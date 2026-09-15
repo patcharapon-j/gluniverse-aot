@@ -3,6 +3,8 @@ import type { CollectionEntry } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import TitanDiagram from './TitanDiagram.astro';
 import Redacted from './Redacted.astro';
+import GlossText from './GlossText.astro';
+import { glossifier } from '~/lib/glossify';
 
 type Titan = CollectionEntry<'titans'>['data'];
 type HiddenField = Titan['hidden'][number];
@@ -39,6 +41,14 @@ const READ_WORDS: Record<HiddenField, string> = {
 };
 const readList = new Intl.ListFormat('en', { type: 'conjunction' }).format(t.hidden.map((h) => READ_WORDS[h]));
 const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', ...t.behaviors.map((b) => b.name)].join(' ').toLowerCase();
+
+// Glossary pop-ups on the first use of each term in this report, in reading order.
+// Every report is about a Titan, and "Legs" here is a Body Part, not an Expedition Leg.
+const gloss = glossifier(['Titan', 'Leg']);
+const readNote = mode === 'squad' && t.hidden.length > 0 ? gloss(`An Abnormal keeps some things to itself. A Read can tell your squad ${readList}.`) : [];
+const behaviors = t.behaviors.map((b) => ({ ...b, parts: gloss(b.effect) }));
+const fallbackEffect = t.fallback ? gloss(t.fallback.effect) : [];
+const tableId = `${id}-behaviors`;
 ---
 <article
   class="specimen"
@@ -52,7 +62,7 @@ const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', 
   <div class="spec-head">
     <div>
       <p class="lbl">Specimen report · Size: {t.sizeClass.name} · {t.sizeClass.height}</p>
-      <h3 id={`${id}-name`}>{t.name}</h3>
+      <h2 id={`${id}-name`}>{t.name}</h2>
     </div>
     <span class="stamp stamp--dbl" aria-hidden="true">{t.abnormal ? 'Abnormal' : 'Specimen'}</span>
   </div>
@@ -70,7 +80,7 @@ const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', 
             {fig.value === null ? (
               <dd class="val val--unknown num"><span aria-hidden="true">?</span><span class="sr">Unknown until a Read</span></dd>
             ) : mode === 'gm' && fig.field && isHidden(fig.field) ? (
-              <dd class:list={['val num', fig.seal && 'val--seal']}><Redacted value={String(fig.value)} /></dd>
+              <dd class:list={['val num', fig.seal && 'val--seal']}><Redacted value={String(fig.value)} label={fig.label} /></dd>
             ) : (
               <dd class:list={['val num', fig.seal && 'val--seal']}>{fig.value}</dd>
             )}
@@ -79,10 +89,10 @@ const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', 
         ))}
       </dl>
 
-      {mode === 'squad' && t.hidden.length > 0 && (
+      {readNote.length > 0 && (
         <p class="read-note">
           <Icon name="ph:eye" aria-hidden="true" />
-          <span>An Abnormal keeps some things to itself. A Read can tell your squad {readList}.</span>
+          <span><GlossText parts={readNote} /></span>
         </p>
       )}
 
@@ -95,7 +105,7 @@ const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', 
               {part.toughness === null ? (
                 <span class="pips pips--unknown" aria-hidden="true"><span></span><span></span></span>
               ) : mode === 'gm' && isHidden('toughness') ? (
-                <Redacted value={`Toughness ${part.toughness}`} />
+                <Redacted value={`Toughness ${part.toughness}`} label={`${part.name} Toughness`} />
               ) : (
                 <span class="pips" role="img" aria-label={`Toughness ${part.toughness}`}>
                   {Array.from({ length: part.toughness }, () => <span></span>)}
@@ -111,7 +121,7 @@ const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', 
         <dl class="tiers">
           {t.tiers.map((tier) => (
             <div class="tier">
-              <dt><span class:list={['tchip', `t-${tier.slug}`]}>{tier.name}</span></dt>
+              <dt><span class:list={['tchip', `t-${tier.slug}`]}><span class="tdia" aria-hidden="true"></span>{tier.name}</span></dt>
               <dd class="sq" aria-hidden="true">{Array.from({ length: Math.max(...tier.dice) }, () => <span></span>)}</dd>
               <dd class="tval num">{tier.dice.join(' or ')}</dd>
             </div>
@@ -125,29 +135,36 @@ const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', 
     <p class="dossier-extra">
       {t.heave !== null && <span>Heave {t.heave}</span>}
       {t.attentionLadder && (
-        <span>Attention: {isHidden('attentionLadder') ? <Redacted value={t.attentionLadder} /> : t.attentionLadder}</span>
+        <span>Attention: {isHidden('attentionLadder') ? <Redacted value={t.attentionLadder} label="Attention" /> : t.attentionLadder}</span>
       )}
     </p>
   )}
 
   <div class="bt">
     <div class="bt-cap">
-      <h4>Behavior Table</h4>
+      <h3 id={tableId}>Behavior Table</h3>
       <span class="lbl">Roll a d6 when it acts</span>
     </div>
-    <div class="scroll" tabindex="0" role="region" aria-label={`${t.name} Behavior Table`}>
-      <table>
-        <thead>
-          <tr><th scope="col">d6</th><th scope="col">Behavior</th><th scope="col">Tier</th><th scope="col">Attack Dice</th><th scope="col">What happens</th></tr>
+    <!-- Explicit table roles keep the table's meaning where narrow reports restyle rows as cards. -->
+    <div class="scroll">
+      <table role="table" aria-labelledby={tableId}>
+        <thead role="rowgroup">
+          <tr role="row">
+            <th scope="col" role="columnheader">d6</th>
+            <th scope="col" role="columnheader">Behavior</th>
+            <th scope="col" role="columnheader">Tier</th>
+            <th scope="col" role="columnheader">Attack Dice</th>
+            <th scope="col" role="columnheader">What happens</th>
+          </tr>
         </thead>
-        <tbody>
-          {t.behaviors.map((b) => (
-            <tr>
-              <td class="d6 num">{b.roll}</td>
-              <th scope="row">{b.name}</th>
-              <td><span class:list={['tchip', `t-${b.tier.slug}`]}>{b.tier.name}</span></td>
-              <td class="ad num">{b.attackDice ?? 'None'}</td>
-              <td>{b.effect}<span class="q">{b.text}</span></td>
+        <tbody role="rowgroup">
+          {behaviors.map((b) => (
+            <tr role="row">
+              <td class="d6 num" role="cell">{b.roll}</td>
+              <th scope="row" role="rowheader">{b.name}</th>
+              <td class="btier" role="cell"><span class:list={['tchip', `t-${b.tier.slug}`]}><span class="tdia" aria-hidden="true"></span>{b.tier.name}</span></td>
+              <td class="ad num" role="cell" data-label="Attack Dice">{b.attackDice ?? 'None'}</td>
+              <td class="beff" role="cell"><GlossText parts={b.parts} /><span class="q">{b.text}</span></td>
             </tr>
           ))}
         </tbody>
@@ -157,7 +174,7 @@ const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', 
       <p class="bt-foot">
         <span class="lbl">Otherwise</span>
         <span>
-          <b>{t.fallback.name}.</b> When a rolled behavior cannot happen and has nothing to fall back on, it does this instead. {t.fallback.attackDice} Attack Dice. {t.fallback.effect}
+          <b>{t.fallback.name}.</b> When a rolled behavior cannot happen and has nothing to fall back on, it does this instead. {t.fallback.attackDice} Attack Dice. <GlossText parts={fallbackEffect} />
           <span class="q"> {t.fallback.text}</span>
         </span>
       </p>

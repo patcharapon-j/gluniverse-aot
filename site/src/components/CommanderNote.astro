@@ -1,0 +1,11 @@
+---
+/** A note typed on the Commander's copy: GM guidance in blue carbon typewriter (ADR-0023). */
+interface Props {
+  title?: string;
+}
+const { title = "Commander's note" } = Astro.props;
+---
+<div class="carbon-note" role="note">
+  <p class="carbon-note-head lbl">{title}</p>
+  <div class="carbon-note-body"><slot /></div>
+</div>

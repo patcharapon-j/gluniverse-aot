@@ -32,7 +32,7 @@
   padding: 6px 0;
 }
 .search input::placeholder {
-  color: #6b624f;
+  color: var(--ink-2);
 }
 .search input:focus {
   outline: none;
@@ -80,7 +80,7 @@
   border-color: var(--ink);
 }
 .chip .n {
-  opacity: 0.65;
+  opacity: 0.8;
   margin-left: 5px;
 }
 .count {
@@ -149,7 +149,7 @@
   color: var(--seal);
   font-weight: 700;
 }
-.card h3 {
+.card :is(h2, h3) {
   font-family: var(--f-serif);
   font-weight: 700;
   font-size: 1.5rem;
@@ -209,7 +209,7 @@
 .spec-head .lbl {
   color: var(--ink-2);
 }
-.spec-head h3 {
+.spec-head h2 {
   font-family: var(--f-stencil);
   font-weight: 800;
   font-size: clamp(2rem, 4vw, 2.875rem);
@@ -339,14 +339,13 @@
 }
 .tiers {
   display: grid;
-  gap: 6px;
+  grid-template-columns: max-content minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 12px;
   margin: 0;
 }
 .tier {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
+  display: contents;
 }
 .tier dd {
   margin: 0;
@@ -392,8 +391,28 @@
 .t-thrash {
   color: var(--steel);
 }
+/* The tier diamond: its fill tells the tiers apart without colour. */
+.tdia {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin: 0 8px 2px 1px;
+  border: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  vertical-align: middle;
+}
+.t-control .tdia {
+  background: linear-gradient(135deg, currentColor 50%, transparent 50%);
+}
+.t-kill .tdia {
+  background: currentColor;
+}
+.t-thrash .tdia {
+  background: radial-gradient(circle, currentColor 1.2px, transparent 1.8px);
+}
 .bt {
   border-top: 1.5px solid var(--ink);
+  container-type: inline-size;
 }
 .bt-cap {
   display: flex;
@@ -402,7 +421,7 @@
   gap: 8px;
   padding: 12px 22px 8px;
 }
-.bt-cap h4 {
+.bt-cap h3 {
   font-family: var(--f-serif);
   font-weight: 700;
   font-size: 1.25rem;
@@ -419,7 +438,7 @@
 .bt table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 660px;
+  min-width: 0;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   font-family: var(--f-serif);
@@ -480,6 +499,87 @@
 }
 .bt tbody tr:hover {
   background: rgba(207, 195, 165, 0.3);
+}
+/* Wherever a report is narrow, each d6 result stacks into its own card: no sideways scrolling. */
+@container (max-width: 620px) {
+  .bt table,
+  .bt tbody {
+    display: block;
+  }
+  .bt thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .bt tr {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    align-items: start;
+    padding: 14px;
+    border-bottom: 1px solid rgba(156, 144, 120, 0.6);
+  }
+  .bt tr:last-child {
+    border-bottom: 0;
+  }
+  .bt td,
+  .bt tbody th {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+  .bt td.d6 {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1.5px solid var(--ink);
+    font-size: 1.5rem;
+  }
+  .bt tbody th {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    white-space: normal;
+    font-size: 1.0625rem;
+    line-height: 1.25;
+  }
+  .bt td.btier {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+  }
+  .bt td.ad {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 1.125rem;
+  }
+  .bt td.ad::before {
+    content: attr(data-label) / "";
+    font-family: var(--f-type);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .bt td.beff {
+    grid-column: 2 / -1;
+    grid-row: 3;
+  }
+  .bt tbody tr:hover {
+    background: none;
+  }
 }
 .bt-foot {
   display: grid;
@@ -543,13 +643,14 @@
   stroke-width: 1.6;
   stroke-dasharray: 3 2.4;
 }
+.card h2,
 .card h3,
 .ledger h3,
 .ledger h4,
 .year-head h3 {
   scroll-margin-top: 96px;
 }
-.card:has(> h3:target) {
+.card:has(> :is(h2, h3):target) {
   border: 1.5px solid var(--ink);
   box-shadow: 4px 4px 0 var(--paper-shade);
 }
@@ -1014,9 +1115,6 @@
   }
   .fig .val {
     font-size: 2.25rem;
-  }
-  .tier {
-    grid-template-columns: 80px minmax(0, 1fr) auto;
   }
   .legend {
     grid-template-columns: repeat(2, minmax(0, 1fr));

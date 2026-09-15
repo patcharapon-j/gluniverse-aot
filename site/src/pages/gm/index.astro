@@ -1,6 +1,7 @@
 ---
 import GmLayout from '~/layouts/GmLayout.astro';
 import EarlyRulesBadge from '~/components/EarlyRulesBadge.astro';
+import RestrictedBand from '~/components/RestrictedBand.astro';
 import { gmChapters, gmTabs } from '~/lib/chapters';
 import { numeral } from '~/lib/nav';
 
@@ -9,7 +10,7 @@ const tabs = await gmTabs();
 ---
 <GmLayout title="GM's Guide" description="The Commander's copy: running Titans, Expeditions, and the dangers the squad cannot see." tabs={tabs}>
   <section class="sheet sheet--carbon" aria-labelledby="page-title">
-    <div class="restricted"><span>Restricted: Commanding Officers</span><small>GM's Guide</small></div>
+    <RestrictedBand />
     <div class="runhead lbl"><span>Part V · GM's Guide</span><span>Commander's copy</span></div>
     <header class="rules-head">
       <p class="lbl eyebrow">Briefing</p>

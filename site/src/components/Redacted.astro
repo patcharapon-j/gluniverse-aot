@@ -1,8 +1,55 @@
 ---
-/** A value the squad does not see yet. The bar lifts on hover or keyboard focus. */
+/**
+ * A value the squad does not see yet (ADR-0023). The bar lifts while hovered or focused, and a
+ * click, tap, or key press keeps it lifted. Screen readers hear the value once it is revealed.
+ */
 interface Props {
   value: string;
+  /** What the value is, as in "Reveal Nape Depth". */
+  label: string;
 }
-const { value } = Astro.props;
+const { value, label } = Astro.props;
+const id = `redact-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Math.random().toString(36).slice(2, 8)}`;
 ---
-<span class="redact" tabindex="0">{value}<span class="sr"> (hidden from the squad until a Read)</span></span>
+<span class="redact"><span class="redact-val" id={id}>{value}</span><button type="button" class="redact-bar" aria-expanded="false" aria-controls={id} data-redact-bar data-label={label}><span class="sr">Reveal {label}</span></button></span>
+
+<script>
+  const bars = [...document.querySelectorAll<HTMLButtonElement>('[data-redact-bar]')];
+
+  if (bars.length > 0) {
+    const live = document.createElement('span');
+    live.className = 'sr';
+    live.setAttribute('aria-live', 'polite');
+    (document.querySelector('main') ?? document.body).append(live);
+
+    const set = (bar: HTMLButtonElement, open: boolean) => {
+      const value = document.getElementById(bar.getAttribute('aria-controls') ?? '');
+      bar.setAttribute('aria-expanded', String(open));
+      const text = bar.querySelector('.sr');
+      if (text) text.textContent = `${open ? 'Cover' : 'Reveal'} ${bar.dataset.label ?? ''}`;
+      // A covered value is hidden from screen readers as well, until it is revealed.
+      if (open) value?.removeAttribute('aria-hidden');
+      else value?.setAttribute('aria-hidden', 'true');
+      return value?.textContent ?? '';
+    };
+
+    bars.forEach((bar) => {
+      set(bar, false);
+      bar.addEventListener('click', () => {
+        const open = bar.getAttribute('aria-expanded') !== 'true';
+        const value = set(bar, open);
+        live.textContent = open ? `${bar.dataset.label}: ${value}` : `${bar.dataset.label} covered`;
+      });
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-redact-all]').forEach((all) => {
+      all.hidden = false;
+      all.addEventListener('click', () => {
+        const open = all.getAttribute('aria-pressed') !== 'true';
+        all.setAttribute('aria-pressed', String(open));
+        bars.forEach((bar) => set(bar, open));
+        live.textContent = open ? 'Every bar lifted.' : 'Every bar covered.';
+      });
+    });
+  }
+</script>

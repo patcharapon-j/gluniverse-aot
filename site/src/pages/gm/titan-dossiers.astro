@@ -4,23 +4,33 @@ import { getCollection } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import GmLayout from '~/layouts/GmLayout.astro';
 import TitanSpecimen from '~/components/TitanSpecimen.astro';
+import RestrictedBand from '~/components/RestrictedBand.astro';
+import CommanderNote from '~/components/CommanderNote.astro';
+import GlossaryPopover from '~/components/GlossaryPopover.astro';
 import { gmTabs } from '~/lib/chapters';
 
 const dossiers = (await getCollection('titanDossiers')).sort((a, b) => a.data.order - b.data.order);
 const tabs = await gmTabs();
+const hasRedactions = dossiers.some((d) => d.data.hidden.length > 0);
 ---
 <GmLayout title="Titan Dossiers" description="Every Titan in full, including the values an Abnormal hides until a Read." tabs={tabs}>
   <section class="sheet sheet--carbon" aria-labelledby="page-title">
-    <div class="restricted"><span>Restricted: Commanding Officers</span><small>GM's Guide</small></div>
+    <RestrictedBand />
     <div class="runhead lbl"><span>Part V · GM's Guide</span><span>Titan Dossiers</span></div>
     <header class="rules-head">
       <p class="lbl eyebrow">Dossiers</p>
       <h1 class="h1" id="page-title">Titan Dossiers</h1>
       <p class="lede carbon">The full record of every Titan. Values the squad learns only by a Read sit under a bar.</p>
-      <p class="redact-hint lbl"><Icon name="ph:hand-pointing" aria-hidden="true" />Hover or focus a bar to lift it</p>
+      {hasRedactions && (
+        <CommanderNote title="Reading a dossier">
+          <p class="redact-hint"><Icon name="ph:hand-pointing" aria-hidden="true" />Hover over or focus a bar to look under it. Tap or press it to keep it lifted.</p>
+          <button type="button" class="btn btn--carbon" data-redact-all aria-pressed="false" hidden><Icon name="ph:eye" aria-hidden="true" />Lift every bar</button>
+        </CommanderNote>
+      )}
     </header>
     <div class="specimens">
       {dossiers.map((titan) => <TitanSpecimen titan={titan.data} id={titan.id} mode="gm" />)}
     </div>
+    <GlossaryPopover />
   </section>
 </GmLayout>
