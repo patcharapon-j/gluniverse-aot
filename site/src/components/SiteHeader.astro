@@ -9,15 +9,26 @@ const { current } = Astro.props;
 const path = withSlash(Astro.url.pathname);
 const state = (href: string, key: SectionKey) => (withSlash(href) === path ? 'page' : key === current ? 'true' : undefined);
 ---
-<header class="masthead">
+<header class="masthead" data-masthead>
   <a class="brand" href="/" aria-label="Wings of Freedom, home">
     <svg aria-hidden="true"><use href="#brandmark" /></svg>
     <span><b>Wings of Freedom</b><small>The Survey Corps roleplaying game</small></span>
   </a>
   <nav class="mainnav" aria-label="Main">
-    <ul>
+    <button class="navmenu" type="button" aria-expanded="false" aria-controls="mainnav-list" data-nav-toggle hidden>
+      <Icon name="ph:list" class="navmenu-open" aria-hidden="true" />
+      <Icon name="ph:x" class="navmenu-close" aria-hidden="true" />
+      <span>Menu</span>
+    </button>
+    <ul id="mainnav-list">
       {MAIN_NAV.map((item) => (
-        <li><a href={item.href} aria-current={state(item.href, item.key)}>{item.label}</a></li>
+        <li>
+          <a href={item.href} aria-current={state(item.href, item.key)}>
+            <span>{item.label}</span>
+            {item.key === 'gm' && <span class="mn-tag" aria-hidden="true">GM only</span>}
+            <Icon name="ph:arrow-right" class="mn-arrow" aria-hidden="true" />
+          </a>
+        </li>
       ))}
     </ul>
   </nav>
@@ -27,3 +38,36 @@ const state = (href: string, key: SectionKey) => (withSlash(href) === path ? 'pa
     <kbd aria-hidden="true">/</kbd>
   </button>
 </header>
+
+<script>
+  // Below the wide layout the main navigation folds into a Contents card behind a Menu button.
+  // Without scripts the links keep their scrolling row.
+  const header = document.querySelector<HTMLElement>('[data-masthead]');
+  const toggle = header?.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+
+  if (header && toggle) {
+    const isOpen = () => header.classList.contains('is-open');
+    const setOpen = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    header.classList.add('has-menu');
+    toggle.hidden = false;
+
+    toggle.addEventListener('click', () => setOpen(!isOpen()));
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !isOpen()) return;
+      setOpen(false);
+      toggle.focus();
+    });
+    document.addEventListener('click', (event) => {
+      if (isOpen() && !header.contains(event.target as Node)) setOpen(false);
+    });
+    header.addEventListener('focusout', (event) => {
+      const next = event.relatedTarget as Node | null;
+      if (isOpen() && next && !header.contains(next)) setOpen(false);
+    });
+    window.matchMedia('(max-width: 1240px)').addEventListener('change', () => setOpen(false));
+  }
+</script>
