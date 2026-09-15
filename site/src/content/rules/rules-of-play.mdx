@@ -1,0 +1,77 @@
+---
+title: The Rules of Play
+summary: How every roll works. Build your pool, count your successes, and decide when to Push.
+section: guide
+order: 1
+tab: Rules
+sources:
+  - path: docs/rules/01-core-rules.md
+    sha: "a4311e63b0d2c4c3e4a56f1062727515589b7ada"
+  - path: data/core/dice-pool.yaml
+    sha: "65a83cd9bb8ab0754819890ea32483ef53166260"
+---
+
+import BoxPair from '~/components/BoxPair.astro';
+import DiceKey from '~/components/DiceKey.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import FieldReport from '~/components/FieldReport.astro';
+import GlossaryTerm from '~/components/GlossaryTerm.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import PoolRows from '~/components/PoolRows.astro';
+import PushSteps from '~/components/PushSteps.astro';
+import RollPanel from '~/components/RollPanel.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Subsection from '~/components/Subsection.astro';
+
+<SectionHead id="pushing-your-luck" eyebrow="Rolling dice">Pushing Your Luck</SectionHead>
+
+<FieldQuote cite="Survey Corps field manual">Every recruit learns to count their gas. Every veteran learns when to spend it anyway.</FieldQuote>
+
+<MarginNote stamp="Read twice">You can Push a success too. One 6 will not cut through a <GlossaryTerm term="Nape Depth" /> of 4.</MarginNote>
+
+<p class="lede">A roll that falls short does not have to be the end.</p>
+
+You can **Push**: take on <GlossaryTerm term="Stress" /> for a second chance at successes. You can Push after a failed roll or after a successful one.
+
+<MarginNote>Cover costs your comrade, not you. Say it out loud before anyone picks up a die.</MarginNote>
+
+<Subsection title="How a Push works" note="Five steps, in order" id="how-a-push-works">
+<PushSteps />
+</Subsection>
+
+<BoxPair>
+<RuleBox variant="stop" title="You cannot Push when" icon="ph:prohibit">
+
+- a Stress Die showed a 1 on this roll;
+- the roll says it cannot be Pushed, like a <GlossaryTerm term="Death Roll" />;
+- you have already Pushed this roll. You get one Push unless a Talent gives you more.
+
+</RuleBox>
+<RuleBox variant="gas" title="Pushing burns gas" icon="ph:wind">
+
+If you Push a roll made with <GlossaryTerm term="ODM Gear" />, your <GlossaryTerm term="Gas Roll" /> that round uses **three** dice instead of two.
+
+</RuleBox>
+</BoxPair>
+
+<MarginNote>Gear Dice keep their face. After a Push, look for 1s on them.</MarginNote>
+
+<Subsection title="The four kinds of dice" note="Each kind is its own colour at the table" id="four-kinds-of-dice">
+<DiceKey />
+</Subsection>
+
+<FieldReport id="example-mira" title="Field report: Mira at the Nape">
+
+Mira swings in at the Nape. Her pool is 5 base dice, 2 Gear Dice, and 1 Stress Die. She rolls one 6: not enough to kill. She Pushes: she gains 1 Stress, adds a second Stress Die, and rolls every base and Stress die that isn't a 6.
+
+<PoolRows rows={[
+  { label: 'First roll', pool: 'base:6,3,2,4,1|gear:5,1|stress:3', successes: 1 },
+  { label: 'After the Push', pool: 'base:6k,6,4,2,5|gear:5l,1lx|stress:6,3n', successes: 3 },
+]} />
+
+Her Gear Dice stay put, and one of them shows a 1, so her gear will wear. The reroll turns up two more 6s. Three successes, and no Stress Die showing a 1.
+
+</FieldReport>
+
+<RollPanel caption="Mira's pool: 5 base, 2 Gear, 1 Stress" pool={{ base: 5, gear: 2, stress: 1 }} />
