@@ -1,0 +1,104 @@
+# What Chapter 3 resolves when a Titan Engagement ends, in what order, and how its rules treat a
+# soldier who left the Titan Engagement before it ended.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.16) references this
+# file and does not repeat its rows. data/engagement/engagement-flow.yaml (ending) states when a
+# Titan Engagement ends.
+id: engagement-end
+name: When a Titan Engagement Ends
+chapter: 03-harm-and-mind
+adrs: [ADR-0008, ADR-0014]
+decided: [OQ-54, OQ-56, OQ-57]
+
+steps:
+  - id: turns
+    text: >-
+      Turns spent in advance that have not come up are cancelled (Chapter 1, section 1.9, OQ-15),
+      and so are turns and actions a result would have spent. Every ban on Reactions ends
+      (data/harm/effect-types.yaml, no-reactions). Every pending Fear Roll result, a forced step or a
+      forced strike not yet made, is cancelled (data/harm/sheet-fields.yaml, pending_fear_results;
+      decision batch 7, 7-8).
+  - id: stress-relief
+    text: Apply the end-of-Engagement Stress relief (data/core/stress-changes.yaml, engagement-ends).
+  - id: lasting-stress-responses
+    text: Every lasting Stress Response gained during the Titan Engagement ends (data/mind/stress-responses.yaml).
+  - id: turn-limits
+    text: Every lethal Critical Injury with a turn limit now has an engagement limit (data/harm/death-rolls.yaml).
+  - id: aftermath-rolls
+    text: >-
+      Each patient with an untreated lethal Critical Injury with an engagement limit gets at
+      most one aftermath roll, from a treater the players choose, and each soldier makes at most
+      one (data/harm/treat-injury.yaml, aftermath_rolls). A success gives back the Critical
+      Injury's Health box as treat does (data/harm/treat-injury.yaml, uses) and can end Down.
+  - id: death-rolls
+    text: >-
+      Every lethal Critical Injury that still has an engagement limit runs out and causes a Death
+      Roll, after the aftermath rolls and before the care window. These Death Rolls are made
+      outside the Titan Engagement
+      (data/harm/death-rolls.yaml, outside_titan_engagement_restart). A death at this step causes
+      no Fear Roll.
+  - id: care-window
+    text: >-
+      Hold a care window (data/harm/treat-injury.yaml, care_windows, engagement-end). A lethal
+      Critical Injury stabilized here or at the aftermath-rolls step gives its Scar
+      (data/mind/scars.yaml).
+  - id: grief
+    text: >-
+      Every soldier gains Grief for the deaths during the Titan Engagement, including deaths at
+      the death-rolls step (data/mind/grief.yaml).
+  - id: retirement-and-promotion
+    text: >-
+      Every soldier with five Scars retires, including a soldier who gained the fifth Scar at an
+      earlier step (data/mind/scars.yaml, retirement), and a retiring Squadmate leaves the Squad
+      Pool. Left items, and every Blade Set a Fear Roll result dropped during the Titan Engagement, are
+      then shared out (data/gear/carrying.yaml, leaving_play, death, shared_out;
+      data/harm/effect-types.yaml, drop-blade-set; decision batch 8, 8-13). Then promotion replaces, as one batch, every player character who died or retired
+      during the Titan Engagement or at any end step, including the death-rolls step, using the
+      contest in data/character/squadmates.yaml (promotion, contested).
+
+during_the_steps: >-
+  The steps are resolved outside the Titan Engagement: a roll made at them is not made in a Titan
+  Engagement. No soldier retires, and no promotion happens, before the retirement-and-promotion
+  step.
+
+positions_read: >-
+  A step that reads a Position a soldier held when the Titan Engagement ended reads their last
+  Positions: a Position held relative to a Focus Titan when that Titan died is recorded as the last
+  Position relative to it, and the Position records are cleared only after the last step above
+  (data/engagement/positions.yaml, a_focus_titan_dies; decision batch 5, OQ-122). While a Titan's corpse lies on the field, the last Positions relative to that Titan are the Positions relative to its corpse as they stand when the Titan Engagement ends (data/engagement/positions.yaml, corpse; decision batch 8, 8-20).
+
+# A Skirmish ends with the same steps (decision batch 7, 7-17; data/skirmish/skirmish.yaml, ending).
+procedures:
+  titan-engagement: The steps as written.
+  skirmish:
+    reading: Every step applies with Skirmish in place of Titan Engagement, and is resolved outside the Skirmish.
+    took_part: >-
+      Every soldier who took part in the Skirmish (data/skirmish/skirmish.yaml, starting, taking_part)
+      stands in for every soldier who held a Position at any point during the Titan Engagement.
+    stress-relief: data/core/stress-changes.yaml (skirmish-ends) in place of engagement-ends. A Skirmish has no Nape kill.
+    turn-limits: A turn limit gained or running in the Skirmish becomes engagement (data/harm/death-rolls.yaml, turn, when_a_skirmish_ends).
+    aftermath-rolls: A Skirmish has no Positions, so every soldier who took part counts as holding the patient's Position.
+    death-rolls: A death at this step causes no Fear Roll.
+    care-window: data/harm/treat-injury.yaml (care_windows, skirmish-end).
+    grief: data/mind/grief.yaml (gaining, who, skirmish_death).
+    decided: [OQ-143]
+
+nape_kill: >-
+  A Nape kill that ends the Titan Engagement has already applied its own Stress relief when the
+  kill happened (data/core/stress-changes.yaml, nape-kill).
+
+# A living soldier who held a Position in the Titan Engagement and then left it while it went on.
+soldiers_who_left:
+  status: >-
+    Until the Titan Engagement ends, the soldier is still in it for every Chapter 3 rule, though
+    they hold no Position in it.
+  turns: >-
+    They still take a turn each round, in the order of play data/engagement/round.yaml sets. Each of those turns
+    counts for every rule that counts turns, such as a turn time limit, and a result can spend it.
+  same_position: >-
+    For Treat Injury and Rally, for Help and Covering on those rolls, and for aftermath rolls
+    (data/harm/treat-injury.yaml, aftermath_rolls), two soldiers who have both left the Titan
+    Engagement count as holding the same Position. A soldier who has left never counts as holding
+    the same Position as, or one step from, a soldier who still holds a Position.
+  end_steps: Every step above applies to them when the Titan Engagement ends.
+  set_by_chapter_5: How a soldier leaves a Titan Engagement, and what their move and action can do after leaving (data/engagement/positions.yaml, leaving).
+  decided: [OQ-56]

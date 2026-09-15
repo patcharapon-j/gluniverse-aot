@@ -1,0 +1,122 @@
+# The Next Behavior and a Focus Titan's card: when the hidden Next Behavior is rolled, how an
+# illegal result moves, and the steps of resolving one of the Titan's cards.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.5) references this
+# file and does not repeat its rows.
+id: behavior-procedure
+name: Next Behavior and Titan Cards
+chapter: 05-titan-engagement
+adrs: [ADR-0001, ADR-0003, ADR-0010, ADR-0015, ADR-0019]
+decided: [OQ-80, OQ-107, OQ-145]
+
+# ------------------------------------------------------------------ the Next Behavior
+next_behavior:
+  hidden: >-
+    The GM rolls the Next Behavior where the players cannot see it and records it face down on the
+    tracker (data/engagement/round.yaml, gm_tracker). It is revealed only by a Read
+    (data/engagement/read.yaml), by a telegraph effect, or when a card resolves it. The GM never
+    re-rolls it, changes its row, or makes any choice this file does not name (ADR-0003, item 8).
+  rolled_when:
+    - The Titan becomes a Focus Titan.
+    - One of its cards has resolved a behavior (resolving_a_card, next).
+    - A card came up while a decoy held its Attention (resolving_a_card, decoy).
+  kept_when: >-
+    A card resolves no behavior because the Titan holds a Grabbed soldier, or because no soldier
+    holds its Attention. The Next Behavior stays as it is.
+  previous_behavior: >-
+    The entry the Titan most recently resolved, or the Next Behavior a decoy's card spent. A Titan
+    that has just become a Focus Titan has none.
+  roll:
+    - id: roll
+      text: Roll D6 and find the entry whose results include it.
+    - id: legal
+      text: >-
+        The entry can be rolled if it is not the previous behavior and the Titan meets its
+        body_parts_used (data/engagement/titan-format.yaml, entry_fields).
+    - id: move-up
+      text: >-
+        If it cannot, take the entry that holds the next higher result (after 6 comes 1), skipping
+        entries already checked, and test it the same way. Repeat until an entry can be rolled.
+    - id: thrash
+      text: If no entry can be rolled, the Next Behavior is Thrash.
+  positions_not_checked: >-
+    Rolling never checks Positions or Attention, because Attention is evaluated only when a card
+    comes up.
+  move_up_shares: >-
+    For Chapter 6's authors: an entry that cannot be rolled passes its share of results to the
+    entry above it. So the entry after the previous behavior, and the entry after one whose Body
+    Parts are Broken, are rolled more often until that changes. On the reference Titan with both
+    arms Broken, Bite takes Grab's share. The simulator reports each table's kill share by previous
+    behavior and by Broken parts (data/engagement/tuning.yaml, simulator_cases). Chapter 6 reads
+    "any state" in its constraint as every previous behavior combined with every count of Broken
+    eyes, arms, and legs. Under that reading the reference Titan's table reaches a kill share of 4
+    in 6 (previous behavior Shake Off, both arms Broken), and every table in data/titans/ stays at or
+    under one half (data/titans/tuning.yaml, targets, every_standard_table; OQ-101).
+
+# ------------------------------------------------------------------ one Titan card
+resolving_a_card:
+  steps:
+    - id: dead
+      text: If the Titan has died, its card does nothing.
+    - id: holding
+      text: >-
+        If the Titan holds a Grabbed soldier, the card resolves no behavior. The Attention Ladder is
+        not evaluated, the Next Behavior is kept, and the flags for this Titan stay as they are
+        (data/engagement/attention.yaml, flag_duration; decision batch 3e). Stop.
+    - id: decoy
+      text: >-
+        If a decoy holds the Titan's Attention, the card resolves no behavior, and the cards the
+        hold has left fall by 1 (data/engagement/round.yaml, gm_tracker, focus_titan_row). The Next
+        Behavior becomes the previous behavior, any Call It on it ends, and a new Next Behavior is
+        rolled (next_behavior, roll). If the hold has no cards left, it ends: evaluate the
+        Attention Ladder (data/engagement/attention.yaml, evaluation). Otherwise the decoy keeps the
+        Titan's Attention and the ladder is not evaluated. Either way the flags for this Titan stay
+        as they are, because the card resolves no behavior (data/engagement/attention.yaml,
+        flag_duration; decision batch 3e). The Titan's decoys in a row does not change. Stop.
+    - id: attention
+      text: >-
+        Evaluate the Attention Ladder (data/engagement/attention.yaml, evaluation). If no soldier
+        holds its Attention, the card resolves no behavior, the Next Behavior is kept, and the flags
+        for this Titan stay as they are. Stop.
+    - id: choose
+      text: >-
+        Take the Next Behavior's entry. If the Titan does not meet its body_parts_used, the
+        behavior is Thrash. Otherwise, if the Attention holder does not meet its
+        position_requirement, the behavior is its fallback entry. If that fallback is thrash, is
+        the previous behavior, or fails either test, the behavior is Thrash. Thrash can always
+        happen, and it is the only entry that can follow itself.
+    - id: roll-and-announce
+      text: >-
+        Announce the behavior's name, tier, and targets to every soldier. If the entry lists
+        attack_dice, roll that many Titan Dice in the open (data/engagement/titan-format.yaml,
+        titan_dice) and announce the successes: the card's Severity, the same number for every
+        target. An entry with no attack_dice rolls nothing and harms no one. The GM never re-rolls or
+        adjusts the roll (ADR-0003, item 8; ADR-0019).
+    - id: reactions
+      text: >-
+        If the roll scored 0 successes, the card whiffs against every target, a target who cannot make
+        a Reaction included, and no Reaction is made against it. Otherwise each target, knowing the
+        Severity, chooses whether to dodge, or cancels with a dodge already made against this Titan
+        this round, as Chapter 1, section 1.9 (Attack and Reaction) states: each dodge success
+        cancels one of the card's successes, separately for this card, and the card lands on that
+        target on 1 or more Net Successes and whiffs on 0 (data/engagement/titan-format.yaml,
+        titan_dice, lands). A target whom a state or result forbids a Reaction, or who makes none,
+        cancels nothing, so every success is net. A Call It on this Next Behavior adds its Bonus
+        Dice to a dodge made against this card (data/engagement/read.yaml, call_it).
+    - id: effects
+      text: >-
+        For each target on which the behavior lands, apply its effects in order, target by target
+        in initiative card order (a Wing Squadmate after its player character), reading the Net
+        Successes only where an effect names them (data/engagement/titan-format.yaml,
+        effect_types). A telegraph effect applies whether the card landed or whiffed. A target who
+        dies receives none of the card's later effects; every other target still does (decision
+        batch 4, OQ-107). Fear Rolls the effects cause are made as data/mind/fear-rolls.yaml (limits,
+        timing) states.
+    - id: next
+      text: >-
+        The card has resolved a behavior whether it landed or whiffed (ADR-0003, item 2; decision
+        batch 8, 8-1). The behavior becomes the previous behavior, the Titan's decoys in a row returns to 0
+        (data/engagement/attention.yaml, break_attention, needs_rule), and every flag for this Titan
+        clears (data/engagement/attention.yaml, flag_duration; decision batch 3e). Roll the new Next Behavior
+        (next_behavior, roll). If the behavior had a telegraph effect, reveal the new Next Behavior to every
+        soldier. It stays revealed until a card resolves it or a decoy's card spends it.
+  gm_choices: none   # the GM never picks a row, a fallback, a target, or an order

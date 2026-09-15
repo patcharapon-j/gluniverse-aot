@@ -1,0 +1,340 @@
+# Attention: the standard Attention Ladder, when a Focus Titan evaluates it, ties, the flags that
+# feed it, Draw Attention, Break Attention and its decoys, and the format of an Abnormal's ladder.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.6) references this
+# file and does not repeat its rows.
+id: attention
+name: Attention
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0010]
+decided: [OQ-75, OQ-81, OQ-87, OQ-99, OQ-102, OQ-111]
+
+holder: >-
+  A Focus Titan's Attention is held by exactly one soldier, by a decoy, or by nothing. The soldier
+  who holds it cannot make a Nape strike against that Titan (ADR-0010). Its Behavior Table acts
+  against the soldier who holds it (data/engagement/behavior-procedure.yaml). Who holds each
+  Focus Titan's Attention is public.
+
+# ------------------------------------------------------------------ when Attention changes
+changes:
+  - id: titan-becomes-focus
+    when: A Titan becomes a Focus Titan, including the first Focus Titan when the Titan Engagement begins.
+    effect: >-
+      Evaluate its Attention Ladder at once. When a Titan Engagement begins, every soldier holds
+      Distant and no cards are dealt, so unless a rung picks out one soldier, as none of the Phase 1
+      ladders' rungs does at the start, nothing holds its Attention until its first card (evaluation,
+      none; decision batch 4, 4-3; decision batch 4b, 4b-6). A Titan that enters from a Background
+      clock at the background-clocks end step is evaluated with no cards; one that enters mid-round,
+      when a flare fills its clock, is evaluated with that round's cards (evaluation, card; decision
+      batch 4b, 4b-3).
+  - id: card
+    when: One of the Titan's cards comes up and the Titan does not hold a Grabbed soldier.
+    effect: >-
+      If a decoy holds its Attention, the card counts the decoy's hold down. Only the hold's last
+      card ends it and evaluates the Attention Ladder; an earlier card of the hold evaluates nothing.
+      No card of a hold clears the flags, since none resolves a behavior: they stand until the
+      Titan's next card that does (data/engagement/behavior-procedure.yaml, resolving_a_card,
+      decoy; flag_duration; decision batch 3e). Otherwise evaluate its Attention Ladder, before
+      anything else the card does (resolving_a_card).
+  - id: decoy
+    when: A Break Attention against the Titan succeeds.
+    effect: The decoy holds its Attention at once, for its next cards, as many as its Tempo (break_attention).
+  - id: grab
+    when: A Grab by the Titan lands.
+    effect: The Grabbed soldier holds its Attention for as long as the Titan holds them (data/engagement/grab.yaml).
+  - id: holder-gone
+    when: >-
+      The soldier who holds its Attention dies, leaves the Titan Engagement, is freed from the
+      Titan's grip, is Grabbed by another Focus Titan, or stops holding a Position relative to the
+      Titan (decision batch 4, 4-13).
+    effect: The Titan's Attention is held by nothing until its next evaluation.
+  - id: nothing-else
+    when: Any other time.
+    effect: >-
+      Attention does not change. Between two evaluations the same soldier holds it, whatever
+      soldiers do.
+
+# ------------------------------------------------------------------ candidates
+candidates:
+  who: Every living soldier who holds a Position relative to the Titan.
+  never:
+    - A soldier who has left the Titan Engagement.
+    - A soldier held Grabbed by another Focus Titan.
+    - A horse.
+  down: >-
+    A Down soldier is a candidate, but meets only the tests whose row below says down_can_meet
+    true. On the standard ladder that is only nearest, which they meet by their Position like
+    anyone else (decision batch 3e, 3e-6). An Abnormal ladder that names current-holder also keeps
+    a Down holder who is not at Distant (decision batch 4, 4-3 and 4-13).
+  carried: >-
+    A carried soldier is a candidate at their carrier's Position, and meets only the tests whose
+    row says down_can_meet true.
+  none: If the Titan has no candidate, its Attention is held by nothing.
+
+# ------------------------------------------------------------------ flags
+# A flag is set on a soldier for one Focus Titan and lasts as flag_duration states. A soldier can
+# hold the same flag for two Focus Titans at once. Flags are public.
+flag_duration: >-
+  A flag lasts until the end of the Titan's next card that resolves a behavior, and clears for that
+  Titan at that card's next step (data/engagement/behavior-procedure.yaml, resolving_a_card, next).
+  A card that resolves nothing leaves every flag standing: every card of a decoy's hold, including
+  the hold's last card, which evaluates the ladder with the flags; a card that comes up while the
+  Titan holds a Grabbed soldier; and a card with no one holding its Attention. So a flag set before
+  or during a hold, or while the Titan holds a soldier, is read again by the Titan's next card that
+  resolves a behavior, and a Nape striker who falls short draws that behavior (ADR-0003, item 2, and
+  ADR-0010, as amended in decision batch 3e; OQ-81 and OQ-111, as revised in decision batch 3e).
+flags:
+  - id: hooked-by-strike
+    set_when: The soldier makes a Nape strike against the Titan, whatever its result (ADR-0010).
+  - id: just-hurt
+    set_when: The soldier makes a Body Part strike against the Titan with at least 1 success.
+  - id: loudest
+    set_when: >-
+      The soldier takes Draw Attention against the Titan (draw_attention), or a Fear Roll result's
+      draw-attention effect names the Titan as the event's Titan (data/harm/effect-types.yaml;
+      data/mind/fear-rolls.yaml, event_titan; decision batch 7, 7-8). Neither sets it from distant.
+
+# ------------------------------------------------------------------ tests (closed list)
+# The tests a ladder rung can use. The standard ladder uses the first five. The rest are for Abnormal
+# ladders only; current-holder was added by decision batch 3e (3e-6) for a Titan that keeps the soldier
+# it last turned on, and decision batch 4 (4-3) narrowed it to a holder who is not at Distant. A later
+# chapter that needs a new test for an Abnormal adds a row here.
+tests:
+  - id: hooked-into-its-body
+    meaning: The soldier holds on-body relative to the Titan, or holds the hooked-by-strike flag for it.
+    down_can_meet: false
+  - id: nearest-person-in-reach
+    meaning: The soldier holds in-reach relative to the Titan.
+    down_can_meet: false
+  - id: just-hurt-it
+    meaning: The soldier holds the just-hurt flag for the Titan.
+    down_can_meet: false
+  - id: loudest-or-brightest
+    meaning: The soldier holds the loudest flag for the Titan.
+    down_can_meet: false
+  - id: nearest
+    meaning: >-
+      The soldier holds the closest Position any soldier in the set being tested holds, in the
+      order on-body, in-reach, blind-spot, distant. As the highest rung met, it is met by the
+      candidates at the closest Position any candidate holds; as a lower rung, by the tied soldiers
+      at the closest Position any of them holds.
+    down_can_meet: true
+  - id: current-holder
+    meaning: >-
+      The soldier holds the Titan's Attention and a Position other than Distant. A holder who is at
+      Distant, mounted or on foot, does not meet it (decision batch 4, 4-3).
+    down_can_meet: true
+  - id: mounted
+    meaning: The soldier is mounted (data/gear/horses.yaml).
+    down_can_meet: false
+  - id: airborne
+    meaning: The soldier is airborne (data/gear/odm-gear.yaml).
+    down_can_meet: false
+  - id: carrying-a-comrade
+    meaning: The soldier carries a comrade (data/gear/carrying.yaml).
+    down_can_meet: false
+  - id: most-harmed
+    meaning: >-
+      The soldier holds the most untreated Critical Injuries among the candidates. Every candidate
+      with that number meets it.
+    down_can_meet: true
+  - id: down
+    meaning: The soldier is Down.
+    down_can_meet: true
+
+ladders:
+  - id: standard
+    name: Standard Attention Ladder
+    rungs: [hooked-into-its-body, nearest-person-in-reach, just-hurt-it, loudest-or-brightest, nearest]
+    used_by: Every Focus Titan whose stat block names the standard ladder (data/engagement/titan-format.yaml).
+
+# The format of an Abnormal's ladder. The ladders themselves are rows of ladders in
+# data/titans/index.yaml (ladders; Chapter 6).
+abnormal_ladder_format:
+  fields:
+    id: The ladder's id, which the Abnormal's stat block names.
+    rungs: >-
+      An ordered list of test ids from tests, highest first. The first rung is always
+      hooked-into-its-body and the last rung is always nearest (rules). Between them it may use any
+      test, including those the standard ladder does not use; current-holder is for Abnormal
+      ladders only (decision batch 3e, 3e-6).
+  rules:
+    - >-
+      The first rung is always hooked-into-its-body, so a Nape striker who falls short draws the
+      Titan's next behavior on every ladder, and no rung, noise included, turns a Titan off a blade
+      at its Nape or a soldier On Body (ADR-0010, as amended in decision batch 4b; decision batch 4b,
+      4b-1). The standard ladder begins with it too (ladders, standard). The last rung is always
+      nearest.
+    - The ladder is evaluated by evaluation, exactly as the standard ladder is.
+    - A Grab and a decoy take the ladder's place exactly as they do for the standard ladder.
+    - The candidates rules apply unchanged.
+
+# ------------------------------------------------------------------ evaluating a ladder
+evaluation:
+  steps:
+    - id: top
+      text: >-
+        Find the highest rung that at least one candidate meets. The candidates who meet it are the
+        tied set. When that rung is nearest, the tied set is the candidates at the closest Position
+        any candidate holds, not every candidate (tests, nearest; decision batch 3e, 3e-6).
+    - id: struck-first
+      text: >-
+        If the highest rung met is hooked-into-its-body and at least one soldier in the tied set
+        holds the hooked-by-strike flag, keep only those soldiers. A soldier who has just struck
+        the Nape comes before one who is only On Body, so a striker who falls short draws the
+        Titan's next behavior (ADR-0010; flag_duration).
+    - id: narrow
+      text: >-
+        Take the ladder's lower rungs in order. At each, if at least one soldier in the tied set
+        meets it, keep only the soldiers who do. The nearest rung keeps only the tied soldiers at
+        the closest Position any of them holds.
+    - id: holder
+      text: >-
+        If one soldier is left, they hold the Titan's Attention. Otherwise, if the soldier who held
+        it before this evaluation is still in the tied set, they keep it. Since the nearest rung has
+        already narrowed the set, this keeps the holder only in a tie at equal distance.
+    - id: card
+      text: >-
+        Otherwise the tied soldier whose initiative card this round is lowest holds it. A Squadmate
+        on a Wing counts as its player character's card, and comes after that player character.
+        Skip this step if no cards have been dealt this round, or if the evaluation is made at an
+        end step, as when a Background Titan enters at the background-clocks end step
+        (data/engagement/background-titans.yaml, ticks, end-of-round; full_clock): the cards dealt
+        for a round that is ending choose nothing. A Titan that enters mid-round, when a flare fills
+        its clock (background-titans.yaml, ticks, flare), is evaluated with that round's cards
+        (decision batch 4b, 4b-3).
+    - id: none
+      text: >-
+        Otherwise nothing holds the Titan's Attention until its next card. Only the start of a Titan
+        Engagement, an end step, and a tie among Wing Squadmates of one player character (none in
+        Phase 1, since a Wing holds one Squadmate) reach this step, since during a round every player
+        character's card is distinct and a Wing Squadmate comes right after its player character's;
+        the Titan's next card evaluates the ladder with that round's cards dealt. The order of the
+        Squad sheet chooses nothing (ADR-0003 and ADR-0010, as amended in decision batch 4; OQ-81, as
+        revised in decision batch 4, 4-3; decision batch 4b, 4b-3).
+  gm_choices: none   # the GM never picks the holder
+
+# ------------------------------------------------------------------ Draw Attention
+draw_attention:
+  entry: draw-attention   # data/character/action-catalog.yaml: an unrolled action
+  requirements:
+    - The soldier holds a Position relative to the named Focus Titan.
+    - The soldier holds a Position other than distant relative to that Titan (decision batch 5, OQ-113).
+    - The soldier is not Grabbed.
+  spends: the soldier's action
+  effect: >-
+    The soldier holds the loudest flag for that Titan until the end of its next card that resolves
+    a behavior (flag_duration). It moves Attention only when the Titan next evaluates its ladder,
+    and a card that resolves nothing, including the last card of a decoy's hold, leaves the flag
+    standing.
+  adrs: [ADR-0003]   # item 2, as amended in decision batch 3e
+
+# ------------------------------------------------------------------ Break Attention
+break_attention:
+  entry: break-attention   # data/character/action-catalog.yaml: Perception, Gear Dice from ODM Gear or the horse
+  requirements:
+    - The soldier holds a Position relative to the named Focus Titan.
+    - The soldier is not Grabbed.
+    - No decoy holds the named Titan's Attention.
+    - The soldier meets the requirement of one decoy below, and names that decoy before rolling.
+  spends: the soldier's action
+  gear: >-
+    ODM Gear, or the horse under data/gear/horses.yaml (gear_dice), except that a Feint names its
+    own gear, which can be none (decoys, feint). A roll made with ODM Gear is ODM use
+    (data/gear/odm-gear.yaml, odm_use).
+  needs:
+    holder: 1
+    anyone_else: 2
+    titan_holds_a_grabbed_soldier: 2
+    feint_extra: 1          # added to whichever need above applies when the decoy named is a Feint
+    per_decoy_in_a_row: 1   # added for each of the Titan's decoys in a row
+  needs_rule: >-
+    Against a Titan that holds a Grabbed soldier, 2, whoever rolls. Otherwise 1 if the soldier
+    holds the named Titan's Attention, and 2 for anyone else, including while nothing holds its
+    Attention. Add 1 if the decoy named is a Feint. Add 1 for each of the named Titan's decoys in a
+    row: the decoys that have held its Attention since the last of its cards that resolved a
+    behavior, whoever placed them. Its tracker row counts them (data/engagement/round.yaml,
+    gm_tracker, focus_titan_row): the count is 0 when the Titan becomes a Focus Titan, rises by 1
+    each time a decoy takes its Attention, and returns to 0 when one of its cards resolves a
+    behavior (data/engagement/behavior-procedure.yaml, resolving_a_card, next). A card that
+    resolves no behavior, because a decoy holds the Titan's Attention, because it holds a Grabbed
+    soldier, or because no one holds its Attention, leaves the count as it is. Break Attention is
+    the Attention holder's own escape (ADR-0010), and a Titan fooled again before one of its cards
+    has resolved a behavior comes back fixated (OQ-81, as revised in decision batch 3b).
+  on_success:
+    - >-
+      The decoy holds the Titan's Attention at once, and the Titan's decoys in a row rises by 1.
+      The hold lasts for the Titan's next cards, as many as its Tempo, and the tracker records how
+      many it has left. Each of those cards resolves no behavior and spends the Next Behavior. Only
+      the last of them ends the hold and evaluates the ladder. No card of the hold clears the flags:
+      they stand until the Titan's next card that resolves a behavior
+      (data/engagement/behavior-procedure.yaml, resolving_a_card, decoy; flag_duration; ADR-0010,
+      as amended in decision batches 3b and 3e).
+    - >-
+      Each success beyond the whole need (needs_rule) creates 1 Opening on the Titan, created by
+      the soldier (data/engagement/titan-harm.yaml, openings).
+    - If the Titan holds a Grabbed soldier, that soldier is freed (data/engagement/grab.yaml, release).
+    - The named decoy's on_success effect applies.
+  on_failure: Nothing happens. A decoy's spends_when_declared is still spent.
+  decoys:
+    - id: flare
+      name: Flare
+      requirement: The Squad Supply holds at least 1 flare (data/gear/squad-supply.yaml), and the Titan does not have Broken eyes.
+      spends_when_declared: 1 flare from Squad Supply.
+      on_success: none
+      background_titans: >-
+        Each flare spent this way fills 1 segment of every Background Titan's clock once this
+        Break Attention is fully resolved, whether it succeeded or failed, including any Hook and
+        Cut it allowed, so a Titan that enters never interrupts the Break Attention that called it
+        (data/engagement/background-titans.yaml, ticks).
+    - id: riderless-horse
+      name: Riderless horse
+      requirement: >-
+        The soldier's own horse is not lame, and the soldier is mounted on it, or it holds the
+        Position the soldier holds, both compared relative to the Focus Titan recorded with the
+        horse's Position (data/gear/horses.yaml, gear_dice). Broken eyes do not stop this decoy.
+      spends_when_declared: none
+      on_success: >-
+        If the soldier is mounted, they are dismounted with no fall. The horse bolts and leaves the
+        Titan Engagement: it holds no Position, cannot be mounted, gives no Gear Dice, and cannot
+        be named as a decoy again until the Titan Engagement ends, when it is the soldier's own
+        again (data/engagement/positions.yaml, horses; data/gear/horses.yaml,
+        titan_engagement_ends). Its price is the horse for the rest of the fight: no mounted
+        dodge, no ride out, and no Rescue Ride.
+    - id: thrown-cloak
+      name: Thrown cloak
+      requirement: >-
+        The soldier holds on-body or blind-spot relative to the Titan, has not thrown their cloak
+        in this Titan Engagement, and the Titan does not have Broken eyes.
+      spends_when_declared: >-
+        The soldier's cloak for the rest of the Titan Engagement. The tracker records that it has
+        been thrown. A cloak is not a gear item (data/gear/items.yaml, other_objects).
+      on_success: none
+    - id: feint
+      name: Feint
+      requirement: >-
+        The soldier holds in-reach or on-body relative to the Titan, and has working ODM Gear
+        (data/gear/odm-gear.yaml, strikes: not Jammed, Gas Rating above 0), or is mounted on their
+        own horse that is not lame, or is not mounted and the Titan is grounded
+        (data/engagement/titan-harm.yaml, grounded). A mounted soldier against a grounded Titan
+        Feints with the horse (decision batch 3e, 3e-3). Broken eyes do not stop this decoy.
+      gear: >-
+        The working ODM Gear or the horse the requirement names, or, on foot against a grounded
+        Titan, no gear item: Perception alone, with no Gas Roll and no wear
+        (data/character/action-catalog.yaml, gear_requirement, other_entries). A soldier on foot is
+        not mounted. If more than one way qualifies, the soldier names one before rolling. A roll
+        made with ODM Gear is ODM use (data/gear/odm-gear.yaml, odm_use).
+      # Successes needed: break_attention, needs, feint_extra (one source, ADR-0012).
+      spends_when_declared: none
+      on_success: none
+      works_against_broken_eyes: true
+      repeatable: >-
+        A Feint can be named any number of times in a Titan Engagement. It is the soldier's own pass
+        across the Titan's face, and its price is where it is made: in-reach or on-body, within the
+        Titan's hands. Its three ways follow the Nape strike's gear need (titan-harm.yaml,
+        nape_strikes), so a Feint can be named in every state in which a Nape strike is legal,
+        outside a retreat; a Jammed harness is repaired in the fight by Field Repair
+        (data/gear/field-repair.yaml) and an empty canister changed for a spare. A retreat closes the
+        lone cut by design, since no Nape strike is made in it
+        (data/engagement/background-titans.yaml, retreat, actions; OQ-81, as revised in decision
+        batches 3b and 3c; OQ-87; OQ-129; ADR-0010, as amended in decision batches 3c, 3e, and 5b).
+  adrs: [ADR-0010]

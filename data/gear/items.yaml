@@ -1,0 +1,255 @@
+# Gear items: every item a rule can give a soldier, its Gear Dice rating, wear, what happens at
+# 0, when it counts as not had, what restores it, and how many items it counts as; and what a
+# kept item is.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (section 4.1) references this file and
+# does not repeat its rows.
+id: gear-items
+name: Gear Items
+chapter: 04-gear
+adrs: [ADR-0004, ADR-0006, ADR-0012, ADR-0015, ADR-0016, ADR-0018, ADR-0019]
+decided: [OQ-59, OQ-61, OQ-63, OQ-66, OQ-93, OQ-142, OQ-143, OQ-147]
+
+rating_rules:
+  rating: >-
+    A rated item has a rating from 1 to 3, set when the item is received
+    (data/gear/standard-issue.yaml, or the rule that gives it), and a current rating from 0 to
+    its rating. Its Gear Dice are its current rating (Chapter 1, section 1.3, step 6). The rating
+    never changes; only the current rating does.
+  wear: >-
+    When a Pushed roll is final, each Gear Die showing 1 wears the item that supplied it by 1
+    point (Chapter 1, section 1.5; OQ-01). A rule Talent that ignores wear (Well-Kept Rig,
+    Blade Discipline, Sure Seat) removes points before they apply. Each point left lowers the
+    current rating by 1, never below 0, unless the item's wear row says otherwise.
+  unpushed_rolls: A roll that was not Pushed never wears an item.
+  at_zero: >-
+    An item whose current rating is 0 is in its at_zero state. It adds no Gear Dice and counts
+    as not had for every Action Catalog entry (data/character/action-catalog.yaml,
+    gear_requirement).
+  restoring: >-
+    A current rating rises only through a rule in the item's restored_by list, and never above
+    the item's rating.
+  one_item_per_roll: >-
+    A roll takes Gear Dice from at most one item. If more than one qualifies, the roller picks
+    one before rolling (ADR-0006; Chapter 1, section 1.3, step 6).
+  other_objects: >-
+    Only the items below are gear items. Any other object, such as a rope, is not a gear item: it
+    adds no Gear Dice and counts as no item (data/gear/carrying.yaml, items_counted). It has a
+    mechanical effect only where another rule names it, as a thrown cloak is named as a decoy
+    for Break Attention (data/engagement/attention.yaml, break_attention, decoys; ADR-0010).
+
+# Decision batch 7, 7-16 (OQ-142).
+kept_item:
+  meaning: >-
+    An item received by Requisition is a kept item (Chapter 7, section 7.3). Any item below can be
+    one. The soldier's sheet records which of their items are kept (data/gear/sheet-fields.yaml,
+    kept_items).
+  standard_issue: >-
+    Standard Issue never takes a kept item away unless the soldier hands it in. At a step that would
+    replace a kept item or make it leave play (data/gear/standard-issue.yaml, receiving), the soldier
+    may hand the kept item in and take the issue in its place; otherwise the kept item stays as it
+    is, as if the soldier had declined that exchange (decision batch 8, 8-12).
+  otherwise: >-
+    A kept item stays kept when it is passed, taken, or shared out (data/gear/carrying.yaml). In
+    every other way it is an item of its kind: it counts as items, wears, and is restored as its
+    row states, and a Blade Set rated above 1 is still ruined by any wear.
+
+items:
+  - id: odm-gear
+    name: ODM Gear
+    rated: true
+    gear_dice_for: [dodge, break-attention, fly, leap-clear]   # leap-clear: decision batch 8, 8-9
+    wear: Each point lowers the current rating by 1.
+    at_zero:
+      state: jammed
+      effect: The ODM Gear Jams (data/gear/odm-gear.yaml, jam).
+    counts_as_not_had:
+      - Its current rating is 0 (Jammed).
+      - The soldier's Gas Rating is 0 (data/gear/odm-gear.yaml, running_dry). This never applies to the Graduation Exam's training ODM Gear, which has no canister (data/character/graduation-exam.yaml, exam_issue).
+    restored_by:
+      - Field Repair (data/gear/field-repair.yaml).
+      - A full Standard Issue replaces Jammed or worn ODM Gear; the interim issue does not unless it is rated below the Funding row. The soldier may decline the exchange and keep the ODM Gear as it is, worn or at current rating 0 (data/gear/standard-issue.yaml, receiving, decline; decision batch 2b).
+      - The Maintain Gear Downtime Action (Chapter 7, section 7.2).
+    items_counted: 0
+    items_note: Worn, together with its fitted canister, its handles, and its scabbards.
+    passable: false
+
+  - id: gas-canister
+    name: Gas canister
+    rated: false
+    holds: >-
+      A Gas Rating from 1 to the full Gas Rating (data/gear/odm-gear.yaml, gas). An empty
+      canister is discarded when it is removed from ODM Gear, so no carried spare is ever empty.
+    fitted: >-
+      At most one canister is fitted to a soldier's ODM Gear. Its Gas Rating is the soldier's
+      Gas Rating.
+    items_counted: 1
+    items_note: A spare counts as 1 item. The fitted canister counts as no item.
+    passable: true
+
+  - id: blade-set
+    name: Blade Set
+    rated: true
+    gear_dice_for: [nape-strike, body-part-strike, break-free, block, fight]
+    wear: Any point of wear ruins the Blade Set (data/gear/blade-sets.yaml, wear).
+    at_zero:
+      state: none
+      effect: A Blade Set's current rating never falls. Ruin takes the place of wear.
+    counts_as_not_had:
+      - It is not in the soldier's handles (data/gear/blade-sets.yaml, handles).
+    restored_by: []
+    items_counted: 1
+    items_note: A Blade Set in the handles counts as no item.
+    passable: true
+
+  - id: horse
+    name: Horse
+    rated: true
+    gear_dice_for: [dodge, ride, break-attention, leap-clear]   # leap-clear: decision batch 8, 8-9
+    wear: Each point lowers the current rating by 1.
+    at_zero:
+      state: lame
+      effect: The horse is lame (data/gear/horses.yaml, lame).
+    counts_as_not_had:
+      - Its current rating is 0 (lame).
+      - For dodge, ride, and leap-clear, the soldier is not mounted on it.
+      - For break-attention, the soldier is not mounted on it and it does not hold the Position the soldier holds, both compared relative to the Focus Titan recorded with the horse's Position (data/gear/horses.yaml, horse_position).
+    restored_by:
+      - Standard Issue, full or interim, replaces a lame or worn horse (OQ-93). The soldier may decline the exchange and keep the horse as it is, worn or at current rating 0 (data/gear/standard-issue.yaml, receiving, decline; decision batch 2b).
+      - The Maintain Gear Downtime Action, which also ends lameness (Chapter 7, section 7.2).
+    items_counted: 0
+    items_note: A horse is ridden or left at a Position, never carried.
+    passable: false
+
+  - id: medical-kit
+    name: Medical kit
+    rated: true
+    gear_dice_for: [treat-injury]
+    wear: Each point lowers the current rating by 1.
+    at_zero:
+      state: spent
+      effect: >-
+        The kit counts as not had, so Treat Injury rolls Wits alone
+        (data/character/action-catalog.yaml, gear_requirement).
+    counts_as_not_had:
+      - Its current rating is 0 (spent).
+    restored_by:
+      - Restocking from medical Squad Supply in a care window (data/gear/squad-supply.yaml, medical_uses).
+      - A full Standard Issue replaces a Medic's spent kits when none of theirs is above 0; the interim issue does not (data/gear/standard-issue.yaml).
+      - The Maintain Gear Downtime Action (Chapter 7, section 7.2).
+    items_counted: 1
+    passable: true
+
+  - id: tool-kit
+    name: Tool kit
+    rated: true
+    gear_dice_for: [field-repair]
+    wear: Each point lowers the current rating by 1.
+    at_zero:
+      state: worn-out
+      effect: >-
+        The kit counts as not had, so Field Repair rolls Wits alone unless Make Do applies
+        (data/character/action-catalog.yaml, gear_requirement).
+    counts_as_not_had:
+      - Its current rating is 0 (worn out).
+    restored_by:
+      - Field Repair with another tool kit, or with none (data/gear/field-repair.yaml). A kit at 0 supplies no Gear Dice, so its owner can repair it with Wits alone.
+      - A full Standard Issue replaces an Engineer's worn-out kits when none of theirs is above 0; the interim issue does not (data/gear/standard-issue.yaml).
+      - The Maintain Gear Downtime Action (Chapter 7, section 7.2).
+    items_counted: 1
+    passable: true
+
+  # ---------------------------------------------------------------- firearms (decision batch 7, 7-17)
+  # The one exception ADR-0016's order of work allows before the first playtest. The damage, the
+  # Injury Type, and which Foes each can be fired at are Skirmish rules (data/skirmish/skirmish.yaml,
+  # weapons; Chapter 7, section 7.4).
+  - id: flintlock-pistol
+    name: Flintlock pistol
+    rated: true
+    gear_dice_for: [shoot]
+    received: >-
+      Only through Requisition (Chapter 7, section 7.3), and empty. Standard Issue never gives a
+      firearm (ADR-0016, items 3 and 8).
+    loaded: >-
+      A firearm is loaded or empty, and the sheet records which (data/gear/sheet-fields.yaml,
+      firearms). Only Reload loads it, spending 1 shot of Squad Supply
+      (data/character/action-catalog.yaml, reload). Making a Shoot roll with it empties it.
+    titan_engagement: >-
+      No use in a Titan Engagement. Shoot is never taken there, and a firearm supplies Gear Dice to
+      no roll made there.
+    wear: Each point lowers the current rating by 1.
+    at_zero:
+      state: worn-out
+      effect: >-
+        The firearm counts as not had, so Shoot cannot be taken with it
+        (data/character/action-catalog.yaml, gear_requirement).
+    counts_as_not_had:
+      - Its current rating is 0 (worn out).
+      - It is empty.
+    restored_by:
+      - Field Repair (data/gear/field-repair.yaml; decision batch 8, 8-12).
+      - The Maintain Gear Downtime Action (Chapter 7, section 7.2).
+    items_counted: 1
+    passable: true
+
+  - id: musket
+    name: Musket
+    rated: true
+    gear_dice_for: [shoot]
+    received: >-
+      Only through Requisition (Chapter 7, section 7.3), and empty. Standard Issue never gives a
+      firearm (ADR-0016, items 3 and 8).
+    loaded: >-
+      As the flintlock pistol's row states. Reload with a musket also spends the soldier's move in a
+      Skirmish (data/character/action-catalog.yaml, reload).
+    titan_engagement: >-
+      No use in a Titan Engagement. Shoot is never taken there, and a firearm supplies Gear Dice to
+      no roll made there.
+    wear: Each point lowers the current rating by 1.
+    at_zero:
+      state: worn-out
+      effect: >-
+        The firearm counts as not had, so Shoot cannot be taken with it
+        (data/character/action-catalog.yaml, gear_requirement).
+    counts_as_not_had:
+      - Its current rating is 0 (worn out).
+      - It is empty.
+    restored_by:
+      - Field Repair (data/gear/field-repair.yaml; decision batch 8, 8-12).
+      - The Maintain Gear Downtime Action (Chapter 7, section 7.2).
+    items_counted: 2
+    items_note: A musket counts as 2 items.
+    passable: true
+
+  # ---------------------------------------------------------------- prosthetics (decision batch 8, 8-10; OQ-147)
+  # Paradis workshop work of 845 to 850 (ADR-0016). What a fitted one does to the lost-limb grades is
+  # data/harm/critical-injuries.yaml (lost_limb_riders, prosthetics). It is received only by Requisition,
+  # so it is a kept item (kept_item).
+  - id: prosthetic-arm
+    name: Prosthetic arm
+    rated: false
+    holds: A hook or an iron hand on a leather socket, fitted to one lost arm.
+    gear_dice_for: []
+    received: >-
+      Only through Requisition, one per Requisition, at Limited Scarcity (Chapter 7, section 7.3), or, in
+      Phase 2, a Discovery. Standard Issue never gives one or takes one away (ADR-0016).
+    fitted: data/harm/critical-injuries.yaml (lost_limb_riders, prosthetics)
+    wear: None. It never wears and has no rating to lose.
+    never: It is never a weapon, gives no Gear Dice, and adds no die to any roll.
+    items_counted: 0
+    items_note: Fitted to the soldier, never carried as a load (data/gear/carrying.yaml, items_counted).
+    passable: false
+
+  - id: prosthetic-leg
+    name: Prosthetic leg
+    rated: false
+    holds: A peg or a jointed wooden leg on a leather socket, fitted to one lost leg.
+    gear_dice_for: []
+    received: >-
+      Only through Requisition, one per Requisition, at Limited Scarcity (Chapter 7, section 7.3), or, in
+      Phase 2, a Discovery. Standard Issue never gives one or takes one away (ADR-0016).
+    fitted: data/harm/critical-injuries.yaml (lost_limb_riders, prosthetics)
+    wear: None. It never wears and has no rating to lose.
+    never: It is never a weapon, gives no Gear Dice, and adds no die to any roll.
+    items_counted: 0
+    items_note: Fitted to the soldier, never carried as a load (data/gear/carrying.yaml, items_counted).
+    passable: false

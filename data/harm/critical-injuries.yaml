@@ -1,0 +1,710 @@
+# Critical Injuries: the Injury Types, how one is gained, the sided Injury Location roll, one table per Injury
+# Location with one name per Injury Type on every row, the type riders, and the lost-limb grades.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.2) references this file
+# and renders its tables from it (tools/render/render.py).
+id: critical-injuries
+name: Critical Injuries
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0005, ADR-0012, ADR-0015, ADR-0017, ADR-0019]
+decided: [OQ-41, OQ-42, OQ-137, OQ-138, OQ-145, OQ-147, OQ-150]   # sides, Injury Type, the Bite rider, and lost limbs: decision batch 7, 7-4 to 7-6; the Burn, Cut, and Pierce riders, stacking, and prosthetics: decision batch 8, 8-8, 8-10, 8-11, 8-15
+
+# ------------------------------------------------------------------ Injury Types (ADR-0017)
+types:
+  - id: crush
+    name: Crush
+    named_by: Every Titan behavior that is not a Bite, the Grab's crush (data/engagement/grab.yaml), every fall (data/gear/falls.yaml), the falling Titan's pin (data/engagement/titan-harm.yaml, falling_titan), and a club or a fist (Chapter 7).
+  - id: bite
+    name: Bite
+    named_by: A Titan's Bite (data/titans/), and the Straggler's Critical Injury (Chapter 7).
+  - id: burn
+    name: Burn
+    # decision batch 8, 8-7 (OQ-138): the four sources
+    named_by: Steam at a kill and at a Regeneration fill (data/engagement/titan-harm.yaml, steam), Corpse Heat on a Pinned soldier and on a soldier who Heaves a corpse (data/engagement/titan-harm.yaml, falling_titan, corpse_heat), a Bandit's firebrand (Chapter 7), and a flare fired at a person (Chapter 7).
+  - id: cut
+    name: Cut
+    named_by: A Blade Set, a sabre, or a knife (Chapter 7).
+  - id: pierce
+    name: Pierce
+    named_by: A shot (Chapter 7).
+
+type_rules:
+  named_by: >-
+    Every rule that inflicts a Critical Injury names its Injury Type, and every rule that deals damage names the
+    Injury Type that the Critical Injury it inflicts at 0 current Health records (data/harm/health.yaml,
+    harm_kinds). The GM never picks a type.
+  picks: >-
+    The Injury Type picks which of the row's names the Critical Injury shows, and applies any rider its table
+    carries for that type (type_riders). It changes nothing else.
+  blast: >-
+    Blast is a delivery, not a type. A rule that names a blast inflicts two Critical Injuries, one Burn and one
+    Crush, each at its own rolled Injury Location. No rule yet names a blast.
+  no_mental_rows: >-
+    The tables carry no rows for harm to the mind. The Stress gains on the torso and head tables' lowest rows stay,
+    and no lethal row gains Stress. Lasting harm to the mind comes from Stress Responses, Fear Rolls, Scars, and
+    Grief (Chapter 3, Part Two).
+  decided: [OQ-137]   # decision batch 7, 7-5
+
+# ------------------------------------------------------------------ sides (ADR-0017)
+sides:
+  sided_locations: [arm, leg]
+  values: [left, right]
+  unsided_locations: [torso, head]
+  side_roll:
+    when: A rule names arm or leg as the Injury Location without a side.
+    roll: D6
+    odd: left
+    even: right
+  decided: [OQ-137]   # decision batch 7, 7-4
+
+# ------------------------------------------------------------------ gaining a Critical Injury
+gaining:
+  steps:
+    - id: injury-location
+      text: >-
+        If the rule that inflicts the Critical Injury names an Injury Location, use it. When it names arm or leg
+        without a side, roll D6 for the side (sides, side_roll): odd is left and even is right. Otherwise roll D6
+        on injury_location_table, which gives the side of an arm or a leg.
+    - id: roll
+      text: >-
+        Roll 2D6. Add worsening.per_held_injury for each Critical Injury at that Injury Location and side that
+        counts under worsening.counts. Find the row of that Injury Location's table whose results include the
+        total. Both arms share the arm table, and both legs the leg table.
+    - id: net-success-rider
+      text: >-
+        If the Critical Injury is a Titan attack's (data/harm/health.yaml, titan_attacks) that landed
+        with more than 1 Net Success (data/engagement/titan-format.yaml, titan_dice, lands), add
+        net_success_rider.add_per_net_success_beyond_first to the total for each Net Success beyond
+        the first, and find the row of that Injury Location's table whose results include the new
+        total. Against a soldier who made no Reaction, or could not make one, every success of the
+        Titan's roll is net. The cannot-be-lethal step still caps the row, and an instant-death row
+        found this way still kills (decision batch 8, 8-2; OQ-145).
+    - id: repeat-permanent
+      text: >-
+        If the row found has permanent_effects and the soldier has already gained that row at the same side,
+        whether it is still held or has healed, use the row its repeat_row names instead. The head has no side, so
+        its row with permanent_effects is gained at most once per soldier.
+    - id: cannot-be-lethal
+      text: >-
+        If the rule gives cannot_be_lethal true and the row now found is lethal or instant_death,
+        use the table's non_lethal_cap row instead.
+    - id: type-rider
+      text: >-
+        If the table's type_riders pick the row now found for the Critical Injury's Injury Type (by rows, all_rows,
+        or lethal_rows), apply each such rider for this Critical Injury: a time_limit it sets replaces the row's, a
+        healing_days_multiplier multiplies the row's healing_days, heals_untreated false keeps it from healing
+        while untreated, and its treat_injury applies to every Treat Injury roll on it (table_fields,
+        type_riders; decision batch 8, 8-8 and 8-15).
+    - id: record
+      text: >-
+        Record the Critical Injury: its row id, its side (left or right at an arm or leg, none at the torso or
+        head), its Injury Type, whether it is treated (false), whether it is lethal and its current time limit,
+        and its healing time. It crosses off one Health box (data/harm/health.yaml, harm_kinds,
+        critical-injury, health_box). Apply the row's effects and permanent_effects at once, and any
+        lost_limb_riders grade the soldier now meets. If the row is instant_death, the soldier dies instead
+        (data/harm/death-rolls.yaml, dying).
+    - id: down-check
+      text: >-
+        Check whether the soldier is now Down (data/harm/down.yaml). A Critical Injury that
+        crosses off the last box makes the soldier Down and inflicts no further Critical Injury.
+  net_success_rider:
+    add_per_net_success_beyond_first: 1
+    applies_to: >-
+      The critical-injury effect of a Behavior Table entry whose card landed on the soldier
+      (data/engagement/titan-format.yaml, effect_types). Nothing else takes it: not the Grab's
+      crush (data/engagement/grab.yaml, grab_lands, rider), a fall from a knock loose, damage, a
+      Stress gain, or any Critical Injury a rule other than a Behavior Table entry inflicts
+      (ADR-0005 and ADR-0019, as amended in decision batch 8).
+  gm_choices: none   # the GM never picks an Injury Location, a side, an Injury Type, a row, or whether cannot_be_lethal applies
+
+worsening:
+  per_held_injury: 2
+  counts: >-
+    Every Critical Injury the soldier holds at that Injury Location and side, treated or not, and every
+    healed Critical Injury at that Injury Location and side whose row has permanent_effects. The torso and the
+    head have no side, so there the Injury Location alone decides. A Critical Injury at the other arm or the
+    other leg never counts. Any other Critical Injury stops counting when it heals.
+  meaning: >-
+    This bonus makes a later injury to the same Injury Location and side more likely to land on a worse
+    result (glossary, Critical Injury), not certain to. The roll is made with the bonus; the new
+    row is not compared with an earlier one.
+  decided: [OQ-42, OQ-137]
+
+# ------------------------------------------------------------------ what a table and a row state
+table_fields:
+  injury_location: the Injury Location the table serves; an arm or leg table serves both sides
+  non_lethal_cap: the row used by the cannot-be-lethal step
+  type_riders: >-
+    Keyed by Injury Type. Each rider picks its rows in one of three ways: rows (listed by id), all_rows (every
+    row of the table), or lethal_rows (every row with lethal true). For a Critical Injury of that type on a
+    picked row it then sets fields (sets) and may state a Treat Injury requirement (treat_injury). The fields a
+    rider may set are time_limit (the row's field replaced), healing_days_multiplier (the row's healing_days
+    multiplied by it), and heals_untreated (false: the Critical Injury does not heal while untreated,
+    data/harm/healing.yaml, healing_time, not_while_untreated). treat_injury is requires_kit_or_supplies, or
+    {penalty: n} (data/harm/treat-injury.yaml, type_riders). A type with no rider on the table is left out
+    (decision batch 7, 7-5; decision batch 8, 8-8 and 8-15).
+  rows: the rows, lowest totals first
+
+row_fields:
+  results: "min and max of the 2D6 total; min null means the row covers every total up to max, max null every total from min up"
+  names: "one name per Injury Type, keyed by type id (types). A Critical Injury shows the name of its own type. The row id, not a name, identifies the row"
+  down: "false, or until_treated: the soldier is Down while this Critical Injury is untreated (data/harm/down.yaml)"
+  lethal: "true if the Critical Injury can kill; it then has a time_limit (data/harm/death-rolls.yaml)"
+  time_limit: "null, turn, engagement, or day"
+  death_roll_penalty: "base dice removed from each Death Roll made for this Critical Injury (Chapter 1, section 1.3, step 5)"
+  instant_death: "true if the soldier dies at once; the row has no other fields but its id, names, and results"
+  effects: "effects from data/harm/effect-types.yaml that apply while the Critical Injury is held and end when it heals"
+  healing_days: "days until the Critical Injury heals and stops being held (data/harm/healing.yaml)"
+  permanent_effects: "effects from data/harm/effect-types.yaml that apply from the moment the Critical Injury is gained, stay after it heals, and last for as long as the soldier lives; they are not repeated in effects"
+  repeat_row: "only on a row with permanent_effects: the id of the row used instead when the soldier has already gained this row at the same side (gaining, repeat-permanent)"
+
+held_injuries:
+  treated: >-
+    A Critical Injury becomes treated when a Treat Injury roll succeeds on it
+    (data/harm/treat-injury.yaml). Treating it never removes its effects or permanent_effects.
+    It stabilizes a lethal Critical Injury, ends a down: until_treated row's hold on the soldier,
+    and gives back the Health box the Critical Injury crossed off, unless the soldier still
+    holds at least as many untreated Critical Injuries as Health (data/harm/health.yaml,
+    restoring, treated-or-healed). A
+    treated Critical Injury keeps its healing time and still counts toward worsening.
+  stacking: >-
+    Effects and permanent_effects from several Critical Injuries add up. So two lost legs dodge, Fly, and Ride
+    at a 4-die penalty, and two lost arms strike at 4 (decision batch 8, 8-11).
+  sides: >-
+    Sides are tracked. A Critical Injury at an arm or a leg is held at its side, and one at the torso or head has
+    no side. A row with permanent_effects at an arm or a leg is gained at most once per side, and a repeat at
+    that side uses its repeat_row. The head's row with permanent_effects keeps a single repeat: it is gained at
+    most once per soldier.
+  decided: [OQ-41, OQ-42, OQ-137]
+
+# ------------------------------------------------------------------ Injury Location (D6)
+injury_location_table:
+  roll: D6
+  modifiers: none   # no rule adjusts this roll; the first and last rows are open-ended for safety
+  rows:
+    - {results: {min: null, max: 1}, injury_location: arm, side: left}
+    - {results: {min: 2, max: 2}, injury_location: arm, side: right}
+    - {results: {min: 3, max: 3}, injury_location: leg, side: left}
+    - {results: {min: 4, max: 4}, injury_location: leg, side: right}
+    - {results: {min: 5, max: 5}, injury_location: torso, side: null}
+    - {results: {min: 6, max: null}, injury_location: head, side: null}
+  decided: [OQ-41, OQ-137]   # every location keeps its weight: arm and leg 2 in 6 each, split 1 in 6 per side
+
+# ------------------------------------------------------------------ the four tables (2D6 + worsening)
+tables:
+  arm:
+    injury_location: arm
+    non_lethal_cap: arm-fractured-arm
+    type_riders:
+      bite:
+        # decision batch 7, 7-5: teeth take the limb and it bleeds fast. arm-lost-arm already has a turn limit.
+        - {rows: [arm-mangled-arm, arm-lost-arm], sets: {time_limit: turn}}
+      burn:
+        # decision batch 8, 8-8 (OQ-138): healing doubled and Treat Injury needs a kit or supplies on every row;
+        # every lethal row kills by the day
+        - {all_rows: true, sets: {healing_days_multiplier: 2}, treat_injury: requires_kit_or_supplies}
+        - {lethal_rows: true, sets: {time_limit: day}}
+      cut:
+        # decision batch 8, 8-15 (OQ-150): every lethal engagement row bleeds on a turn limit
+        - {rows: [arm-torn-artery, arm-mangled-arm], sets: {time_limit: turn}}
+      pierce:
+        # decision batch 8, 8-15 (OQ-150): from the 7 row up, but no instant death: a 1-die penalty on Treat Injury,
+        # and no healing while untreated
+        - {rows: [arm-dislocated-elbow, arm-fractured-arm, arm-torn-artery, arm-mangled-arm, arm-lost-arm], treat_injury: {penalty: 1}, sets: {heals_untreated: false}}
+    rows:
+      - id: arm-wrenched-shoulder
+        names: {crush: Wrenched Shoulder, bite: Teeth-Raked Shoulder, burn: Scalded Shoulder, cut: Nicked Shoulder, pierce: Grazed Shoulder}
+        results: {min: null, max: 4}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [break-free]}
+        healing_days: 2
+      - id: arm-gashed-forearm
+        names: {crush: Battered Forearm, bite: Tooth-Torn Forearm, burn: Blistered Forearm, cut: Gashed Forearm, pierce: Clipped Forearm}
+        results: {min: 5, max: 6}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [nape-strike, body-part-strike]}
+        healing_days: 4
+      - id: arm-dislocated-elbow
+        names: {crush: Dislocated Elbow, bite: Elbow Wrenched in the Jaws, burn: Seared Elbow, cut: Tendon Nicked at the Elbow, pierce: Ball Lodged in the Elbow}
+        results: {min: 7, max: 7}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [nape-strike, body-part-strike, break-free, treat-injury, field-repair]}
+        healing_days: 7
+      - id: arm-fractured-arm
+        names: {crush: Fractured Arm, bite: Bone Cracked in the Jaws, burn: Arm Burned Raw, cut: Forearm Split Open, pierce: Arm Shot Through}
+        results: {min: 8, max: 9}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 2, entries: [nape-strike, body-part-strike, break-free]}
+        healing_days: 21
+      - id: arm-torn-artery
+        names: {crush: Pulped Forearm, bite: Artery Torn by Teeth, burn: Charred Arm, cut: Artery Cut in the Arm, pierce: Artery Shot in the Arm}
+        results: {min: 10, max: 11}
+        down: false
+        lethal: true
+        time_limit: engagement
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [nape-strike, body-part-strike]}
+        healing_days: 10
+      - id: arm-mangled-arm
+        names: {crush: Mangled Arm, bite: Arm Half Bitten Through, burn: Arm Burned to the Muscle, cut: Arm Hacked to the Bone, pierce: Elbow Shattered by Shot}
+        results: {min: 12, max: 12}
+        down: until_treated
+        lethal: true
+        time_limit: engagement
+        death_roll_penalty: 1
+        effects:
+          - {type: penalty, dice: 2, entries: [nape-strike, body-part-strike, break-free]}
+        healing_days: 28
+      - id: arm-lost-arm
+        names: {crush: Lost Arm, bite: Bitten Off at the Shoulder, burn: Arm Burned Away, cut: Arm Severed, pierce: Arm Shot to Ruin}
+        results: {min: 13, max: null}
+        down: until_treated
+        lethal: true
+        time_limit: turn
+        death_roll_penalty: 1
+        effects: []
+        healing_days: 28
+        permanent_effects:
+          - {type: penalty, dice: 2, entries: [nape-strike, body-part-strike, break-free, treat-injury, field-repair, heave]}   # heave: decision batch 8, 8-23
+        repeat_row: arm-mangled-arm
+
+  leg:
+    injury_location: leg
+    non_lethal_cap: leg-fractured-leg
+    type_riders:
+      bite:
+        # decision batch 7, 7-5: teeth take the limb and it bleeds fast. leg-lost-leg already has a turn limit.
+        - {rows: [leg-shattered-knee, leg-lost-leg], sets: {time_limit: turn}}
+      burn:
+        # decision batch 8, 8-8 (OQ-138): healing doubled and Treat Injury needs a kit or supplies on every row;
+        # every lethal row kills by the day
+        - {all_rows: true, sets: {healing_days_multiplier: 2}, treat_injury: requires_kit_or_supplies}
+        - {lethal_rows: true, sets: {time_limit: day}}
+      cut:
+        # decision batch 8, 8-15 (OQ-150): every lethal engagement row bleeds on a turn limit
+        - {rows: [leg-opened-artery, leg-shattered-knee], sets: {time_limit: turn}}
+      pierce:
+        # decision batch 8, 8-15 (OQ-150): from the 7 row up, but no instant death: a 1-die penalty on Treat Injury,
+        # and no healing while untreated
+        - {rows: [leg-wrenched-knee, leg-fractured-leg, leg-opened-artery, leg-shattered-knee, leg-lost-leg], treat_injury: {penalty: 1}, sets: {heals_untreated: false}}
+    rows:
+      - id: leg-twisted-ankle
+        names: {crush: Twisted Ankle, bite: Ankle Caught in the Teeth, burn: Scalded Foot, cut: Cut Heel, pierce: Grazed Calf}
+        results: {min: null, max: 4}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [fly]}
+        healing_days: 2
+      - id: leg-gashed-thigh
+        names: {crush: Bruised Thigh, bite: Tooth-Torn Thigh, burn: Blistered Thigh, cut: Gashed Thigh, pierce: Clipped Thigh}
+        results: {min: 5, max: 6}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [dodge]}
+        healing_days: 4
+      - id: leg-wrenched-knee
+        names: {crush: Wrenched Knee, bite: Knee Wrenched in the Jaws, burn: Seared Knee, cut: Hamstring Nicked, pierce: Shot Through the Calf}
+        results: {min: 7, max: 7}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [fly, ride, dodge]}
+        healing_days: 7
+      - id: leg-fractured-leg
+        names: {crush: Fractured Leg, bite: Shin Cracked in the Jaws, burn: Leg Burned Raw, cut: Calf Split Open, pierce: Thigh Shot Through}
+        results: {min: 8, max: 9}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 2, entries: [fly, ride, dodge]}
+        healing_days: 21
+      - id: leg-opened-artery
+        names: {crush: Pulped Thigh, bite: Thigh Artery Torn by Teeth, burn: Charred Leg, cut: Opened Artery, pierce: Artery Shot in the Thigh}
+        results: {min: 10, max: 11}
+        down: false
+        lethal: true
+        time_limit: engagement
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [dodge]}
+        healing_days: 10
+      - id: leg-shattered-knee
+        names: {crush: Shattered Knee, bite: Leg Half Bitten Through, burn: Leg Burned to the Muscle, cut: Leg Hacked to the Bone, pierce: Knee Shattered by Shot}
+        results: {min: 12, max: 12}
+        down: until_treated
+        lethal: true
+        time_limit: engagement
+        death_roll_penalty: 1
+        effects:
+          - {type: penalty, dice: 2, entries: [fly, ride, dodge]}
+        healing_days: 28
+      - id: leg-lost-leg
+        names: {crush: Lost Leg, bite: Bitten Off at the Thigh, burn: Leg Burned Away, cut: Leg Severed, pierce: Leg Shot to Ruin}
+        results: {min: 13, max: null}
+        down: until_treated
+        lethal: true
+        time_limit: turn
+        death_roll_penalty: 1
+        effects: []
+        healing_days: 28
+        permanent_effects:
+          - {type: penalty, dice: 2, entries: [fly, ride, dodge, leap-clear]}   # leap-clear: decision batch 8, 8-23
+        repeat_row: leg-shattered-knee
+
+  torso:
+    injury_location: torso
+    non_lethal_cap: torso-caved-chest
+    type_riders:   # no Bite rider on the torso (decision batch 7, 7-5)
+      burn:
+        # decision batch 8, 8-8 (OQ-138): healing doubled and Treat Injury needs a kit or supplies on every row;
+        # every lethal row kills by the day
+        - {all_rows: true, sets: {healing_days_multiplier: 2}, treat_injury: requires_kit_or_supplies}
+        - {lethal_rows: true, sets: {time_limit: day}}
+      cut:
+        # decision batch 8, 8-15 (OQ-150): every lethal engagement row bleeds on a turn limit
+        - {rows: [torso-punctured-lung], sets: {time_limit: turn}}
+      pierce:
+        # decision batch 8, 8-15 (OQ-150): from the 7 row up, but no instant death: a 1-die penalty on Treat Injury,
+        # and no healing while untreated
+        - {rows: [torso-deep-bruising, torso-crushed-ribs, torso-caved-chest, torso-punctured-lung, torso-internal-bleeding, torso-torn-open], treat_injury: {penalty: 1}, sets: {heals_untreated: false}}
+    rows:
+      - id: torso-winded
+        names: {crush: Winded, bite: Teeth Scrape the Ribs, burn: Scalded Chest, cut: Shallow Cut Across the Ribs, pierce: Grazed Side}
+        results: {min: null, max: 4}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: stress-gain, amount: 1}   # gained once, when recorded (effect-types.yaml, stress-gain)
+        healing_days: 1
+      - id: torso-cracked-ribs
+        names: {crush: Cracked Ribs, bite: Ribs Cracked in the Jaws, burn: Blistered Back, cut: Slashed Side, pierce: Shot Glances off the Ribs}
+        results: {min: 5, max: 6}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [nape-strike, body-part-strike, break-free]}
+        healing_days: 7
+      - id: torso-deep-bruising
+        names: {crush: Deep Bruising, bite: Squeezed Between the Teeth, burn: Burned Belly, cut: Cut Across the Belly, pierce: Shot in the Flank}
+        results: {min: 7, max: 7}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [fly, dodge, break-free]}
+        healing_days: 5
+      - id: torso-crushed-ribs
+        names: {crush: Crushed Ribs, bite: Ribs Staved In by Teeth, burn: Chest Burned Raw, cut: Chest Laid Open to the Ribs, pierce: Rib Shattered by Shot}
+        results: {min: 8, max: 9}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 2, entries: [nape-strike, body-part-strike, break-free]}
+        healing_days: 14
+      - id: torso-caved-chest
+        names: {crush: Caved-In Chest, bite: Chest Clamped in the Teeth, burn: Burns Across the Chest, cut: Deep Cut Under the Collarbone, pierce: Shot Beneath the Collarbone}
+        results: {min: 10, max: 10}
+        down: until_treated
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [fly, dodge, break-free]}
+        healing_days: 21
+      - id: torso-punctured-lung
+        names: {crush: Punctured Lung, bite: Teeth in the Lung, burn: Scorched Lungs, cut: Stabbed Lung, pierce: Shot Through the Lung}
+        results: {min: 11, max: 11}
+        down: false
+        lethal: true
+        time_limit: engagement
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [fly, dodge]}
+        healing_days: 14
+      - id: torso-internal-bleeding
+        names: {crush: Internal Bleeding, bite: Belly Torn by Teeth, burn: Burned Through the Belly, cut: Gut Wound, pierce: Shot in the Gut}
+        results: {min: 12, max: 12}
+        down: until_treated
+        lethal: true
+        time_limit: turn
+        death_roll_penalty: 1
+        effects:
+          - {type: penalty, dice: 1, entries: [fly, dodge, break-free]}
+        healing_days: 21
+      - id: torso-torn-open
+        names: {crush: Ribcage Burst, bite: Torn Open by Teeth, burn: Chest Burned Open, cut: Opened from Hip to Ribs, pierce: Chest Shot Through}
+        results: {min: 13, max: 14}
+        down: until_treated
+        lethal: true
+        time_limit: turn
+        death_roll_penalty: 2
+        effects:
+          - {type: penalty, dice: 2, entries: [fly, dodge, break-free]}
+        healing_days: 28
+      - id: torso-crushed
+        names: {crush: Crushed, bite: Bitten in Half, burn: Burned Alive, cut: Cut Down, pierce: Shot Through the Heart}
+        results: {min: 15, max: null}
+        instant_death: true
+
+  head:
+    injury_location: head
+    non_lethal_cap: head-head-blow
+    type_riders:   # no Bite rider on the head (decision batch 7, 7-5)
+      burn:
+        # decision batch 8, 8-8 (OQ-138): healing doubled and Treat Injury needs a kit or supplies on every row;
+        # every lethal row kills by the day
+        - {all_rows: true, sets: {healing_days_multiplier: 2}, treat_injury: requires_kit_or_supplies}
+        - {lethal_rows: true, sets: {time_limit: day}}
+      cut:
+        # decision batch 8, 8-15 (OQ-150): every lethal engagement row bleeds on a turn limit
+        - {rows: [head-fractured-skull, head-lost-eye], sets: {time_limit: turn}}
+      pierce:
+        # decision batch 8, 8-15 (OQ-150): from the 7 row up, but no instant death: a 1-die penalty on Treat Injury,
+        # and no healing while untreated
+        - {rows: [head-concussion, head-head-blow, head-fractured-skull, head-bleeding-skull, head-lost-eye], treat_injury: {penalty: 1}, sets: {heals_untreated: false}}
+    rows:
+      - id: head-dazed
+        names: {crush: Dazed, bite: Teeth Graze the Scalp, burn: Scalded Face, cut: Cut Brow, pierce: Grazed Temple}
+        results: {min: null, max: 4}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: stress-gain, amount: 1}   # gained once, when recorded (effect-types.yaml, stress-gain)
+          - {type: penalty, dice: 1, entries: [read]}
+        healing_days: 1
+      - id: head-split-scalp
+        names: {crush: Ringing Blow, bite: Scalp Torn by Teeth, burn: Blistered Scalp, cut: Split Scalp, pierce: Shot Along the Skull}
+        results: {min: 5, max: 6}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [read, break-attention]}
+        healing_days: 3
+      - id: head-concussion
+        names: {crush: Concussion, bite: Head Shaken in the Jaws, burn: Burned Face, cut: Cut Across the Forehead, pierce: Ball Glances off the Skull}
+        results: {min: 7, max: 7}
+        down: false
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [read, break-attention, treat-injury, field-repair, fly]}
+        healing_days: 7
+      - id: head-head-blow
+        names: {crush: Head Blow, bite: Skull Squeezed in the Teeth, burn: Face Burned Raw, cut: Scalp Laid Open, pierce: Stunned by a Ball to the Head}
+        results: {min: 8, max: 9}
+        down: until_treated
+        lethal: false
+        time_limit: null
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [read, break-attention]}
+        healing_days: 5
+      - id: head-fractured-skull
+        names: {crush: Fractured Skull, bite: Skull Cracked by Teeth, burn: Skull Burned to the Bone, cut: Skull Split by a Blade, pierce: Ball in the Skull}
+        results: {min: 10, max: 11}
+        down: until_treated
+        lethal: true
+        time_limit: engagement
+        death_roll_penalty: 0
+        effects:
+          - {type: penalty, dice: 1, entries: [read, break-attention, fly]}
+        healing_days: 21
+      - id: head-bleeding-skull
+        names: {crush: Bleeding Inside the Skull, bite: Jaws Close on the Head, burn: Burned Through the Temple, cut: Neck Slashed, pierce: Shot in the Neck}
+        results: {min: 12, max: 12}
+        down: until_treated
+        lethal: true
+        time_limit: turn
+        death_roll_penalty: 1
+        effects:
+          - {type: penalty, dice: 1, entries: [read, break-attention, fly]}
+        healing_days: 28
+      - id: head-lost-eye
+        names: {crush: Lost Eye, bite: Face Torn Away at the Eye, burn: Eye Burned Out, cut: Eye Cut Out, pierce: Eye Shot Out}
+        results: {min: 13, max: 14}
+        down: until_treated
+        lethal: true
+        time_limit: engagement
+        death_roll_penalty: 0
+        effects: []
+        healing_days: 28
+        permanent_effects:
+          - {type: penalty, dice: 1, entries: [read, break-attention, nape-strike]}
+        repeat_row: head-fractured-skull
+      - id: head-crushed-skull
+        names: {crush: Crushed Skull, bite: Head Bitten Off, burn: Face Burned Away, cut: Head Split Open, pierce: Shot Through the Head}
+        results: {min: 15, max: null}
+        instant_death: true
+
+# ------------------------------------------------------------------ lost limbs (ADR-0017; decision batch 7, 7-6)
+lost_limb_riders:
+  sides_lost: >-
+    The sides at which the soldier has gained a grade's row: every entry in critical_injuries with that row id,
+    held, treated or not, and every entry in healed_permanent_injuries with it (data/harm/sheet-fields.yaml). A
+    later roll of that row at a side already lost uses its repeat_row (gaining, repeat-permanent), so it loses no
+    further side.
+  applies: >-
+    A grade applies from the moment the soldier's sides lost at its row, read with the prosthetics fitted
+    (prosthetics, reading), equal its sides_lost, and for as long as that stays true. One grade per limb
+    applies: a soldier who loses the second arm moves from one-arm to both-arms. The row's own permanent_effects
+    still apply at every side lost, prosthetic or not, and add up with everything else (held_injuries,
+    stacking): two lost legs dodge, Fly, and Ride at a 4-die penalty, and two lost arms strike at 4 (decision
+    batch 8, 8-11).
+  fields:
+    penalties: effects of type penalty (data/harm/effect-types.yaml) the grade adds
+    forbids_entries: >-
+      Action Catalog entry ids the soldier cannot take, make, or use, read as effect type forbids-entries
+      (data/harm/effect-types.yaml). The drafter's choice under decision batch 7, 7-6: a new effect type, rather
+      than widening Chapter 1's forbids hook, which names Pushing, Help, Covering, and Reactions (ADR-0003,
+      item 13).
+    forbids_decoys: Break Attention decoy ids the soldier cannot name (data/engagement/attention.yaml, break_attention, decoys)
+    no_gear_dice_from: >-
+      Items that supply no Gear Dice to the listed entries for this soldier. The entry is still rolled, with Gear
+      Dice from any other item it allows (Chapter 1, section 1.3, step 6).
+    mount_or_dismount: what the grade does to Mount or Dismount (mount_values)
+    moves: what the grade does to each kind of move the soldier makes (move_values)
+    keeps: what the grade leaves as it was, as the decision states it; it adds and removes nothing
+  move_kinds:
+    on_foot: a move that is neither an ODM move nor made mounted (data/engagement/anchor-ratings.yaml, move_kinds)
+    mounted: a move made mounted (data/gear/horses.yaml)
+    odm: an ODM move (data/gear/odm-gear.yaml, odm_moves)
+  move_values:
+    unchanged: The move is made as the rules for moves state.
+    spends_action: >-
+      The move also spends the soldier's action, and cannot be made if that action is already spent, as an
+      Overloaded soldier's ODM move does (data/gear/carrying.yaml, overloaded). Outside a Titan Engagement this
+      has no effect unless the rule for the procedure under way says so.
+    forbidden: The soldier cannot make the move, and holds the Position they are placed at.
+  mount_values:
+    unchanged: The soldier mounts and dismounts as data/gear/horses.yaml (mounted) states.
+    with_help: >-
+      A mount or a dismount is made only with a comrade's help, as the grade's mount_with_help states, and
+      never otherwise (decision batch 8, 8-11 and 8-25).
+  gm_choices: none
+  grades:
+    - id: one-arm
+      name: One arm lost
+      row: arm-lost-arm
+      sides_lost: 1
+      penalties:
+        - {type: penalty, dice: 1, entries: [fly, fight, block]}
+      forbids_entries: []
+      forbids_decoys: []
+      no_gear_dice_from: []
+      mount_or_dismount: unchanged
+      moves: {on_foot: unchanged, mounted: unchanged, odm: unchanged}
+      keeps: >-
+        Everything else: Ride, the dodge, Read, Rally, Break Attention, Draw Attention, Help, and command from
+        the saddle.
+    - id: both-arms
+      name: Both arms lost
+      row: arm-lost-arm
+      sides_lost: 2
+      penalties: []   # the rows' own penalties, which stack: 4 dice on the strikes, Break Free, Treat Injury, and Field Repair (decision batch 8, 8-11)
+      # Every entry whose requirements name ODM Gear, a Blade Set, a firearm, or handling an item or a comrade,
+      # enumerated from data/character/action-catalog.yaml.
+      forbids_entries: [nape-strike, body-part-strike, break-free, fly, field-repair, treat-injury, lift-comrade, heave, pass-item, take-item, swap-blade-set, change-canister, restock-medical-kit, fight, block, shoot, reload]   # heave: decision batch 8, 8-23
+      forbids_decoys: [feint, flare, thrown-cloak]   # decision batch 8, 8-11: the riderless-horse decoy stays allowed
+      # decision batch 8, 8-11 and 8-23 (OQ-159): the grade forbids ODM use, so the dodge and Leap Clear take no Gear
+      # Dice from ODM Gear, and the horse's while mounted.
+      no_gear_dice_from:
+        - {item: odm-gear, entries: [dodge, leap-clear]}
+      mount_or_dismount: with_help   # decision batch 8, 8-11
+      mount_with_help: >-
+        In a Titan Engagement, a comrade who holds the soldier's Position and is not Down spends their action to
+        help. In a Skirmish, a comrade taking part who is not Down spends their action to help. Anywhere else, a
+        comrade in the Squad who is not Down and is on the same Expedition as the soldier, or in the Squad when no
+        Expedition is under way, helps, spending nothing. With no such help the soldier does not mount or
+        dismount (decision batch 8, 8-11 and 8-25; OQ-161).
+      moves: {on_foot: unchanged, mounted: unchanged, odm: forbidden}
+      keeps: >-
+        Shed Load; Mount or Dismount with a comrade's help, and Ride while mounted; the dodge and Leap Clear, with the horse's Gear Dice while mounted; the riderless-horse decoy; Read; Call It; Rally; Draw Attention; Help; Cover;
+        and Swap Initiative Card.
+    - id: one-leg
+      name: One leg lost
+      row: leg-lost-leg
+      sides_lost: 1
+      penalties: []   # the row's own 2-die penalty on Fly, Ride, and the dodge stands, and a second lost leg's stacks with it (decision batch 8, 8-11)
+      forbids_entries: []
+      forbids_decoys: []
+      no_gear_dice_from: []
+      mount_or_dismount: unchanged
+      moves: {on_foot: spends_action, mounted: unchanged, odm: unchanged}
+      keeps: Everything else, flight included.
+    - id: both-legs
+      name: Both legs lost
+      row: leg-lost-leg
+      sides_lost: 2
+      penalties: []   # the rows' own penalties, which stack: 4 dice on Fly, Ride, and the dodge (decision batch 8, 8-11)
+      forbids_entries: [fly, ride, lift-comrade]
+      forbids_decoys: []
+      no_gear_dice_from: []
+      mount_or_dismount: unchanged   # no move of any kind is made, so no mount is either (moves)
+      # "hold the Position they are placed at": no move of any kind (decision batch 7, 7-6)
+      moves: {on_foot: forbidden, mounted: forbidden, odm: forbidden}
+      keeps: >-
+        The dodge and Leap Clear, with the rows' penalties, which stack; Heave; a strike at a Titan at In Reach; Read; Rally; Break
+        Attention; Draw Attention; Treat Injury; Field Repair; and being carried by Lift Comrade, at their consent
+        (data/gear/carrying.yaml, lifting_a_comrade). They travel across a comrade's saddle or in the wagon.
+  # Decision batch 8, 8-10 (OQ-147): the Prosthetic, the alternative to medical Retirement.
+  prosthetics:
+    kinds: {arm: prosthetic-arm, leg: prosthetic-leg}   # data/gear/items.yaml
+    fitted: >-
+      A prosthetic of a kind is fitted to one side the soldier has lost at that kind's 13 or more row, at most one
+      per side, during a Downtime once the Critical Injury that lost that side has healed (data/harm/healing.yaml;
+      Chapter 7, section 7.2). Fitting needs no roll and spends nothing. It stays fitted for as long as the soldier
+      lives, and the sheet records it (data/harm/sheet-fields.yaml, prosthetics).
+    reading: >-
+      A grade's sides_lost is compared with the soldier's sides lost at its row less the prosthetics of that kind
+      fitted. So one lost arm with a prosthetic meets no arm grade, and both arms lost with one prosthetic meet the
+      one-arm grade.
+    limit: >-
+      Two prosthetics of a kind never lower the grade past the one-limb grade: a soldier who has lost both sides of
+      a kind and has two prosthetics of that kind fitted meets that kind's one-limb grade.
+    never_removes: >-
+      The 13 or more row's own permanent_effects stay at every side lost, prosthetic or not, and stack
+      (held_injuries, stacking). A prosthetic gives no dice to any roll, is never a weapon, and cannot be obtained
+      before the loss at that side has healed (Chapter 7, section 7.3).
+    squadmates: A player character may obtain one for a Squadmate (Chapter 7, section 7.3).
+    retirement: Medical Retirement stays open beside it (data/mind/scars.yaml, retirement, trigger, lost-limbs).
+    decided: [OQ-147]
+  retirement: data/mind/scars.yaml (retirement, trigger, lost-limbs) applies to both-arms and both-legs
+  decided: [OQ-137, OQ-147]

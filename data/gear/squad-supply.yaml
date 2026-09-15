@@ -1,0 +1,111 @@
+# Squad Supply: the kinds of shared supply, how much the Squad holds, and every use.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (section 4.10) references this file and
+# renders its tables from it (tools/render/render.py).
+id: squad-supply
+name: Squad Supply
+chapter: 04-gear
+adrs: [ADR-0003, ADR-0009, ADR-0016, ADR-0018]
+decided: [OQ-44, OQ-67, OQ-141, OQ-142, OQ-143, OQ-148]
+
+held_by: >-
+  The Squad as a whole. No soldier carries Squad Supply, and it counts as no item
+  (data/gear/carrying.yaml). A dead or retiring soldier takes none of it out of play.
+
+# Decision batch 7: rations gain a stock and uses (7-14), and shot is the fourth kind (7-17).
+kinds:
+  - id: rations
+    name: Rations
+    uses: >-
+      A Leg spends rations by its Leg roll and its Pace, a night camp spends 1, and a hazard row
+      may spend or lose rations (Chapter 7, section 7.1). With none left, the Leg or the camp still
+      happens, and Chapter 7, section 7.1, gives what a Squad with no rations pays.
+  - id: flares
+    name: Flares
+    uses: >-
+      A rule that names a flare spends 1. Which decoys for Break Attention use a flare is in
+      data/engagement/attention.yaml (break_attention, decoys). The Expedition rules add the Signal
+      Relay's flare and a hazard row's flare (Chapter 7, section 7.1), and in a Skirmish a soldier may
+      fire one at a person (data/skirmish/skirmish.yaml, weapons, fired-flare; decision batch 8, 8-7).
+  - id: medical
+    name: Medical supplies
+    uses: medical_uses, below.
+  - id: shot
+    name: Shot
+    uses: >-
+      Reload spends 1 unit to load one flintlock pistol or musket
+      (data/character/action-catalog.yaml, reload; Chapter 7, section 7.4). No other rule spends
+      shot.
+
+units: >-
+  Each kind is a whole number of units, never below 0. A use needs a unit of its kind. With none
+  left, the use cannot be made, except where Chapter 7, section 7.1, says what a Leg or a night
+  camp with no rations costs.
+spending: >-
+  A unit is spent only by a rule that names its kind, and added only by a restock (stock, when_set)
+  or a Requisition (Chapter 7, section 7.3). The GM never spends, adds, or removes units.
+sheet: The Squad sheet records each kind's units (data/gear/sheet-fields.yaml, squad_sheet).
+
+stock:
+  funding: the Funding data/gear/standard-issue.yaml uses (3 until the Funding rules are written)
+  by_funding:
+    - funding: 1
+      rations: 6
+      flares: 1
+      medical: 1
+      shot: 0
+    - funding: 2
+      rations: 7
+      flares: 2
+      medical: 1
+      shot: 0
+    - funding: 3
+      rations: 8
+      flares: 2
+      medical: 2
+      shot: 6
+    - funding: 4
+      rations: 9
+      flares: 3
+      medical: 2
+      shot: 6
+    - funding: 5
+      rations: 10
+      flares: 3
+      medical: 3
+      shot: 8
+    - funding: 6
+      rations: 12
+      flares: 4
+      medical: 3
+      shot: 10
+  # Every kind is a column of the stock table, rations included (decision batch 8, 8-12, item 7).
+  when_set:
+    - When the Squad forms (data/character/lifepath.yaml, join-the-squad), each kind is set to its stock.
+    - Whenever every soldier in the Squad receives Standard Issue together (data/gear/standard-issue.yaml), each kind below its stock rises to it. None is lowered, so units a Requisition added above the stock stay.
+
+medical_uses:
+  - id: care-bonus
+    name: Medical supplies on a care-window roll
+    when: >-
+      In a care window (data/harm/treat-injury.yaml, care_windows), when a soldier declares a
+      Treat Injury roll, before it is rolled.
+    who: the soldier rolling
+    spends: 1 medical unit
+    effect: >-
+      1 Bonus Die on that roll. It is the medical-supplies source in
+      data/core/bonus-dice-sources.yaml.
+    limit: 1 unit per roll
+    not: >-
+      Never on a roll in a Titan Engagement, and never on an aftermath roll
+      (data/harm/treat-injury.yaml, aftermath_rolls).
+  - id: restock-kit
+    name: Restocking a medical kit
+    when: At any point in a care window, including before its first roll and between rolls.
+    who: any living soldier in the window's scope who is not Down
+    spends: 1 medical unit
+    effect: >-
+      One medical kit held by a soldier in the window's scope has its current rating raised to
+      its rating.
+    limit: Each medical kit once per window.
+    not_a_roll: It spends no soldier's Treat Injury or Field Repair roll in the window.
+    entry: restock-medical-kit   # data/character/action-catalog.yaml

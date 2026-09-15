@@ -1,0 +1,64 @@
+# Healing time: how a held Critical Injury heals, and when a day passes.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.6) references this
+# file and does not repeat its rows.
+id: healing
+name: Healing Time
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0009]
+decided: [OQ-42, OQ-53, OQ-150]
+
+unit: day
+
+day_passes:
+  during_an_expedition: >-
+    A day passes at each night camp, at its day-passes step (data/expedition/legs.yaml, night_camp;
+    ADR-0009). each_day runs as written. Its care window's scope is every soldier on the Expedition,
+    and Field Repair is rolled in it.
+  in_downtime: >-
+    Seven days pass at Downtime's infirmary (data/campaign/downtime.yaml, infirmary). Each follows the
+    infirmary's steps in place of each_day: an infirmary roll comes before that day's Death Rolls, and
+    no care window is held on those days (decision batch 7, 7-15).
+  in_a_titan_engagement: never   # no day passes inside a Titan Engagement
+  interim: >-
+    While no Expedition and no Downtime is under way, one day passes at the start of each
+    session, before the interim issue (data/gear/standard-issue.yaml, interim_issue). If a session
+    begins partway through a procedure, such as a Titan Engagement or a care window, the day passes
+    once that procedure has ended, as the interim issue waits. each_day runs as written, and Stress
+    and Grief do not change. Its care window's scope is every soldier in the Squad
+    (data/harm/treat-injury.yaml, care_windows, day, scope), and Field Repair is rolled in that
+    window as on an Expedition day (data/gear/field-repair.yaml, outside_titan_engagement, when).
+    While an Expedition or a Downtime is under way it never happens: the night camp's day and
+    Downtime's seven days take its place (decision batch 5, OQ-120; 5-16, OQ-130; decision batch 7,
+    7-14, 7-15).
+
+# What happens each time a day passes, in order.
+each_day:
+  - Hold a care window (data/harm/treat-injury.yaml, care_windows, day).
+  - Every lethal Critical Injury with a day limit runs out and causes a Death Roll (data/harm/death-rolls.yaml).
+  - Every living soldier gets back all Health lost to damage, erasing every damage mark; crossed-off boxes stay crossed off (data/harm/health.yaml, restoring, day-passes).
+  - >-
+    Every held Critical Injury's remaining healing time drops by 1 day. One that reaches 0 heals. An
+    untreated Critical Injury whose type rider sets heals_untreated false does not drop
+    (healing_time, not_while_untreated; decision batch 8, 8-15).
+
+healing_time:
+  starts: when the Critical Injury is gained
+  not_while_untreated: >-
+    A Critical Injury whose type rider sets heals_untreated false (data/harm/critical-injuries.yaml,
+    type_riders; the Pierce rider) keeps its remaining healing time while it is untreated: a day passing
+    does not lower it. It heals only after a Treat Injury roll has succeeded on it, and until then it
+    keeps its effects and its crossed-off Health box. A lethal one that Death Rolls stabilize is still
+    untreated, so it still does not heal (decision batch 8, 8-15; OQ-150).
+  lethal_injuries: A lethal Critical Injury's healing time still counts down, but it cannot heal while it is still lethal. It stays at 1 day until it is stabilized.
+  heals: >-
+    A Critical Injury that heals stops being held. Its effects end, it has no time limit, and if
+    it was untreated it gives back its Health box (data/harm/health.yaml, restoring,
+    treated-or-healed). If its row has permanent_effects, they stay for as long as the
+    soldier lives, and it still counts toward worsening at its Injury Location
+    (data/harm/critical-injuries.yaml, worsening). Any other healed Critical Injury no longer
+    counts toward worsening.
+  careful_nursing: >-
+    When a Treat Injury roll by a soldier with Careful Nursing succeeds on a comrade's Critical
+    Injury, that Critical Injury's remaining healing time is halved, rounding up. A roll on the
+    soldier's own Critical Injury never triggers it. Each Critical Injury can be halved only once,
+    and the sheet records it as halved (data/character/talents.yaml; data/harm/sheet-fields.yaml).

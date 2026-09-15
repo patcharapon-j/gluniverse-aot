@@ -1,0 +1,95 @@
+
+== cutters_first, retreat clock 8, 120000 fights a row
+sprinting-abnormal: 4 player characters, mounted, with the med  2  by3  69.6%  nokill12  8.52±0.08%  CI 0.835±0.0038  deaths 0.1046±0.0014  all 0.1140±0.0014  grabs 0.320  leftbehind 0.0362  retreats 8.50%  out 0.249  carried 0.0772  rounds 3.71  cap 0.00000
+standard-medium: 4 player characters, eager, dodge when ha med  3  by3  61.7%  nokill12  8.04±0.08%  CI 0.698±0.0028  deaths 0.0499±0.0009  all 0.0560±0.0009  grabs 0.217  leftbehind 0.0190  retreats 8.08%  out 0.282  carried 0.0641  rounds 3.98  cap 0.00000
+standard-large: 4 player characters, eager, dodge when har med  3  by3  61.4%  nokill12 14.39±0.10%  CI 1.316±0.0046  deaths 0.1778±0.0020  all 0.1883±0.0020  grabs 0.287  leftbehind 0.1239  retreats 13.81%  out 0.407  carried 0.1737  rounds 4.31  cap 0.00000
+sprinting-abnormal: 4 player characters and 2 helper Squad med  2  by3  77.1%  nokill12  4.87±0.06%  CI 0.786±0.0032  deaths 0.0341±0.0007  all 0.0425±0.0008  grabs 0.301  leftbehind 0.0079  retreats 4.88%  out 0.266  carried 0.0606  rounds 3.20  cap 0.00000
+standard-medium: 4 player characters and 2 helper Squadmat med  3  by3  68.6%  nokill12  5.11±0.06%  CI 0.638±0.0025  deaths 0.0159±0.0004  all 0.0207±0.0005  grabs 0.207  leftbehind 0.0045  retreats 5.12%  out 0.296  carried 0.0467  rounds 3.53  cap 0.00000
+standard-large: 4 player characters and 2 helper Squadmate med  3  by3  68.5%  nokill12 10.46±0.09%  CI 1.180±0.0043  deaths 0.0468±0.0010  all 0.0566±0.0010  grabs 0.268  leftbehind 0.0278  retreats 10.48%  out 0.584  carried 0.1912  rounds 3.85  cap 0.00000
+sprinting-abnormal: template Squad                         med  3  by3  60.6%  nokill12 12.85±0.10%  CI 0.978±0.0044  deaths 0.1759±0.0018  all 0.1862±0.0019  grabs 0.360  leftbehind 0.0671  retreats 12.85%  out 0.353  carried 0.1002  rounds 4.34  cap 0.00000
+standard-medium: template Squad                            med  4  by3  48.8%  nokill12 14.91±0.10%  CI 0.868±0.0034  deaths 0.0977±0.0012  all 0.1059±0.0013  grabs 0.263  leftbehind 0.0375  retreats 15.01%  out 0.511  carried 0.1069  rounds 4.96  cap 0.00000
+standard-large: template Squad                             med  4  by3  49.1%  nokill12 21.91±0.12%  CI 1.619±0.0051  deaths 0.2911±0.0025  all 0.3055±0.0025  grabs 0.345  leftbehind 0.1997  retreats 20.94%  out 0.597  carried 0.2449  rounds 5.22  cap 0.00000
+sprinting-abnormal: cutters take Draw Attention while a st med  2  by3  69.0%  nokill12  7.12±0.07%  CI 1.057±0.0046  deaths 0.1324±0.0016  all 0.1432±0.0017  grabs 0.338  leftbehind 0.0637  retreats 7.04%  out 0.169  carried 0.0527  rounds 3.67  cap 0.00000
+sprinting-abnormal: 4 player characters and 2 mounted Squa med  2  by3  69.8%  nokill12  8.44±0.08%  CI 0.848±0.0039  deaths 0.0806±0.0011  all 0.0903±0.0012  grabs 0.321  leftbehind 0.0170  retreats 8.48%  out 0.439  carried 0.0971  rounds 3.69  cap 0.00000
+sprinting-abnormal: the standard ladder instead of its own med  2  by3  73.7%  nokill12  3.83±0.06%  CI 0.804±0.0035  deaths 0.0883±0.0014  all 0.0959±0.0014  grabs 0.316  leftbehind 0.0330  retreats 3.83%  out 0.084  carried 0.0217  rounds 3.25  cap 0.00000
+sprinting-abnormal: 4 player characters on foot, with the  med  2  by3  69.4%  nokill12  8.66±0.08%  CI 0.846±0.0038  deaths 0.1055±0.0014  all 0.1147±0.0014  grabs 0.321  leftbehind 0.0370  retreats 8.65%  out 0.254  carried 0.0784  rounds 3.72  cap 0.00000
+sprinting-abnormal: its earlier ladder, loudest-or-brighte med  3  by3  75.8%  nokill12  2.29±0.04%  CI 0.844±0.0036  deaths 0.0743±0.0012  all 0.0830±0.0012  grabs 0.336  leftbehind 0.0163  retreats 2.33%  out 0.046  carried 0.0115  rounds 3.14  cap 0.00000
+support: sprinting-abnormal: 4 player characters and 2 Squ med  2  by3  77.9%  nokill12  3.07±0.05%  CI 0.518±0.0026  deaths 0.0181±0.0005  all 0.0233±0.0006  grabs 0.186  leftbehind 0.0041  retreats 3.09%  out 0.171  carried 0.0341  rounds 3.06  cap 0.00000
+support: standard-medium: 4 player characters and 2 Squadm med  3  by3  66.5%  nokill12  5.62±0.07%  CI 0.422±0.0021  deaths 0.0126±0.0004  all 0.0156±0.0004  grabs 0.136  leftbehind 0.0035  retreats 5.63%  out 0.328  carried 0.0379  rounds 3.63  cap 0.00000
+support: standard-large: 4 player characters and 2 Squadma med  3  by3  66.6%  nokill12 10.41±0.09%  CI 0.852±0.0037  deaths 0.0294±0.0007  all 0.0371±0.0008  grabs 0.182  leftbehind 0.0160  retreats 10.42%  out 0.597  carried 0.1750  rounds 3.91  cap 0.00000
+support: sprinting-abnormal: 4 player characters, Hook and med  2  by3  73.6%  nokill12  6.46±0.07%  CI 0.727±0.0035  deaths 0.0846±0.0013  all 0.0918±0.0013  grabs 0.293  leftbehind 0.0299  retreats 6.47%  out 0.186  carried 0.0576  rounds 3.45  cap 0.00000
+support: standard-medium: 4 player characters, Hook and Cu med  3  by3  65.3%  nokill12  7.07±0.07%  CI 0.625±0.0027  deaths 0.0420±0.0008  all 0.0471±0.0008  grabs 0.200  leftbehind 0.0161  retreats 7.09%  out 0.250  carried 0.0531  rounds 3.80  cap 0.00000
+support: standard-large: 4 player characters, Hook and Cut med  3  by3  64.6%  nokill12 12.32±0.09%  CI 1.156±0.0042  deaths 0.1410±0.0018  all 0.1505±0.0018  grabs 0.263  leftbehind 0.0962  retreats 11.91%  out 0.360  carried 0.1497  rounds 4.09  cap 0.00000
+support: sprinting-abnormal: 4 player characters and 2 Squ med  2  by3  81.4%  nokill12  2.10±0.04%  CI 0.463±0.0025  deaths 0.0137±0.0005  all 0.0180±0.0005  grabs 0.176  leftbehind 0.0035  retreats 2.11%  out 0.116  carried 0.0240  rounds 2.89  cap 0.00000
+support: standard-medium: 4 player characters and 2 Squadm med  3  by3  70.2%  nokill12  4.79±0.06%  CI 0.394±0.0020  deaths 0.0120±0.0004  all 0.0150±0.0004  grabs 0.129  leftbehind 0.0035  retreats 4.80%  out 0.278  carried 0.0313  rounds 3.46  cap 0.00000
+support: standard-large: 4 player characters and 2 Squadma med  3  by3  70.1%  nokill12  8.30±0.08%  CI 0.747±0.0033  deaths 0.0243±0.0006  all 0.0308±0.0007  grabs 0.173  leftbehind 0.0123  retreats 8.31%  out 0.476  carried 0.1345  rounds 3.66  cap 0.00000
+sprinting-abnormal: a loud rider who stays mounted at Dist med  3  by3  64.6%  nokill12  9.35±0.08%  CI 0.933±0.0043  deaths 0.1391±0.0015  all 0.1477±0.0016  grabs 0.262  leftbehind 0.0531  retreats 9.38%  out 0.251  carried 0.0733  rounds 3.91  cap 0.00000
+sprinting-abnormal: the loud rider under its ladder before med  3  by3  71.0%  nokill12  4.60±0.06%  CI 0.801±0.0036  deaths 0.0830±0.0012  all 0.0895±0.0012  grabs 0.218  leftbehind 0.0254  retreats 4.62%  out 0.120  carried 0.0299  rounds 3.44  cap 0.00000
+sprinting-abnormal: 4 eager strikers and no cutters        med  2  by3  91.4%  nokill12  0.52±0.02%  CI 0.622±0.0026  deaths 0.0220±0.0007  all 0.0291±0.0007  grabs 0.180  leftbehind 0.0089  retreats 0.48%  out 0.007  carried 0.0026  rounds 2.45  cap 0.00000
+standard-medium: 4 eager strikers and no cutters           med  3  by3  78.4%  nokill12  1.39±0.03%  CI 0.431±0.0020  deaths 0.0155±0.0005  all 0.0191±0.0005  grabs 0.148  leftbehind 0.0060  retreats 1.39%  out 0.045  carried 0.0115  rounds 3.00  cap 0.00000
+standard-large: 4 eager strikers and no cutters            med  3  by3  78.6%  nokill12  2.71±0.05%  CI 0.787±0.0029  deaths 0.0734±0.0014  all 0.0824±0.0014  grabs 0.175  leftbehind 0.0626  retreats 2.08%  out 0.039  carried 0.0176  rounds 3.02  cap 0.00000
+
+-- limits (z past the twin; a limit holds within 2)
+sprinting-abnormal: 4 player characters, mounted, with the CI +29.2  nokill -45.4  deaths -29.9  all -29.9  HOLDS
+sprinting-abnormal: 4 player characters and 2 helper Squad CI +36.2  nokill -51.8  deaths -10.5  all -10.9  HOLDS
+sprinting-abnormal: template Squad                         CI +19.6  nokill -59.0  deaths -37.0  all -37.9  HOLDS
+sprinting-abnormal: cutters take Draw Attention while a st CI +66.5  nokill -57.9  deaths -17.5  all -17.1  HOLDS
+sprinting-abnormal: 4 player characters and 2 mounted Squa CI +31.3  nokill -46.0  deaths -42.3  all -41.8  HOLDS
+sprinting-abnormal: the standard ladder instead of its own CI +23.4  nokill -91.4  deaths -36.9  all -37.6  HOLDS
+sprinting-abnormal: 4 player characters on foot, with the  CI +31.3  nokill -44.1  deaths -29.5  all -29.6  HOLDS
+sprinting-abnormal: its earlier ladder, loudest-or-brighte CI +31.7  nokill -109.9  deaths -44.7  all -44.7  HOLDS
+support: sprinting-abnormal: 4 player characters and 2 Squ CI +28.8  nokill -72.4  deaths -12.9  all -14.6  HOLDS
+support: sprinting-abnormal: 4 player characters, Hook and CI +23.0  nokill -49.5  deaths -25.8  all -26.4  HOLDS
+support: sprinting-abnormal: 4 player characters and 2 Squ CI +21.5  nokill -69.1  deaths -13.5  all -15.1  HOLDS
+sprinting-abnormal: a loud rider who stays mounted at Dist CI +45.9  nokill -38.3  deaths -15.4  all -15.9  HOLDS
+sprinting-abnormal: the loud rider under its ladder before CI +22.5  nokill -82.9  deaths -41.0  all -42.1  HOLDS
+sprinting-abnormal: 4 eager strikers and no cutters        CI +58.1  nokill -42.8  deaths -33.1  all -33.4  HOLDS
+
+== strikers_first, retreat clock 8, 120000 fights a row
+sprinting-abnormal: 4 player characters, mounted, with the med  2  by3  69.7%  nokill12  8.43±0.08%  CI 0.840±0.0038  deaths 0.1053±0.0014  all 0.1145±0.0015  grabs 0.321  leftbehind 0.0379  retreats 8.42%  out 0.245  carried 0.0754  rounds 3.70  cap 0.00000
+standard-medium: 4 player characters, eager, dodge when ha med  3  by3  61.8%  nokill12  7.88±0.08%  CI 0.694±0.0028  deaths 0.0482±0.0009  all 0.0544±0.0009  grabs 0.218  leftbehind 0.0182  retreats 7.91%  out 0.277  carried 0.0619  rounds 3.97  cap 0.00000
+standard-large: 4 player characters, eager, dodge when har med  3  by3  61.2%  nokill12 14.56±0.10%  CI 1.334±0.0046  deaths 0.1785±0.0020  all 0.1896±0.0020  grabs 0.293  leftbehind 0.1243  retreats 13.96%  out 0.413  carried 0.1774  rounds 4.33  cap 0.00000
+sprinting-abnormal: 4 player characters and 2 helper Squad med  2  by3  77.1%  nokill12  4.72±0.06%  CI 0.788±0.0032  deaths 0.0326±0.0007  all 0.0414±0.0008  grabs 0.300  leftbehind 0.0074  retreats 4.73%  out 0.258  carried 0.0591  rounds 3.19  cap 0.00000
+standard-medium: 4 player characters and 2 helper Squadmat med  3  by3  68.3%  nokill12  5.10±0.06%  CI 0.636±0.0025  deaths 0.0157±0.0004  all 0.0207±0.0005  grabs 0.207  leftbehind 0.0044  retreats 5.11%  out 0.295  carried 0.0474  rounds 3.52  cap 0.00000
+standard-large: 4 player characters and 2 helper Squadmate med  3  by3  68.2%  nokill12 10.40±0.09%  CI 1.181±0.0043  deaths 0.0470±0.0010  all 0.0566±0.0010  grabs 0.269  leftbehind 0.0290  retreats 10.42%  out 0.580  carried 0.1896  rounds 3.85  cap 0.00000
+sprinting-abnormal: template Squad                         med  3  by3  60.5%  nokill12 13.10±0.10%  CI 0.992±0.0045  deaths 0.1797±0.0019  all 0.1904±0.0019  grabs 0.366  leftbehind 0.0693  retreats 13.09%  out 0.360  carried 0.1017  rounds 4.36  cap 0.00000
+standard-medium: template Squad                            med  4  by3  48.7%  nokill12 14.92±0.10%  CI 0.871±0.0034  deaths 0.0966±0.0012  all 0.1052±0.0013  grabs 0.262  leftbehind 0.0374  retreats 15.00%  out 0.512  carried 0.1064  rounds 4.96  cap 0.00000
+standard-large: template Squad                             med  4  by3  49.0%  nokill12 22.04±0.12%  CI 1.627±0.0052  deaths 0.2949±0.0025  all 0.3092±0.0026  grabs 0.345  leftbehind 0.2024  retreats 21.10%  out 0.598  carried 0.2440  rounds 5.23  cap 0.00000
+sprinting-abnormal: cutters take Draw Attention while a st med  2  by3  69.2%  nokill12  7.05±0.07%  CI 1.055±0.0046  deaths 0.1302±0.0016  all 0.1405±0.0017  grabs 0.337  leftbehind 0.0623  retreats 6.99%  out 0.168  carried 0.0517  rounds 3.66  cap 0.00000
+sprinting-abnormal: 4 player characters and 2 mounted Squa med  2  by3  69.9%  nokill12  8.53±0.08%  CI 0.853±0.0039  deaths 0.0799±0.0011  all 0.0895±0.0012  grabs 0.325  leftbehind 0.0169  retreats 8.57%  out 0.444  carried 0.0994  rounds 3.69  cap 0.00000
+sprinting-abnormal: the standard ladder instead of its own med  2  by3  73.5%  nokill12  3.96±0.06%  CI 0.807±0.0036  deaths 0.0924±0.0014  all 0.0999±0.0014  grabs 0.320  leftbehind 0.0350  retreats 3.97%  out 0.086  carried 0.0225  rounds 3.27  cap 0.00000
+sprinting-abnormal: 4 player characters on foot, with the  med  2  by3  69.7%  nokill12  8.55±0.08%  CI 0.843±0.0038  deaths 0.1045±0.0014  all 0.1139±0.0014  grabs 0.324  leftbehind 0.0361  retreats 8.55%  out 0.251  carried 0.0776  rounds 3.71  cap 0.00000
+sprinting-abnormal: its earlier ladder, loudest-or-brighte med  3  by3  76.0%  nokill12  2.28±0.04%  CI 0.843±0.0036  deaths 0.0736±0.0011  all 0.0822±0.0012  grabs 0.335  leftbehind 0.0160  retreats 2.31%  out 0.046  carried 0.0119  rounds 3.14  cap 0.00000
+support: sprinting-abnormal: 4 player characters and 2 Squ med  2  by3  77.7%  nokill12  3.04±0.05%  CI 0.520±0.0026  deaths 0.0179±0.0005  all 0.0230±0.0006  grabs 0.189  leftbehind 0.0043  retreats 3.06%  out 0.169  carried 0.0341  rounds 3.07  cap 0.00000
+support: standard-medium: 4 player characters and 2 Squadm med  3  by3  66.7%  nokill12  5.62±0.07%  CI 0.423±0.0021  deaths 0.0128±0.0004  all 0.0165±0.0004  grabs 0.135  leftbehind 0.0039  retreats 5.62%  out 0.327  carried 0.0385  rounds 3.63  cap 0.00000
+support: standard-large: 4 player characters and 2 Squadma med  3  by3  66.5%  nokill12 10.46±0.09%  CI 0.852±0.0037  deaths 0.0306±0.0007  all 0.0390±0.0008  grabs 0.183  leftbehind 0.0162  retreats 10.47%  out 0.600  carried 0.1732  rounds 3.92  cap 0.00000
+support: sprinting-abnormal: 4 player characters, Hook and med  2  by3  73.4%  nokill12  6.37±0.07%  CI 0.729±0.0036  deaths 0.0844±0.0013  all 0.0919±0.0013  grabs 0.291  leftbehind 0.0303  retreats 6.37%  out 0.183  carried 0.0563  rounds 3.44  cap 0.00000
+support: standard-medium: 4 player characters, Hook and Cu med  3  by3  65.5%  nokill12  6.87±0.07%  CI 0.619±0.0026  deaths 0.0414±0.0008  all 0.0467±0.0008  grabs 0.199  leftbehind 0.0154  retreats 6.90%  out 0.243  carried 0.0507  rounds 3.78  cap 0.00000
+support: standard-large: 4 player characters, Hook and Cut med  3  by3  65.2%  nokill12 12.08±0.09%  CI 1.154±0.0042  deaths 0.1394±0.0018  all 0.1490±0.0018  grabs 0.262  leftbehind 0.0954  retreats 11.64%  out 0.352  carried 0.1476  rounds 4.05  cap 0.00000
+support: sprinting-abnormal: 4 player characters and 2 Squ med  2  by3  81.4%  nokill12  2.10±0.04%  CI 0.458±0.0024  deaths 0.0141±0.0005  all 0.0188±0.0005  grabs 0.174  leftbehind 0.0035  retreats 2.11%  out 0.115  carried 0.0232  rounds 2.89  cap 0.00000
+support: standard-medium: 4 player characters and 2 Squadm med  3  by3  70.0%  nokill12  4.84±0.06%  CI 0.399±0.0020  deaths 0.0125±0.0004  all 0.0155±0.0004  grabs 0.132  leftbehind 0.0040  retreats 4.85%  out 0.281  carried 0.0314  rounds 3.47  cap 0.00000
+support: standard-large: 4 player characters and 2 Squadma med  3  by3  69.9%  nokill12  8.33±0.08%  CI 0.748±0.0033  deaths 0.0245±0.0006  all 0.0313±0.0007  grabs 0.173  leftbehind 0.0122  retreats 8.34%  out 0.477  carried 0.1357  rounds 3.67  cap 0.00000
+sprinting-abnormal: a loud rider who stays mounted at Dist med  3  by3  65.1%  nokill12  9.19±0.08%  CI 0.928±0.0043  deaths 0.1379±0.0015  all 0.1462±0.0016  grabs 0.260  leftbehind 0.0528  retreats 9.23%  out 0.246  carried 0.0714  rounds 3.89  cap 0.00000
+sprinting-abnormal: the loud rider under its ladder before med  3  by3  71.1%  nokill12  4.53±0.06%  CI 0.802±0.0036  deaths 0.0835±0.0012  all 0.0899±0.0012  grabs 0.217  leftbehind 0.0256  retreats 4.55%  out 0.117  carried 0.0292  rounds 3.43  cap 0.00000
+sprinting-abnormal: 4 eager strikers and no cutters        med  2  by3  91.6%  nokill12  0.48±0.02%  CI 0.621±0.0026  deaths 0.0206±0.0006  all 0.0276±0.0007  grabs 0.178  leftbehind 0.0080  retreats 0.44%  out 0.007  carried 0.0026  rounds 2.45  cap 0.00000
+standard-medium: 4 eager strikers and no cutters           med  3  by3  78.3%  nokill12  1.40±0.03%  CI 0.432±0.0020  deaths 0.0159±0.0005  all 0.0195±0.0005  grabs 0.146  leftbehind 0.0061  retreats 1.39%  out 0.045  carried 0.0118  rounds 3.01  cap 0.00000
+standard-large: 4 eager strikers and no cutters            med  2  by3  78.5%  nokill12  2.79±0.05%  CI 0.787±0.0029  deaths 0.0750±0.0014  all 0.0844±0.0014  grabs 0.175  leftbehind 0.0643  retreats 2.18%  out 0.041  carried 0.0186  rounds 3.03  cap 0.00000
+
+-- limits (z past the twin; a limit holds within 2)
+sprinting-abnormal: 4 player characters, mounted, with the CI +30.8  nokill -47.3  deaths -29.7  all -30.0  HOLDS
+sprinting-abnormal: 4 player characters and 2 helper Squad CI +37.2  nokill -53.0  deaths -11.8  all -11.8  HOLDS
+sprinting-abnormal: template Squad                         CI +21.6  nokill -57.9  deaths -36.6  all -37.3  HOLDS
+sprinting-abnormal: cutters take Draw Attention while a st CI +66.8  nokill -59.7  deaths -18.7  all -18.7  HOLDS
+sprinting-abnormal: 4 player characters and 2 mounted Squa CI +33.2  nokill -46.5  deaths -42.9  all -42.6  HOLDS
+sprinting-abnormal: the standard ladder instead of its own CI +24.8  nokill -91.1  deaths -35.2  all -36.1  HOLDS
+sprinting-abnormal: 4 player characters on foot, with the  CI +31.5  nokill -46.3  deaths -30.2  all -30.4  HOLDS
+sprinting-abnormal: its earlier ladder, loudest-or-brighte CI +32.4  nokill -111.1  deaths -45.3  all -45.6  HOLDS
+support: sprinting-abnormal: 4 player characters and 2 Squ CI +28.9  nokill -73.2  deaths -14.3  all -16.6  HOLDS
+support: sprinting-abnormal: 4 player characters, Hook and CI +24.8  nokill -48.5  deaths -25.1  all -25.6  HOLDS
+support: sprinting-abnormal: 4 player characters and 2 Squ CI +18.6  nokill -69.3  deaths -13.2  all -14.5  HOLDS
+sprinting-abnormal: a loud rider who stays mounted at Dist CI +45.6  nokill -40.8  deaths -16.1  all -17.0  HOLDS
+sprinting-abnormal: the loud rider under its ladder before CI +23.5  nokill -84.9  deaths -40.9  all -42.3  HOLDS
+sprinting-abnormal: 4 eager strikers and no cutters        CI +57.6  nokill -44.8  deaths -34.9  all -35.5  HOLDS
+
+failed limits: 0
+done

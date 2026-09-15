@@ -1,0 +1,160 @@
+# Starting a Titan Engagement, who witnesses a Fear Roll trigger, and when a Titan Engagement ends.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (sections 5.1 and 5.11)
+# references this file and does not repeat its rows.
+id: engagement-flow
+name: Starting and Ending a Titan Engagement
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0008, ADR-0010, ADR-0014]
+decided: [OQ-86, OQ-87, OQ-88, OQ-122, OQ-126, OQ-146, OQ-163, OQ-165]
+
+# ------------------------------------------------------------------ starting
+starting:
+  steps:
+    - id: setup
+      text: >-
+        The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any
+        Background Titans with their clock lengths, and the length of its retreat clock. Any of
+        these it does not name comes from data/engagement/engagement-setup.yaml. The retreat clock
+        starts empty (data/engagement/background-titans.yaml, retreat_clock).
+    - id: label
+      text: The Focus Titan is labelled A (data/gear/sheet-fields.yaml, focus_titan_label).
+    - id: titan-values
+      text: >-
+        Every Body Part is Intact with count 0, the Titan has no Openings, its Regeneration clock is
+        empty, and it has no previous behavior. Roll its Next Behavior
+        (data/engagement/behavior-procedure.yaml, next_behavior).
+    - id: placement
+      text: Place the soldiers and horses (data/engagement/positions.yaml, placement).
+    - id: attention
+      text: Evaluate the Titan's Attention Ladder (data/engagement/attention.yaml).
+    - id: fear
+      text: >-
+        Fear Rolls for the first-titan-engagement and abnormal triggers (data/mind/fear-rolls.yaml),
+        one per soldier.
+    - id: squad-tactics
+      text: Every Squad Tactic the Squad holds is unused for this Titan Engagement (data/engagement/squad-tactics.yaml).
+    - id: first-round
+      text: Round 1 begins (data/engagement/round.yaml).
+
+# ------------------------------------------------------------------ witnesses
+witnesses:
+  for_triggers: [comrade-grabbed, comrade-dies]   # data/mind/fear-rolls.yaml
+  definition: >-
+    In a Titan Engagement, a witness of a comrade becoming Grabbed or dying is every soldier who,
+    when that event has been fully resolved, is alive and holds a Position in the Titan
+    Engagement, other than the Grabbed or dead soldier.
+  not_witnesses: A soldier who has left the Titan Engagement, and a soldier who has died.
+  down: A Down soldier is a witness but makes no Fear Roll (data/mind/fear-rolls.yaml, limits, not_down).
+  squadmates: A Squadmate is a witness like a player character (data/character/squadmates.yaml, rules_applicability).
+  limits: One Fear Roll per soldier per event (data/mind/fear-rolls.yaml, limits, one_per_event).
+
+# ------------------------------------------------------------------ ending
+ending:
+  tests:
+    - id: no-focus-titan
+      test: >-
+        No Focus Titan is alive, and no soldier is Pinned (data/engagement/titan-harm.yaml,
+        falling_titan, pinned; decision batch 8, 8-9).
+      ends: At once.
+      also: A Background Titan whose clock has not filled never enters.
+      run_on: >-
+        While no Focus Titan is alive and a soldier lies Pinned under a corpse, the rounds go on: the
+        Background Titans' clocks and the retreat clock fill as they do, a Background Titan may enter,
+        and this test ends the Titan Engagement when the last Pinned soldier is freed or dies
+        (data/engagement/positions.yaml, corpse; OQ-146), unless no-soldier-standing ends it first, as
+        the retreat's stay limit brings about (data/engagement/background-titans.yaml, retreat, moves;
+        decision batch 8, 8-32). A Background Titan that enters during the run-on ends the run-on, but
+        not the stay limit on a stay beside a comrade Pinned under a corpse, which binds in every
+        retreat (decision batch 8, 8-36).
+    - id: no-soldier-standing
+      test: >-
+        No soldier who holds a Position in the Titan Engagement is alive and not Down. Every
+        soldier having left the Titan Engagement meets this test.
+      pinned: >-
+        A body-pinned soldier is not standing, and counts for this test as a Down soldier does; a limb-pinned soldier who is not Down is standing (decision batch 8, 8-20)
+        (data/engagement/titan-harm.yaml, falling_titan, pinned, standing; decision batch 8, 8-9).
+      past_the_stay_limit: >-
+        In a retreat, whether or not a Focus Titan is alive, from the first round past the retreat's
+        stay limit (data/engagement/background-titans.yaml, retreat, moves, the stay limit; decision
+        batch 8, 8-36), a soldier is not
+        standing for this test if a lost-limb grade forbids them every kind of move and they are not
+        Down, Pinned, or carried. Today that grade is only both-legs, whose moves are forbidden on
+        foot, mounted, and by ODM Gear (data/harm/critical-injuries.yaml, lost_limb_riders, both-legs,
+        moves). The test reads the grade, not the turn: a soldier who loses one turn's move to a
+        Reaction or a result is not this soldier. The start of the first round past the limit is an
+        event for checked, so this test is checked as that round begins, before its wings step, and
+        after every event from then on; no returner exists in a retreat, so once it is met the Titan
+        Engagement ends at once. The soldier keeps their Position, their turns, and every action their
+        Position allows, such as Heave, the strike on a pinning Body Part, Treat Injury, and Rally, and
+        their forced move changes nothing. A comrade who shares their Position may still take Lift
+        Comrade for them, at their consent, and carry them out by option 1 or 2 with the move after the
+        lift (data/gear/carrying.yaml, lifting_a_comrade; decision batch 5, 5-13): the limit closes
+        options 3 and 4, not the lift, and no rule obliges anyone to take it. If the Titan Engagement
+        ends with no Focus Titan alive, they live and go through the end steps from the Positions they
+        hold, as a Down comrade beside a corpse does (decision batch 8, 8-21). If it ends with a Focus
+        Titan alive, left_behind applies as written, and they die left to the Titans with every other
+        soldier who still holds a Position (decision batch 8, 8-36). A soldier who has lost both legs
+        and is Pinned is read as Pinned (decision batch 8, 8-20). The reading is 8-34's, widened to a
+        retreat with a Focus Titan alive by 8-36 (OQ-165).
+      ends: As no_soldier_standing states.
+  checked: >-
+    As soon as the event that makes a test true has been fully resolved, including the Fear Rolls
+    and Drive decisions it causes.
+  always_ends: >-
+    A Titan Engagement always ends: by no-focus-titan, by no-soldier-standing, or through the
+    retreat its retreat clock starts when neither test has ended it first
+    (data/engagement/background-titans.yaml, retreat_clock, retreat). During that retreat every
+    standing soldier's move is forced toward distant and out, or toward a fallen comrade, and no
+    one who has left returns, so no-soldier-standing ends it at once when no standing soldier
+    holds a Position (no_soldier_standing, no-returner), and left_behind says who then dies
+    (decision batch 5, 5-10, OQ-126). The fallen-comrade options close after the retreat's first
+    rounds, as many as its retreat clock has segments (data/engagement/background-titans.yaml,
+    retreat, moves, the stay limit): for a comrade Pinned under a corpse in every retreat, whether
+    or not a Focus Titan is alive, and for every comrade while no Focus Titan is alive, so every
+    standing soldier walks out from beside the corpse (decision batch 8, 8-32 and 8-36). A
+    limb-pinned soldier left alone is still standing, but corpse heat crosses off one of their
+    Health boxes at the start of each of their turns and they cannot treat themselves, so they go
+    Down unless they free themselves first; a freeing with no Focus Titan alive ends it by
+    no-focus-titan. Then no-soldier-standing ends it, every Pinned soldier dies under the body, and a
+    Down comrade who holds a Position lives if no Focus Titan is alive and dies left to the Titans if
+    one is (left_behind; decision batch 8, 8-21, 8-32, and 8-36; OQ-163). A soldier whom a lost-limb
+    grade forbids every move does not keep it running past the stay limit, whether or not a Focus
+    Titan is alive, since a Titan whose entries never reach them is no clock (ending,
+    no-soldier-standing, past_the_stay_limit; decision batch 8, 8-34 and 8-36; OQ-165).
+  returner: >-
+    A soldier who has left the Titan Engagement, is alive, and is neither Down nor carried, while
+    no retreat is under way. Only a returner can come back (data/engagement/positions.yaml,
+    leaving, returning).
+  no_soldier_standing:
+    - id: empty
+      text: If no soldier holds a Position in the Titan Engagement, it ends at once.
+    - id: no-returner
+      text: If no returner exists, the Titan Engagement ends at once.
+    - id: wait
+      text: >-
+        Otherwise the tracker's Engagement line records the round in which the test became true
+        (data/engagement/round.yaml, gm_tracker). Play goes on. The Titan Engagement ends at the
+        round-ends end step of the next round if the test is still true then.
+    - id: stood-again
+      text: >-
+        If the test stops being true while the record stands, because a soldier who holds a
+        Position is alive and not Down again, the record is erased.
+    - id: returners-gone
+      text: While the record stands, the Titan Engagement ends at once when no returner exists.
+  left_behind: >-
+    When the Titan Engagement ends by no-soldier-standing while a Focus Titan is alive, every soldier
+    who still holds a Position in it dies, left to the Titans (data/harm/health.yaml, harm_kinds,
+    death). Every one of them is Down, or is not standing by past_the_stay_limit (ending,
+    no-soldier-standing; decision batch 8, 8-36). These deaths have no witnesses, so they cause no Fear Roll,
+    and they count as deaths during the Titan Engagement for Grief (data/mind/grief.yaml). Their
+    left items are not shared out and leave play (data/gear/carrying.yaml, leaving_play, death, shared_out, left_behind; decision batch 5, 5-18). Whether or not a Focus Titan is alive, every soldier still Pinned when it ends by no-soldier-standing dies the same death, left under the body: Down first, with no witnesses and no Fear Roll, counted for Grief, their left items leaving play (decision batch 8, 8-21; OQ-157).
+  pinned_at_the_end: >-
+    The end of a Titan Engagement frees no one (data/engagement/titan-harm.yaml, falling_titan,
+    freeing; decision batch 8, 8-9). Only no-soldier-standing can end it while a soldier is Pinned, since no-focus-titan waits for them and the retreat ends by no-soldier-standing, and then every Pinned soldier dies, as left_behind states (decision batch 8, 8-21; OQ-157).
+  then: >-
+    Resolve the steps in data/harm/engagement-end.yaml, which read each soldier's last Positions
+    (data/harm/engagement-end.yaml, positions_read). After the last of those steps, every Position,
+    last Position, recorded horse Position, and left-item record is cleared
+    (data/engagement/positions.yaml, a_focus_titan_dies; data/gear/horses.yaml,
+    titan_engagement_ends; data/gear/carrying.yaml, leaving_play).
+  gm: The GM never ends a Titan Engagement. Only these tests do.

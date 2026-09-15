@@ -1,0 +1,16 @@
+chosen | reference {'median': 2, 'by3': 74.7, 'by4': 83.6, 'nokill12': 4.88, 'cis': 0.8246, 'deaths': 0.0704, 'deaths_se': 0.0035, 'grabs': 0.318} | Large twin deaths 0.1635 +- 0.0021, -22.8 SE
+chosen | helpers {'median': 2, 'by3': 80.6, 'by4': 88.1, 'nokill12': 2.8, 'cis': 0.7187, 'deaths': 0.0185, 'deaths_se': 0.0014, 'grabs': 0.274} | Large twin deaths 0.0196 +- 0.0006, -0.7 SE
+chosen | screen {'median': 2, 'by3': 80.8, 'by4': 89.5, 'nokill12': 1.52, 'cis': 0.5126, 'deaths': 0.0105, 'deaths_se': 0.001, 'grabs': 0.188} | Large twin deaths 0.0106 +- 0.0004, -0.1 SE
+chosen | screen_pair {'median': 2, 'by3': 83.9, 'by4': 91.6, 'nokill12': 1.01, 'cis': 0.4462, 'deaths': 0.0075, 'deaths_se': 0.0009, 'grabs': 0.174} | Large twin deaths 0.0092 +- 0.0004, -1.7 SE
+most_first | reference {'median': 2, 'by3': 74.2, 'by4': 84.3, 'nokill12': 2.48, 'cis': 1.0477, 'deaths': 0.0854, 'deaths_se': 0.0037, 'grabs': 0.442} | Large twin deaths 0.1635 +- 0.0021, -18.4 SE
+most_first | helpers {'median': 2, 'by3': 83.9, 'by4': 92.7, 'nokill12': 0.28, 'cis': 0.8957, 'deaths': 0.0244, 'deaths_se': 0.0015, 'grabs': 0.366} | Large twin deaths 0.0196 +- 0.0006, 3.0 SE
+most_first | screen {'median': 2, 'by3': 85.7, 'by4': 93.2, 'nokill12': 0.26, 'cis': 0.5872, 'deaths': 0.0128, 'deaths_se': 0.0011, 'grabs': 0.229} | Large twin deaths 0.0106 +- 0.0004, 1.9 SE
+most_first | screen_pair {'median': 2, 'by3': 87.9, 'by4': 94.3, 'nokill12': 0.21, 'cis': 0.5145, 'deaths': 0.0118, 'deaths_se': 0.0011, 'grabs': 0.216} | Large twin deaths 0.0092 +- 0.0004, 2.2 SE
+hooked_first | reference {'median': 2, 'by3': 71.0, 'by4': 80.9, 'nokill12': 4.24, 'cis': 1.0525, 'deaths': 0.0968, 'deaths_se': 0.004, 'grabs': 0.452} | Large twin deaths 0.1635 +- 0.0021, -14.8 SE
+hooked_first | helpers {'median': 2, 'by3': 77.8, 'by4': 87.2, 'nokill12': 1.51, 'cis': 0.8929, 'deaths': 0.0271, 'deaths_se': 0.0018, 'grabs': 0.391} | Large twin deaths 0.0196 +- 0.0006, 4.0 SE
+hooked_first | screen {'median': 2, 'by3': 80.5, 'by4': 89.0, 'nokill12': 0.97, 'cis': 0.5773, 'deaths': 0.0147, 'deaths_se': 0.0012, 'grabs': 0.233} | Large twin deaths 0.0106 +- 0.0004, 3.2 SE
+hooked_first | screen_pair {'median': 2, 'by3': 83.3, 'by4': 91.5, 'nokill12': 0.68, 'cis': 0.4781, 'deaths': 0.0086, 'deaths_se': 0.0009, 'grabs': 0.2} | Large twin deaths 0.0092 +- 0.0004, -0.6 SE
+most_holder | reference {'median': 2, 'by3': 72.8, 'by4': 82.0, 'nokill12': 4.33, 'cis': 0.909, 'deaths': 0.0823, 'deaths_se': 0.0038, 'grabs': 0.37} | Large twin deaths 0.1635 +- 0.0021, -18.7 SE
+most_holder | helpers {'median': 2, 'by3': 79.0, 'by4': 87.9, 'nokill12': 1.49, 'cis': 0.8343, 'deaths': 0.0242, 'deaths_se': 0.0017, 'grabs': 0.362} | Large twin deaths 0.0196 +- 0.0006, 2.6 SE
+most_holder | screen {'median': 2, 'by3': 82.0, 'by4': 90.2, 'nokill12': 0.78, 'cis': 0.4915, 'deaths': 0.0107, 'deaths_se': 0.001, 'grabs': 0.192} | Large twin deaths 0.0106 +- 0.0004, 0.1 SE
+most_holder | screen_pair {'median': 2, 'by3': 84.9, 'by4': 92.3, 'nokill12': 0.62, 'cis': 0.4373, 'deaths': 0.0083, 'deaths_se': 0.001, 'grabs': 0.172} | Large twin deaths 0.0092 +- 0.0004, -0.8 SE

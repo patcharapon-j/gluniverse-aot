@@ -1,0 +1,331 @@
+# The effect types that Chapter 3's table rows use: Critical Injuries, Stress Responses,
+# Fear Roll results, and Scars. A row names its effects by these ids, so every effect has one
+# closed reading.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.9) references this
+# file and does not repeat its rows.
+id: effect-types
+name: Effect Types
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0004, ADR-0010, ADR-0019]
+decided: [OQ-46, OQ-139, OQ-146, OQ-151]
+
+# Outside a Titan Engagement there are no turns, rounds, or Reactions (Chapter 1, section 1.9).
+# An effect whose outside_titan_engagement value is "no effect" does nothing there, unless the
+# rule that called for the roll or created the situation states what it does.
+effect_types:
+  - id: penalty
+    name: Dice penalty on named entries
+    parameters:
+      dice: whole number of base dice removed
+      entries: Action Catalog entry ids (data/character/action-catalog.yaml)
+    reading: >-
+      Every roll the soldier makes for one of the listed entries loses that many base dice, as a
+      penalty under Chapter 1, section 1.3, step 5. Penalties from several sources add up. They
+      never take the base dice below 1 and never remove Gear Dice or Stress Dice (OQ-07).
+    lasts: >-
+      As long as the row that names it: a held Critical Injury's effects while it is held, a
+      Critical Injury's permanent_effects from when it is gained for as long as the soldier lives,
+      a lasting Stress Response while it is held, or a Scar.
+    outside_titan_engagement: applies
+    rules: [01-core-rules]
+    decided: [OQ-07]
+
+  - id: next-roll-penalty
+    name: Dice penalty on the next roll
+    parameters:
+      dice: whole number of base dice removed
+    reading: >-
+      The next attribute roll the soldier makes, other than a Death Roll, loses that many base
+      dice as a penalty (Chapter 1, section 1.3, step 5). The penalty is then used up.
+    outside_titan_engagement: applies
+
+  - id: stress-gain
+    name: Stress gain
+    parameters:
+      amount: whole number
+    reading: >-
+      The soldier gains that much Stress once each time the row takes effect: for a Critical
+      Injury, once, when it is recorded (holding it gains nothing more); for a Stress Response or
+      Fear Roll result, when the result applies; for a Scar, each time its trigger happens. This
+      is the named-gain row in data/core/stress-changes.yaml.
+    outside_titan_engagement: applies
+    rules: [01-core-rules]
+
+  - id: push-stress
+    name: Extra Stress on every Push
+    parameters:
+      amount: whole number
+    reading: >-
+      Each time the soldier Pushes a roll, they gain that much Stress in addition to the Push's
+      own Stress, whether or not the Push is Covered. It adds no Stress Die. A Squadmate never
+      Pushes, so this does nothing for a Squadmate.
+    outside_titan_engagement: applies
+    rules: [01-core-rules]
+
+  - id: lose-successes
+    name: Lose successes
+    parameters:
+      amount: whole number
+    reading: >-
+      The roll that caused the result loses that many successes, to a minimum of 0. It is applied
+      at step 2 of Finishing a roll (Chapter 1, section 1.5), so the reduced count is the roll's
+      count for every later use, including a dodge's comparisons with later behaviors (OQ-05,
+      OQ-14).
+    outside_titan_engagement: applies
+    rules: [01-core-rules]
+    decided: [OQ-05]
+
+  - id: zero-successes
+    name: The roll fails
+    reading: >-
+      The roll that caused the result has 0 successes, applied at step 2 of Finishing a roll
+      (Chapter 1, section 1.5).
+    outside_titan_engagement: applies
+    rules: [01-core-rules]
+    decided: [OQ-05]
+
+  - id: spend-next-turn
+    name: Next turn spent
+    parameters:
+      turns: whole number (1 unless the row says otherwise)
+    reading: >-
+      The result spends the soldier's earliest turn, starting with the current round's, whose
+      move and action are both unspent, exactly as a Reaction spends a turn (Chapter 1, section
+      1.9, OQ-09). With turns 2, it then spends the earliest such turn after that one. A spent
+      turn still happens and counts as a turn for every rule that counts turns, and begins its
+      round with its move and action spent (Chapter 1, section 1.9), so the soldier cannot Help
+      that round (OQ-17).
+    outside_titan_engagement: no effect
+    rules: [01-core-rules]
+    decided: [OQ-09, OQ-46]
+
+  - id: spend-next-action
+    name: Next action spent
+    reading: >-
+      The result spends the action of the soldier's earliest turn, starting with the current
+      round's, whose action is unspent. That turn keeps its move if the move is unspent. An
+      action spent in a later round begins that round already spent (Chapter 1, section 1.9),
+      so the soldier cannot Help that round or make a Reaction with that turn (OQ-17).
+    outside_titan_engagement: no effect
+    rules: [01-core-rules]
+    decided: [OQ-17, OQ-46]
+
+  - id: no-reactions
+    name: No Reactions
+    reading: >-
+      The soldier cannot make a Reaction from when the result takes effect until the end of the
+      first of their turns that begins after it took effect. If the same row's spend-next-turn
+      effect has turns 2, the ban lasts until the end of the second such turn. Every turn counts,
+      including a turn spent in advance or by a result. How long the ban lasts does not depend on
+      which turn the row spends. The ban ends when the Titan Engagement ends
+      (data/harm/engagement-end.yaml). Every row that uses this effect also names
+      forbids: [reaction], Chapter 1's shared hook (section 1.9, OQ-18); the hook reads this ban
+      while it lasts and adds no second timer. A Titan's card against a soldier who cannot react
+      lands on 1 or more Titan successes, and a card that scores 0 whiffs and spares them
+      (ADR-0019; decision batch 8, 8-1).
+    outside_titan_engagement: no effect
+    rules: [01-core-rules]
+    decided: [OQ-09, OQ-18, OQ-46]
+
+  - id: fear-roll-total
+    name: Fear Roll total raised
+    parameters:
+      amount: whole number
+    reading: The named Fear Roll's total is raised by that amount before the result is read.
+    outside_titan_engagement: applies
+
+  - id: gain-scar
+    name: Gain a Scar
+    reading: The soldier gains a Scar, as data/mind/scars.yaml states.
+    outside_titan_engagement: applies
+    rules: [03-harm-and-mind]
+
+  # Decision batch 7, 7-8 (OQ-139), with the readings of decision batch 8, 8-13: the six effect types a Fear
+  # Roll row may add. An effect that acts on a Titan acts on the event's Titan (data/mind/fear-rolls.yaml,
+  # event_titan), so no effect leaves the Titan, the item, or the step to the GM.
+  - id: draw-attention
+    name: The loudest flag
+    reading: >-
+      If the soldier holds a Position other than distant relative to the event's Titan
+      (data/mind/fear-rolls.yaml, event_titan), they hold the loudest flag for that Titan, the flag
+      Draw Attention sets (data/engagement/attention.yaml, flags, loudest). It lasts until the end of
+      that Titan's next card that resolves a behavior, like every flag (flag_duration; ADR-0003,
+      item 2). Otherwise it does nothing: a scream from beyond a Titan's reach does not turn it
+      (decision batch 5, OQ-113).
+    lasts: As every flag lasts (data/engagement/attention.yaml, flag_duration).
+    outside_titan_engagement: no effect
+    rules: [05-titan-engagement]
+    decided: [OQ-113, OQ-139]
+
+  - id: stress-gain-nearby
+    name: Stress to comrades nearby
+    parameters:
+      amount: whole number (1 unless the row says otherwise)
+    reading: >-
+      Every comrade, player character or Squadmate, who holds the same Position as the soldier or one
+      Position step away, compared relative to the event's Titan (data/mind/fear-rolls.yaml,
+      event_titan), gains that much Stress once, when the result applies. A comrade who has left the
+      Titan Engagement never counts as either (data/engagement/positions.yaml, leaving, after_leaving,
+      same_position). It is Stress, not a roll: it causes no Fear Roll and no other roll (decision
+      batch 7, 7-8; OQ-50, as revised). The gain uses the named-gain row of
+      data/core/stress-changes.yaml. It applies only after every Fear Roll of the same event has found
+      its row, so it never changes a comrade's total for that event, which was fixed at the event's
+      snapshot (data/mind/fear-rolls.yaml, limits, timing; decision batch 8, 8-40); it counts from
+      that comrade's next roll on.
+    outside_titan_engagement: In a Skirmish, every other soldier in the Skirmish gains it, under the same snapshot. Anywhere else, no effect.
+    rules: [01-core-rules, 05-titan-engagement]
+    decided: [OQ-50, OQ-139]
+
+  - id: forced-move
+    name: A forced step
+    parameters:
+      toward: distant, or nearest-comrade
+    reading: >-
+      At the start of the soldier's next turn, before anything else in it, the soldier's Position
+      changes by one step. The step happens even when that turn was spent in advance, because it is a
+      result and not the soldier's own move (decision batch 8, 8-13): it spends nothing, it is a
+      change of Position a rule names (data/engagement/positions.yaml, moves, forced_step), and it
+      never meets a Drive's own-move trigger. It is one step the soldier's move could make, of that
+      kind (on foot, mounted, or ODM, with any Fly roll the step calls for), so an ODM step is an ODM
+      move for Chapter 4 (data/gear/odm-gear.yaml, odm_use, airborne). With toward distant, it is the
+      retreat's option 1: one step along a shortest chain of steps their move can make from their
+      Position to distant, relative to the Focus Titan with the earliest label they do not hold
+      distant from (data/engagement/background-titans.yaml, retreat, moves). With toward
+      nearest-comrade, it is one step their move can make that lowers the number of Position steps
+      between the soldier and the nearest comrade: the living comrade who holds a Position the fewest
+      Position steps away, compared relative to the living Focus Titan with the earliest label. When
+      more than one comrade or step qualifies, the soldier's player chooses. No step is made if the
+      soldier is Down, Grabbed, Pinned, or carried, or has left the Titan Engagement; if they hold distant
+      relative to every Focus Titan (toward distant) or already hold the nearest comrade's Position
+      (toward nearest-comrade); or if no step their move can make qualifies. The step never makes the
+      soldier leave the Titan Engagement or let go.
+    lasts: >-
+      Pending from when the result applies until the start of that turn, when the step is made or not
+      made. Rally clears a pending step (data/mind/stress-responses.yaml, rally), and it ends when the
+      Titan Engagement ends.
+    outside_titan_engagement: no effect
+    rules: [05-titan-engagement]
+    decided: [OQ-119, OQ-139]
+
+  - id: forced-action
+    name: A forced strike
+    placement: Only on a row whose lowest total is 7 or more (decision batch 7, 7-8).
+    reading: >-
+      The next action the soldier takes must be a Nape strike or a Body Part strike against the
+      event's Titan (data/mind/fear-rolls.yaml, event_titan; data/character/action-catalog.yaml,
+      nape-strike, body-part-strike), with every requirement those entries have. Until they take one,
+      they take no other action but Swap Blade Set (data/character/action-catalog.yaml,
+      swap-blade-set), so that a soldier whose handles are empty or whose Blade Set is ruined can refit
+      and strike, and they cannot Help or Cover: the row names forbids: [help, cover],
+      Chapter 1's shared hook (section 1.9; OQ-18), which reads this effect while it lasts and adds no
+      second timer. If the strike's roll falls short of what it needs and the soldier is allowed to
+      Push it, they must Push it; a Squadmate never Pushes. The soldier's moves are their own. While
+      the soldier is Grabbed the effect waits, since a Grabbed soldier's only action is Break Free
+      (data/engagement/grab.yaml, grabbed_state); while they are Down it waits, since a Down
+      soldier takes no action; and while they are Pinned it waits, since the Pinned list is their
+      state's rule (pinned). A limb-pinned soldier's Body Part strike against the Body Part that pins
+      them, when the event's Titan's body pins them, is the forced strike (data/engagement/titan-harm.yaml,
+      falling_titan, cut_free). A strike the soldier cannot legally make does not end the effect: it
+      stays pending (decision batch 8, 8-16). A forced strike is a Fear result, not a penalty for acting
+      alone (ADR-0010, as amended in decision batch 7).
+    lasts: >-
+      Until the soldier makes the strike, whatever its result; until Rally clears it
+      (data/mind/stress-responses.yaml, rally); until the event's Titan dies; or until the Titan
+      Engagement ends. It never lapses for any other reason, including a strike the soldier cannot make
+      by their moves and a Swap Blade Set (decision batch 8, 8-16). The ban on Help and Covering lasts
+      exactly as long.
+    outside_titan_engagement: >-
+      In a Skirmish, the next action must be a Fight or a Shoot against a Foe, with the same Push,
+      Help, and Covering rules, until it is taken, Rally clears it, or the Skirmish ends. Anywhere
+      else, no effect.
+    rules: [01-core-rules, 05-titan-engagement]
+    decided: [OQ-18, OQ-139]
+
+  - id: drop-blade-set
+    name: Blade Set dropped
+    placement: Only on a row that also spends the next action or the next turn (decision batch 7, 7-8).
+    reading: >-
+      The Blade Set in the soldier's handles falls, and the handles are empty. It lies at the
+      soldier's Position. No one takes it during the Titan Engagement and no rule moves it; when the
+      Titan Engagement ends, it is shared out with the left items, as data/gear/carrying.yaml
+      (leaving_play, death, shared_out) shares out a dead soldier's (decision batch 8, 8-13). If the
+      handles are empty, nothing happens. The soldier refits from a carried Blade Set with the swap
+      (data/gear/blade-sets.yaml, swap), which spends neither the move nor the action and can be
+      made during a turn spent in advance. The sheet records the dropped set
+      (data/harm/sheet-fields.yaml, dropped_blade_sets).
+    outside_titan_engagement: >-
+      Applies. The dropped Blade Set is shared out, as above, when the procedure in which the Fear
+      Roll was made ends.
+    rules: [04-gear]
+    decided: [OQ-63, OQ-68, OQ-139]
+
+  - id: gas-roll
+    name: A Gas Roll at once
+    reading: >-
+      If the soldier has a canister fitted to their ODM Gear with a Gas Rating above 0, they make a
+      Gas Roll on it at once, read as data/gear/odm-gear.yaml (gas_roll) reads one: two dice,
+      whatever rolls the soldier has Pushed this round; each die showing 1 lowers the Gas Rating by
+      1, to a minimum of 0. It is not the round's Gas Roll and it is not ODM use, so it neither
+      replaces nor adds to the round's own Gas Roll. With no canister fitted, or a Gas Rating of 0,
+      nothing happens.
+    outside_titan_engagement: applies
+    rules: [04-gear]
+    decided: [OQ-60, OQ-139]
+
+  # Decision batch 7, 7-6 (OQ-137): the drafter's choice for the lost-limb grades. A new effect type, rather
+  # than widening Chapter 1's forbids hook, which names only Pushing, Help, Covering, and Reactions
+  # (ADR-0003, item 13). data/harm/critical-injuries.yaml (lost_limb_riders, forbids_entries) uses it.
+  - id: forbids-entries
+    name: Entries the soldier cannot take
+    parameters:
+      entries: Action Catalog entry ids (data/character/action-catalog.yaml)
+    reading: >-
+      The soldier cannot take, make, or use any listed entry. A roll a rule calls for under a listed
+      entry is not made, and whatever needs that roll, such as a Position change that needs a Fly roll,
+      cannot be done. A Talent's dice or rule on a listed entry does nothing for the soldier. It removes
+      no die from any other roll.
+    lasts: As long as the row that names it; a lost-limb grade lasts for as long as the soldier lives.
+    outside_titan_engagement: applies
+    rules: [03-harm-and-mind]
+    decided: [OQ-137]
+
+  - id: other
+    name: Stated effect
+    parameters:
+      text: the effect, in closed words, written on the row
+    reading: >-
+      The row's text states the whole effect. It uses only terms and procedures the rules
+      define, and names no choice for the GM. Only Scar rows use it.
+    outside_titan_engagement: applies
+
+# Decision batch 8, 8-9 (OQ-146): the Pinned state's closed lists, read as forbids-entries. The state is
+# data/engagement/titan-harm.yaml (falling_titan, pinned), whose forbids and body_pin_forbids rows carry
+# Chapter 1's hook for Help, Covering, and Reactions, so those three are not listed here. Rolls a rule calls
+# for without the soldier choosing them (the Death Roll, a Fear Roll, a Gas Roll) are never forbidden.
+pinned:
+  limb_pin:
+    allowed_entries: [heave, body-part-strike, read, call-it, rally, draw-attention, help, swap-initiative-card]
+    body_part_strike: Only against the Body Part that pins the soldier (data/engagement/titan-harm.yaml, falling_titan, cut_free).
+    forbids_entries: [nape-strike, break-attention, break-free, squad-tactic, lift-comrade, change-canister, pass-item, take-item, mount-or-dismount, swap-blade-set, shed-load, restock-medical-kit, fight, shoot, reload, release, treat-injury, field-repair, fly, ride, downtime-action, squad-action]
+  body_pin:
+    allowed_entries: [swap-initiative-card]
+    forbids_entries: [heave, body-part-strike, read, call-it, rally, draw-attention, nape-strike, break-attention, break-free, squad-tactic, lift-comrade, change-canister, pass-item, take-item, mount-or-dismount, swap-blade-set, shed-load, restock-medical-kit, fight, shoot, reload, release, treat-injury, field-repair, fly, ride, downtime-action, squad-action]
+  lasts: While the soldier is Pinned.
+  decided: [OQ-146]
+
+# Optional qualifiers a row can add to any effect: applies_to (which roll or amount the effect
+# is limited to) and applies_after (what it follows). They narrow the effect; they never widen it.
+
+# What no Chapter 3 row does, and why.
+never_used:
+  forbid_help_or_cover: >-
+    Only a Fear Roll row with the forced-action effect uses the forbids hook for Help or Cover
+    (Chapter 1, section 1.9; decision batch 7, 7-8); any other row may, by adding forbids. The Down
+    state forbids both on its own row (data/harm/down.yaml).
+  gear_damage: >-
+    No Chapter 3 row damages or wears gear. Two Fear Roll effects touch gear, each through a rule
+    Chapter 4 defines: drop-blade-set leaves the Blade Set in the handles at the soldier's Position,
+    and gas-roll spends gas by a Gas Roll (decision batch 7, 7-8). Chapter 4 owns gear damage.
+  forced_move_toward_nearest_comrade: >-
+    No Phase 1 Fear Roll row uses forced-move with toward nearest-comrade. The reading stands so a
+    later row can use it without a new effect type (decision batch 7, 7-8).

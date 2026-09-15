@@ -1,0 +1,142 @@
+# The playtest Foes: each kind's Attack Dice, Guard, Health, Grit, Watch, group size, and weapons; the
+# Foe's firearms; Guard, the Foe's cancelling roll; and the closed foe rule every Foe acts by.
+# Source of truth under ADR-0012. docs/rules/07-playtest-rules.md (section 7.4) references this file
+# and renders its tables from it (tools/render/render.py). Each weapon's damage and Injury Type is in
+# data/skirmish/skirmish.yaml (weapons).
+# Playtest rule: Phase 2 replaces this file (decision batch 7, 7-17; decision batch 8, 8-4, 8-7;
+# OQ-143, OQ-145).
+id: foes
+name: Foes
+chapter: 07-playtest-rules
+status: playtest
+adrs: [ADR-0003, ADR-0014, ADR-0018, ADR-0019]
+decided: [OQ-143, OQ-145, OQ-155, OQ-164]
+
+row_fields:
+  attack_dice: base dice the Foe rolls for every attack it makes, succeeding on 6, never Pushed, with no other dice
+  guard_dice: base dice the Foe rolls as its cancelling roll against each attack on it (guard)
+  health: the damage it takes before it is out of the Skirmish
+  grit: how many of the group must be out of the Skirmish before it breaks; also the base of a Parley's needs
+  watch: the successes a Sneak roll needs for the ambush against the group
+  group_size: how many Foes the group has when the Skirmish's start names no number
+  fight_weapon: the weapon its Fight attacks use (data/skirmish/skirmish.yaml, weapons)
+  shoot_weapon: the firearm its Shoot attacks use, or null
+
+foes:
+  - id: bandit
+    name: Bandit
+    who: A salvager or a deserter living outside the Walls.
+    attack_dice: 4
+    guard_dice: 3
+    health: 3
+    grit: 1
+    watch: 1
+    group_size: {fixed: 3}
+    fight_weapon:
+      roll: D6 for each Bandit as the Skirmish begins   # decision batch 8, 8-30 (OQ-155, item b)
+      rows:
+        - {results: [1, 2, 3], weapon: club}
+        - {results: [4, 5, 6], weapon: knife}
+      at_night: {replaces: club, with: firebrand}   # decision batch 8, 8-7: the prowlers row and any Bandit group at night
+    shoot_weapon: null
+  - id: military-police-trooper
+    name: Military Police trooper
+    who: A soldier of the Military Police, the commonest human Foe.
+    # decision batch 8, 8-33 (OQ-164): Attack Dice 7, Grit 4, and a patrol of 4 that fights to the last,
+    # from the Skirmish sweep. History: Attack Dice 5, Grit 2, and 8-30 (a)'s D3+1 group (OQ-155, item a).
+    attack_dice: 7
+    guard_dice: 4
+    health: 4
+    grit: 4
+    watch: 2
+    group_size: {fixed: 4}
+    fight_weapon: sabre
+    shoot_weapon: flintlock-pistol
+  - id: garrison-sentry
+    name: Garrison sentry
+    who: A Garrison soldier on picket duty.
+    attack_dice: 4
+    guard_dice: 3
+    health: 4
+    grit: 1
+    watch: 2
+    group_size: {fixed: 2}
+    fight_weapon: bare-hands   # decision batch 8, 8-30 (OQ-155, item b): a musket is never fired at an Engaged target
+    shoot_weapon: musket
+
+# The Skirmish probe's reported figures (decision batch 8, 8-33; OQ-164). Each is reported beside its
+# probe row, with the Cut and Pierce riders on, and each range is read exactly. They are reported
+# figures, not ADR-0014 targets (ADR-0014, as amended for 8-31 and 8-33), and no rule reads them.
+reported_figures:
+  status: reported
+  riders: on
+  rows:
+    - id: squad-against-a-patrol
+      case: The reference Squad against a Military Police patrol, four troopers (the kind's group_size).
+      deaths_per_skirmish: {min: 0.02, max: 0.04}   # deaths through the end steps
+      squad_win_percent: {min: 90}
+      sweep: {deaths_per_skirmish: 0.024, squad_win_percent: 97.6}
+      final_rerun: {deaths_per_skirmish: 0.020, squad_win_percent: 97.5, reading: inside the range}
+    - id: bandit-night-ambush
+      case: The reference Squad against three Bandits with their ambush at night, with firebrands.
+      deaths_per_skirmish: {min: 0.01, max: 0.03}   # deaths through the end steps
+      sweep: {deaths_per_skirmish: 0.015}
+      final_rerun: {deaths_per_skirmish: 0.016, reading: inside the range}
+    - id: rookie-against-a-trooper
+      case: One Rookie against one Military Police trooper.
+      rookie_win_percent: {min: 50, max: 70}
+      sweep: {rookie_win_percent: 56.2}
+      final_rerun: {rookie_win_percent: 57.5, reading: inside the range}
+  source: >-
+    The simulator agent's Foe sweep after the full rerun: 8,000 Skirmishes a row, the Cut and Pierce
+    riders on, fixed seeds (decision batch 8, 8-33). The final full rerun reports each figure at the
+    probe's own count.
+
+firearms:
+  start: A Foe's firearm is loaded when the Skirmish begins.   # decision batch 8, 8-30 (OQ-155, item b)
+  reload: A Foe's Reload spends its turn and no shot; a Foe never runs out.
+  empty: A Foe's firearm is empty after it Shoots.
+
+# Guard is the Foe's cancelling roll (decision batch 8, 8-4; Chapter 1, section 1.9).
+guard:
+  what: >-
+    A Foe's Guard is its cancelling roll. When a soldier's Fight or Shoot roll against the Foe is final,
+    the GM rolls the Foe's Guard dice in the open as base dice. Each success cancels one of the attack's
+    successes, and the attack lands on 1 or more net successes.
+  every_attack: Guard is rolled against every attack on the Foe, however many come in a round. A Held Foe still rolls it.
+  never: [push, help, bonus-dice, stress-dice, gear-dice]
+  spends: nothing
+  ambush: No Guard is rolled against an attack the ambush leaves unanswered (data/skirmish/skirmish.yaml, ambush).
+
+# The closed foe rule (ADR-0003, item 8; ADR-0018). Every Foe acts by these steps and no others.
+foe_rule:
+  when: On the Foe group's card, each Foe still in the Skirmish that has not broken takes one turn, in label order.
+  # decision batch 8, 8-30 (OQ-155, item c): a Foe never targets a Down soldier
+  candidates: >-
+    Every soldier taking part who is alive and not Down.
+  last_attacker: Of the candidates, the one who most recently made a Fight or Shoot roll against this Foe, landed or not.
+  lowest_card: Of the candidates a step names, the one whose initiative card this round is lowest.
+  steps:
+    - id: held
+      test: The Foe is Held.
+      does: It Fights its holder, bare-handed.
+    - id: engaged
+      test: The Foe is Engaged with a candidate.
+      does: >-
+        It Fights with its Fight weapon: its last attacker, if they are Engaged with it; otherwise the
+        Engaged candidate with the lowest card.
+    - id: loaded
+      test: The Foe has a loaded firearm and at least one candidate.
+      does: It Shoots with its Shoot weapon at its last attacker, if any; otherwise at the candidate with the lowest card.
+    - id: empty
+      test: The Foe has an empty firearm.
+      does: It reloads.
+    - id: close-in
+      test: The Foe has at least one candidate.
+      does: It becomes Engaged with the candidate with the lowest card and Fights them with its Fight weapon.
+    - id: none
+      test: None of the above.
+      does: Nothing.
+  first_match: Take the first step whose test the Foe meets.
+  never: [push, help, cover, grapple, break-free, release, parley, size-up, reaction]
+  no_stress: A Foe has no Stress, makes no Fear Roll, and has no Stress Response.

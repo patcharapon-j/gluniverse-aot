@@ -1,0 +1,275 @@
+# Expeditions, the playtest minimum: when one begins and ends, the day, Pace, Formation Posts, the
+# Leg, the Leg roll, rations and hunger, and the night camp.
+# Source of truth under ADR-0012. docs/rules/07-playtest-rules.md (section 7.1) references this file
+# and renders its tables from it (tools/render/render.py). The Leg Hazard and Night tables are in
+# data/expedition/hazards.yaml; the route, the Waypoint kinds, and the interim route are in
+# data/expedition/route.yaml.
+# Playtest rule: Phase 2 replaces this file (decision batch 7, 7-14; OQ-141).
+id: legs
+name: Expeditions
+chapter: 07-playtest-rules
+status: playtest
+adrs: [ADR-0003, ADR-0009, ADR-0010, ADR-0014, ADR-0016]
+decided: [OQ-141]
+
+# ------------------------------------------------------------------ the Expedition
+expedition:
+  meaning: A Survey Corps operation beyond the Walls, ridden as a chain of Legs between Waypoints (ADR-0009).
+  before_it_begins:
+    - The route is set (data/expedition/route.yaml, route).
+    - >-
+      Every soldier in the Squad receives a full Standard Issue together (data/gear/standard-issue.yaml,
+      when_received), which restocks Squad Supply, rations included (data/gear/squad-supply.yaml, stock).
+  begins: When the Squad rides out of a gate of the Walls onto the route's first Leg.
+  ends: >-
+    When the Squad reaches the route's last Waypoint, a gate, at the end of a Leg. No further Leg and
+    no Night Camp follow. Downtime begins (data/campaign/downtime.yaml).
+  taking_part: >-
+    Every living soldier in the Squad. A new character who joins the Squad during an Expedition joins
+    at the next Waypoint (data/character/squadmates.yaml, promotion, no_squadmate) and takes part from
+    then on.
+  interim_rows: >-
+    While an Expedition is under way, the interim day (data/harm/healing.yaml, day_passes, interim)
+    and the interim issue (data/gear/standard-issue.yaml, interim_issue) never happen. The Night
+    Camp's day, the issue before the Expedition, and a Depot's issue take their place.
+  gas: No Gas Roll is made on a Leg or at a Night Camp; gas is spent only in a Titan Engagement (ADR-0009).
+  gear_back: >-
+    Canisters, Blade Sets, and Squad Supply come back only through a full Standard Issue: before the
+    Expedition and at a Depot (data/expedition/route.yaml, depot). What a Titan Engagement uses up
+    stays used up until then.
+  # decision batch 8, 8-27 (OQ-152, item e)
+  mounted: >-
+    On a Leg, every soldier who is not Down and whose own horse is not lame is mounted. At a Night Camp
+    every soldier is dismounted. A Down soldier, and a soldier whose horse is lame, rides in the wagon
+    or across a comrade's saddle and is not mounted. These are the Expedition's mount and dismount
+    rules (data/gear/horses.yaml, mounted, outside_titan_engagement).
+  down_soldiers: >-
+    A Down soldier cannot be the Lead, Help a Leg roll or the camp roll, or make the camp roll. In a
+    Titan Engagement a hazard row begins, they take part as the starting placement gives
+    (data/engagement/positions.yaml, placement).
+  # decision batch 8, 8-35: extends 8-27 (e) to every Leg roll and the camp roll
+  every_soldier_down: >-
+    When no soldier on the Expedition can make a Leg roll or the camp roll, that roll fails (rolls,
+    leg-roll and camp-roll, notes): when every living soldier is Down, or, on a Hard Ride, when no soldier
+    who is not Down is mounted on their own horse. With no roller there is no Help and no Push. Nothing
+    else in the Leg or the Night Camp changes. The Squad still reaches the Waypoint
+    (ADR-0009, as amended for 8-35), and the Down ride in the wagon (mounted). A failed Leg roll spends its rations and adds
+    its hazard modifier (leg_outcome); a failed camp roll gives no Camp Relief and adds 1 to the night
+    hazard (night_camp, camp_outcome). A hazard row that names the Lead does nothing when there is no
+    Lead. A care window makes no roll, since no Down soldier rolls in one (data/harm/treat-injury.yaml,
+    care_windows); the Death Rolls of day limits and the healing count run as a day passing gives
+    (data/harm/healing.yaml, each_day).
+  deaths: >-
+    Promotion and Retirement that fall due on a Leg or at a Night Camp happen when that Leg or Night
+    Camp ends (data/character/squadmates.yaml, promotion, timing), after any Titan Engagement,
+    Skirmish, care window, or day passing inside it has ended.
+  # decision batch 8, 8-39: a fight nested in a Leg or a Night Camp has its own once-per uses
+  drives_and_talents: >-
+    A Leg and a Night Camp are procedures with a start and an end. A Talent whose limit is once per
+    Titan Engagement can also be used once per Leg and once per Night Camp where its trigger can occur,
+    such as Sure Seat on a Hard Ride (data/character/talents.yaml, talent_rules, limit_terms). A Titan
+    Engagement or a Skirmish that begins inside a Leg or a Night Camp is its own procedure with its own
+    use, and neither use spends the other, as limit_terms states. A Drive's turn tests count no Leg roll
+    and no camp roll.
+
+# ------------------------------------------------------------------ the day
+day:
+  steps:
+    - Ride the day's first Leg, then its second (leg_steps).
+    - If a Leg is left on the route after the second, and pace orders a Hard Ride, ride that Leg as the day's third.
+    - Make the Night Camp (night_camp).
+  # decision batch 8, 8-27 (OQ-152, item b); 8-37 for the retreat at night
+  counted_legs: >-
+    Every Leg ridden counts toward the day's Legs, including a Leg ridden again after a retreat
+    (leg_steps, titan-engagement), and a Leg ridden again as the next day's first after a retreat at a
+    Night Camp (night_camp, retreat).
+  night: Legs are never ridden at night (ADR-0009).
+
+pace:
+  - id: steady
+    name: Steady
+    when: Every Leg that is not a Hard Ride.
+    rations_multiplier: 1
+    hazard_modifier: 0
+    leg_roll_entry: the Formation Post's entry
+  - id: hard-ride
+    name: Hard Ride
+    # decision batch 8, 8-27 (OQ-152, item a)
+    when: >-
+      A third Leg squeezed in before dark, after the day's second Leg, when a Leg is left on the route
+      and Command orders it: on a day the Mission Brief lists, or, on the interim route, when the D6
+      rolled after the day's second Leg shows 5 or 6. A day's first or second Leg is never a Hard Ride.
+    rations_multiplier: 2
+    hazard_modifier: 1
+    leg_roll_entry: ride
+
+# ------------------------------------------------------------------ Formation Posts
+# The whole Squad rides at one Post (ADR-0010). The route gives each Leg's Post, so it changes only at
+# a Waypoint.
+formation_posts:
+  - id: vanguard
+    name: Vanguard
+    entry: spot
+    hazard_modifier: 1
+    special: none
+    picture: The first to see, and the first seen.
+  - id: flank-scout
+    name: Flank Scout
+    entry: survive
+    hazard_modifier: 1
+    special: none
+    picture: Reading the land at the formation's edge.
+  - id: signal-relay
+    name: Signal Relay
+    entry: spot
+    hazard_modifier: 0
+    special: >-
+      Once per Leg, before the hazard roll, the Squad may spend 1 flare of Squad Supply to lower that
+      Leg's hazard total by 2.
+    picture: Watching the sky for flares.
+  - id: center
+    name: Center
+    entry: endure
+    hazard_modifier: -1
+    special: none
+    picture: The long hours in the saddle.
+  - id: supply-wagon
+    name: Supply Wagon
+    entry: survive
+    hazard_modifier: 0
+    special: The Leg Hazard table's Dropped supplies row loses 2 units in place of 1.
+    picture: Keeping the wagons whole.
+  - id: rear-guard
+    name: Rear Guard
+    entry: spot
+    hazard_modifier: 0
+    special: none
+    picture: The last to leave.
+
+# ------------------------------------------------------------------ the Leg
+leg_steps:
+  - id: post
+    text: The Squad rides at the Formation Post the route gives this Leg.
+  - id: leg-roll
+    text: Make the Leg roll (rolls, leg-roll).
+  - id: arrive
+    text: >-
+      The Squad always reaches the Leg's Waypoint (ADR-0009). Spend the rations leg_outcome gives; a
+      Squad that holds fewer meets hunger (rations). Record the hazard modifier leg_outcome gives.
+  - id: hazard
+    text: >-
+      At the Signal Relay Post the Squad may first spend its flare (formation_posts, signal-relay). Roll
+      the hazard and resolve its row (data/expedition/hazards.yaml, leg_hazards).
+  - id: harm
+    text: >-
+      Harm a row inflicts outside a Titan Engagement opens the outside-harm care window
+      (data/harm/treat-injury.yaml, care_windows, outside-harm), with every soldier on the Expedition in
+      its scope.
+  - id: titan-engagement
+    text: >-
+      A Titan Engagement a row begins takes its Anchor Rating from the kind of the Waypoint this Leg
+      leads to (data/expedition/route.yaml, waypoint_kinds), and whatever else the row names; everything
+      it leaves unnamed comes from data/engagement/engagement-setup.yaml. Every living soldier on the
+      Expedition takes part. If it became a retreat before it ended (data/engagement/background-titans.yaml,
+      retreat), the Squad falls back to the Waypoint this Leg started from and rides this Leg again from
+      step post, with a new Leg roll and a new hazard. A retreat from a Titan Engagement the Night table
+      begins falls back overnight instead (night_camp, retreat; decision batch 8, 8-37).
+  - id: waypoint
+    text: >-
+      The Leg ends at its Waypoint. At a Depot, every soldier receives a full Standard Issue together
+      (data/expedition/route.yaml, depot). At the gate, the Expedition ends.
+
+leg_outcome:
+  tracked_value: leg-outcome   # data/character/action-catalog.yaml
+  success:
+    rations: 1
+    hazard_modifier_per_success_beyond_the_first: -1
+  failure:
+    rations: 2
+    hazard_modifier: 1
+  pace: Multiply the rations by the Pace's rations_multiplier (pace).
+
+# ------------------------------------------------------------------ rations and hunger
+rations:
+  stock: data/gear/squad-supply.yaml (stock, by_funding, rations)
+  spent_by: >-
+    A Leg (leg_outcome), a Night Camp (night_camp, rations), and the titans-far-off and spoiled rows
+    (data/expedition/hazards.yaml).
+  hunger:
+    # decision batch 8, 8-27 (OQ-152, item c): short of the spend counts as none
+    when: >-
+      A Leg or a Night Camp must spend rations and Squad Supply holds fewer units than it must spend.
+      The Squad spends every unit it holds.
+    effect: >-
+      Every soldier on the Expedition gains 1 Stress, with no roll (data/core/stress-changes.yaml,
+      named-gain). A Night Camp that meets hunger gives no Camp Relief.
+
+# ------------------------------------------------------------------ the night camp
+night_camp:
+  steps:
+    - id: camp-roll
+      text: Make the camp roll (rolls, camp-roll).
+    - id: rations
+      text: Spend 1 ration. A Squad that holds none meets hunger (rations).
+    - id: camp-relief
+      text: >-
+        If the camp roll succeeded and the camp did not meet hunger, every soldier on the Expedition loses
+        1 Stress: the Camp Relief (data/core/stress-changes.yaml, camp-relief).
+    - id: night-hazard
+      text: >-
+        Roll the night hazard and resolve its row (data/expedition/hazards.yaml, night), with +1 if the
+        camp roll failed. If a Titan Engagement the row begins becomes a retreat before it ends, the
+        Squad falls back overnight (retreat).
+    - id: day-passes
+      text: >-
+        A day passes (data/harm/healing.yaml, each_day). Its care window's scope is every soldier on the
+        Expedition, and Field Repair is rolled in it (data/gear/field-repair.yaml, outside_titan_engagement).
+  # decision batch 8, 8-37: ADR-0009's fall-back and its batch 7 ride-again, with no Leg ridden at night
+  retreat: >-
+    When a Titan Engagement the Night table began became a retreat before it ended
+    (data/engagement/background-titans.yaml, retreat), the Squad falls back overnight to the Waypoint
+    the day's last Leg started from. The Night Camp goes on there at its day-passes step, with no new
+    camp roll, ration, or night hazard, and it counts as a Night Camp made on this Expedition
+    (data/expedition/hazards.yaml, leg_hazards, modifiers, per_night_camp_made). The next day's first
+    Leg rides that Leg again, from step post, with a new Leg roll and a new hazard, and it counts toward
+    that day's Legs (day, counted_legs). Falling back is not riding a Leg: it makes no Leg roll, spends
+    nothing, and reads no Leg hazard, so no Leg is ridden at night (ADR-0009, as amended for 8-37). Only a retreat moves the
+    camp; a Titan Engagement the Night table begins that ends any other way leaves the camp where it was.
+  camp_outcome:
+    tracked_value: camp-outcome   # data/character/action-catalog.yaml
+    success: The camp can give Camp Relief.
+    failure: No Camp Relief, and the night hazard roll gains +1.
+
+# ------------------------------------------------------------------ rolls
+# Every roll this file calls for, with its Help and retry (Chapter 1, sections 1.1 and 1.8).
+rolls:
+  - id: leg-roll
+    name: Leg roll
+    who: >-
+      The Lead: one soldier on the Expedition who is not Down, chosen by the players, using Chapter 2's
+      roll-off if they disagree. On a Hard Ride the Lead must be mounted on their own horse.
+    entry: the Formation Post's entry on a Steady Leg; Ride on a Hard Ride, with the horse's Gear Dice
+    needs: "1"
+    help: >-
+      Up to 3 comrades on the Expedition who are not Down. Help spends nothing, and each soldier Helps
+      at most once per Leg.
+    push: Allowed, and a comrade who qualifies to Help may Cover it (Chapter 1, section 1.5).
+    retry: Never. A Leg ridden again after a retreat makes a new Leg roll.
+    changes: [leg-outcome]
+    # decision batch 8, 8-27 (OQ-152, item e) for a Hard Ride; 8-35 for every Leg
+    notes: >-
+      With no soldier who can make the roll, on a Steady Leg or a Hard Ride, the Leg roll fails.
+  - id: camp-roll
+    name: Camp roll
+    who: >-
+      One soldier on the Expedition who is not Down, chosen by the players, using the roll-off if they
+      disagree.
+    entry: Survive
+    needs: "1"
+    help: Up to 3 comrades on the Expedition who are not Down. Help spends nothing.
+    push: Allowed, and a comrade who qualifies to Help may Cover it (Chapter 1, section 1.5).
+    retry: Never.
+    changes: [camp-outcome]
+    # decision batch 8, 8-35
+    notes: >-
+      With no soldier who can make the roll, the camp roll fails.

@@ -1,0 +1,71 @@
+# Interim Titan Engagement setup: the Anchor Rating, the Focus Titan's Size Class, the Background
+# Titans, and the retreat clock, for a Titan Engagement whose starting rule names none of them.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.1) references this
+# file and renders its tables from it (tools/render/render.py).
+id: engagement-setup
+name: Interim Titan Engagement Setup
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0014]
+decided: [OQ-87, OQ-104, OQ-126, OQ-141]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10)
+
+used_when: >-
+  A Titan Engagement begins and the rule that begins it does not name its Anchor Rating, its Focus
+  Titan, its Background Titans, or its retreat clock's length. An Expedition's hazard rows name some of
+  these, and the kind of the Waypoint names the Anchor Rating (data/expedition/hazards.yaml;
+  data/expedition/route.yaml, waypoint_kinds; decision batch 7, 7-14); a Mission Brief may name more. A value the starting rule
+  names is never rolled or taken from this table.
+
+steps:
+  - id: anchor-rating
+    text: Roll D6 on anchor_rating.
+  - id: focus-titan
+    text: >-
+      Roll D6 on size_class. The Focus Titan is the standard Titan of that Size Class
+      (data/titans/index.yaml, standard_titans). If it gives medium, roll D6 on medium_abnormal:
+      the Focus Titan is the Titan its row names (data/titans/index.yaml, abnormals).
+  - id: background-titans
+    text: >-
+      Roll D6 on background_titans. For each Background Titan it gives, roll D6 on size_class for
+      its Size Class, in the order the row lists the clocks. Each is the standard Titan of its Size
+      Class (data/titans/index.yaml, standard_titans); medium_abnormal is never rolled for it.
+  - id: retreat-clock
+    text: >-
+      The retreat clock has retreat_clock segments (data/engagement/background-titans.yaml,
+      retreat_clock). Nothing is rolled: the length is the same for every Titan Engagement this
+      table sets up.
+
+anchor_rating:
+  roll: D6
+  rows:
+    - {results: [1], anchor_rating: open}
+    - {results: [2], anchor_rating: sparse}
+    - {results: [3, 4], anchor_rating: wooded}
+    - {results: [5], anchor_rating: urban}
+    - {results: [6], anchor_rating: giant-forest}
+
+size_class:
+  roll: D6
+  rows:
+    - {results: [1, 2], size_class: small}
+    - {results: [3, 4, 5], size_class: medium}
+    - {results: [6], size_class: large}
+
+# A Focus Titan whose size_class row is medium: 1 Titan Engagement in 12 the table sets up has the
+# Sprinting Abnormal as its Focus Titan (OQ-104).
+medium_abnormal:   # 1 Titan Engagement in 12 the table sets up meets the Sprinting Abnormal (decision batch 4, OQ-104)
+  roll: D6
+  rows:
+    - {results: [1, 2, 3, 4, 5], titan: standard-medium}
+    - {results: [6], titan: sprinting-abnormal}
+
+background_titans:
+  roll: D6
+  rows:
+    - {results: [1, 2], clocks: []}
+    - {results: [3, 4], clocks: [6]}
+    - {results: [5], clocks: [4]}
+    - {results: [6], clocks: [4, 8]}
+
+retreat_clock: 8   # segments, for every Titan Engagement this table sets up; no roll (decision batch 5, 5-10, OQ-126)
+
+gm_choices: none

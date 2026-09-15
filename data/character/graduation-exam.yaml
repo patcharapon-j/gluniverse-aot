@@ -1,0 +1,132 @@
+# The Graduation Exam: the optional played prologue of three Trials that replaces the
+# third Training Year's performance roll.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.4)
+# references this file and renders its tables from it (tools/render/render.py).
+id: graduation-exam
+name: Graduation Exam
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0012]
+decided: [OQ-05, OQ-18, OQ-22, OQ-37]
+
+use:
+  optional: true
+  decided_by: >-
+    the players, before the Lifepath begins, at step campaign-year of
+    data/character/lifepath.yaml (group_choices there settles disagreement). A replacement
+    character created later decides before rolling their own Lifepath.
+  applies_to: >-
+    every Cadet being created at the same time; a replacement character created later takes
+    the Exam alone
+  replaces: the year-3 performance roll (data/character/training-years.yaml)
+  keeps: the year-3 event, including its attribute point, Talent level, and merit_change
+  timing: after every Cadet has applied their Year 3 event, and before Graduation
+
+conditions:
+  titan_engagement: false     # no rounds, turns, Positions, Attention, or Titans
+  gas_rolls: false
+  blade_sets_counted: false
+  exam_issue:
+    - item: training ODM Gear
+      counts_as: odm-gear
+      gear_dice: 1
+    - item: training Blade Set
+      counts_as: blade-set
+      gear_dice: 1
+    - item: training medical kit
+      counts_as: medical-kit
+      gear_dice: 1
+    - item: training tool kit
+      counts_as: tool-kit
+      gear_dice: 1
+  exam_issue_wear: >-
+    Wear from Pushed rolls applies to the exam issue during the Exam and has no effect after
+    it. The exam issue is handed back when the Exam ends.
+  pools: >-
+    Every Trial roll is an attribute roll with the full Chapter 1 pool: attribute, one dice
+    Talent that names the entry, Bonus Dice only from the squad field exercise's Help, Gear
+    Dice from the exam issue item listed for the entry, and Stress Dice. A roll can be Pushed
+    only where its Trial's push is true; the other Trials forbid a Push by their own rule
+    (Chapter 1, section 1.5). Rule Talents that name the entry apply.
+  requirements_ignored: >-
+    Requirements of an entry that need a Titan, a Position, Attention, a Grabbed or Down
+    soldier, a patient, a comrade with a Stress Response, or a worn or Jammed item do not
+    apply during the Exam. The listed exam issue item always meets the entry's gear
+    requirement.
+  stress: >-
+    Every Cadet starts the Exam at Stress 0. Stress gained during the Exam stays through
+    later Trials and adds Stress Dice to their rolls. When the Exam ends, every Cadet's Stress
+    returns to 0 (data/core/stress-changes.yaml, row graduation-exam-ends).
+  stress_responses: >-
+    A Stress Response during the Exam still happens, and the roll cannot be Pushed after it.
+    The Exam names its resolution (Chapter 1, section 1.5, Finishing a roll, step 2): it is
+    not resolved on the Chapter 3 table, and instead costs the Cadet 1 Merit on the Trial
+    whose roll caused it. Nothing else happens. No Chapter 3 result arises during the Exam.
+  merit: >-
+    The Merit from all three Trials, after any Stress Response costs, is added to the
+    Cadet's Merit total in place of the Year 3 performance roll. A Stress Response can make a
+    Trial's Merit negative.
+
+order: [odm-balance-test, titan-dummy-course, squad-field-exercise]  # every Cadet finishes a Trial before the next begins
+roll_order_within_a_trial: >-
+  Before each Trial, every Cadet taking the Exam rolls a D6. Cadets roll that Trial in
+  descending order of result. Cadets tied for the same result roll again among themselves to
+  settle their order. The players do not choose the order, and group_choices in
+  data/character/lifepath.yaml does not apply to it.
+
+trials:
+  - id: odm-balance-test
+    name: The ODM balance test
+    description: Hanging from wires in a harness, the Cadet must hold steady and upright while instructors watch.
+    entry: fly
+    gear_item: training ODM Gear
+    push: false     # the Trial's own rule forbids a Push (Chapter 1, section 1.5)
+    help: none      # no Help and so no Covering
+    merit:          # by the roll's successes; successes_max null means no upper bound
+      - {successes_min: 0, successes_max: 1, merit: 0}
+      - {successes_min: 2, successes_max: null, merit: 1}
+
+  - id: titan-dummy-course
+    name: The Titan dummy course
+    description: A timed run through the training forest, cutting the napes of wooden Titans on hidden rails.
+    entry: nape-strike
+    gear_item: training Blade Set
+    push: false     # the Trial's own rule forbids a Push (Chapter 1, section 1.5)
+    help: none
+    merit:
+      - {successes_min: 0, successes_max: 1, merit: 0}
+      - {successes_min: 2, successes_max: null, merit: 1}
+
+  - id: squad-field-exercise
+    name: The squad field exercise
+    description: The Cadets taking the Exam work as one squad through a day-long exercise against instructors playing Titans.
+    entry_choice:
+      - {entry: read, gear_item: null}
+      - {entry: break-attention, gear_item: training ODM Gear}
+      - {entry: body-part-strike, gear_item: training Blade Set}
+      - {entry: treat-injury, gear_item: training medical kit}
+      - {entry: field-repair, gear_item: training tool kit}
+      - {entry: rally, gear_item: null}
+    needs: 3
+    push: true
+    help: >-
+      Every Cadet taking the Exam, other than the roller, qualifies to Help each roll in this
+      Trial (Chapter 1, section 1.8). Help given is fixed by this Trial's roll order. The
+      Cadet who rolls next in the order Helps the current roller, and the first roller Helps
+      the last. Each Cadet Helps exactly one roll, declared before that roll, and that one
+      Help is all it spends. A Cadet taking the Exam alone has no Help. No other Help is
+      possible in this Trial.
+    cover: >-
+      Every Cadet who qualifies to Help a roll can Cover its Push, whether or not they Helped
+      it (Chapter 1, section 1.5), unless they hold the rolled_state below, which a Cadet
+      gains on making their own roll and holds for the rest of the Trial. So only a Cadet
+      taking the Exam who has not yet made their own roll in this Trial can Cover. Covering
+      spends nothing (Chapter 1, section 1.5).
+    rolled_state:
+      id: rolled-in-squad-field-exercise
+      held_by: a Cadet who has made their own roll in this Trial
+      lasts: until this Trial ends
+      forbids: [cover]   # Chapter 1, section 1.9 shared hook (OQ-18)
+    merit:          # by the roll's successes; needs 3
+      - {successes_min: 0, successes_max: 2, merit: 0}
+      - {successes_min: 3, successes_max: null, merit: 1}
+    squad_bonus: none   # each Cadet's Merit depends only on their own rolls (OQ-22)

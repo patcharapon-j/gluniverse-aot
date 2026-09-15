@@ -1,0 +1,108 @@
+# Specialties: chosen at Graduation, or at a build's Specialty step (section 2.11), and the general
+# Talent list.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.6)
+# references this file and renders its tables from it (tools/render/render.py).
+id: specialties
+name: Specialties
+chapter: 02-character-creation
+adrs: [ADR-0006, ADR-0010, ADR-0011, ADR-0016]
+decided: [OQ-19, OQ-20, OQ-28, OQ-136]
+
+rules:
+  choose: >-
+    At Graduation, or at a build's Specialty step (data/character/lifepath.yaml, built_steps), the
+    player chooses one Specialty. It is not rolled and has no requirement. It never changes
+    afterwards.
+  grants:
+    - The key attribute, which is the only attribute that can be rated 6 (data/character/attributes.yaml).
+    - At Graduation only, the swap and floor in data/character/attributes.yaml (creation.graduation) give the key attribute the soldier's highest rating, and at least 4, without changing the attribute total. A built soldier takes no swap and no floor (creation.built).
+    - At Graduation, or at a build's Talents step, 1 level in one Talent on the Specialty's Talent list (at most level 2).
+  never_grants: >-
+    Permission. Every Action Catalog entry can be attempted by every soldier, and every
+    Talent, including those on a Specialty's list, can be held by any soldier. The Squadmate
+    rules still apply whatever the Specialty: a Squadmate never Pushes or Covers, and its only
+    Reaction is the dodge (data/character/squadmates.yaml, never, reactions).
+  talent_list_use: >-
+    The list limits only the Talent level granted at Graduation or at a build's Talents step. The XP rules (not yet
+    written) state whether the list matters when buying Talents.
+  list_size: >-
+    Each Specialty's list holds eight Talents: at least three dice Talents, one of them with a
+    condition, at least three rule Talents, and at least two that name a Leg, Night Camp,
+    Requisition, or Skirmish roll or trigger. A Talent may sit on two Specialty lists, and at most
+    four do; Well-Kept Rig sits on the Flier's and the Engineer's lists (decision batch 7, 7-2;
+    OQ-28 (c) as revised; OQ-136).
+  general_list: >-
+    The general list holds the twelve Talents on no Specialty's list, about temperament and
+    survival, at most four of them dice Talents. Any soldier may hold them, but the level a
+    Specialty grants never goes into one (decision batch 7, 7-2).
+
+specialties:
+  - id: slayer
+    name: Slayer
+    key_attribute: strength
+    summary: Trained to finish the job. Slayers make the Nape strike, cut the Body Parts that set it up, and know how to stop a person without killing them.
+    talents: [clean-cut, hamstringer, ground-work, relentless, blade-discipline, flat-of-the-blade, ready-blade, wrist-cut]
+    squadmate_template: slayer
+
+  - id: flier
+    name: Flier
+    key_attribute: agility
+    summary: The best on the wires. Fliers reach the hard Positions, dodge what others cannot, catch a falling comrade, and make a canister last.
+    talents: [slip-away, wirework, high-vantage, light-trigger, well-kept-rig, mid-air-catch, lookout-tree, close-pass]
+    squadmate_template: flier
+
+  - id: hunter
+    name: Hunter
+    key_attribute: perception
+    summary: Patient and sharp-eyed. Hunters turn a Titan's head with a decoy, spot danger first, and keep a Night Camp fed.
+    talents: [lure, keen-eyes, fieldcraft, musket-drill, hunters-eye, flare-discipline, forager, saw-it-coming]
+    squadmate_template: hunter
+
+  - id: tactician
+    name: Tactician
+    key_attribute: instinct
+    summary: Reads the Titan, the field, and the people in it. Tacticians learn a Titan's Next Behavior, put the Squad where it can help, and choose the line of the ride.
+    talents: [titan-reader, judge-of-character, route-finder, sharp-call, wide-awareness, formation-drill, change-the-order, break-their-nerve]
+    squadmate_template: tactician
+
+  - id: leader
+    name: Leader
+    key_attribute: empathy
+    summary: The voice that keeps soldiers in the fight. Leaders Rally, steady nerves, take on others' Stress, and talk armed people down.
+    talents: [steady-voice, silver-tongue, stand-down, unshaken-command, carrying-voice, shoulder-the-load, put-in-a-word, campfire-talk]
+    squadmate_template: leader
+
+  - id: medic
+    name: Medic
+    key_attribute: wits
+    summary: Keeps the injured alive long enough to get them home, and knows where the infirmary keeps its spare kits.
+    talents: [field-medicine, book-learning, camp-surgeon, careful-nursing, sure-hands, triage, friends-in-the-infirmary, tourniquet]
+    squadmate_template: medic
+
+  - id: engineer
+    name: Engineer
+    key_attribute: wits
+    summary: Keeps ODM Gear flying, the supply wagon rolling, and the firearms firing.
+    talents: [gearwright, wagon-master, know-the-stores, make-do, quick-refit, well-kept-rig, spare-parts, gunsmith]
+    squadmate_template: engineer
+
+  - id: rider
+    name: Rider
+    key_attribute: agility
+    summary: At home in the saddle. Riders use the horse as a decoy, a shield, and a way to carry the fallen out, and keep the column moving on a Hard Ride.
+    talents: [horsemanship, cavalry-cut, long-haul, loose-the-horse, sure-seat, rescue-ride, horse-whistle, hard-rider]
+    squadmate_template: rider
+
+  - id: brawler
+    name: Brawler
+    key_attribute: strength
+    summary: Hard to hold and hard to kill. Brawlers tear free of a Titan's grip, drag comrades out with them, and win a brawl with people.
+    talents: [grip-breaker, hard-to-kill, hand-to-hand, menace, pry-loose, strong-back, headlock, shoulder-charge]
+    squadmate_template: brawler
+
+# The general list (decision batch 7, 7-2): Talents on no Specialty's list.
+general:
+  id: general
+  name: General
+  summary: Temperament and survival. Talents on no Specialty's list, open to any soldier.
+  talents: [quiet-step, will-to-live, every-last-one, underground-instincts, iron-nerve, steady-heart, got-your-back, gallows-humour, stay-with-the-column, light-sleeper, nothing-wasted, not-like-this]

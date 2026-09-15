@@ -1,0 +1,248 @@
+# Why You Enlisted: the second Lifepath step. Each row gives one attribute point and a Drive.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (sections 2.3.2 and 2.5)
+# references this file and renders its tables from it (tools/render/render.py).
+id: why-you-enlisted
+name: Why You Enlisted
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0011]
+roll: D66
+decided: [OQ-23, OQ-36]
+
+# How the row is used at creation. The attribute point always comes from the rolled row, so
+# choosing a Drive never steers an attribute (OQ-19, OQ-23).
+use:
+  roll: Roll D66 on this table. The rolled row's attribute gains 1 point.
+  drive: >-
+    Record the rolled row's Drive, or instead the Drive of any other row, chosen by the
+    player. Choosing another row's Drive never changes which attribute gained the point.
+
+# How every Drive works. ADR-0003 item 3: every Drive is written as a trigger ("When I ...").
+drive_rules:
+  uses_per_session: 1
+  checked_when: >-
+    A Fear Roll result (Chapter 3) is about to take effect on the soldier. The player
+    checks the soldier's Drive trigger at that moment.
+  effect: >-
+    If the trigger is met and the Drive has not been used this session, the player may
+    shrug off the result: it does not take effect. Chapter 3 states what counts as the
+    result of a Fear Roll.
+  acts: >-
+    The acts a trigger can name are Action Catalog entry ids (data/character/action-catalog.yaml)
+    and push, which means Pushing a roll (Chapter 1, section 1.5). Covering is the Catalog
+    entry cover.
+  trigger_tests:
+    own_state: >-
+      The trigger names Positions the soldier holds, or the soldier's own flight on ODM Gear.
+      It is met if that state is true when the Fear Roll result is about to take effect. A
+      Position counts only if the soldier's own move put them in it: their most recent change
+      of Position was a move they made. A Position the soldier was placed at when the Titan
+      Engagement began, or by any rule other than their own move, does not count until their
+      own move changes it. A Grab counts as a change of Position made by another rule, even
+      when the soldier's Position stays On Body (data/engagement/grab.yaml, grabbed_state). A Position exists only in a Titan
+      Engagement. Flight is met only by the soldier's own ODM use: a soldier carried by a
+      comrade is not airborne on their own ODM Gear, and Chapter 4 defines airborne. A flight
+      trigger can be met outside a Titan Engagement (OQ-36). The test never names a Focus
+      Titan's Attention, a state of a comrade, a Titan's Body Parts, or the soldier's Stress,
+      Grief, or injuries.
+    most_recent_turn: >-
+      The trigger names acts. It is met if the soldier took one of them on their most recent
+      turn in the current Titan Engagement, whether that turn came earlier this round or in
+      an earlier round. Outside a Titan Engagement, or before the soldier's first turn in it,
+      this test is never met (see outside_titan_engagement).
+    since_most_recent_turn_start: >-
+      The trigger names acts. It is met if the soldier took or used one of them at any time
+      from the start of their most recent turn in the current Titan Engagement until now,
+      whether on that turn or outside it (such as Help, Cover, a dodge, or a Push of a dodge).
+      Outside a Titan Engagement, or before the soldier's first turn in it, this test is
+      never met (see outside_titan_engagement).
+  outside_titan_engagement: >-
+    A later rule that gives soldiers turns outside a Titan Engagement, such as the Chase
+    rules, may state that most_recent_turn and since_most_recent_turn_start count those
+    turns. Until a rule states that, both tests are met only in a Titan Engagement (OQ-36).
+  targets:
+    any: The act counts whoever or whatever it was used on.
+    named_comrade: >-
+      The act counts only if it was used on the soldier's named comrade: Help given to the
+      named comrade's roll, Cover of the named comrade's Push, or an entry taken on the named
+      comrade.
+    grabbed_or_down_comrade: >-
+      The act counts only if it was used on a comrade who was Grabbed or Down when it was
+      used, or who is Grabbed or Down when the Fear Roll result is about to take effect. The
+      act must already have been used; an intention to act later never counts. Qualifying
+      uses are Help given to that comrade's roll, Cover of that comrade's Push, Treat Injury or
+      Lift Comrade taken on that comrade, Break Free taken on a Grabbed comrade's behalf
+      (Pry Loose), or a Body Part strike against the hand holding a Grabbed comrade.
+  named_comrade: >-
+    A Drive with needs_named_comrade: true names one comrade: a living player character or
+    Squadmate in the Squad, other than the soldier. A Drive recorded when the Squad forms
+    names its comrade at step join-the-squad (data/character/lifepath.yaml). A Drive recorded
+    after the Squad has formed (a replacement Drive, a promoted Squadmate's Drive, or a new
+    character's Drive) names its comrade when it is recorded. A promoted Squadmate is the
+    same comrade and stays named. If no other living soldier is in the Squad when such a
+    Drive would be recorded, the player records instead the Drive of a row whose Drive does
+    not need a named comrade.
+  replacement: >-
+    If the named comrade dies, retires, or leaves the Squad, the Drive can never trigger
+    again. Promotion does not make a soldier leave the Squad. At the start of the next
+    session the player picks a new Drive from any row of this table. No attribute point is
+    gained (ADR-0011).
+
+rows:
+  - id: vengeance
+    results: [11, 12, 13]
+    reason: A Titan killed someone you loved, and you watched it happen.
+    attribute: strength
+    drive:
+      id: vengeance
+      name: Vengeance
+      trigger: When I made a Nape strike or a Body Part strike on my most recent turn.
+      test: most_recent_turn
+      acts: [nape-strike, body-part-strike]
+      target: any
+      needs_named_comrade: false
+
+  - id: beyond-the-walls
+    results: [14, 15, 16]
+    reason: You want to see what lies beyond the Walls, and to learn what Titans are.
+    attribute: perception
+    drive:
+      id: beyond-the-walls
+      name: Beyond the Walls
+      trigger: When I made a Read on my most recent turn.
+      test: most_recent_turn
+      acts: [read]
+      target: any
+      needs_named_comrade: false
+
+  - id: followed-a-friend
+    results: [21, 22, 23]
+    reason: Someone you could not let go alone was enlisting, so you enlisted too.
+    attribute: empathy
+    drive:
+      id: stay-beside-them
+      name: Stay Beside Them
+      trigger: >-
+        When I Helped my named comrade's roll, Covered their Push, or took Lift Comrade on
+        them since the start of my most recent turn.
+      test: since_most_recent_turn_start
+      acts: [help, cover, lift-comrade]
+      target: named_comrade
+      needs_named_comrade: true
+
+  - id: saved-by-a-soldier
+    results: [24, 25, 26]
+    reason: A soldier once gave their life to save yours, and you mean to repay it.
+    attribute: agility
+    drive:
+      id: pay-it-forward
+      name: Pay It Forward
+      trigger: >-
+        When I Helped, Covered, treated, lifted, or struck to free a comrade who was Grabbed
+        or Down, since the start of my most recent turn.
+      test: since_most_recent_turn_start
+      acts: [help, cover, treat-injury, lift-comrade, break-free, body-part-strike]
+      target: grabbed_or_down_comrade
+      needs_named_comrade: false
+
+  - id: nobody-believed
+    results: [31, 32, 33]
+    reason: Nobody believed you would survive the Training Corps, let alone a Titan.
+    attribute: agility
+    drive:
+      id: prove-them-wrong
+      name: Prove Them Wrong
+      trigger: When I hold Blind Spot or On Body, having moved there myself.
+      test: own_state
+      target: any
+      needs_named_comrade: false
+
+  - id: family-duty
+    results: [34, 35, 36]
+    reason: Your family has always served, and you were raised to put the soldier beside you first.
+    attribute: empathy
+    drive:
+      id: duty
+      name: Duty
+      trigger: When I Helped a roll or Covered a Push since the start of my most recent turn.
+      test: since_most_recent_turn_start
+      acts: [help, cover]
+      target: any
+      needs_named_comrade: false
+
+  - id: protect-the-people
+    results: [41, 42, 43]
+    reason: You want to stand between the Titans and the people living inside the Walls.
+    attribute: strength
+    drive:
+      id: shield-the-walls
+      name: Shield the Walls
+      trigger: When I took Draw Attention on my most recent turn.
+      test: most_recent_turn
+      acts: [draw-attention]
+      target: any
+      needs_named_comrade: false
+
+  - id: food-and-a-bunk
+    results: [44, 45, 46]
+    reason: The Training Corps meant three meals a day and a bed, and you mean to live to enjoy them.
+    attribute: instinct
+    drive:
+      id: full-belly
+      name: Full Belly
+      trigger: When I dodged since the start of my most recent turn.
+      test: since_most_recent_turn_start
+      acts: [dodge]
+      target: any
+      needs_named_comrade: false
+
+  - id: humanity-must-learn
+    results: [51, 52, 53]
+    reason: Humanity will lose until someone learns how Titans can be beaten.
+    attribute: wits
+    drive:
+      id: knowledge
+      name: Knowledge
+      trigger: When I made a Read or a Body Part strike on my most recent turn.
+      test: most_recent_turn
+      acts: [read, body-part-strike]
+      target: any
+      needs_named_comrade: false
+
+  - id: nothing-left
+    results: [54, 55, 56]
+    reason: Everything you had is already gone.
+    attribute: instinct
+    drive:
+      id: nothing-left
+      name: Nothing Left
+      trigger: When I Pushed a roll since the start of my most recent turn.
+      test: since_most_recent_turn_start
+      acts: [push]
+      target: any
+      needs_named_comrade: false
+
+  - id: a-promise
+    results: [61, 62, 63]
+    reason: You made a promise to someone who did not live to see you keep it.
+    attribute: perception
+    drive:
+      id: the-promise
+      name: The Promise
+      trigger: When I took Break Attention on my most recent turn.
+      test: most_recent_turn
+      acts: [break-attention]
+      target: any
+      needs_named_comrade: false
+
+  - id: the-walls-are-a-cage
+    results: [64, 65, 66]
+    reason: Living inside the Walls felt like living in a cage.
+    attribute: wits
+    drive:
+      id: freedom
+      name: Freedom
+      trigger: When I am airborne on ODM Gear through my own ODM use.
+      test: own_state
+      target: any
+      notes: Chapter 4 defines when a soldier is airborne.
+      needs_named_comrade: false

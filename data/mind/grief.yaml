@@ -1,0 +1,62 @@
+# Grief: gaining it after a comrade dies, its effect on Resolve, and its limit.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.14) references this
+# file and does not repeat its rows.
+id: grief
+name: Grief
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0008]
+decided: [OQ-52, OQ-141, OQ-143]
+
+gaining:
+  trigger: A soldier in the Squad dies (data/harm/death-rolls.yaml, dying).
+  who:
+    titan_engagement_death: >-
+      For a death during a Titan Engagement, including one at the steps of
+      data/harm/engagement-end.yaml: every other living soldier in the Squad, player character or
+      Squadmate, who held a Position at any point during that Titan Engagement (the same test as
+      data/core/stress-changes.yaml, engagement-ends).
+    skirmish_death: >-
+      For a death during a Skirmish, including one at its end steps: every other living soldier in the
+      Squad who took part in that Skirmish (data/harm/engagement-end.yaml, procedures, skirmish).
+    other_death: For any other death, every other living soldier in the Squad.
+  amount:
+    - who: each soldier who gains Grief from the death
+      grief: 1
+      limit: >-
+        The deaths of one Titan Engagement give each soldier 1 Grief in total, however many
+        soldiers died in it. So do the deaths of one Skirmish, and the deaths of one day passing (data/harm/healing.yaml,
+        each_day), and the deaths from one event outside a Titan Engagement together with the
+        Death Rolls that follow its care window (data/harm/treat-injury.yaml, care_windows,
+        outside-harm). A later procedure, such as a Chase, may state that all deaths during it
+        count as one event. Any other death gives 1 Grief for that death.
+    - who: a soldier whose Drive named the dead soldier (data/character/enlistment.yaml)
+      grief: 1
+      note: in addition, for each dead soldier their Drive named
+    - who: a soldier with the Numb Scar (data/mind/scars.yaml)
+      grief: 1
+      note: in addition, for each death
+  additions_apply_to: >-
+    Only a soldier who gains Grief from that death under who gains the named-comrade or Numb
+    Grief for it.
+  applies_after: Every Fear Roll caused by the same death, including its Drive decision and result.
+  timing: >-
+    For deaths during a Titan Engagement or a Skirmish, including deaths at its end steps, at the grief step
+    of data/harm/engagement-end.yaml. For any other death, immediately after every Fear Roll
+    caused by that death (data/mind/fear-rolls.yaml); immediately if none is made. Either way, a
+    death's Grief never applies before that death's own Fear Rolls.
+  not_grief: Retirement, promotion, and a soldier leaving the Squad Pool for any other reason give no Grief.
+
+maximum: 3
+at_maximum: Grief gained beyond 3 is lost.
+
+effect:
+  resolve: -1 per point of Grief (data/character/attributes.yaml, resolve)
+  resolve_floor: none   # Resolve can fall to 0 or below; a lower Resolve raises Stress Response and Fear Roll totals
+  nothing_else: Grief has no other effect in the Phase 1 rules.
+
+losing:
+  in_the_field: never   # no field rule lowers Grief
+  downtime: >-
+    Visit Haven lowers the soldier's Grief by 2, Honoring the Fallen every soldier's by 1, and the
+    Squadmate relief each Squadmate's by 1, never below 0 (data/campaign/downtime.yaml; decision batch
+    7, 7-15). Visit Haven meets OQ-52's relief of at least 2 Grief per Downtime.

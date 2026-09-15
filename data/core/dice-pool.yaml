@@ -1,0 +1,146 @@
+# Dice pool components for attribute rolls.
+# Source of truth under ADR-0012. docs/rules/01-core-rules.md (sections 1.2, 1.3, and 1.5)
+# references this file and does not repeat its rows. Edit this file, not the chapter.
+id: dice-pool
+name: Dice Pool Components
+chapter: 01-core-rules
+adrs: [ADR-0004, ADR-0006, ADR-0008]
+
+# How each kind of die behaves. Faces are the die results 1 to 6.
+# push_re_rolls_faces: faces a Push picks up and rolls again.
+# push_keeps_faces: faces that stay in the pool, unchanged, through a Push.
+die_types:
+  - id: base
+    name: base die
+    success_faces: [6]
+    push_re_rolls_faces: [1, 2, 3, 4, 5]
+    push_keeps_faces: [6]
+    on_one: none
+  - id: gear
+    name: Gear Die
+    success_faces: [6]
+    push_re_rolls_faces: []                 # a Push never re-rolls a Gear Die
+    push_keeps_faces: [1, 2, 3, 4, 5, 6]
+    locked_faces: [1]                       # stays in the pool showing 1
+    on_one: wear_1_if_roll_pushed           # each 1 showing when the roll is final
+    decided: [OQ-01]
+  - id: stress
+    name: Stress Die
+    success_faces: [6]
+    push_re_rolls_faces: [2, 3, 4, 5]       # any Stress Die showing 1 forbids the Push, so a 1 is never re-rolled
+    push_keeps_faces: [6]
+    on_one: stress_response                 # at most one Stress Response per roll
+
+# What goes into the pool, in build order.
+# count.from names the value that sets the number of dice, for tools that build pools.
+components:
+  - id: attribute
+    name: Attribute
+    die_type: base
+    dice: the rating of the attribute the roll's Action Catalog entry names, or the attribute a rule names when it calls for the attribute alone (data/character/action-catalog.yaml)
+    count:
+      from: attribute_rating
+      sign: 1
+    min: 2
+    max: 5
+    max_exception:
+      max: 6
+      when: the attribute is the key attribute of the soldier's Specialty
+    per_roll: exactly one attribute
+    rules: [02-character-creation]
+    adrs: [ADR-0006]
+  - id: talent
+    name: Talent
+    die_type: base
+    dice: the level of one Talent that adds dice and names the roll's Action Catalog entry, when the roll meets the Talent's condition for that entry, if its row has one (data/character/talents.yaml, talent_rules, types, dice)
+    count:
+      from: talent_level
+      sign: 1
+    min: 0
+    max: 3
+    per_roll: at most one Talent that adds dice; Talents that bend a rule stack
+    uncatalogued_action: 0 dice when the soldier rolls the attribute alone (ADR-0003 item 9)
+    rules: [02-character-creation]
+    adrs: [ADR-0003, ADR-0006]
+    decided: [OQ-11]
+  - id: bonus
+    name: Bonus Dice
+    die_type: base
+    dice: the total from the declared sources in data/core/bonus-dice-sources.yaml
+    count:
+      from: declared_bonus_sources
+      sign: 1
+    min: 0
+    max: 4
+    per_roll: any number of listed sources, at most 4 dice in total
+    rules: [01-core-rules]
+    adrs: [ADR-0006]
+    decided: [OQ-01]
+  - id: penalty
+    name: Dice penalty
+    die_type: base
+    dice: minus the dice a named rule removes
+    count:
+      from: named_penalties
+      sign: -1
+    min_base_dice_after: 1
+    never_removes: [gear, stress]
+    applied_after: bonus
+    per_roll: every penalty whose rule applies to the roll
+    rules: [01-core-rules, 03-harm-and-mind]
+    decided: [OQ-07]
+  - id: gear
+    name: Gear Dice
+    die_type: gear
+    dice: the current Gear Dice rating of one gear item the roll's Action Catalog entry allows, or of the gear item the calling rule names when a rule calls for the attribute alone; none when the entry's gear_requirement gives attribute_alone (data/character/action-catalog.yaml)
+    count:
+      from: gear_item_current_rating
+      sign: 1
+    min: 1
+    min_when_worn: 0      # an item worn down to 0 adds no dice
+    max: 3
+    per_roll: at most one gear item
+    rules: [04-gear]
+    adrs: [ADR-0006]
+  - id: stress
+    name: Stress Dice
+    die_type: stress
+    dice: current Stress
+    count:
+      from: current_stress
+      sign: 1
+    min: minimum Stress (1 per Scar)
+    max: null
+    per_roll: included in every attribute roll except the rolls listed under roll_exceptions
+    rules: [01-core-rules]
+    adrs: [ADR-0004, ADR-0008]
+    decided: [OQ-03, OQ-04]
+
+# Attribute rolls that leave out pool components or forbid parts of the core procedure.
+# A roll not listed here uses every component above. A roll leaves out a component only if
+# its own rule names it and it has a row here; a later chapter whose rule does so adds the
+# row (OQ-03). A roll's own procedure may still forbid Help or a Push without a row, as the
+# first two Graduation Exam Trials forbid a Push (data/character/graduation-exam.yaml).
+#
+# Push hook (OQ-18): a roll cannot be Pushed if its row here sets push_allowed false, if its
+# own rule forbids a Push, or if a state or result the soldier holds names push in its
+# forbids field (Chapter 1, sections 1.5 and 1.9), such as Down (data/harm/down.yaml).
+roll_exceptions:
+  - roll: death-roll
+    name: Death Roll
+    attribute: strength
+    components_excluded: [stress]
+    bonus_sources_excluded: [help]
+    push_allowed: false
+    talent_dice_allowed: true    # a Talent that names the Death Roll's Catalog entry
+    rules: [03-harm-and-mind]
+    decided: [OQ-03, OQ-11]
+  - roll: performance-roll
+    name: Performance roll
+    attribute: the higher of the Training Year's performance attributes (data/character/training-years.yaml)
+    components_excluded: [talent, bonus, gear, stress]
+    bonus_sources_excluded: [help]
+    push_allowed: false
+    talent_dice_allowed: false
+    rules: [02-character-creation]
+    decided: [OQ-21]

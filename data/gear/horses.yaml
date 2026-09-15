@@ -1,0 +1,124 @@
+# Horses: a soldier's own horse, where it is, mounted and dismounted, its Gear Dice, wear, and
+# lame.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (section 4.5) references this file and
+# does not repeat its rows.
+id: horses
+name: Horses
+chapter: 04-gear
+adrs: [ADR-0003, ADR-0009, ADR-0015, ADR-0019]
+decided: [OQ-25, OQ-28, OQ-35, OQ-59, OQ-61, OQ-141]
+
+item: horse   # data/gear/items.yaml
+
+own_horse: >-
+  A soldier's horse is the one their sheet records. It comes from Standard Issue
+  (data/gear/standard-issue.yaml). A soldier can mount only their own horse.
+
+horse_position: >-
+  In a Titan Engagement a horse holds a Position. While its soldier is mounted, it holds the
+  soldier's Position and changes Position with them. After the soldier dismounts, it stays at the
+  Position where they dismounted until they mount it again. Where each horse is when a Titan
+  Engagement begins is in data/engagement/positions.yaml (placement). Whether a horse changes
+  Position by any other rule, and whether a Titan's behavior can target a horse, are in
+  data/engagement/positions.yaml (horses). The sheet records a dismounted horse's Position
+  together with the Focus Titan that Position is held relative to (data/gear/sheet-fields.yaml,
+  horse). How a soldier's Positions relative to two Focus Titans relate, and what a recorded
+  Position becomes when its Focus Titan dies, are in data/engagement/positions.yaml
+  (two_focus_titans). A horse whose riderless-horse decoy succeeds leaves the Titan Engagement: it
+  holds no Position and cannot be mounted or give Gear Dice until the Titan Engagement ends
+  (data/engagement/attention.yaml, break_attention, decoys, riderless-horse;
+  data/engagement/positions.yaml, horses). Outside a Titan Engagement no horse holds a Position.
+
+titan_engagement_ends: >-
+  When a Titan Engagement ends, no horse holds a Position any longer. Each living soldier's horse
+  is still that soldier's own, lame or not, and can be mounted under
+  mounted.mount.requirements.outside_titan_engagement. A horse that left as a decoy is its
+  soldier's own again. A soldier who was mounted stays mounted,
+  and one who was not stays dismounted.
+
+mounted:
+  meaning: The soldier is riding their own horse. The sheet records mounted as true or false. A mounted soldier is never airborne.
+  mount:
+    as_part_of: a move in a Titan Engagement; outside one, mounted.outside_titan_engagement
+    requirements:
+      in_titan_engagement:
+        - The soldier's own horse holds the Position the soldier holds when they mount, with both Positions compared relative to the Focus Titan recorded with the horse's Position.
+        - The horse is not lame.
+                - The soldier is not airborne, Down, Grabbed, or carried by a comrade.
+        - A soldier who has lost both arms mounts and dismounts only with a comrade's help (data/harm/critical-injuries.yaml, lost_limb_riders, both-arms, mount_with_help; decision batch 8, 8-25).
+      outside_titan_engagement:
+        - The soldier has their own horse, and it is not lame.
+        - The soldier is not airborne, Down, or carried by a comrade.
+        - A soldier who has lost both arms mounts and dismounts only with a comrade's help (data/harm/critical-injuries.yaml, lost_limb_riders, both-arms, mount_with_help; decision batch 8, 8-25).
+    effect: The soldier is mounted.
+    roll: none
+  dismount:
+    as_part_of: a move in a Titan Engagement; outside one, mounted.outside_titan_engagement
+    requirements: The soldier is mounted.
+    effect: The soldier is not mounted. In a Titan Engagement, the horse stays at the Position the soldier holds when they dismount.
+    roll: none
+  within_a_move: >-
+    A move can include one mount or one dismount, made at the Position the soldier holds before
+    or after that move's change of Position. A mounted soldier's ODM move dismounts before its
+    change of Position. The Position changes a mounted soldier can make are in
+    data/engagement/anchor-ratings.yaml (move_kinds, ratings).
+  becoming_airborne: >-
+    A mounted soldier whom a rule makes airborne, by an ODM move or by a Fly roll whose calling
+    rule makes them airborne (data/gear/odm-gear.yaml, airborne), is dismounted first, with no
+    fall. In a Titan Engagement the horse stays at the Position the soldier held.
+  forced_dismount:
+    - id: lame
+      trigger: The horse becomes lame while the soldier is mounted.
+      effect: The soldier is dismounted and falls from a horse (data/gear/falls.yaml, lame-mounted). The horse stays at the Position.
+    - id: down
+      trigger: The soldier becomes Down while mounted.
+      effect: The soldier is dismounted and falls from a horse (data/gear/falls.yaml, down-mounted). The horse stays at the Position.
+    - id: grabbed
+      trigger: The soldier becomes Grabbed while mounted.
+      effect: The soldier is dismounted with no fall. The horse stays at the Position.
+  outside_titan_engagement: >-
+    Outside a Titan Engagement there are no moves, except in a Skirmish, where a move may include
+    one mount or one dismount (data/skirmish/skirmish.yaml, engaged_and_apart, mount). A soldier
+    mounts or dismounts when the rule for the procedure under way says so: on an Expedition, every
+    soldier who is not Down and whose horse is not lame is mounted on a Leg and dismounted at a
+    night camp (data/expedition/legs.yaml, expedition, mounted); the Chase rules (not yet written)
+    will say for a Chase. If that rule says nothing, a soldier may mount or dismount at any time, subject to
+    mount.requirements.outside_titan_engagement.
+  entry: mount-or-dismount   # data/character/action-catalog.yaml
+
+gear_dice:
+  dodge: >-
+    Only while the soldier is mounted on the horse (ADR-0019; OQ-25). Horsemanship adds
+    its dice to this dodge (data/character/talents.yaml, horsemanship; decision batch 5, OQ-121).
+  ride: Only while the soldier is mounted on the horse.
+  leap-clear: Only while the soldier is mounted on the horse (decision batch 8, 8-9).
+  break-attention: >-
+    While the soldier is mounted on the horse, or while the horse holds the Position the soldier
+    holds, both compared relative to the Focus Titan recorded with the horse's Position
+    (horse_position). What Break Attention does with the horse is in
+    data/engagement/attention.yaml (break_attention, decoys, riderless-horse).
+  otherwise: The horse counts as not had for that entry (data/gear/items.yaml, horse).
+  choice: >-
+    A mounted soldier's dodge or Break Attention may take its Gear Dice from ODM Gear instead,
+    one item per roll (Chapter 1, section 1.3, step 6). A roll made with ODM Gear is ODM use
+    (data/gear/odm-gear.yaml, odm_use) and does not make the soldier airborne.
+
+pushed_rolls: >-
+  A Pushed roll made with the horse wears the horse, not ODM Gear, and does not by itself make
+  that round's Gas Roll three dice (Chapter 1, section 1.5; OQ-12). Sure Seat
+  (data/character/talents.yaml) can ignore 1 point of that wear.
+
+lame:
+  when: The horse's current rating is 0.
+  effect:
+    - The horse cannot be mounted, adds no Gear Dice, and counts as not had for every entry.
+    - A soldier mounted on it is dismounted and falls from a horse (mounted, forced_dismount).
+  ends: >-
+    Standard Issue exchanges a lame horse, unless the soldier declines the exchange and keeps the
+    horse lame (data/gear/standard-issue.yaml, receiving, decline; the interim issue included). The
+    Maintain Gear Downtime Action ends lameness too (data/campaign/downtime.yaml, downtime_actions,
+    maintain-gear). No other rule restores a horse.
+
+carrying: >-
+  A mounted soldier carries items and a comrade as data/gear/carrying.yaml states. Rescue Ride
+  (data/character/talents.yaml) lets a mounted soldier take lift-comrade as part of their move.

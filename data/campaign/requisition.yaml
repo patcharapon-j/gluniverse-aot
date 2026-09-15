@@ -1,0 +1,251 @@
+# Requisition, the playtest minimum: when it is made, Scarcity and the Funding gate, the roll, the
+# ledger, Size Up, what a grant gives, and the playtest Requisition list.
+# Source of truth under ADR-0012. docs/rules/07-playtest-rules.md (section 7.3) references this file
+# and renders its tables from it (tools/render/render.py).
+# Playtest rule: Phase 2 replaces this file (decision batch 7, 7-16; decision batch 8, 8-10; OQ-142,
+# OQ-147).
+id: requisition
+name: Requisition
+chapter: 07-playtest-rules
+status: playtest
+adrs: [ADR-0003, ADR-0006, ADR-0014, ADR-0016, ADR-0017]
+decided: [OQ-142, OQ-147, OQ-148]
+
+when: >-
+  Only as the Requisition Downtime Action (data/campaign/downtime.yaml, downtime_actions): each player
+  character may make one Requisition per Downtime. Never before a campaign's first Expedition, and never
+  outside Downtime. There are no prices (ADR-0016, item 8).
+
+scarcity:
+  - {id: standard, name: Standard, needs: 1}
+  - {id: limited, name: Limited, needs: 2}
+  - {id: rare, name: Rare, needs: 3}
+
+funding_gate:
+  funding: the Funding data/gear/standard-issue.yaml uses (3 until the Funding rules are written)
+  rows:
+    - {funding: [1, 2], tiers: [standard]}
+    - {funding: [3, 4], tiers: [standard, limited]}
+    - {funding: [5, 6], tiers: [standard, limited, rare]}
+  locked_rows: A row with locked_until_discovery set cannot be named until the Squad holds that Discovery. No playtest row is locked.
+
+procedure:
+  - id: name-a-row
+    text: The soldier names one row of the list whose Scarcity the Funding gate allows, and any choice the row asks for.
+  - id: roll
+    text: Make the Requisition roll (rolls, requisition-roll).
+  - id: result
+    text: >-
+      On a success Command grants the row (grant), and the ledger rises by 1. On a failure Command says
+      no, and nothing else happens. Successes beyond the needs do nothing.
+
+ledger:
+  meaning: Command's patience within one Downtime (ADR-0016, item 8).
+  # decision batch 8, 8-29 (OQ-154, item a): the floor
+  value: >-
+    The number of Requisitions Command has granted the Squad this Downtime, minus 1 if this Downtime's
+    Size Up roll succeeded, never below 0.
+  starts: 0 at the start of each Downtime
+  tracked_value: ledger-lower   # data/character/action-catalog.yaml; Size Up is the entry that changes it
+  size_up:
+    when: Once per Downtime, before any Requisition roll that Downtime.
+    roll: size-up-for-the-ledger (rolls)
+    on_success: The ledger counts 1 lower for the whole Squad for the rest of this Downtime.
+    on_failure: Nothing happens.
+
+grant:
+  # decision batch 8, 8-29 (OQ-154, item b)
+  arrives: >-
+    At the after-actions step of this Downtime, before prosthetics are fitted and before the next
+    Standard Issue (data/campaign/downtime.yaml, steps; decision batch 8, 8-28, 8-29).
+  items: >-
+    A granted item belongs to the soldier the Requisition named, and is a kept item
+    (data/gear/items.yaml, kept_item): it counts as items, can be passed, taken, and shared out like any
+    item of its kind, and Standard Issue never takes it away unless the soldier hands it in at an
+    exchange (data/gear/standard-issue.yaml, receiving). A Blade Set rated above 1 is still ruined by any
+    wear. An item that the soldier can hold only one of, ODM Gear or a horse, replaces the soldier's
+    own, which leaves play.
+  supply: Units of Squad Supply are added to the Squad's units above its stock (data/gear/squad-supply.yaml, stock, when_set). They are not kept items.
+
+# ------------------------------------------------------------------ the playtest list
+# Every row is canon gear Chapters 3 and 4 already define, at a rating or number Standard Issue does not
+# give, or one of the two firearms (ADR-0016's one exception, decision batch 7, 7-17), or the prosthetic
+# (decision batch 8, 8-10). Phase 2 rows carry a canon label and, where a Discovery gates them, its name
+# and Canon Clock year.
+list:
+  row_fields:
+    id: the row's id
+    name: what the row gives, as printed
+    items: the gear item ids it gives (data/gear/items.yaml), or none for Squad Supply
+    rating: the rating of the item it gives, or null
+    supply: the Squad Supply units it gives, or null
+    scarcity: standard, limited, or rare (scarcity)
+    canon_label: canon, canon-adjacent, or invented (ADR-0016)
+    locked_until_discovery: a Discovery id, or null
+    notes: what else the row states
+  rows:
+    - id: spare-canister
+      name: Spare gas canister, full
+      items: [gas-canister]
+      rating: null
+      supply: null
+      scarcity: standard
+      canon_label: canon
+      locked_until_discovery: null
+      notes: One more than the Funding row gives.
+    - id: blade-set-1
+      name: Blade Set, rating 1
+      items: [blade-set]
+      rating: 1
+      supply: null
+      scarcity: standard
+      canon_label: canon
+      locked_until_discovery: null
+      notes: One more than the Funding row gives.
+    - id: medical-kit-1
+      name: Medical kit, rating 1
+      items: [medical-kit]
+      rating: 1
+      supply: null
+      scarcity: standard
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Standard Issue gives one only to a Medic.
+    - id: tool-kit-1
+      name: Tool kit, rating 1
+      items: [tool-kit]
+      rating: 1
+      supply: null
+      scarcity: standard
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Standard Issue gives one only to an Engineer.
+    - id: supplies
+      name: 2 flares, 2 rations, or 1 unit of medical supplies
+      items: []
+      rating: null
+      supply: {choose_one: [{flares: 2}, {rations: 2}, {medical: 1}]}
+      scarcity: standard
+      canon_label: canon
+      locked_until_discovery: null
+      notes: The soldier names which when naming the row. Added to Squad Supply above its stock.
+    - id: shot
+      name: 6 units of shot
+      items: []
+      rating: null
+      supply: {shot: 6}
+      scarcity: standard
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Added to Squad Supply above its stock.
+    - id: blade-set-2
+      name: Blade Set, rating 2
+      items: [blade-set]
+      rating: 2
+      supply: null
+      scarcity: limited
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Any wear still ruins it.
+    - id: medical-kit-2
+      name: Medical kit, rating 2
+      items: [medical-kit]
+      rating: 2
+      supply: null
+      scarcity: limited
+      canon_label: canon
+      locked_until_discovery: null
+      notes: none
+    - id: tool-kit-2
+      name: Tool kit, rating 2
+      items: [tool-kit]
+      rating: 2
+      supply: null
+      scarcity: limited
+      canon_label: canon
+      locked_until_discovery: null
+      notes: none
+    - id: flintlock-pistol
+      name: Flintlock pistol, rating 1
+      items: [flintlock-pistol]
+      rating: 1
+      supply: null
+      scarcity: limited
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Arrives empty (Chapter 4, section 4.1).
+    - id: musket
+      name: Musket, rating 1
+      items: [musket]
+      rating: 1
+      supply: null
+      scarcity: limited
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Arrives empty, and counts as 2 items (Chapter 4, section 4.1).
+    - id: prosthetic
+      name: Prosthetic arm or prosthetic leg
+      items: [prosthetic-arm, prosthetic-leg]   # data/gear/items.yaml (decision batch 8, 8-10)
+      rating: null
+      supply: null
+      scarcity: limited
+      canon_label: canon-adjacent   # decision batch 8, 8-29 (OQ-154, item c)
+      locked_until_discovery: null
+      notes: >-
+        One per Requisition, of the kind of a side the named soldier has lost and has no prosthetic
+        fitted to, and only once that side's loss has healed. A player character may name a Squadmate
+        as its soldier. It is fitted at a Downtime (Chapter 3, section 3.2, Lost limbs).
+    - id: odm-gear-3
+      name: ODM Gear, rating 3
+      items: [odm-gear]
+      rating: 3
+      supply: null
+      scarcity: rare
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Replaces the soldier's ODM Gear, which leaves play.
+    - id: horse-3
+      name: Horse, rating 3
+      items: [horse]
+      rating: 3
+      supply: null
+      scarcity: rare
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Replaces the soldier's horse, which leaves play.
+    - id: blade-set-3
+      name: Blade Set, rating 3
+      items: [blade-set]
+      rating: 3
+      supply: null
+      scarcity: rare
+      canon_label: canon
+      locked_until_discovery: null
+      notes: Any wear still ruins it.
+
+# ------------------------------------------------------------------ rolls
+rolls:
+  - id: requisition-roll
+    name: Requisition roll
+    who: The player character taking the Requisition Downtime Action.
+    entry: Persuade (Empathy) or Recall (Wits), chosen before rolling
+    needs: the named row's Scarcity needs, plus the ledger
+    help: >-
+      Up to 3 comrades in the Squad who are not Down. A player character Helps by taking Requisition as
+      their Downtime Action and spending it on the Help. A Squadmate Helps at most once per Downtime and
+      spends nothing.
+    push: Allowed, and a comrade who qualifies to Help may Cover it (Chapter 1, section 1.5). Stress gained rides out on the next Expedition.
+    retry: Never this Downtime; it was the soldier's one Requisition.
+    changes: [requisition-grant]
+  - id: size-up-for-the-ledger
+    name: Size Up on the quartermaster
+    # decision batch 8, 8-29 (OQ-154, item a)
+    who: >-
+      One soldier in the Squad who is not Down, a Squadmate included, chosen by the players, using the
+      roll-off if they disagree. It is not a Downtime Action.
+    entry: Size Up
+    needs: "1"
+    help: Never.
+    push: Allowed (Chapter 1, section 1.5); no one can Cover it, since no one qualifies to Help.
+    retry: Never; one Size Up per Downtime.
+    changes: [ledger-lower]

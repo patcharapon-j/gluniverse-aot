@@ -1,0 +1,99 @@
+# Read and Call It: what a Read needs, the closed list of facts it can reveal, what is public
+# without a Read, and Call It.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.8) references this
+# file and does not repeat its rows. The two Bonus Dice sources it names are rows of
+# data/core/bonus-dice-sources.yaml (read-from-distant, call-it).
+id: read
+name: Read and Call It
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0010, ADR-0015, ADR-0019]
+decided: [OQ-84, OQ-145]
+
+# ------------------------------------------------------------------ Read
+read:
+  entry: read   # data/character/action-catalog.yaml: Instinct, no gear (Hunter's Eye allows Perception)
+  requirements:
+    - The soldier holds a Position relative to the named Focus Titan.
+    - The soldier is not Grabbed.
+  spends: the soldier's action
+  needs: 1
+  from_distant: >-
+    A soldier who holds distant relative to the named Titan gains the read-from-distant Bonus Dice
+    on the Read (data/core/bonus-dice-sources.yaml, read-from-distant).
+  on_success: >-
+    For each success, the soldier's player picks one fact from facts about that Titan that the
+    Titan's kind allows. Each fact can be picked once per Read. The GM reveals every picked fact to
+    every soldier at once. A success that picks no fact is lost, unless Call It spends it.
+  on_failure: Nothing is revealed.
+  squadmates: A Squadmate can Read (data/character/squadmates.yaml, action_list).
+
+# A fact lists the kinds of Focus Titan it can be picked for. A standard Titan's stat block values
+# and ladder are public (public_without_a_read), so only its Next Behavior is hidden.
+facts:
+  - id: next-behavior
+    for: [standard, abnormal]
+    reveals: >-
+      The Titan's Next Behavior: its entry's name, tier, targets, position_requirement,
+      body_parts_used, attack_dice, effects, and fallback. The card's Severity is known only when
+      the card that resolves it rolls its Attack Dice (data/engagement/behavior-procedure.yaml,
+      resolving_a_card, roll-and-announce).
+    stays_revealed: Until a card resolves it or a decoy's card spends it.
+  - id: body-part
+    for: [abnormal]
+    reveals: The Toughness of one Body Part the player names.
+    stays_revealed: For the rest of the Titan Engagement.
+  - id: nape-depth
+    for: [abnormal]
+    reveals: The Titan's Nape Depth.
+    stays_revealed: For the rest of the Titan Engagement.
+  - id: regeneration-clock
+    for: [abnormal]
+    reveals: The number of segments in the Titan's Regeneration clock.
+    stays_revealed: For the rest of the Titan Engagement.
+  - id: attention-ladder
+    for: [abnormal]
+    reveals: The ladder the Titan uses, with its rungs in order (data/titans/index.yaml, ladders; data/engagement/attention.yaml, tests).
+    stays_revealed: For the rest of the Titan Engagement.
+
+public_without_a_read:
+  - Each Focus Titan's Size Class, whether it is an Abnormal, its Tempo, and its cards this round.
+  - >-
+    A standard Titan's Nape Depth, Regeneration clock length, Toughness for each Body Part, and
+    Attention Ladder, which its Size Class row and the standard ladder give
+    (data/engagement/titan-format.yaml, stat_block).
+  - Each Body Part's state and count.
+  - How many segments of each Focus Titan's Regeneration clock are filled.
+  - Openings and who created each.
+  - Who holds each Focus Titan's Attention, and the flags set for it.
+  - Each Focus Titan's previous behavior, every Next Behavior already revealed, and any Call It on it.
+  - Each Background Titan's Size Class, whether it is an Abnormal, and its clock.
+  - Whether a soldier is Grabbed, their countdown turns, and whether they have been lifted.
+hidden_until_read:
+  - Each Focus Titan's Next Behavior, until a Read or a telegraph effect reveals it.
+  - >-
+    An Abnormal's values that facts lists for it, until a Read reveals each one. Public counts and
+    state changes show an Abnormal's Body Part Toughness over time (data/engagement/titan-harm.yaml,
+    states, public), so that fact is worth a success mostly early in a Titan Engagement. Until its
+    Regeneration clock length is revealed, the tracker shows only the clock's filled segments
+    (data/engagement/round.yaml, gm_tracker).
+
+# ------------------------------------------------------------------ Call It
+call_it:
+  entry: call-it   # an option of read (data/character/action-catalog.yaml)
+  requirement: The same Read revealed next-behavior.
+  successes_needed: >-
+    2 of the Read's successes: the one that picked next-behavior and one more, which picks no fact.
+    With Sharp Call, 1: the next-behavior success alone (data/character/talents.yaml, sharp-call).
+  declare: When the Read's facts are picked.
+  effect: >-
+    The Called behavior is the Next Behavior the Read revealed. Each target other than the soldier
+    who made the Read, who makes a dodge against the card that resolves it, gains the call-it Bonus
+    Dice on that dodge (data/core/bonus-dice-sources.yaml, call-it). This holds when the card
+    resolves it as its fallback or as Thrash.
+  reader: >-
+    The soldier who made the Read gains no Bonus Dice from their own Call It. Calling It helps
+    comrades only, as teamwork (ADR-0010); a soldier who Reads for themselves already knows what
+    comes.
+  already_dodged: A target who cancels with a dodge made earlier this round against the Titan gains nothing from Call It.
+  once: A Next Behavior can be Called once. A second Call It on it has no effect.
+  ends: When the card that resolves the Called behavior is finished, when a decoy's card spends it, or when the Titan dies.

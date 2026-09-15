@@ -1,0 +1,179 @@
+# ODM Gear and gas: ODM moves, ODM use, airborne, the Gas Rating, the Gas Roll, changing a
+# canister, running dry, and the Jam.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (sections 4.2 and 4.3) references this
+# file and does not repeat its rows.
+id: odm-gear
+name: ODM Gear and Gas
+chapter: 04-gear
+adrs: [ADR-0004, ADR-0009, ADR-0014, ADR-0015, ADR-0019]
+decided: [OQ-01, OQ-12, OQ-23, OQ-60, OQ-61]
+
+item: odm-gear   # data/gear/items.yaml
+rolls_it_rates: [dodge, break-attention, fly, leap-clear]   # data/character/action-catalog.yaml; leap-clear: decision batch 8, 8-9
+
+odm_moves:
+  definition: >-
+    An ODM move is a move a soldier makes on their own ODM Gear. Which Position changes need an
+    ODM move at each Anchor Rating, and which can be made on foot or mounted, is in
+    data/engagement/anchor-ratings.yaml (move_kinds, ratings).
+  needs: ODM Gear that counts as had (data/gear/items.yaml, odm-gear, counts_as_not_had).
+  mounted: A mounted soldier's ODM move dismounts them first (data/gear/horses.yaml, mounted).
+  overloaded: >-
+    While Overloaded, an ODM move also spends the soldier's action, and cannot be made if that
+    action is already spent (data/gear/carrying.yaml, overloaded).
+  carried: A soldier carried by a comrade makes no ODM move.
+
+# ------------------------------------------------------------------ ODM use
+odm_use:
+  definition: >-
+    A soldier uses ODM Gear in a round if, during that round, they make an ODM move, make a roll
+    whose gear item is their ODM Gear, or take an act that a Chapter 5 rule names as ODM use
+    (data/engagement/positions.yaml, moves, odm_use_named_by_this_chapter).
+  not_odm_use:
+    - Holding a Position without moving, including staying airborne on the soldier's anchors.
+    - A roll whose gear item is a Blade Set, a horse, or a kit, including every Nape strike.
+    - Being carried by a comrade.
+  outside_titan_engagement: >-
+    Outside a Titan Engagement there are no rounds. ODM use there causes a Gas Roll only when
+    the rule that calls for it says so, as the Chase rules (not yet written) may. The Graduation
+    Exam makes no Gas Rolls (data/character/graduation-exam.yaml). Travel on horseback never
+    spends gas (ADR-0009).
+
+# ------------------------------------------------------------------ strikes need working gear
+strikes:
+  rule: >-
+    In a Titan Engagement, a Nape strike, and a Body Part strike made from On Body or Blind Spot,
+    need the striker's ODM Gear to count as had: not Jammed, and with a Gas Rating above 0. A
+    striker who is Jammed or has run dry cannot make those strikes there.
+  outside_titan_engagement: >-
+    The requirement does not apply outside a Titan Engagement, so the Graduation Exam's strikes
+    never test it (data/character/graduation-exam.yaml). A later rule that calls for a strike
+    outside a Titan Engagement, such as a Chase rule, applies it only if that rule names it.
+  still: >-
+    The strike takes its Gear Dice from the Blade Set in the handles, and it is not ODM use, so it
+    makes no Gas Roll and never makes one three dice.
+  lifted_only_by: A Chapter 5 rule that names this requirement, such as the one for a Titan grounded by a Broken leg (data/engagement/titan-harm.yaml, grounded).
+  catalog: data/character/action-catalog.yaml (nape-strike and body-part-strike, requirements)
+
+# ------------------------------------------------------------------ airborne
+airborne:
+  meaning: The soldier is in the air on their own ODM Gear. The sheet records it as true or false.
+  becomes_airborne:
+    - The soldier makes an ODM move.
+    - A rule calls for a fly roll with the soldier's own ODM Gear and states that the soldier is airborne after it. Making the roll does not by itself make the soldier airborne; the calling rule states whether it does on a success, on a failure, or both.
+  mounted: A mounted soldier who becomes airborne is dismounted first, with no fall (data/gear/horses.yaml, mounted, becoming_airborne).
+  stops_being_airborne:
+    - The soldier makes a move that is not an ODM move.
+    - The soldier falls (data/gear/falls.yaml).
+    - The soldier becomes Grabbed (data/engagement/grab.yaml).
+    - The Titan Engagement ends. The soldier lands, with no fall.
+    - Outside a Titan Engagement, the procedure whose rule made the soldier airborne ends, unless that rule states another point.
+  never_airborne:
+    - A soldier carried by a comrade, whatever the carrier does (OQ-23).
+    - A Grabbed soldier, whatever the Titan does.
+    - A mounted soldier.
+  running_dry: A soldier whose Gas Rating reaches 0 while airborne stays airborne (running_dry).
+  drives: >-
+    Freedom's trigger (data/character/enlistment.yaml, the-walls-are-a-cage) is met while the
+    soldier is airborne under this definition, in or outside a Titan Engagement.
+
+# ------------------------------------------------------------------ gas
+gas:
+  full_gas_rating: 3   # tuned under ADR-0014: about 9 rounds of ODM use, about 6 Pushing every round (docs/rules/04-gear.md, section 4.3)
+  gas_rating: >-
+    The gas left in the canister fitted to the soldier's ODM Gear, from 0 to full_gas_rating.
+    A soldier with no fitted canister has Gas Rating 0.
+  spare_canisters: >-
+    Each spare canister records its own Gas Rating, from 1 to full_gas_rating. A canister
+    received from Standard Issue is full.
+
+gas_roll:
+  entry: gas-roll   # fixed-roll (data/character/action-catalog.yaml)
+  who: Every soldier, player character or Squadmate, who used ODM Gear during the round.
+  when: >-
+    Once at the end of the round for each such soldier, however many times they used ODM Gear
+    in it. data/engagement/round.yaml (end_steps) places this step among the round's end steps.
+    If the Titan Engagement ends
+    during a round, the Gas Rolls for that round are made at once, before the steps in
+    data/harm/engagement-end.yaml.
+  # OQ-60: no canister moves before the gas it owes is rolled. The three rules apply in order.
+  canister_removed:
+    - >-
+      A soldier who has used ODM Gear this round, and has not yet made that round's Gas Roll,
+      makes it before their fitted canister can be passed or taken (data/gear/carrying.yaml, passing_items and taking_items).
+      The passer makes it when they declare that they mean to pass the canister, and a Down
+      soldier makes it when a taker declares that they mean to take it. Its dice are set by
+      gas_roll.dice (below), from the rolls the soldier has made so far this round. It is that
+      soldier's Gas Roll for the round: none is made for them at the end of the round, whatever
+      canister is fitted later in it.
+    - >-
+      If that roll leaves the canister at Gas Rating 0, the canister is discarded: the soldier has
+      no canister fitted, nothing moves, and the pass or take is not made and spends nothing, so
+      the passer or taker may still take an action that turn. If gas remains, the canister moves
+      with its Gas Rating, and the pass or take spends what it spends.
+    - >-
+      A soldier who dies after using ODM Gear this round, and has not yet made that round's Gas
+      Roll, makes it at once, before their fitted canister becomes a left item
+      (data/gear/carrying.yaml, leaving_play, death). A canister that roll leaves at Gas Rating 0
+      is discarded and is never a left item.
+  dice:
+    standard: 2
+    after_pushed_odm_roll: 3   # any Pushed roll this round whose gear item was the soldier's ODM Gear (Chapter 1, section 1.5; OQ-12)
+    maximum: 3
+    pushed_dodge_with_horse: Does not by itself make the roll three dice (ADR-0019; OQ-25).
+    squadmate: 2   # a Squadmate never Pushes
+  extra_gas_is_a_die: >-
+    The extra gas a Push costs is the third die of that round's one Gas Roll. It is never a
+    second Gas Roll.
+  reading: Count the dice showing 1. The dice are not added, and a 6 does nothing.
+  effect: Lower the soldier's Gas Rating by 1 for each die showing 1, to a minimum of 0.
+  not_an_attribute_roll: >-
+    No attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed,
+    Helped, or Covered, and never causes a Stress Response (Chapter 1, section 1.3).
+  talents: Light Trigger (data/character/talents.yaml) can make a three-die Gas Roll two dice.
+
+change_canister:
+  entry: change-canister   # data/character/action-catalog.yaml
+  requirement: The soldier carries a spare canister (every carried spare has gas; gas-canister in data/gear/items.yaml).
+  roll: none
+  spends:
+    in_titan_engagement: the soldier's action (Quick Refit lets the soldier spend their move instead)
+    outside_titan_engagement: nothing
+  effect: >-
+    The soldier picks one carried spare canister and fits it. Its Gas Rating becomes the
+    soldier's Gas Rating. The canister it replaces becomes a spare with its Gas Rating if that
+    is above 0, and is discarded if it is 0.
+  airborne: A soldier can change a canister while airborne.
+  help: Not rolled, so it is never Helped or Covered.
+
+running_dry:
+  when: The soldier's Gas Rating is 0.
+  effect:
+    - Their ODM Gear counts as not had for every Action Catalog entry and adds no Gear Dice (data/gear/items.yaml).
+    - They cannot make an ODM move, so they make no Gas Roll for a later round until their Gas Rating is above 0.
+    - They cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot (strikes).
+  airborne: >-
+    Running dry does not make the soldier fall. An airborne soldier stays airborne at their
+    Position until they stop being airborne (airborne, stops_being_airborne). Which moves that are
+    not ODM moves each Position allows is in data/engagement/positions.yaml (moves, letting_go).
+  ends: >-
+    When the Gas Rating rises above 0: Change Canister (change_canister), Standard Issue
+    (data/gear/standard-issue.yaml), or receiving a canister by passing or taking and then
+    changing to it (data/gear/carrying.yaml, passing_items and taking_items).
+  graduation_exam: >-
+    The Graduation Exam's training ODM Gear has no canister, and running dry never applies to it
+    (data/character/graduation-exam.yaml, exam_issue).
+
+jam:
+  when: The ODM Gear's current rating reaches 0 (data/gear/items.yaml, odm-gear).
+  effect:
+    - The ODM Gear counts as not had for every Action Catalog entry and adds no Gear Dice.
+    - The soldier cannot make an ODM move while it is Jammed, so they make no Gas Roll for a later round. The Gas Roll for the round in which it Jammed is still made.
+    - The Gas Rating does not change.
+    - The soldier cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot (strikes).
+    - If the soldier is airborne, they fall once the roll that Jammed it is finished (data/gear/falls.yaml, jam-airborne).
+  ends: >-
+    When the current rating rises above 0: Field Repair (data/gear/field-repair.yaml), or
+    Standard Issue replacing the Jammed ODM Gear (data/gear/standard-issue.yaml; the interim
+    issue replaces it only if its rating is below the Funding row, and the soldier may decline
+    the exchange).

@@ -1,0 +1,1133 @@
+{
+ "sprinting-abnormal": {
+  "by_broken_parts": {
+   "arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "arm 1, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "arm 1, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "arm 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "headlong-lunge": 0.333,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "arm 2, leg 1": {
+    "kill_share": 0.0,
+    "shares": {
+     "pitch-headlong": 0.333,
+     "veer": 0.667
+    }
+   },
+   "arm 2, leg 2": {
+    "kill_share": 0.0,
+    "shares": {
+     "pitch-headlong": 0.333,
+     "veer": 0.667
+    }
+   },
+   "eyes 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "eyes 1, arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "eyes 1, arm 1, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "eyes 1, arm 1, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "eyes 1, arm 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "headlong-lunge": 0.333,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "eyes 1, arm 2, leg 1": {
+    "kill_share": 0.0,
+    "shares": {
+     "pitch-headlong": 0.333,
+     "veer": 0.667
+    }
+   },
+   "eyes 1, arm 2, leg 2": {
+    "kill_share": 0.0,
+    "shares": {
+     "pitch-headlong": 0.333,
+     "veer": 0.667
+    }
+   },
+   "eyes 1, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "eyes 1, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.333,
+     "veer": 0.5
+    }
+   },
+   "none": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   }
+  },
+  "by_previous_behavior": {
+   "None": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "grab": {
+    "kill_share": 0.333,
+    "shares": {
+     "headlong-lunge": 0.333,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "headlong-lunge": {
+    "kill_share": 0.167,
+    "shares": {
+     "grab": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.333,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "pitch-headlong": {
+    "kill_share": 0.5,
+    "shares": {
+     "grab": 0.333,
+     "headlong-lunge": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "run-past": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "trample": 0.167,
+     "veer": 0.333
+    }
+   },
+   "thrash": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.167,
+     "veer": 0.167
+    }
+   },
+   "trample": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.333,
+     "run-past": 0.167,
+     "veer": 0.167
+    }
+   },
+   "veer": {
+    "kill_share": 0.333,
+    "shares": {
+     "grab": 0.167,
+     "headlong-lunge": 0.167,
+     "pitch-headlong": 0.167,
+     "run-past": 0.167,
+     "trample": 0.333
+    }
+   }
+  },
+  "in_reach_results": 5,
+  "max_kill_share": 0.5,
+  "min_legal_entries": 1,
+  "no_legal_state": {
+   "broken": {
+    "arm": 2,
+    "eyes": 0,
+    "leg": 1
+   },
+   "previous": "veer"
+  },
+  "problems": [],
+  "worst_state": {
+   "broken": {
+    "arm": 0,
+    "eyes": 0,
+    "leg": 0
+   },
+   "previous": "pitch-headlong"
+  }
+ },
+ "standard-large": {
+  "by_broken_parts": {
+   "arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "arm 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "arm 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "arm 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "arm 2, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "loom": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "arm 2, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "loom": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, arm 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, arm 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, arm 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, arm 2, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "loom": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, arm 2, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "loom": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "eyes 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "none": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   }
+  },
+  "by_previous_behavior": {
+   "None": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "bite": {
+    "kill_share": 0.333,
+    "shares": {
+     "crush": 0.167,
+     "grab": 0.333,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "crush": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.333
+    }
+   },
+   "grab": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "heavy-tread": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.333,
+     "grab": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   },
+   "loom": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.333,
+     "shrug-off": 0.167
+    }
+   },
+   "shrug-off": {
+    "kill_share": 0.5,
+    "shares": {
+     "bite": 0.333,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167
+    }
+   },
+   "thrash": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "crush": 0.167,
+     "grab": 0.167,
+     "heavy-tread": 0.167,
+     "loom": 0.167,
+     "shrug-off": 0.167
+    }
+   }
+  },
+  "in_reach_results": 4,
+  "max_kill_share": 0.5,
+  "min_legal_entries": 3,
+  "no_legal_state": {
+   "broken": {
+    "arm": 2,
+    "eyes": 0,
+    "leg": 1
+   },
+   "previous": "loom"
+  },
+  "problems": [],
+  "worst_state": {
+   "broken": {
+    "arm": 0,
+    "eyes": 0,
+    "leg": 0
+   },
+   "previous": "shrug-off"
+  }
+ },
+ "standard-medium": {
+  "by_broken_parts": {
+   "arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "arm 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "arm 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "arm 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.333,
+     "shake-off": 0.333,
+     "snap-short": 0.167
+    }
+   },
+   "arm 2, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.333,
+     "shake-off": 0.333,
+     "snap-short": 0.167
+    }
+   },
+   "arm 2, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.333,
+     "shake-off": 0.333,
+     "snap-short": 0.167
+    }
+   },
+   "eyes 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.333,
+     "swat": 0.167
+    }
+   },
+   "eyes 1, arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.333,
+     "swat": 0.167
+    }
+   },
+   "eyes 1, arm 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.333,
+     "swat": 0.167
+    }
+   },
+   "eyes 1, arm 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.333,
+     "swat": 0.167
+    }
+   },
+   "eyes 1, arm 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "shake-off": 0.333,
+     "snap-short": 0.5
+    }
+   },
+   "eyes 1, arm 2, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "shake-off": 0.333,
+     "snap-short": 0.5
+    }
+   },
+   "eyes 1, arm 2, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "shake-off": 0.333,
+     "snap-short": 0.5
+    }
+   },
+   "eyes 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.333,
+     "swat": 0.167
+    }
+   },
+   "eyes 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.333,
+     "swat": 0.167
+    }
+   },
+   "leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "none": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   }
+  },
+  "by_previous_behavior": {
+   "None": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "bite": {
+    "kill_share": 0.333,
+    "shares": {
+     "fixed-grin": 0.167,
+     "grab": 0.333,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "fixed-grin": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.333,
+     "swat": 0.167
+    }
+   },
+   "grab": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.333,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "shake-off": {
+    "kill_share": 0.5,
+    "shares": {
+     "bite": 0.333,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   },
+   "snap-short": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "swat": 0.333
+    }
+   },
+   "swat": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.333,
+     "snap-short": 0.167
+    }
+   },
+   "thrash": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "fixed-grin": 0.167,
+     "grab": 0.167,
+     "shake-off": 0.167,
+     "snap-short": 0.167,
+     "swat": 0.167
+    }
+   }
+  },
+  "in_reach_results": 5,
+  "max_kill_share": 0.5,
+  "min_legal_entries": 2,
+  "no_legal_state": {
+   "broken": {
+    "arm": 2,
+    "eyes": 1,
+    "leg": 0
+   },
+   "previous": "snap-short"
+  },
+  "problems": [],
+  "worst_state": {
+   "broken": {
+    "arm": 0,
+    "eyes": 0,
+    "leg": 0
+   },
+   "previous": "shake-off"
+  }
+ },
+ "standard-small": {
+  "by_broken_parts": {
+   "arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "arm 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "arm 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "arm 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "gape": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.333
+    }
+   },
+   "arm 2, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "gape": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.333
+    }
+   },
+   "arm 2, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "gape": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.333
+    }
+   },
+   "eyes 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "eyes 1, arm 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "eyes 1, arm 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "eyes 1, arm 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "eyes 1, arm 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "gape": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.333
+    }
+   },
+   "eyes 1, arm 2, leg 1": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "gape": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.333
+    }
+   },
+   "eyes 1, arm 2, leg 2": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "gape": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.333
+    }
+   },
+   "eyes 1, leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "eyes 1, leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "leg 1": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "leg 2": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "none": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   }
+  },
+  "by_previous_behavior": {
+   "None": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "bite": {
+    "kill_share": 0.333,
+    "shares": {
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "clutch-at-the-legs": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.333
+    }
+   },
+   "gape": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.333,
+     "scrabble": 0.167
+    }
+   },
+   "grab": {
+    "kill_share": 0.167,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.333,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "lurch-closer": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.333,
+     "gape": 0.167,
+     "grab": 0.167,
+     "scrabble": 0.167
+    }
+   },
+   "scrabble": {
+    "kill_share": 0.5,
+    "shares": {
+     "bite": 0.333,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167
+    }
+   },
+   "thrash": {
+    "kill_share": 0.333,
+    "shares": {
+     "bite": 0.167,
+     "clutch-at-the-legs": 0.167,
+     "gape": 0.167,
+     "grab": 0.167,
+     "lurch-closer": 0.167,
+     "scrabble": 0.167
+    }
+   }
+  },
+  "in_reach_results": 5,
+  "max_kill_share": 0.5,
+  "min_legal_entries": 3,
+  "no_legal_state": {
+   "broken": {
+    "arm": 2,
+    "eyes": 0,
+    "leg": 0
+   },
+   "previous": "gape"
+  },
+  "problems": [],
+  "worst_state": {
+   "broken": {
+    "arm": 0,
+    "eyes": 0,
+    "leg": 0
+   },
+   "previous": "scrabble"
+  }
+ }
+}

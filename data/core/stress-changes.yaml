@@ -1,0 +1,110 @@
+# Every trigger that raises or lowers a soldier's Stress.
+# Source of truth under ADR-0012. docs/rules/01-core-rules.md (section 1.6) references
+# this file and does not repeat its rows. Stress changes only through a row here or a
+# table result or Talent that names an amount. A later chapter that creates a new
+# trigger (for example, a Waypoint camp in the Expedition rules) adds a row here.
+id: stress-changes
+name: Stress Changes
+chapter: 01-core-rules
+adrs: [ADR-0004, ADR-0008]
+
+starting_value: minimum
+minimum:
+  base: 0
+  per_scar: 1
+  on_rise: Stress below the new minimum rises to it immediately.
+  reductions_stop_at_minimum: true
+maximum: null
+maximum_decided: [OQ-04]
+
+gains:
+  - id: push
+    trigger: The soldier Pushes a roll and is not Covered.
+    who: the Pushing soldier
+    amount: 1
+    also: Add 1 Stress Die to the Pushed roll and roll it with the re-rolled dice.
+    rules: [01-core-rules]
+    adrs: [ADR-0004]
+
+  - id: cover
+    trigger: The soldier Covers a comrade's Push.
+    who: the Covering soldier
+    amount: 1
+    condition: >-
+      The Covering soldier is not the Pushing soldier, is not Down, and is a player
+      character or a Squadmate whose Chapter 2 rules allow Covering. In a Titan
+      Engagement they are at the same Position as the Pushing soldier or one Position
+      step away. Outside a Titan Engagement they qualify to Help that roll under the
+      rule that called for it. No state or result the soldier holds forbids it (a
+      forbids field on that state's or result's row; Chapter 1, section 1.9). Only one
+      soldier Covers a given Push; if more than one comrade offers, the Pushing soldier
+      chooses one. A Push that would re-roll no die cannot be Covered.
+    spends: nothing, in or outside a Titan Engagement
+    also: The Pushing soldier gains no Stress and adds no Stress Die.
+    rules: [01-core-rules]
+    decided: [OQ-06, OQ-08, OQ-13, OQ-18]
+
+  - id: named-gain
+    trigger: A table result, a Talent, or a Chapter 7 rule, such as hunger (data/expedition/legs.yaml, rations), names a Stress gain.
+    who: as that result or Talent states
+    amount: as that result or Talent states
+    includes: >-
+      Fear contagion: a Fear Roll row's stress-gain-nearby effect gives its amount of Stress to every
+      comrade within one Position step of the soldier who rolled. It is Stress, not a roll, and causes
+      no Fear Roll (data/harm/effect-types.yaml; decision batch 7, 7-8; OQ-50, as revised).
+    rules: [03-harm-and-mind]
+    decided: [OQ-139]
+
+reductions:
+  - id: engagement-ends
+    trigger: A Titan Engagement ends, for any reason, including a retreat.
+    who: every soldier, player character or Squadmate, who held a Position at any point during that Titan Engagement
+    amount: 1
+    stacks_with: [nape-kill]   # a Nape kill that ends the Engagement sets off both rows
+    rules: [01-core-rules, 05-titan-engagement]
+    adrs: [ADR-0008, ADR-0009]
+    decided: [OQ-10, OQ-13]
+
+  - id: nape-kill
+    trigger: A Nape strike kills a Titan.
+    who: every soldier, player character or Squadmate, who holds a Position in that Titan Engagement when the kill happens
+    amount: 1
+    stacks_with: [engagement-ends]
+    rules: [01-core-rules, 05-titan-engagement]
+    adrs: [ADR-0008]
+    decided: [OQ-10, OQ-13]
+
+  - id: named-reduction
+    trigger: A table result or Talent names a Stress reduction.
+    who: as that result or Talent states
+    amount: as that result or Talent states
+    rules: [03-harm-and-mind]
+
+  # Chapter 7, the playtest rules (decision batch 7, 7-14, 7-15, 7-17).
+  - id: camp-relief
+    trigger: At a night camp, the camp roll succeeds and the camp does not meet hunger (data/expedition/legs.yaml, night_camp).
+    who: every soldier on the Expedition
+    amount: 1
+    rules: [07-playtest-rules]
+    decided: [OQ-141]
+
+  - id: skirmish-ends
+    trigger: A Skirmish ends, for any reason (data/skirmish/skirmish.yaml, ending).
+    who: every soldier, player character or Squadmate, who took part in that Skirmish
+    amount: 1
+    rules: [07-playtest-rules]
+    decided: [OQ-143]
+
+  - id: downtime
+    trigger: A player character takes Recover or Visit Haven, or a Squadmate takes the Squadmate relief (data/campaign/downtime.yaml).
+    who: that soldier
+    amount: 2   # Recover 2, Visit Haven 2, the Squadmate relief 2
+    rules: [07-playtest-rules]
+    decided: [OQ-141]
+
+  - id: graduation-exam-ends
+    trigger: The optional Graduation Exam ends (data/character/graduation-exam.yaml).
+    who: every Cadet who took the Graduation Exam
+    amount: all of the Cadet's Stress   # Stress returns to 0; no Chapter 3 result, and so no Scar, arises during the Exam
+    rules: [02-character-creation]
+    decided: [OQ-22]

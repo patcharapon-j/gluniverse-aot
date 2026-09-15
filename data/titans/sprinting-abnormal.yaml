@@ -1,0 +1,138 @@
+# The Sprinting Abnormal: an Abnormal's stat block, its own Behavior Table, and its own Attention
+# Ladder (data/titans/index.yaml, ladders), in the format of data/engagement/titan-format.yaml.
+# Source of truth under ADR-0012. docs/rules/06-standard-titans.md (section 6.5) renders this file
+# with tools/probes/chapter-06/render.py and never writes its rows by hand.
+id: sprinting-abnormal
+name: Sprinting Abnormal
+chapter: 06-standard-titans
+adrs: [ADR-0001, ADR-0003, ADR-0005, ADR-0007, ADR-0010, ADR-0014, ADR-0015, ADR-0017, ADR-0019]
+decided: [OQ-80, OQ-81, OQ-84, OQ-101, OQ-102, OQ-103, OQ-108, OQ-109, OQ-137, OQ-145]   # Chapter 5's table procedure, ladder format, and Read facts; Chapter 6's entries (decision batch 4); each harming effect's Injury Type (decision batch 7, 7-5)
+format: data/engagement/titan-format.yaml (stat_block, abnormal_titan, behavior_table, entry_fields, tier_rules)
+
+# ------------------------------------------------------------------ stat block
+# An Abnormal lists every value in full (data/engagement/titan-format.yaml, stat_block,
+# abnormal_titan). Each value stays inside the Size Class rows' bounds (Tempo 1 to 2, Nape Depth 3 to
+# 4, Regeneration 2 to 4, Toughness 1 to 3, Attack Dice 3 to 12). Its Toughness, Nape Depth, Regeneration
+# clock length, and Attention Ladder are hidden until a Read reveals them
+# (data/engagement/read.yaml, facts). Values that differ from the medium row: tempo (2), nape_depth
+# (3), Pitch Headlong's attack_dice (3, against the medium row's control pool of 6), the Grab's and
+# Headlong Lunge's attack_dice (6, against the medium row's kill pool of 9), and the ladder (OQ-102,
+# OQ-103; decision batch 4, 4-3 and 4-4, as revised in decision batch 4b, 4b-1). Each pool is 3 dice
+# for each point of the fixed need decision batch 4 chose (decision batch 8, 8-1). Trample, a harming
+# control entry, stays at the medium row's control pool of 6 (decision batch 4b, 4b-7). Every Toughness is the medium row's. Run Past, Trample, and Headlong Lunge list both
+# legs: one Broken leg grounds the Titan, and a grounded Titan does not run (OQ-109).
+size_class: medium
+abnormal: true
+tempo: 2
+nape_depth: 3
+regeneration_clock: 3
+heave: 3   # its Heave rating, the medium row's; an Abnormal lists its own (data/engagement/size-classes.yaml, heave; decision batch 8, 8-9, OQ-146)
+body_parts:
+  - {id: eyes, kind: eyes, toughness: 2}
+  - {id: left-arm, kind: arm, toughness: 2}
+  - {id: right-arm, kind: arm, toughness: 2}
+  - {id: left-leg, kind: leg, toughness: 2}
+  - {id: right-leg, kind: leg, toughness: 2}
+attention_ladder: sprinting-abnormal   # data/titans/index.yaml (ladders)
+
+# ------------------------------------------------------------------ Behavior Table
+behavior_table:
+  roll: D6
+  entries:
+    - id: run-past
+      name: Run Past
+      results: [1]
+      tier: terrorize
+      targets: holder-and-position
+      position_requirement: [distant, in-reach]
+      body_parts_used: [leg, leg]
+      attack_dice: 3
+      effects:
+        - {type: stress, amount: 1}
+      fallback: thrash
+      text: >-
+        It runs past on long, pounding legs without slowing, and everyone beside the soldier feels
+        the ground jump.
+
+    - id: veer
+      name: Veer
+      results: [2]
+      tier: terrorize
+      targets: holder
+      position_requirement: [distant, in-reach, on-body, blind-spot]
+      body_parts_used: []
+      attack_dice: 3
+      effects:
+        - {type: stress, amount: 1}
+        - {type: telegraph}
+      fallback: thrash
+      text: >-
+        Its head lolls and its whole body tips one way, and the way it tips shows where it will go
+        next.
+
+    - id: trample
+      name: Trample
+      results: [3]
+      tier: control
+      targets: holder
+      position_requirement: [distant, in-reach]
+      body_parts_used: [leg, leg]
+      attack_dice: 6
+      effects:
+        - {type: critical-injury, injury_location: leg, injury_type: crush, cannot_be_lethal: true}
+      fallback: thrash
+      text: It runs straight through the soldier, and its feet come down wherever they come down.
+
+    - id: pitch-headlong
+      name: Pitch Headlong
+      results: [4]
+      tier: control
+      targets: holder
+      position_requirement: [on-body, blind-spot]
+      body_parts_used: []
+      attack_dice: 3   # below the medium row's control pool of 6 (OQ-103)
+      effects:
+        - {type: knock-loose}
+      fallback: thrash
+      text: >-
+        It flings its whole body forward and rolls over, a slow, heaving roll that scrapes off
+        whatever clings to it.
+
+    - id: grab
+      name: Grab
+      results: [5]
+      tier: kill
+      targets: holder
+      position_requirement: [in-reach, on-body]
+      body_parts_used: [arm]
+      attack_dice: 6   # below the medium row's kill pool of 9 (OQ-103; decision batch 4, 4-4)
+      effects:
+        - {type: grab}
+      fallback: thrash
+      text: A hand shoots out at the soldier and closes around them.
+
+    - id: headlong-lunge
+      name: Headlong Lunge
+      results: [6]
+      tier: kill
+      targets: holder
+      position_requirement: [in-reach, on-body]
+      body_parts_used: [leg, leg]
+      attack_dice: 6   # below the medium row's kill pool of 9 (OQ-103; decision batch 4, 4-4)
+      effects:
+        - {type: critical-injury, injury_location: rolled, injury_type: crush, cannot_be_lethal: false}
+      fallback: pitch-headlong
+      text: It closes the last of the gap in one long stride and snaps at the soldier with its whole head.
+
+    - id: thrash
+      name: Thrash
+      results: []
+      tier: thrash
+      targets: holder
+      position_requirement: [distant, in-reach, on-body, blind-spot]
+      body_parts_used: []
+      attack_dice: 6
+      effects:
+        - {type: knock-loose}
+      fallback: none
+      text: It spins and rolls on the spot, twisting every way at once.

@@ -1,0 +1,157 @@
+# Scars: how a soldier gains one, what every Scar does (ADR-0008 as amended), the Scar table, and
+# Retirement.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.13) references this
+# file and renders its tables from it (tools/render/render.py).
+id: scars
+name: Scars
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0008]
+decided: [OQ-51, OQ-137, OQ-147]
+
+# ------------------------------------------------------------------ gaining (closed list)
+gaining:
+  triggers:
+    - id: fear-roll-result
+      event: A Fear Roll result whose row has gain-scar takes effect (data/mind/fear-rolls.yaml). A result a Drive shrugs off gives no Scar.
+    - id: survived-lethal-injury
+      event: >-
+        A lethal Critical Injury the soldier holds is stabilized while the soldier is alive, by
+        a Treat Injury success or by a Death Roll that slows a day limit
+        (data/harm/death-rolls.yaml). Each Critical Injury gives this Scar at most once.
+  maximum: 5   # a gain-scar at five Scars does nothing
+  steps:
+    - Roll D66 on the table below. If the soldier already holds the row rolled, roll again. A Squadmate also rolls again on a row with squadmate_rerolls true.
+    - Record the Scar.
+    - Minimum Stress rises by 1. If the soldier's Stress is below the new minimum, it rises to it at once (data/core/stress-changes.yaml, minimum).
+    - Resolve rises by 1 (data/character/attributes.yaml, resolve).
+    - If the soldier now holds five Scars, they must retire (retirement below).
+  permanent: true   # no rule removes a Scar
+  squadmates: A Squadmate gains Scars like a player character.
+
+# ------------------------------------------------------------------ what every Scar does (ADR-0008)
+every_scar:
+  minimum_stress: +1
+  resolve: +1
+  effect: the row's trigger and effect, permanently
+
+# ------------------------------------------------------------------ Retirement
+retirement:
+  trigger:
+    - id: five-scars
+      when: The soldier holds five Scars.
+      retires: The soldier must retire.
+    - id: lost-limbs
+      when: >-
+        The soldier has lost both arms or both legs: both sides lost at the arm table's or the leg table's
+        13 or more row (data/harm/critical-injuries.yaml, lost_limb_riders, sides_lost), whatever
+        prosthetics are fitted, since the loss stands (glossary, Retirement).
+      retires: >-
+        The soldier may retire, at the player's choice. The choice is offered when the procedure in which
+        the soldier met this trigger ends, or at once if no procedure is under way, and again at the end
+        of every Downtime while the loss stands (Chapter 7, section 7.2). Declining is not final. If the
+        player chooses it, the sheet marks the soldier retiring, and Retirement happens at the moment
+        timing gives a fifth Scar gained when the choice was made, with the same effect.
+      squadmates: >-
+        A Squadmate may take it. The players choose for it as one table, using the roll-off in
+        data/character/lifepath.yaml (group_choices) when they disagree.
+      alternative: >-
+        A Prosthetic (data/harm/critical-injuries.yaml, lost_limb_riders, prosthetics). Fitting one does
+        not end the offer, since the loss still stands.
+      decided: [OQ-137, OQ-147]   # decision batch 7, 7-6; decision batch 8, 8-10 and 8-11
+  timing: >-
+    Retirement never interrupts a procedure. A fifth Scar gained during a Titan Engagement, or at
+    any step of data/harm/engagement-end.yaml, retires the soldier at its retirement-and-promotion
+    step. One gained while a day passes retires the soldier after the last step of
+    data/harm/healing.yaml (each_day). One gained in an outside-harm care window retires the
+    soldier after that window and the Death Rolls that follow it, if any
+    (data/harm/treat-injury.yaml). Any other fifth Scar, such as one from a Fear Roll that a
+    Chase causes, retires the soldier when the procedure in which it was gained ends, as that
+    procedure's rule states. If no procedure is under way, it retires the soldier at once. Until
+    Retirement the soldier follows every rule as normal, and the sheet marks them retiring
+    (data/harm/sheet-fields.yaml).
+  what_happens:
+    - The soldier leaves play and becomes an NPC instructor or Squad contact. The rules for contacts and instructors, not yet written, give that any effect.
+    - A retiring player character is replaced by promotion or a new character (data/character/squadmates.yaml, promotion).
+    - A retiring Squadmate leaves the Squad Pool.
+    - Every Drive that named the retiring soldier can never trigger again (data/character/enlistment.yaml).
+    - Retirement gives no Grief and is not a Fear Roll trigger.
+  adrs: [ADR-0008]
+
+# ------------------------------------------------------------------ the Scar table (D66)
+table:
+  roll: D66
+  rows:
+    - id: the-closing-hand
+      name: The Closing Hand
+      results: [11, 12, 13]
+      trigger: You make a dodge against a behavior whose Behavior Table entry has a grab effect, which Chapter 6 marks in each table's Grab column (data/titans/index.yaml, grab_mark).
+      effects:
+        - {type: penalty, dice: 1, entries: [dodge], applies_to: that dodge only}
+    - id: survivors-guilt
+      name: Survivor's Guilt
+      results: [14, 15, 16]
+      trigger: A comrade in the Squad dies.
+      effects:
+        - {type: stress-gain, amount: 1, applies_after: "the soldier's comrade-dies Fear Roll for that death, if they make one (data/mind/fear-rolls.yaml); otherwise it applies when the death happens"}
+    - id: unsteady-hands
+      name: Unsteady Hands
+      results: [21, 22, 23]
+      trigger: You roll for treat-injury or field-repair.
+      effects:
+        - {type: penalty, dice: 1, entries: [treat-injury, field-repair]}
+    - id: cannot-look-away
+      name: Cannot Look Away
+      results: [24, 25, 26]
+      trigger: You make a Fear Roll for the comrade-grabbed trigger.
+      effects:
+        - {type: fear-roll-total, amount: 1}
+    - id: numb
+      name: Numb
+      results: [31, 32, 33]
+      trigger: A comrade in the Squad dies.
+      effects:
+        - {type: other, text: "You make no Fear Roll for that death, and you gain 1 more Grief from it (data/mind/grief.yaml)."}
+    - id: reckless-blade
+      name: Reckless Blade
+      results: [34, 35, 36]
+      trigger: Your roll for nape-strike or body-part-strike falls short of what it needs, and you are allowed to Push it.
+      effects:
+        - {type: other, text: You must Push that roll.}
+      squadmate_rerolls: true   # a Squadmate never Pushes
+    - id: nerves-on-edge
+      name: Nerves on Edge
+      results: [41, 42, 43]
+      trigger: For the first time in a Titan Engagement, a Titan's card resolves a behavior against you.
+      effects:
+        - {type: stress-gain, amount: 1}
+    - id: fear-of-falling
+      name: Fear of Falling
+      results: [44, 45, 46]
+      trigger: You roll for fly.
+      effects:
+        - {type: penalty, dice: 1, entries: [fly]}
+    - id: blood-on-the-blade
+      name: Blood on the Blade
+      results: [51, 52, 53]
+      trigger: Your Nape strike kills a Titan.
+      effects:
+        - {type: stress-gain, amount: 1, applies_after: the Nape kill Stress relief (data/core/stress-changes.yaml)}
+    - id: carrying-their-weight
+      name: Carrying Their Weight
+      results: [54, 55, 56]
+      trigger: You Cover a comrade's Push.
+      effects:
+        - {type: stress-gain, amount: 1, applies_to: in addition to the Covering Stress}
+      squadmate_rerolls: true   # a Squadmate never Covers
+    - id: second-guessing
+      name: Second-Guessing
+      results: [61, 62, 63]
+      trigger: You roll for read or break-attention.
+      effects:
+        - {type: penalty, dice: 1, entries: [read, break-attention]}
+    - id: old-nightmare
+      name: Old Nightmare
+      results: [64, 65, 66]
+      trigger: You make a Fear Roll for the abnormal or second-focus-titan trigger.
+      effects:
+        - {type: fear-roll-total, amount: 1}

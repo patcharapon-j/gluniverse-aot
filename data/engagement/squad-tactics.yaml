@@ -1,0 +1,82 @@
+# Squad Tactics for Phase 1: how a Squad holds and uses them, who declares each, and the list.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.12) references this
+# file and does not repeat its rows.
+id: squad-tactics
+name: Squad Tactics
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0010]
+decided: [OQ-89, OQ-99]
+
+rules:
+  owned_by: The Squad, not any one soldier (glossary Squad Tactic).
+  held: >-
+    A Squad holds 2 Squad Tactics from tactics. The players choose them together before the
+    Squad's first Titan Engagement, using the roll-off in data/character/lifepath.yaml
+    (group_choices) if they disagree. A later rule (the Squad Points rules, not yet written) may
+    let a Squad hold more. Promotions and new soldiers do not change them.
+  use: >-
+    Each Squad Tactic the Squad holds can be used once per Titan Engagement, when its condition is
+    met. A use is declared by the player each tactic's declared_by names, at the moment its when
+    names, and is spent as soon as it is declared.
+  entry: squad-tactic   # an option, not an action (data/character/action-catalog.yaml)
+  tracked_value: squad-tactic-use
+  several_declarers: >-
+    If more than one player may declare the same use at the same moment, and they disagree about
+    whether it is used or who declares it, the roll-off in data/character/lifepath.yaml
+    (group_choices) decides. The winner's choice stands.
+  squadmates: >-
+    Where declared_by names a Squadmate's player, or a choice is made for a Squadmate, the
+    directing rules decide (data/character/squadmates.yaml, wing, directing).
+  gm: The GM never uses a Squad Tactic and never decides whether a condition is met beyond its text.
+  tuning: The reference rows are measured without Squad Tactics; every tactic alone and in pairs is reported beside them (data/engagement/tuning.yaml, prepared_squad_kill, squad_tactics).
+
+tactics:
+  - id: hook-and-cut
+    name: Hook and Cut
+    condition: >-
+      A soldier's Break Attention against a Focus Titan has just succeeded, and a comrade holds
+      blind-spot relative to that Titan, is neither Down nor Grabbed, has an unspent action this
+      round, and meets the Nape strike's requirements, and no retreat is under way
+      (data/engagement/background-titans.yaml, retreat, actions; decision batch 5, 5-15, OQ-129).
+      During a retreat the Break Attention still resolves, and this tactic is not used or spent.
+    declared_by: The player of the comrade who will take the Nape strike.
+    when: >-
+      As soon as every on_success step of the Break Attention is resolved
+      (data/engagement/attention.yaml, break_attention, on_success), a freed soldier's release
+      included, and before any other rule acts. A flare's Background clock segment is filled after
+      this tactic's Nape strike (data/engagement/background-titans.yaml, ticks, flare).
+    effect: >-
+      That comrade takes a Nape strike against the Titan at once, spending their action, whether or
+      not their card has come up. Openings the Break Attention created can be spent on it, because
+      the comrade did not create them.
+
+  - id: hamstring-line
+    name: Hamstring Line
+    condition: A soldier declares a Body Part strike against a leg, and at least one comrade Helps that roll.
+    declared_by: The player of the soldier making the strike.
+    when: After every Help for the strike is declared, and before the roll.
+    effect: If the strike has at least 1 success, it gains 1 more success.
+
+  - id: clear-the-hand
+    name: Clear the Hand
+    condition: >-
+      A soldier is Grabbed and has been lifted, and a comrade declares a strike against the holding
+      arm that only this tactic's effect allows: from in-reach, or without working ODM Gear.
+    declared_by: The player of the comrade declaring that strike, naming the Grab.
+    when: As that strike is declared, before the roll.
+    effect: >-
+      Until that Grab ends, every strike against the holding arm, by any soldier, can also be made
+      from in-reach, and none needs working ODM Gear (data/engagement/grab.yaml, escapes,
+      strike-the-holding-arm).
+
+  - id: fall-back
+    name: Fall Back
+    condition: >-
+      The wings step of a round begins (data/engagement/round.yaml), and at least one soldier holds
+      on-body or blind-spot relative to a Focus Titan and is not Down, Grabbed, or carried.
+    declared_by: The player of any such soldier.
+    when: At the wings step, before Wings are assigned or kept.
+    effect: >-
+      Each such soldier's player chooses whether that soldier holds in-reach relative to that Titan
+      instead. The change is made by this rule, not by the soldier's own move. It is not a fall,
+      not ODM use, and does not change airborne.

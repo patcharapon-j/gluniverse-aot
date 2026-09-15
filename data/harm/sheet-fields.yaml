@@ -1,0 +1,148 @@
+# What Chapter 3 adds to the character sheet and the Squadmate stat block, beyond the fields
+# data/character/lifepath.yaml (record_on_sheet) and data/character/squadmates.yaml (stat_block)
+# already list. Each of those lists ends with a row that includes this file (OQ-55).
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md references this file.
+id: sheet-fields
+name: Harm and Mind Sheet Fields
+chapter: 03-harm-and-mind
+decided: [OQ-55, OQ-137]
+
+applies_to: [player-character, squadmate]
+
+# Values derived from recorded fields, with no field of their own (Health boxes, ADR-0005 as
+# amended). health and health_lost are Chapter 2 fields; health_lost is Health lost to damage.
+derived:
+  - id: current_health
+    stored: false
+    untreated_critical_injuries: >-
+      the number of entries in critical_injuries with treated false; critical_injuries lists
+      only Critical Injuries still held, because one that heals leaves it (fields,
+      critical_injuries, removed_when)
+    boxes_crossed_off: min(untreated_critical_injuries, health)
+    formula: max(0, health - min(untreated_critical_injuries, health) - health_lost)
+    invariant: health_lost <= health - min(untreated_critical_injuries, health)
+    paper: >-
+      The Health row has one box per point of Health. Mark damage with a slash in a box and an
+      untreated Critical Injury with an X. Treating erases an X; a day passing or a revive
+      erases slashes (data/harm/health.yaml).
+
+# Stored fields that must always agree with other fields.
+invariants:
+  - id: down
+    field: down   # stored in data/character/lifepath.yaml (record_on_sheet) and data/character/squadmates.yaml (stat_block)
+    rule: >-
+      down is true exactly when current_health is 0, or an entry in critical_injuries with
+      treated false has a row whose down is until_treated (data/harm/down.yaml, conditions).
+      Recheck it whenever health_lost or critical_injuries changes.
+  - id: pinned
+    field: pinned
+    rule: >-
+      A soldier with a pinned value is not airborne and not carried, and holds In Reach relative to the
+      body it names (data/engagement/titan-harm.yaml, falling_titan, pinned; decision batch 8, 8-9).
+
+fields:
+  - id: critical_injuries
+    already_listed: true
+    each_records:
+      - row           # the row id (data/harm/critical-injuries.yaml)
+      - side          # left or right at an arm or a leg; none at the torso or head (critical-injuries.yaml, sides)
+      - injury_type   # crush, bite, burn, cut, or pierce; it picks the name the entry shows (critical-injuries.yaml, types)
+      - treated       # true or false; an untreated entry crosses off one Health box
+      - time_limit    # turn, engagement, day, or none (stabilized or never lethal); after any type rider
+      - healing_days_left
+      - halved        # true once Careful Nursing has halved its healing time (data/harm/healing.yaml)
+    paper: >-
+      One line per entry, for example "Right arm, Bite: Bitten Off at the Shoulder, untreated, turn,
+      28 days" (decision batch 7, 7-4).
+    removed_when: >-
+      A Critical Injury that heals leaves critical_injuries (data/harm/healing.yaml, heals). If
+      its row has permanent_effects, its row id and side are added to healed_permanent_injuries.
+  - id: healed_permanent_injuries
+    already_listed: false
+    records: >-
+      The row id and side of every healed Critical Injury whose row has permanent_effects. Its
+      permanent_effects still apply, it counts toward worsening at its Injury Location and side, its
+      row cannot be gained again at that side, and it counts as a side lost for the lost-limb grades
+      (data/harm/critical-injuries.yaml, held_injuries, sides; lost_limb_riders).
+  - id: lasting_stress_responses
+    already_listed: false
+    each_records:
+      - row    # the row id (data/mind/stress-responses.yaml)
+      - ends   # titan-engagement-end if gained during a Titan Engagement; otherwise day, or what the rule that called for the roll states
+  - id: rallied_outside_titan_engagement_by
+    already_listed: false
+    records: >-
+      The soldiers who have Rallied this soldier outside a Titan Engagement since this soldier last
+      gained a lasting Stress Response. Cleared whenever the soldier gains one
+      (data/mind/stress-responses.yaml, rally).
+  - id: next_roll_penalty
+    already_listed: false
+    records: dice removed from the next attribute roll, until used (data/harm/effect-types.yaml)
+  # Decision batch 7, 7-8 (OQ-139), and decision batch 8, 8-13: the Fear Roll results that wait on the sheet.
+  - id: pending_fear_results
+    already_listed: false
+    each_records:
+      - effect   # forced-move, with its toward, or forced-action (data/harm/effect-types.yaml)
+      - titan    # for forced-action, the event's Titan (data/mind/fear-rolls.yaml, event_titan)
+    removed_when: >-
+      A forced step is made or not made at the start of the soldier's next turn; a forced strike is
+      made or its Titan dies; Rally clears either (data/mind/stress-responses.yaml, rally); or the
+      Titan Engagement, or the Skirmish, in which it was gained ends (data/harm/effect-types.yaml).
+  - id: dropped_blade_sets
+    already_listed: false
+    records: >-
+      How many Blade Sets a Fear Roll result has dropped from the soldier's handles during the current
+      Titan Engagement. No one takes them; when it ends they are shared out as left items are, and the
+      count returns to 0 (data/harm/effect-types.yaml, drop-blade-set; decision batch 8, 8-13).
+  # Decision batch 8, 8-9 and 8-17 (OQ-146, OQ-151).
+  - id: pinned
+    already_listed: false
+    records: >-
+      While the soldier is Pinned (data/engagement/titan-harm.yaml, falling_titan, pinned): the body that
+      pins them, by its Focus Titan label and whether it is a corpse; a limb pin, with the pinned limb and
+      its side, or a body pin; and the pinning Body Part, or none.
+    paper: 'One line, for example "Pinned under A (corpse), right arm, by right-arm".'
+    removed_when: The soldier is freed (falling_titan, freeing) or dies.
+  # Decision batch 8, 8-10 (OQ-147).
+  - id: prosthetics
+    already_listed: false
+    records: >-
+      Each prosthetic fitted, by kind (prosthetic-arm or prosthetic-leg; data/gear/items.yaml) and the side
+      it is fitted to (data/harm/critical-injuries.yaml, lost_limb_riders, prosthetics).
+    only_if_fitted: true
+  - id: faced_a_titan
+    already_listed: false
+    records: >-
+      True once the soldier first holds a Position in a Titan Engagement, whether or not they
+      make the first-titan-engagement Fear Roll (data/mind/fear-rolls.yaml).
+    at_creation: false
+  # Decision batch 7, 7-17: the first-human-kill Fear Roll trigger reads it (data/mind/fear-rolls.yaml).
+  - id: killed_a_person
+    already_listed: false
+    records: >-
+      True once the soldier first kills a person, when that kill resolves, whether or not they make the
+      first-human-kill Fear Roll (data/mind/fear-rolls.yaml; Chapter 7, section 7.4).
+    at_creation: false
+  - id: scars
+    already_listed: true
+    each_records: [row]   # the row id (data/mind/scars.yaml)
+  - id: stabilized_injuries_scarred
+    already_listed: false
+    records: which Critical Injuries have already given a Scar for being survived (data/mind/scars.yaml)
+  - id: retiring
+    already_listed: false
+    records: >-
+      true from the fifth Scar, or from the player's choice of medical Retirement, until Retirement
+      happens (data/mind/scars.yaml, retirement, trigger)
+
+# Promotion keeps everything a Squadmate has, in its current state (Chapter 2, section 2.10;
+# data/character/squadmates.yaml, promotion). That includes every field in this file.
+promotion: >-
+  A Squadmate promoted to a player character keeps every field in this file in its current
+  state, such as healed_permanent_injuries and lasting_stress_responses. This adds nothing to the
+  promotion procedure beyond naming these fields among what it keeps.
+
+# State Chapter 3 tests but does not record on the sheet: who held a Position in a Titan
+# Engagement is the Titan Engagement's record (data/core/stress-changes.yaml, engagement-ends), and
+# once-per-Titan-Engagement Talent uses such as Unshaken Command are recorded beside the Talent
+# on the Chapter 2 sheet (data/character/lifepath.yaml, record_on_sheet). See OQ-55.

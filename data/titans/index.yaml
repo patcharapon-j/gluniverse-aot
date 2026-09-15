@@ -1,0 +1,95 @@
+# Chapter 6's Titans: which Titan is the standard Titan of each Size Class, the Abnormals, the
+# Abnormal Attention Ladders, and how an entry is marked as a Grab.
+# Source of truth under ADR-0012. docs/rules/06-standard-titans.md (sections 6.1 and 6.5) references
+# this file and does not repeat its rows.
+# Renamed from a file name that used a word the glossary lists under Squad Pool's Avoid terms, with
+# every pointer in Chapters 3, 5, and 6 moved with it (OQ-110, option (a)).
+id: chapter-6-titans
+name: Chapter 6 Titans
+chapter: 06-standard-titans
+adrs: [ADR-0001, ADR-0003, ADR-0010, ADR-0012, ADR-0013]
+decided: [OQ-100, OQ-102, OQ-103, OQ-104, OQ-108, OQ-110]   # decision batch 4 (4-1, 4-3, 4-4, 4-5, 4-9, 4-11)
+
+# ------------------------------------------------------------------ the standard Titans
+# The standard Titan of a Size Class is the Focus Titan or Background Titan the interim setup table
+# gives for that class (data/engagement/engagement-setup.yaml, steps, focus-titan, background-titans).
+standard_titans:
+  small: standard-small     # data/titans/standard-small.yaml
+  medium: standard-medium   # data/titans/standard-medium.yaml
+  large: standard-large     # data/titans/standard-large.yaml
+
+# ------------------------------------------------------------------ Abnormals
+abnormals:
+  - id: sprinting-abnormal   # data/titans/sprinting-abnormal.yaml
+    size_class: medium
+    enters_play: >-
+      When the rule that begins a Titan Engagement names it, or when the interim setup table gives
+      it: a Focus Titan whose Size Class roll gives medium is the Sprinting Abnormal on a 6 on
+      medium_abnormal (data/engagement/engagement-setup.yaml, steps, focus-titan), 1 Titan
+      Engagement in 12 that the table sets up. A Background Titan the interim setup table gives is
+      always the standard Titan of its Size Class, and medium_abnormal is never rolled for it; a rule
+      that begins a Titan Engagement may still name an Abnormal as a Background Titan
+      (data/engagement/background-titans.yaml). A Mission Brief or Operation Frame (not yet written)
+      that names an Abnormal names this id.
+    decided: OQ-104   # decision batch 4, 4-5
+    fear_roll: >-
+      The abnormal trigger applies when it starts a Titan Engagement as a Focus Titan or becomes one
+      (data/mind/fear-rolls.yaml, triggers, abnormal).
+    hidden_until_read: >-
+      Its Body Part Toughness, Nape Depth, Regeneration clock length, and Attention Ladder
+      (data/engagement/read.yaml, facts; hidden_until_read). Everything else on its tracker row is
+      public, as for any Focus Titan. The rulebook prints them only in a GM section (decision batch 4,
+      OQ-108).
+
+# ------------------------------------------------------------------ Abnormal Attention Ladders
+# Rows of ladders in data/engagement/attention.yaml's abnormal_ladder_format: rungs from its closed
+# tests list, highest first, ending with nearest. Evaluated exactly as the standard ladder is
+# (data/engagement/attention.yaml, evaluation); a Grab and a decoy override it the same way.
+ladders:
+  - id: sprinting-abnormal
+    name: Sprinting Abnormal Ladder
+    rungs: [hooked-into-its-body, loudest-or-brightest, current-holder, nearest]
+    used_by: sprinting-abnormal
+    decided: OQ-102   # decision batch 4, 4-3, as revised in decision batch 4b, 4b-1
+    reads_as: >-
+      It turns first on what digs into it, as every ladder does (data/engagement/attention.yaml,
+      abnormal_ladder_format, rules): a Nape striker's hooked-by-strike flag first, then a soldier On
+      Body, so a striker who falls short draws its next behavior on this ladder as on every other
+      (ADR-0010, as amended in decision batch 4b). Then a soldier who has made themselves the loudest
+      or brightest turns it, wherever they are, but only while no blade is at its Nape and no one is
+      On Body (decision batch 4b, 4b-1). Otherwise it keeps the soldier it last turned on while that
+      soldier is On Body, In Reach, or at Blind Spot, Down or not, until one of those turns it: it runs
+      its quarry down. A quarry who gets away to Distant, mounted or on foot, is no longer its quarry
+      (decision batch 4, 4-3). When
+      nothing holds its Attention (when the fight begins, when a decoy's hold or a Grab ends, or when
+      its holder dies, leaves, is Grabbed by another Focus Titan, or holds no Position), or when its
+      holder is at Distant, it goes for whoever is nearest; a tie at the same distance goes to the
+      holder, then to the lowest card, and a tie no card can break, at the start of a Titan
+      Engagement or when it enters at an end step, leaves nothing holding its Attention until its
+      next card; when it enters mid-round, after a flare fills its clock, that round's cards break
+      the tie (decision batch 4, 4-3 and 4-13; decision batch 4b, 4b-3). It has no rung for soldiers
+      in its reach or for soldiers who have just hurt it, so the cutters at its legs draw it only
+      when it is running no one down and they are the nearest (decision batch 3e, 3e-6:
+      current-holder). A rider who stays at Distant draws it only as the nearest: Draw Attention
+      cannot be taken from Distant (data/engagement/attention.yaml, draw_attention; decision batch 5,
+      OQ-113). Canon's runner heads for where
+      the most soldiers are, and the closed tests list has no rung for that, so loudest-or-brightest
+      stands in for it, below the rung every ladder begins with (OQ-102; decision batch 4b, 4b-1).
+
+# ------------------------------------------------------------------ the Grab mark and harm
+# Chapter 6 adds no field to data/engagement/titan-format.yaml's entry_fields beyond text, which that
+# file now lists.
+grab_mark:
+  decided: OQ-100   # decision batch 4, 4-1
+  marked: >-
+    An entry is marked as a Grab when its effects include a grab effect. Each rendered Behavior
+    Table shows the mark in its Grab column, and the Closing Hand Scar reads it
+    (data/mind/scars.yaml, the-closing-hand).
+  harm: >-
+    Each harming entry's effects already list what data/harm/health.yaml (titan_attacks,
+    definition) asks for: a critical-injury effect names its Injury Location (fixed, or rolled), its
+    Injury Type (injury_type: bite on a Bite entry, crush on every other; decision batch 7, 7-5), and
+    whether it cannot be lethal, and a grab effect's harm is the Grab's crush, Injury Type Crush
+    (data/harm/health.yaml, titan_attacks, grab; data/engagement/grab.yaml, grab_lands, crush_harm). A
+    knock-loose fall is damage under Chapter 4, not a Titan attack, and Crush (data/gear/falls.yaml,
+    injury_type).

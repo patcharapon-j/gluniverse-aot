@@ -1,0 +1,964 @@
+# The Action Catalog: every named action and roll a Talent can name, and the procedure for
+# actions that are not in it.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (sections 2.8 and 2.9)
+# references this file and renders its tables from it (tools/render/render.py).
+# Entries owned by later chapters are defined here only as far as a Talent needs to name them
+# and a pool needs to be built. The owning chapter gives the procedure and the full effect.
+id: action-catalog
+name: Action Catalog
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0006, ADR-0010, ADR-0015, ADR-0018, ADR-0019]
+decided: [OQ-11, OQ-25, OQ-26, OQ-27, OQ-33, OQ-35, OQ-141, OQ-142, OQ-143, OQ-146]
+
+# kind:
+#   action      Taken as a soldier's action in a Titan Engagement or a Skirmish (Chapter 1,
+#               section 1.9; Chapter 7, section 7.4).
+#   reaction    Made when a Titan or a Foe acts against the soldier, outside the soldier's own
+#               turn; spends a turn (Chapter 1, section 1.9). Not an action.
+#   roll        An attribute roll made when a rule calls for it. Not an action, and it spends no
+#               turn of its own.
+#   option      A use of another entry or rule, such as spending a Read's successes. Not an
+#               action and not a roll. It spends nothing of its own unless its notes or its
+#               calling rule say so.
+#   fixed-roll  A roll that is not an attribute roll (Chapter 1, section 1.3). It never gains
+#               Talent dice; only rule Talents can name it.
+# rolled:
+#   when_taken         Rolled every time the entry is taken or made.
+#   when_a_rule_calls  Rolled only when the owning rule calls for it.
+#   never              Never rolled.
+# gear: the gear items that can supply Gear Dice (Chapter 1, section 1.3, step 6). Items are
+#   defined in Chapter 4.
+# requires_gear, without_gear: whether the entry needs one of its gear items, and what
+#   happens without one. gear_requirement below is the rule; it applies to every use of the
+#   entry (section 2.8).
+# dormant: true if no rule in the current chapters calls for the entry. The later rule that
+#   calls for it may change its attribute. A Talent that names only dormant or reserved
+#   entries does nothing until then.
+# reserved: true if the entry exists for Foes or Titans that later rules add.
+#   Since decision batch 7 (7-14, 7-16, 7-17) Chapter 7 calls for every entry that was dormant or
+#   reserved, so no entry carries either field. Both stay in the format for entries later rules add.
+# changes: the tracked values (listed under tracked_values) the entry can change, used by
+#   the procedure for actions outside the Catalog.
+# help_outside_titan_engagement: the Help requirement Chapter 1, section 1.8 (OQ-08), asks
+#   every rule that calls for a roll outside a Titan Engagement to state.
+
+# Gear an entry needs (section 2.8). This applies every time an entry is taken, made, or
+# called for, whether the soldier names it directly or reaches it through the procedure for
+# actions outside the Catalog, and whether the soldier is a player character or a Squadmate.
+gear_requirement:
+  applies_when: >-
+    The entry has requires_gear true and the soldier has none of its gear items. An item
+    worn down to 0 counts as not had (Chapter 1, section 1.3, step 6; for ODM Gear, a Jam),
+    and so does an item in any other state a Chapter 4 rule names as counting as not had.
+  attribute_alone: >-
+    The roll uses the entry's attribute with no Talent dice and no Gear Dice. Everything else
+    about the entry still applies. A rule Talent can change this only by naming it (Make Do).
+  not_possible: The entry cannot be taken, made, or used.
+  other_entries: >-
+    An entry with requires_gear false and no gear item available is rolled without Gear Dice
+    (Chapter 1, section 1.3, step 6).
+
+# The values an action outside the Catalog can be meant to change. A later chapter whose rule
+# creates a new value that soldiers change by acting adds a row here, or creates it as a
+# rule-named-value.
+tracked_values:
+  - {id: stress-raise, name: raise a soldier's Stress, rules: [01-core-rules]}
+  - {id: stress-response-clear, name: "end a Stress Response, or a pending Fear Roll result (a forced step or a forced strike not yet made)", rules: [03-harm-and-mind]}
+  - {id: health-restore, name: restore Health, rules: [03-harm-and-mind]}
+  - {id: critical-injury-treat, name: treat or stabilize a Critical Injury, rules: [03-harm-and-mind]}
+  - {id: down-end, name: end the Down state, rules: [03-harm-and-mind]}
+  - {id: grabbed-end, name: free a Grabbed soldier, rules: [05-titan-engagement]}
+  - {id: gear-restore, name: restore a gear item's Gear Dice rating or end a Jam, rules: [04-gear]}
+  - {id: gas-restore, name: restore a Gas Rating, rules: [04-gear]}
+  - {id: comrade-carry, name: "pick up and carry a Down comrade, or one the both-legs grade forbids to move", rules: [04-gear, 05-titan-engagement]}
+  - {id: item-give, name: give a carried item to a comrade, rules: [04-gear]}
+  - {id: item-take, name: take an item from a Down comrade or from where a dead comrade's items lie, rules: [04-gear]}
+  - {id: mount-change, name: mount or dismount a horse, rules: [04-gear, 05-titan-engagement]}
+  - {id: blade-set-swap, name: fit a carried Blade Set into empty handles, rules: [04-gear]}
+  - {id: load-shed, name: "drop a carried item, set down a carried comrade, or stop being carried", rules: [04-gear]}
+  - {id: attention-shift, name: shift a Focus Titan's Attention onto a decoy and raise its decoys in a row, rules: [05-titan-engagement]}
+  - {id: draw-attention-set, name: become the loudest or brightest stimulus on the Attention Ladder, rules: [05-titan-engagement]}
+  - {id: toughness-add, name: add successes toward a Body Part's Toughness, rules: [05-titan-engagement]}
+  - {id: body-part-worsen, name: move a Body Part toward Broken, rules: [05-titan-engagement]}
+  - {id: openings-create, name: create Openings, rules: [05-titan-engagement]}
+  - {id: titan-kill, name: kill a Titan, rules: [05-titan-engagement]}
+  - {id: titan-facts-reveal, name: learn a fact about a Titan such as its Next Behavior, rules: [05-titan-engagement]}
+  - {id: reaction-dice-add, name: add dice to a comrade's Reaction, rules: [05-titan-engagement]}
+  - {id: initiative-swap, name: exchange initiative cards with a comrade, rules: [05-titan-engagement]}
+  - {id: squad-tactic-use, name: use a Squad Tactic, rules: [05-titan-engagement]}
+  - {id: roll-dice-add, name: add a die to a comrade's roll, rules: [01-core-rules]}
+  - {id: behavior-avoid, name: avoid a behavior or attack aimed at oneself, rules: [01-core-rules, 05-titan-engagement, 07-playtest-rules]}
+  - {id: position-change, name: "change Position, or become Engaged with or Apart from a Foe in a Skirmish", rules: [05-titan-engagement, 07-playtest-rules], changed_by: "a move, not a Catalog entry"}
+  # Decision batch 8, 8-9 (ADR-0003 item 12, as amended; OQ-146): the falling Titan's values.
+  - {id: pinned, name: "get out from under a falling Titan's body, or free a soldier it pins", rules: [05-titan-engagement]}
+  - {id: heave-count, name: add successes toward the Heave rating of a body that pins a soldier, rules: [05-titan-engagement]}
+  # Chapter 7, the playtest rules (decision batch 7; ADR-0003 item 12 as amended). Each is changed only
+  # by the entries whose calling rule reads it.
+  - {id: leg-outcome, name: "settle what a Leg costs in rations and how its hazard roll is adjusted", rules: [07-playtest-rules]}
+  - {id: camp-outcome, name: "settle whether a Night Camp gives Camp Relief and how its night hazard roll is adjusted", rules: [07-playtest-rules]}
+  - {id: hazard-outcome, name: "escape the harm a hazard row names for the soldier who rolls against it", rules: [07-playtest-rules]}
+  - {id: requisition-grant, name: have Command grant a Requisition, rules: [07-playtest-rules]}
+  - {id: ledger-lower, name: lower the ledger for the Squad this Downtime, rules: [07-playtest-rules]}
+  - {id: foe-harm, name: deal damage to a Foe, rules: [07-playtest-rules]}
+  - {id: held-set, name: hold a Foe with a Grapple, rules: [07-playtest-rules]}
+  - {id: held-end, name: "end a hold: break free while Held, or let go of a Foe the soldier holds", rules: [07-playtest-rules]}
+  - {id: firearm-load, name: load an empty firearm, rules: [07-playtest-rules, 04-gear]}
+  - {id: foe-yield, name: make a Foe group yield, rules: [07-playtest-rules]}
+  - {id: foe-intent-reveal, name: "learn a Foe group's Grit, how many more of it must fall before it breaks, and what each of its Foes does on its next card", rules: [07-playtest-rules]}
+  - {id: ambush-set, name: give the Squad the ambush against a Foe group, rules: [07-playtest-rules]}
+  # Decision batch 8, 8-28 (OQ-153, item d): Downtime Actions and the Squad Action are acts.
+  - {id: stress-lower, name: "lower a soldier's Stress in Downtime", rules: [07-playtest-rules]}
+  - {id: grief-lower, name: "lower a soldier's Grief in Downtime", rules: [07-playtest-rules]}
+  - {id: squad-recruit, name: bring a new Squadmate into the Squad Pool, rules: [07-playtest-rules]}
+  - {id: rule-named-value, name: "change a clock, counter, or obstacle that a rule creates and for which that rule names an attribute roll", rules: [the rule that creates the value], changed_by: "the attribute roll its creating rule names, made with the attribute alone, when no Catalog entry changes it"}
+
+entries:
+  # ------------------------------------------------ Titan Engagement actions (Chapter 5)
+  - id: nape-strike
+    name: Nape strike
+    kind: action
+    rolled: when_taken
+    attribute: strength
+    gear: [blade-set]
+    requires_gear: true
+    without_gear: not_possible
+    context: titan-engagement
+    requirements: >-
+      The soldier holds Blind Spot and does not hold the struck Titan's Attention
+      (ADR-0010). The soldier is not Grabbed. In a Titan Engagement, the soldier's ODM Gear counts
+      as had: not Jammed, and with a Gas Rating above 0 (data/gear/odm-gear.yaml, strikes), unless
+      the Titan is grounded (data/engagement/titan-harm.yaml, grounded). No retreat is under way
+      (data/engagement/background-titans.yaml, retreat, actions). Making the strike counts as
+      hooking into the Titan.
+    needs: the struck Titan's Nape Depth
+    changes: [titan-kill, openings-create]
+    help_outside_titan_engagement: not taken outside a Titan Engagement
+    rules: [05-titan-engagement, 04-gear]
+    decided: [OQ-60]
+    adrs: [ADR-0007, ADR-0010]
+
+  - id: body-part-strike
+    name: Body Part strike
+    kind: action
+    rolled: when_taken
+    attribute: strength
+    gear: [blade-set]
+    requires_gear: true
+    without_gear: not_possible
+    context: titan-engagement
+    requirements: >-
+      The Position and state requirements in data/engagement/titan-harm.yaml (body_part_strikes)
+      and data/engagement/grab.yaml (escapes). In a Titan Engagement, a strike made from On Body or
+      Blind Spot also needs the soldier's ODM Gear to count as had (data/gear/odm-gear.yaml,
+      strikes), unless the Titan is grounded.
+    needs: 1; successes add up toward the Body Part's Toughness (data/engagement/titan-harm.yaml)
+    changes: [toughness-add, body-part-worsen, openings-create, grabbed-end, pinned]
+    notes: >-
+      Striking the hand that holds a Grabbed soldier is a Body Part strike (Chapter 5, ADR-0019). So is cutting
+      the Body Part that pins a soldier, which frees them when it becomes Broken (data/engagement/titan-harm.yaml,
+      falling_titan, cut_free; decision batch 8, 8-17).
+    help_outside_titan_engagement: not taken outside a Titan Engagement
+    rules: [05-titan-engagement, 04-gear]
+    decided: [OQ-60]
+    adrs: [ADR-0007]
+
+  - id: break-attention
+    name: Break Attention
+    kind: action
+    rolled: when_taken
+    attribute: perception
+    gear: [odm-gear, horse]
+    requires_gear: false
+    context: titan-engagement
+    requirements: data/engagement/attention.yaml (break_attention)
+    needs: 1 for the soldier holding the Titan's Attention, otherwise 2, and 2 against a Titan holding a Grabbed soldier; 1 more for a Feint; plus 1 for each decoy the Titan has fallen for since its last card that resolved a behavior; extra successes create Openings (data/engagement/attention.yaml, break_attention, needs_rule)
+    changes: [attention-shift, openings-create, grabbed-end]
+    notes: Against a Titan holding a Grabbed soldier, a success frees them (data/engagement/grab.yaml)
+    help_outside_titan_engagement: not taken outside a Titan Engagement
+    rules: [05-titan-engagement]
+    decided: [OQ-81, OQ-90]
+    adrs: [ADR-0010]
+
+  - id: draw-attention
+    name: Draw Attention
+    kind: action
+    rolled: never
+    attribute: null
+    gear: []
+    requires_gear: false
+    context: titan-engagement
+    requirements: data/engagement/attention.yaml (draw_attention)
+    changes: [draw-attention-set]
+    notes: Not from Distant (decision batch 5, OQ-113). Sets the loudest flag, which lasts until the end of the Titan's next card that resolves a behavior; a card that resolves nothing, under a decoy's hold, while the Titan holds a Grabbed soldier, or with no one holding its Attention, leaves it standing (ADR-0003, item 2, as amended in decision batch 3e; data/engagement/attention.yaml, flag_duration).
+    rules: [05-titan-engagement]
+    adrs: [ADR-0003]
+
+  - id: read
+    name: Read
+    kind: action
+    rolled: when_taken
+    attribute: instinct
+    gear: []
+    requires_gear: false
+    context: titan-engagement
+    requirements: data/engagement/read.yaml (read)
+    needs: 1; each success reveals one fact or pays toward Call It (data/engagement/read.yaml, facts, call_it)
+    changes: [titan-facts-reveal]
+    help_outside_titan_engagement: not taken outside a Titan Engagement
+    rules: [05-titan-engagement]
+
+  - id: call-it
+    name: Call It
+    kind: option
+    option_of: read
+    rolled: never
+    attribute: null
+    gear: []
+    context: titan-engagement
+    requirements: Spends successes from a Read (data/engagement/read.yaml, call_it)
+    changes: [reaction-dice-add]
+    rules: [05-titan-engagement]
+
+  - id: break-free
+    name: Break Free
+    kind: action
+    rolled: when_taken
+    attribute: strength
+    gear: [blade-set]
+    requires_gear: false
+    context: any
+    requirements: >-
+      In a Titan Engagement, the soldier is Grabbed and not Down, or holds Pry Loose
+      (data/engagement/grab.yaml, escapes). In a Skirmish, the soldier is Held and not Down
+      (Chapter 7, section 7.4). It is taken nowhere else.
+    needs: >-
+      2, with a 2-die penalty once lifted (data/engagement/grab.yaml, escapes); 2 while Held in a
+      Skirmish (Chapter 7, section 7.4)
+    changes: [grabbed-end, held-end]
+    help_outside_titan_engagement: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their
+      action, whether Engaged or Apart (Chapter 7, section 7.4). Not taken outside a Titan
+      Engagement or a Skirmish.
+    rules: [05-titan-engagement, 07-playtest-rules]
+    decided: [OQ-143]
+    adrs: [ADR-0015, ADR-0018, ADR-0019]
+
+  - id: swap-initiative-card
+    name: Swap Initiative Card
+    kind: option
+    option_of: the swap step of a round in a Titan Engagement (data/engagement/round.yaml, round_steps, swap)
+    rolled: never
+    attribute: null
+    gear: []
+    context: titan-engagement
+    requirements: data/engagement/round.yaml (swapping)
+    changes: [initiative-swap]
+    notes: Not an action, and spends neither the move nor the action (data/engagement/round.yaml, swapping).
+    rules: [05-titan-engagement]
+
+  - id: squad-tactic
+    name: Squad Tactic
+    kind: option
+    option_of: a Squad Tactic the Squad holds (data/engagement/squad-tactics.yaml, rules, held)
+    rolled: never
+    attribute: null
+    gear: []
+    context: titan-engagement
+    requirements: data/engagement/squad-tactics.yaml (rules, tactics)
+    changes: [squad-tactic-use]
+    rules: [05-titan-engagement]
+
+  - id: lift-comrade
+    name: Lift Comrade
+    kind: action
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: >-
+      data/gear/carrying.yaml (lifting_a_comrade), in and out of a Titan Engagement. In one, a comrade who
+      is Down, or who is not Down, consents, and whom the both-legs grade forbids to move, holds the
+      soldier's Position and is not Grabbed, Pinned, or already carried; and the soldier is not Down,
+      carries no other comrade, and is not carried (decision batch 8, 8-11 and 8-18).
+    changes: [comrade-carry]
+    rules: [04-gear, 05-titan-engagement]
+    decided: [OQ-64, OQ-137, OQ-146]
+
+  - id: heave
+    name: Heave
+    kind: action
+    rolled: when_taken
+    attribute: strength
+    gear: []
+    requires_gear: false
+    context: titan-engagement
+    requirements: >-
+      data/engagement/titan-harm.yaml (falling_titan, heave): the soldier holds In Reach or On Body
+      relative to a body that pins at least one soldier, and is not Down, Grabbed, carried, or
+      body-pinned. A limb-pinned soldier may Heave the body that pins them.
+    needs: 1; each success adds 1 to the body's heave count, and at its Heave rating every soldier the body pins is freed (data/engagement/titan-harm.yaml, falling_titan, heave)
+    changes: [heave-count, pinned]
+    notes: Against a corpse the heaver takes 1 Burn damage after the roll, whatever its result (data/engagement/titan-harm.yaml, falling_titan, corpse_heat).
+    help_outside_titan_engagement: not taken outside a Titan Engagement
+    rules: [05-titan-engagement]
+    decided: [OQ-146]
+    adrs: [ADR-0003]
+
+  - id: change-canister
+    name: Change Canister
+    kind: action
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: The soldier carries a spare gas canister. data/gear/odm-gear.yaml (change_canister) states what changing it spends.
+    changes: [gas-restore]
+    rules: [04-gear]
+
+  - id: pass-item
+    name: Pass Item
+    kind: action
+    rolled: never
+    attribute: null
+    gear: []
+    requires_gear: false
+    context: any
+    requirements: >-
+      In a Titan Engagement, the passer is not Down, and the receiver is a living comrade who
+      holds the passer's Position; the receiver may be Down or Grabbed. Outside a Titan
+      Engagement, data/gear/carrying.yaml (passing_items) sets the requirement.
+    changes: [item-give]
+    notes: data/gear/carrying.yaml (passing_items) lists which items can be passed and what passing spends.
+    rules: [04-gear]
+    adrs: [ADR-0003]
+    decided: [OQ-35, OQ-60, OQ-65]
+
+  - id: take-item
+    name: Take Item
+    kind: action
+    rolled: never
+    attribute: null
+    gear: []
+    requires_gear: false
+    context: any
+    requirements: >-
+      In a Titan Engagement, the taker is not Down, and either a Down comrade who is not Grabbed
+      holds the taker's Position, or a dead comrade's left items lie at that Position, relative to
+      the Focus Titan recorded with them (data/gear/carrying.yaml, leaving_play, death, where_left).
+      Outside a Titan Engagement, data/gear/carrying.yaml (taking_items) sets the requirement.
+    changes: [item-take]
+    notes: data/gear/carrying.yaml (taking_items) lists which items can be taken and what taking spends.
+    rules: [04-gear]
+    adrs: [ADR-0003]
+    decided: [OQ-60, OQ-61, OQ-65, OQ-68]
+
+  - id: mount-or-dismount
+    name: Mount or Dismount
+    kind: option
+    option_of: a move in a Titan Engagement; outside one, the procedure under way, or no procedure when none is under way (data/gear/horses.yaml, mounted, outside_titan_engagement)
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: data/gear/horses.yaml (mounted).
+    changes: [mount-change]
+    notes: Part of a move in a Titan Engagement, never an action (OQ-35).
+    rules: [04-gear, 05-titan-engagement]
+    decided: [OQ-35, OQ-61]
+
+  - id: swap-blade-set
+    name: Swap Blade Set
+    kind: option
+    option_of: the soldier's own turn in a Titan Engagement; outside one, no turn (data/gear/blade-sets.yaml, swap)
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: data/gear/blade-sets.yaml (swap).
+    changes: [blade-set-swap]
+    notes: Spends neither the move nor the action.
+    rules: [04-gear]
+    decided: [OQ-63]
+
+  - id: shed-load
+    name: Shed Load
+    kind: option
+    option_of: the soldier's own turn in a Titan Engagement; outside one, no turn (data/gear/carrying.yaml, shedding)
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: data/gear/carrying.yaml (shedding).
+    changes: [load-shed]
+    notes: Spends neither the move nor the action.
+    rules: [04-gear]
+    decided: [OQ-64]
+
+  - id: restock-medical-kit
+    name: Restock Medical Kit
+    kind: option
+    option_of: a care window (data/harm/treat-injury.yaml, care_windows)
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: data/gear/squad-supply.yaml (medical_uses, restock-kit).
+    changes: [gear-restore]
+    notes: Spends 1 medical unit of Squad Supply, and no roll.
+    rules: [04-gear, 03-harm-and-mind]
+    decided: [OQ-67]
+
+  # ------------------------------------------------ Core actions and options (Chapter 1)
+  - id: help
+    name: Help
+    kind: action
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: Chapter 1, section 1.8.
+    changes: [roll-dice-add]
+    notes: Outside a Titan Engagement, Help is allowed only where the rule that calls for the roll allows it (OQ-08).
+    rules: [01-core-rules]
+
+  - id: cover
+    name: Cover
+    kind: option
+    option_of: a comrade's Push
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: Chapter 1, section 1.5 (Covering).
+    changes: [stress-raise]
+    rules: [01-core-rules]
+
+  # ------------------------------------------------ Reactions (Chapters 1 and 5)
+  - id: dodge
+    name: Dodge
+    kind: reaction
+    rolled: when_taken
+    attribute: agility
+    gear: [odm-gear, horse]   # the horse only while mounted (Chapter 4); ADR-0019 (OQ-25)
+    requires_gear: false
+    context: any
+    requirements: >-
+      Chapter 1, section 1.9. In a Titan Engagement, against a Titan's behavior. In a Skirmish,
+      against a Foe's Fight attack or shot, and never while Held (Chapter 7, section 7.4).
+    needs: >-
+      none of its own: each success cancels one of the attack's successes, and the attack lands on
+      1 or more Net Successes (Chapter 1, section 1.9, Attack and Reaction). Against a Titan the
+      attack is the behavior's Attack Dice roll (ADR-0019); in a Skirmish, a Foe's Fight attack or
+      shot (ADR-0018, as amended)
+    changes: [behavior-avoid]
+    help_outside_titan_engagement: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their
+      action, whether Engaged or Apart (Chapter 7, section 7.4). Not made outside a Titan
+      Engagement or a Skirmish.
+    rules: [01-core-rules, 05-titan-engagement, 07-playtest-rules]
+    decided: [OQ-143]
+    adrs: [ADR-0015, ADR-0018, ADR-0019]
+
+  - id: block
+    name: Block
+    kind: reaction
+    rolled: when_taken
+    attribute: strength
+    gear: [blade-set]
+    requires_gear: false
+    context: any
+    requirements: >-
+      Only against an attacker whose rules allow blocking: in a Skirmish, a Foe's Fight attack
+      (Chapter 7, section 7.4; ADR-0018). No Titan can be blocked (ADR-0019), so a Block is never
+      made in a Titan Engagement.
+    needs: >-
+      none of its own: each success cancels one of the Fight attack's successes, and the attack lands
+      on 1 or more Net Successes (Chapter 1, section 1.9, Attack and Reaction; ADR-0018, as amended)
+    changes: [behavior-avoid]
+    help_outside_titan_engagement: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their
+      action, whether Engaged or Apart (Chapter 7, section 7.4). Not made outside a Skirmish.
+    rules: [01-core-rules, 07-playtest-rules]
+    decided: [OQ-143]
+    adrs: [ADR-0015, ADR-0018, ADR-0019]
+
+  # ------------------------------------------------ Skirmish actions and options (Chapter 7, section 7.4)
+  - id: fight
+    name: Fight
+    kind: action
+    rolled: when_taken
+    attribute: strength
+    gear: [blade-set]
+    requires_gear: false
+    context: any
+    requirements: >-
+      In a Skirmish, against one Foe the soldier is Engaged with (Chapter 7, section 7.4). It uses
+      the Blade Set in the handles, or is made bare-handed or with an object that is not a gear
+      item, which supplies no Gear Dice. A Grapple is a Fight made with no Gear Dice. A Held
+      soldier Fights only their holder, bare-handed, and so does a soldier who holds a Foe, against
+      that Foe. Never taken against a Titan.
+    needs: >-
+      1 Net Success after the Foe's Guard cancels (Chapter 1, section 1.9, Attack and Reaction; Chapter 7,
+      section 7.4)
+    changes: [foe-harm, held-set]
+    notes: >-
+      A Fight that lands deals its weapon's damage, plus 1 for each Net Success beyond the first, with the
+      weapon's Injury Type (data/skirmish/skirmish.yaml, weapons, damage). A Grapple that lands deals no
+      damage and makes the Foe Held (decision batch 8, 8-12; Chapter 7, section 7.4).
+    help_outside_titan_engagement: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their
+      action, whether Engaged or Apart (Chapter 7, section 7.4). Not taken outside a Skirmish.
+    rules: [07-playtest-rules]
+    decided: [OQ-143]
+    adrs: [ADR-0018, ADR-0019]
+
+  - id: shoot
+    name: Shoot
+    kind: action
+    rolled: when_taken
+    attribute: agility
+    gear: [flintlock-pistol, musket]
+    requires_gear: false   # a flare fired at a person is a Shoot with no gear item (decision batch 8, 8-7)
+    context: any
+    requirements: >-
+      In a Skirmish, against one Foe, Engaged or Apart, with a loaded firearm the soldier holds, or with a
+      flare fired at a person, which needs 1 flare in Squad Supply and no firearm
+      (data/skirmish/skirmish.yaml, weapons, fired-flare); a musket is never fired at a Foe the soldier is
+      Engaged with (Chapter 7, section 7.4). A Held soldier, and a soldier who holds a Foe, cannot Shoot.
+      Firearms have no use in a Titan Engagement (data/gear/items.yaml), so Shoot is never taken there.
+    needs: >-
+      1 Net Success after the Foe's Guard cancels (Chapter 1, section 1.9, Attack and Reaction; Chapter 7,
+      section 7.4)
+    changes: [foe-harm]
+    notes: >-
+      A firearm supplies its Gear Dice, a Pushed Gear Die showing 1 wears it, and at current rating 0 it
+      cannot be fired until Field Repair or Maintain Gear restores it (decision batch 8, 8-12). The roll
+      empties the firearm (data/gear/items.yaml, flintlock-pistol, loaded). A fired flare spends 1 flare
+      and no shot, and takes no Gear Dice (decision batch 8, 8-7).
+    help_outside_titan_engagement: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their
+      action, whether Engaged or Apart (Chapter 7, section 7.4). Not taken outside a Skirmish.
+    rules: [07-playtest-rules, 04-gear]
+    decided: [OQ-143, OQ-148]
+    adrs: [ADR-0016, ADR-0018, ADR-0019]
+
+  - id: reload
+    name: Reload
+    kind: option
+    option_of: the soldier's turn in a Skirmish (Chapter 7, section 7.4); outside a Skirmish, no turn
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: >-
+      The soldier has an empty flintlock pistol or musket, and Squad Supply holds at least 1 shot
+      (data/gear/squad-supply.yaml). In a Skirmish, the limits on a soldier who holds a Foe apply
+      (Chapter 7, section 7.4).
+    changes: [firearm-load]
+    notes: >-
+      Loads one firearm and spends 1 shot. In a Skirmish it also spends the soldier's action, and,
+      for a musket, their move. Outside a Skirmish and a Titan Engagement it spends nothing else, can
+      be made at any time, and the firearm stays loaded until it is fired (decision batch 8, 8-12). It
+      is never made in a Titan Engagement.
+    rules: [07-playtest-rules, 04-gear]
+    decided: [OQ-143, OQ-148]
+    adrs: [ADR-0018]
+
+  - id: release
+    name: Release
+    kind: option
+    option_of: the holder's turn in a Skirmish (Chapter 7, section 7.4)
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: The soldier holds a Foe with a Grapple, in a Skirmish (Chapter 7, section 7.4).
+    changes: [held-end]
+    notes: >-
+      Lets go of the held Foe, with no roll, spending neither the move nor the action. A Foe never
+      releases (decision batch 8, 8-12).
+    rules: [07-playtest-rules]
+    decided: [OQ-148]
+    adrs: [ADR-0003, ADR-0018]
+
+  # ------------------------------------------------ Harm, gear, and mind (Chapters 3 and 4)
+  - id: treat-injury
+    name: Treat Injury
+    kind: action
+    rolled: when_taken
+    attribute: wits
+    gear: [medical-kit]
+    requires_gear: true
+    without_gear: attribute_alone
+    context: any
+    requirements: Set by Chapter 3, including which comrades can be treated from which Position.
+    needs: set by Chapter 3
+    changes: [health-restore, critical-injury-treat, down-end]
+    help_outside_titan_engagement: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their
+      action, whether Engaged or Apart (Chapter 7, section 7.4). Otherwise stated by the Chapter 3
+      procedure that calls for the roll.
+    rules: [03-harm-and-mind]
+
+  - id: rally
+    name: Rally
+    kind: action
+    rolled: when_taken
+    attribute: empathy
+    gear: []
+    requires_gear: false
+    context: any
+    requirements: Set by Chapter 3, including which comrades can be Rallied from which Position.
+    needs: set by Chapter 3
+    changes: [stress-response-clear]
+    notes: Rally clears a Stress Response but does not lower Stress.
+    help_outside_titan_engagement: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their
+      action, whether Engaged or Apart (Chapter 7, section 7.4). Otherwise stated by the Chapter 3
+      procedure that calls for the roll.
+    rules: [03-harm-and-mind]
+
+  - id: field-repair
+    name: Field Repair
+    kind: action
+    rolled: when_taken
+    attribute: wits
+    gear: [tool-kit]
+    requires_gear: true
+    without_gear: attribute_alone
+    context: any
+    requirements: data/gear/field-repair.yaml (target, in_titan_engagement, outside_titan_engagement).
+    needs: 1
+    changes: [gear-restore]
+    help_outside_titan_engagement: data/gear/field-repair.yaml (outside_titan_engagement)
+    rules: [04-gear]
+    decided: [OQ-66]
+
+  - id: fly
+    name: Fly
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: agility
+    gear: [odm-gear]
+    requires_gear: true
+    without_gear: not_possible
+    context: any
+    requirements: Called by a Chapter 4 or Chapter 5 rule, such as a Position change that needs a roll.
+    changes: []
+    help_outside_titan_engagement: stated by the rule that calls for the roll
+    rules: [04-gear, 05-titan-engagement]
+
+  - id: leap-clear
+    name: Leap Clear
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: agility
+    gear: [odm-gear, horse]   # the horse only while mounted (data/gear/items.yaml)
+    requires_gear: false
+    context: titan-engagement
+    requirements: >-
+      Called by the falling Titan for each soldier in its path who is not airborne, not Down, and not
+      carried (data/engagement/titan-harm.yaml, falling_titan, leap_clear). Not an action and not a
+      Reaction: it spends nothing.
+    needs: 1; a success clears the soldier to In Reach, and a failure pins them (data/engagement/titan-harm.yaml, falling_titan)
+    changes: [pinned]
+    help_outside_titan_engagement: not made outside a Titan Engagement
+    rules: [05-titan-engagement]
+    decided: [OQ-146]
+    adrs: [ADR-0003, ADR-0019]
+
+  - id: ride
+    name: Ride
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: agility
+    gear: [horse]
+    requires_gear: true
+    without_gear: not_possible
+    context: any
+    requirements: >-
+      Called by the Leg roll on a Hard Ride, whatever the Formation Post (Chapter 7, section 7.1).
+      The horse counts as not had while the soldier is not mounted on it (data/gear/items.yaml). The
+      Chase rules (not yet written) may also call for it.
+    needs: 1 on a Leg roll (Chapter 7, section 7.1)
+    changes: [leg-outcome]
+    help_outside_titan_engagement: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
+      nothing, each at most once per Leg (Chapter 7, section 7.1). A roll another rule calls for
+      states its own.
+    rules: [07-playtest-rules]
+    decided: [OQ-121, OQ-141]   # live since decision batch 7, 7-14; dormant under batch 5, 5-3
+
+  - id: death-roll
+    name: Death Roll
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: strength
+    gear: []
+    requires_gear: false
+    context: any
+    requirements: Called by Chapter 3. Exceptions to the pool are in data/core/dice-pool.yaml.
+    needs: 1 (Chapter 3, section 3.4)
+    changes: []
+    help_outside_titan_engagement: never Helped (data/core/dice-pool.yaml)
+    rules: [03-harm-and-mind]
+
+  - id: fear-roll
+    name: Fear Roll
+    kind: fixed-roll
+    rolled: when_a_rule_calls
+    attribute: null
+    context: any
+    requirements: Called by the closed list of Fear Roll triggers in Chapter 3.
+    changes: []
+    rules: [03-harm-and-mind]
+
+  - id: stress-response-roll
+    name: Stress Response roll
+    kind: fixed-roll
+    rolled: when_a_rule_calls
+    attribute: null
+    context: any
+    requirements: Called when a Stress Die shows 1 (Chapter 1, section 1.5). Chapter 3 holds the table.
+    changes: []
+    rules: [03-harm-and-mind]
+
+  - id: gas-roll
+    name: Gas Roll
+    kind: fixed-roll
+    rolled: when_a_rule_calls
+    attribute: null
+    context: any
+    requirements: Called each round a soldier uses ODM Gear (data/gear/odm-gear.yaml, gas_roll).
+    changes: []
+    rules: [04-gear]
+
+  # ------------------------------------------------ Rolls the playtest rules call for (Chapter 7)
+  # Dormant until decision batch 7 (7-14, 7-16, 7-17). Every attribute is unchanged. Each entry
+  # changes only the tracked values its calling rule reads.
+  - id: spot
+    name: Spot
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: perception
+    gear: []
+    context: any
+    requirements: >-
+      Called by the Leg roll at the Vanguard, Signal Relay, and Rear Guard Formation Posts on a
+      Steady Leg (Chapter 7, section 7.1).
+    needs: 1 on a Leg roll (Chapter 7, section 7.1)
+    changes: [leg-outcome]
+    help_outside_titan_engagement: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
+      nothing, each at most once per Leg (Chapter 7, section 7.1). A roll another rule calls for
+      states its own.
+    rules: [07-playtest-rules]
+    decided: [OQ-141]
+  - id: size-up
+    name: Size Up
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: instinct
+    gear: []
+    context: any
+    requirements: >-
+      Called once per Downtime, before any Requisition roll, to lower the ledger (Chapter 7,
+      section 7.3); and in a Skirmish, once per Foe group, to learn about that group (Chapter 7,
+      section 7.4).
+    needs: 1 (Chapter 7, sections 7.3 and 7.4)
+    notes: >-
+      Judging a person's intent. Observing a Titan is Read, not Size Up. In a Skirmish it is made
+      on the soldier's action (Chapter 7, section 7.4).
+    changes: [ledger-lower, foe-intent-reveal]
+    help_outside_titan_engagement: >-
+      Never Helped and never retried: neither the Requisition rule nor the Skirmish rule allows
+      Help on it (Chapter 7, sections 7.3 and 7.4). A roll another rule calls for states its own.
+    rules: [07-playtest-rules]
+    decided: [OQ-142, OQ-143]
+  - id: survive
+    name: Survive
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: instinct
+    gear: []
+    context: any
+    requirements: >-
+      Called by the Leg roll at the Flank Scout and Supply Wagon Formation Posts on a Steady Leg,
+      and by the camp roll at a Night Camp (Chapter 7, section 7.1).
+    needs: 1 (Chapter 7, section 7.1)
+    changes: [leg-outcome, camp-outcome]
+    help_outside_titan_engagement: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
+      nothing, each at most once per Leg; on the camp roll, up to three comrades on the Expedition
+      who are not Down may Help, spending nothing (Chapter 7, section 7.1). A roll another rule
+      calls for states its own.
+    rules: [07-playtest-rules]
+    decided: [OQ-141]
+  - id: persuade
+    name: Persuade
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: empathy
+    gear: []
+    context: any
+    requirements: >-
+      Called by a Requisition roll, which the roller makes with Persuade or Recall, chosen before
+      rolling (Chapter 7, section 7.3); by a Parley, once per Skirmish, on the soldier's action; and by a
+      Parley outside a Skirmish, made before a Foe group with no Skirmish under way and never again by
+      the same soldier with that group (Chapter 7, section 7.4).
+    needs: set by Chapter 7 (sections 7.3 and 7.4)
+    notes: >-
+      A Parley made as a threat rolls Strength in place of Empathy. It is still made for persuade,
+      so a Talent that names persuade still adds its dice (Chapter 7, section 7.4).
+    changes: [requisition-grant, foe-yield]
+    help_outside_titan_engagement: >-
+      On a Requisition roll, up to three comrades in the Squad who are not Down may Help; a player
+      character who Helps spends their own Requisition this Downtime, and a Squadmate may Help once
+      per Downtime (Chapter 7, section 7.3). On a Parley in a Skirmish, up to three comrades taking
+      part who are not Down may Help, each spending their action, whether Engaged or Apart; a
+      Parley outside a Skirmish is never Helped (Chapter 7, section 7.4).
+    rules: [07-playtest-rules]
+    decided: [OQ-142, OQ-143]
+  - id: endure
+    name: Endure
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: strength
+    gear: []
+    context: any
+    requirements: >-
+      Called by the Leg roll at the Center Formation Post on a Steady Leg, and by the Straggler row
+      of the Leg Hazard table for its victim (Chapter 7, section 7.1).
+    needs: 1 (Chapter 7, section 7.1)
+    changes: [leg-outcome, hazard-outcome]
+    help_outside_titan_engagement: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
+      nothing, each at most once per Leg; the Straggler row's roll is never Helped (Chapter 7,
+      section 7.1). A roll another rule calls for states its own.
+    rules: [07-playtest-rules]
+    decided: [OQ-141]
+  - id: sneak
+    name: Sneak
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: agility
+    gear: []
+    context: any
+    requirements: >-
+      Called before a Skirmish's first round when the Squad approaches a Foe group unseen: one
+      soldier rolls it for the ambush (Chapter 7, section 7.4).
+    needs: the Foe group's Watch (Chapter 7, section 7.4)
+    changes: [ambush-set]
+    help_outside_titan_engagement: >-
+      Never Helped and never retried (Chapter 7, section 7.4). A roll another rule calls for states
+      its own.
+    rules: [07-playtest-rules]
+    decided: [OQ-143]
+  - id: recall
+    name: Recall
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: wits
+    gear: []
+    context: any
+    requirements: >-
+      Called by a Requisition roll, which the roller makes with Persuade or Recall, chosen before
+      rolling (Chapter 7, section 7.3).
+    needs: set by Chapter 7 (section 7.3)
+    changes: [requisition-grant]
+    help_outside_titan_engagement: >-
+      On a Requisition roll, up to three comrades in the Squad who are not Down may Help; a player
+      character who Helps spends their own Requisition this Downtime, and a Squadmate may Help once
+      per Downtime (Chapter 7, section 7.3). A roll another rule calls for states its own.
+    rules: [07-playtest-rules]
+    decided: [OQ-142]
+
+  # ------------------------------------------------ Downtime options (Chapter 7, section 7.2; decision batch 8, 8-28)
+  - id: downtime-action
+    name: Downtime Action
+    kind: option
+    option_of: the downtime-actions step of Downtime (data/campaign/downtime.yaml, steps)
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: >-
+      A player character, once per Downtime (data/campaign/downtime.yaml, downtime_actions, who). The
+      player names one row of downtime_actions: Recover, Visit Haven, Requisition, or Maintain Gear.
+    changes: [stress-lower, grief-lower, gear-restore, gas-restore, requisition-grant]
+    notes: >-
+      The rows are kept in data/campaign/downtime.yaml, as Break Attention's decoys are kept in
+      data/engagement/attention.yaml. Requisition spends the Downtime Action on a persuade or recall roll,
+      or on Help to one. The Squadmate relief is a result of the procedure, not this option.
+    rules: [07-playtest-rules]
+    decided: [OQ-153]
+    adrs: [ADR-0003]
+
+  - id: squad-action
+    name: Squad Action
+    kind: option
+    option_of: the squad-action step of Downtime (data/campaign/downtime.yaml, steps)
+    rolled: never
+    attribute: null
+    gear: []
+    context: any
+    requirements: >-
+      The Squad, once per Downtime (data/campaign/downtime.yaml, squad_actions, who). The players name one
+      row of squad_actions: Honoring the Fallen or Recruit.
+    changes: [grief-lower, squad-recruit]
+    notes: The rows are kept in data/campaign/downtime.yaml.
+    rules: [07-playtest-rules]
+    decided: [OQ-153]
+    adrs: [ADR-0003]
+
+  # ------------------------------------------------ Lifepath
+  - id: performance-roll
+    name: Performance roll
+    kind: roll
+    rolled: when_a_rule_calls
+    attribute: from_performance_attributes   # the higher of the Training Year's performance_attributes (data/character/training-years.yaml)
+    gear: []
+    context: lifepath
+    requirements: Called once per Training Year. Exceptions to the pool are in data/core/dice-pool.yaml.
+    changes: []
+    help_outside_titan_engagement: never Helped
+    rules: [02-character-creation]
+
+# Section 2.9: actions that are not in the Catalog (ADR-0003, item 9). Follow the steps in order.
+uncatalogued_actions:
+  steps:
+    - id: name-the-change
+      text: >-
+        The player names the one tracked value (tracked_values above) the action is meant to
+        change. The description of the action never limits which value the player names; the
+        named value alone decides which entries can be used. If it is meant to change none of
+        them, the action needs no roll and has no mechanical effect; stop here.
+    - id: moves
+      text: >-
+        If the value is position-change, the action is a move, resolved by Chapter 5; stop here.
+    - id: match
+      text: >-
+        List every entry whose changes include that value. The soldier must meet an entry's
+        requirements to use it. If the soldier meets the requirements of at least one listed
+        entry, the player picks one of those entries. The action is that entry for every
+        purpose: its kind, attribute, gear items, needs, effect, cost, and every Talent that
+        names it (Chapter 1, section 1.3).
+    - id: without-gear
+      text: >-
+        Apply gear_requirement (above) to the picked entry, as for any entry. An entry that is
+        not_possible for the soldier cannot be used.
+    - id: no-match
+      text: >-
+        If no listed entry can be used and the value is a rule-named-value, make the attribute
+        roll its creating rule names, using the attribute alone (rolls_called_by_attribute).
+        Otherwise the action cannot change that value. It needs no roll and has no mechanical
+        effect.
+  rolls_called_by_attribute: >-
+    A rule that calls for an attribute roll without naming a Catalog entry calls for that
+    attribute alone: no Talent dice, and Gear Dice only from a gear item that rule names.
+    Every other pool step in Chapter 1, section 1.3, applies, and the rule states its Help
+    requirement (Chapter 1, section 1.8).
+  gm_rulings: >-
+    The GM does not decide whether an action is possible, which entry it uses, or what it
+    changes. The steps above decide. What a soldier does that changes no tracked value is
+    described freely and has no mechanical effect.

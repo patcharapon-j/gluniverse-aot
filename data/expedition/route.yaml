@@ -1,0 +1,76 @@
+# The Expedition route: what a Mission Brief's route names, the Waypoint kinds, the depot and the
+# gate, the Distance Bands, and the interim route rolled when the Brief names none.
+# Source of truth under ADR-0012. docs/rules/07-playtest-rules.md (section 7.1) references this file
+# and renders its tables from it (tools/render/render.py).
+# Playtest rule: Phase 2 replaces this file (decision batch 7, 7-14; OQ-141).
+id: route
+name: Expedition Route
+chapter: 07-playtest-rules
+status: playtest
+adrs: [ADR-0003, ADR-0009, ADR-0010]
+decided: [OQ-141]
+
+route:
+  set_when: >-
+    Before the Expedition begins, once. It is the Mission Brief's route, or, when the Squad rides with no
+    Brief or a Brief that names no route, the interim route (interim_route). Nothing changes it
+    afterwards.
+  mission_brief_fields:
+    waypoints: In order. Each has a kind (waypoint_kinds) and is a depot or not. The last is a gate.
+    legs: One Leg leads to each Waypoint. Each has a Distance Band (distance_bands) and a Formation Post (data/expedition/legs.yaml, formation_posts).
+    hard_ride_days: The days, counted from the Expedition's first, on which Command orders a Hard Ride (data/expedition/legs.yaml, pace). It may be empty.
+    abnormal: The Abnormal the Abnormal and Abnormal at night rows name, when not the Sprinting Abnormal (data/expedition/hazards.yaml).
+
+distance_bands:
+  - {id: near, name: Near}
+  - {id: far, name: Far}
+  - {id: deep, name: Deep}
+  # Each band's hazard modifier is in data/expedition/hazards.yaml (leg_hazards, modifiers, distance_band).
+
+waypoint_kinds:
+  - {id: open-plain, name: Open plain, anchor_rating: open, interim_roll: [1]}
+  - {id: hedgerows, name: Hedgerows, anchor_rating: sparse, interim_roll: [2]}
+  - {id: forest, name: Forest, anchor_rating: wooded, interim_roll: [3, 4]}
+  - {id: abandoned-town, name: Abandoned town, anchor_rating: urban, interim_roll: [5]}
+  - {id: giant-forest, name: Giant forest, anchor_rating: giant-forest, interim_roll: [6]}
+  - {id: gate, name: Gate of the Walls, anchor_rating: null, interim_roll: []}
+kind_rules:
+  anchor_rating: A Waypoint's kind sets the Anchor Rating of a Titan Engagement on the Leg that leads to it (data/engagement/anchor-ratings.yaml).
+  gate: >-
+    Only the route's last Waypoint is a gate, and reaching it ends the Expedition. It sets no Anchor
+    Rating, so a Titan Engagement on the Leg to the gate rolls its Anchor Rating on
+    data/engagement/engagement-setup.yaml (anchor_rating).
+depot: >-
+  A Waypoint the Mission Brief marks as a depot keeps its kind. When the Squad arrives there, every
+  soldier receives a full Standard Issue together (data/gear/standard-issue.yaml, when_received), which
+  restocks Squad Supply.
+
+# ------------------------------------------------------------------ interim route
+interim_route:
+  steps:
+    - id: legs
+      text: >-
+        Roll D3+3 for the number of Legs, and so of Waypoints (a D3 is a D6 read 1 or 2 as 1, 3 or 4 as 2,
+        and 5 or 6 as 3).
+    - id: distance-bands
+      text: >-
+        Distance Bands by the Leg's place on the route: the first and last Legs are Near, the second and
+        second-to-last are Far, and every Leg between them is Deep.
+    - id: waypoints
+      text: Roll D6 on the Waypoint kinds table for each Waypoint but the last, which is the gate. No Waypoint is a depot.
+    - id: posts
+      text: Roll D6 on the Formation Post table below for each Leg.
+    - id: pace
+      text: >-
+        Not rolled now. After each day's second Leg, if a Leg is left, roll D6: on 5 or 6, Command orders
+        a Hard Ride.
+  formation_post_roll:
+    roll: D6
+    rows:
+      - {results: [1], post: vanguard}
+      - {results: [2], post: flank-scout}
+      - {results: [3], post: signal-relay}
+      - {results: [4], post: center}
+      - {results: [5], post: supply-wagon}
+      - {results: [6], post: rear-guard}
+  hard_ride_on: [5, 6]

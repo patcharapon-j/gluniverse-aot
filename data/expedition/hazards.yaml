@@ -1,0 +1,259 @@
+# The Leg Hazard table and the Night table, their modifiers, the Straggler's victim, and the effect
+# types their rows use.
+# Source of truth under ADR-0012. docs/rules/07-playtest-rules.md (section 7.1) references this file
+# and renders both tables from it (tools/render/render.py).
+# Playtest rule: Phase 2 replaces this file; the tables ship as written and are tuned on the playtest
+# count (decision batch 7, 7-14; OQ-141).
+id: hazards
+name: Leg Hazards and the Night Table
+chapter: 07-playtest-rules
+status: playtest
+adrs: [ADR-0003, ADR-0005, ADR-0009, ADR-0014, ADR-0017, ADR-0019]
+decided: [OQ-141, OQ-145]
+
+table_rolls: >-
+  The hazard roll, the night hazard roll, the Straggler's victim rolls, and the interim route's rolls
+  are table rolls, not attribute rolls: no pool, no Push, no Help, no Stress Dice, and never retried
+  (Chapter 1, section 1.3). They are rolled in the open, and nobody re-rolls or changes one
+  (Chapter 1, section 1.1).
+choices: >-
+  A row that lets the players choose is a shared choice, settled by the roll-off in
+  data/character/lifepath.yaml (group_choices) when they disagree. The GM chooses nothing on either
+  table.
+
+# Closed list of the effect types these rows use. Every row names at least one, or none for nothing.
+effect_types:
+  - id: horse-wear
+    meaning: A soldier's horse takes points of wear (data/gear/items.yaml, horse, wear), with the lame and fall rules of data/gear/horses.yaml.
+  - id: supply-loss
+    meaning: Squad Supply loses units of a kind, never below 0 (data/gear/squad-supply.yaml, units).
+  - id: stress-gain
+    meaning: Every soldier on the Expedition gains Stress (data/core/stress-changes.yaml, named-gain).
+  - id: fall
+    meaning: A soldier falls (data/gear/falls.yaml, triggers, rule-named), at the height the row names.
+  - id: horse-lame
+    meaning: A horse's current rating becomes 0 (data/gear/horses.yaml, lame).
+  - id: choice
+    meaning: The players choose one of the row's options.
+  - id: straggler
+    meaning: The Straggler procedure (straggler).
+  - id: titan-engagement
+    meaning: >-
+      A Titan Engagement begins (Chapter 5, section 5.1), with the starting Positions, Focus Titan,
+      Background Titan clocks, and mounted state the row names; data/expedition/legs.yaml (leg_steps,
+      titan-engagement) and night give its Anchor Rating, and data/engagement/engagement-setup.yaml
+      everything the row leaves unnamed.
+  - id: skirmish
+    meaning: A Skirmish begins (data/skirmish/skirmish.yaml, starting) with the Foes the row names.
+  - id: as-row
+    meaning: Resolve the named row of the same table instead.
+
+# ------------------------------------------------------------------ Leg Hazard table
+leg_hazards:
+  roll: D6
+  modifiers:
+    distance_band: {near: 0, far: 1, deep: 2}   # the Leg's Distance Band (data/expedition/route.yaml)
+    per_night_camp_made: 1   # for each night camp already made on this Expedition
+    formation_post: data/expedition/legs.yaml (formation_posts, hazard_modifier)
+    pace: data/expedition/legs.yaml (pace, hazard_modifier)
+    leg_roll: data/expedition/legs.yaml (leg_outcome)
+    signal_relay_flare: -2   # when the Squad spends the Signal Relay's flare (data/expedition/legs.yaml, formation_posts)
+  tracked_value: hazard-outcome   # changed only by the Straggler's Endure roll (straggler)
+  rows:
+    - id: quiet-ride
+      name: Quiet ride
+      results: {min: null, max: 1}
+      text: Nothing happens.
+      effects: []
+    - id: broken-ground
+      name: Broken ground
+      results: {min: 2, max: 2}
+      # decision batch 8, 8-35: a Leg with every living soldier Down has no Lead
+      text: The Lead's horse takes 1 point of wear. If there is no Lead, or the Lead is not mounted, nothing happens.
+      effects:
+        - {type: horse-wear, whose: lead, points: 1}
+    - id: dropped-supplies
+      name: Dropped supplies
+      results: {min: 3, max: 3}
+      text: >-
+        Squad Supply loses 1 unit of one kind that holds a unit, chosen by the players; at the Supply
+        Wagon Post it loses 2 units of that kind, or all it holds if fewer. If no kind holds a unit,
+        nothing happens.
+      effects:
+        - {type: supply-loss, kind: chosen by the players, units: 1, units_at_supply_wagon: 2}
+    - id: long-hours
+      name: Long hours
+      results: {min: 4, max: 4}
+      text: Every soldier on the Expedition gains 1 Stress.
+      effects:
+        - {type: stress-gain, amount: 1}
+    - id: thrown
+      name: Thrown
+      results: {min: 5, max: 5}
+      text: >-
+        One mounted soldier, chosen by the players, falls from a horse (Chapter 4, section 4.6). If no
+        soldier is mounted, nothing happens.
+      effects:
+        - {type: fall, who: one mounted soldier chosen by the players, height: from-a-horse}
+    - id: titans-far-off
+      name: Titans far off
+      results: {min: 6, max: 6}
+      text: >-
+        The players choose: the Squad spends 1 flare and 1 ration and rides around them, or a Titan
+        Engagement begins with every soldier at Distant. If Squad Supply holds no flare or no ration,
+        the Titan Engagement begins.
+      effects:
+        - type: choice
+          options:
+            - {spend: {flares: 1, rations: 1}}
+            - {type: titan-engagement, placement: {every_soldier: distant}}
+    - id: titan-on-the-formation
+      name: Titan on the formation
+      results: {min: 7, max: 7}
+      text: A Titan Engagement begins with every soldier at Distant.
+      effects:
+        - {type: titan-engagement, placement: {every_soldier: distant}}
+    - id: straggler
+      name: Straggler
+      results: {min: 8, max: 8}
+      text: >-
+        Roll the Straggler's victim. The victim makes an Endure roll; on a failure they gain a Bite
+        Critical Injury at a rolled Injury Location, which can be lethal. Then a Titan Engagement begins
+        with the victim at In Reach and every other soldier at Distant.
+      effects:
+        - {type: straggler}
+        - {type: titan-engagement, placement: {victim: in-reach, every_other_soldier: distant}}
+    - id: abnormal
+      name: Abnormal
+      results: {min: 9, max: 9}
+      text: >-
+        A Titan Engagement begins with every soldier at Distant, against the Sprinting Abnormal, or the
+        Abnormal the Mission Brief names.
+      effects:
+        - {type: titan-engagement, placement: {every_soldier: distant}, focus_titan: sprinting-abnormal, brief_may_name: an Abnormal}
+    - id: overrun
+      name: Overrun
+      results: {min: 10, max: null}
+      text: >-
+        A Titan Engagement begins with every soldier at In Reach and two Background Titans, on clocks of
+        4 and 8.
+      effects:
+        - {type: titan-engagement, placement: {every_soldier: in-reach}, background_clocks: [4, 8]}
+
+# The Straggler (decision batch 7, 7-14). Its harm is a Titan's but not a Behavior Table card: it rolls
+# no Attack Dice and allows no Reaction, and the Endure roll is its whole test (ADR-0005 and ADR-0019,
+# as amended in decision batch 8).
+straggler:
+  victim:
+    kind_roll:
+      roll: D6
+      rows:
+        - {results: [1, 2, 3, 4], kind: squadmate}
+        - {results: [5, 6], kind: player-character}
+    # decision batch 8, 8-27 (OQ-152, item d)
+    pool: >-
+      The living soldiers of that kind on the Expedition who are not Down. If there are none, use the
+      other kind. If neither kind has one, the row reads as titan-on-the-formation.
+    pick: >-
+      Number the soldiers in the pool 1 upward in Squad sheet order, and roll D6, rolling again any
+      result above the count, so that each is equally likely and the order chooses nothing.
+  roll: straggler-endure (rolls)
+  on_failure:
+    type: critical-injury   # data/harm/health.yaml, harm_kinds
+    injury_location: rolled
+    injury_type: bite
+    cannot_be_lethal: false
+    attack_dice: none   # no net-success rider
+  on_success: No harm.
+  # decision batch 8, 8-27 (OQ-152, item d)
+  timing: >-
+    The Critical Injury counts as gained as the row's Titan Engagement begins: no outside-harm care window
+    is held for it, and its time limit runs as one gained in that Titan Engagement
+    (data/harm/death-rolls.yaml).
+  then: The Titan Engagement of the row begins.
+
+# ------------------------------------------------------------------ Night table
+# ADR-0009's "night camps use calmer hazard results, except against Abnormals": a separate table whose
+# only Titan is an Abnormal. Titans do not walk at night; only an Abnormal does.
+night:
+  roll: D6
+  modifiers:
+    distance_band: the Distance Band of the day's last Leg (leg_hazards, modifiers, distance_band)   # decision batch 8, 8-27 (OQ-152, item f)
+    camp_roll_failed: 1
+  unused_modifiers: Nights outside, the Formation Post, the Pace, and the Leg roll add nothing to this roll.
+  # decision batch 8, 8-27 (OQ-152, item f)
+  anchor_rating: >-
+    A Titan Engagement this table begins takes its Anchor Rating from the kind of the Waypoint the day's
+    last Leg reached (data/expedition/route.yaml, waypoint_kinds).
+  # decision batch 8, 8-37
+  retreat: >-
+    A Titan Engagement this table begins that becomes a retreat before it ends falls back overnight
+    (data/expedition/legs.yaml, night_camp, retreat).
+  rows:
+    - id: quiet-night
+      name: Quiet night
+      results: {min: null, max: 3}
+      text: Nothing happens.
+      effects: []
+    - id: restless
+      name: Restless
+      results: {min: 4, max: 4}
+      text: Every soldier on the Expedition gains 1 Stress.
+      effects:
+        - {type: stress-gain, amount: 1}
+    - id: spoiled
+      name: Spoiled
+      results: {min: 5, max: 5}
+      text: Squad Supply loses 2 rations, or all it holds if fewer.
+      effects:
+        - {type: supply-loss, kind: rations, units: 2}
+    - id: spooked-horses
+      name: Spooked horses
+      results: {min: 6, max: 6}
+      text: >-
+        One horse on the Expedition that is not lame, chosen by the players, goes lame. If none, nothing
+        happens.
+      effects:
+        - {type: horse-lame, whose: one horse chosen by the players}
+    - id: prowlers
+      name: Prowlers
+      results: {min: 7, max: 7}
+      text: >-
+        At Near or Far, a Skirmish begins against three Bandits who have the Ambush and carry firebrands
+        in place of clubs. At Deep, resolve Restless instead.
+      effects:
+        - type: skirmish
+          at: [near, far]
+          foes: {kind: bandit, number: 3}   # data/skirmish/foes.yaml
+          ambush: foes
+          at_night: true
+        - {type: as-row, at: [deep], row: restless}
+    - id: abnormal-at-night
+      name: Abnormal at night
+      results: {min: 8, max: null}
+      text: >-
+        A Titan Engagement begins against the Sprinting Abnormal, or the Abnormal the Mission Brief names,
+        with every soldier dismounted at Distant. If it becomes a retreat before it ends, the Squad falls
+        back overnight, as the Night Camp's night hazard step gives.
+      effects:
+        - {type: titan-engagement, placement: {every_soldier: distant}, mounted: none, focus_titan: sprinting-abnormal, brief_may_name: an Abnormal}
+
+# ------------------------------------------------------------------ rolls
+rolls:
+  - id: hazard-roll
+    name: Hazard roll and night hazard roll
+    who: Rolled in the open for the Squad; no soldier rolls it.
+    entry: none (a table roll, D6 plus what its table adds)
+    needs: none; read the row for the total
+    help: Never.
+    push: Never.
+    retry: Never.
+  - id: straggler-endure
+    name: The Straggler's Endure roll
+    who: The Straggler's victim.
+    entry: Endure
+    needs: "1"
+    help: Never.
+    push: Allowed, and Covering is not, since no one qualifies to Help (Chapter 1, section 1.5).
+    retry: Never.
+    changes: [hazard-outcome]

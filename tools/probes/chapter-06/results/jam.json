@@ -1,0 +1,370 @@
+{
+ "sprinting-abnormal": {
+  "kill": {
+   "1_titans": {
+    "help_0": 8.3,
+    "help_0_covered": 10.6,
+    "help_1": 7.5,
+    "help_1_covered": 9.4,
+    "help_2": 6.7,
+    "help_2_covered": 8.3,
+    "help_3": 6.1,
+    "help_3_covered": 7.2,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 10.6
+    }
+   },
+   "2_titans": {
+    "help_0": 18.0,
+    "help_0_covered": 28.1,
+    "help_1": 16.3,
+    "help_1_covered": 25.3,
+    "help_2": 14.8,
+    "help_2_covered": 22.6,
+    "help_3": 13.3,
+    "help_3_covered": 19.6,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 28.1
+    }
+   }
+  },
+  "mounted": {
+   "1_titans": {
+    "help_0": 6.6,
+    "help_0_covered": 8.6,
+    "help_1": 6.0,
+    "help_1_covered": 7.4,
+    "help_2": 5.3,
+    "help_2_covered": 6.5,
+    "help_3": 4.7,
+    "help_3_covered": 5.4,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 8.6
+    }
+   },
+   "2_titans": {
+    "help_0": 15.1,
+    "help_0_covered": 23.0,
+    "help_1": 13.6,
+    "help_1_covered": 20.1,
+    "help_2": 11.8,
+    "help_2_covered": 17.2,
+    "help_3": 10.6,
+    "help_3_covered": 14.9,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 23.0
+    }
+   }
+  },
+  "table": {
+   "1_titans": {
+    "help_0": 7.0,
+    "help_0_covered": 8.2,
+    "help_1": 5.9,
+    "help_1_covered": 7.2,
+    "help_2": 5.3,
+    "help_2_covered": 6.4,
+    "help_3": 4.5,
+    "help_3_covered": 5.4,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 8.2
+    }
+   },
+   "2_titans": {
+    "help_0": 14.5,
+    "help_0_covered": 22.7,
+    "help_1": 13.4,
+    "help_1_covered": 19.7,
+    "help_2": 12.1,
+    "help_2_covered": 17.3,
+    "help_3": 10.2,
+    "help_3_covered": 14.7,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 22.7
+    }
+   }
+  }
+ },
+ "standard-large": {
+  "kill": {
+   "1_titans": {
+    "help_0": 11.1,
+    "help_0_covered": 13.8,
+    "help_1": 11.1,
+    "help_1_covered": 13.6,
+    "help_2": 11.1,
+    "help_2_covered": 13.4,
+    "help_3": 10.5,
+    "help_3_covered": 13.3,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 13.8
+    }
+   },
+   "2_titans": {
+    "help_0": 23.7,
+    "help_0_covered": 35.5,
+    "help_1": 23.1,
+    "help_1_covered": 35.2,
+    "help_2": 23.0,
+    "help_2_covered": 35.2,
+    "help_3": 22.5,
+    "help_3_covered": 34.4,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 35.5
+    }
+   }
+  },
+  "mounted": {
+   "1_titans": {
+    "help_0": 9.6,
+    "help_0_covered": 12.2,
+    "help_1": 9.3,
+    "help_1_covered": 11.7,
+    "help_2": 8.8,
+    "help_2_covered": 10.9,
+    "help_3": 8.0,
+    "help_3_covered": 10.1,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 12.2
+    }
+   },
+   "2_titans": {
+    "help_0": 20.9,
+    "help_0_covered": 32.6,
+    "help_1": 19.8,
+    "help_1_covered": 30.8,
+    "help_2": 18.7,
+    "help_2_covered": 29.3,
+    "help_3": 17.8,
+    "help_3_covered": 27.5,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 32.6
+    }
+   }
+  },
+  "table": {
+   "1_titans": {
+    "help_0": 10.2,
+    "help_0_covered": 12.4,
+    "help_1": 9.5,
+    "help_1_covered": 11.8,
+    "help_2": 8.5,
+    "help_2_covered": 11.0,
+    "help_3": 8.2,
+    "help_3_covered": 10.2,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 12.4
+    }
+   },
+   "2_titans": {
+    "help_0": 20.8,
+    "help_0_covered": 32.9,
+    "help_1": 20.2,
+    "help_1_covered": 30.7,
+    "help_2": 18.8,
+    "help_2_covered": 29.5,
+    "help_3": 18.1,
+    "help_3_covered": 27.2,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 32.9
+    }
+   }
+  }
+ },
+ "standard-medium": {
+  "kill": {
+   "1_titans": {
+    "help_0": 10.4,
+    "help_0_covered": 13.2,
+    "help_1": 10.1,
+    "help_1_covered": 12.9,
+    "help_2": 9.8,
+    "help_2_covered": 11.9,
+    "help_3": 9.3,
+    "help_3_covered": 11.5,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 13.2
+    }
+   },
+   "2_titans": {
+    "help_0": 22.6,
+    "help_0_covered": 34.4,
+    "help_1": 21.4,
+    "help_1_covered": 33.5,
+    "help_2": 20.8,
+    "help_2_covered": 32.4,
+    "help_3": 19.8,
+    "help_3_covered": 30.2,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 34.4
+    }
+   }
+  },
+  "mounted": {
+   "1_titans": {
+    "help_0": 7.6,
+    "help_0_covered": 9.8,
+    "help_1": 7.0,
+    "help_1_covered": 8.4,
+    "help_2": 6.0,
+    "help_2_covered": 7.4,
+    "help_3": 5.2,
+    "help_3_covered": 6.5,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 9.8
+    }
+   },
+   "2_titans": {
+    "help_0": 16.4,
+    "help_0_covered": 25.9,
+    "help_1": 15.0,
+    "help_1_covered": 22.7,
+    "help_2": 13.3,
+    "help_2_covered": 19.8,
+    "help_3": 12.0,
+    "help_3_covered": 17.6,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 25.9
+    }
+   }
+  },
+  "table": {
+   "1_titans": {
+    "help_0": 7.4,
+    "help_0_covered": 9.3,
+    "help_1": 6.6,
+    "help_1_covered": 8.2,
+    "help_2": 6.1,
+    "help_2_covered": 7.4,
+    "help_3": 5.5,
+    "help_3_covered": 6.6,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 9.3
+    }
+   },
+   "2_titans": {
+    "help_0": 16.4,
+    "help_0_covered": 24.4,
+    "help_1": 14.7,
+    "help_1_covered": 22.1,
+    "help_2": 13.6,
+    "help_2_covered": 19.9,
+    "help_3": 12.3,
+    "help_3_covered": 17.9,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 24.4
+    }
+   }
+  }
+ },
+ "standard-small": {
+  "kill": {
+   "1_titans": {
+    "help_0": 8.6,
+    "help_0_covered": 10.6,
+    "help_1": 7.4,
+    "help_1_covered": 9.5,
+    "help_2": 6.7,
+    "help_2_covered": 8.5,
+    "help_3": 5.9,
+    "help_3_covered": 7.4,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 10.6
+    }
+   },
+   "2_titans": {
+    "help_0": 17.9,
+    "help_0_covered": 28.3,
+    "help_1": 16.2,
+    "help_1_covered": 25.5,
+    "help_2": 14.7,
+    "help_2_covered": 22.2,
+    "help_3": 13.4,
+    "help_3_covered": 19.8,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 28.3
+    }
+   }
+  },
+  "mounted": {
+   "1_titans": {
+    "help_0": 6.7,
+    "help_0_covered": 8.6,
+    "help_1": 6.1,
+    "help_1_covered": 7.3,
+    "help_2": 5.3,
+    "help_2_covered": 6.4,
+    "help_3": 4.7,
+    "help_3_covered": 5.5,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 8.6
+    }
+   },
+   "2_titans": {
+    "help_0": 14.8,
+    "help_0_covered": 23.1,
+    "help_1": 13.6,
+    "help_1_covered": 20.1,
+    "help_2": 12.1,
+    "help_2_covered": 17.3,
+    "help_3": 10.4,
+    "help_3_covered": 14.8,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 23.1
+    }
+   }
+  },
+  "table": {
+   "1_titans": {
+    "help_0": 6.7,
+    "help_0_covered": 8.4,
+    "help_1": 5.9,
+    "help_1_covered": 7.3,
+    "help_2": 5.1,
+    "help_2_covered": 6.2,
+    "help_3": 4.4,
+    "help_3_covered": 5.5,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 8.4
+    }
+   },
+   "2_titans": {
+    "help_0": 14.4,
+    "help_0_covered": 22.5,
+    "help_1": 13.2,
+    "help_1_covered": 19.6,
+    "help_2": 11.8,
+    "help_2_covered": 17.0,
+    "help_3": 10.1,
+    "help_3_covered": 14.6,
+    "worst": {
+     "cell": "help_0_covered",
+     "value": 22.5
+    }
+   }
+  }
+ }
+}

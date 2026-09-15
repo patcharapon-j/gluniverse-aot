@@ -1,0 +1,157 @@
+# Stress Responses: when one is rolled, the D6 + Stress - Resolve table, lasting results, and
+# Rally.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (sections 3.10 and 3.11)
+# references this file and renders its tables from it (tools/render/render.py).
+id: stress-responses
+name: Stress Responses
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0004, ADR-0008]
+decided: [OQ-47, OQ-48, OQ-139]
+
+# ------------------------------------------------------------------ the roll
+roll:
+  entry: stress-response-roll    # a fixed roll (data/character/action-catalog.yaml)
+  trigger: >-
+    A Stress Die shows 1 on an attribute roll, or after a Push of it. A roll causes at most one
+    Stress Response (Chapter 1, section 1.5; ADR-0004).
+  when_resolved: step 2 of Finishing a roll (Chapter 1, section 1.5, OQ-05)
+  total: D6 + Stress - Resolve
+  stress_used: the soldier's Stress after any Push of the roll
+  resolve_used: >-
+    The soldier's current Resolve: the formula in data/character/attributes.yaml, including
+    Scars and Grief. Iron Nerve counts it as 1 higher for this roll.
+  attribute_roll: false   # no pool, no Push, no Help, no Stress Dice
+  exceptions: >-
+    A roll whose own rule names another resolution for its Stress Response, such as the
+    Graduation Exam (data/character/graduation-exam.yaml, stress_responses), still has the
+    Stress Response and cannot be Pushed after it, but does not use this table (Chapter 1,
+    section 1.5, Finishing a roll, OQ-05).
+
+# ------------------------------------------------------------------ results
+result_rules:
+  instant: An instant result applies once, at step 2 of Finishing a roll.
+  lasting: >-
+    A lasting result is held by the soldier. Its effects apply from the next roll on and never
+    change the roll that caused it. The soldier can hold several different lasting results.
+  already_held: >-
+    If the row found is a lasting row the soldier already holds, use the next row down the table
+    (the next higher total) instead. Repeat while that row is also a lasting row the soldier
+    holds.
+  lasting_ends:
+    - Rally clears it (rally below).
+    - >-
+      The Titan Engagement in which it was gained ends (data/harm/engagement-end.yaml). A result
+      gained at the steps after a Titan Engagement ends, such as on a care-window roll, is gained
+      outside it. The sheet records which ending applies (data/harm/sheet-fields.yaml).
+    - >-
+      One gained outside a Titan Engagement ends when the rule that called for the roll states.
+      If that rule states nothing, it ends when a day passes (data/harm/healing.yaml).
+  down: A soldier who is Down keeps the lasting results they hold (data/harm/down.yaml).
+
+# Decision batch 7, 7-9 (OQ-47, as revised; OQ-139): every row keeps its total, duration, and effects,
+# and gains a fiction-first name and a text line the render prints beside it. The ids are unchanged, since
+# the sheet records a lasting row by id. The text is second-person fiction with no rule words; only the
+# effects are rules.
+table:
+  roll: D6 + Stress - Resolve
+  rows:
+    - id: steady
+      name: Deep Breath
+      results: {min: null, max: 0}
+      duration: instant
+      text: You breathe out through your teeth, and the moment passes.
+      effects: []
+    - id: racing-thoughts
+      name: Scattered Thoughts
+      results: {min: 1, max: 1}
+      duration: lasting
+      text: Every plan you start falls apart before you finish thinking it.
+      effects:
+        - {type: penalty, dice: 1, entries: [read, treat-injury, field-repair]}
+    - id: narrowed-sight
+      name: Tunnel Vision
+      results: {min: 2, max: 2}
+      duration: lasting
+      text: The edges of the world go grey. You see the danger in front of you and nothing beside it.
+      effects:
+        - {type: penalty, dice: 1, entries: [break-attention, rally]}
+    - id: shaking-hands
+      name: Blade Chatter
+      results: {min: 3, max: 3}
+      duration: lasting
+      text: Your hands will not stop shaking, and the grip you drilled for three years is gone.
+      effects:
+        - {type: penalty, dice: 1, entries: [nape-strike, body-part-strike, break-free]}
+    - id: weak-knees
+      name: Leaden Legs
+      results: {min: 4, max: 4}
+      duration: lasting
+      text: Your body answers a heartbeat late, as if your legs belong to someone else.
+      effects:
+        - {type: penalty, dice: 1, entries: [fly, ride, dodge]}
+    - id: hair-trigger
+      name: Wound Tight
+      results: {min: 5, max: 5}
+      duration: lasting
+      text: Everything in you is pulled taut. Each time you reach for more, something tears a little.
+      effects:
+        - {type: push-stress, amount: 1}
+    - id: flinch
+      name: Flinch
+      results: {min: 6, max: 6}
+      duration: instant
+      text: Something moves at the edge of your sight, and your whole body jerks away from it.
+      effects:
+        - {type: lose-successes, amount: 1}
+    - id: locked-up
+      name: Seized Up
+      results: {min: 7, max: 7}
+      duration: instant
+      text: Every muscle locks at once. For a long moment you can only watch.
+      effects:
+        - {type: lose-successes, amount: 1}
+        - {type: spend-next-turn, turns: 1}
+    - id: botched
+      name: Everything Slips
+      results: {min: 8, max: null}
+      duration: instant
+      text: Your grip, your footing, and your nerve all give way in the same instant.
+      effects:
+        - {type: zero-successes}
+        - {type: stress-gain, amount: 1}
+
+# ------------------------------------------------------------------ Rally
+rally:
+  entry: rally              # data/character/action-catalog.yaml: Empathy, no gear
+  target: >-
+    A comrade, player character or Squadmate, who holds at least one lasting Stress Response or
+    pending Fear result: a forced step or forced strike not yet made (data/harm/sheet-fields.yaml,
+    pending_fear_results; decision batch 7, 7-8). A soldier can never Rally themselves. The target
+    may be Down.
+  needs: 1
+  on_success: >-
+    Clear one of the target's lasting Stress Responses or pending Fear results per success. The
+    Rallying soldier's player chooses which.
+  on_failure: Nothing happens.
+  never: Rally never lowers Stress (glossary Rally).
+  in_titan_engagement:
+    kind: action
+    position_requirement: >-
+      The target holds the same Position as the Rallying soldier or one Position step away
+      (data/engagement/positions.yaml, comparison). Carrying Voice adds one more step (data/character/talents.yaml). Two soldiers
+      who have both left a Titan Engagement that is still under way count as holding the same
+      Position (data/harm/engagement-end.yaml, soldiers_who_left).
+    help: >-
+      As Chapter 1, section 1.8. Two soldiers who have both left a Titan Engagement that is still
+      under way count as holding the same Position for Help and Covering on this roll.
+    retry: A failed Rally can be tried again on a later turn.
+  outside_titan_engagement:
+    who: Any soldier who is not Down may Rally a comrade.
+    help: Rally outside a Titan Engagement cannot be Helped or Covered.
+    retry: >-
+      A soldier can Rally a given comrade once, and again only after that comrade gains another
+      lasting Stress Response or pending Fear result. The sheet records who has Rallied the comrade
+      (data/harm/sheet-fields.yaml, rallied_outside_titan_engagement_by).
+  talents:
+    - {id: steady-voice, effect: adds dice}
+    - {id: carrying-voice, effect: one more Position step}

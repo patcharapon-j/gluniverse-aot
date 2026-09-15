@@ -1,0 +1,75 @@
+# Field Repair: the procedure for the Action Catalog entry field-repair, in a Titan Engagement
+# and in care windows outside one.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (section 4.8) references this file and
+# does not repeat its rows. The entry's kind, attribute, gear, and gear rule are in
+# data/character/action-catalog.yaml.
+id: field-repair
+name: Field Repair
+chapter: 04-gear
+adrs: [ADR-0003]
+decided: [OQ-66]
+
+entry: field-repair
+attribute: wits
+gear: tool-kit   # without one that counts as had, Wits alone (gear_requirement); Make Do keeps Talent dice
+needs: 1
+
+target:
+  # decision batch 8, 8-12: a firearm at 0 cannot be fired until Field Repair or Maintain Gear restores it
+  items: [odm-gear, tool-kit, flintlock-pistol, musket]
+  cannot_repair: >-
+    A Blade Set, a horse, or a medical kit. The tool kit that supplies the roll's Gear Dice cannot
+    be the item it repairs.
+  kit_at_zero: >-
+    A tool kit at current rating 0 counts as not had and supplies no Gear Dice, so it can be the
+    target: its owner or a comrade repairs it with another tool kit, or with Wits alone (Make Do
+    still applies).
+  whose:
+    in_titan_engagement: >-
+      An item of the soldier's own, or of a comrade who holds the soldier's Position. Two soldiers
+      who have both left the Titan Engagement count as holding the same Position
+      (data/engagement/positions.yaml, leaving, after_leaving).
+    outside_titan_engagement: An item of any soldier in the care window's scope.
+  declare: The soldier names the item before rolling.
+
+on_success: >-
+  The named item's current rating rises by 1 for each success, to at most its rating. ODM Gear
+  whose current rating rises above 0 is no longer Jammed (data/gear/odm-gear.yaml, jam).
+on_failure: Nothing happens.
+
+in_titan_engagement:
+  spends: the soldier's action
+  help_push_cover: As Chapter 1 states (sections 1.5 and 1.8).
+  retry: A failed roll can be tried again on a later turn.
+
+outside_titan_engagement:
+  when: >-
+    Only in a care window held when a Titan Engagement ends, when a day passes during an
+    Expedition, or on the interim day (data/harm/treat-injury.yaml, care_windows;
+    data/harm/healing.yaml, day_passes, interim), within that window's scope. The interim day
+    stands in for the night camps of ADR-0009, so its window allows Field Repair as an Expedition
+    day's does (decision batch 5, 5-16, OQ-130). Never in
+    a care window held when a day passes in Downtime, never in a care window held after harm
+    outside a Titan Engagement, and never at another time. Restoring gear in Downtime belongs to
+    the Maintain Gear Downtime Action (Chapter 7, section 7.2).
+  rolls: >-
+    Each living soldier in the scope who is not Down may make one Field Repair roll in each such
+    window. It is separate from their Treat Injury roll in the window and does not use it up.
+  help: >-
+    A living soldier in the scope who is not Down, and is not the soldier rolling, qualifies to
+    Help. They may Help only if they have not yet made or Helped a Field Repair roll in the
+    window. Help is declared before the roll and spends that soldier's Field Repair roll for the
+    window. At most 3 soldiers Help one roll.
+  cover: >-
+    Any soldier who qualifies to Help the roll can Cover its Push, even one who has already made
+    or Helped a Field Repair roll in the window. Covering spends nothing (Chapter 1, section 1.5).
+  push: allowed
+  order: >-
+    The players choose the order of rolls, using the roll-off in data/character/lifepath.yaml
+    (group_choices) if they disagree.
+  retry: A failed roll can be tried again only in a later such window.
+  squadmates: Squadmates take part like player characters, directed as data/character/squadmates.yaml states.
+
+talents:
+  - {id: gearwright, effect: adds dice (data/character/talents.yaml)}
+  - {id: make-do, effect: keeps Talent dice without a tool kit (data/character/talents.yaml)}

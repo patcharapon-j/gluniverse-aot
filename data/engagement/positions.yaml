@@ -1,0 +1,248 @@
+# Positions: what each Position means, moves, where a fall lands, Positions relative to two Focus
+# Titans, recorded Positions, horses, a corpse, and leaving a Titan Engagement.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (sections 5.1, 5.2, 5.7, and 5.11)
+# references this file and does not repeat its rows.
+id: positions
+name: Positions and Moves
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0009, ADR-0010, ADR-0019]
+decided: [OQ-74, OQ-75, OQ-76, OQ-146]
+
+# ------------------------------------------------------------------ the Positions
+positions:
+  - id: distant
+    name: Distant
+    meaning: >-
+      Out of a standing Titan's reach. A Behavior Table entry may still name distant in its Position
+      requirement, as a running Abnormal's does (Chapter 6; decision batch 5, OQ-125).
+  - id: in-reach
+    name: In Reach
+    meaning: Within reach of the Titan's hands, on the ground or on anchors beside it.
+  - id: on-body
+    name: On Body
+    meaning: Hooked into the Titan's body or standing on it, anywhere but the Nape.
+  - id: blind-spot
+    name: Blind Spot
+    meaning: >-
+      Out of the Titan's sight with its Nape within reach, anchored to terrain rather than hooked
+      into the Titan. The only Position a Nape strike can be made from (ADR-0010). Making a Nape
+      strike counts as hooking into the Titan (data/engagement/attention.yaml, flags,
+      hooked-by-strike).
+
+relative_to: >-
+  A soldier holds a Position relative to each Focus Titan in the Titan Engagement, and relative to each corpse on the field (corpse), and to no other Titan. The first Focus Titan of a Titan Engagement is labelled A, the next B
+  (data/gear/sheet-fields.yaml, focus_titan_label). A soldier who has left the Titan Engagement,
+  or is dead, holds no Position.
+
+holding_a_position: >-
+  A soldier "holds a Position" in a Titan Engagement while they hold a Position relative to at least one Focus Titan or corpse (corpse; decision batch 8, 8-20). That is the test Chapters 1 and 3 use for being in a Titan Engagement
+  (Stress relief, Grief, care-window scope).
+
+# Which Focus Titan two soldiers' Positions are compared relative to, for every rule that asks
+# whether two soldiers hold the same Position or are one step apart (Help, Covering, Treat Injury,
+# Rally, aftermath rolls, Lift Comrade, Pass Item, Take Item, Field Repair, Pry Loose).
+comparison:
+  titan_named: >-
+    For a roll or act made against one Focus Titan (a strike, Break Attention, Draw Attention,
+    Read, Break Free, a dodge), and for Help and Covering on it, compare relative to that Titan. For an act against a body, Heave and the Body Part strike against a pinning Body Part, and for Help and Covering on either, compare relative to that body, a Focus Titan or a corpse (corpse; decision batch 8, 8-20).
+  otherwise: >-
+    Compare relative to the living Focus Titan with the earliest label. When no Focus Titan is alive,
+    compare relative to the corpse of the Focus Titan that died last (corpse; decision batch 8, 8-20).
+  steps: One Position step is defined by the Anchor Rating (data/engagement/anchor-ratings.yaml, ratings).
+
+# ------------------------------------------------------------------ two Focus Titans
+two_focus_titans:
+  entering: >-
+    When a Titan becomes a Focus Titan during a Titan Engagement, every soldier who holds a
+    Position holds Distant relative to it. No other Position changes.
+  independent: >-
+    A move changes a soldier's Position relative to one Focus Titan, which the soldier names. Their
+    Position relative to any other Focus Titan does not change, except by the close rule below.
+  close_rule: >-
+    Whenever a soldier's Position relative to one Focus Titan becomes on-body or blind-spot, by a
+    move or by any rule, their Position relative to every other Focus Titan that is on-body or
+    blind-spot becomes in-reach. A soldier never holds on-body or blind-spot relative to two
+    Focus Titans at once.
+  grabbed: >-
+    A Grabbed soldier holds on-body relative to the Titan that holds them (data/engagement/grab.yaml),
+    and the close rule applies.
+  a_focus_titan_dies: >-
+    When a Focus Titan dies, every soldier stops holding a Position relative to it; the Position
+    each held relative to it at that moment is recorded as their last Position relative to it, and
+    becomes their Position relative to its corpse (corpse, positions). A soldier who still holds a
+    Position relative to another Focus Titan keeps it. Every recorded Position that names the Titan
+    that died (a dismounted horse's Position, and where a dead soldier's left items lie;
+    data/gear/sheet-fields.yaml) is rewritten as distant, naming the living Focus Titan with the
+    earliest label. When no Focus Titan is alive, such a record names that Titan's corpse instead
+    and keeps the Position it recorded, except that on-body and blind-spot read in-reach, as a
+    soldier's Positions do (corpse, positions; decision batch 8, 8-20). The Titan Engagement then
+    ends only as its ending tests state (data/engagement/engagement-flow.yaml, ending), so the
+    rounds run on while a soldier lies Pinned (ending, no-focus-titan, run_on). When it ends, the
+    engagement-end steps read the last Positions, which, while a corpse lies on the field, are the
+    Positions relative to that corpse as they stand at the end (data/harm/engagement-end.yaml,
+    positions_read; decision batch 8, 8-20), and Chapter 4 clears the records after the last
+    engagement-end step (decision batch 5, OQ-122).
+  recorded_label: >-
+    A Position recorded when a horse is dismounted or a soldier dies names the living Focus Titan
+    with the earliest label, and is the soldier's Position relative to that Titan at that moment.
+    When no Focus Titan is alive, as during the run-on, it names the corpse of the Focus Titan that
+    died last, and is the soldier's Position relative to that corpse at that moment (comparison,
+    otherwise; decision batch 8, 8-20).
+
+# ------------------------------------------------------------------ starting placement
+placement:
+  when: As the Titan Engagement begins (data/engagement/engagement-flow.yaml, starting, placement).
+  default: >-
+    Every soldier in the Squad who takes part holds distant relative to the first Focus Titan.
+    Every soldier who was mounted when it began stays mounted, and every soldier who was not stays
+    dismounted. No soldier is airborne. A dismounted soldier's horse holds distant, recorded with
+    Focus Titan A. The rule that begins the Titan Engagement may name other starting Positions for
+    named soldiers, as the Leg Hazard table's Straggler and Overrun rows do
+    (data/expedition/hazards.yaml, straggler, overrun).
+  who_takes_part: >-
+    The soldiers the rule that begins the Titan Engagement names; if it names none, every living
+    soldier in the Squad on the same Expedition, or every living soldier in the Squad when no
+    Expedition is under way.
+  drives: >-
+    A starting Position is placed by a rule, not by the soldier's own move, so it does not meet a
+    Drive's Position trigger until the soldier's own move changes it
+    (data/character/enlistment.yaml, drive_rules, trigger_tests, own_state).
+
+# ------------------------------------------------------------------ moves
+moves:
+  what_a_move_does: >-
+    A move changes the soldier's Position relative to one named Focus Titan by exactly one step
+    that the Anchor Rating allows for that kind of move, or changes no Position. A move can include
+    one mount or one dismount (data/gear/horses.yaml, mounted, within_a_move). A move is the only
+    way a soldier changes their own Position; every other change of Position comes from a rule
+    that names it.
+  tracked_value: position-change   # data/character/action-catalog.yaml; a move is not a Catalog entry
+  kinds: data/engagement/anchor-ratings.yaml (move_kinds, ratings)
+  mounted_soldier: >-
+    A mounted soldier's move can make a step whose row has mounted true, or an ODM move, which
+    dismounts them first (data/gear/horses.yaml). Nothing else.
+  down_soldier:
+    allowed: >-
+      A Down soldier's move can make only the step from in-reach to distant, on foot, and only while
+      they are not Grabbed and not carried. It can make no other change of Position, and cannot
+      leave the Titan Engagement.
+    decided_for: data/harm/down.yaml (while_down, turn)
+  grabbed_soldier: A Grabbed soldier's move changes nothing (data/engagement/grab.yaml, grabbed_state).
+  pinned_soldier: >-
+    A Pinned soldier's move changes nothing, and no rule changes their Position relative to the
+    pinning body while they are Pinned: no forced step, no fall, and no carrying moves them
+    (data/engagement/titan-harm.yaml, falling_titan, pinned, moves; decision batch 8, 8-9 and 8-18).
+  carried_soldier: >-
+    A carried soldier's own move changes nothing. They change Position with their carrier
+    (data/gear/carrying.yaml, carrying_a_comrade).
+  letting_go:
+    who: A soldier who holds on-body or blind-spot relative to a Focus Titan and is not Grabbed or carried.
+    what: >-
+      Instead of any other move, the soldier may use their move to let go. They fall, a fall a
+      rule names (data/gear/falls.yaml, triggers, rule-named), with the band Chapter 4's height
+      steps give for the Position they held. It is not an ODM move and not ODM use.
+    use: >-
+      It is the only change of Position a soldier at on-body or blind-spot can make without an
+      ODM move, unless the Titan is grounded (data/engagement/anchor-ratings.yaml, grounded_titan).
+  forced_step: >-
+    A Fear Roll result's forced-move effect (data/harm/effect-types.yaml; decision batch 7, 7-8)
+    changes the soldier's Position by one step at the start of their next turn, by the retreat's move
+    rule and its exceptions (data/engagement/background-titans.yaml, retreat, moves: option 1 for a
+    step toward distant). It is a change of Position a rule names, not the soldier's own move: it
+    spends nothing, it happens even on a turn spent in advance (decision batch 8, 8-13), and it never
+    meets a Drive's own-move trigger (data/character/enlistment.yaml, drive_rules, trigger_tests,
+    own_state).
+  odm_use_named_by_this_chapter: >-
+    None. ODM use is only what Chapter 4 lists (data/gear/odm-gear.yaml, odm_use). A Fly roll a
+    step calls for is a roll with ODM Gear as its gear item, so it is ODM use under that list.
+
+# Where a soldier lands (data/gear/falls.yaml, after_the_fall).
+falls_land:
+  reference_titan: >-
+    Each row reads the fall's reference Titan (data/gear/falls.yaml, height; decision batch 5,
+    OQ-123).
+  from_on_body_or_blind_spot: >-
+    A soldier who falls while holding on-body or blind-spot relative to the fall's reference Titan
+    holds in-reach relative to that Titan once the fall is resolved.
+  from_in_reach_or_distant: The soldier keeps the Position they held relative to the fall's reference Titan.
+  other_titans: Their Positions relative to any other Focus Titan do not change.
+  drives: A fall is a change of Position made by a rule, not the soldier's own move.
+
+# ------------------------------------------------------------------ horses and left items
+horses:
+  moved_by: >-
+    A horse changes Position with its mounted soldier's move, and by Horse Whistle, which places the
+    soldier's own horse at the soldier's Position before a move that mounts it
+    (data/character/talents.yaml, horse-whistle; decision batch 7, 7-2). No other rule moves a horse.
+  left_as_decoy: >-
+    A horse whose riderless-horse decoy succeeds leaves the Titan Engagement
+    (data/engagement/attention.yaml, break_attention, decoys, riderless-horse). It holds no
+    Position until the Titan Engagement ends, and the sheet records its position as left
+    (data/gear/sheet-fields.yaml, horse).
+  targeted: >-
+    The Attention Ladder never chooses a horse. A behavior affects a horse only if its Behavior
+    Table row names that effect (data/engagement/titan-format.yaml, effect_types). No effect type
+    in that list affects a horse, so a Chapter 6 entry can affect one only after an effect type
+    that does is added there.
+left_items:
+  moved_by: No rule moves a dead soldier's left items from where they lie (data/gear/carrying.yaml, leaving_play, death).
+
+# ------------------------------------------------------------------ a corpse (decision batch 8, 8-9; OQ-146)
+corpse:
+  what: >-
+    A dead Focus Titan's body stays on the field as a corpse for the rest of the Titan Engagement
+    (data/engagement/titan-harm.yaml, titan_death, corpse). It keeps the Titan's label, marked as a
+    corpse (data/engagement/round.yaml, gm_tracker, corpse_row).
+  positions: >-
+    Each soldier's last Position relative to the Titan (two_focus_titans, a_focus_titan_dies) becomes
+    their Position relative to its corpse, except that on-body and blind-spot read in-reach. A soldier
+    who held no Position relative to the Titan when it died holds none relative to its corpse.
+  steps: >-
+    A corpse counts as a grounded Titan for Position steps for as long as it lies on the field
+    (data/engagement/anchor-ratings.yaml, grounded_titan, corpse). A soldier's move may name a corpse,
+    and changes their Position relative to it by one step as a move relative to a Focus Titan does.
+  counts_for: >-
+    A Position relative to a corpse is a Position in the Titan Engagement (holding_a_position), and it counts
+    for every rule that reads a Position: the ending tests, witnesses, care-window scope, Stress relief,
+    Grief, Help, Heave, corpse heat, the retreat's forced moves, and returning. This holds whenever a corpse
+    lies on the field, and while a Focus Titan is alive it changes nothing (decision batch 8, 8-20; OQ-156).
+  nothing_else: >-
+    A corpse holds no Attention, plays no cards, has no Regeneration clock, is no fall's reference Titan,
+    and no close rule or Attention Ladder reads a Position relative to it. Heave and the Body Part strike
+    against a pinning Body Part are the only acts made against a corpse: no Nape strike, no other Body Part
+    strike, no Read, no Break Attention or Draw Attention, and no Openings (decision batch 8, 8-20).
+  cleared: >-
+    Positions relative to a corpse are cleared with every other Position record, after the last
+    engagement-end step (two_focus_titans, a_focus_titan_dies).
+
+# ------------------------------------------------------------------ leaving a Titan Engagement
+leaving:
+  who: >-
+    A soldier who holds distant relative to every Focus Titan, and is not Down, Grabbed, or carried. A corpse counts as a Focus Titan for this test (corpse; decision batch 8, 8-20).
+  how: >-
+    The soldier uses their move to leave. They stop holding any Position. A comrade they carry
+    leaves with them. Their horse leaves with them if they are mounted; a dismounted horse keeps
+    its recorded Position.
+  returning: >-
+    A soldier who has left, and is not Down or carried, may use a later move to return, except
+    during a retreat (data/engagement/background-titans.yaml, retreat). They hold distant relative to every Focus Titan and every corpse, mounted or not as they were when they left.
+  after_leaving:
+    turns: >-
+      They still take a turn each round (data/harm/engagement-end.yaml, soldiers_who_left), with
+      its move and action.
+    move: Their move can do nothing but return.
+    action: >-
+      Any Action Catalog entry whose requirements they meet. Entries that need a Position relative
+      to a Titan (strikes, Break Attention, Draw Attention, Read, Break Free) cannot be taken.
+    same_position: >-
+      For every rule that asks whether two soldiers hold the same Position or are one step apart,
+      two soldiers who have both left count as holding the same Position, and a soldier who has
+      left never counts as holding the same Position as, or one step from, a soldier who still
+      holds one. This covers Help and Covering, Treat Injury, Rally, aftermath rolls, Field Repair
+      on a comrade's item, Pass Item, Take Item, and Lift Comrade.
+    titans: >-
+      No behavior targets a soldier who has left, the Attention Ladder never chooses them, and they
+      are not a witness (data/engagement/engagement-flow.yaml, witnesses).
+    gas: >-
+      ODM use by a soldier who has left still makes that round's Gas Roll (data/gear/odm-gear.yaml,
+      gas_roll).

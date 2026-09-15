@@ -1,0 +1,213 @@
+# The Grab: the Grabbed state, what happens when a Grab lands, the countdown in the Grabbed
+# soldier's own turns, what a holding Titan's cards do, every way out, and where a freed soldier ends up.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.9) references this
+# file and does not repeat its rows.
+id: grab
+name: The Grab
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0005, ADR-0010, ADR-0014, ADR-0015, ADR-0017, ADR-0019]
+decided: [OQ-85, OQ-86, OQ-99, OQ-137, OQ-145, OQ-146, OQ-151]
+constraints_met: [OQ-18, OQ-39, OQ-42, OQ-50]
+
+# ------------------------------------------------------------------ the state
+grabbed_state:
+  id: grabbed
+  name: Grabbed
+  forbids: [help, cover, reaction]   # Chapter 1, section 1.9 hook (OQ-18). A Grabbed soldier can still Push.
+  meaning: The soldier is held in the hand of the Focus Titan whose Grab landed on them, the holding Titan.
+  position: >-
+    The soldier holds on-body relative to the holding Titan, and the close rule applies
+    (data/engagement/positions.yaml, two_focus_titans). Becoming Grabbed is a change of Position
+    made by a rule, not by the soldier's own move, even when they already held on-body
+    (data/character/enlistment.yaml, drive_rules, trigger_tests, own_state).
+  chapter_4_effects: >-
+    The soldier stops being airborne (data/gear/odm-gear.yaml, airborne), is dismounted with no
+    fall if mounted (data/gear/horses.yaml, forced_dismount, grabbed), and stops carrying any
+    comrade (data/gear/carrying.yaml, carrying_a_comrade, ends). A carried soldier who becomes
+    Grabbed stops being carried, with no fall.
+  move: A Grabbed soldier's move changes nothing.
+  action: The only action a Grabbed soldier can take is break-free.
+  attention: >-
+    The soldier holds the holding Titan's Attention while Grabbed, and is never a candidate for any
+    other Focus Titan's Attention (data/engagement/attention.yaml, candidates).
+  down: A Grabbed soldier who becomes Down stays Grabbed (data/harm/down.yaml, while_down, kept).
+  recorded: >-
+    On the holding Titan's tracker row: who is held, countdown turns (0 or 1), and lifted (true or
+    false) (data/engagement/round.yaml, gm_tracker).
+
+# ------------------------------------------------------------------ a Grab lands
+grab_lands:
+  when: >-
+    A behavior with a grab effect lands on its target, on 1 or more Net Successes
+    (data/engagement/behavior-procedure.yaml, resolving_a_card, reactions).
+  lands_on: 1   # Net Successes (data/engagement/titan-format.yaml, titan_dice, lands; decision batch 8, 8-1)
+  rider: none   # every step below is the same whatever the Net Successes; the crush adds nothing to its roll (decision batch 8, 8-2)
+  steps:
+    - id: failed-dodge
+      text: >-
+        If the target's dodge against this card, or an earlier dodge whose successes cancelled
+        against this card, spent a turn that comes up after their first counted turn, that turn is unspent
+        again (countdown, failed_dodge).
+    - id: hold
+      text: >-
+        The target becomes Grabbed (grabbed_state). A target who was airborne stops being airborne;
+        a mounted target is dismounted with no fall (data/gear/horses.yaml, forced_dismount,
+        grabbed); a target who was carried stops being carried, with no fall; and a comrade the
+        target carried is set down at the target's Position, and falls if the target was airborne
+        (data/gear/carrying.yaml, carrying_a_comrade, ends; data/gear/falls.yaml, triggers,
+        carried). The holding arm is the first arm in the Titan's stat block that is not Broken.
+        While it holds the soldier its Toughness is grip_toughness and its count is 0, so any count
+        it had is lost; its state is unchanged.
+    - id: crush
+      text: >-
+        The target, already Grabbed, gains a torso Critical Injury with cannot_be_lethal true, of
+        Injury Type Crush (crush_harm; data/harm/health.yaml, titan_attacks, grab;
+        data/harm/critical-injuries.yaml, gaining). It
+        crosses off a Health box like any other, so a target whose last box it crosses off is Down
+        in the Titan's hand. The hold has already ended the target's airborne and mounted states,
+        so becoming Down here causes no fall (data/gear/falls.yaml, triggers). The crush is the
+        Grab's Titan attack; nothing else in this procedure is one (decision batch 5, 5-6, OQ-124).
+        It takes no net success rider (rider).
+    - id: attention
+      text: The Grabbed soldier holds the Titan's Attention.
+    - id: witnesses
+      text: >-
+        Every witness makes a Fear Roll for comrade-grabbed (data/mind/fear-rolls.yaml;
+        data/engagement/engagement-flow.yaml, witnesses).
+  pinned_target: >-
+    A Grab cannot take hold of a Pinned soldier (data/engagement/titan-harm.yaml, falling_titan,
+    pinned). When a grab effect lands on a Pinned target, from the Titan whose body pins them or any
+    other, the failed-dodge, hold, attention, and witnesses steps do not happen. Only the crush step
+    lands, as the Grab's Titan attack, with no rider. The soldier stays Pinned, and no countdown starts
+    (decision batch 8, 8-18; OQ-151).
+  grip_toughness: 1   # ADR-0019; data/engagement/size-classes.yaml
+  # The crush step's harm, as data (ADR-0019; ADR-0017, as amended in decision batch 7, 7-5; OQ-137).
+  crush_harm: {harm_kind: critical-injury, injury_location: torso, injury_type: crush, cannot_be_lethal: true}
+
+# ------------------------------------------------------------------ the countdown (ADR-0019)
+countdown:
+  counts: >-
+    The Grabbed soldier's turns that come up after the Grab lands while they are still Grabbed.
+    A turn spent in advance counts, and so does a turn taken while Down.
+  first_turn_action: >-
+    The action of the Grabbed soldier's first counted turn is spent by the Grab, whether or not a
+    Reaction or any other result has already spent it. The move of that turn is not spent by this
+    rule, but a Grabbed soldier's move changes nothing. So a soldier who dodged the Grab and one who
+    did not both reach their second counted turn with its action unspent, unless something else
+    spent it.
+  failed_dodge: >-
+    If the soldier made a dodge against the card whose Grab landed on them, or an earlier dodge
+    this round whose successes cancelled against that card (Chapter 1, section 1.9), and that dodge spent a
+    turn that comes up after their first counted turn (as it does when the first counted turn
+    already had its move or action spent in advance), that later turn is unspent again, and the
+    move and action of the first counted turn count as spent instead. This is applied as the Grab
+    lands, before the crush (grab_lands, failed-dodge). A failed dodge therefore costs the Grabbed
+    soldier their first counted turn, as not dodging does, and never their second, including on a
+    Tempo 2 Titan whose first card the dodge answered (OQ-85, OQ-99).
+  steps:
+    - id: lift
+      at: the end of the first counted turn
+      text: >-
+        If the soldier is still Grabbed, they are lifted, and the tracker records lifted true.
+        Lifting harms nothing and changes no Position. From then on every lifted rule under escapes
+        applies.
+    - id: devour
+      at: the end of the second counted turn
+      text: >-
+        If the soldier is still Grabbed, the Titan devours them: the soldier dies
+        (data/harm/health.yaml, harm_kinds, death). The Grab ends (grabbed_soldier_dies), and every
+        witness makes a Fear Roll for comrade-dies.
+  not_titan_attacks: >-
+    The lift and the devour are steps of this procedure, not Behavior Table entries. They roll no
+    Attack Dice, they always happen as written (ADR-0019), and no Reaction answers them (data/harm/health.yaml, titan_attacks, grab_countdown).
+  freed_during_a_turn: A soldier freed during a counted turn is not Grabbed at its end, so neither step happens.
+
+# ------------------------------------------------------------------ the holding Titan
+while_holding:
+  applies: Only while the Titan holds a living Grabbed soldier.
+  cards: >-
+    Each card of the holding Titan resolves no behavior. Its Attention Ladder is not evaluated,
+    and its Next Behavior is kept (data/engagement/behavior-procedure.yaml, resolving_a_card, holding).
+  one_grab: A Titan that holds a Grabbed soldier cannot Grab another, because its cards resolve no behavior.
+  regeneration: >-
+    Its Regeneration clock still fills. The holding arm is never Broken while it holds, because
+    Breaking it frees the soldier.
+
+# ------------------------------------------------------------------ ways out
+escapes:
+  - id: break-free
+    who: The Grabbed soldier, if not Down.
+    roll: break-free (data/character/action-catalog.yaml), Strength with Gear Dice from a Blade Set.
+    needs: 2
+    lifted_penalty: 2   # a 2-die penalty (data/harm/effect-types.yaml, penalty) once the soldier has been lifted
+    help: As Chapter 1, section 1.8. Helpers compare their Position relative to the holding Titan.
+    on_success: The soldier is freed (release).
+  - id: pry-loose
+    who: >-
+      A comrade with Pry Loose who holds on-body relative to the holding Titan and is not Grabbed
+      (data/character/talents.yaml, pry-loose).
+    roll: break-free, on the Grabbed soldier's behalf, with the comrade's own pool.
+    needs: 2
+    lifted_penalty: 2
+    on_success: The soldier is freed (release).
+  - id: strike-the-holding-arm
+    who: Any soldier who is not Grabbed.
+    roll: body-part-strike against the holding arm (data/engagement/titan-harm.yaml, body_part_strikes).
+    reach_before_lift: [in-reach, on-body, blind-spot]
+    reach_after_lift: [on-body, blind-spot]
+    grounded: >-
+      reach_before_lift and reach_after_lift apply whether or not the Titan is grounded. Grounding
+      lets every other Body Part be struck from in-reach, on-body, or blind-spot, but never widens
+      the reach to a holding arm (data/engagement/titan-harm.yaml, grounded). Only Clear the Hand
+      widens it (data/engagement/squad-tactics.yaml, clear-the-hand).
+    strike_penalty: 0
+    odm_gear: >-
+      A strike from on-body or blind-spot needs working ODM Gear unless the Titan is grounded
+      (data/gear/odm-gear.yaml, strikes).
+    effect: >-
+      Successes count toward the arm's Toughness, which is grip_toughness. When the arm becomes
+      Broken the soldier is freed (release). Successes beyond Breaking it create Openings.
+    successes_to_free: >-
+      2 in total while the holding arm is Intact (the first makes it Wounded), or 1 while it is
+      Wounded. They can come from several strikes by several soldiers.
+  - id: break-attention
+    who: Any soldier who meets Break Attention's requirements against the holding Titan.
+    roll: >-
+      break-attention (data/engagement/attention.yaml, break_attention), needing what needs_rule
+      gives against a holding Titan: 2, 1 more for a Feint, and 1 for each of the Titan's decoys
+      in a row.
+    on_success: The soldier is freed (release), and the decoy holds the Titan's Attention for its next cards, as many as its Tempo.
+  - id: titan-dies
+    who: Whoever kills the holding Titan with a Nape strike.
+    on_success: The soldier is freed (release).
+
+# ------------------------------------------------------------------ being freed
+release:
+  not_lifted: >-
+    The soldier stops being Grabbed and, if the holding Titan is alive, holds in-reach relative to
+    it, with no fall.
+  lifted: >-
+    The soldier stops being Grabbed and falls (data/gear/falls.yaml, triggers, rule-named), with
+    the band Chapter 4's height steps give for on-body. If the holding Titan is alive, the soldier
+    then holds in-reach relative to it (data/engagement/positions.yaml, falls_land).
+  titan_dead: >-
+    A soldier freed by the holding Titan's death holds no Position relative to it. If they were
+    lifted, they still fall. Their Positions relative to any other Focus Titan stay as they are. For
+    the steam and fall steps of that death, they hold on-body relative to the dying body, which is
+    their last Position relative to it, and are not airborne; a fall this release makes them take is
+    resolved first (data/engagement/titan-harm.yaml, titan_death, freed; decision batch 8, 8-18).
+  after: >-
+    The holding arm's Toughness returns to its stat block value and its count is 0. The Titan's
+    Attention is held by nothing until its next card (data/engagement/attention.yaml, changes,
+    holder-gone), and the Next Behavior it kept is unchanged, unless the Break Attention that freed
+    the soldier placed a decoy.
+
+# A Grab ends without freeing anyone when the Grabbed soldier dies.
+grabbed_soldier_dies: >-
+  If a Grabbed soldier dies by any rule (the devour step, a Death Roll, or any other), the Grab
+  ends at once. The dead soldier holds no Position and does not fall. The holding arm's Toughness
+  returns to its stat block value and its count is 0, and the Titan's Attention is held by nothing
+  until its next card (data/engagement/attention.yaml, changes, holder-gone). From that moment
+  while_holding no longer applies, so the Titan's next card evaluates its Attention Ladder and can
+  resolve its kept Next Behavior. Witnesses make the Fear Roll for comrade-dies once, as any
+  death causes (data/engagement/engagement-flow.yaml, witnesses).

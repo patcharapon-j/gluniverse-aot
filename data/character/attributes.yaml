@@ -1,0 +1,182 @@
+# Attributes, their creation limits, and the derived values a new soldier records.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.2)
+# references this file and renders its tables from it (tools/render/render.py). Edit this file, not the chapter.
+id: attributes
+name: Attributes and Derived Values
+chapter: 02-character-creation
+adrs: [ADR-0006, ADR-0008, ADR-0011]
+
+scale:
+  min: 2
+  max: 5
+  max_key_attribute: 6          # only the key attribute of the soldier's Specialty
+  rises_after_lifepath: false   # ADR-0011: attributes never rise after the Lifepath
+
+# The six attributes. "used_by" lists the Action Catalog entries that name the attribute
+# (data/character/action-catalog.yaml). It is a summary for players; the Catalog decides.
+attributes:
+  - id: strength
+    name: Strength
+    summary: Force, cutting power, and physical endurance.
+    used_by: [nape-strike, body-part-strike, break-free, heave, block, fight, endure, death-roll]
+    key_attribute_of: [slayer, brawler]
+  - id: agility
+    name: Agility
+    summary: Quickness, balance, and control on ODM Gear or in the saddle.
+    used_by: [dodge, fly, leap-clear, ride, sneak, shoot]
+    key_attribute_of: [flier, rider]
+  - id: wits
+    name: Wits
+    summary: Planning, mechanics, and medicine.
+    used_by: [treat-injury, field-repair, recall]
+    key_attribute_of: [medic, engineer]
+  - id: perception
+    name: Perception
+    summary: Noticing, aiming, and placing a decoy where a Titan will look.
+    used_by: [break-attention, spot]
+    key_attribute_of: [hunter]
+  - id: instinct
+    name: Instinct
+    summary: Gut calls, survival, reading people, and Reading Titans.
+    used_by: [read, size-up, survive]
+    key_attribute_of: [tactician]
+  - id: empathy
+    name: Empathy
+    summary: Steadying comrades and moving people to act.
+    used_by: [rally, persuade]
+    key_attribute_of: [leader]
+
+# How the Lifepath sets attribute ratings (data/character/lifepath.yaml gives the step order).
+creation:
+  starting_rating: 2              # every attribute, before the Origin step
+  lifepath_points:
+    - source: origin              # data/character/origins.yaml, attributes
+      points: 2                   # +1 to each of the two listed attributes
+    - source: why-you-enlisted    # data/character/enlistment.yaml, attribute
+      points: 1
+    - source: training-year-event # data/character/training-years.yaml, one per Training Year
+      points: 3
+  cap_before_graduation: 5
+  overflow: >-
+    A point that would raise an attribute above 5 is added instead to another attribute
+    rated below 5, chosen by the player.
+  graduation:
+    key_attribute_minimum: 4
+    key_attribute_swap: >-
+      If any other attribute is rated higher than the Specialty's key attribute, swap the key
+      attribute's rating with the highest rating among the other five attributes. If several
+      share that rating, the player picks one. After the swap, the key attribute holds the
+      soldier's highest rating.
+    key_attribute_floor: >-
+      If the key attribute is still below 4 after the swap, raise it to 4. For each point
+      added, the player lowers by 1 another attribute rated 3 or more.
+    total_unchanged: true         # the swap and the floor never change the attribute total
+    top_10_key_attribute_bonus: 1 # a Top 10 Class Rank adds 1 to the key attribute, up to 6
+    order: [key_attribute_swap, key_attribute_floor, top_10_key_attribute_bonus]
+  free_points: 0    # the Lifepath adds no point beyond its rolled rows
+  decided: [OQ-19]
+
+  # The Template Build and the Free Build (data/character/lifepath.yaml, procedures and
+  # built_steps; decision batch 7, 7-1; OQ-135). Neither uses lifepath_points,
+  # cap_before_graduation, overflow, or graduation: no swap, no floor, no Top 10 bonus.
+  built:
+    total_points: 18
+    min: 2
+    max: 4
+    key_attribute: 4               # exactly 4
+    max_attributes_at_4: 2
+    template_build: >-
+      Record the chosen Specialty's template ratings (data/character/squadmates.yaml,
+      templates) unchanged. Every template has the one-four shape with the key attribute at 4.
+      Only the ratings are taken: the template's Talent is not, and Health and Resolve come
+      from the ratings (derived_values).
+    free_build:
+      # The only two arrays that meet total_points, min, max, key_attribute, and
+      # max_attributes_at_4.
+      shapes:
+        - id: one-four
+          ratings: [4, 3, 3, 3, 3, 2]
+        - id: two-fours
+          ratings: [4, 4, 3, 3, 2, 2]
+      placement: >-
+        Choose one shape and place its six ratings on the six attributes, one rating each, in
+        any order that puts a 4 on the Specialty's key attribute.
+      # The Squad ADR-0014 (as amended in batch 7) reports beside the Talent-dependent targets
+      # and does not tune: four identical Free Build soldiers in the two-fours shape with the
+      # key attribute, Strength, at 4. Agility takes the second 4 and Wits and Empathy take
+      # the 2s, so the dodge and Fly gain a die, Health is 4, Resolve stays 3, and no other
+      # roll a target measures changes from the reference Rookie. Each soldier is a legal Free
+      # Build Slayer: the Origin gives Grip Breaker or Field Medicine, the Specialty gives
+      # Clean Cut or Hamstringer, and the three any-Talent levels complete the set.
+      reported_squad:
+        soldiers: 4
+        shape: two-fours
+        specialty: slayer
+        attributes: {strength: 4, agility: 4, wits: 2, perception: 3, instinct: 3, empathy: 2}
+        health: 4
+        resolve: 3
+        talent_levels:
+          level_2: >-
+            the dice Talent that names the roll the soldier makes for the target: nape-strike
+            (clean-cut), body-part-strike (hamstringer), break-free (grip-breaker), or
+            treat-injury (field-medicine)
+          level_1: the dice Talents that name the other three of those four entries
+          total: 5
+        talent_dice_on_other_rolls: none   # as the reference Rookie: none on dodge, fly, break-attention, ride, or read
+      # The Health 2 Squad (decision batch 8, 8-3), reported beside the Health-dependent targets and not tuned:
+      # the same two-fours array with its 2s on Strength and Agility, so Health is 2. The key attribute is
+      # Wits, at 4 (a Medic), and Empathy takes the second 4, so Resolve is 4. The Talents mirror
+      # reported_squad: each is a legal Free Build Medic, the Origin giving Grip Breaker, the Specialty Field
+      # Medicine, and the three any-Talent levels completing the set.
+      reported_squad_health_2:
+        soldiers: 4
+        shape: two-fours
+        specialty: medic
+        attributes: {strength: 2, agility: 2, wits: 4, perception: 3, instinct: 3, empathy: 4}
+        health: 2
+        resolve: 4
+        talent_levels:
+          level_2: >-
+            the dice Talent that names the roll the soldier makes for the target: nape-strike
+            (clean-cut), body-part-strike (hamstringer), break-free (grip-breaker), or
+            treat-injury (field-medicine)
+          level_1: the dice Talents that name the other three of those four entries
+          total: 5
+        talent_dice_on_other_rolls: none   # as reported_squad
+        # The reported row seats these 4 soldiers beside 2 helper Squadmates (tools/sim/cases.py, the Free Build
+        # Squad at Health 2 and 2 helper Squadmates; Chapter 2, section 2.11). Review round 1, R43.
+        helper_squadmates: 2
+    decided: [OQ-135]
+
+# Values the soldier writes down at the end of creation. Formulas round as stated.
+derived_values:
+  - id: health
+    name: Health
+    formula: (strength + agility) / 2
+    rounding: up
+    source: settled design summary (docs/reviews/2026-09-14-final-review-brief.md)
+    rules: [03-harm-and-mind]
+    adrs: [ADR-0005]
+    decided: [OQ-24]
+  - id: resolve
+    name: Resolve
+    formula: (instinct + empathy) / 2, plus 1 per Scar, minus 1 per point of Grief (at most 3 points count)
+    rounding: up    # applies to the halved attributes, before Scars and Grief
+    at_creation: (instinct + empathy) / 2, rounded up (a new soldier has no Scars and no Grief)
+    rules: [03-harm-and-mind]
+    adrs: [ADR-0008]
+    decided: [OQ-24]
+  - id: minimum-stress
+    name: Minimum Stress
+    formula: number of Scars
+    at_creation: 0
+    rules: [01-core-rules]
+    adrs: [ADR-0008]
+  - id: stress
+    name: Stress
+    at_creation: 0    # starts at minimum Stress (data/core/stress-changes.yaml)
+    rules: [01-core-rules]
+  - id: carrying-limit
+    name: Items carried before Overloaded
+    formula: strength + 4
+    rules: [04-gear]

@@ -1,0 +1,177 @@
+# The data format of a Titan: its stat block, its Behavior Table, each entry's fields, the tier
+# rules, the Titan Dice its entries roll, and the closed list of behavior effect types. The playable
+# Titans in data/titans/ (Chapter 6) are written in this format.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.4) references this
+# file and does not repeat its rows.
+id: titan-format
+name: Titan Stat Blocks and Behavior Tables
+chapter: 05-titan-engagement
+adrs: [ADR-0001, ADR-0003, ADR-0005, ADR-0007, ADR-0015, ADR-0017, ADR-0019]
+decided: [OQ-78, OQ-80, OQ-82, OQ-137, OQ-145]
+
+# ------------------------------------------------------------------ stat block
+stat_block:
+  fields:
+    id: The Titan's id.
+    name: The Titan's name.
+    size_class: small, medium, or large (data/engagement/size-classes.yaml).
+    abnormal: true or false (glossary Abnormal).
+    tempo: Initiative cards per round.
+    nape_depth: Successes one Nape strike needs to kill it.
+    regeneration_clock: Segments in its Regeneration clock.
+    heave: >-
+      Its Heave rating: the heave count at which its body, living or a corpse, frees every soldier it
+      pins (data/engagement/size-classes.yaml, heave; data/engagement/titan-harm.yaml, falling_titan,
+      heave; decision batch 8, 8-9).
+    body_parts: >-
+      A list of Body Parts, each with id, kind (eyes, arm, or leg; data/engagement/titan-harm.yaml,
+      body_part_kinds), and toughness. The list order matters: it breaks ties for Regeneration and
+      decides which arm Grabs.
+    attention_ladder: standard, or the id of an Abnormal ladder (data/titans/index.yaml, ladders; format in data/engagement/attention.yaml, abnormal_ladder_format).
+    behavior_table: The Titan's Behavior Table (behavior_table).
+  standard_titan: >-
+    A Titan whose abnormal is false takes tempo, nape_depth, regeneration_clock, heave, each Body
+    Part's toughness, and each entry's attack_dice from its Size Class row. Its body_parts list is exactly
+    eyes, left-arm, right-arm, left-leg, right-leg, in that order, and its attention_ladder is
+    standard.
+  abnormal_titan: >-
+    An Abnormal's stat block lists every field in full. Values that differ from its Size Class row
+    are allowed only there.
+
+# ------------------------------------------------------------------ Behavior Table
+behavior_table:
+  roll: D6
+  rows: >-
+    Every result from 1 to 6 belongs to exactly one entry. An entry may cover more than one result,
+    but all of an entry's results lie within one tier's pair (escalation), so an entry has exactly
+    one tier.
+  escalation: >-
+    Results rise through the tiers: results 1 and 2 are terrorize entries, 3 and 4 control
+    entries, and 5 and 6 kill entries.
+  thrash: >-
+    Every table has exactly one Thrash entry, with results [] and tier thrash. It is never rolled.
+    It is what the table falls back to when no other entry can happen
+    (data/engagement/behavior-procedure.yaml).
+
+# ------------------------------------------------------------------ Titan Dice
+# The die kind an entry's attack_dice are rolled with (ADR-0019; decision batch 8, 8-1; OQ-145).
+titan_dice:
+  success_faces: [5, 6]   # each die showing 5 or 6 is one success; every other face does nothing
+  rolled: >-
+    By the GM, in the open, when a card resolves the entry (data/engagement/behavior-procedure.yaml,
+    resolving_a_card, roll-and-announce). The pool is the entry's attack_dice and nothing else.
+  never: >-
+    Titan Dice never Push and never take Bonus Dice, Help, Gear Dice, or Stress Dice. The GM never
+    re-rolls or adjusts them (ADR-0003, item 8). A Titan never makes a Reaction.
+  colour: A colour no soldier's pool uses, so the Titan's roll never mixes with base, Gear, or Stress Dice.
+  successes: >-
+    The roll's successes are the card's Severity, the same number for every target of the card
+    (Chapter 1, section 1.9, Attack and Reaction).
+  whiff: >-
+    A roll of 0 successes whiffs against every target, a target who cannot make a Reaction
+    included, and no Reaction is made against it.
+  lands: >-
+    Against each target, each success of that target's dodge cancels one of the roll's successes.
+    The card lands on the target on 1 or more Net Successes and whiffs on 0. A target who makes no
+    Reaction, or cannot make one, cancels nothing, so every success of the roll is net.
+
+entry_fields:
+  id: The entry's id, unique in its table.
+  name: The entry's name.
+  results: The D6 results that give this entry. [] for Thrash.
+  tier: terrorize, control, kill, or thrash.
+  targets: >-
+    holder: only the soldier who holds the Titan's Attention. holder-and-position: that soldier and
+    every other soldier who holds the same Position relative to the Titan, except a soldier who is
+    Grabbed.
+  position_requirement: >-
+    The Positions the Attention holder must hold relative to the Titan for the entry to happen.
+    Listing all four means any Position.
+  # an entry a grounded Titan must not resolve lists leg twice (decision batch 4, OQ-109)
+  body_parts_used: >-
+    A list of Body Part kinds. The entry can happen only while, for each listed kind, the Titan
+    has at least that many Body Parts of that kind that are not Broken (a kind listed twice needs
+    two). [] means none.
+  attack_dice: >-
+    The number of Titan Dice (titan_dice) the entry rolls when a card resolves it: 3, 6, 9, or 12,
+    which is 3 for each point of the fixed number of dodge successes it needed before decision
+    batch 8 (8-1). Every entry whose effects include stress, knock-loose, critical-injury, or grab
+    lists it. An entry whose only effect is telegraph lists none and rolls nothing (ADR-0019).
+  effects: A list of effects from effect_types, applied in order to each target on which the behavior lands.
+  fallback: >-
+    The id of another entry in the same table that happens instead when the Attention holder does
+    not meet position_requirement, or thrash. Thrash's own fallback is none.
+  text: >-
+    What the soldiers see. Flavour only: no procedure step reads it (ADR-0003). It names none of the
+    Titan's own Body Parts of a kind the entry does not list in body_parts_used (added for Chapter 6,
+    OQ-100 and OQ-105).
+
+tier_rules:
+  terrorize:
+    effects_allowed: [stress, telegraph]
+  control:
+    effects_allowed: [stress, telegraph, knock-loose, critical-injury]
+    critical_injury: Every critical-injury effect has cannot_be_lethal true.
+  kill:
+    effects_allowed: [stress, telegraph, knock-loose, critical-injury, grab]
+    grab: >-
+      An entry with a grab effect has targets holder, lists arm in body_parts_used, and has no
+      other harming effect (ADR-0019: the Grab's harm is its crushing Critical Injury).
+  thrash:
+    effects_allowed: [stress, knock-loose, critical-injury]
+    critical_injury: Every critical-injury effect has cannot_be_lethal true.
+    position_requirement: [distant, in-reach, on-body, blind-spot]
+    body_parts_used: []
+    attack_dice: The Size Class control pool (data/engagement/size-classes.yaml, attack_dice).
+    fallback: none
+  every_entry: >-
+    ADR-0003 item 11, as amended in decision batches 7 and 8: every entry lists
+    position_requirement, body_parts_used, attack_dice (none for an entry whose only effect is
+    telegraph), and fallback, and every harming effect lists its Injury Type. A critical-injury
+    effect names it in injury_type. A grab effect's crush is Crush (data/engagement/grab.yaml,
+    grab_lands, crush_harm), and a knock-loose fall is Crush (data/gear/falls.yaml, injury_type), so
+    neither effect repeats it. No entry names death (data/harm/health.yaml, harm_kinds, death).
+
+# ------------------------------------------------------------------ effect types (closed list)
+# Each effect applies to a target on which the behavior landed (titan_dice, lands). Only the
+# critical-injury effect reads the Net Successes (decision batch 8, 8-2).
+effect_types:
+  - id: stress
+    fields: {amount: a whole number of 1 or more}
+    effect: The target gains that much Stress, once, whatever the Net Successes.
+  - id: critical-injury
+    fields:
+      injury_location: >-
+        An Injury Location id (data/harm/critical-injuries.yaml), or rolled. An arm or a leg names no
+        side; its side is rolled (data/harm/critical-injuries.yaml, sides, side_roll).
+      injury_type: >-
+        An Injury Type id (data/harm/critical-injuries.yaml, types). An entry named Bite is bite; every
+        other entry is crush (ADR-0017; decision batch 7, 7-5). Required.
+      cannot_be_lethal: true or false.
+    effect: >-
+      The target gains one Critical Injury (data/harm/critical-injuries.yaml, gaining), whose roll
+      adds 1 for each Net Success beyond the first (gaining, net-success-rider). It is a Titan
+      attack (data/harm/health.yaml, titan_attacks).
+  - id: knock-loose
+    fields: {}
+    effect: >-
+      If the target is airborne, or holds on-body or blind-spot relative to the Titan, they fall
+      (data/gear/falls.yaml, triggers, rule-named), with the band Chapter 4's height steps give.
+      Otherwise nothing happens. A mounted target is not affected. The fall is the same whatever the
+      Net Successes.
+  - id: grab
+    fields: {}
+    effect: >-
+      The Grab procedure against the target (data/engagement/grab.yaml, grab_lands). It is the same
+      whatever the Net Successes: the Grab takes no rider (grab_lands, rider).
+  - id: telegraph
+    fields: {}
+    effect: >-
+      The Next Behavior rolled after this card is revealed to every soldier at once
+      (data/engagement/behavior-procedure.yaml, resolving_a_card, next). A telegraph effect
+      applies whether the behavior landed or whiffed, because it is information, not harm.
+
+# A filled-in example of this format is the reference Titan the simulations used
+# (data/engagement/tuning.yaml, simulation_reference_titan). It is not a playable Titan; the playable
+# Titans are in data/titans/ (Chapter 6).
+example: data/engagement/tuning.yaml (simulation_reference_titan)

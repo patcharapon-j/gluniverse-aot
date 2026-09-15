@@ -1,0 +1,48 @@
+# Blade Sets: the handles, ruin, and the swap.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (section 4.4) references this file and
+# does not repeat its rows.
+id: blade-sets
+name: Blade Sets
+chapter: 04-gear
+adrs: [ADR-0004, ADR-0006]
+decided: [OQ-63]
+
+item: blade-set   # data/gear/items.yaml
+unit: >-
+  A Blade Set is one pair of ODM blades, and the only unit in which they are carried, counted,
+  passed, and lost. Each Blade Set keeps its own rating: the sheet records the rating of the Blade Set in
+  the handles, or none, and one rating for each other Blade Set the soldier carries, so the number of
+  ratings is the number carried (data/gear/sheet-fields.yaml, blade_set_in_handles, blade_sets_carried).
+
+handles:
+  holds: At most one Blade Set, the set in use.
+  gear_item: >-
+    Only the Blade Set in the handles supplies Gear Dice or counts as had for an entry whose
+    gear is blade-set. Every other carried Blade Set counts as not had for those entries
+    (data/character/action-catalog.yaml, gear_requirement).
+  start_of_titan_engagement: >-
+    When a Titan Engagement begins, a soldier whose handles are empty and who carries a Blade
+    Set fits one into the handles.
+  items_counted: The set in the handles counts as no item. Every other Blade Set counts as 1 (data/gear/carrying.yaml).
+
+wear:
+  rule: >-
+    When a Pushed roll whose gear item is the Blade Set in the handles is final, and at least 1
+    point of wear is left after any rule that ignores wear (Blade Discipline), that Blade Set is
+    ruined.
+  ruined: The ruined set is discarded at once, and the handles are empty.
+  no_other_loss: >-
+    A Blade Set is lost only when it is ruined, dropped (data/gear/carrying.yaml, shedding), or
+    passed (data/gear/carrying.yaml, passing_items), or when a rule names its loss.
+
+swap:
+  effect: If the soldier's handles are empty, fit one carried Blade Set into them.
+  in_titan_engagement: >-
+    Once during each of the soldier's own turns, at any point in that turn, spending neither the
+    move nor the action. A turn spent in advance still happens (Chapter 1, section 1.9), so the
+    soldier can swap during it.
+  outside_titan_engagement: At any time, as often as the soldier likes.
+  not_while: [down]
+  not_an_action: true
+  entry: swap-blade-set    # data/character/action-catalog.yaml
+  squadmates: A Squadmate swaps exactly as a player character does.

@@ -1,0 +1,498 @@
+# Skirmishes, the playtest minimum: soldiers against people. Starting one, Engaged and Apart, the
+# ambush, rounds and turns, actions, the attack and its cancelling roll, damage, weapons, the Grapple
+# and Held, Grit and breaking, Parley, Size Up, ending, and what a Skirmish changes elsewhere.
+# Source of truth under ADR-0012. docs/rules/07-playtest-rules.md (section 7.4) references this file
+# and renders its tables from it (tools/render/render.py). The Foes, Guard, and the foe rule are in
+# data/skirmish/foes.yaml.
+# Playtest rule: Phase 2 replaces this file (decision batch 7, 7-17; decision batch 8, 8-4, 8-7, 8-12;
+# OQ-143, OQ-145).
+id: skirmish
+name: Skirmishes
+chapter: 07-playtest-rules
+status: playtest
+adrs: [ADR-0003, ADR-0005, ADR-0016, ADR-0017, ADR-0018, ADR-0019]
+decided: [OQ-143, OQ-145, OQ-148]
+
+meaning: >-
+  A scene in which soldiers fight people. No Titan takes part. A Titan Engagement rule applies in a
+  Skirmish only where this file names it.
+
+# ------------------------------------------------------------------ starting
+starting:
+  begins_when: >-
+    A rule names a Skirmish, such as the Night table's prowlers row (data/expedition/hazards.yaml) or a
+    Mission Brief, or the table's scene framing sets the Squad against people, as scene framing starts a
+    Titan Engagement (Chapter 5, section 5.1).
+  names: >-
+    The start names one Foe kind from data/skirmish/foes.yaml, and may name how many, which side has the
+    Ambush, whether it is night, and which soldiers take part. One Foe group takes part in a playtest
+    Skirmish.
+  number: The number the start names, or else the kind's group_size (data/skirmish/foes.yaml).   # decision batch 8, 8-30 (OQ-155, item a); the trooper's group is a fixed 4 under 8-33 (OQ-164)
+  night: A Skirmish that begins at a Night Camp is at night.
+  taking_part: >-
+    The soldiers the start names; if it names none, every living soldier in the Squad on the same
+    Expedition, or every living soldier in the Squad when no Expedition is under way.
+  steps:
+    - id: foes
+      text: >-
+        Set out the Foe group: its Foes, labelled 1 upward, each at full Health, with its weapons
+        (data/skirmish/foes.yaml, foes) and its firearms loaded (data/skirmish/foes.yaml, firearms).
+    - id: range
+      text: Every soldier taking part is Apart from every Foe, unless the start names otherwise.
+    - id: ambush
+      text: Settle the Ambush (ambush).
+    - id: round-1
+      text: Round 1 begins (rounds).
+
+# ------------------------------------------------------------------ Engaged and Apart
+engaged_and_apart:
+  states:
+    - {id: engaged, name: Engaged, meaning: "Within arm's reach of a Foe."}
+    - {id: apart, name: Apart, meaning: "Not within arm's reach of a Foe."}
+  per_pair: Each soldier is Engaged with or Apart from each Foe separately.
+  not_positions: >-
+    Engaged and Apart are not Positions. A Skirmish has no Position, no Anchor Rating, no ODM move, no
+    Fly roll, and no airborne soldier.
+  moves:
+    - {id: close-in, text: "The soldier becomes Engaged with one Foe they name."}
+    - {id: break-away, text: "The soldier becomes Apart from every Foe they are Engaged with."}
+    - {id: stay, text: "The soldier's range does not change."}
+  mount: A move may also include one mount or one dismount (data/gear/horses.yaml, mounted).
+  held: A Held soldier's move, and the move of a soldier who holds a Foe, change nothing.
+  down: A Down soldier's move changes nothing, and they stay Engaged with or Apart from each Foe as they were.   # decision batch 8, 8-30 (OQ-155, item c)
+  foes: A Foe becomes Engaged or Apart only through the foe rule (data/skirmish/foes.yaml, foe_rule).
+  tracked_value: >-
+    position-change (data/character/action-catalog.yaml, tracked_values), changed by a move, which is not
+    a Catalog entry, as in a Titan Engagement.
+
+# ------------------------------------------------------------------ the ambush
+ambush:
+  from_the_start: A start may give the Ambush to the Foes, as the prowlers row does.
+  squad_attempt:
+    # decision batch 8, 8-30 (OQ-155, item d)
+    when: >-
+      Before round 1 of a Skirmish whose start does not give the Ambush to the Foes.
+    roll: sneak-for-the-ambush (rolls)
+    on_success: The Squad has the Ambush.
+    on_failure: No side has the Ambush.
+  has_not_yet_acted: A soldier or a Foe has not yet acted in a Skirmish until its first card of that Skirmish has come up.
+  effects:
+    - id: order
+      text: In round 1, every card of the side with the Ambush comes up before every card of the other side. Cards within a side keep their order.
+    - id: dice
+      # decision batch 8, 8-30 (OQ-155, item i)
+      text: >-
+        A soldier's Fight or Shoot roll against a Foe that has not yet acted gains 2 Bonus Dice
+        (data/core/bonus-dice-sources.yaml, ambush). A Foe with the Ambush rolls 2 more Attack Dice
+        against a soldier who has not yet acted.
+    - id: no-cancelling-roll
+      text: >-
+        An attack by the side with the Ambush on a target that has not yet acted cannot be answered: the
+        soldier makes no Reaction and the Foe rolls no Guard, so every success of the attack is net.
+  changes: [ambush-set]
+
+# ------------------------------------------------------------------ rounds and turns
+rounds:
+  cards: >-
+    At the start of each round, deal initiative cards as a Titan Engagement does
+    (data/engagement/round.yaml, initiative_cards): one to each soldier taking part, living, Down or not,
+    and one to the Foe group while any of its Foes is in the Skirmish. Cards come up lowest first. There
+    are no Wings and no swap step.
+  soldier_card: >-
+    The soldier takes one turn of one move and one action (Chapter 1, section 1.9), in the order
+    data/engagement/round.yaml (turn_order) gives. A Squadmate takes its turn on its own card.
+  foe_card: Each Foe of the group still in the Skirmish acts once, in label order, by the foe rule (data/skirmish/foes.yaml, foe_rule).
+  end_of_round:
+    - Every Foe of a group that broke leaves (grit).
+    - Check the ending (ending).
+  turns_count: >-
+    A soldier's turn in a Skirmish counts for every rule that counts turns: a turn time limit
+    (data/harm/death-rolls.yaml), spending a turn (Chapter 1, section 1.9), and a Drive's turn tests.
+
+# ------------------------------------------------------------------ actions
+actions:
+  skirmish_entries: [fight, shoot, break-free, reload, release, persuade, size-up]   # persuade as a Parley
+  other_entries: [help, treat-injury, rally, lift-comrade, pass-item, take-item, change-canister, swap-blade-set, shed-load, mount-or-dismount]
+  never: Every Action Catalog entry whose context is titan-engagement (data/character/action-catalog.yaml).
+  # decision batch 8, 8-30 (OQ-155, item h)
+  treat_and_rally: >-
+    Treat Injury and Rally are actions in a Skirmish, used as in a Titan Engagement (Chapter 3, sections
+    3.5 and 3.11) with no Position requirement: the patient or the Rallied comrade is any other soldier
+    taking part, or the soldier themselves as Chapter 3 allows. A failed use can be tried again on a later
+    turn.
+  reload: >-
+    Reload loads one empty firearm and spends 1 Shot of Squad Supply, the soldier's action, and, for a
+    musket, the soldier's move (data/character/action-catalog.yaml, reload).
+
+# ------------------------------------------------------------------ the attack
+# Chapter 1, section 1.9 (Attack and Reaction) gives the procedure once, for Titans and people. This
+# block adds only what is the Skirmish's: who rolls what, Guard, and damage (decision batch 8, 8-4, 8-5).
+attack:
+  procedure: Chapter 1, section 1.9 (Attack and Reaction)
+  by_a_soldier:
+    roll: A Fight or Shoot roll with a full pool, which the soldier may Push before the Foe's Guard is rolled.
+    cancelling_roll: the Foe's Guard (data/skirmish/foes.yaml, guard)
+  by_a_foe:
+    roll: The Foe's Attack Dice as base dice, succeeding on 6, never Pushed, and with no other dice (data/skirmish/foes.yaml, foes, attack_dice).
+    cancelling_roll: the target's Reaction, if they make one (reactions)
+  announced: The attack's successes are its Severity, announced before any cancelling roll is made.
+  cancels: Each success of the cancelling roll cancels one success of the attack.
+  lands_on_net_successes: 1
+  whiff: On 0 Net Successes the attack does nothing.
+  no_cancelling_roll: Against a target who makes no cancelling roll, every success of the attack is net.
+
+reactions:
+  entries:
+    - {entry: block, against: [fight]}
+    - {entry: dodge, against: [fight, shoot]}
+  per_foe_per_round: >-
+    A soldier makes at most one Reaction against each Foe per round. Its successes cancel against the
+    attack it answered and, separately, against each later attack that Foe makes on the soldier that
+    round, never used up (Chapter 1, section 1.4, item 4). A Block cancels only Fight attacks.
+  spends: one turn, as Chapter 1, section 1.9 gives
+  forbidden:
+    - A Held soldier cannot Dodge.
+    - No Reaction answers an attack the Ambush leaves unanswered (ambush).
+    - A state or result whose row forbids Reactions forbids them here too (Chapter 1, section 1.9).
+  titans: No Titan takes part in a Skirmish, and no Titan can be blocked (ADR-0019).
+
+# ------------------------------------------------------------------ damage
+damage:
+  amount:
+    base: the weapon's damage (weapons)
+    per_net_success_beyond_the_first: 1
+  injury_type: the weapon's (weapons)
+  on_a_soldier: >-
+    Damage in Chapter 3's sense (data/harm/health.yaml, harm_kinds, damage), with the weapon's Injury
+    Type and a rolled Injury Location. The Critical Injury it inflicts at 0 current Health takes its
+    name and any rider from its Injury Type (data/harm/critical-injuries.yaml, types, type_riders). A
+    person never inflicts a Critical Injury directly (ADR-0018).
+  on_a_foe:
+    health: Damage lowers the Foe's Health, never below 0. A Foe has no Critical Injuries, no Stress, and no Down state.
+    at_zero: The Foe is out of the Skirmish.
+    killed_by: [cut, pierce, burn]   # decision batch 8, 8-30 (OQ-155, item e): Burn kills; ADR-0018, as amended
+    out_cold_by: [crush]
+    out: An out-of-the-Skirmish Foe, dead or out cold, takes no further part and is never a target again in it.
+  grapple: A Grapple that lands deals no damage (grapple).
+  changes: [foe-harm]
+
+# ------------------------------------------------------------------ weapons
+# Every row carries its damage and its Injury Type (decision batch 7, 7-17; decision batch 8, 8-4, 8-7).
+weapons:
+  row_fields:
+    id: the weapon's id
+    name: the weapon, as printed
+    used_with: fight or shoot, the attack it makes
+    injury_type: crush, bite, burn, cut, or pierce (data/harm/critical-injuries.yaml, types)
+    damage: the base damage of a landed attack
+    target: engaged (only a target the attacker is Engaged with), apart (only a target the attacker is Apart from), or either
+    gear_item: the gear item that gives its Gear Dice (data/gear/items.yaml), or null for none
+    spends: what an attack with it spends beyond the action
+    wielded_by: soldiers, Foes, or both
+    notes: what else the row states
+  rows:
+    - id: blade-set
+      name: Blade Set
+      used_with: fight
+      injury_type: cut
+      damage: 2
+      target: engaged
+      gear_item: blade-set
+      spends: nothing
+      wielded_by: [soldier]
+      notes: The Blade Set in the handles gives the Gear Dice. A Pushed roll whose Gear Die shows 1 ruins it (Chapter 4, section 4.4).
+    - id: bare-hands
+      name: Bare hands, or an object that is not a gear item
+      used_with: fight
+      injury_type: crush
+      damage: 1
+      target: engaged
+      gear_item: null
+      spends: nothing
+      wielded_by: [soldier, foe]
+      notes: A Grapple is made with it and deals no damage. Bare hands never kill a Foe.
+    - id: flintlock-pistol
+      name: Flintlock pistol
+      used_with: shoot
+      injury_type: pierce
+      damage: 2
+      target: either
+      gear_item: flintlock-pistol
+      spends: its load; the firearm is empty after the roll
+      wielded_by: [soldier, foe]
+      notes: A soldier's firearm gives its Gear Dice, and a Pushed 1 wears it (Chapter 4, section 4.1).
+    - id: musket
+      name: Musket
+      used_with: shoot
+      injury_type: pierce
+      damage: 4
+      target: apart
+      gear_item: musket
+      spends: its load; the firearm is empty after the roll
+      wielded_by: [soldier, foe]
+      notes: >-
+        Reload also spends the move. A ball that lands at 1 Net Success deals 4, which brings a Health 4
+        Rookie to 0 current Health: Down, with a Pierce Critical Injury.
+    - id: fired-flare
+      name: Flare, fired at a person
+      used_with: shoot
+      injury_type: burn
+      damage: 1
+      target: either
+      gear_item: null
+      spends: 1 flare of Squad Supply; no Shot and no firearm
+      wielded_by: [soldier]
+      notes: A flare is a signal first. Firing one at a person is a Shoot roll with no Gear Dice. Fire kills a Foe it brings to 0 Health.
+    - id: sabre
+      name: Sabre
+      used_with: fight
+      injury_type: cut
+      damage: 2
+      target: engaged
+      gear_item: null
+      spends: nothing
+      wielded_by: [foe]
+      notes: none
+    - id: knife
+      name: Knife
+      used_with: fight
+      injury_type: cut
+      damage: 1
+      target: engaged
+      gear_item: null
+      spends: nothing
+      wielded_by: [foe]
+      notes: none
+    - id: club
+      name: Club
+      used_with: fight
+      injury_type: crush
+      damage: 1
+      target: engaged
+      gear_item: null
+      spends: nothing
+      wielded_by: [foe]
+      notes: none
+    - id: firebrand
+      name: Firebrand
+      used_with: fight
+      injury_type: burn
+      damage: 1
+      target: engaged
+      gear_item: null
+      spends: nothing
+      wielded_by: [foe]
+      notes: A Bandit at night carries it in place of a club. Fire kills; against a soldier it is Burn damage.
+
+# ------------------------------------------------------------------ the Grapple and Held
+grapple:
+  what: >-
+    A Fight roll against a Foe the soldier is Engaged with, declared as a Grapple before rolling. It takes
+    no Gear Dice. Talents that name fight apply to it.
+  lands: The Foe is Held by the soldier. It deals no damage (decision batch 8, 8-12).
+  changes: [held-set]
+held:
+  a_held_foe: A Held Foe cannot move, and attacks only its holder, bare-handed (data/skirmish/foes.yaml, foe_rule). It still rolls Guard.
+  the_holder: >-
+    A soldier who holds a Foe cannot move, cannot Shoot or Reload, and takes no action but a bare-handed
+    Fight against the Held Foe or Help. Release, which spends nothing, lets go at any point of their turn.
+  # decision batch 8, 8-30 (OQ-155, item g): a Down holder
+  ends: >-
+    The holder takes Release, the holder becomes Down or dies, or the Foe is out of the Skirmish. A Foe
+    never Breaks Free and never releases.
+  a_held_soldier: >-
+    A soldier Held by a person cannot move, cannot Dodge, and attacks only the holder, bare-handed. Break
+    Free ends it. No Foe Grapples in the playtest (data/skirmish/foes.yaml, foe_rule), so no playtest rule
+    makes a soldier Held; these rules stay written for later Foes (decision batch 8, 8-30).
+release:
+  entry: release   # data/character/action-catalog.yaml
+  what: An option on the holder's turn, with no roll, that spends nothing and ends the hold.
+  changes: [held-end]
+
+# ------------------------------------------------------------------ Grit and breaking
+grit:
+  breaks_when: The number of the group's Foes out of the Skirmish reaches its Grit (data/skirmish/foes.yaml).
+  # decision batch 8, 8-30 (OQ-155, item g): a Held Foe
+  on_breaking: >-
+    At once, every Foe of the group still in the Skirmish that is not Held becomes Apart from every
+    soldier and takes no further turn; each leaves at the end of the round. A Held Foe stays Held and
+    leaves at the end of the round its hold ends.
+  failed_threat: A failed Parley made as a threat raises the group's Grit by 1 for the rest of this Skirmish (parley).
+
+# ------------------------------------------------------------------ Parley
+parley:
+  when: On the soldier's action, against the group; each soldier at most once per Skirmish.
+  roll: parley (rolls)
+  threat: The soldier may make it a threat, rolling Strength in place of Empathy. It is still a roll for persuade, so a Talent that names persuade adds its dice.
+  needs: >-
+    The group's Grit plus 1, minus 1 for each of its Foes out of the Skirmish, never below 1; then add
+    the ask's needs_add.
+  asks:
+    - {id: stand-down, name: Stand down, needs_add: 0, effect: "The group leaves."}
+    - {id: let-us-pass, name: Let us pass, needs_add: 0, effect: "The group lets the Squad go its way."}
+    - {id: answer, name: Answer, needs_add: 0, effect: "The group answers one question truthfully, from what its Foes know."}
+    - {id: surrender, name: Surrender, needs_add: 1, effect: "The group lays down its arms and gives itself up to the Squad."}
+  on_success: The group yields, does what the ask says, and the Skirmish ends.
+  on_failure: Nothing happens, except that a failed threat raises the group's Grit by 1 for the rest of this Skirmish.
+  changes: [foe-yield]
+  outside_a_skirmish:
+    when: >-
+      A Mission Brief or scene framing sets the Squad before a Foe group from the list with no Skirmish
+      under way. Each soldier may make one Parley with that group.
+    roll: parley-outside-a-skirmish (rolls)
+    needs: The group's Grit, plus the ask's needs_add.
+    on_success: The group does what the ask says.
+    on_failure: Nothing happens.
+
+# ------------------------------------------------------------------ Size Up
+size_up:
+  when: On the soldier's action, once per Foe group per Skirmish, for the whole Squad.
+  roll: size-up (rolls)
+  on_success: >-
+    The GM states the group's Grit, how many more of its Foes must be out before it breaks, and what each
+    of its Foes will do on the group's next card under the foe rule as things stand.
+  on_failure: Nothing happens.
+  changes: [foe-intent-reveal]
+
+# ------------------------------------------------------------------ ending
+ending:
+  tests:
+    - id: foes-gone
+      text: Every Foe of the group is out of the Skirmish, has left, or has yielded.
+    - id: squad-leaves
+      # decision batch 8, 8-30 (OQ-155, item f)
+      text: >-
+        At the end of a round, if every soldier taking part who is not Down is Apart from every Foe, is not
+        Held, and holds no Foe, and every Down soldier taking part is carried by a comrade, the players may
+        declare that the Squad leaves.
+    - id: no-soldier-standing
+      # decision batch 8, 8-30 (OQ-155, item f)
+      text: >-
+        Every soldier taking part is Down or dead. The Foe group leaves, and takes nothing.
+  when_it_ends: >-
+    Resolve the end steps of data/harm/engagement-end.yaml for a Skirmish (procedures, skirmish). They are
+    resolved outside the Skirmish.
+
+# ------------------------------------------------------------------ Fear Rolls, Drives, Talents, Squadmates
+fear_rolls:
+  comrade-dies: Every other soldier taking part who is alive rolls; a Down soldier makes none (data/mind/fear-rolls.yaml, comrade-dies).
+  first-human-kill: >-
+    A soldier kills a person when damage of Injury Type Cut, Pierce, or Burn they deal brings a Foe to 0
+    Health (damage, on_a_foe; decision batch 8, 8-30). If they have never killed a person before, they roll (data/mind/fear-rolls.yaml,
+    first-human-kill).
+  comrade-grabbed: never, since no Titan takes part
+drives_and_talents:
+  drive_turn_tests: A Drive's turn tests count Skirmish turns (OQ-36). A Drive's Position triggers need a Titan Engagement and are never met in a Skirmish.
+  # decision batch 8, 8-39: a Skirmish nested in a Leg or a Night Camp has its own use
+  once_per_titan_engagement: >-
+    A Skirmish is a procedure with a start and an end: a Talent whose limit is once per Titan Engagement
+    can also be used once per Skirmish (data/character/talents.yaml, talent_rules, limit_terms). A
+    Skirmish that begins inside a Leg or a Night Camp is its own procedure with its own use, and neither
+    use spends the other, as limit_terms states.
+  positions: A Talent whose effect reads a Position or a Position step does nothing in a Skirmish unless its row says what it does there, as Carrying Voice's does.
+squadmates: >-
+  A Squadmate takes part like a player character, on its own card, directed as
+  data/character/squadmates.yaml states, and never Pushes or Covers.
+gm: >-
+  The GM rolls every Foe's Attack Dice and Guard in the open, follows the foe rule, and chooses nothing
+  (ADR-0003, item 8).
+
+# ------------------------------------------------------------------ rolls
+rolls:
+  - id: sneak-for-the-ambush
+    name: Sneak for the Ambush
+    who: One soldier taking part who is not Down, chosen by the players, using Chapter 2's roll-off if they disagree.
+    entry: Sneak
+    needs: the Foe group's Watch
+    help: Never.
+    push: Allowed (Chapter 1, section 1.5); no one can Cover it, since no one qualifies to Help.
+    retry: Never.
+    changes: [ambush-set]
+  - id: fight
+    name: Fight, or a Grapple
+    who: A soldier on their action, against a Foe they are Engaged with.
+    entry: Fight
+    needs: 1 Net Success after the Foe's Guard
+    help: Up to 3 comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+    push: Allowed, before the Foe's Guard is rolled; a comrade who qualifies to Help may Cover it.
+    retry: On a later turn.
+    changes: [foe-harm, held-set]
+  - id: shoot
+    name: Shoot
+    who: A soldier on their action, with a loaded firearm or a flare, against a Foe the weapon's target allows.
+    entry: Shoot
+    needs: 1 Net Success after the Foe's Guard
+    help: Up to 3 comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+    push: Allowed, before the Foe's Guard is rolled; a comrade who qualifies to Help may Cover it.
+    retry: On a later turn, once the firearm is loaded again or with another flare.
+    changes: [foe-harm]
+  - id: reaction
+    name: Block or Dodge against a Foe
+    who: The soldier a Foe's attack targets.
+    entry: Block (against a Fight attack only) or Dodge
+    needs: none of its own; each success cancels one success of the attack
+    help: Up to 3 comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+    push: Allowed, after the Foe's roll is known; the reacting side Pushes last. A comrade who qualifies to Help may Cover it.
+    retry: Never against the same Foe that round; its successes stand against that Foe's later attacks that round.
+    changes: [behavior-avoid]
+  - id: break-free
+    name: Break Free while Held
+    who: A soldier Held by a person, on their action.
+    entry: Break Free
+    needs: "2"
+    help: Up to 3 comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+    push: Allowed; a comrade who qualifies to Help may Cover it.
+    retry: On a later turn.
+    changes: [held-end]
+  - id: parley
+    name: Parley
+    who: A soldier on their action.
+    entry: Persuade (Empathy, or Strength as a threat)
+    needs: the group's Grit plus 1, minus 1 for each of its Foes out of the Skirmish, never below 1, plus the ask's number
+    help: Up to 3 comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+    push: Allowed; a comrade who qualifies to Help may Cover it.
+    retry: Never by the same soldier in this Skirmish; each soldier Parleys at most once per Skirmish.
+    changes: [foe-yield]
+  - id: parley-outside-a-skirmish
+    name: Parley outside a Skirmish
+    who: A soldier before a Foe group with no Skirmish under way.
+    entry: Persuade (Empathy, or Strength as a threat)
+    needs: the group's Grit, plus the ask's number
+    help: Never.
+    push: Allowed; no one can Cover it, since no one qualifies to Help.
+    retry: Never by the same soldier with that group.
+    changes: [foe-yield]
+  - id: size-up
+    name: Size Up a Foe group
+    who: A soldier on their action.
+    entry: Size Up
+    needs: "1"
+    help: Never.
+    push: Allowed; no one can Cover it, since no one qualifies to Help.
+    retry: Never; once per Foe group per Skirmish, for the whole Squad.
+    changes: [foe-intent-reveal]
+  - id: treat-injury-or-rally
+    name: Treat Injury or Rally in a Skirmish
+    who: A soldier on their action.
+    entry: Treat Injury or Rally
+    needs: as Chapter 3 gives
+    help: Up to 3 comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+    push: Allowed; a comrade who qualifies to Help may Cover it. Sure Hands allows a second Push on Treat Injury.
+    retry: On a later turn.
+    changes: [health-restore, critical-injury-treat, down-end, stress-response-clear]
+  - id: foe-attack
+    name: A Foe's attack
+    who: A Foe, on its group's card, by the foe rule.
+    entry: none (the Foe's Attack Dice)
+    needs: 1 Net Success after the target's Reaction, if any
+    help: Never.
+    push: Never.
+    retry: Never.
+  - id: guard
+    name: A Foe's Guard
+    who: The Foe a soldier's Fight or Shoot roll targets.
+    entry: none (the Foe's Guard dice)
+    needs: none of its own; each success cancels one success of the attack
+    help: Never.
+    push: Never.
+    retry: Never.

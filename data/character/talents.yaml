@@ -1,0 +1,1132 @@
+# The Talent list: 83 Talents, the nine Specialty lists of eight and the general list of twelve
+# (decision batch 7, 7-2; OQ-136). The lists themselves are in data/character/specialties.yaml.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.7 and Appendix 2A)
+# references this file and renders its tables from it (tools/render/render.py).
+# Every Talent names the Action Catalog entries it applies to (data/character/action-catalog.yaml)
+# and passes ADR-0016's Talent guardrails. No Talent adds dice to Leap Clear, and none changes Attack
+# Dice, a Titan's roll, or the net-success rider (decision batch 8, the constraints on WP-B).
+id: talents
+name: Talents
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0006, ADR-0011, ADR-0014, ADR-0016]
+decided: [OQ-20, OQ-26, OQ-28, OQ-33, OQ-34, OQ-36, OQ-136]
+
+talent_rules:
+  levels:
+    min: 0
+    max: 3
+    max_at_creation: 2
+  types:
+    dice: >-
+      Adds base dice equal to its level to a roll made for one of the entries it names. If its
+      row has a condition for that entry, it adds them only to a roll that meets the condition.
+      A roll uses at most one dice Talent (Chapter 1, section 1.3). A dice Talent can name
+      only entries whose kind is action, reaction, or roll.
+    rule: >-
+      Changes a rule, as its effect states, whenever its trigger occurs. Rule Talents stack
+      with each other and with the roll's dice Talent. A rule Talent has max_level 1 unless
+      its row says otherwise; holding it at level 1 means having it.
+  trigger_timing:
+    declare: >-
+      A trigger that begins "You declare" is met when the soldier declares that they take,
+      make, or use the named entry, before its requirements, targets, pool, and cost are
+      checked. The effect changes those checks for that use of the entry. If the use still
+      does not qualify after the effect is applied, it is not taken and nothing is spent.
+    event: Every other trigger is met when the event it describes happens.
+  dormant_talents: >-
+    A Talent whose named entries are all dormant or reserved (data/character/action-catalog.yaml)
+    does nothing until a rule calls for one of those entries.
+  names_only_catalog_entries: true
+  description_field: >-
+    Each Talent's description is a summary for players. Its type, max_level, names,
+    condition, trigger, effect, and limit are the rule.
+  limit_terms:
+    once_per_titan_engagement: >-
+      Usable once between the start and the end of each Titan Engagement. Never usable
+      outside a Titan Engagement, unless a later rule that creates another procedure with a
+      start and an end, such as a Chase, states that this limit applies to it. The Talent is
+      then usable once between that procedure's start and end (OQ-36). Chapter 7 states that it
+      applies to a Leg, a Night Camp, and a Skirmish. A Titan Engagement or a Skirmish that begins
+      inside a Leg or a Night Camp is its own procedure, with its own use: a use in it does not spend
+      the use of the Leg or the Night Camp, and a use in the Leg or the Night Camp does not spend its
+      use (decision batch 8, 8-39).
+    # The per-procedure limits of ADR-0016, Talent guardrail 8, for Talents whose trigger only a
+    # Chapter 7 procedure can meet (decision batch 7, 7-3).
+    once_per_leg: >-
+      Usable once during each Leg of an Expedition, from its Leg roll to the end of its hazard
+      (Chapter 7, section 7.1). Never usable outside a Leg.
+    once_per_night_camp: >-
+      Usable once during each Night Camp, from its camp roll until its day has passed (Chapter 7,
+      section 7.1). Never usable outside a Night Camp.
+    once_per_skirmish: >-
+      Usable once between the start and the end of each Skirmish (Chapter 7, section 7.4). Never
+      usable outside a Skirmish.
+    once_per_downtime: >-
+      Usable once during each Downtime (Chapter 7, section 7.2). Never usable outside a Downtime.
+  gaining_levels: >-
+    At creation, as data/character/lifepath.yaml states for the Lifepath and for the two
+    builds (talent_levels_at_creation, built_steps). After creation, through XP and the Train
+    Downtime Action (ADR-0011; rules not yet written).
+
+talents:
+  # ================================================================ dice Talents
+  # ---------------------------------------------------------------- Slayer
+  - id: clean-cut
+    name: Clean Cut
+    description: "Practice at the single deep cut through the Nape that kills."
+    type: dice
+    max_level: 3
+    names: [nape-strike]
+    specialties: [slayer]
+  - id: hamstringer
+    name: Hamstringer
+    description: "Practice at cutting ankles, arms, and eyes to bring a Titan down."
+    type: dice
+    max_level: 3
+    names: [body-part-strike]
+    specialties: [slayer]
+  - id: ground-work
+    name: Ground Work
+    description: "Practice at finishing a Titan that is down on the ground, at its Nape or its Body Parts."
+    type: dice
+    max_level: 3
+    names: [nape-strike, body-part-strike]
+    condition:   # decision batch 7, 7-2: the Horsemanship pattern; data/engagement/titan-harm.yaml (grounded)
+      nape-strike: "against a grounded Titan"
+      body-part-strike: "against a grounded Titan"
+    specialties: [slayer]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- Flier
+  - id: slip-away
+    name: Slip Away
+    description: "A knack for twisting clear of a Titan's hands and teeth."
+    type: dice
+    max_level: 3
+    names: [dodge]
+    specialties: [flier]
+    decided: [OQ-11]
+  - id: wirework
+    name: Wirework
+    description: "Control on the wires when a hard swing or landing is called for."
+    type: dice
+    max_level: 3
+    names: [fly]
+    specialties: [flier]
+  - id: high-vantage
+    name: High Vantage
+    description: "Climbing high on the wires to watch the ground ahead or to come at people unseen."
+    type: dice
+    max_level: 3
+    names: [spot, sneak]
+    condition:   # data/gear/items.yaml (odm-gear, counts_as_not_had); Chapter 7, sections 7.1 and 7.4
+      spot: "while your ODM Gear is not Jammed and its Gas Rating is above 0"
+      sneak: "while your ODM Gear is not Jammed and its Gas Rating is above 0"
+    specialties: [flier]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- Hunter
+  - id: lure
+    name: Lure
+    description: "Placing a flare, a horse, or a cloak where a Titan will turn to look."
+    type: dice
+    max_level: 3
+    names: [break-attention]
+    specialties: [hunter]
+  - id: keen-eyes
+    name: Keen Eyes
+    description: "Noticing movement, smoke, and danger at a distance."
+    type: dice
+    max_level: 3
+    names: [spot]
+    specialties: [hunter]
+  - id: fieldcraft
+    name: Fieldcraft
+    description: "Living off the land and keeping a camp safe outside the Walls."
+    type: dice
+    max_level: 3
+    names: [survive]
+    specialties: [hunter]
+  - id: musket-drill
+    name: Musket Drill
+    description: "Loading, bracing, and firing a musket with a hunter's patience."
+    type: dice
+    max_level: 3
+    names: [shoot]
+    condition:   # Chapter 7, section 7.4; data/gear/items.yaml (musket)
+      shoot: "with a musket"
+    specialties: [hunter]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- Tactician
+  - id: titan-reader
+    name: Titan Reader
+    description: "Watching a Titan closely enough to see what it will do next."
+    type: dice
+    max_level: 3
+    names: [read]
+    specialties: [tactician]
+  - id: judge-of-character
+    name: Judge of Character
+    description: "Reading what a person wants and whether they are lying."
+    type: dice
+    max_level: 3
+    names: [size-up]
+    specialties: [tactician]
+  - id: route-finder
+    name: Route Finder
+    description: "Choosing the line of a ride so the Squad arrives in good order, wherever it rides in the formation."
+    type: dice
+    max_level: 3
+    names: [spot, survive, endure, ride]
+    condition:   # Chapter 7, section 7.1: the Lead rolls the entry the Formation Post or the Pace names
+      spot: "on the Leg roll, as Lead"
+      survive: "on the Leg roll, as Lead"
+      endure: "on the Leg roll, as Lead"
+      ride: "on the Leg roll, as Lead"
+    specialties: [tactician]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- Leader
+  - id: steady-voice
+    name: Steady Voice
+    description: "Talking a comrade back to their senses in the middle of a Titan Engagement."
+    type: dice
+    max_level: 3
+    names: [rally]
+    specialties: [leader]
+  - id: silver-tongue
+    name: Silver Tongue
+    description: "Talking people into things."
+    type: dice
+    max_level: 3
+    names: [persuade]
+    specialties: [leader]
+  - id: stand-down
+    name: Stand Down
+    description: "The voice of command that makes armed people think twice."
+    type: dice
+    max_level: 3
+    names: [persuade, size-up]
+    condition:   # Chapter 7, section 7.4: the Parley and Size Up in a Skirmish
+      persuade: "in a Skirmish"
+      size-up: "in a Skirmish"
+    specialties: [leader]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- Medic
+  - id: field-medicine
+    name: Field Medicine
+    description: "Binding injuries and keeping the injured alive in the field."
+    type: dice
+    max_level: 3
+    names: [treat-injury]
+    specialties: [medic]
+  - id: book-learning
+    name: Book Learning
+    description: "Remembering what the lectures, books, and reports said."
+    type: dice
+    max_level: 3
+    names: [recall]
+    specialties: [medic]
+  - id: camp-surgeon
+    name: Camp Surgeon
+    description: "Keeping a Night Camp's injured clean, warm, and alive until morning."
+    type: dice
+    max_level: 3
+    names: [treat-injury, survive]
+    condition:   # data/harm/treat-injury.yaml (care_windows, day); Chapter 7, section 7.1
+      treat-injury: "in the care window held when a day passes on an Expedition"
+      survive: "on the camp roll at a Night Camp"
+    specialties: [medic]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- Engineer
+  - id: gearwright
+    name: Gearwright
+    description: "Repairing ODM Gear and other equipment with field tools."
+    type: dice
+    max_level: 3
+    names: [field-repair]
+    specialties: [engineer]
+  - id: wagon-master
+    name: Wagon Master
+    description: "Keeping the supply wagon rolling and every harness sound on the long road."
+    type: dice
+    max_level: 3
+    names: [survive, field-repair]
+    condition:   # Chapter 7, section 7.1; data/gear/field-repair.yaml (outside_titan_engagement)
+      survive: "on the Leg roll at the Supply Wagon Formation Post"
+      field-repair: "in the care window held when a day passes on an Expedition"
+    specialties: [engineer]
+    decided: [OQ-136]
+  - id: know-the-stores
+    name: Know the Stores
+    description: "Knowing the regulation, the form, and the clerk for every piece of gear in the stores."
+    type: dice
+    max_level: 3
+    names: [recall]
+    condition:   # Chapter 7, section 7.3: the Requisition list
+      recall: "on a Requisition roll for ODM Gear, a Blade Set, a tool kit, a flintlock pistol, or a musket"
+    specialties: [engineer]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- Rider
+  - id: horsemanship
+    name: Horsemanship
+    description: "Riding hard and well, whatever the ground and whatever gives chase: it adds its dice to Ride and to the dodge a mounted soldier makes with the horse's Gear Dice."
+    type: dice
+    max_level: 3
+    names: [ride, dodge]
+    condition:   # decision batch 5, 5-3 (OQ-121); data/gear/horses.yaml (gear_dice, dodge)
+      dodge: while mounted, with the horse as the dodge's gear item
+    specialties: [rider]
+    decided: [OQ-121]
+  - id: cavalry-cut
+    name: Cavalry Cut
+    description: "Cutting at a Titan's Body Parts, or decoying it, from the saddle at a gallop."
+    type: dice
+    max_level: 3
+    names: [body-part-strike, break-attention]
+    condition:   # data/gear/horses.yaml (mounted)
+      body-part-strike: "while mounted"
+      break-attention: "while mounted"
+    specialties: [rider]
+    decided: [OQ-136]
+  - id: long-haul
+    name: Long Haul
+    description: "Keeping going through hunger, cold, and exhaustion."
+    type: dice
+    max_level: 3
+    names: [endure]
+    specialties: [rider]
+  # ---------------------------------------------------------------- Brawler
+  - id: grip-breaker
+    name: Grip Breaker
+    description: "Tearing free of a grip, even a Titan's, and heaving its body off a comrade."
+    type: dice
+    max_level: 3
+    names: [break-free, heave]   # heave: decision batch 8, 8-26 (OQ-162)
+    specialties: [brawler]
+  - id: hard-to-kill
+    name: Hard to Kill
+    description: "Holding on to life when an injury should be fatal."
+    type: dice
+    max_level: 3
+    names: [death-roll]
+    specialties: [brawler]
+    decided: [OQ-11]
+  - id: hand-to-hand
+    name: Hand-to-Hand
+    description: "Fighting and blocking people up close, with a Blade Set, bare-handed, or as a Grapple."
+    type: dice
+    max_level: 3
+    names: [fight, block]    # live in a Skirmish (Chapter 7, section 7.4): a Fight with a Blade Set, bare-handed, or as a Grapple, and a Block
+    specialties: [brawler]
+    decided: [OQ-143]   # decision batch 7, 7-17
+  - id: menace
+    name: Menace
+    description: "Looking like you mean it when you order people to back away."
+    type: dice
+    max_level: 3
+    names: [persuade]
+    condition:   # Chapter 7, section 7.4: a Parley made as a threat rolls Strength for persuade
+      persuade: "on a Parley made as a threat"
+    specialties: [brawler]
+    decided: [OQ-136]
+  # ---------------------------------------------------------------- general
+  - id: quiet-step
+    name: Quiet Step
+    description: "Moving without being seen or heard."
+    type: dice
+    max_level: 3
+    names: [sneak]
+    specialties: []
+  - id: will-to-live
+    name: Will to Live
+    description: "Refusing to die in a wagon bed or an infirmary cot."
+    type: dice
+    max_level: 3
+    names: [death-roll]
+    condition:   # data/harm/death-rolls.yaml (time_limits, day)
+      death-roll: "when a lethal Critical Injury's day limit runs out"
+    specialties: []
+    decided: [OQ-136]
+  - id: every-last-one
+    name: Every Last One
+    description: "The cold fury that steadies the hand after a comrade is killed."
+    type: dice
+    max_level: 3
+    names: [nape-strike, body-part-strike]
+    condition:
+      nape-strike: "after a comrade has died in this Titan Engagement"
+      body-part-strike: "after a comrade has died in this Titan Engagement"
+    specialties: []
+    decided: [OQ-136]
+  - id: underground-instincts
+    name: Underground Instincts
+    description: "Years of staying one step ahead of the Military Police."
+    type: dice
+    max_level: 3
+    names: [sneak, size-up]
+    condition:   # Chapter 7, section 7.4: the foe list
+      sneak: "against a Foe group of Military Police troopers"
+      size-up: "against a Foe group of Military Police troopers"
+    specialties: []
+    decided: [OQ-136]
+  # ================================================================ rule Talents
+  # ---------------------------------------------------------------- Slayer
+  - id: relentless
+    name: Relentless
+    description: "A cut that falls short still leaves the Titan open for the next soldier."
+    type: rule
+    max_level: 1
+    names: [nape-strike]
+    trigger: Your Nape strike falls short of the struck Titan's Nape Depth with at least 1 success.
+    effect: >-
+      The strike creates 1 more Opening than data/engagement/titan-harm.yaml (nape_strikes) gives
+      it for its successes. It does not change the roll, its successes, or whether the Titan dies.
+    limit: none
+    rules: [05-titan-engagement]
+    specialties: [slayer]
+    decided: [OQ-28, OQ-90]
+
+  - id: blade-discipline
+    name: Blade Discipline
+    description: "Care that keeps Blade Sets sharp through a long fight."
+    type: rule
+    max_level: 1
+    names: [nape-strike, body-part-strike, break-free, block, fight]
+    trigger: A Pushed roll made for a named entry, with a Blade Set as its gear item, is about to wear that Blade Set.
+    effect: Ignore 1 point of that wear.
+    limit: once_per_titan_engagement   # also once per Skirmish (data/skirmish/skirmish.yaml, drives_and_talents)
+    rules: [01-core-rules, 04-gear, 07-playtest-rules]
+    specialties: [slayer]
+    decided: [OQ-143]   # decision batch 7, 7-17: Blade Discipline also names fight
+
+  - id: flat-of-the-blade
+    name: Flat of the Blade
+    description: "Striking a person to stop them, not to kill them."
+    type: rule
+    max_level: 1
+    names: [fight]
+    trigger: Your Fight made with a Blade Set lands on a Foe in a Skirmish.
+    effect: >-
+      You may make its damage Crush instead of Cut. A Foe it brings to 0 Health is out cold, as Crush
+      damage leaves a Foe, and not dead (Chapter 7, section 7.4).
+    limit: none
+    rules: [07-playtest-rules]
+    specialties: [slayer]
+    decided: [OQ-136]
+
+  - id: ready-blade
+    name: Ready Blade
+    description: "Always ready to take the cut a comrade's decoy opens."
+    type: rule
+    max_level: 1
+    names: [squad-tactic, nape-strike]
+    trigger: >-
+      You declare that Hook and Cut makes you its striking comrade, and your action this round is
+      already spent.
+    effect: >-
+      Hook and Cut may still be used with you as that comrade. Its Nape strike spends the action of
+      your next turn instead (data/harm/effect-types.yaml, spend-next-action). Every other condition of
+      Hook and Cut still applies (data/engagement/squad-tactics.yaml, hook-and-cut).
+    limit: once_per_titan_engagement
+    rules: [05-titan-engagement]
+    specialties: [slayer]
+    decided: [OQ-136]
+
+  - id: wrist-cut
+    name: Wrist Cut
+    description: "A cut aimed at the wrist of the hand that holds a comrade."
+    type: rule
+    max_level: 1
+    names: [body-part-strike]
+    trigger: Your Body Part strike against an arm that holds a Grabbed comrade has at least 1 success.
+    effect: The strike gains 1 success.
+    limit: once_per_titan_engagement
+    rules: [05-titan-engagement]
+    specialties: [slayer]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Flier and Engineer
+  - id: well-kept-rig
+    name: Well-Kept Rig
+    description: "Maintenance that keeps ODM Gear working when it is pushed hard."
+    type: rule
+    max_level: 1
+    names: [dodge, fly, break-attention]
+    trigger: A Pushed roll made for a named entry, with your ODM Gear as its gear item, is about to wear your ODM Gear.
+    effect: Ignore 1 point of that wear.
+    limit: once_per_titan_engagement
+    rules: [01-core-rules, 04-gear]
+    specialties: [flier, engineer]
+
+  # ---------------------------------------------------------------- Flier
+  - id: light-trigger
+    name: Light Trigger
+    description: "A gentle hand on the gas trigger that makes a canister last."
+    type: rule
+    max_level: 1
+    names: [gas-roll]
+    trigger: Your Gas Roll this round would be three dice because you made a Pushed roll whose gear item was ODM Gear.
+    effect: The Gas Roll is two dice instead.
+    limit: once_per_titan_engagement
+    rules: [01-core-rules, 04-gear]
+    specialties: [flier]
+    decided: [OQ-12]
+
+  - id: mid-air-catch
+    name: Mid-Air Catch
+    description: "Swinging in on the wires to catch a falling comrade."
+    type: rule
+    max_level: 1
+    names: [fly]
+    trigger: >-
+      In a Titan Engagement, a comrade falls while holding the Position you hold relative to the fall's
+      reference Titan (data/gear/falls.yaml, height), and you are airborne, not carried, and carrying no
+      comrade.
+    effect: >-
+      Before the fall's damage is rolled, you may make a roll for fly with your own ODM Gear, needing 1.
+      It spends nothing, can be Pushed, and cannot be Helped, and it is ODM use
+      (data/gear/odm-gear.yaml, odm_use). On a success the fall's band is low, whatever the height
+      steps give. A Jam on this roll makes you fall as any Jam does.
+    limit: once_per_titan_engagement
+    rules: [04-gear, 05-titan-engagement]
+    specialties: [flier]
+    decided: [OQ-136]
+
+  - id: lookout-tree
+    name: Lookout Tree
+    description: "Going up a tree to see what waits on the next stretch of the ride."
+    type: rule
+    max_level: 1
+    names: [spot, survive, endure, ride]
+    trigger: >-
+      A Leg's Leg roll succeeds, the Waypoint the Leg leads to is of the Forest or Giant forest kind (Chapter 7,
+      section 7.1), and you are not Down and your ODM Gear is not Jammed and has a Gas Rating above 0.
+    effect: >-
+      This Leg's hazard roll is 1 lower. It is lowered once, however many soldiers hold Lookout Tree.
+    limit: once_per_leg
+    rules: [07-playtest-rules]
+    specialties: [flier]
+    decided: [OQ-136]
+
+  - id: close-pass
+    name: Close Pass
+    description: "A pass across a Titan's face close enough that it has to look."
+    type: rule
+    max_level: 1
+    names: [break-attention]
+    trigger: You declare a Break Attention that names a Feint.
+    effect: >-
+      The Feint adds nothing to what the roll needs (data/engagement/attention.yaml, break_attention,
+      needs, feint_extra). Every other need still applies.
+    limit: once_per_titan_engagement
+    rules: [05-titan-engagement]
+    specialties: [flier]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Hunter
+  - id: hunters-eye
+    name: Hunter's Eye
+    description: "Reading a Titan by sight rather than by gut."
+    type: rule
+    max_level: 1
+    names: [read]
+    trigger: You declare a Read.
+    effect: >-
+      The roll may use Perception instead of Instinct. It is still made for read, so a
+      Talent that names read still adds its dice.
+    limit: none
+    rules: [05-titan-engagement]
+    specialties: [hunter]
+
+  - id: flare-discipline
+    name: Flare Discipline
+    description: "A flare placed where it keeps burning in a Titan's eyes."
+    type: rule
+    max_level: 1
+    names: [break-attention]
+    trigger: Your Break Attention that names a flare decoy succeeds.
+    effect: >-
+      The decoy holds the Titan's Attention for 1 more of its cards than its Tempo
+      (data/engagement/attention.yaml, break_attention, on_success).
+    limit: once_per_titan_engagement
+    rules: [05-titan-engagement]
+    specialties: [hunter]
+    decided: [OQ-136]
+
+  - id: forager
+    name: Forager
+    description: "Snares, roots, and clean water found before dark."
+    type: rule
+    max_level: 1
+    names: [survive]
+    trigger: The camp roll at a Night Camp succeeds, and you made it or Helped it.
+    effect: >-
+      The Night Camp spends no ration, and a camp that finds Squad Supply with no rations counts as
+      having its ration (Chapter 7, section 7.1). This applies once for the camp, however many soldiers
+      hold Forager.
+    limit: once_per_night_camp
+    rules: [07-playtest-rules]
+    specialties: [hunter]
+    decided: [OQ-136]
+
+  - id: saw-it-coming
+    name: Saw It Coming
+    description: "The first to see a Titan coming, and how it moves."
+    type: rule
+    max_level: 1
+    names: [read]
+    trigger: >-
+      A Titan Engagement begins from a row of the Leg Hazard table or the Night table (Chapter 7,
+      section 7.1), and you take part in it and are not Down.
+    effect: >-
+      Before round 1, the first Focus Titan's Next Behavior is revealed to every soldier, as a Read's
+      next-behavior fact reveals it (data/engagement/read.yaml, facts). No Call It can be made on it.
+      It is revealed once, however many soldiers hold Saw It Coming.
+    limit: once_per_titan_engagement
+    rules: [05-titan-engagement, 07-playtest-rules]
+    specialties: [hunter]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Tactician
+  - id: sharp-call
+    name: Sharp Call
+    description: "Calling It in time with less to go on."
+    type: rule
+    max_level: 1
+    names: [call-it]
+    trigger: You declare Call It.
+    effect: Calling It needs one fewer success from your Read than data/engagement/read.yaml (call_it) states, to a minimum of 1.
+    limit: none
+    rules: [05-titan-engagement]
+    specialties: [tactician]
+    decided: [OQ-84, OQ-90]
+
+  - id: wide-awareness
+    name: Wide Awareness
+    description: "Seeing where Help is needed across the field."
+    type: rule
+    max_level: 1
+    names: [help]
+    trigger: You declare Help for a roll in a Titan Engagement.
+    effect: >-
+      You may be up to two Position steps from the roller instead of one. Every other Help
+      requirement in Chapter 1, section 1.8, still applies.
+    limit: none
+    rules: [01-core-rules, 05-titan-engagement]
+    specialties: [tactician]
+
+  - id: formation-drill
+    name: Formation Drill
+    description: "Drilled with your Squadmate until each knows where the other will be."
+    type: rule
+    max_level: 1
+    names: [help]
+    # No effect while the playtest configuration holds, since no Squadmate serves
+    # (data/character/squadmates.yaml, playtest_configuration; decision batch 8, 8-38).
+    trigger: You declare that the Squadmate on your Wing Helps a roll of yours in a Titan Engagement.
+    effect: >-
+      The Squadmate may be up to two Position steps from you instead of one. Every other Help
+      requirement in Chapter 1, section 1.8, still applies.
+    limit: none
+    rules: [01-core-rules, 05-titan-engagement]
+    specialties: [tactician]
+    decided: [OQ-136]
+
+  - id: change-the-order
+    name: Change the Order
+    description: "Putting the right soldier's turn first."
+    type: rule
+    max_level: 1
+    names: [swap-initiative-card]
+    trigger: >-
+      The swap step of a round in a Titan Engagement begins, and you hold a card this round and are
+      neither Down nor Grabbed.
+    effect: >-
+      You may name two comrades who each hold a card this round, are neither Down nor Grabbed, and both
+      agree. They exchange cards whatever Positions they hold. It is the one swap each of them takes part
+      in this round (data/engagement/round.yaml, swapping); you take no part in it.
+    limit: none
+    rules: [05-titan-engagement]
+    specialties: [tactician]
+    decided: [OQ-136]
+
+  - id: break-their-nerve
+    name: Break Their Nerve
+    description: "Seeing who will run first, and making sure they do."
+    type: rule
+    max_level: 1
+    names: [size-up]
+    trigger: Your Size Up of a Foe group in a Skirmish succeeds.
+    effect: >-
+      For the rest of that Skirmish, the group's Grit counts as 1 lower when testing whether it breaks,
+      to a minimum of 1 (Chapter 7, section 7.4). What a Parley against it needs does not change.
+    limit: once_per_skirmish
+    rules: [07-playtest-rules]
+    specialties: [tactician]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Leader
+  - id: unshaken-command
+    name: Unshaken Command
+    description: "A calm presence that steadies nearby comrades against terror."
+    type: rule
+    max_level: 1
+    names: [fear-roll]
+    trigger: >-
+      In a Titan Engagement, a comrade who holds your Position or a Position one step from
+      you makes a Fear Roll, and you are not Down.
+    effect: That Fear Roll uses your Resolve in place of the comrade's, if yours is higher.
+    limit: once_per_titan_engagement
+    rules: [03-harm-and-mind, 05-titan-engagement]
+    specialties: [leader]
+
+  - id: carrying-voice
+    name: Carrying Voice
+    description: "A voice that reaches a comrade farther away."
+    type: rule
+    max_level: 1
+    names: [rally]
+    trigger: You declare rally.
+    effect: >-
+      You may target a comrade one Position step farther from you than Chapter 3 allows. In a
+      Skirmish, which has no Positions, you may target any soldier taking part in it (Chapter 7,
+      section 7.4).
+    limit: none
+    rules: [03-harm-and-mind, 07-playtest-rules]
+    specialties: [leader]
+    decided: [OQ-143]   # decision batch 7, 7-17
+
+  - id: shoulder-the-load
+    name: Shoulder the Load
+    description: "Taking on the Stress of comrades farther away."
+    type: rule
+    max_level: 1
+    names: [cover]
+    trigger: You declare that you Cover a comrade's Push in a Titan Engagement.
+    effect: >-
+      You may be up to two Position steps from the Pushing soldier instead of one. Every
+      other Covering requirement in Chapter 1, section 1.5, still applies.
+    limit: none
+    rules: [01-core-rules, 05-titan-engagement]
+    specialties: [leader]
+
+  - id: put-in-a-word
+    name: Put In a Word
+    description: "Vouching for a comrade in front of the quartermaster."
+    type: rule
+    max_level: 1
+    names: [help, persuade, recall]
+    trigger: You declare that you Help a comrade's Requisition roll (Chapter 7, section 7.3).
+    effect: >-
+      If you are a player character, the Help does not spend your own Requisition this Downtime, and
+      you may Help even if you have already made your own Requisition roll. Every other Help requirement
+      of that roll still applies.
+    limit: once_per_downtime
+    rules: [07-playtest-rules]
+    specialties: [leader]
+    decided: [OQ-136]
+
+  - id: campfire-talk
+    name: Campfire Talk
+    description: "Keeping the Squad talking by the fire until they can sleep."
+    type: rule
+    max_level: 1
+    names: [survive]
+    trigger: The camp roll at a Night Camp succeeds, and you are not Down.
+    effect: >-
+      Camp Relief lowers the Stress of every soldier on the Expedition by 2 instead of 1, never below a
+      soldier's minimum (a named reduction, data/core/stress-changes.yaml). This applies once for the
+      camp, however many soldiers hold Campfire Talk.
+    limit: once_per_night_camp
+    rules: [01-core-rules, 07-playtest-rules]
+    specialties: [leader]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Medic
+  - id: careful-nursing
+    name: Careful Nursing
+    description: "Aftercare that speeds healing."
+    type: rule
+    max_level: 1
+    names: [treat-injury]
+    trigger: Your roll for treat-injury succeeds on a comrade's Critical Injury.
+    effect: >-
+      That Critical Injury's healing time, as Chapter 3 gives it, is halved, rounding up.
+      Each Critical Injury can be halved only once.
+    limit: none
+    rules: [03-harm-and-mind]
+    specialties: [medic]
+
+  - id: sure-hands
+    name: Sure Hands
+    description: "A second attempt at treatment under pressure."
+    type: rule
+    max_level: 1
+    names: [treat-injury]
+    trigger: You have Pushed a roll made for treat-injury, and no Stress Die shows 1.
+    effect: >-
+      You may Push that roll a second time, following the Push procedure in Chapter 1
+      again. A roll never causes more than one Stress Response.
+    # No limit (decision batch 8, 8-42). Guardrail 8's default does not fit: Sure Hands also reaches aftermath
+    # rolls and care windows, where once_per_titan_engagement would forbid it outright, and its second Push
+    # already costs Stress Dice.
+    limit: none
+    rules: [01-core-rules]
+    specialties: [medic]
+    decided: [OQ-02, OQ-28]
+
+  - id: triage
+    name: Triage
+    description: "Treating the worst of a comrade's injuries in one pass."
+    type: rule
+    max_level: 1
+    names: [treat-injury]
+    trigger: >-
+      Your roll for treat-injury in a care window succeeds with at least 2 successes on the treat use
+      (data/harm/treat-injury.yaml, uses).
+    effect: >-
+      One more untreated Critical Injury of the same patient, one the same roll's treat use could have
+      named, also becomes treated, as treat gives. It uses no soldier's roll in the window.
+    limit: none
+    rules: [03-harm-and-mind]
+    specialties: [medic]
+    decided: [OQ-136]
+
+  - id: friends-in-the-infirmary
+    name: Friends in the Infirmary
+    description: "Knowing which orderly can find a spare kit or a crate of bandages."
+    type: rule
+    max_level: 1
+    names: [persuade, recall]
+    trigger: You declare a Requisition roll for a medical kit or for medical supplies (Chapter 7, section 7.3).
+    effect: The roll needs 1 fewer success than its Scarcity and the ledger give, to a minimum of 1.
+    limit: once_per_downtime
+    rules: [07-playtest-rules]
+    specialties: [medic]
+    decided: [OQ-136]
+
+  - id: tourniquet
+    name: Tourniquet
+    description: "A strap pulled tight to keep a comrade alive until the fighting stops."
+    type: rule
+    max_level: 1
+    names: [treat-injury]
+    trigger: >-
+      In a Titan Engagement, your roll for treat-injury on a comrade's lethal Critical Injury with a turn
+      limit fails.
+    effect: >-
+      That Critical Injury's time limit slows one step, from turn to engagement
+      (data/harm/death-rolls.yaml, time_limits). It stays untreated and keeps its Health box crossed off.
+    limit: once_per_titan_engagement
+    rules: [03-harm-and-mind]
+    specialties: [medic]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Engineer
+  - id: make-do
+    name: Make Do
+    description: "Improvising repairs without a proper tool kit."
+    type: rule
+    max_level: 1
+    names: [field-repair]
+    trigger: >-
+      You declare a roll for field-repair, and gear_requirement in
+      data/character/action-catalog.yaml applies the entry's without_gear value
+      (attribute_alone) because you have no tool kit that counts as had.
+    effect: The roll still adds dice from one Talent that names field-repair.
+    limit: none
+    rules: [02-character-creation, 04-gear]
+    specialties: [engineer]
+    decided: [OQ-27]
+
+  - id: quick-refit
+    name: Quick Refit
+    description: "Swapping gas canisters with practiced speed."
+    type: rule
+    max_level: 1
+    names: [change-canister]
+    trigger: You declare change-canister in a Titan Engagement.
+    effect: If Chapter 4 makes changing a canister spend your action, you may spend your move on it instead.
+    limit: once_per_titan_engagement   # decision batch 8, 8-42 (ADR-0016, Talent guardrail 8)
+    rules: [04-gear]
+    specialties: [engineer]
+
+  - id: spare-parts
+    name: Spare Parts
+    description: "A pocket of springs and spare hooks for a quick fix."
+    type: rule
+    max_level: 1
+    names: [field-repair]
+    trigger: Your roll for field-repair in a Titan Engagement succeeds.
+    effect: >-
+      The named item's current rating rises by 1 more, to at most its rating (data/gear/field-repair.yaml,
+      on_success).
+    limit: once_per_titan_engagement
+    rules: [04-gear]
+    specialties: [engineer]
+    decided: [OQ-136]
+
+  - id: gunsmith
+    name: Gunsmith
+    description: "Care that keeps a flintlock firing."
+    type: rule
+    max_level: 1
+    names: [shoot]
+    trigger: A Pushed roll for shoot, with your firearm as its gear item, is about to wear that firearm.
+    effect: Ignore 1 point of that wear.
+    limit: once_per_skirmish
+    rules: [04-gear, 07-playtest-rules]
+    specialties: [engineer]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Rider
+  - id: loose-the-horse
+    name: Loose the Horse
+    description: "Sending a horse where a Titan will chase it."
+    type: rule
+    max_level: 1
+    names: [break-attention]
+    trigger: You declare a roll for break-attention with your horse as its gear item.
+    effect: The roll may use Agility instead of Perception.
+    limit: none
+    rules: [04-gear, 05-titan-engagement]
+    specialties: [rider]
+
+  - id: sure-seat
+    name: Sure Seat
+    description: "A seat that keeps the horse sound when a dodge, Ride, or Break Attention made with the horse is Pushed."
+    type: rule
+    max_level: 1
+    names: [dodge, ride, break-attention]
+    trigger: A Pushed roll made for a named entry, with your horse as its gear item, is about to wear your horse.
+    effect: Ignore 1 point of that wear.
+    limit: once_per_titan_engagement
+    rules: [01-core-rules, 04-gear]
+    specialties: [rider]
+    decided: [OQ-28, OQ-71]
+
+  - id: rescue-ride
+    name: Rescue Ride
+    description: "Scooping a fallen comrade onto the saddle at a gallop."
+    type: rule
+    max_level: 1
+    names: [lift-comrade]
+    trigger: You declare lift-comrade while mounted.
+    effect: You may take it as part of your move instead of as your action.
+    limit: once_per_titan_engagement   # decision batch 8, 8-42 (ADR-0016, Talent guardrail 8)
+    rules: [04-gear, 05-titan-engagement]
+    specialties: [rider]
+
+  - id: horse-whistle
+    name: Horse Whistle
+    description: "A horse trained to come at its rider's whistle."
+    type: rule
+    max_level: 1
+    names: [mount-or-dismount]
+    trigger: >-
+      You declare a move in a Titan Engagement that mounts your own horse, while you hold Distant or In
+      Reach relative to the Focus Titan recorded with the horse's Position.
+    effect: >-
+      Before the move, your horse holds the Position you hold, if it is not lame and holds a Position,
+      so the move can mount it (data/gear/horses.yaml, mounted, mount). Every other mount requirement
+      still applies.
+    limit: once_per_titan_engagement
+    rules: [04-gear, 05-titan-engagement]
+    specialties: [rider]
+    decided: [OQ-136]
+
+  - id: hard-rider
+    name: Hard Rider
+    description: "Getting a hard day's ride out of horse and rider on short rations."
+    type: rule
+    max_level: 1
+    names: [ride]
+    trigger: Your Ride roll as Lead on a Hard Ride succeeds (Chapter 7, section 7.1).
+    effect: The Leg spends 1 ration fewer than a successful Hard Ride spends.
+    limit: once_per_leg
+    rules: [07-playtest-rules]
+    specialties: [rider]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- Brawler
+  - id: pry-loose
+    name: Pry Loose
+    description: "Prying a comrade out of a Titan's grip."
+    type: rule
+    max_level: 1
+    names: [break-free]
+    trigger: >-
+      You declare break-free on behalf of a Grabbed comrade who holds your Position, and you
+      are not Grabbed.
+    effect: >-
+      You may take break-free as your action on that comrade's behalf, although you are not
+      Grabbed. You roll your own pool for break-free, including your dice Talent that names
+      it. If the roll succeeds, the comrade is freed exactly as if they had succeeded on
+      break-free themselves. It never applies to a comrade Held by a Foe in a Skirmish (Chapter 7,
+      section 7.4).
+    limit: none
+    rules: [05-titan-engagement]
+    specialties: [brawler]
+    decided: [OQ-28, OQ-143]   # decision batch 7, 7-17: Pry Loose stays Titan-only
+
+  - id: strong-back
+    name: Strong Back
+    description: "Carrying a comrade without their weight slowing you down."
+    type: rule
+    max_level: 1
+    names: [lift-comrade]
+    trigger: You carry a comrade you lifted with lift-comrade.
+    effect: The comrade's own 5 items do not count toward the items you carry. The items that comrade carries still count (data/gear/carrying.yaml, items_counted).
+    limit: none
+    rules: [04-gear]
+    specialties: [brawler]
+
+  - id: headlock
+    name: Headlock
+    description: "Holding one of them down until the rest lose their nerve."
+    type: rule
+    max_level: 1
+    names: [fight]
+    trigger: Your Grapple lands on a Foe in a Skirmish, and that Foe becomes Held by you.
+    effect: >-
+      While you hold that Foe, it counts as out of the Skirmish for its group's breaking test
+      (Chapter 7, section 7.4). If the group breaks while you hold it, that Foe does not leave: it
+      surrenders and is out of the Skirmish. Only that Foe surrenders; the group's other Foes break as
+      its breaking test gives.
+    limit: none
+    rules: [07-playtest-rules]
+    specialties: [brawler]
+    decided: [OQ-136]
+
+  - id: shoulder-charge
+    name: Shoulder Charge
+    description: "Tearing out of a Titan's fingers hard enough to leave it open."
+    type: rule
+    max_level: 1
+    names: [break-free]
+    trigger: Your roll for break-free in a Titan Engagement frees a Grabbed soldier.
+    effect: >-
+      The Titan that had them Grabbed gains 1 Opening, created by you (data/engagement/titan-harm.yaml,
+      openings).
+    limit: once_per_titan_engagement
+    rules: [05-titan-engagement]
+    specialties: [brawler]
+    decided: [OQ-136]
+
+  # ---------------------------------------------------------------- general
+  - id: iron-nerve
+    name: Iron Nerve
+    description: "Keeping steady as Stress mounts."
+    type: rule
+    max_level: 1
+    names: [stress-response-roll]
+    trigger: You roll for a Stress Response.
+    effect: Your Resolve counts as 1 higher for that roll.
+    limit: none
+    rules: [03-harm-and-mind]
+    specialties: []
+
+  - id: steady-heart
+    name: Steady Heart
+    description: "Keeping your feet when a comrade is taken."
+    type: rule
+    max_level: 1
+    names: [fear-roll]
+    trigger: You make a Fear Roll for the comrade-grabbed or comrade-dies trigger (data/mind/fear-rolls.yaml).
+    effect: Your Resolve counts as 1 higher for that roll.
+    limit: once_per_titan_engagement
+    rules: [03-harm-and-mind]
+    specialties: []
+    decided: [OQ-136]
+
+  - id: got-your-back
+    name: Got Your Back
+    description: "One comrade whose fear you always carry."
+    type: rule
+    max_level: 1
+    names: [cover]
+    trigger: You declare that you Cover a comrade's Push in a Titan Engagement.
+    effect: >-
+      If you have Covered no other comrade's Push in this Titan Engagement, you may Cover it from any
+      number of Position steps away. Every other Covering requirement in Chapter 1, section 1.5, still
+      applies.
+    limit: none
+    rules: [01-core-rules, 05-titan-engagement]
+    specialties: []
+    decided: [OQ-136]
+
+  - id: gallows-humour
+    name: Gallows Humour
+    description: "A bad joke at the worst moment that keeps you from coming apart."
+    type: rule
+    max_level: 1
+    names: [stress-response-roll]
+    trigger: You roll for a Stress Response.
+    effect: >-
+      Once the total is known, you may roll the D6 a second time. Use the second total.
+    limit: once_per_titan_engagement
+    rules: [03-harm-and-mind]
+    specialties: []
+    decided: [OQ-136]
+
+  - id: stay-with-the-column
+    name: Stay With the Column
+    description: "Keeping up with the column when your body says stop."
+    type: rule
+    max_level: 1
+    names: [endure]
+    trigger: >-
+      You have Pushed the Endure roll a Straggler row calls for (Chapter 7, section 7.1), and no Stress
+      Die shows 1.
+    effect: >-
+      You may Push that roll a second time, following the Push procedure in Chapter 1 again. A roll
+      never causes more than one Stress Response.
+    limit: once_per_leg   # decision batch 8, 8-42 (ADR-0016, Talent guardrail 8)
+    rules: [01-core-rules, 07-playtest-rules]
+    specialties: []
+    decided: [OQ-136]
+
+  - id: light-sleeper
+    name: Light Sleeper
+    description: "Waking at the first footstep outside the camp."
+    type: rule
+    max_level: 1
+    names: [dodge, block]
+    trigger: >-
+      A Skirmish begins at a Night Camp with its Foes holding the ambush (Chapter 7, sections 7.1 and
+      7.4), and you are not Down.
+    effect: >-
+      The ambush does not stop your Reactions: in round 1 you may make a Reaction against a Foe's
+      attack as Chapter 1, section 1.9, allows.
+    limit: once_per_skirmish
+    rules: [01-core-rules, 07-playtest-rules]
+    specialties: []
+    decided: [OQ-136]
+
+  - id: nothing-wasted
+    name: Nothing Wasted
+    description: "Taking gas and Blade Sets from the fallen without a moment's pause."
+    type: rule
+    max_level: 1
+    names: [take-item]
+    trigger: >-
+      You declare take-item in a Titan Engagement for a dead comrade's left items
+      (data/gear/carrying.yaml, taking_items).
+    effect: The take spends your move instead of your action.
+    limit: once_per_titan_engagement
+    rules: [04-gear]
+    specialties: []
+    decided: [OQ-136]
+
+  - id: not-like-this
+    name: Not Like This
+    description: "Fighting hardest when a Titan's mouth is closest."
+    type: rule
+    max_level: 1
+    names: [break-free]
+    trigger: You declare break-free while you are Grabbed and have been lifted.
+    effect: >-
+      The roll takes no lifted penalty (data/engagement/grab.yaml, escapes, break-free,
+      lifted_penalty).
+    limit: once_per_titan_engagement
+    rules: [05-titan-engagement]
+    specialties: []
+    decided: [OQ-136]

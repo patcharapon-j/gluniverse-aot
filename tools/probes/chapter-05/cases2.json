@@ -1,0 +1,10 @@
+[
+ ["M Regen 2", {"size": "medium", "policy": "eager", "titan": {"regen_len": 2}}],
+ ["M Regen 4", {"size": "medium", "policy": "eager", "titan": {"regen_len": 4}}],
+ ["M Nape Depth 3", {"size": "medium", "policy": "eager", "titan": {"nd": 3}}],
+ ["M Nape Depth 5", {"size": "medium", "policy": "eager", "titan": {"nd": 5}}],
+ ["M Tempo 2", {"size": "medium", "policy": "eager", "titan": {"tempo": 2}}],
+ ["L Nape Depth 5 (the round 2 value)", {"size": "large", "policy": "eager", "titan": {"nd": 5}}],
+ ["S Tempo 1", {"size": "small", "policy": "eager", "titan": {"tempo": 1}}],
+ ["M, 4 eager strikers and no cutters (the four-striker row, reported, not tuned; decision batch 4b, 4b-2)", {"size": "medium", "policy": "eager", "roles": ["striker", "striker", "striker", "striker"]}]
+]

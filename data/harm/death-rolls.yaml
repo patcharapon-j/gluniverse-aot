@@ -1,0 +1,110 @@
+# Lethal Critical Injuries: time limits, when they run out, the Death Roll and its outcomes, and
+# dying.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.4) references this
+# file and does not repeat its rows.
+id: death-rolls
+name: Lethal Injuries and Death Rolls
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0015, ADR-0019]
+decided: [OQ-43, OQ-54, OQ-56, OQ-57]
+
+# ------------------------------------------------------------------ time limits
+# Listed fastest first. "Slows one step" moves a limit to the next entry in this list.
+time_limits:
+  - id: turn
+    runs_out: >-
+      At the end of each of the soldier's turns in a Titan Engagement or a Skirmish (data/skirmish/skirmish.yaml,
+      rounds, turns_count; decision batch 8, 8-15), starting with the first of
+      their turns that begins after the Critical Injury was gained. A turn spent in advance, a
+      turn spent by a result, a Down soldier's turn, and the turn of a soldier who has left the
+      Titan Engagement while it goes on (data/harm/engagement-end.yaml, soldiers_who_left) all
+      count.
+    when_titan_engagement_ends: >-
+      The limit becomes engagement for this Titan Engagement's end: it can be treated with the
+      patient's one aftermath roll, and otherwise runs out at the death-rolls step, before the care window
+      (data/harm/engagement-end.yaml).
+    # The outside_titan_engagement keys below read "outside both a Titan Engagement and a Skirmish".
+    outside_titan_engagement: >-
+      A Critical Injury gained outside both a Titan Engagement and a Skirmish with this limit runs
+      out once, right after the outside-harm care window (data/harm/treat-injury.yaml, care_windows).
+      One gained during a Skirmish runs out at the end of each of the soldier's turns (runs_out).
+    when_a_skirmish_ends: >-
+      The limit becomes engagement at that Skirmish's end steps, as when_titan_engagement_ends states
+      (data/harm/engagement-end.yaml, procedures, skirmish).
+    slows_to: engagement
+
+  - id: engagement
+    runs_out: >-
+      Once, when the Titan Engagement or the Skirmish in which it was gained ends, at the death-rolls step, after
+      the aftermath rolls and before the care window (data/harm/engagement-end.yaml). That Death
+      Roll is made outside the Titan Engagement or the Skirmish. Only a treatment during the fight or
+      the patient's one aftermath roll, if it succeeds (data/harm/treat-injury.yaml,
+      aftermath_rolls), prevents it.
+    outside_titan_engagement: >-
+      A Critical Injury gained outside both a Titan Engagement and a Skirmish with this limit runs
+      out once, right after the outside-harm care window (data/harm/treat-injury.yaml, care_windows).
+    slows_to: day
+
+  - id: day
+    runs_out: >-
+      Each time a day passes (data/harm/healing.yaml), after that day's care window: at each night camp of
+      an Expedition, and on each of Downtime's seven days, after that day's infirmary roll
+      (data/campaign/downtime.yaml, infirmary; decision batch 7, 7-15).
+    slows_to: stabilized
+
+  - id: stabilized
+    meaning: The Critical Injury is no longer lethal. It has no time limit and never causes a Death Roll again.
+
+outside_titan_engagement_restart: >-
+  After a Death Roll made outside both a Titan Engagement and a Skirmish, a turn or engagement limit
+  that the soldier survived becomes day, whatever the outcome row says. That includes every Death Roll
+  made at the death-rolls end step of a Titan Engagement or a Skirmish, since the end steps are
+  resolved outside the fight (data/harm/engagement-end.yaml, during_the_steps, procedures, skirmish).
+  A Death Roll made during a Skirmish, at the end of a soldier's turn, follows its outcome row, as one
+  made during a Titan Engagement does.
+
+# ------------------------------------------------------------------ the Death Roll
+death_roll:
+  entry: death-roll          # data/character/action-catalog.yaml
+  attribute: strength
+  pool: >-
+    Strength, plus the dice of one Talent that names death-roll (such as Hard to Kill), minus the
+    Critical Injury's death_roll_penalty. No Stress Dice, no Help, and no Push
+    (data/core/dice-pool.yaml, roll_exceptions). No Gear Dice, because the entry allows no gear.
+    No listed Bonus Dice source applies to it.
+  needs: 1
+  one_roll_per_injury: >-
+    Each lethal Critical Injury whose limit runs out causes its own Death Roll. When several run
+    out at the same moment, roll for each in the order the soldier's player chooses. The first
+    one failed kills the soldier, and no further Death Rolls are made.
+  not_an_action: true
+  rules: [01-core-rules]
+  decided: [OQ-03, OQ-43]
+
+outcomes:
+  - id: dies
+    successes: {min: 0, max: 0}
+    result: The soldier dies (see dying).
+  - id: holds-on
+    successes: {min: 1, max: 1}
+    result: >-
+      The soldier lives. The time limit stays the same and runs out again as its row states
+      (outside both a Titan Engagement and a Skirmish, see outside_titan_engagement_restart).
+  - id: fights-back
+    successes: {min: 2, max: null}
+    result: >-
+      The soldier lives, and the Critical Injury's time limit slows one step. A day limit that
+      slows becomes stabilized.
+
+# ------------------------------------------------------------------ dying
+dying:
+  sources: >-
+    A failed Death Roll, a Critical Injury row with instant_death, and any rule that names death
+    (data/harm/health.yaml, harm_kinds, death).
+  what_happens:
+    - The soldier is dead and leaves play. A dead soldier holds no Position.
+    - A player character is replaced by promotion or a new character (data/character/squadmates.yaml, promotion).
+    - A Squadmate leaves the Squad Pool.
+    - Every Drive that named the dead soldier can never trigger again (data/character/enlistment.yaml, drive_rules).
+    - The death is a Fear Roll trigger (data/mind/fear-rolls.yaml, comrade-dies) and gives Grief (data/mind/grief.yaml).
+  gear: data/gear/carrying.yaml (leaving_play)

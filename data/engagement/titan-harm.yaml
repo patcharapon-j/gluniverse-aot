@@ -1,0 +1,409 @@
+# Harming Titans: Body Part kinds and where each is struck, Body Part States and Toughness, what
+# Broken does, a grounded Titan, Nape strikes, Openings, Regeneration, a Titan's death, steam, and the
+# falling Titan with Pinned, corpse heat, Heave, and cutting free.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.7) references this
+# file and does not repeat its rows.
+id: titan-harm
+name: Harming Titans
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0005, ADR-0007, ADR-0010, ADR-0014, ADR-0017, ADR-0019]
+decided: [OQ-82, OQ-83, OQ-84, OQ-138, OQ-146, OQ-151]
+
+# ------------------------------------------------------------------ Body Parts
+body_part_kinds:
+  - id: eyes
+    strike_from: [on-body, blind-spot]
+    when_broken: >-
+      Flare and thrown-cloak decoys cannot be used against the Titan
+      (data/engagement/attention.yaml, break_attention, decoys).
+  - id: arm
+    strike_from: [in-reach, on-body]
+    when_broken: >-
+      If the arm holds a Grabbed soldier, that soldier is freed (data/engagement/grab.yaml,
+      release). A Broken arm cannot Grab.
+  - id: leg
+    strike_from: [in-reach, on-body]
+    when_broken: The Titan is grounded (grounded).
+every_kind_when_broken: >-
+  A Behavior Table entry that lists a kind in body_parts_used cannot happen while the Titan lacks
+  enough Body Parts of that kind that are not Broken (data/engagement/behavior-procedure.yaml).
+
+states:
+  order: [intact, wounded, broken]
+  wounded: Wounded has no effect of its own.
+  count: >-
+    Each Body Part has a count of successes toward its next state, from 0 up to one less than its
+    Toughness. A Broken Body Part keeps a count of 0.
+  public: >-
+    Every Body Part's state and count are public. A standard Titan's Toughness is public from its
+    Size Class row (data/engagement/size-classes.yaml). An Abnormal's Toughness is revealed by a
+    Read (data/engagement/read.yaml, facts). Because counts and state changes are public, they
+    show an Abnormal's Toughness over time: a count of 2 shows a Toughness of at least 3, and a
+    state change shows it exactly.
+
+# ------------------------------------------------------------------ Body Part strikes
+body_part_strikes:
+  entry: body-part-strike   # data/character/action-catalog.yaml: Strength, Gear Dice from a Blade Set
+  requirements:
+    - >-
+      The soldier holds one of the struck Body Part's strike_from Positions relative to the Titan,
+      or one of the Positions grounded allows. A strike against an arm that holds a Grabbed soldier
+      uses only the reach data/engagement/grab.yaml (escapes, strike-the-holding-arm) gives, whether
+      or not the Titan is grounded.
+    - The struck Body Part is not Broken.
+    - The soldier is not Grabbed.
+    - >-
+      A strike from on-body or blind-spot needs working ODM Gear (data/gear/odm-gear.yaml, strikes),
+      unless the Titan is grounded.
+  spends: the soldier's action
+  needs: 1
+  resolving: >-
+    Take the successes one at a time. Each adds 1 to the Body Part's count. When the count reaches
+    the Body Part's Toughness, the Body Part moves one state toward Broken and its count returns
+    to 0. Once it is Broken, each remaining success creates 1 Opening, created by the striker.
+  flag: A strike with at least 1 success sets the just-hurt flag (data/engagement/attention.yaml, flags).
+
+grounded:
+  when: At least one of the Titan's legs is Broken.
+  effects:
+    - Nape strikes against it gain the grounded-titan Bonus Dice (data/core/bonus-dice-sources.yaml, grounded-titan).
+    - >-
+      Nape strikes and Body Part strikes against it need no working ODM Gear. This is the Chapter 5
+      rule that data/gear/odm-gear.yaml (strikes, lifted_only_by) names.
+    - >-
+      Every Body Part of the Titan can be struck from in-reach, on-body, or blind-spot, except an
+      arm that holds a Grabbed soldier, whose reach data/engagement/grab.yaml (escapes) sets.
+    - Some Position steps relative to it can be made on foot (data/engagement/anchor-ratings.yaml, grounded_titan).
+  ends: >-
+    When none of its legs is Broken. It then frees every soldier it pins, and its heave count returns to 0
+    (falling_titan, freeing, heave; decision batch 8, 8-9 and 8-22).
+
+# ------------------------------------------------------------------ Nape strikes
+nape_strikes:
+  entry: nape-strike   # data/character/action-catalog.yaml: Strength, Gear Dice from a Blade Set
+  requirements:
+    - >-
+      As the Catalog entry states: the soldier holds blind-spot relative to the Titan, does not
+      hold its Attention, and has working ODM Gear (lifted while the Titan is grounded).
+    - The soldier is not Grabbed.
+    - >-
+      No retreat is under way (data/engagement/background-titans.yaml, retreat, actions; decision
+      batch 5, 5-15, OQ-129).
+  spends: the soldier's action
+  needs: The Titan's Nape Depth, in this one roll.
+  bonus_dice: >-
+    Openings (openings), the grounded-titan source, and Help, within the cap of 4 Bonus Dice
+    (data/core/bonus-dice-sources.yaml).
+  kill: If the successes are at least the Nape Depth, the Titan dies (titan_death).
+  falls_short: >-
+    Each success creates 1 Opening, created by the striker. Relentless adds 1 more
+    (data/character/talents.yaml, relentless).
+  flag: The strike sets the hooked-by-strike flag, whatever its result (data/engagement/attention.yaml, flags).
+  no_carry_over: >-
+    A Nape strike's successes never count toward a later Nape strike except as Openings (ADR-0007).
+
+# ------------------------------------------------------------------ Openings
+openings:
+  what: >-
+    A token on one Focus Titan. Each Opening records the soldier who created it. Openings and their
+    creators are public.
+  created_by:
+    - Each success of a Body Part strike beyond Breaking the Body Part (body_part_strikes).
+    - Each success of a Break Attention beyond what it needs (data/engagement/attention.yaml, break_attention).
+    - Each success of a Nape strike that falls short, and Relentless (nape_strikes).
+    - A rule that names an Opening.
+  spending: >-
+    A soldier declaring a Nape strike against the Titan may spend Openings on it before rolling,
+    1 Bonus Die for each Opening spent (data/core/bonus-dice-sources.yaml, opening), within the
+    cap of 4.
+  own_openings: >-
+    A soldier can never spend an Opening they created. It stays on the Titan for other soldiers,
+    even if its creator dies or leaves.
+  erased: >-
+    Regeneration erases every Opening on the Titan (regeneration). The Titan's death erases them too.
+  no_limit: A Titan can hold any number of Openings.
+
+# ------------------------------------------------------------------ Regeneration
+regeneration:
+  clock: >-
+    Each Focus Titan has a Regeneration clock with as many segments as its regeneration_clock. It
+    is empty when the Titan becomes a Focus Titan.
+  tick: >-
+    At the regeneration end step of each round (data/engagement/round.yaml, end_steps), fill 1
+    segment of the clock of every living Focus Titan. A retreat does not stop it: only the Background
+    Titans' clocks and the retreat clock stop filling (data/engagement/background-titans.yaml, ticks,
+    stopped; decision batch 6, OQ-134).
+  when_full:
+    - Erase every Opening on the Titan.
+    - Set every Body Part's count to 0.
+    - >-
+      The most damaged Body Part moves one state toward Intact. A Broken Body Part is more damaged
+      than a Wounded one. Between equally damaged Body Parts, take the one listed first in the stat
+      block. If no Body Part is Wounded or Broken, this step does nothing.
+    - >-
+      If the step above moved a Body Part, every soldier who holds on-body relative to the Titan
+      rolls on the steam table (steam, triggers, regeneration-fill; decision batch 8, 8-7). If that
+      Body Part was a Broken leg and the Titan now has no Broken leg, it stands (grounded, ends).
+    - Empty the clock.
+  gm_choices: none
+
+# ------------------------------------------------------------------ a Titan's death
+# Decision batch 8, 8-7, 8-9, and 8-18 (OQ-138, OQ-146, OQ-151): the steam and the fall come after the relief
+# and the freed soldier and before the removals, and the body stays on the field as a corpse.
+titan_death:
+  cause: A Nape strike that reaches the Titan's Nape Depth. No other Phase 1 rule kills a Titan.
+  steps:
+    - id: relief
+      text: Every soldier who holds a Position in the Titan Engagement applies the nape-kill Stress relief (data/core/stress-changes.yaml, nape-kill).
+    - id: freed
+      text: >-
+        A soldier the Titan holds Grabbed is freed (data/engagement/grab.yaml, release, titan_dead).
+        For the steam and fall steps below they hold on-body relative to the dying body and are not
+        airborne, and a fall the release makes them take is resolved first (decision batch 8, 8-18).
+    - id: steam
+      text: >-
+        Every soldier who holds on-body or blind-spot relative to the dying Titan rolls on the steam
+        table (steam, triggers, kill).
+    - id: fall
+      text: >-
+        The body comes down (falling_titan). A Titan that was already grounded when it died falls no
+        second time: every soldier it pins stays Pinned, now under its corpse, and corpse heat begins
+        (falling_titan, corpse_heat).
+    - id: removals
+      text: The Titan's Openings, Next Behavior, Regeneration clock, flags, and remaining cards this round are removed.
+    - id: positions-end
+      text: Positions relative to the Titan end (data/engagement/positions.yaml, two_focus_titans, a_focus_titan_dies).
+    - id: corpse
+      text: >-
+        The body stays on the field as a corpse, and each soldier's last Position relative to the Titan
+        gives their Position relative to the corpse (data/engagement/positions.yaml, corpse).
+    - id: ending
+      text: >-
+        If no Focus Titan is alive and no soldier is Pinned, the Titan Engagement ends
+        (data/engagement/engagement-flow.yaml, ending, no-focus-titan).
+
+# ------------------------------------------------------------------ steam (decision batch 8, 8-7; OQ-138)
+steam:
+  what: >-
+    The scalding vapour a Titan's body gives off. Steam is damage (data/harm/health.yaml, harm_kinds,
+    damage) of Injury Type Burn, so it reaches the Critical Injury tables only at 0 current Health. It
+    is Titan harm that no Behavior Table entry deals: it rolls no Attack Dice, no Reaction answers it,
+    and a Critical Injury it inflicts takes no net success rider (ADR-0005 and ADR-0019, as amended in
+    decision batch 8).
+  injury_type: burn
+  injury_location: rolled   # of the Critical Injury it inflicts at 0 current Health (data/harm/critical-injuries.yaml, gaining)
+  triggers:
+    - id: kill
+      when: A Titan's death, at its steam step (titan_death).
+      who: >-
+        Every soldier who holds On Body or Blind Spot relative to the dying Titan, including a soldier
+        its death freed from its hand (titan_death, freed).
+    - id: regeneration-fill
+      when: >-
+        The Titan's Regeneration clock fills and a Body Part moves one state toward Intact
+        (regeneration, when_full). A fill that moves no Body Part releases no steam.
+      who: Every soldier who holds On Body relative to the Titan.
+  outside: A soldier who holds In Reach or Distant relative to the Titan, or no Position relative to it, rolls nothing.
+  roll: >-
+    Each soldier a trigger names rolls D6 once on the table and takes the damage its row gives. It is
+    a fixed roll, as the fall damage roll is (data/gear/falls.yaml): no Push, Help, Stress Dice, or
+    Talent changes it.
+  table:
+    roll: D6
+    rows:
+      - {results: {min: null, max: 3}, damage: 0}
+      - {results: {min: 4, max: 5}, damage: 1}
+      - {results: {min: 6, max: null}, damage: 2}
+  fear_roll: none   # no Fear Roll trigger is added; the list stays closed (ADR-0003, item 1)
+  gm_choices: none
+  decided: [OQ-138]
+
+# ------------------------------------------------------------------ the falling Titan (decision batch 8, 8-9, 8-17, 8-18)
+falling_titan:
+  summary: >-
+    When a Focus Titan dies or becomes grounded, every soldier in its path who is not airborne makes a
+    Leap Clear roll, which needs 1 success, or is Pinned with a Crush Critical Injury. A Pinned soldier
+    under a corpse takes corpse heat each turn. Heave toward the Heave rating, cutting the pinning Body
+    Part, or a living Titan standing frees them.
+  when:
+    - id: death
+      text: A Focus Titan dies (titan_death, fall), unless it was already grounded.
+    - id: grounding
+      text: A living Focus Titan becomes grounded (grounded, when).
+  titan_harm: >-
+    The falling body is Titan harm that no Behavior Table entry deals: it rolls no Attack Dice, no
+    Reaction answers it, and the pin's Critical Injury takes no net success rider (ADR-0019).
+  path:
+    in_it: Every soldier who holds On Body or Blind Spot relative to the falling Titan.
+    airborne: >-
+      An airborne soldier swings clear with no roll and keeps their Position (data/gear/odm-gear.yaml,
+      airborne).
+    outside: >-
+      In Reach and Distant are outside the path. So is a soldier Grabbed in another Titan's hand,
+      whatever Position they hold relative to the falling Titan, and a soldier the falling Titan holds
+      Grabbed when it becomes grounded, who stays Grabbed (decision batch 8, 8-18).
+    freed_at_death: >-
+      A soldier freed by the holding Titan's death is in the path: they hold On Body relative to the
+      dying body and are not airborne (titan_death, freed).
+  leap_clear:
+    who: Each soldier in the path who is not airborne, not Down, and not carried.
+    entry: leap-clear   # data/character/action-catalog.yaml: not an action and not a Reaction; it spends nothing
+    roll: >-
+      Agility, with Gear Dice from ODM Gear, or from the horse while the soldier is mounted, one item
+      (Chapter 1, section 1.3, step 6).
+    needs: 1
+    help: >-
+      Comrades who hold the roller's Position may Help, as Chapter 1, section 1.8 states, each spending
+      their action.
+    push: As Chapter 1, section 1.5. A Squadmate never Pushes.
+    success: >-
+      The soldier clears. They hold In Reach relative to the Titan; at a death, In Reach is their last
+      Position relative to it, which the corpse reads (data/engagement/positions.yaml, corpse).
+    failure: The soldier is Pinned (pinned).
+    down: A Down soldier in the path makes no roll and is Pinned.
+    carried: >-
+      A carried soldier makes no roll and follows their carrier. If the carrier clears, both hold In
+      Reach. If the carrier is Pinned, carrying ends and the comrade is Pinned too, with their own
+      Critical Injury at their own rolled Injury Location and their own pinning Body Part
+      (data/gear/carrying.yaml, carrying_a_comrade, ends; decision batch 8, 8-18).
+    not_a_reaction: >-
+      It spends no turn and no action, and it is made whatever the soldier has spent. It is not a
+      dodge (Chapter 1, section 1.9).
+  pinned:
+    id: pinned
+    name: Pinned
+    crush: >-
+      The soldier gains one Critical Injury of Injury Type Crush at a rolled Injury Location, which
+      cannot be lethal and takes no net success rider (pin_harm; data/harm/critical-injuries.yaml,
+      gaining).
+    pin_harm: {harm_kind: critical-injury, injury_location: rolled, injury_type: crush, cannot_be_lethal: true}
+    by: >-
+      An arm or leg result pins that limb, at its side: a limb pin. A torso or head result pins the
+      whole body: a body pin.
+    pinning_body_part:
+      limb_pin: >-
+        The Titan's Body Part of the same kind and side as the pin's Injury Location, by the stat block's
+        ids: a left arm result is pinned by left-arm, a right leg result by right-leg.
+      if_broken: If that Body Part is Broken, the other Body Part of its kind pins instead.
+      both_broken: >-
+        If both Body Parts of its kind are Broken, no Body Part pins. The pin stays a limb pin, and only
+        Heave or a living Titan standing frees the soldier.
+      body_pin: A body pin names no Body Part.
+      position: The soldier's Position at the fall plays no part.
+      map:
+        - {injury_location: arm, side: left, body_part: left-arm, if_broken: right-arm}
+        - {injury_location: arm, side: right, body_part: right-arm, if_broken: left-arm}
+        - {injury_location: leg, side: left, body_part: left-leg, if_broken: right-leg}
+        - {injury_location: leg, side: right, body_part: right-leg, if_broken: left-leg}
+        - {injury_location: torso, side: null, body_part: null, if_broken: null}
+        - {injury_location: head, side: null, body_part: null, if_broken: null}
+      decided: [OQ-151]   # decision batch 8, 8-17
+    position: >-
+      The soldier holds In Reach relative to the pinning body, the Titan or its corpse, and is not
+      airborne.
+    moves: >-
+      The soldier cannot move or be moved: their move changes nothing, and no rule changes their
+      Position relative to the pinning body while they are Pinned. Lift Comrade never takes them
+      (data/gear/carrying.yaml, lifting_a_comrade; decision batch 8, 8-18).
+    # Chapter 1's hook (section 1.9; ADR-0003, item 13) is the only route by which a state forbids Help,
+    # Covering, or Reactions. 8-9 names Reactions, and its closed list leaves Cover out for a limb pin and
+    # every action out for a body pin, so each row names what its list removes through the hook.
+    forbids: [cover, reaction]
+    body_pin_forbids: [help, cover, reaction]
+    action: >-
+      A limb-pinned soldier keeps their action and may take only the entries the Pinned list allows. A
+      body-pinned soldier has no action: it counts as spent for every rule that asks
+      (data/harm/effect-types.yaml, pinned).
+    entries: data/harm/effect-types.yaml (pinned)
+    cards: >-
+      Under a living grounded Titan, a card lands on a Pinned soldier as on any soldier who cannot make
+      a Reaction (data/engagement/behavior-procedure.yaml, resolving_a_card, reactions).
+    grab: A Grab cannot take hold of a Pinned soldier (data/engagement/grab.yaml, grab_lands, pinned_target).
+    forced_strike: A pending forced strike waits while the soldier is Pinned (data/harm/effect-types.yaml, forced-action; decision batch 8, 8-16).
+    standing: >-
+      A body-pinned soldier is not standing for the no-soldier-standing test, and a limb-pinned soldier who is
+      not Down is (data/engagement/engagement-flow.yaml, ending; decision batch 8, 8-20).
+    recorded: data/harm/sheet-fields.yaml (pinned)
+    ends: When the soldier is freed (freeing) or dies.
+  corpse_heat:
+    what: >-
+      The heat of an evaporating corpse. It is Titan harm that no Behavior Table entry deals (ADR-0005,
+      as amended in decision batch 8).
+    pinned: >-
+      A soldier Pinned under a corpse gains one Critical Injury of Injury Type Burn at the start of each
+      of their turns, beginning with their first turn that begins after the fall, at the pinned Injury
+      Location: the pinned limb at its side, or the torso for a body pin. It can be lethal, counts
+      toward worsening and takes it as any Critical Injury does, and takes no net success rider. Every
+      turn counts, as for a turn time limit (data/harm/death-rolls.yaml, time_limits, turn).
+    heat_harm: {harm_kind: critical-injury, injury_location: the pinned Injury Location, injury_type: burn, cannot_be_lethal: false}
+    living_titan: >-
+      A soldier Pinned under a living grounded Titan takes no heat. If that Titan dies, heat begins at
+      the start of their first turn that begins after its death.
+    lost_limb: >-
+      A limb-pinned soldier whose pinned arm or leg is lost, as at the 13-or-more row of its table,
+      stays limb-pinned. The pin keeps its pinning Body Part (pinned, pinning_body_part), Heave and
+      cutting that Body Part still free them (freeing), and the lost-limb grade applies at once
+      (data/harm/critical-injuries.yaml, lost_limb_riders). Losing the limb frees no one, and the
+      freeing list stays closed (decision batch 8, 8-41).
+    heave: >-
+      A soldier who makes a Heave against a corpse takes 1 Burn damage after the roll, whatever its
+      result (data/harm/health.yaml, harm_kinds, damage). A Critical Injury it inflicts at 0 current
+      Health lands at an arm, its side rolled (data/harm/critical-injuries.yaml, sides, side_roll).
+  heave:
+    entry: heave   # data/character/action-catalog.yaml: an action, Strength, no Gear Dice
+    who: >-
+      A soldier who holds In Reach or On Body relative to a body that pins at least one soldier, and who
+      is not Down, Grabbed, carried, or body-pinned. A limb-pinned soldier may Heave the body that pins
+      them.
+    spends: the soldier's action
+    help: >-
+      Comrades who hold the heaver's Position may Help, as Chapter 1, section 1.8 states, each spending
+      their action.
+    push: As Chapter 1, section 1.5.
+    each_success: Adds 1 to the body's heave count.
+    frees: >-
+      When the heave count reaches the body's Heave rating, every soldier the body pins is freed. The
+      Heave rating is the Size Class's (data/engagement/size-classes.yaml, heave), or an Abnormal's own
+      (data/titans/).
+    count: >-
+      The heave count belongs to the body, is public, starts at 0, and is cleared only when a living Titan
+      stands (grounded, ends): not at a Regeneration fill, not at the Titan's death, when it carries to the
+      corpse, and not between Heaves by different soldiers. A Heave with 0 successes never frees anyone
+      (decision batch 8, 8-22; OQ-158).
+    corpse: A Heave against a corpse costs the heaver corpse heat (corpse_heat, heave).
+  cut_free:
+    entry: body-part-strike   # body_part_strikes, as it stands; no new roll (decision batch 8, 8-17)
+    target: The pinning Body Part of a limb pin (pinned, pinning_body_part).
+    from: >-
+      In Reach or On Body relative to the pinning body. The limb-pinned soldier holds In Reach and may
+      strike it themselves.
+    odm_gear: >-
+      None needed. A corpse counts as grounded, and a living Titan that pins is grounded, which lifts
+      the need (grounded).
+    resolving: >-
+      As body_part_strikes: each success adds 1 to the Body Part's count toward its Toughness. When it
+      becomes Broken, every soldier that Body Part pins is freed.
+    living_titan: >-
+      On a living Titan the strike sets the just-hurt flag, successes beyond Breaking the part create
+      Openings, and the Broken part does what its kind's when_broken states.
+    corpse: >-
+      A corpse's Body Parts keep their state, count, and Toughness, and never regenerate. A strike
+      against a corpse sets no flag and creates no Opening, since a corpse holds no Attention and plays
+      no cards.
+    body_pin: A body-pinned soldier is never freed by a Body Part strike.
+    help: As on any Body Part strike (Chapter 1, section 1.8).
+  freeing:
+    - Heave (heave).
+    - Cutting the pinning Body Part, for a limb pin (cut_free).
+    - A living Titan that stops being grounded frees every soldier it pins (grounded, ends).
+    - >-
+      The end of the Titan Engagement frees no one (data/engagement/engagement-flow.yaml, ending,
+      pinned_at_the_end).
+  freed: >-
+    A freed soldier stops being Pinned and holds In Reach relative to the body. The pin's Critical
+    Injury stays, as every Critical Injury does.
+  corpse: data/engagement/positions.yaml (corpse)
+  ending: data/engagement/engagement-flow.yaml (ending, no-focus-titan)
+  fear_roll: none   # no Fear Roll trigger is added; the list stays closed (ADR-0003, item 1)
+  gm_choices: none   # the GM never picks who is in the path, a location, a pinning Body Part, or when heat falls
+  decided: [OQ-146, OQ-151]

@@ -1,0 +1,1441 @@
+"""Renders the rulebook's tables from data/ YAML into Chapters 2 to 5 and 7 of docs/rules/ (ADR-0012).
+
+Run from the repository root with PyYAML:
+- `uv run --with pyyaml python tools/render/render.py write` replaces every rendered block in Chapters 2 to 5 and 7.
+  `render.py write docs/rules/07-playtest-rules.md` (one or more chapter paths) rewrites only those chapters, so a
+  drafter can render under one chapter's lock while other packages edit the rest.
+- `uv run --with pyyaml python tools/render/render.py check` exits 1 if any rendered block differs from its YAML,
+  names a source other than the file it renders, is unknown, is missing from its chapter, or appears twice.
+- `uv run --with pyyaml python tools/render/render.py list` prints every block with its chapter and source.
+
+A rendered block sits between `<!-- BEGIN RENDERED: name from data/....yaml -->` and
+`<!-- END RENDERED: name -->`. The source named is the file whose rows the block renders; names of entries,
+Talents, attributes, items, Positions, and Titans are looked up in their own files. Nothing between the markers
+is written by hand.
+
+Every renderer checks the keys of the rows it reads, so a value that YAML silently splits into extra keys (an
+unquoted comma or colon in a flow mapping) fails the check instead of rendering half a rule.
+
+Chapter 6's stat blocks, Behavior Tables, and probe figures stay on tools/probes/chapter-06/render.py, whose
+blocks read titans.py's share enumeration and the collected probe results; check them with `render.py check`
+in that folder.
+"""
+import os
+import re
+import sys
+
+import yaml
+
+sys.dont_write_bytecode = True
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+CH2 = "docs/rules/02-character-creation.md"
+CH3 = "docs/rules/03-harm-and-mind.md"
+CH4 = "docs/rules/04-gear.md"
+CH5 = "docs/rules/05-titan-engagement.md"
+CH7 = "docs/rules/07-playtest-rules.md"
+CHAPTERS = [CH2, CH3, CH4, CH5, CH7]
+
+ATTR = "data/character/attributes.yaml"
+ORIG = "data/character/origins.yaml"
+ENL = "data/character/enlistment.yaml"
+TY = "data/character/training-years.yaml"
+CR = "data/character/class-rank.yaml"
+EXAM = "data/character/graduation-exam.yaml"
+SPEC = "data/character/specialties.yaml"
+TAL = "data/character/talents.yaml"
+CAT = "data/character/action-catalog.yaml"
+SQ = "data/character/squadmates.yaml"
+CI = "data/harm/critical-injuries.yaml"
+EFF = "data/harm/effect-types.yaml"
+SR = "data/mind/stress-responses.yaml"
+FR = "data/mind/fear-rolls.yaml"
+SC = "data/mind/scars.yaml"
+FALL = "data/gear/falls.yaml"
+ISSUE = "data/gear/standard-issue.yaml"
+ITEMS = "data/gear/items.yaml"
+SUP = "data/gear/squad-supply.yaml"
+SETUP = "data/engagement/engagement-setup.yaml"
+ANCH = "data/engagement/anchor-ratings.yaml"
+SIZE = "data/engagement/size-classes.yaml"
+POSN = "data/engagement/positions.yaml"
+TIDX = "data/titans/index.yaml"
+LEGS = "data/expedition/legs.yaml"
+HAZ = "data/expedition/hazards.yaml"
+ROUTE = "data/expedition/route.yaml"
+DOWN = "data/campaign/downtime.yaml"
+REQ = "data/campaign/requisition.yaml"
+SKIR = "data/skirmish/skirmish.yaml"
+FOES = "data/skirmish/foes.yaml"
+
+_CACHE = {}
+
+
+class RenderError(Exception):
+    pass
+
+
+def load(rel):
+    if rel not in _CACHE:
+        with open(os.path.join(ROOT, rel)) as fh:
+            _CACHE[rel] = yaml.safe_load(fh)
+    return _CACHE[rel]
+
+
+# ------------------------------------------------------------------ formatting
+def cell(v):
+    if isinstance(v, bool):
+        raise RenderError(f"a true/false value reached a table cell unformatted: {v}")
+    if v is None:
+        raise RenderError("an empty value reached a table cell")
+    return " ".join(str(v).split()).replace("|", "\\|")
+
+
+def table(headers, rows):
+    out = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
+    for r in rows:
+        if len(r) != len(headers):
+            raise RenderError(f"row has {len(r)} cells for {len(headers)} columns: {r}")
+        out.append("| " + " | ".join(cell(c) for c in r) + " |")
+    return "\n".join(out)
+
+
+def expect_keys(row, allowed, where, required=()):
+    extra = set(row) - set(allowed)
+    if extra:
+        raise RenderError(f"{where}: unexpected keys {sorted(map(str, extra))} (an unquoted comma or colon splits a value)")
+    missing = [k for k in required if k not in row]
+    if missing:
+        raise RenderError(f"{where}: missing keys {missing}")
+
+
+def yes_no(v):
+    if not isinstance(v, bool):
+        raise RenderError(f"expected true or false, got {v!r}")
+    return "yes" if v else "no"
+
+
+def runs(values):
+    """Die results as ranges: [11, 12, 13] reads 11–13."""
+    vals = sorted(values)
+    parts, start, prev = [], vals[0], vals[0]
+    for v in vals[1:]:
+        if v == prev + 1:
+            prev = v
+            continue
+        parts.append((start, prev))
+        start = prev = v
+    parts.append((start, prev))
+    return ", ".join(str(a) if a == b else f"{a}–{b}" for a, b in parts)
+
+
+def bounds(lo, hi):
+    """A min and max where null is open-ended."""
+    if lo is None and hi is None:
+        return "any"
+    if lo is None:
+        return f"{hi} or less"
+    if hi is None:
+        return f"{lo} or more"
+    return str(lo) if lo == hi else f"{lo}–{hi}"
+
+
+def signed(n):
+    return f"+{n}" if n > 0 else str(n)
+
+
+def chapter(ref):
+    m = re.match(r"^(\d\d)-", ref)
+    if m:
+        return f"Chapter {int(m.group(1))}"
+    if ref == "rules-not-yet-written":
+        return "not yet written"
+    return ref
+
+
+# ------------------------------------------------------------------ lookups
+def attr_name(aid):
+    names = {a["id"]: a["name"] for a in load(ATTR)["attributes"]}
+    if aid not in names:
+        raise RenderError(f"unknown attribute {aid}")
+    return names[aid]
+
+
+def specialty_name(sid):
+    names = {s["id"]: s["name"] for s in load(SPEC)["specialties"]}
+    if sid not in names:
+        raise RenderError(f"unknown Specialty {sid}")
+    return names[sid]
+
+
+def catalog():
+    return {e["id"]: e for e in load(CAT)["entries"]}
+
+
+def entry_status(e):
+    return "dormant" if e.get("dormant") else "reserved" if e.get("reserved") else None
+
+
+def entry_name(eid, status=True):
+    cat = catalog()
+    if eid not in cat:
+        raise RenderError(f"unknown Action Catalog entry {eid}")
+    e = cat[eid]
+    st = entry_status(e)
+    return f"{e['name']} ({st})" if status and st else e["name"]
+
+
+def talents():
+    return {t["id"]: t for t in load(TAL)["talents"]}
+
+
+def talent_name(tid, status=True):
+    ts = talents()
+    if tid not in ts:
+        raise RenderError(f"unknown Talent {tid}")
+    t = ts[tid]
+    if status:
+        flags = [entry_status(catalog()[e]) for e in t["names"]]
+        if all(flags):
+            return f"{t['name']} ({' or '.join(sorted(set(flags)))})"
+    return t["name"]
+
+
+def item_name(iid):
+    names = {i["id"]: i["name"] for i in load(ITEMS)["items"]}
+    if iid not in names:
+        raise RenderError(f"unknown gear item {iid}")
+    return names[iid]
+
+
+def position_name(pid):
+    names = {p["id"]: p["name"] for p in load(POSN)["positions"]}
+    if pid not in names:
+        raise RenderError(f"unknown Position {pid}")
+    return names[pid]
+
+
+def titan_name(tid):
+    return load(f"data/titans/{tid}.yaml")["name"]
+
+
+EFFECT_KEYS = {"type", "dice", "entries", "amount", "turns", "text", "toward", "applies_to", "applies_after"}
+# decision batch 7, 7-8 (OQ-139): where a Fear Roll row's forced-move effect steps (data/harm/effect-types.yaml)
+TOWARD = {"distant": "Distant", "nearest-comrade": "the nearest comrade"}
+
+
+def effect(e):
+    expect_keys(e, EFFECT_KEYS, f"effect {e.get('type')}", required=("type",))
+    known = {t["id"] for t in load(EFF)["effect_types"]}
+    t = e["type"]
+    if t not in known:
+        raise RenderError(f"effect type {t} is not in {EFF}")
+    if t == "penalty":
+        base = f"{e['dice']}-die penalty on " + ", ".join(entry_name(x, False) for x in e["entries"])
+    elif t == "next-roll-penalty":
+        base = f"{e['dice']}-die penalty on the next roll"
+    elif t == "stress-gain":
+        base = f"gain {e['amount']} Stress"
+    elif t == "push-stress":
+        base = f"{e['amount']} extra Stress on every Push"
+    elif t == "lose-successes":
+        base = f"lose {e['amount']} success" + ("" if e["amount"] == 1 else "es")
+    elif t == "zero-successes":
+        base = "the roll fails"
+    elif t == "spend-next-turn":
+        base = "next turn spent" if e["turns"] == 1 else f"next {e['turns']} turns spent"
+    elif t == "spend-next-action":
+        base = "next action spent"
+    elif t == "no-reactions":
+        base = "no Reactions"
+    elif t == "fear-roll-total":
+        base = f"Fear Roll total +{e['amount']}"
+    elif t == "gain-scar":
+        base = "gain a Scar"
+    # decision batch 7, 7-8 (OQ-139): the six effect types a Fear Roll row may add
+    elif t == "draw-attention":
+        base = "the loudest flag on the event's Titan, never from Distant"
+    elif t == "stress-gain-nearby":
+        base = f"comrades within 1 Position step gain {e.get('amount', 1)} Stress"
+    elif t == "forced-move":
+        base = f"1 step toward {lookup(TOWARD, e.get('toward'), 'forced-move toward')} at the start of the next turn"
+    elif t == "forced-action":
+        base = "next action a strike on the event's Titan, Pushed if short"
+    elif t == "drop-blade-set":
+        base = "drop the Blade Set in the handles"
+    elif t == "gas-roll":
+        base = "a Gas Roll at once"
+    elif t == "forbids-entries":
+        base = "cannot take " + ", ".join(entry_name(x, False) for x in e["entries"])
+    elif t == "other":
+        base = e["text"]
+    else:
+        raise RenderError(f"effect type {t} has no rendering")
+    if e.get("applies_to"):
+        base += f" ({e['applies_to']})"
+    if e.get("applies_after"):
+        base += f", after {e['applies_after']}"
+    return base
+
+
+def effects(lst, empty):
+    return "; ".join(effect(e) for e in lst) if lst else empty
+
+
+# ------------------------------------------------------------------ Chapter 2
+def b_attributes():
+    rows = []
+    for a in load(ATTR)["attributes"]:
+        expect_keys(a, {"id", "name", "summary", "used_by", "key_attribute_of"}, f"{ATTR} {a.get('id')}")
+        rows.append([a["name"], a["summary"], ", ".join(entry_name(x) for x in a["used_by"]),
+                     ", ".join(specialty_name(s) for s in a["key_attribute_of"])])
+    return table(["Attribute", "Covers", "Action Catalog entries that name it", "Key attribute of"], rows)
+
+
+def b_origins():
+    d = load(ORIG)
+    rows = []
+    for r in d["rows"]:
+        expect_keys(r, {"id", "results", "name", "description", "attributes", "talent_choice", "haven_choice",
+                        "canon_tie", "condition"}, f"{ORIG} {r.get('id')}")
+        tie = f"{r['canon_tie']['character']}: {r['canon_tie']['link']}" if r["canon_tie"] else "none"
+        if r["condition"] is None:
+            cond = "no condition"
+        else:
+            parts = []
+            for k, v in r["condition"].items():
+                if k not in d["condition_fields"]:
+                    raise RenderError(f"{ORIG} {r['id']}: condition {k} is not in condition_fields")
+                if k == "campaign_year_min":
+                    parts.append(f"Campaign Year {v} or later")
+                else:
+                    raise RenderError(f"{ORIG}: condition {k} has no rendering")
+            cond = "; ".join(parts)
+        rows.append([runs(r["results"]), r["name"], ", ".join(attr_name(a) for a in r["attributes"]),
+                     " or ".join(talent_name(t) for t in r["talent_choice"]), "<br>".join(r["haven_choice"]),
+                     tie, cond, r["description"]])
+    return ("**Origin (D66)**\n\n" +
+            table(["D66", "Origin", "+1 to each", "Talent level 1 in one of", "Haven, one of", "Canon Tie (optional)",
+                   "Keep the row only with", "Description"], rows))
+
+
+def b_enlistment():
+    rows = []
+    for r in load(ENL)["rows"]:
+        expect_keys(r, {"id", "results", "reason", "attribute", "drive"}, f"{ENL} {r.get('id')}")
+        dv = r["drive"]
+        expect_keys(dv, {"id", "name", "trigger", "test", "acts", "target", "needs_named_comrade", "notes"},
+                    f"{ENL} {r['id']} drive")
+        trigger = dv["trigger"] + (" " + dv["notes"] if dv.get("notes") else "")
+        acts = ", ".join("Push" if a == "push" else entry_name(a, False) for a in dv.get("acts", [])) or "none"
+        rows.append([runs(r["results"]), r["reason"], attr_name(r["attribute"]), dv["name"], trigger,
+                     f"`{dv['test']}`", acts, f"`{dv['target']}`", yes_no(dv["needs_named_comrade"])])
+    return ("**Why You Enlisted (D66)**\n\n" +
+            table(["D66", "Why you enlisted", "+1", "Drive", "Trigger", "Test", "Acts", "Target",
+                   "Needs a named comrade"], rows))
+
+
+def b_training_years():
+    rows = []
+    for y in load(TY)["years"]:
+        rows.append([y["name"], " and ".join(attr_name(a) for a in y["performance_attributes"]),
+                     ", ".join(talent_name(t) for t in y["curriculum"])])
+    return (table(["Training Year", "Performance attributes", "Curriculum"], rows) +
+            "\n\nA Talent marked dormant or reserved names only dormant or reserved Action Catalog entries (section 2.8).")
+
+
+def b_year(yid):
+    years = {y["id"]: y for y in load(TY)["years"]}
+    y = years[yid]
+    rows = []
+    for e in y["events"]:
+        expect_keys(e, {"results", "name", "description", "attribute", "talent_choice", "merit_change"},
+                    f"{TY} {yid} {e.get('name')}")
+        rows.append([runs(e["results"]), e["name"], attr_name(e["attribute"]),
+                     " or ".join(talent_name(t) for t in e["talent_choice"]), signed(e["merit_change"]), e["description"]])
+    return (f"**{y['name']}: events (D66)**\n\n" +
+            table(["D66", "Event", "+1", "Talent level in one of", "Merit", "Description"], rows))
+
+
+def b_merit():
+    rows = []
+    for r in load(TY)["performance_roll"]["merit_from_successes"]:
+        expect_keys(r, {"successes_min", "successes_max", "merit"}, f"{TY} merit_from_successes")
+        rows.append([bounds(r["successes_min"], r["successes_max"]), r["merit"]])
+    return table(["Performance roll successes", "Merit"], rows)
+
+
+def b_class_rank():
+    rows = []
+    for r in load(CR)["rows"]:
+        expect_keys(r, {"merit_min", "merit_max", "class_rank", "top_10"}, f"{CR} row")
+        rows.append([bounds(r["merit_min"], r["merit_max"]), r["class_rank"], yes_no(r["top_10"])])
+    return table(["Merit total", "Class Rank", "Top 10"], rows)
+
+
+def merit_rule(rows):
+    for r in rows:
+        expect_keys(r, {"successes_min", "successes_max", "merit"}, f"{EXAM} merit")
+    return "; ".join(f"{bounds(r['successes_min'], r['successes_max'])} successes: {r['merit']} Merit" for r in rows)
+
+
+def b_exam():
+    d = load(EXAM)
+    trials = {t["id"]: t for t in d["trials"]}
+    rows = []
+    for i, tid in enumerate(d["order"], 1):
+        t = trials[tid]
+        if "entry" in t:
+            entry, gear = entry_name(t["entry"], False), t["gear_item"] or "none"
+        else:
+            entry, gear = "one of the entry choices below", "listed with each choice"
+        help_ = "none" if t["help"] == "none" else "fixed by the Trial's roll order (see the list below)"
+        rows.append([i, t["name"], entry, gear, yes_no(t["push"]), help_, merit_rule(t["merit"])])
+    out = table(["Order", "Trial", "Action Catalog entry", "Gear item", "Can be Pushed", "Help", "Merit"], rows)
+    for t in d["trials"]:
+        if "entry_choice" in t:
+            choices = []
+            for c in t["entry_choice"]:
+                expect_keys(c, {"entry", "gear_item"}, f"{EXAM} entry_choice")
+                choices.append([entry_name(c["entry"], False), c["gear_item"] or "none"])
+            out += (f"\n\n**{t['name']}: entry choices** (each needs {t['needs']} successes)\n\n" +
+                    table(["Entry", "Gear item"], choices))
+    return out
+
+
+def b_specialties():
+    rows = []
+    for s in load(SPEC)["specialties"]:
+        expect_keys(s, {"id", "name", "key_attribute", "summary", "talents", "squadmate_template"}, f"{SPEC} {s.get('id')}")
+        rows.append([s["name"], attr_name(s["key_attribute"]), s["summary"], ", ".join(talent_name(t) for t in s["talents"])])
+    general = load(SPEC).get("general")   # decision batch 7, 7-2: the general list of twelve
+    if general:
+        expect_keys(general, {"id", "name", "summary", "talents"}, f"{SPEC} general", required=("name", "summary", "talents"))
+        rows.append([general["name"], "none", general["summary"], ", ".join(talent_name(t) for t in general["talents"])])
+    return table(["Specialty", "Key attribute", "Summary", "Talent list"], rows)
+
+
+def b_templates():
+    attrs = [a["id"] for a in load(ATTR)["attributes"]]
+    rows = []
+    for t in load(SQ)["templates"]:
+        expect_keys(t, {"id", "specialty", "attributes", "talent", "health", "resolve"}, f"{SQ} template {t.get('id')}")
+        if set(t["attributes"]) != set(attrs):
+            raise RenderError(f"{SQ} template {t['id']}: attributes {sorted(t['attributes'])}")
+        rows.append([specialty_name(t["specialty"])] + [t["attributes"][a] for a in attrs] +
+                    [f"{talent_name(t['talent']['id'], False)} {t['talent']['level']}", t["health"], t["resolve"]])
+    return table(["Template"] + [attr_name(a) for a in attrs] + ["Talent", "Health", "Resolve"], rows)
+
+
+def b_squadmate_rules():
+    rows = []
+    for r in load(SQ)["rules_applicability"]:
+        expect_keys(r, {"rule", "applies", "source", "note"}, f"{SQ} rules_applicability", required=("rule", "applies"))
+        applies = yes_no(r["applies"]) if isinstance(r["applies"], bool) else r["applies"]
+        rows.append([r["rule"], applies, chapter(r["source"]) if r.get("source") else "none", r.get("note", "none")])
+    return table(["Rule", "Applies to a Squadmate", "Chapter", "Note"], rows)
+
+
+TALENT_KEYS = {"id", "name", "description", "type", "max_level", "names", "specialties", "decided", "trigger", "effect",
+               "limit", "rules", "condition"}
+
+
+# The limit terms a rule Talent may use (data/character/talents.yaml, talent_rules, limit_terms; ADR-0016,
+# Talent guardrail 8). A limit id must appear both here and in limit_terms.
+LIMIT_NAMES = {"once_per_titan_engagement": "once per Titan Engagement", "once_per_leg": "once per Leg",
+               "once_per_night_camp": "once per Night Camp", "once_per_skirmish": "once per Skirmish",
+               "once_per_downtime": "once per Downtime"}
+
+
+DATA_REF = re.compile(r"\(data/[^)]*\)")
+
+
+def id_names(text):
+    """Player text names Action Catalog entries by name, not id (review round 1, R46). A reference to a data
+    file, "(data/...)", keeps its keys as written."""
+    cat = catalog()
+    ids = re.compile(r"(?<![A-Za-z0-9_/.\-])(" + "|".join(re.escape(i) for i in sorted(cat, key=len, reverse=True)) +
+                     r")(?![A-Za-z0-9_\-])")
+    out, pos = [], 0
+    for m in DATA_REF.finditer(text):
+        out.append(ids.sub(lambda x: cat[x.group(1)]["name"], text[pos:m.start()]))
+        out.append(m.group(0))
+        pos = m.end()
+    out.append(ids.sub(lambda x: cat[x.group(1)]["name"], text[pos:]))
+    return "".join(out)
+
+
+def b_talents(kind):
+    limits = load(TAL)["talent_rules"]["limit_terms"]
+    general = set((load(SPEC).get("general") or {}).get("talents", []))
+    rows = []
+    for t in load(TAL)["talents"]:
+        expect_keys(t, TALENT_KEYS, f"{TAL} {t.get('id')}")
+        if t["type"] != kind:
+            continue
+        cond = t.get("condition") or {}
+        for x in cond:
+            if x not in t["names"]:
+                raise RenderError(f"{TAL} {t['id']}: condition names {x}, which the Talent does not name")
+        names = ", ".join(entry_name(x) + (f" ({cond[x]})" if x in cond else "") for x in t["names"])
+        if t["id"] in general and t["specialties"]:
+            raise RenderError(f"{TAL} {t['id']}: on the general list and on a Specialty's list")
+        specs = ", ".join(specialty_name(s) for s in t["specialties"]) or ("General" if t["id"] in general else "none")
+        if kind == "dice":
+            rows.append([t["name"], names, t["max_level"], specs, t["description"]])
+        else:
+            if t["limit"] == "none":
+                limit = "none"
+            elif t["limit"] in limits and t["limit"] in LIMIT_NAMES:
+                limit = LIMIT_NAMES[t["limit"]]
+            else:
+                raise RenderError(f"{TAL} {t['id']}: limit {t['limit']} has no rendering")
+            rows.append([t["name"], names, id_names(t["trigger"]), id_names(t["effect"]), limit, t["max_level"], specs,
+                         t["description"]])
+    if kind == "dice":
+        return table(["Talent", "Names", "Max level", "Specialty lists", "Description"], rows)
+    return table(["Talent", "Names", "Trigger", "Effect", "Limit", "Max level", "Specialty lists", "Description"], rows)
+
+
+ENTRY_KEYS = {"id", "name", "kind", "rolled", "attribute", "gear", "requires_gear", "without_gear", "context",
+              "requirements", "needs", "changes", "help_outside_titan_engagement", "rules", "decided", "adrs", "notes",
+              "option_of", "reserved", "dormant"}
+KIND = {"action": "action", "reaction": "Reaction", "roll": "roll", "option": "option", "fixed-roll": "fixed roll"}
+ROLLED = {"when_taken": "when taken", "when_a_rule_calls": "when a rule calls for it", "never": "never"}
+CONTEXT = {"titan-engagement": "in a Titan Engagement", "any": "anywhere", "lifepath": "in the Lifepath"}
+WITHOUT = {"not_possible": "yes; without it the entry cannot be used", "attribute_alone": "yes; without it, attribute alone"}
+
+
+def lookup(table_, key, where):
+    if key not in table_:
+        raise RenderError(f"{where}: {key!r} has no rendering")
+    return table_[key]
+
+
+def b_catalog():
+    rows = []
+    for e in load(CAT)["entries"]:
+        expect_keys(e, ENTRY_KEYS, f"{CAT} {e.get('id')}")
+        where = f"{CAT} {e['id']}"
+        if e["attribute"] is None:
+            attribute = "none"
+        elif e["attribute"] == "from_performance_attributes":
+            attribute = "the Training Year's performance attribute"
+        else:
+            attribute = attr_name(e["attribute"])
+        gear = e.get("gear", [])
+        if e.get("requires_gear") is True:
+            needs_gear = lookup(WITHOUT, e["without_gear"], where)
+        elif e.get("requires_gear") is False and gear:
+            needs_gear = "no"
+        else:
+            needs_gear = "not applicable"
+        rows.append([e["name"], f"`{e['id']}`", lookup(KIND, e["kind"], where), lookup(ROLLED, e["rolled"], where),
+                     attribute, ", ".join(item_name(g) for g in gear) or "none", needs_gear,
+                     lookup(CONTEXT, e["context"], where), entry_status(e) or "none"])
+    return table(["Entry", "Id", "Kind", "Rolled", "Attribute", "Gear items", "Needs its gear", "Used", "Status"], rows)
+
+
+def tracked_values():
+    tvs = load(CAT)["tracked_values"]
+    for tv in tvs:
+        expect_keys(tv, {"id", "name", "rules", "changed_by"}, f"{CAT} tracked_values {tv.get('id')}")
+    return {tv["id"]: tv for tv in tvs}
+
+
+def b_catalog_requirements():
+    tvs = tracked_values()
+    rows = []
+    for e in load(CAT)["entries"]:
+        expect_keys(e, ENTRY_KEYS, f"{CAT} {e.get('id')}")
+        req = e.get("requirements")
+        if e.get("option_of"):
+            req = f"Option of {e['option_of']}. " + (req or "")
+        elif req is None:
+            req = "none"
+        changes = ", ".join(lookup({k: v["name"] for k, v in tvs.items()}, c, f"{CAT} {e['id']} changes")
+                            for c in e.get("changes", [])) or "none"
+        rows.append([e["name"], req.strip(), e.get("needs", "none"), changes, e.get("help_outside_titan_engagement", "none"),
+                     e.get("notes", "none"), ", ".join(chapter(r) for r in e.get("rules", [])) or "none"])
+    return table(["Entry", "Requirements", "Needs", "Changes", "Help outside a Titan Engagement", "Notes", "Rules in"], rows)
+
+
+def b_tracked_values():
+    entries = load(CAT)["entries"]
+    rows = []
+    for tid, tv in tracked_values().items():
+        by = ", ".join(e["name"] for e in entries if tid in e.get("changes", [])) or "none"
+        rows.append([f"`{tid}`", tv["name"], by, tv.get("changed_by", "none"), ", ".join(chapter(r) for r in tv["rules"])])
+    return table(["Id", "Tracked value", "Entries that change it", "Otherwise changed by", "Rules in"], rows)
+
+
+# ------------------------------------------------------------------ Chapter 3
+def injury_types():
+    """The Injury Types in their file order (ADR-0017), as {id: name}."""
+    out = {}
+    for t in load(CI)["types"]:
+        expect_keys(t, {"id", "name", "named_by"}, f"{CI} types {t.get('id')}", required=("id", "name", "named_by"))
+        out[t["id"]] = t["name"]
+    return out
+
+
+def b_injury_types():
+    rows = [[t["name"], t["named_by"]] for t in load(CI)["types"] if t["id"] in injury_types()]
+    return table(["Injury Type", "Named by"], rows)
+
+
+def b_injury_location():
+    d = load(CI)
+    sides = d["sides"]
+    rows = []
+    for r in d["injury_location_table"]["rows"]:
+        expect_keys(r, {"results", "injury_location", "side"}, f"{CI} injury_location_table",
+                    required=("results", "injury_location", "side"))
+        sided = r["injury_location"] in sides["sided_locations"]
+        if sided != (r["side"] is not None) or (sided and r["side"] not in sides["values"]):
+            raise RenderError(f"{CI} injury_location_table: {r['injury_location']} has side {r['side']!r}")
+        where = f"{r['side']} {r['injury_location']}" if sided else r["injury_location"]
+        rows.append([bounds(r["results"]["min"], r["results"]["max"]), where])
+    roll = sides["side_roll"]
+    expect_keys(roll, {"when", "roll", "odd", "even"}, f"{CI} sides side_roll")
+    return (table(["D6", "Injury Location"], rows) +
+            f"\n\n**Side, when a rule names {' or '.join(sides['sided_locations'])} without one ({roll['roll']}):** "
+            f"odd, {roll['odd']}; even, {roll['even']}.")
+
+
+CI_KEYS = {"id", "names", "results", "down", "lethal", "time_limit", "death_roll_penalty", "instant_death", "effects",
+           "healing_days", "permanent_effects", "repeat_row"}
+RIDER_KEYS = {"rows", "all_rows", "lethal_rows", "sets", "treat_injury"}
+# decision batch 8, 8-8 and 8-15 (OQ-138, OQ-150): the fields a type rider sets, beside the Bite rider's time_limit
+RIDER_FIELDS = {"time_limit": lambda v: f"a `{v}` limit",
+                "healing_days_multiplier": lambda v: "healing days doubled" if v == 2 else f"healing days multiplied by {v}",
+                "heals_untreated": lambda v: "no healing while untreated" if v is False else None}
+
+
+def listed(parts):
+    parts = list(parts)
+    return " and ".join(parts) if len(parts) <= 2 else ", ".join(parts[:-1]) + ", and " + parts[-1]
+
+
+def rider_clause(rd, row_ref, where):
+    """One type rider as a clause: the rows it picks (rows, all_rows, or lethal_rows), then what it sets and what
+    it asks of Treat Injury (data/harm/critical-injuries.yaml, table_fields, type_riders)."""
+    expect_keys(rd, RIDER_KEYS, where)
+    picks = [k for k in ("rows", "all_rows", "lethal_rows") if k in rd]
+    if len(picks) != 1:
+        raise RenderError(f"{where}: a rider picks its rows by exactly one of rows, all_rows, and lethal_rows")
+    if picks[0] == "rows":
+        subject, verb = listed(row_ref(x) for x in rd["rows"]), ("has" if len(rd["rows"]) == 1 else "have")
+    elif rd[picks[0]] is not True:
+        raise RenderError(f"{where}: {picks[0]} {rd[picks[0]]!r}")
+    else:
+        subject, verb = ("every row" if picks[0] == "all_rows" else "every lethal row"), "has"
+    parts = []
+    for field, value in (rd.get("sets") or {}).items():
+        text = RIDER_FIELDS[field](value) if field in RIDER_FIELDS else None
+        if text is None:
+            raise RenderError(f"{where}: {field} {value!r} has no rendering")
+        parts.append(text)
+    ti = rd.get("treat_injury")
+    if ti == "requires_kit_or_supplies":
+        parts.append("Treat Injury only with a medical kit or medical supplies")
+    elif isinstance(ti, dict) and set(ti) == {"penalty"} and isinstance(ti["penalty"], int):
+        parts.append(f"a {ti['penalty']}-die penalty on Treat Injury")
+    elif ti is not None:
+        raise RenderError(f"{where}: treat_injury {ti!r} has no rendering")
+    if not parts:
+        raise RenderError(f"{where}: the rider sets nothing")
+    return f"{subject} {verb} {listed(parts)}"
+
+
+def row_names(r):
+    types = injury_types()
+    if set(r["names"]) != set(types):
+        raise RenderError(f"{CI} {r['id']}: names {sorted(r['names'])} are not one per Injury Type {sorted(types)}")
+    return "<br>".join(f"{name}: {r['names'][tid]}" for tid, name in types.items())
+
+
+def b_critical_injuries(loc):
+    d = load(CI)
+    tab = d["tables"][loc]
+    expect_keys(tab, {"injury_location", "non_lethal_cap", "type_riders", "rows"}, f"{CI} tables {loc}")
+    by_id = {r["id"]: r for r in tab["rows"]}
+
+    def row_ref(rid):
+        r = by_id[rid]
+        return f"the {bounds(r['results']['min'], r['results']['max'])} row"
+
+    rows = []
+    for r in tab["rows"]:
+        expect_keys(r, CI_KEYS, f"{CI} {r.get('id')}")
+        res = bounds(r["results"]["min"], r["results"]["max"])
+        if r.get("instant_death"):
+            na = "not applicable"
+            rows.append([res, row_names(r), na, "instant death", na, na, na, na, na])
+            continue
+        if r["down"] == "until_treated":
+            down = "until treated"
+        elif r["down"] is False:
+            down = "no"
+        else:
+            raise RenderError(f"{CI} {r['id']}: down {r['down']!r} has no rendering")
+        lethal = f"yes, `{r['time_limit']}` limit" if r["lethal"] else "no"
+        repeat = row_ref(r["repeat_row"]) if r.get("repeat_row") else "none"
+        rows.append([res, row_names(r), down, lethal, r["death_roll_penalty"], effects(r["effects"], "none"),
+                     r["healing_days"], effects(r.get("permanent_effects"), "none"), repeat])
+    cap = row_ref(tab["non_lethal_cap"])
+    per = d["worsening"]["per_held_injury"]
+    if loc in d["sides"]["sided_locations"]:
+        counted = f"each Critical Injury at that {loc}, on the same side, that counts toward worsening"
+    else:
+        counted = f"each {loc} Critical Injury that counts toward worsening"
+    head = (f"**{loc.capitalize()}** (2D6 + {per} for {counted}; "
+            f"a Critical Injury that cannot be lethal uses {cap} in place of a lethal or instant-death row)")
+    riders = []
+    types = injury_types()
+    for typ, lst in (tab["type_riders"] or {}).items():
+        if typ not in types:
+            raise RenderError(f"{CI} tables {loc} type_riders: {typ} is not an Injury Type")
+        clauses = [rider_clause(rd, row_ref, f"{CI} tables {loc} type_riders {typ}") for rd in (lst or [])]
+        if clauses:
+            riders.append(f"{types[typ]}: {'; '.join(clauses)}.")
+    rider_text = ("**Type riders.** " + " ".join(riders)) if riders else "**Type riders.** None on this table."
+    return (head + "\n\n" + table(["2D6 total", "Critical Injury, by Injury Type", "Down", "Lethal", "Death Roll penalty",
+                                   "Effects while held", "Healing days", "Permanent effects", "If gained before at that side, use"],
+                                  rows) + "\n\n" + rider_text)
+
+
+ATT = "data/engagement/attention.yaml"
+MOVE_KINDS = {"on_foot": "moves on foot", "mounted": "mounted moves", "odm": "ODM moves"}
+MOVE_VALUES = {"spends_action": "also spend the action", "forbidden": "cannot be made"}
+# decision batch 8, 8-11 (OQ-137): what a grade does to Mount or Dismount
+MOUNT_VALUES = {"with_help": "Mount or Dismount only with a comrade's help"}
+GRADE_KEYS = ("id", "name", "row", "sides_lost", "penalties", "forbids_entries", "forbids_decoys", "no_gear_dice_from",
+              "mount_or_dismount", "moves", "keeps")
+
+
+def decoy_name(did):
+    names = {x["id"]: x["name"] for x in load(ATT)["break_attention"]["decoys"]}
+    if did not in names:
+        raise RenderError(f"unknown Break Attention decoy {did}")
+    return names[did]
+
+
+def b_lost_limbs():
+    d = load(CI)["lost_limb_riders"]
+    rows = []
+    for g in d["grades"]:
+        where = f"{CI} lost_limb_riders {g.get('id')}"
+        # mount_with_help: the both-arms grade's three readings of a helped mount (decision batch 8, 8-25)
+        expect_keys(g, set(GRADE_KEYS) | {"mount_with_help"}, where, required=GRADE_KEYS)
+        if (g["mount_or_dismount"] == "with_help") != ("mount_with_help" in g):
+            raise RenderError(f"{where}: a helped mount states its mount_with_help, and only a helped mount does")
+        found = [(loc, r) for loc, t in load(CI)["tables"].items() for r in t["rows"] if r["id"] == g["row"]]
+        if len(found) != 1 or not found[0][1].get("permanent_effects"):
+            raise RenderError(f"{where}: {g['row']} is not a row with permanent effects")
+        loc, row = found[0]
+        if g["sides_lost"] not in (1, 2):
+            raise RenderError(f"{where}: sides_lost {g['sides_lost']!r}")
+        sides = "one side" if g["sides_lost"] == 1 else "both sides"
+        cannot = [entry_name(x, False) for x in g["forbids_entries"]] + [f"the {decoy_name(x)} decoy" for x in g["forbids_decoys"]]
+        moves = []
+        if set(g["moves"]) != set(MOVE_KINDS):
+            raise RenderError(f"{where}: moves {sorted(g['moves'])}")
+        for kind, label in MOVE_KINDS.items():
+            v = g["moves"][kind]
+            if v == "unchanged":
+                continue
+            if v not in MOVE_VALUES or v not in d["move_values"]:
+                raise RenderError(f"{where}: move value {v!r} has no rendering")
+            moves.append(f"{label} {MOVE_VALUES[v]}")
+        if g["mount_or_dismount"] not in d["mount_values"]:
+            raise RenderError(f"{where}: mount_or_dismount {g['mount_or_dismount']!r}")
+        if g["mount_or_dismount"] != "unchanged":
+            moves.append(lookup(MOUNT_VALUES, g["mount_or_dismount"], where))
+        penalties = [effects(g["penalties"], "")] if g["penalties"] else []
+        for ng in g["no_gear_dice_from"]:
+            expect_keys(ng, {"item", "entries"}, f"{where} no_gear_dice_from", required=("item", "entries"))
+            penalties.append(f"no Gear Dice from {item_name(ng['item'])} on " + ", ".join(entry_name(x, False) for x in ng["entries"]))
+        rows.append([f"{g['name']}: the {loc} table's {bounds(row['results']['min'], row['results']['max'])} row, gained at {sides}",
+                     "; ".join(penalties) or "none", ", ".join(cannot) or "nothing", "; ".join(moves) or "unchanged",
+                     g["keeps"]])
+    # decision batch 8, 8-10 (OQ-147): the prosthetic reading, printed under the grades
+    pr = d["prosthetics"]
+    where = f"{CI} lost_limb_riders prosthetics"
+    expect_keys(pr, {"kinds", "fitted", "reading", "limit", "never_removes", "squadmates", "retirement", "decided"}, where,
+                required=("kinds", "fitted", "reading", "limit", "never_removes"))
+    if set(pr["kinds"]) != {"arm", "leg"}:
+        raise RenderError(f"{where}: kinds {sorted(pr['kinds'])}")
+    kinds = " and ".join(item_name(i) for i in pr["kinds"].values())
+    return (table(["Grade", "Penalties it adds", "Cannot take", "Moves", "Keeps"], rows) + "\n\n" +
+            f"**Prosthetics ({kinds}).** " + " ".join(folded(pr[k]) for k in ("fitted", "reading", "limit", "never_removes")))
+
+
+def b_stress_responses():
+    t = load(SR)["table"]
+    rows = []
+    for r in t["rows"]:
+        expect_keys(r, {"id", "name", "results", "duration", "text", "effects"}, f"{SR} {r.get('id')}", required=("text",))
+        rows.append([bounds(r["results"]["min"], r["results"]["max"]), r["name"], r["text"], r["duration"],
+                     effects(r["effects"], "none")])
+    return table(["D6 + Stress − Resolve", "Stress Response", "What happens", "Duration", "Effects"], rows)
+
+
+FORBIDS = {"reaction": "Reactions", "push": "Pushing", "help": "Help", "cover": "Covering"}
+
+
+def b_fear_rolls():
+    t = load(FR)["table"]
+    rows = []
+    for r in t["rows"]:
+        expect_keys(r, {"id", "name", "results", "text", "effects", "forbids"}, f"{FR} {r.get('id')}", required=("text",))
+        forbids = ", ".join(lookup(FORBIDS, f, f"{FR} {r['id']} forbids") for f in r.get("forbids", [])) or "none"
+        rows.append([bounds(r["results"]["min"], r["results"]["max"]), r["name"], r["text"], effects(r["effects"], "none"),
+                     forbids])
+    return table(["D6 + Stress − Resolve", "Result", "What happens", "Effects", "Forbids"], rows)
+
+
+def b_scars():
+    rows = []
+    for r in load(SC)["table"]["rows"]:
+        expect_keys(r, {"id", "name", "results", "trigger", "effects", "squadmate_rerolls"}, f"{SC} {r.get('id')}")
+        rerolls = yes_no(r["squadmate_rerolls"]) if "squadmate_rerolls" in r else "no"
+        rows.append([runs(r["results"]), r["name"], r["trigger"], effects(r["effects"], "none"), rerolls])
+    return table(["D66", "Scar", "Trigger", "Effect", "A Squadmate rolls again"], rows)
+
+
+# ------------------------------------------------------------------ Chapter 4
+def b_fall_bands():
+    rows = []
+    for b in load(FALL)["height"]["bands"]:
+        expect_keys(b, {"id", "adds"}, f"{FALL} bands")
+        rows.append([b["id"].capitalize(), signed(b["adds"]) if b["adds"] else "+0"])
+    return table(["Band", "Adds to the D6"], rows)
+
+
+def b_fall_damage():
+    rows = []
+    for r in load(FALL)["damage_table"]["rows"]:
+        expect_keys(r, {"id", "results", "damage"}, f"{FALL} damage_table")
+        rows.append([bounds(r["results"]["min"], r["results"]["max"]), r["id"].replace("-", " ").capitalize(), r["damage"]])
+    return table(["D6 + the band's value", "Landing", "Damage"], rows)
+
+
+def funding_label(n):
+    default = load(ISSUE)["funding"]["until_funding_rules"]
+    return f"{n} (used until the Funding rules are written)" if n == default else n
+
+
+def b_standard_issue():
+    d = load(ISSUE)
+    every = d["every_row"]
+    expect_keys(every, {"fitted_canister", "blade_set_rating"}, f"{ISSUE} every_row")
+    fitted = every["fitted_canister"].split(" (")[0]
+    rows = []
+    for r in d["by_funding"]:
+        expect_keys(r, {"funding", "odm_gear_rating", "spare_canisters", "blade_sets", "horse_rating"}, f"{ISSUE} by_funding")
+        rows.append([funding_label(r["funding"]), r["odm_gear_rating"], fitted, r["spare_canisters"], r["blade_sets"],
+                     every["blade_set_rating"], r["horse_rating"]])
+    out = ("**By Funding**\n\n" +
+           table(["Funding", "ODM Gear rating", "Fitted canister", "Spare canisters",
+                  "Blade Sets, counting the one in the handles", "Blade Set rating", "Horse rating"], rows))
+    spec = []
+    for r in d["by_specialty"]["rows"]:
+        expect_keys(r, {"specialty", "item", "rating"}, f"{ISSUE} by_specialty")
+        spec.append([specialty_name(r["specialty"]), item_name(r["item"]), r["rating"]])
+    out += "\n\n**By Specialty**\n\n" + table(["Specialty", "Item", "Rating"], spec) + "\n\n" + d["by_specialty"]["others"]
+    return out
+
+
+def b_squad_supply():
+    # Every kind is a column, rations included (decision batch 8, 8-12, item 7).
+    d = load(SUP)
+    kinds = d["kinds"]
+    ids = [k["id"] for k in kinds]
+    rows = []
+    for r in d["stock"]["by_funding"]:
+        expect_keys(r, {"funding"} | set(ids), f"{SUP} stock", required=ids)
+        rows.append([funding_label(r["funding"])] + [r[k] for k in ids])
+    return table(["Funding"] + [k["name"] for k in kinds], rows)
+
+
+# ------------------------------------------------------------------ Chapter 5
+def b_interim_setup():
+    d = load(SETUP)
+    anchors = {r["id"]: r["name"] for r in load(ANCH)["ratings"]}
+    sizes = {c["id"]: c for c in load(SIZE)["classes"]}
+    std = load(TIDX)["standard_titans"]
+    t1 = []
+    for r in d["anchor_rating"]["rows"]:
+        expect_keys(r, {"results", "anchor_rating"}, f"{SETUP} anchor_rating")
+        t1.append([runs(r["results"]), lookup(anchors, r["anchor_rating"], f"{SETUP} anchor_rating")])
+    t2 = []
+    for r in d["size_class"]["rows"]:
+        expect_keys(r, {"results", "size_class"}, f"{SETUP} size_class")
+        c = sizes[r["size_class"]]
+        t2.append([runs(r["results"]), f"{c['name']} ({c['height']})", titan_name(std[r["size_class"]])])
+    t3 = []
+    for r in d["medium_abnormal"]["rows"]:
+        expect_keys(r, {"results", "titan"}, f"{SETUP} medium_abnormal")
+        t3.append([runs(r["results"]), titan_name(r["titan"])])
+    t4 = []
+    for r in d["background_titans"]["rows"]:
+        expect_keys(r, {"results", "clocks"}, f"{SETUP} background_titans")
+        t4.append([runs(r["results"]), len(r["clocks"]) or "none", ", ".join(str(c) for c in r["clocks"]) or "none"])
+    return ("**Anchor Rating (D6)**\n\n" + table(["D6", "Anchor Rating"], t1) +
+            "\n\n**Size Class (D6), for the Focus Titan and for each Background Titan**\n\n" +
+            table(["D6", "Size Class", "Standard Titan"], t2) +
+            "\n\n**On Medium: `medium_abnormal` (D6)**\n\n" + table(["D6", "Focus Titan"], t3) +
+            "\n\n**Background Titans (D6)**\n\n" + table(["D6", "Background Titans", "Clock lengths, in order"], t4) +
+            f"\n\n**Retreat clock:** {d['retreat_clock']} segments, for every Titan Engagement this table sets up (no roll).")
+
+
+def b_position_steps():
+    rows = []
+    for rt in load(ANCH)["ratings"]:
+        for s in rt["steps"]:
+            expect_keys(s, {"between", "on_foot", "mounted", "odm", "fly_roll"}, f"{ANCH} {rt['id']} step")
+            a, b = s["between"]
+            fly = "none"
+            if s.get("fly_roll"):
+                expect_keys(s["fly_roll"], {"needs", "failure_ends_at"}, f"{ANCH} {rt['id']} fly_roll")
+                fly = (f"needs {s['fly_roll']['needs']}; on a failure the move ends at "
+                       f"{position_name(s['fly_roll']['failure_ends_at'])}")
+            rows.append([rt["name"], f"{position_name(a)} to {position_name(b)}", yes_no(s["on_foot"]),
+                         yes_no(s["mounted"]), yes_no(s["odm"]), fly])
+    return table(["Anchor Rating", "Position step (either way)", "On foot", "Mounted", "ODM", "Fly roll"], rows)
+
+
+# ------------------------------------------------------------------ Chapter 7
+# The prosthetic items (decision batch 8, 8-10; data/gear/items.yaml), whose Requisition row is one row at Limited.
+PROSTHETIC_ITEMS = {"prosthetic-arm", "prosthetic-leg"}
+
+
+def folded(v):
+    return " ".join(str(v).split())
+
+
+def adds(n):
+    return signed(n) if n else "+0"
+
+
+def contiguous(rows, where):
+    """A D6-plus-modifiers table covers every total once: open below on its first row, open above on its last."""
+    spans = []
+    for r in rows:
+        expect_keys(r["results"], {"min", "max"}, f"{where} {r.get('id')} results", required=("min", "max"))
+        spans.append((r["results"]["min"], r["results"]["max"]))
+    if not spans or spans[0][0] is not None or spans[-1][1] is not None:
+        raise RenderError(f"{where}: the first row must be open below and the last row open above")
+    prev = spans[0][1]
+    for i, (lo, hi) in enumerate(spans[1:], 1):
+        if prev is None or lo != prev + 1:
+            raise RenderError(f"{where}: row {rows[i].get('id')} starts at {lo}, which leaves a gap or an overlap")
+        if hi is not None and hi < lo:
+            raise RenderError(f"{where}: row {rows[i].get('id')} ends before it starts")
+        prev = hi
+
+
+def covers_d6(values, where):
+    if sorted(values) != [1, 2, 3, 4, 5, 6]:
+        raise RenderError(f"{where}: the D6 rows cover {sorted(values)}, not 1 to 6 once each")
+
+
+def post_name(pid):
+    names = {p["id"]: p["name"] for p in load(LEGS)["formation_posts"]}
+    if pid not in names:
+        raise RenderError(f"unknown Formation Post {pid}")
+    return names[pid]
+
+
+def b_interim_route():
+    d = load(ROUTE)["interim_route"]
+    steps = []
+    for i, st in enumerate(d["steps"], 1):
+        expect_keys(st, {"id", "text"}, f"{ROUTE} interim_route steps", required=("id", "text"))
+        steps.append(f"{i}. {folded(st['text'])}")
+    roll = d["formation_post_roll"]
+    rows = []
+    for r in roll["rows"]:
+        expect_keys(r, {"results", "post"}, f"{ROUTE} formation_post_roll", required=("results", "post"))
+        rows.append([runs(r["results"]), post_name(r["post"])])
+    covers_d6([x for r in roll["rows"] for x in r["results"]], f"{ROUTE} formation_post_roll")
+    return "\n".join(steps) + f"\n\n**Formation Post ({roll['roll']})**\n\n" + table(["D6", "Formation Post"], rows)
+
+
+def b_waypoint_kinds():
+    anchors = {r["id"]: r["name"] for r in load(ANCH)["ratings"]}
+    rows, covered = [], []
+    for w in load(ROUTE)["waypoint_kinds"]:
+        where = f"{ROUTE} waypoint_kinds {w.get('id')}"
+        keys = ("id", "name", "anchor_rating", "interim_roll")
+        expect_keys(w, set(keys), where, required=keys)
+        covered += w["interim_roll"]
+        rating = lookup(anchors, w["anchor_rating"], where) if w["anchor_rating"] else "none; roll it on the setup table"
+        roll = runs(w["interim_roll"]) if w["interim_roll"] else "never rolled; always the route's last Waypoint"
+        rows.append([w["name"], rating, roll])
+    covers_d6(covered, f"{ROUTE} waypoint_kinds")
+    return table(["Waypoint kind", "Anchor Rating", "Interim route (D6)"], rows)
+
+
+def b_pace():
+    rows = []
+    for p in load(LEGS)["pace"]:
+        where = f"{LEGS} pace {p.get('id')}"
+        keys = ("id", "name", "when", "rations_multiplier", "hazard_modifier", "leg_roll_entry")
+        expect_keys(p, set(keys), where, required=keys)
+        entry = entry_name(p["leg_roll_entry"], False) if p["leg_roll_entry"] in catalog() else p["leg_roll_entry"]
+        mult = p["rations_multiplier"]
+        rations = "as the Leg roll gives" if mult == 1 else f"{mult} times what the Leg roll gives"
+        rows.append([p["name"], p["when"], entry, rations, adds(p["hazard_modifier"])])
+    return table(["Pace", "When", "Leg roll", "Rations", "Adds to the hazard roll"], rows)
+
+
+def b_formation_posts():
+    rows = []
+    for p in load(LEGS)["formation_posts"]:
+        where = f"{LEGS} formation_posts {p.get('id')}"
+        keys = ("id", "name", "entry", "hazard_modifier", "special", "picture")
+        expect_keys(p, set(keys), where, required=keys)
+        rows.append([p["name"], entry_name(p["entry"], False), adds(p["hazard_modifier"]), p["special"], p["picture"]])
+    return table(["Formation Post", "Leg roll on a Steady Leg", "Adds to the hazard roll", "Special", "The post"], rows)
+
+
+def b_leg_hazard_modifiers():
+    m = load(HAZ)["leg_hazards"]["modifiers"]
+    keys = ("distance_band", "per_night_camp_made", "formation_post", "pace", "leg_roll", "signal_relay_flare")
+    expect_keys(m, set(keys), f"{HAZ} leg_hazards modifiers", required=keys)
+    bands = {b["id"]: b["name"] for b in load(ROUTE)["distance_bands"]}
+    if set(m["distance_band"]) != set(bands):
+        raise RenderError(f"{HAZ} modifiers distance_band: {sorted(m['distance_band'])} are not the Distance Bands")
+    legs = load(LEGS)
+    outcome = legs["leg_outcome"]
+    rows = [
+        ["The Leg's Distance Band", ", ".join(f"{bands[b]} {adds(v)}" for b, v in m["distance_band"].items())],
+        ["Each night camp already made on this Expedition", adds(m["per_night_camp_made"])],
+        ["The Formation Post", "as the Formation Posts table gives"],
+        ["The Pace", ", ".join(f"{p['name']} {adds(p['hazard_modifier'])}" for p in legs["pace"])],
+        ["The Leg roll failed", adds(outcome["failure"]["hazard_modifier"])],
+        ["The Leg roll succeeded",
+         f"{adds(outcome['success']['hazard_modifier_per_success_beyond_the_first'])} for each success beyond the first"],
+        ["The Squad spent the Signal Relay's flare", adds(m["signal_relay_flare"])],
+    ]
+    return table(["The hazard roll adds", "Amount"], rows)
+
+
+HAZ_ROW_KEYS = ("id", "name", "results", "text", "effects")
+
+
+def hazard_table(key, head):
+    d = load(HAZ)
+    known = {e["id"] for e in d["effect_types"]}
+    rows = d[key]["rows"]
+    where = f"{HAZ} {key}"
+    contiguous(rows, where)
+    ids = {r["id"] for r in rows}
+    foes = {f["id"] for f in load(FOES)["foes"]}
+    out = []
+    for r in rows:
+        expect_keys(r, set(HAZ_ROW_KEYS), f"{where} {r.get('id')}", required=HAZ_ROW_KEYS)
+        for e in r["effects"]:
+            for t in [e] + [o for o in e.get("options", []) if "type" in o]:
+                if t.get("type") not in known:
+                    raise RenderError(f"{where} {r['id']}: effect type {t.get('type')} is not in effect_types")
+                if t["type"] == "as-row" and t["row"] not in ids:
+                    raise RenderError(f"{where} {r['id']}: as-row names {t['row']}, which is not a row")
+                if t["type"] == "skirmish" and t["foes"]["kind"] not in foes:
+                    raise RenderError(f"{where} {r['id']}: {t['foes']['kind']} is not a Foe")
+        out.append([bounds(r["results"]["min"], r["results"]["max"]), r["name"], r["text"]])
+    return table(["Total", head, "What happens"], out)
+
+
+def b_leg_hazards():
+    return "**Leg Hazard table (D6, plus every line above)**\n\n" + hazard_table("leg_hazards", "Hazard")
+
+
+def b_night_hazards():
+    n = load(HAZ)["night"]["modifiers"]
+    expect_keys(n, {"distance_band", "camp_roll_failed"}, f"{HAZ} night modifiers", required=("distance_band", "camp_roll_failed"))
+    return (f"**Night table (D6, plus the Distance Band of the day's last Leg, plus {n['camp_roll_failed']} "
+            f"if the camp roll failed)**\n\n" + hazard_table("night", "Night"))
+
+
+def b_downtime_actions():
+    d = load(DOWN)
+
+    def rows_of(lst, where, numbers):
+        out = []
+        for a in lst:
+            keys = ("id", "name", "effect") + (("stress", "grief") if numbers else ())
+            expect_keys(a, set(keys), f"{where} {a.get('id')}", required=keys)
+            for k, word in (("stress", "Stress"), ("grief", "Grief")):
+                if numbers and a[k] and f"{-a[k]} {word}" not in folded(a["effect"]):
+                    raise RenderError(f"{where} {a['id']}: its effect text does not state {-a[k]} {word}")
+            out.append([a["name"], a["effect"]])
+        return out
+
+    sq = d["squadmates"]
+    return ("**Downtime Actions** (each player character takes one per Downtime)\n\n" +
+            table(["Downtime Action", "Effect"], rows_of(d["downtime_actions"]["rows"], f"{DOWN} downtime_actions", True)) +
+            f"\n\n**Squadmates** take no Downtime Action. {sq['relief']}\n\n" +
+            "**Squad Actions** (the Squad takes one per Downtime)\n\n" +
+            table(["Squad Action", "Effect"], rows_of(d["squad_actions"]["rows"], f"{DOWN} squad_actions", False)))
+
+
+def b_requisition_gate():
+    d = load(REQ)
+    names, rows1 = {}, []
+    for sc in d["scarcity"]:
+        expect_keys(sc, {"id", "name", "needs"}, f"{REQ} scarcity", required=("id", "name", "needs"))
+        names[sc["id"]] = sc["name"]
+        rows1.append([sc["name"], sc["needs"]])
+    rows2, covered = [], []
+    for r in d["funding_gate"]["rows"]:
+        expect_keys(r, {"funding", "tiers"}, f"{REQ} funding_gate", required=("funding", "tiers"))
+        covered += r["funding"]
+        rows2.append([runs(r["funding"]), ", ".join(lookup(names, t, f"{REQ} funding_gate") for t in r["tiers"])])
+    covers_d6(covered, f"{REQ} funding_gate")
+    return ("**Scarcity**\n\n" + table(["Scarcity", "Successes needed, plus the ledger"], rows1) +
+            "\n\n**The Funding gate**\n\n" + table(["Funding", "Scarcity Command will consider"], rows2))
+
+
+REQ_ROW_KEYS = ("id", "name", "items", "rating", "supply", "scarcity", "canon_label", "locked_until_discovery", "notes")
+
+
+def b_requisition_list():
+    d = load(REQ)
+    names = {sc["id"]: sc["name"] for sc in d["scarcity"]}
+    items = {i["id"] for i in load(ITEMS)["items"]}
+    rows = d["list"]["rows"]
+    if len(rows) != 15:
+        raise RenderError(f"{REQ} list: {len(rows)} rows, not the 15 of decision batches 7 (7-16) and 8 (8-10)")
+    out = []
+    for r in rows:
+        where = f"{REQ} list {r.get('id')}"
+        expect_keys(r, set(REQ_ROW_KEYS), where, required=REQ_ROW_KEYS)
+        for i in r["items"]:
+            if i not in items:
+                raise RenderError(f"{where}: {i} is not a gear item")
+        if r["canon_label"] not in ("canon", "canon-adjacent", "invented"):
+            raise RenderError(f"{where}: canon_label {r['canon_label']!r}")
+        if r["locked_until_discovery"] is not None:
+            raise RenderError(f"{where}: no playtest row is locked")
+        out.append([r["name"], lookup(names, r["scarcity"], where), r["notes"]])
+    prosthetic = [r for r in rows if set(r["items"]) & PROSTHETIC_ITEMS]
+    if len(prosthetic) != 1 or prosthetic[0]["scarcity"] != "limited":
+        raise RenderError(f"{REQ} list: the prosthetic must be one row at Limited (decision batch 8, 8-10)")
+    return table(["Item", "Scarcity", "Notes"], out)
+
+
+WEAPON_KEYS = ("id", "name", "used_with", "injury_type", "damage", "target", "gear_item", "spends", "wielded_by", "notes")
+ATTACKS = {"fight": "Fight", "shoot": "Shoot"}
+TARGETS = {"engaged": "Engaged only", "apart": "Apart only", "either": "Engaged or Apart"}
+WIELDERS = {"soldier": "soldiers", "foe": "Foes"}
+
+
+def whole(v, where):
+    if isinstance(v, bool) or not isinstance(v, int) or v < 1:
+        raise RenderError(f"{where}: expected a whole number of 1 or more, got {v!r}")
+    return v
+
+
+def skirmish_weapons():
+    out = {}
+    for w in load(SKIR)["weapons"]["rows"]:
+        where = f"{SKIR} weapons {w.get('id')}"
+        expect_keys(w, set(WEAPON_KEYS), where, required=WEAPON_KEYS)
+        whole(w["damage"], f"{where} damage")
+        lookup(injury_types(), w["injury_type"], f"{where} injury_type")
+        out[w["id"]] = w
+    return out
+
+
+def b_skirmish_weapons():
+    types = injury_types()
+    rows = []
+    for w in skirmish_weapons().values():
+        where = f"{SKIR} weapons {w['id']}"
+        rows.append([w["name"], lookup(ATTACKS, w["used_with"], where), types[w["injury_type"]], w["damage"],
+                     lookup(TARGETS, w["target"], where), item_name(w["gear_item"]) if w["gear_item"] else "none",
+                     w["spends"], " and ".join(lookup(WIELDERS, x, where) for x in w["wielded_by"]), w["notes"]])
+    return table(["Weapon", "Attack", "Injury Type", "Damage", "Target", "Gear Dice from", "Spends", "Used by", "Notes"], rows)
+
+
+FOE_KEYS = ("id", "name", "who", "attack_dice", "guard_dice", "health", "grit", "watch", "group_size", "fight_weapon",
+            "shoot_weapon")
+
+
+def b_foes():
+    weapons = skirmish_weapons()
+
+    def weapon(wid, used, where):
+        w = lookup(weapons, wid, where)
+        if w["used_with"] != used or "foe" not in w["wielded_by"]:
+            raise RenderError(f"{where}: {wid} is not a Foe's {used} weapon")
+        return w["name"]
+
+    rows = []
+    for f in load(FOES)["foes"]:
+        where = f"{FOES} foes {f.get('id')}"
+        expect_keys(f, set(FOE_KEYS), where, required=FOE_KEYS)
+        for k in ("attack_dice", "guard_dice", "health", "grit", "watch"):
+            whole(f[k], f"{where} {k}")
+        gs = f["group_size"]
+        if "fixed" in gs:
+            expect_keys(gs, {"fixed"}, f"{where} group_size")
+            size = str(whole(gs["fixed"], f"{where} group_size"))
+        else:
+            expect_keys(gs, {"roll", "min", "max"}, f"{where} group_size", required=("roll", "min", "max"))
+            size = f"{gs['roll']} ({gs['min']} to {gs['max']})"
+        fw = f["fight_weapon"]
+        if isinstance(fw, str):
+            fight = weapon(fw, "fight", where)
+        else:
+            expect_keys(fw, {"roll", "rows", "at_night"}, f"{where} fight_weapon", required=("roll", "rows"))
+            covers_d6([x for r in fw["rows"] for x in r["results"]], f"{where} fight_weapon")
+            fight = "; ".join(f"{runs(r['results'])}: {weapon(r['weapon'], 'fight', where)}" for r in fw["rows"])
+            fight += f" ({folded(fw['roll'])})"
+            if fw.get("at_night"):
+                n = fw["at_night"]
+                fight += (f"; at night, a {weapon(n['with'], 'fight', where).lower()} in place of a "
+                          f"{weapon(n['replaces'], 'fight', where).lower()}")
+        shoot = weapon(f["shoot_weapon"], "shoot", where) if f["shoot_weapon"] else "none"
+        rows.append([f["name"], f["attack_dice"], f["guard_dice"], fight, shoot, f["health"], f["grit"], f["watch"], size])
+    return table(["Foe", "Attack Dice", "Guard", "Fight with", "Shoot with", "Health", "Grit", "Watch", "Group"], rows)
+
+
+FOE_NEVER = {"push": "Push", "help": "Help", "cover": "Cover", "grapple": "Grapple", "break-free": "Break Free",
+             "release": "Release", "parley": "Parley", "size-up": "Size Up", "reaction": "a Reaction"}
+GUARD_NEVER = {"push": "Push", "help": "Help", "bonus-dice": "Bonus Dice", "stress-dice": "Stress Dice",
+               "gear-dice": "Gear Dice"}
+
+
+def b_foe_rule():
+    d = load(FOES)
+    fr, g, fa = d["foe_rule"], d["guard"], d["firearms"]
+    keys = ("when", "candidates", "last_attacker", "lowest_card", "steps", "first_match", "never", "no_stress")
+    expect_keys(fr, set(keys), f"{FOES} foe_rule", required=keys)
+    expect_keys(g, {"what", "every_attack", "never", "spends", "ambush"}, f"{FOES} guard",
+                required=("what", "every_attack", "never", "spends"))
+    if "cancelling roll" not in folded(g["what"]):
+        raise RenderError(f"{FOES} guard: it must name Guard as the Foe's cancelling roll (decision batch 8, 8-4)")
+    steps = []
+    for i, st in enumerate(fr["steps"], 1):
+        expect_keys(st, {"id", "test", "does"}, f"{FOES} foe_rule steps", required=("id", "test", "does"))
+        steps.append(f"{i}. **{folded(st['test'])}** {folded(st['does'])}")
+    never = ", ".join(lookup(FOE_NEVER, x, f"{FOES} foe_rule never") for x in fr["never"])
+    guard_never = ", ".join(lookup(GUARD_NEVER, x, f"{FOES} guard never") for x in g["never"])
+    return (f"{folded(fr['when'])} {folded(fr['first_match'])}\n\n"
+            f"- **Candidates:** {folded(fr['candidates'])}\n"
+            f"- **Last attacker:** {folded(fr['last_attacker'])}\n"
+            f"- **Lowest card:** {folded(fr['lowest_card'])}\n\n" + "\n".join(steps) +
+            f"\n\nA Foe never takes any of these: {never}. {folded(fr['no_stress'])}\n\n"
+            f"**Guard.** {folded(g['what'])} {folded(g['every_attack'])} None of these apply to it: {guard_never}. It "
+            f"spends {folded(g['spends'])}.\n\n"
+            f"**Firearms.** {folded(fa['start'])} {folded(fa['empty'])} {folded(fa['reload'])}")
+
+
+def b_parley_asks():
+    rows = []
+    for a in load(SKIR)["parley"]["asks"]:
+        keys = ("id", "name", "needs_add", "effect")
+        expect_keys(a, set(keys), f"{SKIR} parley asks", required=keys)
+        rows.append([a["name"], adds(a["needs_add"]), a["effect"]])
+    return table(["Ask", "Adds to the needs", "On a success"], rows)
+
+
+ROLL_KEYS = ("id", "name", "who", "entry", "needs", "help", "push", "retry")
+
+
+def b_rolls(src):
+    """Every roll a Chapter 7 file calls for states its Help and whether it is tried again (Chapter 1, 1.1 and 1.8)."""
+    rows = []
+    for r in load(src)["rolls"]:
+        where = f"{src} rolls {r.get('id')}"
+        expect_keys(r, set(ROLL_KEYS) | {"changes", "notes"}, where, required=ROLL_KEYS)
+        for k in ROLL_KEYS:
+            if not folded(r[k]):
+                raise RenderError(f"{where}: {k} is empty")
+        for c in r.get("changes", []):
+            lookup(tracked_values(), c, f"{where} changes")
+        rows.append([r["name"], r["who"], r["entry"], r["needs"], r["help"], r["push"], r["retry"], r.get("notes", "none")])
+    return table(["Roll", "Who rolls", "Entry", "Needs", "Help", "Push", "Tried again", "Notes"], rows)
+
+
+# decision batch 8, 8-9 (OQ-146): the Pinned state's closed lists (data/harm/effect-types.yaml, pinned). Help, Covering,
+# and Reactions are the state's forbids rows (Chapter 1, section 1.9), and the moves are the state's own rule.
+HOOK_ENTRIES = {"help", "cover", "dodge", "block"}
+MOVE_ENTRIES = {"fly", "ride", "mount-or-dismount"}
+
+
+def b_pinned_entries():
+    d = load(EFF)["pinned"]
+    cat = catalog()
+    chosen = {eid for eid, e in cat.items() if e["kind"] in ("action", "option", "reaction")} | {"fly", "ride"}
+    rows = []
+    for key, label in (("limb_pin", "Limb pin"), ("body_pin", "Body pin")):
+        where = f"{EFF} pinned {key}"
+        p = d[key]
+        expect_keys(p, {"allowed_entries", "forbids_entries", "body_part_strike"}, where,
+                    required=("allowed_entries", "forbids_entries"))
+        allowed, forbids = list(p["allowed_entries"]), list(p["forbids_entries"])
+        for eid in allowed + forbids:
+            if eid not in cat:
+                raise RenderError(f"{where}: {eid} is not an Action Catalog entry")
+        if set(allowed) & set(forbids):
+            raise RenderError(f"{where}: {sorted(set(allowed) & set(forbids))} are on both lists")
+        if set(allowed) & MOVE_ENTRIES:
+            raise RenderError(f"{where}: {sorted(set(allowed) & MOVE_ENTRIES)} need a move")
+        missing = chosen - set(allowed) - set(forbids) - HOOK_ENTRIES
+        if missing:
+            raise RenderError(f"{where}: {sorted(missing)} are on neither list")
+        may = [entry_name(x, False) + (" (only against the Body Part that pins the soldier)"
+                                        if x == "body-part-strike" and p.get("body_part_strike") else "") for x in allowed]
+        rows.append([label, ", ".join(may) or "nothing", ", ".join(entry_name(x, False) for x in forbids)])
+    return table(["Pin", "May take", "Cannot take"], rows)
+
+
+# ------------------------------------------------------------------ registry
+BLOCKS = {}
+
+
+def block(name, chapter_, source, fn):
+    if name in BLOCKS:
+        raise RenderError(f"block {name} registered twice")
+    BLOCKS[name] = dict(chapter=chapter_, source=source, fn=fn)
+
+
+block("attributes", CH2, ATTR, b_attributes)
+block("origins", CH2, ORIG, b_origins)
+block("why-you-enlisted", CH2, ENL, b_enlistment)
+block("training-years", CH2, TY, b_training_years)
+for _y in ("year-1", "year-2", "year-3"):
+    block(f"training-year-events {_y}", CH2, TY, lambda y=_y: b_year(y))
+block("performance-merit", CH2, TY, b_merit)
+block("class-rank", CH2, CR, b_class_rank)
+block("graduation-exam-trials", CH2, EXAM, b_exam)
+block("specialties", CH2, SPEC, b_specialties)
+block("squadmate-templates", CH2, SQ, b_templates)
+block("squadmate-rules", CH2, SQ, b_squadmate_rules)
+block("talents-dice", CH2, TAL, lambda: b_talents("dice"))
+block("talents-rule", CH2, TAL, lambda: b_talents("rule"))
+block("action-catalog", CH2, CAT, b_catalog)
+block("action-catalog-requirements", CH2, CAT, b_catalog_requirements)
+block("tracked-values", CH2, CAT, b_tracked_values)
+block("injury-types", CH3, CI, b_injury_types)
+block("injury-location", CH3, CI, b_injury_location)
+for _loc in ("arm", "leg", "torso", "head"):
+    block(f"critical-injuries {_loc}", CH3, CI, lambda loc=_loc: b_critical_injuries(loc))
+block("lost-limbs", CH3, CI, b_lost_limbs)
+block("stress-responses", CH3, SR, b_stress_responses)
+block("fear-rolls", CH3, FR, b_fear_rolls)
+block("scars", CH3, SC, b_scars)
+block("fall-bands", CH4, FALL, b_fall_bands)
+block("fall-damage", CH4, FALL, b_fall_damage)
+block("standard-issue", CH4, ISSUE, b_standard_issue)
+block("squad-supply", CH4, SUP, b_squad_supply)
+block("interim-setup", CH5, SETUP, b_interim_setup)
+block("position-steps", CH5, ANCH, b_position_steps)
+block("pinned-entries", CH5, EFF, b_pinned_entries)
+block("interim-route", CH7, ROUTE, b_interim_route)
+block("waypoint-kinds", CH7, ROUTE, b_waypoint_kinds)
+block("pace", CH7, LEGS, b_pace)
+block("formation-posts", CH7, LEGS, b_formation_posts)
+block("leg-hazard-modifiers", CH7, HAZ, b_leg_hazard_modifiers)
+block("leg-hazards", CH7, HAZ, b_leg_hazards)
+block("night-hazards", CH7, HAZ, b_night_hazards)
+block("rolls expedition", CH7, LEGS, lambda: b_rolls(LEGS))
+block("rolls hazards", CH7, HAZ, lambda: b_rolls(HAZ))
+block("downtime-actions", CH7, DOWN, b_downtime_actions)
+block("rolls downtime", CH7, DOWN, lambda: b_rolls(DOWN))
+block("requisition-gate", CH7, REQ, b_requisition_gate)
+block("requisition-list", CH7, REQ, b_requisition_list)
+block("rolls requisition", CH7, REQ, lambda: b_rolls(REQ))
+block("skirmish-weapons", CH7, SKIR, b_skirmish_weapons)
+block("foes", CH7, FOES, b_foes)
+block("foe-rule", CH7, FOES, b_foe_rule)
+block("parley-asks", CH7, SKIR, b_parley_asks)
+block("rolls skirmish", CH7, SKIR, lambda: b_rolls(SKIR))
+
+
+def marker(name):
+    b = BLOCKS[name]
+    return f"<!-- BEGIN RENDERED: {name} from {b['source']} -->\n<!-- END RENDERED: {name} -->"
+
+
+PATTERN = re.compile(r"<!-- BEGIN RENDERED: (?P<name>.+?) from (?P<src>\S+) -->\n(?P<body>.*?)<!-- END RENDERED: (?P=name) -->",
+                     re.S)
+
+
+def render_chapter(rel):
+    with open(os.path.join(ROOT, rel)) as fh:
+        text = fh.read()
+    problems, changed, seen = [], [], []
+
+    def sub(m):
+        name = m.group("name")
+        b = BLOCKS.get(name)
+        if b is None:
+            problems.append(f"{rel}: unknown block {name!r}")
+            return m.group(0)
+        if b["chapter"] != rel:
+            problems.append(f"{rel}: block {name!r} belongs in {b['chapter']}")
+            return m.group(0)
+        seen.append(name)
+        try:
+            body = b["fn"]()
+        except (RenderError, KeyError, TypeError, ValueError, FileNotFoundError) as exc:
+            problems.append(f"{rel}: block {name!r} cannot render: {type(exc).__name__}: {exc}")
+            return m.group(0)
+        new = f"<!-- BEGIN RENDERED: {name} from {b['source']} -->\n{body}\n<!-- END RENDERED: {name} -->"
+        if new != m.group(0):
+            changed.append(name if m.group("src") == b["source"] else f"{name} (marker names {m.group('src')})")
+        return new
+
+    new_text = PATTERN.sub(sub, text)
+    if text.count("<!-- BEGIN RENDERED:") != len(PATTERN.findall(text)):
+        problems.append(f"{rel}: a BEGIN RENDERED marker has no matching END RENDERED marker")
+    for name in sorted(set(n for n in seen if seen.count(n) > 1)):
+        problems.append(f"{rel}: block {name!r} appears more than once")
+    for name, b in BLOCKS.items():
+        if b["chapter"] == rel and name not in seen:
+            problems.append(f"{rel}: block {name!r} is missing")
+    return text, new_text, problems, changed
+
+
+def main(argv):
+    if len(argv) < 2 or argv[1] not in ("write", "check", "list") or (argv[1] != "write" and len(argv) != 2):
+        print(__doc__)
+        return 2
+    cmd = argv[1]
+    if cmd == "list":
+        for name, b in BLOCKS.items():
+            print(f"{b['chapter']}\t{name}\t{b['source']}")
+        return 0
+    chapters = argv[2:] or CHAPTERS
+    unknown = [c for c in chapters if c not in CHAPTERS]
+    if unknown:
+        print(f"not a rendered chapter: {', '.join(unknown)}")
+        return 2
+    failed, total = False, 0
+    for rel in chapters:
+        text, new_text, problems, changed = render_chapter(rel)
+        total += len(PATTERN.findall(new_text))
+        for p in problems:
+            print(p)
+        failed |= bool(problems)
+        if cmd == "write":
+            if new_text != text:
+                with open(os.path.join(ROOT, rel), "w") as fh:
+                    fh.write(new_text)
+                print(f"{rel}: rewrote {len(changed)} blocks")
+        elif changed:
+            print(f"{rel}: rendered blocks differ from the YAML: {', '.join(changed)}; run render.py write")
+            failed = True
+    if cmd == "check" and not failed:
+        print(f"every rendered block matches the YAML ({total} blocks in {len(chapters)} chapters)")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

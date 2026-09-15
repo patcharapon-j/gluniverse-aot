@@ -1,0 +1,36 @@
+cutters_first | reference | ab {'median': 2, 'by3': 69.7, 'by4': 79.5, 'nokill12': 7.59, 'cis': 0.85, 'deaths': 0.0785, 'deaths_se': 0.0012, 'grabs': 0.321}
+cutters_first | reference | lg {'median': 3, 'by3': 61.5, 'by4': 73.2, 'nokill12': 13.15, 'cis': 1.4168, 'deaths': 0.1621, 'deaths_se': 0.0021, 'grabs': 0.3}
+cutters_first | reference | md {'median': 3, 'by3': 61.6, 'by4': 72.5, 'nokill12': 4.95, 'cis': 0.7023, 'deaths': 0.0332, 'deaths_se': 0.0007, 'grabs': 0.211}
+cutters_first | helpers | ab {'median': 2, 'by3': 76.7, 'by4': 85.5, 'nokill12': 4.06, 'cis': 0.7948, 'deaths': 0.0205, 'deaths_se': 0.0005, 'grabs': 0.298}
+cutters_first | helpers | lg {'median': 3, 'by3': 68.3, 'by4': 78.5, 'nokill12': 9.33, 'cis': 1.26, 'deaths': 0.0205, 'deaths_se': 0.0007, 'grabs': 0.273}
+cutters_first | helpers | md {'median': 3, 'by3': 68.3, 'by4': 79.0, 'nokill12': 3.06, 'cis': 0.6384, 'deaths': 0.0086, 'deaths_se': 0.0003, 'grabs': 0.2}
+cutters_first | screen | ab {'median': 2, 'by3': 77.9, 'by4': 87.4, 'nokill12': 2.27, 'cis': 0.523, 'deaths': 0.0104, 'deaths_se': 0.0003, 'grabs': 0.184}
+cutters_first | screen | lg {'median': 3, 'by3': 66.4, 'by4': 77.6, 'nokill12': 9.03, 'cis': 0.9078, 'deaths': 0.0104, 'deaths_se': 0.0004, 'grabs': 0.181}
+cutters_first | screen | md {'median': 3, 'by3': 66.6, 'by4': 77.2, 'nokill12': 3.1, 'cis': 0.4189, 'deaths': 0.0056, 'deaths_se': 0.0002, 'grabs': 0.13}
+cutters_first | screen_pair | ab {'median': 2, 'by3': 81.4, 'by4': 90.2, 'nokill12': 1.45, 'cis': 0.4532, 'deaths': 0.0078, 'deaths_se': 0.0003, 'grabs': 0.171}
+cutters_first | screen_pair | lg {'median': 3, 'by3': 70.0, 'by4': 81.2, 'nokill12': 6.97, 'cis': 0.7754, 'deaths': 0.0086, 'deaths_se': 0.0003, 'grabs': 0.169}
+cutters_first | screen_pair | md {'median': 3, 'by3': 70.1, 'by4': 80.5, 'nokill12': 2.52, 'cis': 0.3869, 'deaths': 0.0052, 'deaths_se': 0.0002, 'grabs': 0.125}
+strikers_first | reference | ab {'median': 2, 'by3': 69.7, 'by4': 79.4, 'nokill12': 7.58, 'cis': 0.847, 'deaths': 0.077, 'deaths_se': 0.0012, 'grabs': 0.32}
+strikers_first | reference | lg {'median': 3, 'by3': 61.4, 'by4': 73.1, 'nokill12': 12.99, 'cis': 1.4074, 'deaths': 0.1588, 'deaths_se': 0.0021, 'grabs': 0.295}
+strikers_first | reference | md {'median': 3, 'by3': 61.6, 'by4': 72.7, 'nokill12': 5.03, 'cis': 0.7022, 'deaths': 0.0337, 'deaths_se': 0.0007, 'grabs': 0.21}
+strikers_first | helpers | ab {'median': 2, 'by3': 76.9, 'by4': 85.7, 'nokill12': 3.99, 'cis': 0.7887, 'deaths': 0.0197, 'deaths_se': 0.0005, 'grabs': 0.295}
+strikers_first | helpers | lg {'median': 3, 'by3': 68.2, 'by4': 78.3, 'nokill12': 9.51, 'cis': 1.2722, 'deaths': 0.0216, 'deaths_se': 0.0007, 'grabs': 0.274}
+strikers_first | helpers | md {'median': 3, 'by3': 68.7, 'by4': 79.3, 'nokill12': 2.97, 'cis': 0.6394, 'deaths': 0.0086, 'deaths_se': 0.0003, 'grabs': 0.202}
+strikers_first | screen | ab {'median': 2, 'by3': 77.8, 'by4': 87.5, 'nokill12': 2.26, 'cis': 0.519, 'deaths': 0.0102, 'deaths_se': 0.0003, 'grabs': 0.183}
+strikers_first | screen | lg {'median': 3, 'by3': 66.6, 'by4': 77.8, 'nokill12': 8.84, 'cis': 0.9031, 'deaths': 0.0105, 'deaths_se': 0.0004, 'grabs': 0.182}
+strikers_first | screen | md {'median': 3, 'by3': 66.4, 'by4': 77.0, 'nokill12': 3.08, 'cis': 0.4244, 'deaths': 0.0053, 'deaths_se': 0.0002, 'grabs': 0.132}
+strikers_first | screen_pair | ab {'median': 2, 'by3': 81.2, 'by4': 90.0, 'nokill12': 1.53, 'cis': 0.4583, 'deaths': 0.0081, 'deaths_se': 0.0003, 'grabs': 0.172}
+strikers_first | screen_pair | lg {'median': 3, 'by3': 70.1, 'by4': 81.2, 'nokill12': 6.97, 'cis': 0.7774, 'deaths': 0.0082, 'deaths_se': 0.0003, 'grabs': 0.167}
+strikers_first | screen_pair | md {'median': 3, 'by3': 70.4, 'by4': 80.6, 'nokill12': 2.38, 'cis': 0.3858, 'deaths': 0.0051, 'deaths_se': 0.0002, 'grabs': 0.124}
+parked rider first | ab {'median': 3, 'by3': 59.8, 'by4': 69.6, 'nokill12': 16.18, 'cis': 1.3708, 'deaths': 0.1764, 'deaths_se': 0.0014, 'grabs': 0.443}
+parked rider first | md {'median': 4, 'by3': 49.1, 'by4': 59.3, 'nokill12': 12.91, 'cis': 0.9466, 'deaths': 0.0821, 'deaths_se': 0.0009, 'grabs': 0.271}
+--- the bar, read row against row (a positive gap is on the failing side)
+cutters_first | reference: median 2 (2 to 4); cis vs Medium twin -30.9 SE; deaths vs Medium reference -32.6 SE; no kill vs Large twin -44.8 SE; deaths vs Large twin -34.6 SE
+cutters_first | helpers: median 2 (2 to 4); cis vs Medium twin -38.5 SE; no kill vs Large twin -51.9 SE; deaths vs Large twin +0.0 SE
+cutters_first | screen: median 2 (2 to 4); cis vs Medium twin -31.1 SE; no kill vs Large twin -72.3 SE; deaths vs Large twin +0.0 SE
+cutters_first | screen_pair: median 2 (2 to 4); cis vs Medium twin -21.2 SE; no kill vs Large twin -67.8 SE; deaths vs Large twin -1.9 SE
+strikers_first | reference: median 2 (2 to 4); cis vs Medium twin -30.3 SE; deaths vs Medium reference -31.2 SE; no kill vs Large twin -43.9 SE; deaths vs Large twin -33.8 SE
+strikers_first | helpers: median 2 (2 to 4); cis vs Medium twin -36.8 SE; no kill vs Large twin -54.2 SE; deaths vs Large twin -2.2 SE
+strikers_first | screen: median 2 (2 to 4); cis vs Medium twin -28.3 SE; no kill vs Large twin -71.1 SE; deaths vs Large twin -0.6 SE
+strikers_first | screen_pair: median 2 (2 to 4); cis vs Medium twin -23.7 SE; no kill vs Large twin -66.5 SE; deaths vs Large twin -0.2 SE
+parked rider first: cis vs Medium twin -62.4 SE; deaths vs Medium twin -56.7 SE

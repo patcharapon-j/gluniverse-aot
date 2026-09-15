@@ -1,0 +1,18 @@
+committed | chapter-05 reference | baseline {'median': 3, 'by3': 61.9, 'nokill12': 5.0, 'cis': 0.71, 'deaths': 0.03, 'deaths_se': 0.001, 'grabs': 0.21, 'napes': 3.3, 'bodies': 5.79}
+committed | chapter-05 reference | 4 strikers {'median': 2, 'by3': 78.4, 'nokill12': 0.6, 'cis': 0.43, 'deaths': 0.008, 'deaths_se': 0.0005, 'grabs': 0.142, 'napes': 4.58, 'bodies': 0.26}
+committed | standard-small | baseline {'median': 2, 'by3': 80.6, 'nokill12': 1.54, 'cis': 0.8351, 'deaths': 0.0427, 'deaths_se': 0.0014, 'grabs': 0.26, 'napes': 1.88, 'bodies': 3.69}
+committed | standard-small | 4 strikers {'median': 2, 'by3': 90.4, 'nokill12': 0.42, 'cis': 0.6506, 'deaths': 0.0194, 'deaths_se': 0.0009, 'grabs': 0.207, 'napes': 2.55, 'bodies': 0.35}
+committed | standard-medium | baseline {'median': 3, 'by3': 61.6, 'nokill12': 4.89, 'cis': 0.6984, 'deaths': 0.034, 'deaths_se': 0.0011, 'grabs': 0.214, 'napes': 3.28, 'bodies': 5.79}
+committed | standard-medium | 4 strikers {'median': 3, 'by3': 78.1, 'nokill12': 0.66, 'cis': 0.4236, 'deaths': 0.0106, 'deaths_se': 0.0006, 'grabs': 0.142, 'napes': 4.61, 'bodies': 0.26}
+committed | standard-large | baseline {'median': 3, 'by3': 61.4, 'nokill12': 13.12, 'cis': 1.4172, 'deaths': 0.1648, 'deaths_se': 0.003, 'grabs': 0.299, 'napes': 2.94, 'bodies': 6.07}
+committed | standard-large | 4 strikers {'median': 2, 'by3': 78.8, 'nokill12': 2.41, 'cis': 0.7921, 'deaths': 0.0839, 'deaths_se': 0.0023, 'grabs': 0.172, 'napes': 4.37, 'bodies': 0.3}
+committed | sprinting-abnormal | baseline {'median': 2, 'by3': 69.4, 'nokill12': 7.72, 'cis': 0.8605, 'deaths': 0.0787, 'deaths_se': 0.0017, 'grabs': 0.326, 'napes': 2.04, 'bodies': 4.65}
+committed | sprinting-abnormal | 4 strikers {'median': 2, 'by3': 91.4, 'nokill12': 0.37, 'cis': 0.6198, 'deaths': 0.0188, 'deaths_se': 0.0009, 'grabs': 0.176, 'napes': 2.55, 'bodies': 0.29}
+turned | chapter-05 reference | baseline {'median': 3, 'by3': 61.3, 'nokill12': 6.8, 'cis': 1.14, 'deaths': 0.061, 'deaths_se': 0.0014, 'grabs': 0.363, 'napes': 3.32, 'bodies': 5.83}
+turned | chapter-05 reference | 4 strikers {'median': 3, 'by3': 76.4, 'nokill12': 1.5, 'cis': 0.84, 'deaths': 0.029, 'deaths_se': 0.0009, 'grabs': 0.281, 'napes': 4.57, 'bodies': 0.44}
+turned | standard-medium | baseline {'median': 3, 'by3': 61.0, 'nokill12': 6.83, 'cis': 1.0939, 'deaths': 0.0726, 'deaths_se': 0.0015, 'grabs': 0.374, 'napes': 3.31, 'bodies': 5.85}
+turned | standard-medium | 4 strikers {'median': 3, 'by3': 75.8, 'nokill12': 1.6, 'cis': 0.8255, 'deaths': 0.0347, 'deaths_se': 0.001, 'grabs': 0.295, 'napes': 4.55, 'bodies': 0.46}
+grounded3 | chapter-05 reference | baseline {'median': 3, 'by3': 65.8, 'nokill12': 3.6, 'cis': 0.66, 'deaths': 0.025, 'deaths_se': 0.0009, 'grabs': 0.2, 'napes': 3.0, 'bodies': 5.39}
+grounded3 | chapter-05 reference | 4 strikers {'median': 2, 'by3': 78.6, 'nokill12': 0.6, 'cis': 0.42, 'deaths': 0.008, 'deaths_se': 0.0005, 'grabs': 0.14, 'napes': 4.57, 'bodies': 0.25}
+grounded3 | standard-medium | baseline {'median': 3, 'by3': 66.2, 'nokill12': 3.92, 'cis': 0.6581, 'deaths': 0.029, 'deaths_se': 0.001, 'grabs': 0.204, 'napes': 2.99, 'bodies': 5.39}
+grounded3 | standard-medium | 4 strikers {'median': 3, 'by3': 78.4, 'nokill12': 0.58, 'cis': 0.4228, 'deaths': 0.0095, 'deaths_se': 0.0005, 'grabs': 0.145, 'napes': 4.57, 'bodies': 0.27}

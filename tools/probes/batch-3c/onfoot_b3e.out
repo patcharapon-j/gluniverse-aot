@@ -1,0 +1,8 @@
+Rookie Break Attention by need 1..4, gear odm, Stress 1: {1: 82.6, 2: 49.6, 3: 20.6, 4: 5.6}
+Rookie Break Attention by need 1..4, gear horse, Stress 1: {1: 82.6, 2: 49.6, 3: 20.6, 4: 5.6}
+Rookie Break Attention by need 1..4, gear none, Stress 1: {1: 74.8, 2: 37.7, 3: 11.7, 4: 1.9}
+Rookie Break Attention by need 1..4, on foot, Stress 3: {1: 74.8, 2: 43.9, 3: 20.0, 4: 6.5}
+Medium screen beside holder, the rule (screen_b3b E) {'median': 3, 'by3': 66.5, 'by4': 77.3, 'cis': 0.43, 'deaths': 0.004, 'grabs': 0.127, 'cards_resolved_per_round': 0.631, 'decoy_cards_per_round': 0.224, 'decoys': 1.02, 'feints': 0.04, 'feint_rolls': 0.75, 'foot_feints': 0.0}
+Medium screen beside holder, the rule + on-foot Feint against a grounded Titan {'median': 3, 'by3': 66.6, 'by4': 77.2, 'cis': 0.42, 'deaths': 0.004, 'grabs': 0.127, 'cards_resolved_per_round': 0.631, 'decoy_cards_per_round': 0.223, 'decoys': 1.02, 'feints': 0.038, 'feint_rolls': 0.85, 'foot_feints': 0.001}
+Large screen beside holder, the rule {'median': 3, 'by3': 66.2, 'by4': 77.5, 'cis': 0.9, 'deaths': 0.013, 'grabs': 0.186, 'cards_resolved_per_round': 0.646, 'decoy_cards_per_round': 0.222, 'decoys': 1.07, 'feints': 0.058, 'feint_rolls': 1.07, 'foot_feints': 0.0}
+Large screen beside holder, the rule + on-foot Feint against a grounded Titan {'median': 3, 'by3': 67.4, 'by4': 78.6, 'cis': 0.88, 'deaths': 0.013, 'grabs': 0.186, 'cards_resolved_per_round': 0.65, 'decoy_cards_per_round': 0.221, 'decoys': 1.06, 'feints': 0.058, 'feint_rolls': 1.17, 'foot_feints': 0.003}

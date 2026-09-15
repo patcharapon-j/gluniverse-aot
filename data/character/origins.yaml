@@ -1,0 +1,194 @@
+# Origin: the first Lifepath step. Roll D66 and read the row whose results include the roll.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.3.1)
+# references this file and renders its tables from it (tools/render/render.py).
+id: origins
+name: Origin
+chapter: 02-character-creation
+adrs: [ADR-0006, ADR-0012]
+roll: D66
+
+# What a row gives:
+#   attributes: +1 to each listed attribute (data/character/attributes.yaml, overflow rule applies)
+#   talent_choice: the player takes level 1 of one listed Talent (data/character/talents.yaml).
+#     Every row offers at least one Talent that names an entry a current rule uses (OQ-20).
+#   haven_choice entries are true whatever the Campaign Year.
+#   haven_choice: the player records one listed Haven
+#   canon_tie: an optional Canon Tie the player may record (no mechanical effect in Phase 1)
+#   condition: if not met, roll again
+condition_fields:
+  campaign_year_min: >-
+    The row can be kept only if the current Campaign Year is this year or later. Otherwise
+    roll again.
+decided: [OQ-32, OQ-33]
+
+rows:
+  - id: shiganshina
+    results: [11, 12, 13]
+    name: Shiganshina District
+    description: >-
+      A childhood in the walled district on Wall Maria's southern face, watching Survey
+      Corps columns ride out through the outer gate.
+    attributes: [agility, instinct]
+    talent_choice: [quiet-step, slip-away]
+    haven_choice:
+      - A younger sibling you promised to look after
+      - A childhood friend now serving in the Garrison
+    canon_tie:
+      character: Hannes
+      link: The Garrison soldier at the district gate who knew every child on your street.
+    condition: null
+
+  - id: wall-maria-refugee
+    results: [14, 15, 16]
+    name: Wall Maria Refugee
+    description: >-
+      Fled north by boat when Wall Maria fell in 845, then grew up hungry in the refugee
+      camps of Wall Rose.
+    attributes: [strength, instinct]
+    talent_choice: [hard-to-kill, fieldcraft]
+    haven_choice:
+      - A younger sibling still living in the camps
+      - The farm family who took you in
+    canon_tie:
+      character: Armin Arlert
+      link: Another refugee child from Shiganshina who stood in the same bread line.
+    condition:
+      campaign_year_min: 848   # three Training Years after the fall
+
+  - id: trost-merchant
+    results: [21, 22, 23]
+    name: Trost Merchant Family
+    description: >-
+      Raised at a shop counter in Trost District, the southern gate town of Wall Rose.
+    attributes: [wits, empathy]
+    talent_choice: [silver-tongue, steady-voice]
+    haven_choice:
+      - The family shop
+      - A sweetheart who works the market square
+    canon_tie: null
+    condition: null
+
+  - id: wall-rose-farm
+    results: [24, 25, 26]
+    name: Wall Rose Farm
+    description: >-
+      Hauled grain, mended fences, and drove the cart to market on farmland inside Wall Rose.
+    attributes: [strength, perception]
+    talent_choice: [strong-back, horsemanship]
+    haven_choice:
+      - The family farm
+      - A grandparent too old to work the fields
+    canon_tie: null
+    condition: null
+
+  - id: hunting-village
+    results: [31, 32, 33]
+    name: Forest Hunting Village
+    description: >-
+      Learned to track game and move quietly through the trees in a mountain village that
+      lived by the bow.
+    attributes: [perception, instinct]
+    talent_choice: [keen-eyes, lure]
+    haven_choice:
+      - A parent who still hunts the old forest
+      - The village elder who taught you to track
+    canon_tie:
+      character: Sasha Braus
+      link: A hunter's daughter from a mountain village much like yours, met at a market fair.
+    condition: null
+
+  - id: garrison-family
+    results: [34, 35, 36]
+    name: Garrison Family
+    description: >-
+      The child of a Garrison soldier, raised in barracks housing among the Wall's lifts and
+      cannon.
+    attributes: [strength, wits]
+    talent_choice: [gearwright, make-do]
+    haven_choice:
+      - A parent who still serves on the Wall
+      - The barracks family that raised you
+    canon_tie: null
+    condition: null
+
+  - id: underground-city
+    results: [41, 42, 43]
+    name: Underground City
+    description: >-
+      Born in the lightless streets beneath Mitras, where a soldier's pay and a bunk were the
+      only way to reach the surface for good.
+    attributes: [agility, instinct]
+    talent_choice: [quiet-step, grip-breaker]
+    haven_choice:
+      - Friends still living below
+      - The one adult who got you out
+    canon_tie: null
+    condition: null
+
+  - id: interior-merchant
+    results: [44, 45, 46]
+    name: Interior Merchant House
+    description: >-
+      Raised among ledgers and guild dinners in a rich merchant family inside Wall Sina, who
+      never forgave you for enlisting.
+    attributes: [wits, empathy]
+    talent_choice: [book-learning, titan-reader]
+    haven_choice:
+      - A sibling who writes to you every month
+      - The family townhouse, if they will still open the door
+    canon_tie: null
+    condition: null
+
+  - id: minor-noble
+    results: [51, 52, 53]
+    name: Minor Noble House
+    description: >-
+      A younger child of a lesser noble family, taught riding and manners and then left free
+      to throw your life away.
+    attributes: [empathy, agility]
+    talent_choice: [horsemanship, judge-of-character]
+    haven_choice:
+      - An old family servant who raised you
+      - A cousin who still speaks to you
+    canon_tie: null
+    condition: null
+
+  - id: church-orphanage
+    results: [54, 55, 56]
+    name: Church Orphanage
+    description: >-
+      Raised by the Church of the Walls after losing your parents, the eldest of a crowded
+      dormitory of children.
+    attributes: [empathy, strength]
+    talent_choice: [steady-voice, iron-nerve]
+    haven_choice:
+      - The orphanage and the children still in it
+      - The priest who raised you
+    canon_tie: null
+    condition: null
+
+  - id: doctors-household
+    results: [61, 62, 63]
+    name: Doctor's Household
+    description: >-
+      Grew up fetching bandages and holding patients still for a town doctor.
+    attributes: [wits, perception]
+    talent_choice: [field-medicine, careful-nursing]
+    haven_choice:
+      - Your parent's clinic
+      - A patient who owes you their life
+    canon_tie: null
+    condition: null
+
+  - id: horse-ranch
+    results: [64, 65, 66]
+    name: Horse Ranch
+    description: >-
+      Raised on a ranch on the plains of Wall Rose that breeds horses for the military.
+    attributes: [agility, perception]
+    talent_choice: [horsemanship, loose-the-horse]
+    haven_choice:
+      - The ranch and its horses
+      - A sibling who still trains the young horses
+    canon_tie: null
+    condition: null

@@ -1,0 +1,203 @@
+# Treat Injury: the procedure for the Action Catalog entry treat-injury, in a Titan Engagement and
+# in care windows outside one.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.5) references this
+# file and does not repeat its rows. The entry's kind, attribute, gear, and gear rule are in
+# data/character/action-catalog.yaml.
+id: treat-injury
+name: Treat Injury
+chapter: 03-harm-and-mind
+adrs: [ADR-0003]
+decided: [OQ-44, OQ-56, OQ-57, OQ-138, OQ-150]
+
+entry: treat-injury
+attribute: wits
+gear: medical-kit    # Chapter 4 sets the item, its rating, and wear; without one, Wits alone (gear_requirement)
+needs: 1
+
+# Declare one use before rolling. One roll is one use on one patient.
+uses:
+  - id: revive
+    patient: a Down soldier whose current Health is 0 and whose Health lost is above 0
+    on_success: >-
+      Restore 1 Health lost per success, to a maximum of the patient's Health lost, erasing that
+      many damage marks (data/harm/health.yaml, restoring, revive). Crossed-off boxes do not come
+      back. If a down until_treated row still holds the patient, Down goes on. The roll counts as
+      the treater's roll either way.
+    changes: [health-restore, down-end]
+  - id: treat
+    patient: a soldier holding at least one untreated Critical Injury; the treater names one of them
+    on_success: >-
+      The named Critical Injury becomes treated and gives back the Health box it crossed off,
+      unless the patient still holds at least as many untreated Critical Injuries as Health
+      (data/harm/health.yaml, restoring, treated-or-healed). If it is lethal, it is stabilized: it is no longer lethal and has
+      no time limit (data/harm/death-rolls.yaml).
+    changes: [critical-injury-treat, down-end]
+use_choice: Treat and revive are separate uses; the players choose which use a roll makes.
+
+on_failure: >-
+  Nothing happens. In a Titan Engagement the same use can be tried again on a later turn.
+  Outside one, see care_windows.
+
+patients:
+  comrade: Any other soldier, player character or Squadmate, alive.
+  self: >-
+    The treater may use treat on their own Critical Injury, with a penalty of 2 base dice
+    (Chapter 1, section 1.3, step 5). A soldier can never revive themselves, because a Down
+    soldier takes no action and makes no roll but the Death Roll.
+  in_a_care_window: >-
+    A care-window patient must be a living soldier in that window's scope. Its scope restricts
+    patients as well as rollers, helpers, and Coverers (care_windows).
+
+# Decision batch 8, 8-8 and 8-15 (OQ-138, OQ-150): what a type rider asks of a treat use on its Critical Injury
+# (data/harm/critical-injuries.yaml, type_riders). Revive is not made on a Critical Injury, so neither applies to it.
+type_riders:
+  requires_kit_or_supplies: >-
+    A treat use on a Critical Injury whose type rider sets treat_injury requires_kit_or_supplies (the
+    Burn rider) is made only by a treater who has a medical kit that counts as had
+    (data/gear/items.yaml, medical-kit), or who spends 1 medical unit of Squad Supply on the roll.
+    Without either the roll is not made: gear_requirement's attribute-alone reading
+    (data/character/action-catalog.yaml) does not apply to it. The only medical unit spent on a roll is the care-bonus use, in a care window (data/gear/squad-supply.yaml, medical_uses, care-bonus), which also gives its Bonus Die. So in a Titan Engagement or a Skirmish only a kit that counts as had meets the requirement, and in a care window a kit or the care-bonus spend does. The aftermath roll never reaches a Burn, since every lethal Burn row has a day limit (decision batch 8, 8-24; OQ-160).
+  penalty: >-
+    A treat use on a Critical Injury whose type rider sets treat_injury {penalty: n} (the Pierce rider)
+    takes a penalty of n base dice (Chapter 1, section 1.3, step 5), in a Titan Engagement, as an
+    aftermath roll, and in a care window alike. When the patient treats themselves it adds to the
+    self-treatment penalty (patients, self). Like every penalty, it never takes the pool below 1 base die
+    and never removes Gear Dice.
+
+in_titan_engagement:
+  kind: action
+  position_requirement: >-
+    The patient holds the same Position as the treater (data/engagement/positions.yaml,
+    comparison). Two soldiers who have both
+    left a Titan Engagement that is still under way count as holding the same Position
+    (data/harm/engagement-end.yaml, soldiers_who_left).
+  help: >-
+    As Chapter 1, section 1.8. Two soldiers who have both left a Titan Engagement that is still
+    under way count as holding the same Position for Help and Covering on this roll.
+  push_and_cover: As Chapter 1, section 1.5. Sure Hands allows a second Push.
+
+# Decision batch 7, 7-17: Treat Injury as an action in a Skirmish (data/skirmish/skirmish.yaml, actions).
+in_skirmish:
+  kind: action
+  # decision batch 8, 8-30 (OQ-155, item h)
+  patient: >-
+    Any other soldier taking part in the Skirmish, or the treater as patients (self) allows. There is no
+    Position requirement.
+  help: Up to three comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+  push_and_cover: As Chapter 1, section 1.5. Sure Hands allows a second Push.
+  retry: A failed use can be tried again on a later turn.
+
+# Aftermath rolls are made only when a Titan Engagement or a Skirmish ends, before its Death Rolls. They
+# are not a care window, and they use up no soldier's roll in the care window that follows.
+aftermath_rolls:
+  when: >-
+    At the aftermath-rolls step of data/harm/engagement-end.yaml, when a Titan Engagement or a Skirmish
+    ends: after turn limits become engagement limits, and before the end-of-Engagement Death Rolls.
+  in_a_skirmish: >-
+    A Skirmish has no Positions, so for who_rolls every soldier who took part counts as holding the
+    patient's Position (data/harm/engagement-end.yaml, procedures, skirmish, aftermath-rolls).
+  patient: >-
+    A living soldier, Down or not, holding an untreated lethal Critical Injury with an
+    engagement limit, including a turn limit that has just become engagement.
+  who_rolls: >-
+    The players choose one treater for the patient: a living soldier who is not Down and who
+    held, at the moment the Titan Engagement ended, the patient's last Position or a Position one
+    step from it, relative to the Focus Titan alive last (while its corpse lies on the field, the Positions relative to the corpse as they stand at the end; data/engagement/positions.yaml, corpse; decision batch 8, 8-20), or, when more than one Focus Titan was
+    alive, relative to the one data/engagement/positions.yaml (comparison) names
+    (data/engagement/positions.yaml, a_focus_titan_dies; decision batch 5, OQ-122), or the patient, if not Down, treating themselves
+    with the self penalty in
+    patients. Two soldiers who had both left the Titan Engagement count as holding the same
+    Position, and a soldier who had left never counts as holding the same Position as, or one
+    step from, a soldier who still held one (data/harm/engagement-end.yaml, soldiers_who_left).
+  roll: >-
+    Treat on one untreated lethal engagement Critical Injury of the patient's, chosen by the
+    players. On a success it becomes treated and stabilized and gives back its Health box as treat does (uses), which
+    can end the patient's Down before the Death Rolls (data/harm/down.yaml).
+  limit: >-
+    Each patient gets at most one aftermath roll, and each soldier makes at most one aftermath
+    roll as treater. A failure uses up the patient's attempt: no other treater, and no other
+    Critical Injury of the same patient, can reopen it before the Death Rolls.
+  help_and_cover: No one can Help or Cover an aftermath roll (Chapter 1, sections 1.5 and 1.8).
+  push: As Chapter 1, section 1.5. Sure Hands allows a second Push.
+  order: >-
+    The players choose the order of rolls. If they disagree, use the roll-off in
+    data/character/lifepath.yaml (group_choices).
+  squadmates: Squadmates take part like player characters, directed as data/character/squadmates.yaml states.
+  decided: [OQ-57]
+
+# In a Skirmish Treat Injury is an action (in_skirmish, above). Care windows and aftermath rolls are the
+# only other times Treat Injury is rolled outside a Titan Engagement. A
+# window's scope is the soldiers who take part in it.
+care_windows:
+  held:
+    - id: engagement-end
+      when: >-
+        When a Titan Engagement ends, at the care-window step of data/harm/engagement-end.yaml,
+        after that Titan Engagement's end-of-Engagement Death Rolls.
+      scope: >-
+        Every soldier in the Squad who held a Position at any point during that Titan Engagement
+        (the same test as data/core/stress-changes.yaml, engagement-ends).
+    - id: outside-harm
+      when: >-
+        Once for each event outside both a Titan Engagement and a Skirmish that makes one or more
+        soldiers Down or gives them a lethal Critical Injury with a turn or engagement limit, however
+        many soldiers it harms. The window is held as soon as that event has been resolved, unless the
+        rule that caused the harm names a later point in its own procedure. The Death Rolls for those
+        Critical Injuries follow the window (data/harm/death-rolls.yaml). Harm during a Titan
+        Engagement or a Skirmish never holds this window: harm in a Skirmish is treated by the Treat
+        Injury action (in_skirmish), by aftermath rolls, and in the skirmish-end window.
+      scope: >-
+        The soldiers the rule that caused the harm names as taking part, such as a Chase's
+        riders. If it names none, every soldier in the Squad on the same Expedition as a harmed
+        soldier, or every soldier in the Squad when no Expedition is under way.
+      patients: >-
+        A roll in this window may only treat a Critical Injury that the window's event gave, or
+        revive a soldier that the event made Down. An older Critical Injury waits for a later
+        window of another kind.
+    - id: day
+      when: Each time a day passes, before day limits run out (data/harm/healing.yaml).
+      scope: >-
+        Every soldier in the Squad on the Expedition during which the day passes, at a night camp
+        (data/expedition/legs.yaml, night_camp). No window is held on a day that passes in Downtime;
+        Downtime holds its one window at the infirmary (downtime). For the interim day (data/harm/healing.yaml, day_passes, interim), every
+        soldier in the Squad (decision batch 5, 5-16, OQ-130).
+    - id: downtime
+      when: Once in each Downtime, at its infirmary, before its seven days pass (data/campaign/downtime.yaml, infirmary).
+      scope: Every soldier in the Squad.
+    - id: skirmish-end
+      when: When a Skirmish ends, at the care-window step of data/harm/engagement-end.yaml (procedures, skirmish).
+      scope: Every soldier who took part in that Skirmish.
+  patients: >-
+    A care-window patient must be a living soldier in that window's scope. Its scope restricts
+    patients as well as rollers, helpers, and Coverers.
+  who_rolls: >-
+    Every soldier in the window's scope who is alive and not Down may make one Treat Injury roll
+    in the window, for any legal use and patient within this window's scope that the uses and
+    patients above allow. There is no Position requirement.
+  help: >-
+    A soldier qualifies to Help a roll in the window if they are in its scope, alive, not Down,
+    and not the soldier rolling. A soldier who qualifies may Help only if they have not yet made
+    or Helped a roll in the window. Help is declared before the roll, and Helping spends that
+    soldier's roll for the window. At most 3 soldiers Help one roll (Chapter 1, section 1.8).
+  cover: >-
+    A Push in the window can be Covered by any soldier who qualifies to Help that roll, even one
+    who has already made or Helped a roll in the window (Chapter 1, section 1.5, OQ-06). Covering
+    spends nothing.
+  order: >-
+    The players choose the order of rolls. If they disagree, use the roll-off in
+    data/character/lifepath.yaml (group_choices).
+  retry: A failed roll can be tried again only in a later care window.
+  squadmates: Squadmates take part like player characters, directed as data/character/squadmates.yaml states.
+  gear: >-
+    Chapter 4 adds medical kit restocking to every care window (data/gear/squad-supply.yaml,
+    medical_uses), and Field Repair rolls to the windows held when a Titan Engagement ends, when a
+    day passes during an Expedition, or on the interim day (data/gear/field-repair.yaml).
+
+talents:
+  - {id: field-medicine, effect: adds dice (data/character/talents.yaml)}
+  - {id: sure-hands, effect: a second Push (data/character/talents.yaml)}
+  - {id: careful-nursing, effect: "halves the healing time of a comrade's Critical Injury that the soldier treats successfully (data/harm/healing.yaml)"}
+
+squad_supply: >-
+  data/gear/squad-supply.yaml (medical_uses) states the medical Squad Supply uses. Its care-bonus
+  is the medical-supplies source in data/core/bonus-dice-sources.yaml.

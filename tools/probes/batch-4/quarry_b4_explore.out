@@ -1,0 +1,36 @@
+committed | cutters_first | reference {'median': 2, 'by3': 75.4, 'by4': 83.7, 'nokill12': 4.76, 'cis': 0.8083, 'deaths': 0.0691, 'deaths_se': 0.0025, 'grabs': 0.305}
+committed | cutters_first | helpers {'median': 2, 'by3': 80.3, 'by4': 88.0, 'nokill12': 3.01, 'cis': 0.7024, 'deaths': 0.0224, 'deaths_se': 0.0011, 'grabs': 0.273}
+committed | strikers_first | reference {'median': 3, 'by3': 62.6, 'by4': 73.6, 'nokill12': 11.7, 'cis': 1.0811, 'deaths': 0.1296, 'deaths_se': 0.0036, 'grabs': 0.442}
+committed | strikers_first | helpers {'median': 3, 'by3': 68.7, 'by4': 79.5, 'nokill12': 7.46, 'cis': 0.9158, 'deaths': 0.0389, 'deaths_se': 0.0015, 'grabs': 0.368}
+committed | random | reference {'median': 2, 'by3': 69.3, 'by4': 79.0, 'nokill12': 8.1, 'cis': 0.9452, 'deaths': 0.1029, 'deaths_se': 0.0032, 'grabs': 0.375}
+committed | random | helpers {'median': 2, 'by3': 75.2, 'by4': 84.2, 'nokill12': 5.03, 'cis': 0.7874, 'deaths': 0.028, 'deaths_se': 0.0013, 'grabs': 0.314}
+committed | parked rider first {'median': 2, 'by3': 76.0, 'by4': 83.0, 'nokill12': 7.35, 'cis': 0.6174, 'deaths': 0.0738, 'deaths_se': 0.0022, 'grabs': 0.15}
+committed | parked rider last {'median': 3, 'by3': 54.6, 'by4': 65.2, 'nokill12': 20.25, 'cis': 1.6412, 'deaths': 0.2342, 'deaths_se': 0.0038, 'grabs': 0.548}
+no_holder | cutters_first | reference {'median': 3, 'by3': 67.1, 'by4': 76.9, 'nokill12': 9.7, 'cis': 1.1469, 'deaths': 0.1215, 'deaths_se': 0.0035, 'grabs': 0.471}
+no_holder | cutters_first | helpers {'median': 2, 'by3': 75.3, 'by4': 84.3, 'nokill12': 4.66, 'cis': 1.0197, 'deaths': 0.0281, 'deaths_se': 0.0013, 'grabs': 0.416}
+no_holder | strikers_first | reference {'median': 3, 'by3': 67.2, 'by4': 77.0, 'nokill12': 9.5, 'cis': 1.1407, 'deaths': 0.1111, 'deaths_se': 0.0033, 'grabs': 0.465}
+no_holder | strikers_first | helpers {'median': 2, 'by3': 75.2, 'by4': 84.0, 'nokill12': 5.03, 'cis': 1.0397, 'deaths': 0.0305, 'deaths_se': 0.0014, 'grabs': 0.417}
+no_holder | parked rider first {'median': 3, 'by3': 58.7, 'by4': 67.9, 'nokill12': 18.39, 'cis': 1.6589, 'deaths': 0.213, 'deaths_se': 0.0036, 'grabs': 0.547}
+no_holder | parked rider last {'median': 3, 'by3': 58.8, 'by4': 68.2, 'nokill12': 18.29, 'cis': 1.6325, 'deaths': 0.2095, 'deaths_se': 0.0036, 'grabs': 0.54}
+rule | cutters_first | reference {'median': 3, 'by3': 66.9, 'by4': 76.8, 'nokill12': 9.38, 'cis': 1.1473, 'deaths': 0.1258, 'deaths_se': 0.0036, 'grabs': 0.472}
+rule | cutters_first | helpers {'median': 2, 'by3': 75.1, 'by4': 84.0, 'nokill12': 5.0, 'cis': 1.053, 'deaths': 0.0315, 'deaths_se': 0.0014, 'grabs': 0.43}
+rule | strikers_first | reference {'median': 3, 'by3': 67.4, 'by4': 77.1, 'nokill12': 9.5, 'cis': 1.1616, 'deaths': 0.1262, 'deaths_se': 0.0036, 'grabs': 0.476}
+rule | strikers_first | helpers {'median': 2, 'by3': 75.4, 'by4': 84.4, 'nokill12': 4.87, 'cis': 1.0547, 'deaths': 0.0305, 'deaths_se': 0.0013, 'grabs': 0.434}
+rule | parked rider first {'median': 3, 'by3': 56.7, 'by4': 66.1, 'nokill12': 20.02, 'cis': 1.8293, 'deaths': 0.2513, 'deaths_se': 0.0039, 'grabs': 0.631}
+rule | parked rider last {'median': 3, 'by3': 56.6, 'by4': 65.9, 'nokill12': 20.03, 'cis': 1.8133, 'deaths': 0.2445, 'deaths_se': 0.0038, 'grabs': 0.622}
+path | cutters_first | reference {'median': 3, 'by3': 66.6, 'by4': 77.5, 'nokill12': 5.93, 'cis': 1.2379, 'deaths': 0.1487, 'deaths_se': 0.0039, 'grabs': 0.55}
+path | cutters_first | helpers {'median': 2, 'by3': 75.1, 'by4': 85.3, 'nokill12': 2.0, 'cis': 1.1106, 'deaths': 0.0338, 'deaths_se': 0.0015, 'grabs': 0.491}
+path | strikers_first | reference {'median': 3, 'by3': 67.1, 'by4': 77.9, 'nokill12': 5.66, 'cis': 1.2236, 'deaths': 0.1381, 'deaths_se': 0.0038, 'grabs': 0.546}
+path | strikers_first | helpers {'median': 2, 'by3': 74.9, 'by4': 85.5, 'nokill12': 1.99, 'cis': 1.1031, 'deaths': 0.0315, 'deaths_se': 0.0014, 'grabs': 0.493}
+path | parked rider first {'median': 3, 'by3': 55.0, 'by4': 66.1, 'nokill12': 16.62, 'cis': 1.9504, 'deaths': 0.275, 'deaths_se': 0.0041, 'grabs': 0.693}
+path | parked rider last {'median': 3, 'by3': 55.1, 'by4': 65.6, 'nokill12': 16.85, 'cis': 1.9712, 'deaths': 0.2738, 'deaths_se': 0.0041, 'grabs': 0.694}
+rule | standard-medium, parked rider first, mounted start {'median': 4, 'by3': 49.0, 'by4': 59.3, 'nokill12': 13.18, 'cis': 0.9614, 'deaths': 0.0852, 'deaths_se': 0.002, 'grabs': 0.274}
+--- the standard Titans under the tie-break (reference rows; twins the tables quote)
+standard-small | tie_break sheet {'median': 2, 'by3': 80.8, 'by4': 90.6, 'nokill12': 1.4, 'cis': 0.8385, 'deaths': 0.0401, 'deaths_se': 0.0021, 'grabs': 0.258}
+standard-small | tie_break none {'median': 2, 'by3': 80.5, 'by4': 90.3, 'nokill12': 1.58, 'cis': 0.8369, 'deaths': 0.044, 'deaths_se': 0.0022, 'grabs': 0.263}
+standard-medium | tie_break sheet {'median': 3, 'by3': 61.8, 'by4': 72.7, 'nokill12': 5.02, 'cis': 0.6932, 'deaths': 0.0329, 'deaths_se': 0.0016, 'grabs': 0.207}
+standard-medium | tie_break none {'median': 3, 'by3': 61.6, 'by4': 72.5, 'nokill12': 4.79, 'cis': 0.6925, 'deaths': 0.0332, 'deaths_se': 0.0016, 'grabs': 0.211}
+standard-large | tie_break sheet {'median': 3, 'by3': 61.9, 'by4': 73.6, 'nokill12': 12.99, 'cis': 1.4061, 'deaths': 0.1642, 'deaths_se': 0.0047, 'grabs': 0.301}
+standard-large | tie_break none {'median': 3, 'by3': 61.2, 'by4': 73.1, 'nokill12': 12.98, 'cis': 1.4155, 'deaths': 0.1547, 'deaths_se': 0.0046, 'grabs': 0.293}
+chapter-05 fight.py reference | tie_break sheet {'median': 3, 'by3': 61.8, 'by4': 72.1, 'nokill12': 5.2, 'cis': 0.72, 'deaths': 0.032, 'deaths_se': 0.0016, 'grabs': 0.216}
+chapter-05 fight.py reference | tie_break none {'median': 3, 'by3': 62.2, 'by4': 72.9, 'nokill12': 5.0, 'cis': 0.7, 'deaths': 0.029, 'deaths_se': 0.0016, 'grabs': 0.205}

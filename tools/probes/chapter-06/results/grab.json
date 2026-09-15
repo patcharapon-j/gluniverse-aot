@@ -1,0 +1,50 @@
+{
+ "sprinting-abnormal": {
+  "alone_dodge_failed": 70.1,
+  "alone_no_dodge": 73.0,
+  "grab_attack_dice": 6,
+  "modelled_needs": 2,
+  "one_comrade_stress_1_grief_0": 28.7,
+  "one_comrade_stress_1_grief_1": 34.2,
+  "one_comrade_stress_2_grief_0": 33.7,
+  "one_comrade_stress_2_grief_1": 40.3,
+  "one_comrade_stress_3_grief_0": 39.8,
+  "one_comrade_stress_3_grief_1": 45.2
+ },
+ "standard-large": {
+  "alone_dodge_failed": 69.7,
+  "alone_no_dodge": 73.2,
+  "grab_attack_dice": 12,
+  "modelled_needs": 4,
+  "one_comrade_stress_1_grief_0": 28.6,
+  "one_comrade_stress_1_grief_1": 34.1,
+  "one_comrade_stress_2_grief_0": 33.5,
+  "one_comrade_stress_2_grief_1": 39.7,
+  "one_comrade_stress_3_grief_0": 39.5,
+  "one_comrade_stress_3_grief_1": 45.0
+ },
+ "standard-medium": {
+  "alone_dodge_failed": 69.4,
+  "alone_no_dodge": 72.9,
+  "grab_attack_dice": 9,
+  "modelled_needs": 3,
+  "one_comrade_stress_1_grief_0": 28.7,
+  "one_comrade_stress_1_grief_1": 34.4,
+  "one_comrade_stress_2_grief_0": 33.3,
+  "one_comrade_stress_2_grief_1": 39.7,
+  "one_comrade_stress_3_grief_0": 39.8,
+  "one_comrade_stress_3_grief_1": 44.4
+ },
+ "standard-small": {
+  "alone_dodge_failed": 70.4,
+  "alone_no_dodge": 73.1,
+  "grab_attack_dice": 6,
+  "modelled_needs": 2,
+  "one_comrade_stress_1_grief_0": 29.0,
+  "one_comrade_stress_1_grief_1": 34.4,
+  "one_comrade_stress_2_grief_0": 33.9,
+  "one_comrade_stress_2_grief_1": 40.3,
+  "one_comrade_stress_3_grief_0": 39.4,
+  "one_comrade_stress_3_grief_1": 45.3
+ }
+}

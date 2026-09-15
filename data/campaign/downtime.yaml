@@ -1,0 +1,143 @@
+# Downtime, the playtest minimum: when it begins and ends, the infirmary and its seven days, the
+# Downtime Actions, the Squad Action, and what Downtime changes elsewhere.
+# Source of truth under ADR-0012. docs/rules/07-playtest-rules.md (section 7.2) references this file
+# and renders its tables from it (tools/render/render.py).
+# Playtest rule: Phase 2 replaces this file without changing the healing count, which counts days
+# (decision batch 7, 7-15; OQ-141).
+id: downtime
+name: Downtime
+chapter: 07-playtest-rules
+status: playtest
+adrs: [ADR-0003, ADR-0008, ADR-0011, ADR-0016]
+decided: [OQ-52, OQ-141, OQ-142, OQ-147, OQ-153]
+
+downtime:
+  meaning: The time the Squad spends inside the Walls between Expeditions.
+  begins: When the Squad reaches the gate that ends an Expedition (data/expedition/legs.yaml, expedition, ends).
+  # decision batch 8, 8-28 (OQ-153, item a)
+  ends: >-
+    When the next Expedition begins (data/expedition/legs.yaml, expedition, begins). Its seven days pass
+    at the infirmary step; nothing else in it takes days.
+  days: 7
+  scope: Every soldier in the Squad.
+  interim_rows: >-
+    While Downtime is under way, the interim day (data/harm/healing.yaml, day_passes, interim) and the
+    interim issue (data/gear/standard-issue.yaml, interim_issue) never happen. Its seven days and the
+    next Expedition's issue take their place.
+  stress_minimum: Stress never falls below the soldier's minimum (data/core/stress-changes.yaml, minimum).
+  grief_floor: Grief never falls below 0.
+
+steps:
+  - id: infirmary
+    text: Resolve the infirmary (infirmary).
+  - id: downtime-actions
+    text: >-
+      Each player character takes one Downtime Action (downtime_actions), in the order the players
+      choose (the roll-off in data/character/lifepath.yaml, group_choices, if they disagree). Each
+      Squadmate takes the Squadmate relief (squadmates).
+  - id: squad-action
+    # decision batch 8, 8-38
+    text: >-
+      The Squad takes one Squad Action (squad_actions), chosen by the players (the roll-off if they
+      disagree). While the playtest configuration holds (data/character/squadmates.yaml,
+      playtest_configuration), Recruit is not offered, so the Squad Action is Honoring the Fallen.
+  - id: after-actions
+    # decision batch 8, 8-28 (OQ-153, item c): the order of this step
+    text: >-
+      In order: granted Requisitions arrive (data/campaign/requisition.yaml, grant); prosthetics are fitted
+      (data/harm/critical-injuries.yaml, lost_limb_riders, prosthetics); medical Retirement is offered again
+      (data/mind/scars.yaml, retirement); then retirements and promotions due resolve
+      (data/character/squadmates.yaml, promotion).
+
+# ------------------------------------------------------------------ infirmary
+infirmary:
+  care_window: >-
+    Hold one care window (data/harm/treat-injury.yaml, care_windows, downtime) with every soldier in the
+    Squad in its scope. Field Repair is not rolled in it (data/gear/field-repair.yaml,
+    outside_titan_engagement).
+  each_day:
+    count: 7
+    steps:
+      - Every lethal Critical Injury with a day limit gets one infirmary roll (rolls, infirmary-roll). A success stabilizes it, as a successful treat does (data/harm/treat-injury.yaml, uses, treat), but does not treat it.
+      - Every lethal Critical Injury that still has a day limit runs out and causes a Death Roll (data/harm/death-rolls.yaml).
+      - Every living soldier gets back all Health lost to damage (data/harm/health.yaml, restoring, day-passes).
+      # R16: the same step as data/harm/healing.yaml (each_day, fourth step)
+      - >-
+        Every held Critical Injury's remaining healing time drops by 1 day. One that reaches 0 heals
+        (data/harm/healing.yaml, healing_time). An untreated Critical Injury whose type rider sets
+        heals_untreated false does not drop (healing_time, not_while_untreated; decision batch 8, 8-15),
+        and a lethal Critical Injury cannot heal while it is still lethal (healing_time, lethal_injuries).
+    # decision batch 8, 8-28 (OQ-153, item b)
+    no_care_window: >-
+      These seven days hold no care window of their own; the infirmary's window above is Downtime's only
+      one.
+    deaths: >-
+      A death on an infirmary day causes no Fear Roll, since this rule names no one who rolls
+      (data/mind/fear-rolls.yaml, can_arise_outside_titan_engagement). Its Grief follows
+      data/mind/grief.yaml (the deaths of one day passing), and promotion is timed as for a day passing
+      (data/character/squadmates.yaml, promotion, timing).
+
+# ------------------------------------------------------------------ Downtime Actions
+downtime_actions:
+  entry: downtime-action   # data/character/action-catalog.yaml (decision batch 8, 8-28)
+  who: Each player character, once per Downtime. Squadmates take none (squadmates).
+  rows:
+    - id: recover
+      name: Recover
+      effect: The soldier loses 2 Stress.
+      stress: -2
+      grief: 0
+    - id: visit-haven
+      name: Visit Haven
+      effect: The soldier goes home to their Haven and loses 2 Stress and 2 Grief.
+      stress: -2
+      grief: -2
+    - id: requisition
+      name: Requisition
+      effect: >-
+        The soldier makes one Requisition, or Helps a comrade's Requisition roll with it (section 7.3).
+      stress: 0
+      grief: 0
+    - id: maintain-gear
+      name: Maintain Gear
+      effect: >-
+        Every rated item the soldier holds returns to its rating: ODM Gear is no longer Jammed, a lame
+        horse is no longer lame, and a worn kit or firearm is whole again. A ruined Blade Set stays
+        ruined.
+      stress: 0
+      grief: 0
+  later: Train, Investigate, and Contribute to Research wait for Phase 2.
+
+squadmates:
+  relief: Each Squadmate loses 2 Stress and 1 Grief.
+  stress: -2
+  grief: -1
+
+# ------------------------------------------------------------------ Squad Actions
+squad_actions:
+  entry: squad-action   # data/character/action-catalog.yaml (decision batch 8, 8-28)
+  who: The whole Squad, once per Downtime.
+  rows:
+    - id: honoring-the-fallen
+      name: Honoring the Fallen
+      effect: Every soldier in the Squad loses 1 Grief.
+    - id: recruit
+      name: Recruit
+      # decision batch 8, 8-38: not offered while data/character/squadmates.yaml playtest_configuration holds
+      effect: >-
+        Not offered while the playtest configuration holds, and it brings no Squadmate then (Chapter 2,
+        section 2.10). Otherwise, new Squadmates join until the Squad Pool holds 6 minus the number of
+        player characters. The players choose each one's template and name it, and it joins as a starting
+        Squadmate does, with Standard Issue (Chapter 2, section 2.10).
+  later: Lobbying for Funding, HQ Upgrades, and the other Squad Actions wait for Phase 2, as do XP, Commendations, and Faction Standing.
+
+# ------------------------------------------------------------------ rolls
+rolls:
+  - id: infirmary-roll
+    name: Infirmary roll
+    who: Rolled for the patient; no soldier rolls it, and a Down patient gets it too.
+    entry: none (4 base dice, not an attribute roll; no Talent, Gear, Stress, or Bonus Dice)
+    needs: "1"
+    help: Never.
+    push: Never.
+    retry: Once per Critical Injury per infirmary day; it is called again on each later day while that Critical Injury is still lethal.

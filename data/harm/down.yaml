@@ -1,0 +1,84 @@
+# Down: when a soldier becomes Down, what a Down soldier can and cannot do, and when Down ends.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.3) references this
+# file and does not repeat its rows.
+id: down
+name: Down
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0005, ADR-0015, ADR-0019]
+decided: [OQ-18, OQ-45]
+
+# A soldier is Down while at least one condition is true. Check after any change to Health lost,
+# to a Critical Injury, or to whether a Critical Injury is treated.
+conditions:
+  - id: zero-health
+    test: The soldier's current Health is 0 (data/harm/health.yaml), from damage, crossed-off boxes, or both.
+    critical_injury: >-
+      Damage that brings current Health to 0 gives one Critical Injury (data/harm/health.yaml,
+      damage). A Critical Injury that crosses off the last box gives none. This condition gives
+      no further one.
+  - id: down-row
+    test: The soldier holds an untreated Critical Injury whose row has down until_treated (data/harm/critical-injuries.yaml).
+
+# Chapter 1, section 1.9 shared hook (OQ-18): what the Down state forbids, named on its own row.
+forbids: [push, help, cover, reaction]
+
+# What being Down changes. A Down soldier's turns still happen and still count as turns for every
+# rule that counts turns, such as a lethal time limit or a Grab (data/engagement/grab.yaml, countdown).
+while_down:
+  turn: >-
+    Each of the soldier's turns that begins while they are Down has its move, and its action
+    counts as spent (ending, after_ending). The move can make only the change
+    data/engagement/positions.yaml (moves, down_soldier) allows.
+  cannot:
+    - id: actions
+      text: Take any action, including Help (Chapter 1, section 1.8) and every Action Catalog entry whose kind is action.
+    - id: reactions
+      text: >-
+        Make a Reaction. The forbids row above names it (Chapter 1, section 1.9). A soldier who
+        cannot react cancels nothing, so a Titan's behavior lands on them on 1 or more successes of
+        its roll (ADR-0019).
+    - id: cover
+      text: Cover a Push. The forbids row above names it, and Chapter 1, section 1.5 also requires a Covering soldier who is not Down.
+    - id: attribute-rolls
+      text: >-
+        Make any attribute roll except a Death Roll. So a Down soldier never Pushes, never rolls
+        Stress Dice, and never suffers a Stress Response while Down.
+    - id: fear-rolls
+      text: Make a Fear Roll (data/mind/fear-rolls.yaml).
+  can:
+    - Make Death Rolls (data/harm/death-rolls.yaml).
+    - Be the patient of Treat Injury (data/harm/treat-injury.yaml).
+    - Be the target of Rally (data/mind/stress-responses.yaml).
+    - Be lifted with Lift Comrade (Chapters 4 and 5).
+    - Gain Stress, Critical Injuries, Scars, and Grief from any rule that names them.
+  kept: >-
+    Stress, lasting Stress Responses, Grief, Scars, and a Grabbed state all stay as they are.
+    A Grabbed soldier who becomes Down stays Grabbed and cannot take Break Free, because it is an
+    action.
+  becoming_down_mid_round: >-
+    Becoming Down spends no turn by itself. If the soldier's turn this round has already begun or
+    ended, they lose any action of that turn they still hold, even if Down ends before the round
+    ends. That action counts as spent for every rule that asks whether it is spent, such as which
+    turn a Reaction spends (Chapter 1, section 1.9, OQ-09). A move of that turn they still hold
+    stays available only as a Down soldier's move. If this round's turn has not yet come up,
+    becoming Down takes nothing from it (ending, after_ending).
+  set_by_other_chapters:
+    - The Attention Ladder counts a Down soldier only for tests marked down_can_meet (data/engagement/attention.yaml, candidates).
+    - What happens to a soldier who becomes Down while airborne on ODM Gear or mounted (Chapter 4, data/gear/falls.yaml).
+
+ending:
+  test: >-
+    Down ends at once when current Health is above 0 and the soldier holds no untreated
+    Critical Injury whose row has down until_treated.
+  routes:
+    - Treating a Critical Injury (data/harm/treat-injury.yaml, treat) or its healing (data/harm/healing.yaml) gives back its box as data/harm/health.yaml (restoring, treated-or-healed) states, and ends a down until_treated row's hold if it is that row.
+    - A successful Treat Injury revive erases damage marks (data/harm/treat-injury.yaml, revive).
+    - A day passes and erases all damage marks (data/harm/health.yaml, restoring, day-passes).
+  nothing_else: No other rule ends Down.
+  after_ending: >-
+    Ending Down restores nothing already spent: a turn or action that a Reaction or a result has
+    spent stays spent, and a future turn already spent in full stays wholly spent (Chapter 1,
+    section 1.9; data/harm/effect-types.yaml). The action of a turn that begins while the
+    soldier is Down counts as spent for every rule that asks, and stays spent if Down ends during
+    or after that turn. A turn that begins after Down has ended has its move and action unless
+    they are already spent, and a turn that has not yet begun keeps its action.

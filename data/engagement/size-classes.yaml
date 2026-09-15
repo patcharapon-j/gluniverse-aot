@@ -1,0 +1,90 @@
+# Size Classes: the values a standard Titan takes from its Size Class.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.4) references this
+# file and does not repeat its rows.
+id: size-classes
+name: Size Classes
+chapter: 05-titan-engagement
+adrs: [ADR-0007, ADR-0014, ADR-0015, ADR-0019]
+decided: [OQ-78, OQ-99, OQ-145, OQ-146]
+
+# Every number below is a starting value for the ADR-0014 simulator (tools/sim/, whose report is
+# docs/reviews/simulator-report.md). The
+# figures that set them are in data/engagement/tuning.yaml. The simulator may change any of them;
+# the chapter then follows this file.
+starting_values_for_simulator: true
+
+# How to read a class row.
+fields:
+  height: The glossary height band. It has no rule effect beyond naming the class.
+  tempo: Initiative cards the Titan is dealt each round (data/engagement/round.yaml).
+  nape_depth: Successes one Nape strike needs to kill the Titan (data/engagement/titan-harm.yaml, nape_strikes).
+  regeneration_clock: Segments in the Titan's Regeneration clock, which fills 1 segment at the end of each round (data/engagement/titan-harm.yaml, regeneration).
+  toughness: Toughness of each Body Part, by kind (data/engagement/titan-harm.yaml, body_part_kinds).
+  attack_dice: >-
+    The Attack Dice a Behavior Table entry of each tier rolls as Titan Dice
+    (data/engagement/titan-format.yaml, titan_dice). Thrash rolls the control pool
+    (data/engagement/titan-format.yaml, tier_rules). Each pool is 3 dice for each point of the fixed
+    number of dodge successes the tier needed before decision batch 8, so the pools follow those
+    values and not the tier names: the Large Titan's control tier rolls 9 (decision batch 8, 8-1;
+    OQ-145).
+  raises_fall_band: >-
+    Whether a fall from a Position held relative to a Titan of this class is raised one band
+    (data/gear/falls.yaml, height). Chapter 4 owns this rule; the column repeats which class it names.
+  heave: >-
+    The Heave rating: the heave count at which a Titan's body, living or a corpse, frees every soldier
+    it pins (data/engagement/titan-harm.yaml, falling_titan, heave). An Abnormal lists its own (decision
+    batch 8, 8-9; OQ-146).
+
+classes:
+  - id: small
+    name: Small
+    height: 3 to 5 m
+    tempo: 2
+    nape_depth: 3
+    regeneration_clock: 2
+    toughness: {eyes: 1, arm: 1, leg: 1}
+    attack_dice: {terrorize: 3, control: 6, kill: 6}
+    raises_fall_band: false
+    heave: 2
+
+  - id: medium
+    name: Medium
+    height: 6 to 10 m
+    tempo: 1
+    nape_depth: 4
+    regeneration_clock: 3
+    toughness: {eyes: 2, arm: 2, leg: 2}
+    attack_dice: {terrorize: 3, control: 6, kill: 9}
+    raises_fall_band: false
+    heave: 3
+
+  - id: large
+    name: Large
+    height: 11 to 15 m
+    tempo: 1
+    nape_depth: 4   # 5 in round 2: 36.6% of fights had no kill within 12 rounds, the probes' horizon then (OQ-78)
+    regeneration_clock: 4
+    toughness: {eyes: 2, arm: 3, leg: 2}
+    attack_dice: {terrorize: 6, control: 9, kill: 12}
+    raises_fall_band: true
+    heave: 4
+
+# An arm that holds a Grabbed soldier has this Toughness while it holds them, whatever its class
+# (ADR-0019; data/engagement/grab.yaml).
+grip_toughness: 1
+
+# Which values the simulations measured. Unmeasured values are starting guesses the simulator
+# must test before they are relied on.
+measured:
+  small: [tempo, nape_depth, regeneration_clock, toughness.leg, attack_dice]
+  medium: [tempo, nape_depth, regeneration_clock, toughness.leg, attack_dice]
+  large: [tempo, nape_depth, regeneration_clock, toughness.leg, attack_dice]
+measured_note: >-
+  The probes measured each attack_dice pool as the fixed need it replaced, a third of the pool, and
+  the research measured the pools themselves as Titan Dice on 5 or 6
+  (docs/playtest/feedback/round-1/opposed-rolls.md, round 3). The full simulator rerun re-measures
+  every target under Attack Dice as a check (decision batch 8, 8-14; OQ-145).
+unmeasured:
+  - heave for every class (decision batch 8, 8-9; the rerun reports pins and Heaves, it does not tune the rating)
+  - toughness.eyes for every class
+  - toughness.arm for every class (only the grip_toughness arm was measured, in the Grab model)

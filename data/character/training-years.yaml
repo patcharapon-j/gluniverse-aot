@@ -1,0 +1,277 @@
+# Training Years: Lifepath steps three to five. Each Training Year has one D66 event table
+# and one performance roll that earns Merit.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.3.3)
+# references this file and renders its tables from it (tools/render/render.py).
+id: training-years
+name: Training Years
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0006, ADR-0012]
+decided: [OQ-19, OQ-20, OQ-21, OQ-33]
+
+# What an event row gives:
+#   attribute: +1 to that attribute (data/character/attributes.yaml, overflow rule applies)
+#   talent_choice: +1 level in one listed Talent, subject to talent_cap below. Every event
+#     offers at least one Talent that names an entry a current rule uses (OQ-20).
+#   merit_change: added to the Cadet's Merit total (can be negative)
+event_roll: D66
+talent_cap:
+  max_level_at_creation: 2
+  if_both_capped: >-
+    If neither listed Talent can gain a level (each is at level 2, or at its max_level in
+    data/character/talents.yaml), the Cadet takes 1 level in any Talent on this Training
+    Year's curriculum list that can gain one.
+  if_only_dormant_can_gain: >-
+    If the only listed Talent that can gain a level names only dormant or reserved entries
+    (data/character/action-catalog.yaml), the Cadet may take that level, or instead 1 level
+    in any Talent on this Training Year's curriculum list that can gain one (OQ-20).
+
+# The performance roll. It is an attribute roll made for the Action Catalog entry
+# performance-roll (data/character/action-catalog.yaml). Its exceptions to the Chapter 1
+# pool are listed under roll_exceptions in data/core/dice-pool.yaml.
+performance_roll:
+  when: after the Training Year's event has been applied
+  attribute: the higher of the Training Year's two performance_attributes (the player's choice if equal)
+  pool: attribute dice only (no Talent dice, Bonus Dice, Gear Dice, or Stress Dice)
+  push_allowed: false
+  help_allowed: false
+  merit_from_successes:   # successes_max null means no upper bound
+    - {successes_min: 0, successes_max: 0, merit: 0}
+    - {successes_min: 1, successes_max: 1, merit: 1}
+    - {successes_min: 2, successes_max: 2, merit: 2}
+    - {successes_min: 3, successes_max: null, merit: 3}
+  replaced_by_graduation_exam: year-3   # data/character/graduation-exam.yaml
+
+years:
+  - id: year-1
+    name: First Year, Conditioning and Discipline
+    performance_attributes: [strength, instinct]
+    curriculum: [iron-nerve, long-haul, strong-back, hard-to-kill, grip-breaker, quiet-step]
+    events:
+      - results: [11, 12, 13]
+        name: The first inspection
+        description: An instructor screamed a finger's width from your face on the first morning, and you did not flinch.
+        attribute: instinct
+        talent_choice: [iron-nerve, long-haul]
+        merit_change: 1
+      - results: [14, 15, 16]
+        name: Found in the storehouse
+        description: You were found stealing bread from the storehouse and ran laps until you collapsed.
+        attribute: agility
+        talent_choice: [quiet-step, slip-away]
+        merit_change: -1
+      - results: [21, 22, 23]
+        name: Upside down in the harness
+        description: You hung upside down in the balance harness on the first day and practiced every night until you could hold it.
+        attribute: agility
+        talent_choice: [wirework, slip-away]
+        merit_change: 0
+      - results: [24, 25, 26]
+        name: The storm march
+        description: On a mountain march in a storm you carried a Cadet who collapsed the last five kilometers.
+        attribute: strength
+        talent_choice: [strong-back, long-haul]
+        merit_change: 1
+      - results: [31, 32, 33]
+        name: Top of the written test
+        description: You placed first in the class on the written tactics test.
+        attribute: wits
+        talent_choice: [book-learning, titan-reader]
+        merit_change: 1
+      - results: [34, 35, 36]
+        name: A winter in the infirmary
+        description: A fall from the obstacle course fractured your wrist, and you spent the winter helping the infirmary staff.
+        attribute: wits
+        talent_choice: [field-medicine, hard-to-kill]
+        merit_change: -1
+      - results: [41, 42, 43]
+        name: A fight in the barracks
+        description: A barracks argument turned into a fight, and you finished it.
+        attribute: strength
+        talent_choice: [hand-to-hand, grip-breaker]
+        merit_change: 0
+      - results: [44, 45, 46]
+        name: Fire in the stables
+        description: On night watch you smelled smoke from the stables before anyone else and raised the alarm.
+        attribute: perception
+        talent_choice: [keen-eyes, horsemanship]
+        merit_change: 1
+      - results: [51, 52, 53]
+        name: A homesick bunkmate
+        description: You talked a homesick Cadet out of deserting on their first winter night.
+        attribute: empathy
+        talent_choice: [steady-voice, judge-of-character]
+        merit_change: 0
+      - results: [54, 55, 56]
+        name: Stable duty
+        description: You were assigned to the stables for a month and learned every horse by name.
+        attribute: perception
+        talent_choice: [horsemanship, fieldcraft]
+        merit_change: 0
+      - results: [61, 62, 63]
+        name: Three days alone
+        description: The survival exercise left you alone in the woods for three days, and you came back first.
+        attribute: instinct
+        talent_choice: [fieldcraft, iron-nerve]
+        merit_change: 1
+      - results: [64, 65, 66]
+        name: The dismissal list
+        description: Your name went on the dismissal list, and you argued your way off it.
+        attribute: empathy
+        talent_choice: [silver-tongue, iron-nerve]
+        merit_change: -1
+
+  - id: year-2
+    name: Second Year, ODM Gear and the Blade Set
+    performance_attributes: [agility, perception]
+    curriculum: [clean-cut, hamstringer, slip-away, wirework, gearwright, lure]
+    events:
+      - results: [11, 12, 13]
+        name: The wooden nape
+        description: On your first run of the Titan dummy course you cut the wooden nape clean through.
+        attribute: strength
+        talent_choice: [clean-cut, relentless]
+        merit_change: 2
+      - results: [14, 15, 16]
+        name: A snapped wire
+        description: An anchor wire snapped mid-swing and dropped you through the branches, and you walked away from it.
+        attribute: instinct
+        talent_choice: [slip-away, hard-to-kill]
+        merit_change: -1
+      - results: [21, 22, 23]
+        name: Workshop duty
+        description: You took apart a Cadet's jammed ODM Gear and rebuilt it before the morning drill.
+        attribute: wits
+        talent_choice: [gearwright, well-kept-rig]
+        merit_change: 0
+      - results: [24, 25, 26]
+        name: The gas race
+        description: You raced another Cadet through the training forest and emptied your canister doing it.
+        attribute: agility
+        talent_choice: [wirework, light-trigger]
+        merit_change: 0
+      - results: [31, 32, 33]
+        name: Paired with the best
+        description: You were paired with the best in the class on ODM Gear and learned by watching every swing.
+        attribute: perception
+        talent_choice: [hamstringer, wirework]
+        merit_change: 1
+      - results: [34, 35, 36]
+        name: Three Blade Sets in a week
+        description: You ruined three Blade Sets in one week, and the instructors had you sharpen for the whole class.
+        attribute: wits
+        talent_choice: [blade-discipline, gearwright]
+        merit_change: -1
+      - results: [41, 42, 43]
+        name: From saddle to trees
+        description: You mastered firing your anchors from horseback and swinging straight into the trees.
+        attribute: agility
+        talent_choice: [horsemanship, sure-seat]
+        merit_change: 1
+      - results: [44, 45, 46]
+        name: The decoy drill
+        description: In the decoy drill you pulled the instructors' mock Titan crew off your squad with a flare.
+        attribute: perception
+        talent_choice: [lure, loose-the-horse]
+        merit_change: 1
+      - results: [51, 52, 53]
+        name: Thrown in the yard
+        description: In hand-to-hand training you threw a Cadet twice your size.
+        attribute: strength
+        talent_choice: [hand-to-hand, grip-breaker]
+        merit_change: 1
+      - results: [54, 55, 56]
+        name: Frozen on the high wires
+        description: You froze on the high wires, and an instructor had to talk you down one anchor at a time.
+        attribute: empathy
+        talent_choice: [iron-nerve, steady-voice]
+        merit_change: -1
+      - results: [61, 62, 63]
+        name: The repair drill
+        description: In the timed repair drill you found a fault in your gear by feel, with your eyes shut.
+        attribute: instinct
+        talent_choice: [gearwright, quick-refit]
+        merit_change: 0
+      - results: [64, 65, 66]
+        name: Coaching the course
+        description: You coached a struggling squad through the dummy course until every one of them passed.
+        attribute: empathy
+        talent_choice: [hamstringer, carrying-voice]
+        merit_change: 1
+
+  - id: year-3
+    name: Third Year, Field Exercises
+    performance_attributes: [wits, empathy]
+    curriculum: [titan-reader, field-medicine, steady-voice, keen-eyes, horsemanship, judge-of-character]
+    events:
+      - results: [11, 12, 13]
+        name: The signal relay
+        description: On a mock formation ride you relayed every signal flare without a single mistake.
+        attribute: perception
+        talent_choice: [keen-eyes, horsemanship]
+        merit_change: 1
+      - results: [14, 15, 16]
+        name: Taking command
+        description: When your exercise squad leader was ruled dead, you took command and brought the squad home.
+        attribute: empathy
+        talent_choice: [carrying-voice, unshaken-command]
+        merit_change: 2
+      - results: [21, 22, 23]
+        name: The mock casualty
+        description: You kept a mock casualty alive through a timed treatment drill in the rain.
+        attribute: wits
+        talent_choice: [field-medicine, sure-hands]
+        merit_change: 1
+      - results: [24, 25, 26]
+        name: The adopted plan
+        description: The instructors adopted your route plan for the whole class's field exercise.
+        attribute: wits
+        talent_choice: [titan-reader, sharp-call]
+        merit_change: 1
+      - results: [31, 32, 33]
+        name: Lost at night
+        description: Your squad got lost on the night exercise, and you found the way back by the stars.
+        attribute: instinct
+        talent_choice: [fieldcraft, wide-awareness]
+        merit_change: 0
+      - results: [34, 35, 36]
+        name: Arguing with an instructor
+        description: You told an instructor his exercise plan would get everyone killed. You were right, and you were punished for it.
+        attribute: empathy
+        talent_choice: [wide-awareness, silver-tongue]
+        merit_change: -1
+      - results: [41, 42, 43]
+        name: The notebook
+        description: You filled a notebook with sketches from the Titan lectures, noting how each kind moved.
+        attribute: perception
+        talent_choice: [titan-reader, book-learning]
+        merit_change: 0
+      - results: [44, 45, 46]
+        name: An afternoon on the Wall
+        description: On cannon drill atop an outer district's wall you watched a Titan wander the plain beyond it for an entire afternoon.
+        attribute: instinct
+        talent_choice: [titan-reader, hunters-eye]
+        merit_change: 0
+      - results: [51, 52, 53]
+        name: The falling Cadet
+        description: A Cadet's anchor tore loose in the forest exercise, and you reached them before they hit the ground.
+        attribute: agility
+        talent_choice: [wirework, shoulder-the-load]
+        merit_change: 0
+      - results: [54, 55, 56]
+        name: The forced march
+        description: You carried half your squad's gear on the final forced march.
+        attribute: strength
+        talent_choice: [strong-back, long-haul]
+        merit_change: 1
+      - results: [61, 62, 63]
+        name: The rescue drill
+        description: In the rescue drill you pried a dummy loose from a mock Titan's grip before the whistle.
+        attribute: strength
+        talent_choice: [pry-loose, grip-breaker]
+        merit_change: 1
+      - results: [64, 65, 66]
+        name: The runaway wagon
+        description: You left formation to ride down a runaway supply wagon and were disciplined for it.
+        attribute: agility
+        talent_choice: [rescue-ride, horsemanship]
+        merit_change: -1

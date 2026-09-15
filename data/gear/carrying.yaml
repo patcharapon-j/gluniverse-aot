@@ -1,0 +1,230 @@
+# Carrying: what counts as an item, the carrying limit, Overloaded, shedding load, lifting and
+# carrying a comrade, passing an item, and the gear of a soldier who leaves play.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (sections 4.7 and 4.11) references this
+# file and does not repeat its rows.
+id: carrying
+name: Carrying
+chapter: 04-gear
+adrs: [ADR-0003, ADR-0011]
+decided: [OQ-23, OQ-35, OQ-60, OQ-61, OQ-64, OQ-65, OQ-68, OQ-143, OQ-146, OQ-147]
+
+limit:
+  formula: strength + 4   # data/character/attributes.yaml (derived_values, carrying-limit); never changes (ADR-0011)
+  overloaded_when: The items the soldier carries are more than the limit.
+
+# The closed list. Nothing else counts as an item.
+items_counted:
+  - what: ODM Gear, worn, with its fitted canister, its handles, and its scabbards
+    items: 0
+  - what: the Blade Set in the handles
+    items: 0
+  - what: each spare gas canister
+    items: 1
+  - what: each Blade Set not in the handles
+    items: 1
+  - what: each medical kit
+    items: 1
+  - what: each tool kit
+    items: 1
+  - what: each flintlock pistol   # decision batch 7, 7-17
+    items: 1
+  - what: each musket
+    items: 2
+  - what: each prosthetic arm or prosthetic leg   # decision batch 8, 8-10 (OQ-147)
+    items: 0
+    note: A prosthetic is fitted to the soldier, never carried as a load (data/gear/items.yaml).
+  - what: a comrade the soldier carries (carrying_a_comrade)
+    items: 5
+    plus: Every item that comrade carries, counted by this list, also counts for the carrier.
+    talents: Strong Back (data/character/talents.yaml) makes the comrade's own 5 count as 0. The items that comrade carries still count.
+  - what: a horse
+    items: 0
+    note: A horse is ridden or left at a Position, never carried.
+  - what: Squad Supply
+    items: 0
+    note: The Squad holds it, not a soldier (data/gear/squad-supply.yaml).
+
+overloaded:
+  effect: >-
+    Every ODM move the soldier makes also spends their action (Chapter 1, section 1.9). A
+    soldier whose action this round is already spent cannot make an ODM move while Overloaded.
+  nothing_else: Being Overloaded changes no roll, Gas Roll, Reaction, or move that is not an ODM move.
+  outside_titan_engagement: Being Overloaded has no effect outside a Titan Engagement unless the rule for the procedure under way says so.
+
+shedding:
+  effect:
+    - Drop any carried item that counts as 1 or more items (items_counted), other than a carried comrade. The dropped item leaves play.
+    - Set down a comrade the soldier carries. The comrade stops being carried and holds the soldier's Position.
+    - A carried soldier who is not Down stops being carried, and holds the carrier's Position.
+  in_titan_engagement: >-
+    At any point during the soldier's own turn, as often as they like, spending neither the move
+    nor the action. A carrier who is airborne cannot set a comrade down, and a carried soldier
+    cannot stop being carried while the carrier is airborne.
+  outside_titan_engagement: At any time.
+  not_while: [down]
+  not_an_action: true
+  entry: shed-load   # data/character/action-catalog.yaml
+
+# ------------------------------------------------------------------ carrying a comrade
+lifting_a_comrade:
+  entry: lift-comrade   # data/character/action-catalog.yaml
+  requirements:
+    in_titan_engagement:
+      - >-
+        A comrade holds the soldier's Position who is Down, or who is not Down, consents, and whom the
+        both-legs grade forbids to move (data/harm/critical-injuries.yaml, lost_limb_riders, both-legs;
+        decision batch 8, 8-11, as corrected in 8-18).
+      - The comrade is not Grabbed, not Pinned, and not already carried. A Pinned soldier is never lifted (data/engagement/titan-harm.yaml, falling_titan, pinned; decision batch 8, 8-18).
+      - The soldier is not Down, carries no other comrade, and is not carried.
+    outside_titan_engagement:
+      - The comrade is Down, or is not Down, consents, and meets the both-legs grade; and is not Grabbed and not already carried.
+      - The comrade takes part in the same procedure as the soldier. That is the soldiers the rule for the procedure names, or, if it names none, every soldier in the Squad on the same Expedition, or every soldier in the Squad when no Expedition is under way.
+      - The soldier is not Down, carries no other comrade, and is not carried.
+  roll: none
+  spends:
+    in_titan_engagement: The soldier's action. Rescue Ride lets a mounted soldier take it as part of their move.
+    outside_titan_engagement: nothing
+  effect: The soldier carries the comrade.
+
+carrying_a_comrade:
+  position: >-
+    A carried comrade holds the carrier's Position, and changes Position whenever the carrier's
+    move does.
+  airborne: >-
+    A carried comrade is never airborne on their own ODM Gear. Being carried is not ODM use, so
+    it adds nothing to their Gas Roll (data/gear/odm-gear.yaml).
+  turns: >-
+    The carried comrade's turns still happen. Their move changes nothing while they are carried. A
+    carried comrade who is not Down keeps their action for entries that need no move (decision batch 8,
+    8-11).
+  items: >-
+    The comrade counts for the carrier as 5 items plus every item the comrade carries
+    (items_counted). Those items stay the comrade's: they also count against the comrade's own
+    limit. Only the comrade can drop or pass them, and while the comrade is Down another soldier,
+    the carrier included, can take one with take-item (taking_items).
+  one_each: A soldier carries at most one comrade, and a carried soldier carries no one.
+  ends:
+    - The carrier sets the comrade down, or the carried soldier stops being carried (shedding).
+    - The carrier becomes Down while neither airborne nor mounted. The comrade is set down at the carrier's Position.
+    - The carrier becomes Down while airborne or mounted. Carrying goes on until step 2 of the carrier's own fall (data/gear/falls.yaml, procedure), where it ends and the comrade falls with them from the same band (data/gear/falls.yaml, triggers, carried).
+    - The carrier becomes Grabbed. The comrade is set down at the carrier's Position. If the carrier was airborne, the comrade falls.
+    - The carrier falls for any other reason. The comrade falls with them.
+    - The carrier dies. The comrade is set down at the Position the carrier held. If the carrier was airborne or mounted, the comrade falls (data/gear/falls.yaml, carried).
+    - The carrier retires (data/mind/scars.yaml, retirement). The comrade stops being carried, with no fall.
+    - The carried comrade becomes Grabbed. Carrying ends with no fall (data/engagement/grab.yaml).
+    - >-
+      The carrier becomes Pinned. Carrying ends, and the comrade is Pinned too, with their own Crush Critical
+      Injury at their own rolled Injury Location and their own pinning Body Part
+      (data/engagement/titan-harm.yaml, falling_titan, leap_clear, carried; decision batch 8, 8-18).
+    - The carried comrade dies.
+  set_down_outside_titan_engagement: Outside a Titan Engagement no soldier holds a Position, so a comrade set down or no longer carried there holds none.
+  titan_engagement_ends: Carrying goes on after the Titan Engagement ends, until one of the rows under ends happens.
+
+# ------------------------------------------------------------------ passing an item
+passing_items:
+  entry: pass-item   # data/character/action-catalog.yaml
+  roll: none
+  requirements:
+    in_titan_engagement:
+      - The passer is not Down.
+      - The receiver is a living comrade who holds the passer's Position. The receiver may be Down or Grabbed.
+      - Two soldiers who have both left the Titan Engagement count as holding the same Position (data/engagement/positions.yaml, leaving, after_leaving).
+    outside_titan_engagement:
+      - The passer is not Down.
+      - The receiver is a living comrade who takes part in the same procedure as the passer, as lifting_a_comrade states.
+  passable:
+    - A spare gas canister, with its Gas Rating.
+    - The canister fitted to the passer's ODM Gear, if its Gas Rating is above 0 after any Gas Roll the passer makes when they declare the pass (gas_roll, below). The passer's Gas Rating becomes 0 and no canister is fitted. The receiver gains it as a spare with its Gas Rating.
+    - A Blade Set not in the handles.
+    - A medical kit, with its rating and current rating.
+    - A tool kit, with its rating and current rating.
+    - A flintlock pistol or a musket, loaded or empty, with its rating and current rating (decision batch 7, 7-17).
+  not_passable: ODM Gear, the Blade Set in the handles, a horse, a carried comrade (set down, then lifted), and Squad Supply.
+  spends:
+    in_titan_engagement: the passer's action
+    outside_titan_engagement: nothing
+  effect: >-
+    One passable item moves from the passer to the receiver. From then on it counts against the
+    receiver's carrying limit.
+  help: Not rolled, so it is never Helped or Covered.
+  no_thrown_pass: No rule lets a soldier pass an item to a comrade at another Position.
+  gas_roll: >-
+    A passer who has used ODM Gear this round, and has not yet made that round's Gas Roll, makes
+    it when they declare that they mean to pass their fitted canister, before it moves. If that roll leaves the canister at
+    Gas Rating 0, it is discarded, nothing is passed, and the pass is not made and spends nothing,
+    so the passer may still take an action that turn (data/gear/odm-gear.yaml, gas_roll,
+    canister_removed).
+
+# ------------------------------------------------------------------ taking an item
+taking_items:
+  entry: take-item   # data/character/action-catalog.yaml
+  roll: none
+  from:
+    - A Down comrade who is not Grabbed. The taker takes one item that comrade could pass if they were not Down (passing_items, passable).
+    - In a Titan Engagement only, a dead comrade's left items where they lie (leaving_play, death, where_left). The taker takes one of them.
+  requirements:
+    in_titan_engagement:
+      - The taker is not Down.
+      - The Down comrade holds the taker's Position, or the left items lie at the Position the taker holds relative to the Focus Titan recorded with them (leaving_play, death, where_left).
+      - Two soldiers who have both left the Titan Engagement count as holding the same Position (data/engagement/positions.yaml, leaving, after_leaving).
+    outside_titan_engagement:
+      - The taker is not Down.
+      - The Down comrade takes part in the same procedure as the taker, as lifting_a_comrade states. Left items are never taken outside a Titan Engagement; they are shared out (leaving_play).
+      - When the players disagree about who takes an item from a Down comrade, or in what order, they use the roll-off in data/character/lifepath.yaml (group_choices). The Down comrade's player has no veto, since a Down soldier takes no action and the take is the taker's act.
+  spends:
+    in_titan_engagement: the taker's action
+    outside_titan_engagement: nothing
+  effect: >-
+    One item moves to the taker and counts against the taker's carrying limit from then on. A
+    fitted canister taken from a Down comrade leaves them at Gas Rating 0 with no canister fitted,
+    and reaches the taker as a spare with its Gas Rating. If the Down comrade has used ODM Gear
+    this round and has not yet made that round's Gas Roll, they make it when the taker declares
+    that they mean to take the fitted canister, before it moves. If that roll leaves the canister at Gas Rating 0, it is
+    discarded, nothing is taken, and the take is not made and spends nothing, so the taker may
+    still take an action that turn (data/gear/odm-gear.yaml, gas_roll, canister_removed).
+  help: Not rolled, so it is never Helped or Covered.
+  no_distance: No rule lets a soldier take an item from a comrade, or from left items, at another Position.
+
+# ------------------------------------------------------------------ leaving play
+leaving_play:
+  death:
+    leaves_play: The dead soldier's ODM Gear, horse, and every prosthetic fitted to them (decision batch 8, 8-10).
+    left_for_the_squad: >-
+      Every other item the dead soldier had: spare canisters, the fitted canister as a spare if
+      its Gas Rating is above 0 after any Gas Roll below, every Blade Set including the one in the
+      handles, every medical kit and tool kit, and every firearm. A soldier who dies after using ODM Gear this
+      round, and has not yet made that round's Gas Roll, makes it at once, before their fitted canister becomes a left item.
+      A canister that roll leaves at Gas Rating 0 is discarded and is never a left item
+      (data/gear/odm-gear.yaml, gas_roll, canister_removed).
+    where_left: >-
+      If the soldier dies in a Titan Engagement while holding a Position and not Grabbed, their
+      left items lie at that Position until the Titan Engagement ends, and their sheet records the
+      Position, together with the Focus Titan that Position is held relative to, and the items
+      still there (data/gear/sheet-fields.yaml, left_at). Whether any rule moves them is in
+      data/engagement/positions.yaml (left_items). How a soldier's Positions relative to two Focus
+      Titans relate, and what the recorded Position becomes when its Focus Titan dies, are in
+      data/engagement/positions.yaml (two_focus_titans). Otherwise the left items lie at no
+      Position.
+    during_the_procedure: >-
+      Before the procedure in which the death happened ends, a left item can be taken only with
+      take-item, from where it lies (taking_items). No other rule takes one.
+    shared_out:
+      when: >-
+        When that procedure ends, at the moment promotion is timed (data/character/squadmates.yaml,
+        promotion, timing), and before any promotion. The two steps are made in order.
+      steps:
+        - >-
+          The players give each left item not yet taken to a living soldier who took part in that
+          procedure. For a Titan Engagement, a soldier who took part is one who held a Position at
+          any point during it. The players choose together, using the roll-off in
+          data/character/lifepath.yaml (group_choices) if they disagree.
+        - Every left item the players did not give to a soldier in the first step leaves play.
+      left_behind: >-
+        The left items of a soldier who dies left behind (data/engagement/engagement-flow.yaml,
+        left_behind) are not shared out: they leave play when the Titan Engagement ends, and the
+        first step never gives them. An item that soldier passed to a comrade before the ending is
+        the comrade's and is unchanged (decision batch 5, 5-18, OQ-131).
+  retirement: A retiring soldier's gear leaves play with them (data/mind/scars.yaml, retirement).
+  carried_comrade: A soldier who dies or retires while carried stops being carried.
+  carrier: A carrier who dies or retires stops carrying, as carrying_a_comrade (ends) states.
+  promotion: A promoted Squadmate keeps its own gear (data/character/squadmates.yaml, promotion).

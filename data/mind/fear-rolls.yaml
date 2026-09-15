@@ -1,0 +1,243 @@
+# Fear Rolls: the closed list of triggers (ADR-0003 item 1), who rolls, the D6 + Stress - Resolve
+# table, and what counts as a Fear Roll's result for a Drive.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.12) references this
+# file and renders its tables from it (tools/render/render.py).
+id: fear-rolls
+name: Fear Rolls
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0004, ADR-0008, ADR-0010, ADR-0014, ADR-0019]
+decided: [OQ-18, OQ-49, OQ-50, OQ-52, OQ-139]
+
+# ------------------------------------------------------------------ triggers (closed list)
+# A Fear Roll is made only when one of these events happens. A later chapter that creates a new
+# trigger adds a row here. The dice never cause a Fear Roll (ADR-0004).
+# can_arise_outside_titan_engagement marks events that other procedures (such as a Chase) can
+# produce. Outside a Titan Engagement the event causes Fear Rolls only if the rule that creates
+# the situation states who rolls (OQ-36 simulator case).
+triggers:
+  - id: first-titan-engagement
+    event: A Titan Engagement starts, and the soldier has never before held a Position in a Titan Engagement.
+    who_rolls: that soldier, when they first hold a Position in it
+    records: >-
+      faced_a_titan, set to true when the soldier first holds a Position in a Titan Engagement,
+      whether or not they make this Fear Roll (for example, because they are Down). The trigger
+      never applies to that soldier again (data/harm/sheet-fields.yaml).
+    can_arise_outside_titan_engagement: false
+    rules: [05-titan-engagement]
+
+  - id: abnormal
+    event: A Titan Engagement starts with an Abnormal as a Focus Titan, or an Abnormal becomes a Focus Titan during one.
+    who_rolls: every soldier who holds a Position in that Titan Engagement
+    can_arise_outside_titan_engagement: false
+    rules: [05-titan-engagement, 06-standard-titans]
+
+  - id: second-focus-titan
+    event: A Background Titan enters a Titan Engagement as a second Focus Titan.
+    who_rolls: every soldier who holds a Position in that Titan Engagement
+    can_arise_outside_titan_engagement: false
+    rules: [05-titan-engagement]
+
+  - id: comrade-grabbed
+    event: A comrade becomes Grabbed.
+    who_rolls: every witness, as data/engagement/engagement-flow.yaml (witnesses) defines a witness in a Titan Engagement; never the Grabbed soldier
+    can_arise_outside_titan_engagement: true
+    rules: [05-titan-engagement]
+
+  - id: comrade-dies
+    event: A comrade dies.
+    who_rolls: >-
+      every witness, as data/engagement/engagement-flow.yaml (witnesses) defines a witness in a Titan
+      Engagement; in a Skirmish, every other soldier taking part who is alive (data/skirmish/skirmish.yaml,
+      fear_rolls)
+    can_arise_outside_titan_engagement: true
+    rules: [03-harm-and-mind, 05-titan-engagement, 07-playtest-rules]
+
+  - id: first-human-kill   # decision batch 7, 7-17 (ADR-0003, item 1, as amended)
+    event: >-
+      The soldier kills a person for the first time: damage of Injury Type Cut, Pierce, or Burn they deal
+      brings a Foe to 0 Health (data/skirmish/skirmish.yaml, damage, on_a_foe; decision batch 8, 8-30).
+    who_rolls: that soldier, when the kill resolves
+    records: >-
+      killed_a_person, set to true when the soldier first kills a person, whether or not they make this
+      Fear Roll (for example, because a Drive shrugs it off). The trigger never applies to that soldier
+      again.
+    can_arise_outside_titan_engagement: true
+    rules: [07-playtest-rules]
+    decided: [OQ-143]
+
+limits:
+  one_per_event: >-
+    One event causes each soldier at most one Fear Roll, even if it matches several triggers,
+    such as a first Titan Engagement against an Abnormal.
+  not_down: >-
+    A Down soldier makes no Fear Roll (data/harm/down.yaml). A Down soldier's first Titan
+    Engagement still sets faced_a_titan.
+  after_engagement_end: >-
+    A death during the steps that follow the end of a Titan Engagement (data/harm/engagement-end.yaml)
+    causes no Fear Roll, because the Titan Engagement has ended and no rule names its witnesses.
+  # decision batch 8, 8-40: one snapshot for one event.
+  timing: >-
+    Fear Rolls are made as soon as the event has been fully resolved. Everyone who rolls for one
+    event rolls together, from a snapshot taken when the event has been resolved: each rolling
+    soldier's total uses their Stress, Resolve, and Scars as they stood at that moment, before any
+    result of the event applies. First find every rolling soldier's row. Then each soldier's player
+    makes their Drive decision. Then every result that was not shrugged off applies. No result of
+    this event, such as Stress to comrades nearby, a Scar, or a spent action, changes another
+    soldier's total for this event; it counts from the next roll on. So the order of the rolls
+    changes no result. Grief from a death applies only after every Fear Roll that death causes has
+    resolved, including each Drive decision (data/mind/grief.yaml, gaining, applies_after).
+
+# ------------------------------------------------------------------ the roll
+roll:
+  entry: fear-roll               # a fixed roll (data/character/action-catalog.yaml)
+  total: D6 + Stress - Resolve
+  resolve_used: >-
+    The soldier's current Resolve, including Scars and Grief (data/character/attributes.yaml), as it
+    stood at the event's snapshot (limits, timing). Unshaken Command can make the roll use a nearby
+    comrade's Resolve instead, if that Resolve is higher, under the Talent's own trigger and limit
+    (data/character/talents.yaml); it reads the comrade's Resolve at the same snapshot.
+  attribute_roll: false          # no pool, no Push, no Help, no Stress Dice, no Stress Response
+  squadmates: A Squadmate makes Fear Rolls like a player character.
+
+# ------------------------------------------------------------------ result and Drives
+result:
+  definition: >-
+    A Fear Roll's result is every effect of the row found: any Stress gain, to the soldier or to
+    comrades nearby, spent turn or action, ban on Reactions, flag, forced step, forced strike,
+    dropped Blade Set, Gas Roll, and Scar.
+  drive: >-
+    A Drive shrugs off the whole result: none of the row's effects take effect
+    (data/character/enlistment.yaml, drive_rules). The Fear Roll still counts as made.
+  duration: >-
+    Every row is instant: its effects apply once, when the result takes effect. A spent turn, a ban
+    on Reactions, a flag, a forced step, and a forced strike last as effect-types.yaml states, and a
+    next-roll penalty lasts until used.
+
+# ------------------------------------------------------------------ the event's Titan
+# Decision batch 7, 7-8 (OQ-139): a row that acts on a Titan names which one, so the GM never picks it.
+# The draw-attention, stress-gain-nearby, and forced-action effects read it (data/harm/effect-types.yaml).
+event_titan:
+  first-titan-engagement: The nearest Focus Titan (nearest, below).
+  abnormal: The Abnormal that is, or has become, a Focus Titan.
+  second-focus-titan: The Titan that entered as a Focus Titan.
+  comrade-grabbed: The Focus Titan that holds the Grabbed comrade.
+  comrade-dies: >-
+    The Focus Titan whose card or Grab killed the comrade. For a death no Focus Titan's card or Grab
+    caused, such as a Death Roll, the nearest Focus Titan (nearest, below).
+  nearest: >-
+    The living Focus Titan relative to which the rolling soldier holds the closest Position, in the
+    order On Body, Blind Spot, In Reach, Distant, as a fall's reference Titan is found
+    (data/gear/falls.yaml, height); on a tie, the living Focus Titan with the earliest label.
+  no_longer_alive: >-
+    If the Titan named above has died when the result applies, the event's Titan is the nearest
+    Focus Titan instead. If no Focus Titan is alive, every effect that acts on the event's Titan does
+    nothing.
+  outside_titan_engagement: There is no event's Titan; each effect's outside_titan_engagement value states what it does.
+
+# ------------------------------------------------------------------ placement
+# Decision batch 7, 7-8 (OQ-139): the rules every row obeys. The action-lost, turn-lost, and Scar profile
+# at each total is the one the six-cell Grab test (ADR-0014; Chapter 3, section 3.12) was tuned on, so the
+# re-cut holds it by construction and the rerun is a check. A cell that misses goes to the decider, not to
+# the placement.
+placement:
+  totals_1_and_2: Stress, a next-roll penalty, or a Gas Roll; never the action or the turn.
+  totals_3_and_4: The next action spent; never the turn, and no Scar.
+  totals_5_and_6: The next turn spent; no Scar.
+  totals_7_and_up: The next turn spent, and a Scar.
+  forced_action: Only on a row whose lowest total is 7 or more.
+  drop_blade_set: Only on a row that spends the next action or the next turn.
+  stress_gain_nearby: The top row only.
+  never:
+    - A row that causes another Fear Roll or any other roll by a comrade.
+    - A row that helps the soldier or the Squad.
+    - More than one write to the GM's tracker or the Squad sheet's positions column.
+    - A choice for the GM.
+    - A term the glossary marks to avoid, in a row's name or text (CONTEXT.md; decision batch 7, 7-8).
+
+# ------------------------------------------------------------------ the table
+# Every row gains a text line (decision batch 7, 7-8): second-person fiction with no rule words, which the
+# render prints in a What happens column. Only the effects are rules. A card against a soldier on a row with
+# no-reactions lands on 1 or more Titan successes, and a whiff spares them (decision batch 8, 8-1; ADR-0019).
+table:
+  roll: D6 + Stress - Resolve
+  rows:
+    - id: steeled
+      name: Steeled
+      results: {min: null, max: 0}
+      text: You breathe out slowly. Your hands stay where they belong.
+      effects: []
+    - id: heart-in-your-throat
+      name: Heart in Your Throat
+      results: {min: 1, max: 1}
+      text: Your pulse drowns out the wind. You swallow, and it will not go down.
+      effects:
+        - {type: stress-gain, amount: 1}
+    - id: cold-sweat
+      name: Cold Sweat
+      results: {min: 2, max: 2}
+      text: Sweat runs into your eyes, and everything in your hands turns slick.
+      effects:
+        - {type: stress-gain, amount: 1}
+        - {type: next-roll-penalty, dice: 1}
+    - id: clenched-trigger
+      name: Clenched Trigger
+      results: {min: 3, max: 3}
+      text: Your hand clamps down, and gas roars out of your gear for nothing. It takes a moment to make your fingers let go.
+      effects:
+        - {type: spend-next-action}
+        - {type: gas-roll}
+    - id: retching
+      name: Retching
+      results: {min: 4, max: 4}
+      text: The smell reaches you before the sight does, blood and steam and worse. You double over and heave.
+      effects:
+        - {type: spend-next-action}
+        - {type: stress-gain, amount: 1}
+    - id: someone-shouting-your-name
+      name: Someone Is Shouting Your Name
+      results: {min: 5, max: 5}
+      text: Someone is shouting your name from very far away. Your body does not answer.
+      effects:
+        - {type: spend-next-turn, turns: 1}
+    - id: scream
+      name: Scream
+      results: {min: 6, max: 6}
+      text: The scream is out of you before you know it is yours. Somewhere above you, a huge head turns.
+      effects:
+        - {type: spend-next-turn, turns: 1}
+        - {type: no-reactions}
+        - {type: draw-attention}
+      forbids: [reaction]   # Chapter 1, section 1.9 hook; lasts as the no-reactions effect states (OQ-18)
+    - id: run-for-the-wall
+      name: Run for the Wall
+      results: {min: 7, max: 7}
+      text: Every part of you turns toward home and goes. Behind you, someone is still fighting.
+      effects:
+        - {type: spend-next-turn, turns: 1}
+        - {type: no-reactions}
+        - {type: forced-move, toward: distant}
+        - {type: gain-scar}
+      forbids: [reaction]   # Chapter 1, section 1.9 hook; lasts as the no-reactions effect states (OQ-18)
+    - id: kill-it
+      name: Kill It
+      results: {min: 8, max: 8}
+      text: The world goes quiet and red. When it comes back, you are already going for it.
+      effects:
+        - {type: spend-next-turn, turns: 2}
+        - {type: no-reactions}
+        - {type: forced-action}
+        - {type: gain-scar}
+      # Chapter 1, section 1.9 hook (OQ-18): reaction lasts as the no-reactions effect states; help and cover
+      # last as the forced-action effect states, until the strike is made (decision batch 7, 7-8).
+      forbids: [reaction, help, cover]
+    - id: nothing-left
+      name: Nothing Left
+      results: {min: 9, max: null}
+      text: You open your hands and let the blades fall. Everyone near you sees it in your face.
+      effects:
+        - {type: spend-next-turn, turns: 2}
+        - {type: no-reactions}
+        - {type: drop-blade-set}
+        - {type: stress-gain-nearby, amount: 1}
+        - {type: gain-scar}
+      forbids: [reaction]   # Chapter 1, section 1.9 hook; lasts as the no-reactions effect states (OQ-18)

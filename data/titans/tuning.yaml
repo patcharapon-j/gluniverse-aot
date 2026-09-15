@@ -1,0 +1,525 @@
+# ADR-0014 tuning for Chapter 6: the targets each Titan's stat block and Behavior Table must hold, the
+# probes that measured them, and the verdict for each. The figures themselves are generated into
+# data/titans/probe-figures.yaml; this file states what they must show.
+# Source of truth under ADR-0012. docs/rules/06-standard-titans.md (section 6.6) references this file
+# and renders its figure tables from data/titans/probe-figures.yaml.
+id: titan-tuning
+name: Chapter 6 Tuning Targets and Verdicts
+chapter: 06-standard-titans
+adrs: [ADR-0014, ADR-0015, ADR-0019]
+decided: [OQ-78, OQ-79, OQ-80, OQ-95, OQ-96, OQ-98, OQ-101, OQ-102, OQ-103, OQ-104, OQ-107, OQ-109, OQ-113, OQ-126, OQ-127, OQ-145]   # Chapter 5's values and readings, applied here; Chapter 6's entries (decision batch 4)
+
+starting_values: >-
+  Chapter 6 changes no Size Class value. Every number in a standard Titan's stat block is Chapter 5's
+  simulator starting value (data/engagement/size-classes.yaml; data/engagement/tuning.yaml,
+  starting_values). What Chapter 6 adds and tunes is each Behavior Table, and the Abnormal's values,
+  which are reported and not tuned. The Phase 1 simulator re-measures all of them
+  (data/engagement/tuning.yaml, simulator_cases; cases below).
+
+# ------------------------------------------------------------------ the probes
+probes:
+  path: tools/probes/chapter-06
+  runs_with: uv run --with pyyaml python
+  reads: >-
+    data/titans/*.yaml, data/engagement/titan-format.yaml, size-classes.yaml, attention.yaml,
+    engagement-setup.yaml (its Size Class and medium_abnormal rows, for the setup mix), and tuning.yaml
+    (only its simulation_reference_titan, for the port check), and data/harm/critical-injuries.yaml
+    through the Chapter 5 dice core. Unlike the Chapter 5 probes, no Titan value is written into a
+    script, so a changed stat block or table is re-measured by re-running the commands below.
+  imports: >-
+    tools/probes/chapter-05/core.py, fight.py, simple.py, and lone.py. The Chapter 6 files replace only what reads
+    a Titan (its stat block, the Next Behavior roll, a Titan's card, and the Attention Ladder) and add
+    what a fight's start calls for. simple.py's grab_trial takes the fixed need of the victim's dodge as a
+    parameter (default 3, the kill pool of 9 before Attack Dice), so Chapter 5's own Grab figures are unchanged.
+  baseline_policy: >-
+    Each target is measured under the baseline policy Chapter 5 states for it
+    (data/engagement/tuning.yaml, probes, baseline_policy; prepared_squad_kill, model): 4 Rookie player
+    characters at Stress 1 in Wooded terrain, two cutters striking the more damaged leg with Help and
+    two eager strikers at Blind Spot, dodging every harming behavior, going for the hand on a Grab, with
+    no Read, Call It, Draw Attention, Wings, swaps, Squad Tactics, or Background Titans, and every fight
+    runs under the retreat clock of 8 segments (data/engagement/tuning.yaml, prepared_squad_kill, model,
+    retreat; decision batch 5, 5-10). Sensitivity rows name what they add. The Sprinting Abnormal's reference start adds what any rule that names it
+    begins with: every soldier mounted, and the abnormal Fear Roll (targets, abnormals).
+  start_of_fight: >-
+    Before round 1, after the first Attention Ladder evaluation, every soldier holding a Position makes
+    each Fear Roll the start calls for (data/mind/fear-rolls.yaml): abnormal whenever the Sprinting
+    Abnormal is the Focus Titan, and first-titan-engagement in the case that names it. Turns and
+    actions a Fear Roll spends are spent in round 1. A soldier who starts mounted dismounts as part of
+    their first move. With every soldier at Distant and no cards dealt, the first evaluation of a Squad
+    of two or more leaves nothing holding the Titan's Attention until its first card
+    (data/engagement/attention.yaml, evaluation, none; decision batch 4, 4-3).
+  port_check: >-
+    fight6.py fighting Chapter 5's reference Titan must reproduce fight.py's reference row within
+    sampling (62.0% by round 3, 0.72 Critical Injuries per fight, under the retreat clock after decision
+    batch 5). It is the first case in cases6.json.
+  telegraph: >-
+    A telegraph effect is counted but changes no choice in the model, because the baseline policy acts
+    on no revealed Next Behavior. The simulator's Read and Call It case covers revealed behaviors.
+  files:
+    - file: titans.py
+      holds: >-
+        Loads each Titan and checks it against the format and the Chapter 6 constraints, including a
+        text check that fails an entry whose text names the Titan's arm, leg, or eyes when its
+        body_parts_used does not list that kind, or that shows the Titan seeing a holder its row allows
+        at Blind Spot or touching one it allows at Distant, and a check that an entry on a two-legged
+        Titan that uses a leg lists both legs (OQ-109). Enumerates the move-up shares for every previous
+        behavior and every count of Broken eyes, arms, and legs.
+    - file: fight6.py
+      holds: >-
+        The full-fight model against a Chapter 6 Titan: start-of-fight Fear Rolls, a mounted start,
+        the fall of a mounted soldier who goes Down or whose horse goes lame, Chapter 5's Grab
+        countdown for every Grabbed soldier including a rider, and the sensitivity cases (rider
+        Squadmates, Draw Attention, another ladder). Each horse is mounted, stands at the Position
+        where its soldier dismounted, or has bolted; a riderless-horse decoy needs the soldier mounted
+        or at the horse's Position, dismounts them on success, and wears the horse, so a Pushed roll
+        can lame it. The beside-the-holder screen's Squadmates start mounted, ride to the holder's
+        Position when it is distant or in-reach, and send the horse from the saddle. Its selftest
+        checks those cases. Each fight summary carries standard errors for Critical Injuries, deaths,
+        and no kill. The retreat clock and the retreat are fight.py's; a mounted soldier makes a
+        retreat step mounted where the row allows it. Its resolve_card and evaluate follow Chapter 5's fight.py: only a
+        hold's last card evaluates the ladder; a flag lasts until the end of the Titan's next card that
+        resolves a behavior, so a card under a hold, a card that comes up while it holds a Grabbed
+        soldier, and a card with no one holding its Attention leave it standing; the nearest rung is
+        met by the candidates at the closest Position, including when it is the highest rung met; a
+        tie no card can break leaves Attention held by nothing; and an Abnormal ladder's
+        current-holder rung is met by the soldier holding its Attention only while they are not at
+        Distant (decision batch 3e, 3e-1 and 3e-6; decision batch 4, 4-3; OQ-111, as revised in
+        decision batch 3e). The switches tie_break "sheet" and quarry "anywhere" run the rules as they
+        stood before decision batch 4, and sheet_order lists the player characters cutters first or
+        strikers first. roles names the player characters' roles (fight.py's switch, unset for the
+        baseline's two cutters and two strikers): four strikers is the four-striker row (decision batch
+        4b, 4b-2). Cutters who take Draw Attention do so only from a Position other than Distant, and
+        the summary counts the attempts the rule bars (decision batch 5, OQ-113); DRAW_FROM_DISTANT
+        restores the earlier reading for decision batch 4b's record probes, and the loud rider of
+        that batch is no longer a role here. The ladder is read from
+        data/titans/index.yaml, so the Sprinting Abnormal's rows run under the swapped ladder; a row
+        with rungs runs another ladder.
+    - file: jam6.py
+      holds: >-
+        The Jam test on a Chapter 6 Titan's own table, and its mounted reading: a holder on horseback
+        at Distant, dodging with the horse, counted when the horse goes lame.
+    - file: lone6.py
+      holds: >-
+        The lone Nape strike at each Titan's Nape Depth; the lone fight, Chapter 5's lone.py against
+        each Titan's Tempo, Nape Depth, and Behavior Table, on the waiting line and, at Tempo 2, the
+        hurried line and a one-card hold, with the abnormal Fear Roll for an Abnormal; and the Grab
+        cells with the victim's dodge Pushed toward, and tested against, each Titan's own Grab
+        fixed need, a third of its Attack Dice. The lone fight counts a spare canister and Field Repair, and ends when no decoy is
+        usable (decision batch 3c, 3c-3).
+    - file: run6.py
+      holds: >-
+        Runs one family (check, fight, jam, solo, grab, lone, bar) and writes results/<family>.json.
+        fight N PREFIX and bar N PREFIX run only the cases or bar rows whose label starts with PREFIX
+        and merge them in, each with its own seed. check
+        also runs fight6.py's selftest. bar runs every Sprinting Abnormal case with its standard
+        Medium and Large twins (the row with the same support, or the reference row) for the
+        Abnormal's bar (targets, abnormals), in both Squad sheet orders: cutters first on seeds 800
+        onward, and strikers first on seeds 1800 onward (decision batch 4, 4-4). A row whose reading
+        fails a part read within sampling is re-run, the Abnormal row and both twins, on a second seed
+        in the same order (cutters first on seeds 2800 onward, strikers first on 3800 onward), and
+        results/bar.json keeps both runs and the pooled figures under second_seed, which render.py
+        reads (targets, abnormals, sampling; decision batch 4b, 4b-4). A row that names the player
+        characters' roles (the four-striker rows) is read against the standard Titans' rows with the
+        same roles; Draw Attention's rows against the reference rows. check
+        also checks every ladder's format, the first rung hooked-into-its-body and the last nearest
+        (decision batch 4b, 4b-1).
+    - file: render.py
+      holds: >-
+        collect writes data/titans/probe-figures.yaml from results; write and check render the chapter's
+        tables from YAML, including the setup mix, which weights each Focus Titan's reference row by the
+        interim setup table's odds, and the bar in both Squad sheet orders.
+    - file: ../batch-3e/abnormal_b3e.py
+      holds: >-
+        Decision batch 3e's Sprinting Abnormal probe, kept as that batch's record: its ladder without
+        current-holder in the helper, screen, and screen-with-pair rows, and Nape Depth 4 at the
+        reference start, with helpers, and with the template Squad, each at 120,000 fights beside the
+        standard Large Titan's twins as results/bar.json held them in that batch (written into the
+        script); the share of resolved cards that are Thrash on every table; and, at its reference
+        start, how often its current-holder rung kept a holder who was not the closest soldier. It pins
+        batch 3e's rules (the Squad-sheet tie-break, current-holder met wherever the holder stands) and
+        the Grab and Headlong Lunge at a fixed need of 3, and repeats abnormal_b3e.out.
+    - file: ../batch-4/abnormal_b4.py
+      holds: >-
+        The Sprinting Abnormal's reports under decision batch 4 that run6.py does not write, on
+        fight6.py's defaults and the committed YAML: the Thrash share on every table; at its reference
+        start, how often current-holder keeps a holder who is not the closest soldier and how many cards
+        land on a holder at Distant while someone stands closer or on a Down holder; the Grab alone at
+        a fixed need of 2 and the ladder without current-holder on the bar's seeds in both orders, against
+        results/bar.json's twins; and the parked rider against the standard Medium Titan. Run after
+        run6.py bar. Its output is abnormal_b4.out beside it.
+    - file: cases6.json
+      holds: >-
+        The full-fight cases, port check first; a case marked reference is its Titan's reference start.
+        Cases labelled support are ADR-0014's support rows for every table, and cases labelled tactics
+        the standard Medium Titan's Squad Tactic rows (decision batch 3b). Decision batch 4b appended four eager strikers and
+        no cutters on Chapter 5's reference Titan (labelled four strikers) and on every Chapter 6 table
+        (4b-2). The loud-rider cases it also appended left the file in decision batch 5 (OQ-113), which
+        moved the seeds of the cases after them; every case was re-run under the retreat clock.
+  commands:
+    run_from: tools/probes/chapter-06
+    needs: Python 3 with PyYAML, which uv run --with pyyaml supplies. Seeds are fixed, so each command repeats its figures.
+    list:
+      - {family: check, command: uv run --with pyyaml python run6.py check}
+      - {family: fight, command: uv run --with pyyaml python run6.py fight 12000}
+      - {family: jam, command: uv run --with pyyaml python run6.py jam 60000}
+      - {family: solo, command: uv run --with pyyaml python run6.py solo 100000}
+      - {family: grab, command: uv run --with pyyaml python run6.py grab 40000}
+      - {family: lone, command: uv run --with pyyaml python run6.py lone 100000}
+      - {family: bar, command: uv run --with pyyaml python run6.py bar 120000}
+      - {family: "fight, bar, jam, solo, grab, and lone, decision batch 4's re-run of every family (the six full commands above)", command: uv run --with pyyaml python run6.py fight 12000 && uv run --with pyyaml python run6.py jam 60000 && uv run --with pyyaml python run6.py solo 100000 && uv run --with pyyaml python run6.py grab 40000 && uv run --with pyyaml python run6.py lone 100000 && uv run --with pyyaml python run6.py bar 120000}
+      - {family: "decision batch 4's Sprinting Abnormal probe (verdicts, sprinting_abnormal; thrash_share), from the repository root, after bar", command: uv run --with pyyaml python tools/probes/batch-4/abnormal_b4.py}
+      - {family: "decision batch 4b's probes (the loud rider under both ladders and the bar under the swapped ladder; four strikers and the two levers), from the repository root; they pin the 12-round horizon and Draw Attention from any Position, and the committed rows above govern", command: uv run --with pyyaml python tools/probes/batch-4b/loud_b4b.py explore && uv run --with pyyaml python tools/probes/batch-4b/loud_b4b.py bar && uv run --with pyyaml python tools/probes/batch-4b/strikers_b4b.py}
+      - {family: "decision batch 3e's Sprinting Abnormal probe, its record, from the repository root", command: uv run --with pyyaml python tools/probes/batch-3e/abnormal_b3e.py}
+      - {family: figures, command: uv run --with pyyaml python render.py collect}
+      - {family: chapter, command: uv run --with pyyaml python render.py write}
+  limits: >-
+    The probes are Chapter 5's stand-ins, not the ADR-0014 simulator. A mounted soldier dismounts on
+    their first move, except a screening Squadmate, who rides to the holder's Position first, and dodges
+    with a horse rated 2; no soldier remounts or strikes eyes, and a soldier carries a comrade only in a
+    retreat, so Broken eyes never arise in a fight and the carrying-a-comrade test arises only there
+    (titans.py covers Broken eyes in the move-up shares). The probes of decision batches 3e to 4b pin the
+    12-round horizon, so abnormal_b4.py's comparisons with results/bar.json's current twin rows mix two
+    readings; its committed figures below are the ones it measured. A card's later effects skip a target who has died (OQ-107); no Chapter
+    6 entry reaches that case. The setup mix counts only the Focus Titan's fight at its reference start,
+    not Background Titans.
+
+# ------------------------------------------------------------------ targets per table
+# docs/rules/DECISIONS-2026-09-14.md, Constraints on the undrafted Phase 1 chapters, Chapter 6.
+targets:
+  medium:
+    titan: standard-medium
+    at_the_reference_start:
+      median_kill_round: 3
+      killed_by_round_3: 55% to 70%
+      critical_injuries_per_fight: 0.5 to 0.9
+      deaths_per_fight: at most 0.08, deaths through the end of the Titan Engagement; deaths during the fight reported beside it   # decision batch 8, 8-31, the owner's chosen lethality (OQ-132 decided anew); history: at most 0.06 under decision batch 7, 7-13, and 0.05 under decision batch 5, 5-19; re-set again under OQ-140
+      grabs_per_fight: 0.15 to 0.30
+  small:
+    titan: standard-small
+    at_the_reference_start:
+      median_kill_round: 2
+      critical_injuries_per_fight: at most 1.0
+  large:
+    titan: standard-large
+    at_the_reference_start:
+      median_kill_round: 3
+      no_kill: at most 15%   # decision batch 5, 5-10
+  every_standard_table:
+    - The Jam test's worst cell stays under a third, for one and for two Titans of that class (OQ-72, OQ-96).
+    - >-
+      No kill share by previous behavior exceeds one half at any state. Chapter 6 reads "any state" as
+      every previous behavior with every count of Broken eyes, arms, and legs, not only an unbroken
+      Titan (decision batch 4, OQ-101).
+    - At most one result gives a grab effect and at most one a Critical Injury that can be lethal.
+    - A holder at In Reach meets the Position requirement of at least four results in six.
+  adr_0014_targets_quoted:
+    bands:   # ADR-0014, as amended in decision batch 5 (OQ-127)
+      prepared_squad: the median kill round is exactly 3
+      lone_strike: {rookie_fresh_cut: 8% to 14%, levi_grade: 45% to 55%}
+      grab: {alone: 61.7% to 71.7%, stress_2_grief_0: 28.3% to 38.3%, every_cell: under 50%}
+      per_table: Each range or limit in targets is its own band, read exactly, and a median is read exactly.
+      second_seed: A figure past a band's edge by at most 2 standard errors is re-run on a second seed and judged on the figure pooled over both runs.
+    prepared_squad: A prepared Squad of 4 kills a standard Medium Titan in about 3 rounds.
+    lone_strike: >-
+      A lone, average soldier who has used Break Attention succeeds on about 10% of Nape strikes against a
+      Medium Titan, between 8% and 14% on a cut made directly after Break Attention from the Rookie's
+      fight-start Stress of 1, with the cut a lone soldier makes after the cards they took while waiting
+      reported beside it and not tuned; a Levi-grade soldier pushing hard succeeds about 50% of the time.
+      The solo figures are that fresh cut; the lone-fight figures report the in-fight cut.
+    grab: >-
+      A Grab kills about 1 time in 3 with comrades close (one comrade in reach, the six cells), about 2 in
+      3 when alone.
+    not_table_dependent: >-
+      The lone strike, the Grab cells, and gas do not read the Behavior Table. Chapter 6 re-runs the first
+      two at each stat block's Nape Depth and Grab so the figures quoted for each Titan come from
+      its own values; gas is unchanged (data/engagement/tuning.yaml, gas). The lone fight does read the
+      table, and is run for every Titan (decision batch 3b).
+  abnormals:
+    rule: >-
+      Reported under the same probes; its values are chosen within the bounds and held against this
+      bar, not tuned to a target. Values stay within Tempo 1 to 2, Nape Depth 3 to 4, Regeneration 2 to
+      4, Toughness 1 to 3, and Attack Dice 3 to 12. Each limit below is a figure a standard Titan measured
+      under the same probes: the standard Medium Titan is the floor, and the standard Large Titan, the
+      hardest standard fight Phase 1 accepts, gives the winnable limit and the ceiling. Every part is
+      read the same way, row against row, as decision batch 3b reads every table: each Abnormal row
+      against the standard Medium and Large Titans' rows with the same support, or their reference
+      rows where they have none (twins). A row's support is what it adds to the 4 player characters
+      that another Titan's row can share: Squadmates and their role, the template Squad, Squad Tactics,
+      and the Grab escapes. A row that adds Draw Attention, a rider Squadmate, or another
+      ladder has no twin of its own. A row that names the player characters' roles, such as four
+      strikers and no cutters, is read against the standard Titans' rows with the same roles (decision
+      batch 4b, 4b-2). The bar is read under Chapter 5's last tie-break, which leaves a tie no card
+      can break held by nothing, in both Squad sheet orders, the player characters listed cutters first
+      and strikers first, with each twin run in the same order (decision batch 4, OQ-103, 4-4).
+    reference_start: >-
+      4 Rookie player characters at Stress 1 in Wooded terrain under the baseline policy, every one
+      mounted at the start and making the abnormal Fear Roll.
+    sampling:
+      fights_per_row: 120000
+      standard_errors: 2
+      rule: >-
+        The bar is measured by run6.py bar: every Abnormal row and its twins at 120,000 fights each,
+        with standard errors, in both Squad sheet orders. A limit holds when the Abnormal's figure is on
+        the permitted side of its twin's. It holds within sampling when it is past the twin's by no more
+        than 2 standard errors of the difference (the square root of the sum of the two squared
+        standard errors) at 120,000 fights a row. A row past that on one seed is re-run on a second
+        seed in the same order, the Abnormal row and both twins, and it fails only if the figure pooled
+        over the two runs is past 2 standard errors (run6.py bar, second_seed; decision batch 4b, 4b-4;
+        ADR-0014, as amended in decision batch 4b). The same tolerance applies to the floor, the
+        winnable limit, and the ceiling, and a row holds only when it holds in both orders. The median
+        kill round is read exactly, on the first seed.
+    not_trivial:
+      - In every row, the median kill round is 2 or later.
+      - In every row, Critical Injuries per fight are at least those of the standard Medium Titan's twin.
+      - >-
+        In the reference row, deaths per fight, deaths through the end of the Titan Engagement with
+        deaths during the fight reported beside them, are more than the standard Medium Titan's
+        reference row (decision batch 5, 5-19).
+    winnable:
+      - In every row, the median kill round is 4 or sooner.
+      - In every row, no kill is at most the standard Large Titan's twin (decision batch 5, 5-10).
+    ceiling:
+      - >-
+        In every row, deaths per fight, deaths through the end of the Titan Engagement with deaths
+        during the fight reported beside them, are at most the standard Large Titan's twin (decision
+        batch 5, 5-19).
+    report: >-
+      The setup mix: Critical Injuries and deaths per Titan Engagement the interim setup table sets up,
+      with and without its Abnormal roll (OQ-104).
+    decided: OQ-103   # decision batch 4, 4-4
+
+# ------------------------------------------------------------------ Phase 1 simulator cases Chapter 6 adds
+# Also listed in data/engagement/tuning.yaml (simulator_cases).
+simulator_cases:
+  - >-
+    Each Chapter 6 table with every Squad Tactic alone and in pairs, decoy screens, and helper Squadmates
+    under the full rules. The probes now report the support rows for every table and every Squad Tactic
+    for the standard Medium Titan (verdicts; decision batch 3b), so the simulator re-measures them.
+  - The lone fight on each table at its Tempo, with the fresh and the in-fight cut and the Stress at the cut.
+  - Broken eyes in the full fight, with a policy that strikes eyes, for every table whose entries use eyes.
+  - >-
+    The Sprinting Abnormal against the PC Critical Injury and PC death targets at the setup table's
+    rate (OQ-104), with Draw Attention and a Read revealing its ladder.
+  - Two Focus Titans of different Size Classes in the Jam test, and a standard Titan with the Abnormal.
+  - >-
+    The four-striker Squad (4 eager strikers and no cutters) beside the baseline Squad on every table,
+    reported beside every target, whose report is the input to the open question on cutting legs
+    (ADR-0014, as amended in decision batch 4b; decision batch 4b, 4b-2; OQ-112).
+  - >-
+    The start-of-fight Fear Rolls (first-titan-engagement, abnormal) in every case whose start calls for
+    them, and mounted starts, which Chapter 5's fight.py does not model.
+
+# ------------------------------------------------------------------ verdicts
+# Every verdict below reads the final full simulator rerun under Attack Dice (decision batch 8, 8-1,
+# 8-14, and 8-31; docs/reviews/simulator-report.md, cited by section), in which every target, band, and
+# bar limit is Met and no fight reached the safety cap; probe-figures.yaml is re-committed from that
+# run. A figure a verdict gives as the probes' was measured with each entry's fixed need of dodge
+# successes, before Attack Dice replaced it at 3 dice per point, and stands as the record of the
+# measurement that chose a value (tools/probes/chapter-06 and tools/probes/batch-4 where named, under
+# the retreat clock after decision batch 5 unless it says the 12-round horizon). If the report and a
+# verdict differ, the report governs and the verdict is re-written.
+verdicts:
+  port_check: >-
+    Met within sampling on the final full rerun under Attack Dice (docs/reviews/simulator-report.md,
+    sections 9 and 10). The simulator's Chapter 6 port-check case on Chapter 5's reference Titan gives
+    median kill round 3, 62.5% by round 3, and 0.70 Critical Injuries per fight (z +1.2 and -1.2
+    against the probes' 61.8% and 0.72), and its Chapter 5 reference case the same 62.5% and 0.70 (z
+    +0.8 and -1.5 against fight.py's 62.0% and 0.72), all under the retreat clock.
+  medium: >-
+    Met on every band on the final full rerun under Attack Dice, each band a range or limit read
+    exactly and the median read exactly (ADR-0014, as amended in decision batches 5, 5c, 7, and 8;
+    docs/reviews/simulator-report.md, section 3). At the reference start: median kill round 3 (42.0%
+    killed by round 2), 62.4% by round 3 (55% to 70%), 0.69 Critical Injuries (standard error 0.009;
+    0.5 to 0.9), and 0.196 Grabs (0.15 to 0.30) per fight, under the retreat clock; on the bar's two
+    runs of that start, round 3, 62.3% and 62.5%, 0.687 and 0.685 Critical Injuries, and 0.191 Grabs,
+    each Met. Deaths per fight (at most 0.08, re-set by
+    decision batch 8, 8-31, as the owner's chosen lethality, which decides OQ-132 anew; at most 0.06
+    under decision batch 7, 7-13, and 0.05 under decision batch 5, 5-19) read deaths through the end
+    of the Titan Engagement (decision batch 5, 5-19), which the probes do not count: the full rerun
+    gives 0.0754 (standard error 0.0034) at the reference start and 0.0687 and 0.0693 (standard error
+    0.0010) in the bar's two sheet orders, Met (docs/reviews/simulator-report.md, section 3). Deaths
+    during the fight are reported beside it: the full rerun gives 0.0663, 0.0606, and 0.0614; the
+    probes, under each entry's fixed need, give 0.046 (standard error 0.003) at 12,000 fights, and the
+    bar's twin rows 0.0487 (standard error 0.0009) with the cutters first and 0.0501 with the strikers
+    first, pooled over a second seed 0.0494 (standard error 0.0006).
+    Jam test worst cells (section 4.2) 7.7% for one Titan and 20.6% for two; mounted at Distant, 7.6%
+    and 20.9%. Highest kill share 0.500 in any state (section 4.1). Sensitivity rows (section 9):
+    strikers wait (61.4% by round 3, 0.73 Critical Injuries), dodge only lethal harm and Grabs (65.0%,
+    0.94), helper Squadmates, template Squad (median round 3, 51.5%, 0.88), a mounted start (62.3%,
+    0.69, 0.061 deaths during the fight and 0.069 through the end), and a first Titan Engagement with
+    its Fear Roll (median 3, 56.7%, 0.78 Critical Injuries, 0.210 Grabs, 0.086 deaths during the fight
+    and 0.095 through the end, so its deaths still pass the Medium band's limit, and it is reported,
+    not tuned; decision batch 8, 8-31). Support rows (decision batch 3b; section 9): helpers median
+    round 3 on the boundary, 69.5% by round 3, 0.62 Critical Injuries; the screen beside the holder
+    round 3, 67.4%, 0.43; Hook and Cut and Hamstring Line round 3, 66.2%, 0.65; the screen with that
+    pair round 2 on the boundary, 71.5%, 0.41, 0.018 deaths during the fight. Every Squad Tactic alone
+    and in pairs: median kill round 3, 62.3% to 66.2% by round 3, 0.65 to 0.69 Critical Injuries. The
+    probes, under each entry's fixed need, gave the helpers 0.837 cards resolved a round and the
+    screen 0.634.
+  small: >-
+    Met on the final full rerun under Attack Dice (docs/reviews/simulator-report.md, sections 3, 4,
+    7, and 9). Median kill round 2 (66.0% killed by round 2) and 0.86 Critical Injuries per fight
+    (standard error 0.011; at most 1.0), with steam; 0.81 without steam. Jam test worst cells 8.3% and
+    22.8%; mounted, 8.5% and 23.2%. Highest kill share 0.500. Support rows, each median kill round 2
+    and above the Medium's same-support Critical Injuries: helpers 87.0% by round 3, 0.81; the screen
+    87.1%, 0.54; Hook and Cut and Hamstring Line 83.3%, 0.81; the screen with that pair 89.2%, 0.48.
+    The probes, under each entry's fixed need, gave the helpers 1.485 cards resolved a round and the
+    screen 1.098.
+  large: >-
+    Met on the final full rerun under Attack Dice (docs/reviews/simulator-report.md, sections 3, 4,
+    6.2, 9, and 10). Median kill round 3 (42.0% killed by round 2) and 12.9% of fights with no kill
+    (standard error 0.3; at most 15%; decision batch 5, 5-10), and 13.0% and 13.1% on the bar's two
+    runs of that start, with 1.19 Critical Injuries and 0.141 deaths per fight during the fight (0.149
+    through the end), under Chapter 5's reference Large Titan (1.24 and 0.235; 0.257 through the end).
+    Heavy Tread needs both legs (OQ-109); with one leg the probes' row gave 13.0%, 1.38, and 0.162
+    before decision batch 3e, to the 12-round horizon. Template Squad: median round 4 on the boundary,
+    20.6% with no kill, 1.51 Critical Injuries, 0.234 deaths during the fight and 0.246 through the
+    end. Jam test worst cells 10.5% and 27.7%; mounted, 10.2% and 26.9%. The two-Titan cell is under a
+    third by 5.6 points, and any change to the Large table that the Jam test reads re-runs it; the Jam
+    test breaks no Body Part, so Heavy Tread's legs do not reach it. Highest kill share 0.500. Support
+    rows: helpers median round 3 on the boundary, 69.3% by round 3, 9.2% with no kill, 1.05 Critical
+    Injuries, 0.039 deaths during the fight; the screen round 3, 67.4%, 9.8%, 0.78, 0.029, so Heavy
+    Tread does not make it a trap; Hook and Cut and Hamstring Line round 3, 65.0%, 11.3%, 1.06, 0.114;
+    the screen with that pair round 3 on the boundary, 69.9%, 7.9%, 0.69, 0.024.
+  lone_strike: >-
+    Met on the standard Medium Titan at the measurement point on the final full rerun under Attack
+    Dice (docs/reviews/simulator-report.md, sections 1, 2.2, and 9): the Rookie's fresh cut succeeds on
+    13.0% at Stress 1 (standard error 0.1; 8% to 14%; 9.9% from Stress 0), the Veteran 32.2% at Stress
+    2, and the Levi-grade soldier 47.2% at Stress 2 (standard error 0.2; about 50%, read as 45% to
+    55%). The standard Large Titan shares Nape Depth 4 and gives the same; the standard Small Titan's
+    Nape Depth 3 gives the Rookie 33.2%, and the Sprinting Abnormal's 33.2%. Reported beside it and not
+    tuned, the lone fight on the waiting line, under the retreat clock: a usable strike before the
+    retreat in 70.3% of lone fights against the standard Medium Titan, with the in-fight cut at 14.0%
+    and a mean Stress of 2.56; Large 69.7%; Small 69.2%, after 5.55 Titan cards, with 2.7% devoured;
+    the Sprinting Abnormal 51.8%, with 6.2% Down and 1.00 Critical Injuries per lone fight. Each counts
+    a spare canister and Field Repair (decision batch 3c, 3c-3), and no decoy is usable first in any
+    lone fight on any table or line (0.0%). The Abnormal's own table, whose Run Past and Trample reach
+    Distant, gives fewer strikes than decision batch 3b's starting row for Tempo 2 and Nape Depth 3 on
+    the reference table (69.2% in the probes). The hurried line: Small 68.3% (7.7% devoured), Abnormal
+    59.3% (7.0%). A one-card hold would give 40.9% and 28.2%. The probes, under each entry's fixed need,
+    gave 22.8% of the Small Titan's lone fights killing and 42.5% of the Abnormal's still waiting when
+    the retreat began. The lone model reads the Abnormal's Grab, which rolls 6 Attack Dice (decision
+    batch 4). The Abnormal's rows are rendered only in its GM subsection (OQ-108).
+  grab: >-
+    Met on every Titan on the final full rerun under Attack Dice, with each victim dodging the Titan's
+    own Grab Attack Dice and witnesses' Fear Rolls on every row of the re-cut table
+    (docs/reviews/simulator-report.md, sections 1 and 9). On the standard Medium Titan (9 Attack Dice)
+    a lone victim whose dodge failed dies 70.1% of the time (standard error 0.2; about 2 in 3, read as
+    61.7% to 71.7%) and one who did not dodge 73.3%; with one comrade in reach the six cells run 28.6%
+    to 48.3%, with the Stress 2, Grief 0 cell at 33.8% (near 1 in 3, read as 28.3% to 38.3%). Small (6
+    Attack Dice) runs 29.3% to 48.1%, Large (12) 29.2% to 47.7%, and the Sprinting Abnormal (6 since
+    decision batch 4) 28.7% to 48.2%, with 70.0% alone after a failed dodge; every cell is under 50%.
+    The worst cell on every Titan is Stress 3, Grief 1; the probes, under each entry's fixed need and
+    the old Fear table, gave it 44.4% to 45.3%. The Grab family reads no clock, and its figures repeat.
+  sprinting_abnormal: >-
+    Reported, not tuned to a target, and holding every part of the Chapter 6 bar (targets, abnormals)
+    in every row and in both Squad sheet orders on the final full rerun under Attack Dice, read row
+    against row at 120,000 fights a row under the retreat clock (docs/reviews/simulator-report.md,
+    section 5; decision batch 4, 4-4; decision batch 5, 5-10). Its
+    ladder begins with hooked-into-its-body, as every ladder does, so noise, its second rung, never
+    turns it off a striker who fell short (decision batch 4b, 4b-1), and it names current-holder,
+    met only by a holder not at Distant; Chapter 5's last tie-break leaves a tie no card can break
+    held by nothing, so the Squad sheet's order chooses nothing and the two orders differ by
+    sampling alone (decision batch 4, 4-3). Its Grab and Headlong Lunge roll 6 Attack Dice. Draw
+    Attention needs a Position other than Distant, so decision batch 4b's loud-rider rows are no
+    longer legal policies and have left the bar (decision batch 5, OQ-113). On the final full rerun
+    under Attack Dice (docs/reviews/simulator-report.md, sections 2.3, 5, and 9), at its reference
+    start: median kill round 2, 71.1% by round 3, 8.0% of fights with no kill, 0.83 Critical Injuries,
+    0.088 deaths during the fight (0.098 through the end), and 0.278 Grabs per fight, 18.4% of them
+    devouring (20.0% counting any death while held). The bar, read on deaths through the end of the
+    Titan Engagement, cutters first then strikers first, holds every limit in every row and both
+    orders (section 5.1), and every row holds under deaths during the fight too (section 5.2): at the
+    reference start a median kill in round 2 in both orders, 0.839 and 0.838 Critical Injuries against
+    the standard Medium Titan's 0.687 and 0.685, and 0.0995 and 0.0984 deaths against the Medium
+    Titan's 0.0687 and 0.0693; every row has a median kill in round 2 or 3; Critical Injuries at least
+    the Medium twin's in every row by 17.2 standard errors or more, the closest the screen with Hook
+    and Cut and Hamstring Line (0.479 against 0.421); no kill under the Large twin's in every row by
+    40.0 standard errors or more, the closest a start on foot (8.04% against 13.05% with the cutters
+    first); deaths under the Large twin's in every row by 8.6 standard errors or more, the closest
+    helpers (0.0388 against 0.0499 and 0.0388 against 0.0490); no row was past a limit, so none was
+    re-run on a second seed (targets, abnormals, sampling; decision batch 4b, 4b-4). Four strikers
+    hold their part against the standard Titans' four-striker rows (0.0284 and 0.0280 deaths against
+    the Large Titan's 0.0679 and 0.0666; 0.623 and 0.619 Critical Injuries against the Medium Titan's
+    0.440 and 0.437). The Grab alone at 6 Attack Dice, with Headlong Lunge at 9, fails the ceiling on
+    the rerun with helpers in both orders through the end (0.0543 against 0.0499, +3.5 standard
+    errors, pooled over two seeds 0.0545 against 0.0502, +4.8; 0.0546 against 0.0490, +4.5, pooled
+    0.0549 against 0.0503, +5.2) and holds every row during the fight (sections 5.3 and 5.4). The
+    probes' records below, under each entry's fixed need, stand as the measurements that chose its
+    values; those measured to the 12-round horizon before decision batch 5 stand as measured. The
+    probes' figures at its reference start (12,000 fights) were median kill round 2, 69.3% by round
+    3, 8.9% with no kill, 0.85 Critical Injuries, 0.104 deaths, and 0.328 Grabs, 19.4% of them fatal;
+    on the bar 0.0352 against 0.0454 and 0.0336 against 0.0465 for helpers. The same variant on the
+    bar's seeds (abnormal_b4.py): helpers
+    0.0219 against 0.0200 (2.2 standard errors) and 0.0218 against 0.0194 (2.8), which the
+    2-standard-error tolerance counts as failures; it sits above its twin's rate, not at it (pooled
+    over seven runs 0.0217 against 0.0206 with helpers, +3.5 standard errors, and 0.0108 against
+    0.0103 with the screen, +2.6; decision batch 4b, 4b-4), and decision batch 4 had seen it fail
+    one of two seeds (quarry_b4_grab2_bar.out: the screen with the pair, 2.1). Without
+    current-holder (abnormal_b4.py, both orders): helpers 0.0208 and 0.0209 against 0.0200 and
+    0.0194 (0.9 and 1.7 standard errors), the screen 0.0111 and 0.0112 against 0.0099 and 0.0106
+    (2.4 and 1.2), and the screen with the pair 0.0087 and 0.0091 against 0.0079 and 0.0081 (1.9 and
+    2.4), so it fails narrowly; under decision batch 3e, with the kill entries at a fixed need of 3, it
+    failed by 8.0 to 12.7 (abnormal_b3e.py). At its reference start the current-holder rung kept a
+    holder who was not at the closest Position 0.98 times a fight, no card resolved against a holder
+    at Distant while a candidate stood closer, and 0.18 cards a fight resolved against a Down holder
+    (abnormal_b4.py, 60,000 fights). The parked rider, listed first and never leaving the saddle at
+    Distant: 0.177 deaths and 1.38 Critical Injuries against the standard Medium Titan's 0.082 and
+    0.95 with the same Squad (abnormal_b4.py, 120,000 fights), so parking a silent rider buys
+    nothing. Values chosen against the bar (OQ-103): under decision batch 4's tie-break the Grab and
+    Headlong Lunge at a fixed need of 3 failed the ceiling in every supported row (3.4 to 5.9 standard
+    errors at 24,000 fights; tools/probes/batch-4/quarry_b4.py and sweep_b4.py); with the round 2
+    ladder and Pitch Headlong at a fixed need of 2 the helpers row gave 0.026 deaths against 0.019, about 6
+    standard errors at 60,000 fights, and at a fixed need of 1 it holds; with leg Toughness 3 the template
+    Squad row gave 0.296 deaths against 0.268 (round 1). At Nape Depth 4 (abnormal_b3e.py, under
+    decision batch 3e, not re-measured) every row read failed the winnable limit and the ceiling:
+    the reference start 18.5% with no kill against 13.0% and 0.172 deaths against 0.164; helpers
+    12.6% against 9.3% and 0.051 against 0.020; the template Squad median kill round 6, 37.0%
+    against 20.0%, and 0.344 against 0.278. Sensitivity rows on the final full rerun (section 9, under
+    the retreat clock; deaths during the fight): template Squad median round 3, 62.1% by round 3,
+    11.6% with no kill, 0.99 Critical Injuries, 0.143 deaths; Draw Attention from a Position other
+    than Distant, median round 3 on the boundary, 70.5%, 5.9% with no kill, 1.00, 0.101, with 0.49
+    attempts a fight by a cutter still at Distant barred (section 6.7); four strikers and no cutters
+    median round 2, 92.2%, 0.4%, 0.62, 0.019 (4b-2); two mounted Squadmates at Distant 71.0%, 0.064
+    deaths; the standard ladder 75.8%, 0.80, 0.075; on foot with the Fear Roll 70.8%, 0.092; its
+    earlier ladder (loudest-or-brightest, nearest) median round 3, 77.1%, 2.4% with no kill, 0.87,
+    0.072. Support rows: helpers 77.9%, 0.76, 0.032; the screen 78.9%, 0.53, 0.015; Hook and Cut and
+    Hamstring Line 75.4%, 0.73, 0.070; the screen with that pair 82.5%, 0.47, 0.013. The probes gave
+    the screen 1.211 cards resolved a round. Jam test worst cells (section 4.2) 8.4% and 22.9%;
+    mounted, 8.4% and 22.9%. Highest kill share 0.500 (section 4.1); fewest legal entries besides
+    Thrash 1.
+  thrash_share: >-
+    Reported, not tuned (decision batch 4, OQ-101). The final full rerun reports no Thrash share, and
+    its kill-share states match the committed shares in every state (docs/reviews/simulator-report.md,
+    section 4.1), so the probes' figures stand as measured, under each entry's fixed need. At each
+    reference start (tools/probes/batch-4/abnormal_b4.py, 12,000 fights a table, to the 12-round
+    horizon) Thrash is 30.9% of the standard Small
+    Titan's resolved cards, 41.2% of the standard Medium Titan's, 40.9% of the standard Large Titan's,
+    and 33.7% of the Sprinting Abnormal's. Nearly all of it comes from a holder at a Position the rolled
+    entry excludes, or a fallback that repeats, rather than a Broken part: 1.27 of 1.30 Thrash cards a
+    fight, 1.34 of 1.37, 1.34 of 1.49, and 1.66 of 2.00. The commonest case is a Nape striker who fell
+    short and holds Attention at Blind Spot.
+  setup_mix: >-
+    Reported, not tuned. Weighted by the interim setup table, the Focus Titan's fight at its reference
+    start, under the retreat clock, deals on the final full rerun under Attack Dice 0.830 Critical
+    Injuries and 0.077 deaths during the fight per Titan Engagement without the Abnormal roll (0.086
+    through the end), and 0.842 and 0.078 with it (0.088 through the end; 1 Titan Engagement in 12;
+    decision batch 4, OQ-104; docs/reviews/simulator-report.md, section 6.9). The probes, under each
+    entry's fixed need, gave 0.83 and 0.065, and 0.85 and 0.070. Background Titans are not counted
+    (OQ-115).
+  four_strikers: >-
+    Reported beside the prepared-Squad target, not tuned (ADR-0014, as amended in decision batch 4b;
+    decision batch 4b, 4b-2; OQ-112). The target is read under the baseline Squad, two cutters and
+    two strikers. On the final full rerun under Attack Dice (docs/reviews/simulator-report.md,
+    sections 5.1, 6.8, and 9; under the retreat clock; deaths during the fight) four eager strikers and
+    no cutters beat it on every table: Chapter 5's reference Titan median round 2 on the boundary,
+    78.3% by round 3, 0.43 Critical Injuries, 0.020 deaths, against its baseline's 62.5%, 0.70, 0.064;
+    the standard Small Titan 91.1%, 0.63, 0.023, against 81.3%, 0.86, 0.060; the standard Medium Titan
+    median round 3 on the boundary, 78.6%, 0.44, 0.025, against 62.4%, 0.69, 0.066; the standard Large
+    Titan median round 2 on the boundary, 78.7%, 2.6% with no kill, 0.76, 0.063, against 62.5%, 12.9%,
+    1.19, 0.141; the Sprinting Abnormal median round 2, 92.2%, 0.62, 0.019, against 71.1%, 0.83, 0.088.
+    The Medium and Large medians sit on the boundary of rounds 2 and 3: in the bar's twin runs the
+    Medium row is round 3 on the boundary with the cutters first and round 2 with the strikers first,
+    and the Large row round 2 in both. The Sprinting Abnormal's four-striker row holds its bar against
+    the standard Titans' four-striker rows in both orders. The probes, under each entry's fixed need,
+    gave the standard Medium Titan's row 77.3%, 0.44, 0.016 against 61.7%, 0.69, 0.046.
+  gas: Unchanged from Chapter 5 (medians 8 and 6 rounds, read exactly, Met on the final full rerun under Attack Dice with means 9.24 and 6.34; docs/reviews/simulator-report.md, section 1); no Chapter 6 rule adds ODM use.

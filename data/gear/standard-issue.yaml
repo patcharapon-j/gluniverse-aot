@@ -1,0 +1,148 @@
+# Standard Issue: what each soldier receives, scaled by Funding, and how receiving it works.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (section 4.9) references this file and
+# renders its tables from it (tools/render/render.py).
+id: standard-issue
+name: Standard Issue
+chapter: 04-gear
+adrs: [ADR-0003, ADR-0014]
+decided: [OQ-59, OQ-72, OQ-93, OQ-141, OQ-148]
+# Revised by decision batch 2b (docs/rules/DECISIONS-2026-09-14.md, Batch 2b): by_funding.horse_rating
+# (Major 2), and receiving.steps odm-gear, horse, and decline and interim_issue.differences (Minor 5).
+# Revised by decision batch 3 (OQ-93): interim_issue.differences (the horse step) and why_narrow.
+
+funding:
+  meaning: The Survey Corps' Funding, 1 to 6, picks the row of by_funding.
+  until_funding_rules: 3   # the Funding rules are not yet written; until they are, every table uses Funding 3
+
+when_received:
+  - A new player character, at the finish step of the Lifepath (data/character/lifepath.yaml, finish).
+  - A starting Squadmate (data/character/squadmates.yaml, starting_squad).
+  - A new character who joins the Squad later.
+  - Every soldier in the Squad together, as a full issue, before each Expedition and on arriving at a depot Waypoint (data/expedition/legs.yaml, expedition; data/expedition/route.yaml, depot; decision batch 7, 7-14).
+  - Every soldier in the Squad, together, under interim_issue while no Expedition and no Downtime is under way (data/expedition/legs.yaml, expedition, interim_rows; data/campaign/downtime.yaml, downtime, interim_rows).
+full_and_interim: >-
+  Every issue in when_received is a full issue, which follows receiving.steps as written, except
+  the interim issue, which follows them with the differences in interim_issue.
+interim_issue:
+  when: >-
+    While no Expedition and no Downtime is under way, every soldier in the Squad receives the interim
+    issue together at the start of each session, after the interim day (data/harm/healing.yaml,
+    day_passes, interim; decision batch 5, OQ-120). If a session begins partway through a procedure, such
+    as a Titan Engagement or a care window, they receive it once that procedure has ended: after
+    its last step, and so after sharing out a dead soldier's gear (data/gear/carrying.yaml,
+    leaving_play), Retirement, and promotion. While an Expedition or a Downtime is under way it never
+    happens: the issue before each Expedition and a depot's issue take its place (decision batch 7,
+    7-14, 7-15).
+  differences:
+    - At step odm-gear, ODM Gear is replaced only if the soldier has none, or its rating is below the row's odm_gear_rating. Jammed or worn ODM Gear rated at least the row's rating is kept as it is.
+    - At step horse, the full issue's test applies. A horse is replaced if the soldier has none, it is lame, it is worn, or its rating is below the row's horse_rating, and the decline covers the exchange (OQ-93).
+    - At step specialty-item, the item is given only to a soldier who holds none of its kind. A kit at current rating 0 is kept.
+  unchanged: Every other step, including the decline, and the Squad Supply restock apply as written.
+  why_narrow: >-
+    Wear carries between sessions only on items a Phase 1 rule other than Standard Issue can
+    restore: ODM Gear and tool kits through Field Repair, medical kits through restocking. No
+    Phase 1 rule restores a horse, so the interim issue replaces a worn one (OQ-59, OQ-93;
+    decision batch 2b).
+not_received: >-
+  Promotion gives no Standard Issue: a promoted Squadmate keeps its gear
+  (data/character/squadmates.yaml, promotion). From then on it receives every issue the soldiers of
+  the Squad receive, including an interim issue that waits until after that promotion.
+
+# One row per Funding. blade_sets counts every Blade Set, including the one fitted into the handles.
+# odm_gear_rating is 2 from Funding 3 to 5 and 3 at Funding 6 (OQ-72): ADR-0014's Rookie has ODM Gear 2.
+# horse_rating follows the same ladder, 1, 1, 2, 2, 2, 3 (decision batch 2b): ADR-0014's Rookie has a
+# horse rated 2, so a mounted dodge has the same pool with either item and differs only in its cost.
+by_funding:
+  - funding: 1
+    odm_gear_rating: 1
+    spare_canisters: 0
+    blade_sets: 2
+    horse_rating: 1
+  - funding: 2
+    odm_gear_rating: 1
+    spare_canisters: 1
+    blade_sets: 2
+    horse_rating: 1
+  - funding: 3
+    odm_gear_rating: 2
+    spare_canisters: 1
+    blade_sets: 3
+    horse_rating: 2
+  - funding: 4
+    odm_gear_rating: 2
+    spare_canisters: 1
+    blade_sets: 4
+    horse_rating: 2
+  - funding: 5
+    odm_gear_rating: 2
+    spare_canisters: 2
+    blade_sets: 4
+    horse_rating: 2
+  - funding: 6
+    odm_gear_rating: 3
+    spare_canisters: 2
+    blade_sets: 5
+    horse_rating: 3
+every_row:
+  fitted_canister: one, full (data/gear/odm-gear.yaml, gas)
+  blade_set_rating: 1
+
+by_specialty:
+  rows:
+    - specialty: medic
+      item: medical-kit
+      rating: 1
+    - specialty: engineer
+      item: tool-kit
+      rating: 1
+  others: No other Specialty receives an item. A Squadmate uses its template's Specialty.
+
+receiving:
+  steps:
+    - id: odm-gear
+      text: >-
+        A soldier with no ODM Gear, whose ODM Gear is Jammed, whose ODM Gear is worn (its current
+        rating is below its rating), or whose ODM Gear's rating is below the row's
+        odm_gear_rating, receives ODM Gear with the row's rating and a full current rating; the
+        ODM Gear it replaces leaves play. Any other ODM Gear is kept as it is.
+    - id: canisters
+      text: >-
+        Every canister the soldier has, fitted or spare, is refilled to full. A soldier with no
+        fitted canister has a full one fitted. Full spare canisters are added until the soldier
+        has the row's spare_canisters. None is taken away.
+    - id: blade-sets
+      text: >-
+        Blade Sets are added until the soldier has the row's blade_sets, counting the one in the
+        handles. If the handles are empty, one is fitted into them. None is taken away.
+    - id: horse
+      text: >-
+        A soldier with no horse, with a lame horse, with a worn horse (its current rating is below
+        its rating), or with a horse whose rating is below the row's horse_rating, receives a
+        horse with the row's rating and a full current rating. The horse it replaces leaves play,
+        and a soldier mounted on it is mounted on the new horse. Any other horse is kept as it is.
+    - id: specialty-item
+      text: >-
+        A soldier whose Specialty has a by_specialty row, and who holds no item of its kind at a
+        current rating above 0, receives one with that rating and a full current rating. When
+        they receive it, every item of that kind they hold at current rating 0 leaves play.
+    - id: decline
+      text: >-
+        The soldier may decline any spare canister, Blade Set, or Specialty item they would
+        receive. A declined item is not received. In any issue, the soldier may also decline the
+        exchange of Jammed or worn ODM Gear at step odm-gear, or of a lame or worn horse at step
+        horse, and keeps that item as it is, worn or at current rating 0, until a rule in its
+        restored_by list restores it (data/gear/items.yaml). Each choice is made at the step
+        that would give the item.
+  kept_items: >-
+    Standard Issue never restores the current rating of an item the soldier keeps. Field Repair
+    does for ODM Gear and tool kits (data/gear/field-repair.yaml), restocking does for medical
+    kits (data/gear/squad-supply.yaml), and the Maintain Gear Downtime Action does for every rated
+    item the soldier holds (data/campaign/downtime.yaml, downtime_actions, maintain-gear).
+  kept_item_exchange: >-
+    At a step that would replace a kept item or make it leave play, the soldier may hand the kept item
+    in and take the issue in its place; keeping it is the default (data/gear/items.yaml, kept_item;
+    decision batch 8, 8-12).
+  gm: The GM never adds, removes, or changes an item of Standard Issue.
+  squad_supply: >-
+    When every soldier in the Squad receives Standard Issue together, Squad Supply is restocked
+    too (data/gear/squad-supply.yaml, stock).

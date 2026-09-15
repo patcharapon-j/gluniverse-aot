@@ -1,0 +1,81 @@
+# Class Rank: set at Graduation from the Cadet's total Merit.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.3.4)
+# references this file and renders its tables from it (tools/render/render.py).
+id: class-rank
+name: Class Rank
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0012]
+decided: [OQ-21, OQ-135]
+
+class_size: 200    # graduates in a Training Corps class, for describing a Class Rank
+# A Class Rank describes standing only. Several graduates can share the same number; only
+# top_10 has an effect.
+merit_total: the sum of Merit from all three Training Years, including merit_change from events
+
+# Find the row whose merit_min and merit_max include the Merit total. merit_min null means no lower
+# bound; merit_max null means no upper bound.
+rows:
+  - merit_min: null
+    merit_max: 0
+    class_rank: 180
+    top_10: false
+  - merit_min: 1
+    merit_max: 1
+    class_rank: 150
+    top_10: false
+  - merit_min: 2
+    merit_max: 2
+    class_rank: 120
+    top_10: false
+  - merit_min: 3
+    merit_max: 3
+    class_rank: 90
+    top_10: false
+  - merit_min: 4
+    merit_max: 4
+    class_rank: 55
+    top_10: false
+  - merit_min: 5
+    merit_max: 5
+    class_rank: 25
+    top_10: false
+  - merit_min: 6
+    merit_max: 6
+    class_rank: 10
+    top_10: true
+  - merit_min: 7
+    merit_max: 7
+    class_rank: 7
+    top_10: true
+  - merit_min: 8
+    merit_max: 8
+    class_rank: 4
+    top_10: true
+  - merit_min: 9
+    merit_max: 9
+    class_rank: 2
+    top_10: true
+  - merit_min: 10
+    merit_max: null
+    class_rank: 1
+    top_10: true
+
+# What a Top 10 Class Rank does. Every player character serves in the Survey Corps.
+top_10:
+  military_police_offer: >-
+    The graduate is offered a place in the Military Police and declines it to join the
+    Survey Corps. Record "Declined the Military Police" on the character sheet.
+  key_attribute_bonus: 1    # applied at Graduation, see data/character/attributes.yaml
+other_effects: none in the Phase 1 rules
+
+# A soldier made with the Template Build or the Free Build (data/character/lifepath.yaml,
+# procedures), or a promoted Squadmate (data/character/squadmates.yaml, promotion), has no
+# Merit total and uses no row above (decision batch 7, 7-1; OQ-135).
+built_and_promoted:
+  applies_to: [template-build, free-build, promoted-squadmate]
+  merit: none
+  class_rank: none
+  top_10: false
+  military_police_offer: none
+  key_attribute_bonus: 0
+  decided: [OQ-135]

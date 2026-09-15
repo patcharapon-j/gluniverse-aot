@@ -1,0 +1,151 @@
+# Background Titans: their closing clocks, what fills them, entry as a Focus Titan, the
+# two-Focus-Titan limit, the retreat clock, and the retreat.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.10) references this
+# file and does not repeat its rows.
+# Revised by decision batch 5: the retreat clock (5-10, OQ-126) and the order of a retreat's forced
+# move and action (5-1, OQ-119).
+# Revised by decision batch 5b: the lift exception to that order is decided (5-13, OQ-119), and no
+# Nape strike is made during a retreat (5-15, OQ-129).
+id: background-titans
+name: Background Titans and the Retreat
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0010, ADR-0014]
+decided: [OQ-87, OQ-99, OQ-119, OQ-126, OQ-129, OQ-163]
+
+background_titan:
+  meaning: A Titan in the Titan Engagement that is not yet a Focus Titan, run only as a closing clock.
+  recorded: >-
+    Its Size Class, the stat block it will use (data/titans/index.yaml), its clock length, and how many segments
+    are filled (data/engagement/round.yaml, gm_tracker). All of these are public, except the
+    values of an Abnormal's stat block that data/engagement/read.yaml (facts) keeps hidden.
+  clock_length: >-
+    The length the rule that begins the Titan Engagement names, or the one
+    data/engagement/engagement-setup.yaml gives.
+  no_positions: No soldier holds a Position relative to a Background Titan, and it has no cards, Attention, or Behavior Table in play.
+
+focus_titan_limit: 2
+
+# ------------------------------------------------------------------ the retreat clock (decision batch 5, 5-10)
+retreat_clock:
+  meaning: >-
+    A clock every Titan Engagement carries, whatever Titans are in it. When it is full, the Titan
+    Engagement becomes a retreat (retreat).
+  length: >-
+    The length the rule that begins the Titan Engagement names, or the one
+    data/engagement/engagement-setup.yaml gives (retreat_clock).
+  starts: Empty, when the Titan Engagement begins.
+  recorded: >-
+    Its filled segments of its length, on the tracker's Engagement line (data/engagement/round.yaml,
+    gm_tracker, engagement_line). It is public.
+  fills: Only as ticks (retreat-clock) states. No rule empties it.
+
+ticks:
+  rows:
+    - id: end-of-round
+      text: At the background-clocks end step of each round, fill 1 segment of every Background Titan's clock.
+    - id: flare
+      text: >-
+        Each flare spent on Break Attention fills 1 segment of every Background Titan's clock as
+        soon as that Break Attention is fully resolved, whether it succeeded or failed, including
+        any Hook and Cut it allowed (data/engagement/attention.yaml, break_attention, decoys,
+        flare; data/engagement/squad-tactics.yaml, hook-and-cut). A clock it fills resolves then
+        (full_clock), mid-round, so a Titan that enters evaluates its Attention Ladder with that
+        round's cards (data/engagement/attention.yaml, evaluation, card; decision batch 4b, 4b-3).
+        A flare never fills the retreat clock.
+    - id: retreat-clock
+      text: >-
+        At the background-clocks end step of each round, after every Background Titan's clock has
+        filled and every full clock has resolved (full_clock), fill 1 segment of the retreat clock
+        (retreat_clock). When it is full, the Titan Engagement becomes a retreat (retreat).
+  stopped: >-
+    During a retreat no Background Titan's clock fills and the retreat clock does not fill. A Focus
+    Titan's Regeneration clock still fills at the regeneration end step (data/engagement/titan-harm.yaml,
+    regeneration, tick; decision batch 6, OQ-134).
+
+full_clock:
+  order: When several clocks are full at once, resolve them in the order the tracker lists them.
+  fewer_than_two_focus_titans:
+    text: >-
+      The Background Titan becomes a Focus Titan with the next letter not yet used as a label in
+      this Titan Engagement. It starts as data/engagement/engagement-flow.yaml (starting,
+      titan-values) states. Every soldier who holds a Position holds distant relative to it
+      (data/engagement/positions.yaml, two_focus_titans, entering). Evaluate its Attention Ladder:
+      at the background-clocks end step no cards choose, and mid-round, after a flare, that round's
+      cards break a tie (data/engagement/attention.yaml, evaluation, card and none; decision batch 4b,
+      4b-3). It is dealt cards from the next round on.
+    fear_rolls: >-
+      If it is now one of two Focus Titans, every soldier who holds a Position makes a Fear Roll
+      for second-focus-titan. If it is an Abnormal, the abnormal trigger applies. One Fear Roll per
+      soldier for the event (data/mind/fear-rolls.yaml, limits).
+  two_focus_titans_alive:
+    text: The Background Titan does not enter. The Titan Engagement becomes a retreat (retreat).
+
+retreat:
+  starts: >-
+    When a Background Titan's clock is full while two Focus Titans are alive (full_clock,
+    two_focus_titans_alive), or when the retreat clock is full (retreat_clock).
+  effects:
+    - id: no-entries
+      text: >-
+        No Background Titan's clock fills again, the retreat clock does not fill, and no Titan enters, for
+        the rest of the Titan Engagement. Every living Focus Titan's Regeneration clock still fills
+        (ticks, stopped; decision batch 6, OQ-134).
+    - id: moves
+      text: >-
+        Every soldier who holds a Position and is not Down, Grabbed, or carried cannot decline their
+        move. Each move they make must be one of these, the soldier's choice among those they can
+        make:
+          1. Toward distant: one step along a shortest chain of steps their move can make from
+             their Position to distant (data/engagement/anchor-ratings.yaml), relative to the Focus Titan with the earliest label they do not hold distant from; once they hold distant relative to every Focus Titan, relative to the corpse with the earliest label they do not hold distant from (decision batch 8, 8-20).
+          2. Leave: if they hold distant relative to every Focus Titan, leave the Titan Engagement
+             (data/engagement/positions.yaml, leaving).
+          3. Toward a fallen comrade: one step that lowers the number of Position steps between the
+             soldier and a Down, Grabbed, or Pinned comrade who is not carried.
+          4. Stay with a fallen comrade: a move that changes nothing, if the soldier already holds
+             the same Position as such a comrade and has already taken, earlier in this same turn,
+             one of these actions for that comrade: treat-injury; or, for a Grabbed comrade,
+             break-free on their behalf with Pry Loose, a body-part-strike against the holding arm,
+             or break-attention against the holding Titan; or, for a Pinned comrade, heave against the pinning body or body-part-strike against the pinning Body Part (decision batch 8, 8-21). A soldier who has not taken such an action first cannot use this option that turn. A soldier who lifts a comrade
+             (lift-comrade) carries them out by option 1.
+        The stay limit: options 3 and 4 for a comrade the limit covers are open only on the retreat's
+        first rounds, as many as its retreat clock has segments, counted from the round after the one in
+        which the retreat began (data/engagement/round.yaml, gm_tracker, engagement_line). It covers:
+          - a comrade Pinned under a corpse, in every retreat, whether or not a Focus Titan is alive, so
+            a Focus Titan that enters during the run-on does not lift it (decision batch 8, 8-36);
+          - every comrade, whether Pinned, Down, or Grabbed, while no Focus Titan is alive (decision
+            batch 8, 8-32; OQ-163).
+        From the next round on, no soldier may make option 3 or 4 for a comrade the limit covers: each
+        such move is option 1 or 2, or, for a soldier who can make neither, letting go or changing
+        nothing. While a Focus Titan is alive, options 3 and 4 for a Down or Grabbed comrade, or for a
+        comrade Pinned under a living Titan, have no such limit. No Nape strike is made during a
+        retreat, so no Focus Titan dies in one: the limit on every comrade binds only a retreat that
+        began after the last Focus Titan died, and the limit on a stay beside a comrade Pinned under a
+        corpse binds every retreat in which such a comrade lies. From the first round past the limit,
+        in every retreat, a soldier whom a lost-limb grade forbids every move, and who is not Down,
+        Pinned, or carried, is not standing for the no-soldier-standing test
+        (data/engagement/engagement-flow.yaml, ending, no-soldier-standing, past_the_stay_limit;
+        decision batch 8, 8-34 and 8-36).
+        For 3 and 4, Positions are compared relative to the holding Titan for a Grabbed comrade,
+        relative to the pinning body for a Pinned one (decision batch 8, 8-21), and for a Down one as
+        every other comparison is: relative to the living Focus Titan with the earliest label or, when
+        none is alive, relative to the corpse of the Focus Titan that died last
+        (data/engagement/positions.yaml, comparison, otherwise; decision batch 8, 8-20). The number
+        of Position steps between two Positions is the fewest step rows of the Anchor Rating that
+        join them (data/engagement/anchor-ratings.yaml, ratings).
+        A soldier who can make none of these may let go (data/engagement/positions.yaml, moves,
+        letting_go) or change nothing.
+    - id: order
+      # decision batch 5, 5-1 (OQ-119), and the lift exception decided in 5-13: without it a soldier
+      # who shares a Down comrade's Position must move away before the lift, and at distant must leave.
+      text: >-
+        On each turn on which moves binds the soldier, their move comes before their action
+        (data/engagement/round.yaml, turn_order), with two exceptions. A stay-with-a-comrade move
+        (option 4) comes after the action taken for that comrade. A move on a turn whose action is
+        lift-comrade comes after the lift, so a soldier who shares a Down comrade's Position can
+        lift them and carry them out by option 1 or 2 in the same turn.
+    - id: no-return
+      text: A soldier who has left cannot return.
+    - id: actions
+      text: "Actions are not limited by the retreat, only ordered after the forced move (order), except that no Nape strike is made during a retreat, on a soldier's own turn or through Hook and Cut (data/engagement/titan-harm.yaml, nape_strikes; data/engagement/squad-tactics.yaml, hook-and-cut; decision batch 5, 5-15, OQ-129)."
+  ends: A retreat ends only when the Titan Engagement ends (data/engagement/engagement-flow.yaml, ending).
+  stress: The end-of-Engagement Stress relief applies to a retreat as to any ending (data/core/stress-changes.yaml, engagement-ends).

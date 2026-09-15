@@ -1,0 +1,274 @@
+{
+ "sprinting-abnormal": {
+  "hurried": {
+   "by_round": {
+    "2": 13.1,
+    "3": 27.6,
+    "4": 38.4,
+    "6": 50.1,
+    "8": 54.8,
+    "12": 54.8
+   },
+   "cards_against_per_fight": 7.57,
+   "cards_before_strike": 4.62,
+   "cis_per_fight": 1.049,
+   "deaths": 8.3,
+   "downs": 13.0,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 8.3,
+    "down": 13.0,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 23.9,
+    "struck": 54.8
+   },
+   "feints": 0.03,
+   "kill_given_strike": 33.6,
+   "kill_per_fight": 18.4,
+   "mean_round_struck": 3.84,
+   "median_round_struck": 3,
+   "stress_at_strike": 3.91,
+   "usable_strike_share": 54.8
+  },
+  "nape_depth": 3,
+  "one_card_hold": {
+   "by_round": {
+    "2": 4.0,
+    "3": 8.9,
+    "4": 13.4,
+    "6": 20.4,
+    "8": 24.6,
+    "12": 24.6
+   },
+   "cards_against_per_fight": 12.54,
+   "cards_before_strike": 6.72,
+   "cis_per_fight": 1.362,
+   "deaths": 4.3,
+   "downs": 10.2,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 4.3,
+    "down": 10.2,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 60.9,
+    "struck": 24.6
+   },
+   "feints": 0.0,
+   "kill_given_strike": 32.8,
+   "kill_per_fight": 8.1,
+   "mean_round_struck": 4.48,
+   "median_round_struck": 4,
+   "stress_at_strike": 4.42,
+   "usable_strike_share": 24.6
+  },
+  "tempo": 2,
+  "waiting": {
+   "by_round": {
+    "2": 8.0,
+    "3": 18.2,
+    "4": 27.2,
+    "6": 39.9,
+    "8": 46.9,
+    "12": 46.9
+   },
+   "cards_against_per_fight": 10.6,
+   "cards_before_strike": 6.32,
+   "cis_per_fight": 1.109,
+   "deaths": 2.9,
+   "downs": 7.7,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 2.9,
+    "down": 7.7,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 42.5,
+    "struck": 46.9
+   },
+   "feints": 0.0,
+   "kill_given_strike": 32.7,
+   "kill_per_fight": 15.3,
+   "mean_round_struck": 4.34,
+   "median_round_struck": 4.0,
+   "stress_at_strike": 4.32,
+   "usable_strike_share": 46.9
+  }
+ },
+ "standard-large": {
+  "nape_depth": 4,
+  "tempo": 1,
+  "waiting": {
+   "by_round": {
+    "2": 20.8,
+    "3": 37.3,
+    "4": 48.2,
+    "6": 62.3,
+    "8": 69.6,
+    "12": 69.6
+   },
+   "cards_against_per_fight": 3.49,
+   "cards_before_strike": 2.43,
+   "cis_per_fight": 0.175,
+   "deaths": 3.2,
+   "downs": 2.0,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 3.2,
+    "down": 2.0,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 25.2,
+    "struck": 69.6
+   },
+   "feints": 0.09,
+   "kill_given_strike": 14.9,
+   "kill_per_fight": 10.4,
+   "mean_round_struck": 3.81,
+   "median_round_struck": 3,
+   "stress_at_strike": 2.95,
+   "usable_strike_share": 69.6
+  }
+ },
+ "standard-medium": {
+  "nape_depth": 4,
+  "tempo": 1,
+  "waiting": {
+   "by_round": {
+    "2": 20.4,
+    "3": 36.7,
+    "4": 47.7,
+    "6": 62.0,
+    "8": 69.8,
+    "12": 69.8
+   },
+   "cards_against_per_fight": 3.5,
+   "cards_before_strike": 2.47,
+   "cis_per_fight": 0.155,
+   "deaths": 2.7,
+   "downs": 2.9,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 2.7,
+    "down": 2.9,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 24.6,
+    "struck": 69.8
+   },
+   "feints": 0.09,
+   "kill_given_strike": 14.3,
+   "kill_per_fight": 10.0,
+   "mean_round_struck": 3.86,
+   "median_round_struck": 3,
+   "stress_at_strike": 2.67,
+   "usable_strike_share": 69.8
+  }
+ },
+ "standard-small": {
+  "hurried": {
+   "by_round": {
+    "2": 27.7,
+    "3": 44.6,
+    "4": 53.5,
+    "6": 62.5,
+    "8": 66.1,
+    "12": 66.1
+   },
+   "cards_against_per_fight": 5.51,
+   "cards_before_strike": 3.47,
+   "cis_per_fight": 0.537,
+   "deaths": 8.9,
+   "downs": 9.0,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 8.9,
+    "down": 9.0,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 16.0,
+    "struck": 66.1
+   },
+   "feints": 0.05,
+   "kill_given_strike": 33.8,
+   "kill_per_fight": 22.4,
+   "mean_round_struck": 3.28,
+   "median_round_struck": 3.0,
+   "stress_at_strike": 3.08,
+   "usable_strike_share": 66.1
+  },
+  "nape_depth": 3,
+  "one_card_hold": {
+   "by_round": {
+    "2": 9.2,
+    "3": 16.7,
+    "4": 22.8,
+    "6": 32.4,
+    "8": 38.7,
+    "12": 38.7
+   },
+   "cards_against_per_fight": 10.81,
+   "cards_before_strike": 6.13,
+   "cis_per_fight": 0.351,
+   "deaths": 5.6,
+   "downs": 4.8,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 5.6,
+    "down": 4.8,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 50.9,
+    "struck": 38.7
+   },
+   "feints": 0.01,
+   "kill_given_strike": 34.4,
+   "kill_per_fight": 13.3,
+   "mean_round_struck": 4.25,
+   "median_round_struck": 4,
+   "stress_at_strike": 3.64,
+   "usable_strike_share": 38.7
+  },
+  "tempo": 2,
+  "waiting": {
+   "by_round": {
+    "2": 18.2,
+    "3": 33.9,
+    "4": 45.1,
+    "6": 59.3,
+    "8": 66.9,
+    "12": 66.9
+   },
+   "cards_against_per_fight": 8.06,
+   "cards_before_strike": 5.4,
+   "cis_per_fight": 0.204,
+   "deaths": 3.2,
+   "downs": 2.9,
+   "dry": 0.0,
+   "ends": {
+    "dead": 0.0,
+    "devoured": 3.2,
+    "down": 2.9,
+    "horizon": 0.0,
+    "no_decoy_usable": 0.0,
+    "retreat": 27.0,
+    "struck": 66.9
+   },
+   "feints": 0.01,
+   "kill_given_strike": 34.0,
+   "kill_per_fight": 22.8,
+   "mean_round_struck": 3.91,
+   "median_round_struck": 3,
+   "stress_at_strike": 3.45,
+   "usable_strike_share": 66.9
+  }
+ }
+}

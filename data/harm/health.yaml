@@ -1,0 +1,158 @@
+# Health and harm: what Health is, the kinds of harm a rule can inflict, reaching 0 current Health, and
+# getting Health back.
+# Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.1) references this
+# file and does not repeat its rows.
+id: health
+name: Health and Harm
+chapter: 03-harm-and-mind
+adrs: [ADR-0003, ADR-0005, ADR-0017, ADR-0019]
+decided: [OQ-39, OQ-40, OQ-137, OQ-138, OQ-146]
+
+health:
+  rating: the Health formula in data/character/attributes.yaml (derived_values, health)
+  kept_as: >-
+    A row of boxes, one per point of Health. Each box is clean, marked by damage, or crossed
+    off by an untreated Critical Injury (ADR-0005, as amended).
+  tracked: health_lost   # Health lost to damage (data/character/lifepath.yaml); boxes crossed off are not stored (data/harm/sheet-fields.yaml)
+  boxes_crossed_off: >-
+    The smaller of the untreated Critical Injuries the soldier holds and Health. A soldier can
+    hold more untreated Critical Injuries than Health: the extra ones cross off nothing, and
+    treating one of them gives back no box until fewer untreated Critical Injuries remain than
+    the soldier has Health.
+  current: Health minus boxes crossed off minus Health lost
+  current_min: 0          # Health lost never exceeds Health minus boxes crossed off
+  changes_after_creation: false   # attributes never rise (ADR-0011), so Health never changes
+
+# Every harm a rule inflicts on a soldier is one of these kinds. A rule that harms a soldier names
+# the kind and its parameters. Nothing else harms a soldier, and the GM never picks a kind, an
+# amount, or an Injury Location.
+harm_kinds:
+  - id: damage
+    name: Damage
+    parameters:
+      amount: whole number added to Health lost (boxes marked by damage)
+      injury_location: >-
+        optional; the Injury Location of the Critical Injury this damage inflicts at 0 current
+        Health. If the rule names none, the Injury Location is rolled
+        (data/harm/critical-injuries.yaml).
+      injury_type: >-
+        required; the Injury Type of the damage's source (data/harm/critical-injuries.yaml, types),
+        which the Critical Injury this damage inflicts at 0 current Health records. A fall is Crush
+        (data/gear/falls.yaml, injury_type). ADR-0005 and ADR-0017, as amended in decision batch 7, 7-5.
+    procedure:
+      - If the amount is 0, the damage inflicts no harm, whatever the soldier's current Health: Health lost does not change, and no Critical Injury is gained. Steam's 0 row (data/engagement/titan-harm.yaml, steam) and a fall's 0 row (data/gear/falls.yaml, procedure) end here.
+      - If the soldier's current Health is above 0, add the amount to Health lost, to a maximum of Health minus boxes crossed off.
+      - If that brings current Health to 0, the soldier becomes Down (data/harm/down.yaml) and gains one Critical Injury of the damage's Injury Type at once (its health_box rule applies). Then check Down again.
+      - If the soldier's current Health was already 0, Health lost does not change, and the soldier gains one Critical Injury of the damage's Injury Type at once (its health_box rule applies).
+    named_by: >-
+      Rules that harm a soldier by something other than a Titan attack: a fall (Chapter 4), steam at a
+      kill or a Regeneration fill (data/engagement/titan-harm.yaml, steam), a Heave against a corpse
+      (data/engagement/titan-harm.yaml, falling_titan, corpse_heat), and a Foe's weapon (Chapter 7)
+      (decision batch 8, 8-7).
+    rules: [03-harm-and-mind, 04-gear]
+    decided: [OQ-39]
+
+  - id: critical-injury
+    name: Critical Injury
+    parameters:
+      injury_location: >-
+        arm, leg, torso, head, or rolled. An arm or a leg named without a side has its side rolled
+        (data/harm/critical-injuries.yaml, sides, side_roll).
+      injury_type: crush, bite, burn, cut, or pierce; required (data/harm/critical-injuries.yaml, types)
+      cannot_be_lethal: true or false (default false)
+    procedure: data/harm/critical-injuries.yaml (gaining)
+    health_lost: crosses off one Health box while untreated; never adds to Health lost
+    health_box: >-
+      An untreated Critical Injury crosses off a clean box if one is left. If none is, it
+      crosses off a box marked by damage instead, and Health lost falls by 1. If every box is
+      already crossed off, it crosses off none. Treating it, or its healing while untreated,
+      gives the box back, unless the soldier still holds at least as many untreated Critical
+      Injuries as Health (restoring, treated-or-healed; data/harm/treat-injury.yaml, treat;
+      data/harm/healing.yaml).
+    last_box: >-
+      A Critical Injury that crosses off the last box makes the soldier Down
+      (data/harm/down.yaml) and inflicts no further Critical Injury. Only damage that brings
+      current Health to 0, or damage taken at 0, inflicts one.
+    named_by: Titan attacks (the critical-injury effects of Behavior Table entries in data/titans/, and the Grab's crush), the falling Titan's pin and corpse heat (data/engagement/titan-harm.yaml, falling_titan), damage that reaches or is taken at 0 current Health (damage above), and any rule that names one
+    rules: [03-harm-and-mind]
+    adrs: [ADR-0005]
+
+  - id: death
+    name: Death
+    procedure: The soldier dies (data/harm/death-rolls.yaml, dying).
+    named_by: >-
+      A Critical Injury row marked instant_death, a failed Death Roll, the devour step of the Grab
+      procedure (data/engagement/grab.yaml, countdown), and any other rule that names death. No Behavior Table entry names
+      death (titan_attacks).
+    rules: [03-harm-and-mind, 05-titan-engagement]
+    decided: [OQ-39]
+
+# ADR-0005: Titan attacks bypass Health.
+titan_attacks:
+  definition: >-
+    A Titan attack is the harm a Behavior Table entry inflicts on a soldier when a Titan's card
+    resolves that behavior against them. Every such harm is a Titan attack. A Titan attack is
+    only the harm the entry itself names. Harm that another rule causes as a result, such as a
+    fall when a soldier becomes Down while airborne (Chapter 4) or a Jam, is the kind that other
+    rule names. Each Behavior Table entry that harms lists, in its effects, its Injury Location
+    (fixed or rolled), its Injury Type, and whether its Critical Injury cannot be lethal (data/titans/;
+    data/titans/index.yaml, grab_mark, harm).
+  injury_type: >-
+    A Titan's Bite is Bite. Every other Titan attack a Behavior Table entry inflicts is Crush, and so is
+    the Grab's crush (ADR-0017; decision batch 7, 7-5).
+  harm_kind: critical-injury
+  never: damage   # a Titan attack never adds to Health lost, whatever the soldier's Health; its Critical Injury crosses off a box
+  landing: >-
+    A Titan attack is rolled: the entry's Attack Dice are rolled as Titan Dice, and the attack
+    lands on a target on 1 or more Net Successes after that target's Reaction cancels (ADR-0019;
+    Chapter 1, section 1.9; data/engagement/titan-format.yaml, titan_dice). A roll of 0 successes
+    whiffs against every target. A soldier who cannot make a Reaction, such as a Down soldier,
+    cancels nothing, so the attack lands on them on 1 or more successes. Its Critical Injury takes
+    the net success rider (data/harm/critical-injuries.yaml, gaining, net-success-rider).
+  grab: >-
+    The Grab's crushing Critical Injury is a torso Critical Injury of Injury Type Crush with
+    cannot_be_lethal true (ADR-0019). data/engagement/grab.yaml gives the Grab procedure
+    (grab_lands, crush_harm).
+  grab_countdown: >-
+    The Grab countdown's two steps (ADR-0019), lifting the Grabbed soldier after their next turn
+    and devouring them after the turn after that, belong to the Grab procedure
+    (data/engagement/grab.yaml, countdown) and are
+    never Behavior Table entries. They are not Titan attacks and roll no Attack Dice. A Reaction
+    answers only a card that resolves a behavior (Chapter 1, section 1.9), so no Reaction answers
+    them. The devour names death (harm_kinds, death). data/engagement/grab.yaml (countdown, lift)
+    states what the lift does.
+  adrs: [ADR-0005, ADR-0015, ADR-0019]
+  rules: [05-titan-engagement, 06-standard-titans]
+  decided: [OQ-39]
+
+# Getting Health back. Health lost to damage comes back only through revive and day-passes;
+# a crossed-off box comes back only through treated-or-healed.
+restoring:
+  - id: revive
+    name: Revive (Treat Injury)
+    who: a Down soldier whose current Health is 0 and whose Health lost is above 0
+    amount: 1 Health lost per success, to a maximum of the soldier's Health lost (erases that many damage marks)
+    boxes: >-
+      Crossed-off boxes do not come back. If a down until_treated row still holds the soldier,
+      Down goes on.
+    procedure: data/harm/treat-injury.yaml (uses, revive)
+    decided: [OQ-40, OQ-44]
+
+  - id: treated-or-healed
+    name: A Critical Injury is treated or heals
+    who: a soldier whose untreated Critical Injury becomes treated or heals
+    amount: >-
+      The box it crossed off comes back, unless the soldier still holds at least as many
+      untreated Critical Injuries as Health (boxes_crossed_off).
+    procedure: data/harm/treat-injury.yaml (uses, treat); data/harm/healing.yaml (healing_time, heals)
+
+  - id: day-passes
+    name: A day passes
+    who: every living soldier
+    amount: all Health lost to damage (erases every damage mark); crossed-off boxes stay crossed off
+    when: >-
+      Each time a day passes (data/harm/healing.yaml, day_passes): at each Night Camp of an Expedition
+      (data/expedition/legs.yaml, night_camp), on each of Downtime's seven days (data/campaign/downtime.yaml,
+      infirmary, each_day), and on the interim day while no Expedition and no Downtime is under way.
+    order: after that day's care window and Death Rolls (data/harm/healing.yaml, each_day)
+    decided: [OQ-40, OQ-53]

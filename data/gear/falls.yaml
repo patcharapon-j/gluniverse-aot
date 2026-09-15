@@ -1,0 +1,104 @@
+# Falls: the closed list of what makes a soldier fall, the height band, and the fall damage table.
+# Source of truth under ADR-0012. docs/rules/04-gear.md (section 4.6) references this file and
+# renders its tables from it (tools/render/render.py).
+id: falls
+name: Falls
+chapter: 04-gear
+adrs: [ADR-0003, ADR-0005, ADR-0017]
+decided: [OQ-39, OQ-62, OQ-137]
+
+harm_kind: damage   # data/harm/health.yaml (harm_kinds, damage); a fall is never a Titan attack
+injury_type: crush  # every fall (ADR-0017; decision batch 7, 7-5): the Critical Injury its damage inflicts at 0 current Health is Crush
+
+# A soldier falls only when a row here happens.
+triggers:
+  - id: jam-airborne
+    trigger: The soldier's ODM Gear Jams while they are airborne (data/gear/odm-gear.yaml, jam).
+    timing: Once the roll that Jammed it is finished.
+  - id: down-airborne
+    trigger: The soldier becomes Down while airborne.
+    timing: Once the harm that made them Down, including any Critical Injury it gives, has been resolved.
+    note: A Grab's hold ends the airborne state before its crush, so a soldier the crush makes Down does not meet this trigger (data/engagement/grab.yaml, grab_lands; decision batch 5, OQ-124).
+  - id: down-mounted
+    trigger: The soldier becomes Down while mounted (data/gear/horses.yaml, forced_dismount).
+    timing: Once the harm that made them Down has been resolved.
+    height: from-a-horse
+    note: A Grab's hold dismounts the soldier before its crush, so a soldier the crush makes Down does not meet this trigger (data/engagement/grab.yaml, grab_lands; decision batch 5, OQ-124).
+  - id: lame-mounted
+    trigger: The soldier's horse becomes lame while they are mounted (data/gear/horses.yaml, forced_dismount).
+    timing: Once the roll that wore the horse is finished.
+    height: from-a-horse
+  - id: carried
+    trigger: A comrade who carries the soldier falls for any reason, including a down-airborne or down-mounted fall, becomes Grabbed while airborne, or dies while airborne or mounted (data/gear/carrying.yaml, carrying_a_comrade).
+    timing: At the same moment as the carrier's fall, Grab, or death.
+    height: The carrier's band, found by height as if the carrier fell; a carrier who was mounted gives a fall from a horse.
+  - id: rule-named
+    trigger: Another rule names a fall, such as a Chapter 5 rule or the Chase rules (not yet written).
+    height: The band that rule names, or low if it names none.
+not_a_fall: >-
+  Running dry does not make a soldier fall (data/gear/odm-gear.yaml, running_dry). Neither does
+  landing through a move, nor being set down by a carrier.
+never_a_second_fall: >-
+  A fall never causes another fall for the same soldier. The procedure ends the soldier's
+  airborne, mounted, and carried states before the fall's damage applies, so a soldier whom the
+  fall's own damage makes Down is no longer airborne or mounted and meets neither down-airborne
+  nor down-mounted. A carrier whom their own fall's damage makes Down carries no one by then, so
+  carrying_a_comrade's Down row does not apply either.
+
+# ------------------------------------------------------------------ height
+height:
+  steps:
+    - >-
+      In a Titan Engagement, find the fall's reference Titan: the Focus Titan relative to which the
+      soldier held the closest Position when they fell, in the order On Body, Blind Spot, In Reach,
+      Distant. On a tie, it is the Titan whose card, Grab, or effect caused the fall, and otherwise
+      the living Focus Titan with the earliest label. Every later step, and where the fall lands
+      (data/engagement/positions.yaml, falls_land), uses that Titan (decision batch 5, OQ-123).
+    - A fall from a horse is low, and no later step changes it.
+    - Otherwise use the Position the soldier held relative to the reference Titan when they fell. Distant or In Reach is low. On Body or Blind Spot is high.
+    - For a fall that is not from a horse, raise the band one step, to at most extreme, if the Titan Engagement's Anchor Rating is Giant Forest, or if the reference Titan is of the Large Size Class. Both together still raise it one step.
+  outside_titan_engagement: The rule that makes the soldier fall names the band. If it names none, the fall is low.
+  bands:
+    - id: low
+      adds: 0
+    - id: high
+      adds: 2
+    - id: extreme
+      adds: 4
+
+# ------------------------------------------------------------------ damage
+damage_table:
+  roll: D6 plus the band's adds   # a table roll, not an attribute roll: no pool, no Push, no Help (Chapter 1, section 1.3)
+  row_fields:
+    results: "min and max of the total; min null covers every total up to max, max null every total from min up"
+    damage: the damage the fall inflicts
+  rows:
+    - id: no-harm
+      results: {min: null, max: 2}
+      damage: 0
+    - id: jarred
+      results: {min: 3, max: 4}
+      damage: 1
+    - id: hard-landing
+      results: {min: 5, max: 6}
+      damage: 2
+    - id: heavy-landing
+      results: {min: 7, max: 8}
+      damage: 3
+    - id: shattering-landing
+      results: {min: 9, max: null}
+      damage: 4
+
+procedure:
+  - Find the band (height).
+  - The soldier is no longer airborne, mounted, or carried. If they carry a comrade, carrying ends and that comrade falls at the same moment from the same band (triggers, carried).
+  - Roll D6, add the band's adds, and find the row of damage_table.
+  - If the damage is 0, the fall inflicts no harm.
+  - Otherwise the soldier takes that damage (data/harm/health.yaml, harm_kinds, damage). A Critical Injury it inflicts has a rolled Injury Location and Injury Type Crush (injury_type). That damage never causes another fall (never_a_second_fall).
+
+after_the_fall:
+  position: data/engagement/positions.yaml (falls_land)
+  gear: A fall changes no gear rating, Gas Rating, or item.
+  not_a_behavior: A fall is not a Titan attack or a behavior, so no Reaction answers it.
+  not_fear: A fall is not a Fear Roll trigger (data/mind/fear-rolls.yaml).
+  gm: The GM never decides whether a soldier falls, the band, or the damage.

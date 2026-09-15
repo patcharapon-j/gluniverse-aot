@@ -1,0 +1,249 @@
+# The round in a Titan Engagement: initiative cards, Tempo, Wings, the swap step, the order of
+# play, the end steps, and what the GM tracks.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.3) references this
+# file and does not repeat its rows.
+id: round
+name: The Round
+chapter: 05-titan-engagement
+adrs: [ADR-0001, ADR-0003, ADR-0010, ADR-0014, ADR-0015, ADR-0019]
+decided: [OQ-77, OQ-90, OQ-97, OQ-119, OQ-126, OQ-163]
+
+initiative_cards:
+  set: >-
+    Twenty cards numbered 1 to 20. On paper a D20 serves instead: re-roll any number already
+    dealt this round.
+  order: Cards come up in ascending order, lowest first.
+  never_tied: No two cards in a round share a number.
+  public: Every card is dealt face up.
+
+# ------------------------------------------------------------------ the round
+round_steps:
+  - id: wings
+    text: Assign Wings, or keep them, as wings states.
+  - id: deal
+    text: >-
+      Shuffle all twenty cards. Deal one card to each living player character, one to each living
+      Squadmate who is not on a Wing, and as many cards as its Tempo to each living Focus Titan.
+      A soldier who is Down, Grabbed, carried, or has left the Titan Engagement is still dealt a
+      card, because their turns still happen (Chapter 1, section 1.9; data/harm/down.yaml;
+      data/harm/engagement-end.yaml, soldiers_who_left).
+  - id: swap
+    text: Soldiers may swap cards (swapping).
+  - id: play
+    text: >-
+      Cards come up one at a time in ascending order. On a soldier's card, that soldier takes
+      their turn of one move and one action, in the order turn_order states, and then the
+      Squadmate on their Wing, if any, takes its turn. On a Focus Titan's card, resolve the card
+      (data/engagement/behavior-procedure.yaml, resolving_a_card).
+  - id: end
+    text: Resolve end_steps in order.
+
+# ------------------------------------------------------------------ one soldier's turn
+# Chapter 1, section 1.9 points here for how a turn is ordered.
+turn_order:
+  parts: A turn is one move and one action (Chapter 1, section 1.9).
+  order: >-
+    The soldier takes the move and the action in either order, except under a retreat, where the
+    forced move comes first (data/engagement/background-titans.yaml, retreat, order). The move is
+    made at one point in the turn, wholly before or wholly after the action, never partly before
+    and partly after it.
+  declining: >-
+    A move or action the soldier declines on their turn stays available only as Chapter 1,
+    section 1.9 (Declining) states.
+  wing: The Squadmate on the soldier's Wing takes its turn after the soldier's whole turn is finished.
+  decided: [OQ-77, OQ-119]
+
+end_steps:
+  - id: gas-rolls
+    text: >-
+      Every soldier who used ODM Gear this round makes a Gas Roll (data/gear/odm-gear.yaml,
+      gas_roll). The dice for every soldier's Gas Roll can be rolled at once. If the Titan
+      Engagement ends during a round, these Gas Rolls are made at once instead, before the steps
+      in data/harm/engagement-end.yaml (data/gear/odm-gear.yaml, gas_roll, when).
+  - id: regeneration
+    text: Fill 1 segment of every living Focus Titan's Regeneration clock (data/engagement/titan-harm.yaml, regeneration).
+  - id: background-clocks
+    text: >-
+      Fill 1 segment of every Background Titan's clock and resolve full clocks. Then fill 1 segment
+      of the retreat clock; if it is full, the Titan Engagement becomes a retreat
+      (data/engagement/background-titans.yaml, ticks, full_clock, retreat_clock). During a retreat
+      no Background Titan's clock fills and the retreat clock does not fill; the regeneration step
+      still fills every living Focus Titan's Regeneration clock (data/engagement/background-titans.yaml,
+      ticks, stopped; decision batch 6, OQ-134).
+  - id: round-ends
+    text: >-
+      Every move and action left unspent is lost (Chapter 1, section 1.9), and every effect that
+      lasts until the end of the round ends. The next round begins at its wings step.
+
+# ------------------------------------------------------------------ Wings
+wings:
+  when: >-
+    At the first wings step of the Titan Engagement, Wings are assigned, and they stand. At a later
+    wings step the players may change them only if, since the previous wings step, a soldier died,
+    left the Titan Engagement, became Down, or became Grabbed, or a Focus Titan entered or died. A
+    Squadmate whose player character died or left is assigned again at the next wings step,
+    whatever else happened.
+  assign: >-
+    When Wings are assigned or changed, the players assign each living Squadmate to the Wing of one
+    living player character, or to no Wing. A Wing holds at most one Squadmate
+    (data/character/squadmates.yaml, wing). If the players disagree, each proposed assignment is
+    settled as data/character/squadmates.yaml (wing, directing, disagreement_off_a_wing) settles a
+    Squadmate's choice.
+  decided: [OQ-77, OQ-97]
+  on_a_wing: >-
+    The Squadmate is dealt no card. Its turn comes right after its player character's turn, even
+    when that turn was spent in advance (data/character/squadmates.yaml, wing).
+  not_on_a_wing: The Squadmate is dealt its own card and takes its turn when that card comes up.
+  player_character_dies: >-
+    A Squadmate on the Wing of a player character who dies this round still takes its turn when
+    that player character's card comes up. At the next wings step it is assigned again.
+  nothing_else: >-
+    A Wing sets only when the Squadmate acts. It adds no dice and has no Position requirement.
+
+# ------------------------------------------------------------------ swapping
+swapping:
+  entry: swap-initiative-card   # an option, not an action; OQ-90 adds it to data/character/action-catalog.yaml
+  tracked_value: initiative-swap
+  when: During the swap step only, before the first card of the round comes up.
+  who: >-
+    Two soldiers who each hold a card this round, neither Down nor Grabbed, who hold the same
+    Position or are one Position step apart (data/engagement/positions.yaml, comparison), or who
+    have both left the Titan Engagement.
+  what: The two soldiers exchange their cards.
+  limit: Each soldier takes part in at most one swap each round.
+  titans: A Titan's card is never swapped.
+  wing: A Squadmate on a Wing holds no card. Its turn stays right after its player character's, wherever that card goes.
+  agreement: >-
+    Both soldiers must agree. A player character's player decides for that character, and a
+    Squadmate's part is directed as data/character/squadmates.yaml (wing, directing) states.
+  not_an_action: true
+
+# ------------------------------------------------------------------ what the GM tracks
+# The GM keeps one tracker row per Focus Titan and one per Background Titan, plus the Titan
+# Engagement line. Players keep their own sheets (Chapters 3 and 4). Everything on the tracker is
+# public except each Next Behavior that has not been revealed and the values of an Abnormal's stat
+# block that data/engagement/read.yaml (facts) keeps hidden until a Read reveals them.
+gm_tracker:
+  engagement_line:
+    fields:
+      - Anchor Rating
+      - round number
+      - retreat clock, filled segments of its length (data/engagement/background-titans.yaml, retreat_clock)
+      - >-
+        whether the Titan Engagement is a retreat, and the round it began: the round at whose end step,
+        or during which, it became a retreat, which counts the retreat's first rounds for the stay limit
+        (data/engagement/background-titans.yaml, retreat, moves; decision batch 8, 8-32 and 8-36)
+      - Squad Tactics the Squad holds, and which have been used this Titan Engagement
+      - which soldiers have thrown their cloak
+      - the round in which no soldier was left standing, while the ending waits (data/engagement/engagement-flow.yaml, ending)
+    example: "Wooded | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut (used), Fall Back | Cloaks: - | No one standing since: -"
+  focus_titan_row:
+    fields:
+      - label (A, B, and so on)
+      - Size Class and stat block id
+      - cards this round
+      - >-
+        Attention holder, the decoy that holds it with the cards its hold has left, such as
+        "Att: flare, 1 left" (data/engagement/behavior-procedure.yaml, resolving_a_card, decoy), or
+        nothing (data/engagement/attention.yaml, evaluation, none)
+      - Next Behavior, face down until revealed
+      - previous behavior
+      - Call It on the Next Behavior, if any
+      - each Body Part's state and count
+      - Openings, with the soldier who created each
+      - >-
+        Regeneration clock, filled segments of its length; for an Abnormal whose clock length a
+        Read has not revealed, filled segments only (data/engagement/read.yaml, hidden_until_read)
+      - >-
+        decoys in a row, the number of decoys that have held its Attention since the last of its
+        cards that resolved a behavior: 0 when it becomes a Focus Titan, and back to 0 whenever one
+        of its cards resolves a behavior (data/engagement/attention.yaml, break_attention, needs_rule)
+      - Grabbed soldier held, with countdown turns and lifted
+      - flags this Titan has set, by soldier (hooked-by-strike, just-hurt, loudest)
+      - >-
+        heave count of its Heave rating, cleared when it stands (decision batch 8, 8-22), and each soldier its body pins, by limb with the pinning Body
+        Part or none, or by the body (data/engagement/titan-harm.yaml, falling_titan; decision batch 8, 8-9, 8-17)
+    example: "A Medium | cards 4 | Att: Jonas | Next: [hidden] | Prev: Bite | Eyes I0 LA W1 RA I0 LL B0 RL I1 | Op 2 (Mila, Mila) | Regen 1/3 | Decoys 0 | Grab: - | Flags: hooked Mila | Heave 0/3 | Pins: -"
+  corpse_row:
+    # A dead Focus Titan's row stays, as its corpse's, for the rest of the Titan Engagement
+    # (data/engagement/positions.yaml, corpse; decision batch 8, 8-9).
+    fields:
+      - label, marked corpse
+      - each Body Part's state and count, which never regenerate
+      - heave count of its Heave rating
+      - each soldier it pins, by limb with the pinning Body Part or none, or by the body
+    example: "A corpse | Eyes I0 LA I0 RA I0 LL B0 RL W1 | Heave 1/3 | Pins: Mila (right arm, RA), Jonas (body)"
+  background_titan_row:
+    fields:
+      - Size Class and stat block id
+      - clock, filled segments of its length
+    example: "Background 1 Small | clock 4/6"
+  per_round_order: >-
+    Each round the GM updates the tracker at these moments: after the deal (cards), after each
+    Titan card (Attention or the hold's cards left, previous and Next Behavior, decoys in a row,
+    and the flags cleared when the card resolved a behavior, data/engagement/attention.yaml,
+    flag_duration), after each strike or Break Attention (Body Part counts, Openings, flags, the
+    decoy and decoys in a row), after each counted turn of a
+    Grabbed soldier (the countdown and lifted), after each fall of a Titan's body and each Heave (pins
+    and the heave count; decision batch 8, 8-9), and at the end steps (Regeneration, Background, and
+    retreat clocks).
+  titan_card_checklist: >-
+    On a Focus Titan's card the GM reads its row left to right in the order of
+    data/engagement/behavior-procedure.yaml (resolving_a_card): holding, decoy, Attention (the
+    ladder's rungs top to bottom, then the tie-breaks), choose, roll and announce, Reactions, effects,
+    next. Every soldier who takes part in the Titan Engagement has a Squad sheet row, whose
+    positions column gives their Position relative to every living Focus Titan by label
+    (data/gear/sheet-fields.yaml, squad_sheet_row). That column is the record the ladder is read
+    from, and the positions field on the character sheet mirrors it.
+  rolled_together: >-
+    Rolls that do not depend on each other's results can be rolled at once: the Gas Rolls at the
+    gas-rolls end step, and the Fear Rolls every witness makes for one event, which are applied in
+    card order (data/mind/fear-rolls.yaml, limits, timing: their order changes no result).
+  decided: [OQ-97]
+  players_track: >-
+    Each soldier's Positions relative to each Focus Titan, in the positions column of their Squad
+    sheet row, which the positions field mirrors (data/gear/sheet-fields.yaml), and mounted, airborne, carried and
+    carrying, Pinned (data/harm/sheet-fields.yaml, pinned), turns and actions spent in advance, Stress,
+    Stress Responses, Critical Injuries, Health, gear, and Gas Rating, on the sheets Chapters 2 to 4 define.
+
+# ------------------------------------------------------------------ round time (OQ-97)
+round_time:
+  band:
+    typical_round: >-
+      One Focus Titan, 4 player characters and 2 Squadmates, all fully tracked, in 12 to 20
+      minutes.
+    grab_round: Up to the band's top plus the witnesses' Fear Rolls, rolled together.
+    two_focus_titans: At most 30 minutes.
+    status: Design targets until the timed paper test measures them.
+  timed_paper_test:
+    when: The first Phase 1 playtest item.
+    rounds: >-
+      One round with 4 player characters and 2 Squadmates against one Medium Titan, one round with
+      a Grab, and one round against two Focus Titans, played by players new to the rules.
+    reports: [median minutes, upper-quartile minutes]
+    passes: The one-Titan median is at most 20 minutes and the two-Titan median at most 30.
+    playtest_configuration: >-
+      While the playtest configuration holds (data/character/squadmates.yaml, playtest_configuration:
+      4 player characters and no Squadmates; decision batch 8, 8-38), the test's rounds are played
+      with 4 player characters and no Squadmates: one round against one Medium Titan, one round with a
+      Grab, and one round against two Focus Titans, played by players new to the rules. They report
+      the same figures and pass on the same limits, and the fallbacks apply as for the default rounds.
+      The band's rounds with 2 Squadmates stay design targets until a test played with Squadmates
+      measures them.
+  fallbacks:
+    - order: 1
+      if: The one-Titan median misses.
+      then: >-
+        Wings are fixed for the whole Titan Engagement and the swap step is removed, which amends
+        ADR-0010's list of soft levers.
+    - order: 2
+      if: The two-Titan median still misses after fallback 1.
+      then: >-
+        Every Background clock on the interim setup table lengthens by 2 segments
+        (data/engagement/engagement-setup.yaml, background_titans): 6 becomes 8, 4 becomes 6, and 4
+        with 8 becomes 6 with 10. The retreat, the retreat clock, and the two-Focus-Titan limit do
+        not change.
+  rejected: >-
+    Collapsing Body Part states and counts, or making gas one Squad check, because each would
+    change ADR-0007 or Chapter 4's gas rule.
+  decided: [OQ-97]

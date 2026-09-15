@@ -1,0 +1,117 @@
+# Anchor Ratings: which Position steps exist on a battlefield, and which kinds of move can make each.
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.2) references this
+# file and renders its tables from it (tools/render/render.py).
+id: anchor-ratings
+name: Anchor Ratings and Position Steps
+chapter: 05-titan-engagement
+adrs: [ADR-0003, ADR-0010]
+decided: [OQ-74, OQ-99]
+
+# The four Positions (data/engagement/positions.yaml gives their meanings).
+positions: [distant, in-reach, on-body, blind-spot]
+
+# Kinds of move (data/engagement/positions.yaml, moves). A step row says which kinds can make it.
+move_kinds:
+  on_foot: >-
+    A move that is not an ODM move, made by a soldier who is not mounted. A soldier who was
+    airborne stops being airborne (data/gear/odm-gear.yaml, airborne, stops_being_airborne).
+  mounted: A move made by a mounted soldier on their horse (data/gear/horses.yaml, mounted).
+  odm: >-
+    An ODM move (data/gear/odm-gear.yaml, odm_moves). It needs ODM Gear that counts as had, and a
+    mounted soldier is dismounted first.
+
+# How to read a step row.
+step_fields:
+  between: The two Positions the step joins. A step can be made in either direction.
+  on_foot: true if a move on foot can make the step.
+  mounted: true if a mounted move can make the step.
+  odm: true if an ODM move can make the step.
+  fly_roll: >-
+    Present only on a step that an ODM move makes with a Fly roll. The rule calls for a roll for
+    fly (data/character/action-catalog.yaml) with the soldier's own ODM Gear as its gear item,
+    needing the successes named. On a success the move ends at the far Position. On a failure it
+    ends at failure_ends_at. Either way the soldier is airborne after the move, since it is an
+    ODM move. The roll can be Helped, Pushed, and Covered as Chapter 1 states.
+
+# One Position step: two Positions joined by a step row of the Titan Engagement's Anchor Rating,
+# whatever kinds of move can make it. Help, Covering, Rally, and aftermath rolls count steps this
+# way (Chapter 1, section 1.8). Every Position is 0 steps from itself; any pair of Positions with
+# no row is more than one step apart.
+ratings:
+  - id: open
+    name: Open
+    meaning: >-
+      Flat ground with no anchors but the Titan itself, such as a plain. Nothing holds a soldier
+      out of a standing Titan's sight with its Nape in reach, so no step reaches blind-spot until
+      the Titan is grounded (grounded_titan, open_rating).
+    steps:
+      - {between: [distant, in-reach], on_foot: true, mounted: true, odm: false}
+      - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
+
+  - id: sparse
+    name: Sparse
+    meaning: A few anchors, such as scattered trees, a ruined farmstead, or a supply wagon.
+    steps:
+      - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
+      - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
+      - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
+      - between: [in-reach, blind-spot]
+        on_foot: false
+        mounted: false
+        odm: true
+        fly_roll: {needs: 1, failure_ends_at: on-body}
+
+  - id: wooded
+    name: Wooded
+    meaning: Ordinary woodland, the default battlefield of ADR-0014.
+    steps:
+      - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
+      - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
+      - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
+      - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
+
+  - id: urban
+    name: Urban
+    meaning: Streets and rooftops, such as a town inside or beyond the Walls.
+    steps:
+      - {between: [distant, in-reach], on_foot: true, mounted: false, odm: true}
+      - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
+      - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
+      - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
+      - between: [distant, blind-spot]
+        on_foot: false
+        mounted: false
+        odm: true
+        fly_roll: {needs: 1, failure_ends_at: in-reach}
+
+  - id: giant-forest
+    name: Giant Forest
+    meaning: Trees taller than any Titan. Chapter 4 raises every fall that is not from a horse one band here (data/gear/falls.yaml, height).
+    steps:
+      - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
+      - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
+      - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
+      - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
+      - {between: [distant, blind-spot], on_foot: false, mounted: false, odm: true}
+
+# A Titan grounded by a Broken leg (data/engagement/titan-harm.yaml, body_part_kinds, leg) lies on
+# the ground. While it is grounded, these extra permissions apply to Positions held relative to it,
+# at every Anchor Rating. They add no step that the rating's rows do not have, except open_rating.
+grounded_titan:
+  on_foot_steps: >-
+    Every step row joining two of in-reach, on-body, and blind-spot can also be made on foot. None
+    can be made mounted.
+  open_rating: >-
+    At the Open rating a grounded Titan also has a step between on-body and blind-spot that a move
+    on foot or an ODM move can make. The Titan lies on the ground, and its Nape is reached from
+    beside it.
+  ends: >-
+    When the Titan has no Broken leg, these permissions end. A soldier keeps the Position they
+    hold, except at the Open rating: a soldier who holds blind-spot relative to it then holds
+    on-body instead, a change of Position made by this rule and not a fall.
+  corpse: >-
+    A corpse counts as a grounded Titan for these permissions for as long as it lies on the field,
+    and they never end for it (data/engagement/positions.yaml, corpse; decision batch 8, 8-9, OQ-146).
+  decided: [OQ-74, OQ-146]
+
+gm_choices: none   # the GM never picks the Anchor Rating, a step, or whether a move can make it

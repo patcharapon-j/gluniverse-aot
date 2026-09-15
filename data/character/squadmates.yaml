@@ -1,0 +1,251 @@
+# Squadmates: stat block templates, which rules apply to them, their actions, the Wing
+# summary, the starting Squad, the playtest configuration, and promotion to a player character.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.10)
+# references this file and renders its tables from it (tools/render/render.py).
+id: squadmates
+name: Squadmates
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0006, ADR-0010, ADR-0011, ADR-0014]
+decided: [OQ-29, OQ-30, OQ-31, OQ-38, OQ-55, OQ-58, OQ-70, OQ-94, OQ-135]
+
+# ------------------------------------------------------------------ stat block
+stat_block:
+  fields:
+    - name
+    - specialty          # from the template
+    - attributes         # from the template; never change (ADR-0011)
+    - talent             # one dice Talent at level 1, from the template
+    - health             # derived as for a player character (data/character/attributes.yaml), kept as a row of boxes (data/harm/health.yaml); 3 or 4 on the templates
+    - health_lost        # Health lost to damage; boxes crossed off are the untreated entries in critical_injuries
+    - resolve            # derived as for a player character, including Scars and Grief
+    - stress             # starts at 0
+    - minimum_stress     # number of Scars
+    - scars
+    - grief
+    - critical_injuries
+    - down               # true or false
+    - gear               # recorded exactly as a player character's (Chapter 4)
+    - wing               # the player character whose Wing it is on, or none
+    - {include: data/harm/sheet-fields.yaml}   # every field Chapter 3 adds (OQ-55)
+  not_recorded: [origin, haven, drive, canon_tie, merit, class_rank, xp]
+  gear: >-
+    A Squadmate receives Standard Issue and records its gear exactly as a player character
+    does, including Gas Rating, spare canisters, Blade Sets, carried items, and each item's
+    Gear Dice rating (Chapter 4). A rating changes only when a rule names a change. A
+    Squadmate never Pushes, so Push wear never reduces its ratings. The one-line Squad sheet
+    row is in data/gear/sheet-fields.yaml (squad_sheet_row).
+  matches_reference_build: >-
+    Rookie attributes (ADR-0014 as amended); the slayer template's attributes are the reference
+    Rookie's (OQ-58, OQ-70). The reference Rookie is not the slayer template: it has Talent 1 in
+    the Talent that names the Nape strike, the Body Part strike, Break Free, or Treat Injury
+    (decision batch 2b), and no other roll a target measures carries Talent dice, including the
+    dodge, Fly, Break Attention, Ride, and Read (OQ-94). So the
+    Talent-dependent targets are also reported for a Squad built literally from these templates,
+    and the dodge for the flier template alone.
+
+# ------------------------------------------------------------------ rules that apply
+rules_applicability:
+  - {rule: attribute rolls and dice pools, applies: true, source: 01-core-rules}
+  - {rule: Stress Dice, applies: true, source: 01-core-rules}
+  - {rule: Stress Responses, applies: true, source: 03-harm-and-mind}
+  - {rule: Push, applies: false, note: A Squadmate never Pushes.}
+  - {rule: Help (as helper), applies: true, note: Help is on the action list.}
+  - {rule: Help (as roller), applies: true}
+  - {rule: Cover (as the Covering soldier), applies: false}
+  - {rule: Cover (as the Pushing soldier), applies: false, note: "A Squadmate never Pushes, so there is no Push to Cover."}
+  - {rule: field Stress relief (end of Titan Engagement and Nape kill), applies: true, source: 01-core-rules}
+  - {rule: Reactions, applies: true, source: 01-core-rules}
+  - {rule: Fear Rolls, applies: true, source: 03-harm-and-mind}
+  - {rule: "Health, Critical Injuries, Down, and Death Rolls", applies: true, source: 03-harm-and-mind}
+  - {rule: Scars and Retirement, applies: true, source: 03-harm-and-mind}
+  - {rule: Grief, applies: true, source: 03-harm-and-mind}
+  - {rule: Drive, applies: false}
+  - {rule: Gas Rolls, applies: true, source: 04-gear, note: "Always two dice, because a Squadmate never Pushes."}
+  - {rule: "Blade Sets, carried items, and Overloaded", applies: true, source: 04-gear}
+  - {rule: Talent dice and rule Talents, applies: true, note: Only the template Talent.}
+  - {rule: XP and gaining Talents, applies: set by the XP rules (not yet written), note: No current rule gives a Squadmate XP or Talent levels.}
+  - {rule: Downtime Actions, applies: false, source: 07-playtest-rules, note: "A Squadmate takes no Downtime Action. Each Downtime it takes the Squadmate relief instead (data/campaign/downtime.yaml, squadmates)."}
+
+# ------------------------------------------------------------------ actions
+# A Squadmate's Specialty never limits what it can attempt (glossary Specialty, ADR-0006).
+action_list:
+  entries: >-
+    Every Action Catalog entry a player character can take as an action, including help,
+    and every option of those entries (such as call-it). The Squadmate must meet each
+    entry's requirements, as a player character must.
+  includes_help: true
+  reactions: [dodge]
+  rolls: every roll kind entry a rule calls for (such as fly, ride, and death-roll)
+  uncatalogued_actions: >-
+    A Squadmate uses the procedure for actions outside the Catalog (section 2.9) exactly as
+    a player character does.
+  never: [push, cover]
+  reaction_turn: >-
+    A Squadmate's own Reaction spends its own turn under Chapter 1, section 1.9 (OQ-09). On
+    a Wing, that turn is the one it takes right after its player character's turn.
+
+# ------------------------------------------------------------------ Wings (summary; Chapter 5 gives the procedure)
+wing:
+  attaches_to: one player character, during a Titan Engagement
+  acts: right after that player character's turn, as a turn of one move and one action
+  turn_spent_in_advance: >-
+    If the player character's turn has no move and no action because a Reaction or a result
+    spent it in advance (Chapter 1, section 1.9), the Squadmate still acts right after that
+    turn.
+  max_squadmates_per_wing: 1
+  assignment_and_unattached_squadmates: data/engagement/round.yaml (wings)
+  directing:
+    who: any player can propose what a Squadmate does
+    disagreement_on_a_wing: the player whose character's Wing the Squadmate is on decides
+    disagreement_off_a_wing: >-
+      Each proposed choice is rolled for once, with a D6 rolled by one player who proposed
+      it. The highest roll decides. Choices tied for highest roll again.
+    gm: the GM never directs a Squadmate
+
+# ------------------------------------------------------------------ starting Squad
+starting_squad:
+  target_soldiers: 6
+  target_changes: set by the Rank rules (not yet written)
+  starting_squadmates: 6 minus the number of player characters, minimum 0
+  fewer_allowed:     # decision batch 7, 7-11; OQ-31
+    rule: >-
+      At session zero, the players may start with fewer Squadmates than starting_squadmates gives,
+      down to 0 (decision batch 8, 8-13).
+      When players disagree on how many, it is a shared choice (data/character/lifepath.yaml,
+      group_choices).
+    cost: >-
+      Fights run about three times deadlier for player characters (four Rookie player
+      characters alone against the same four with two Squadmates: 0.057 against 0.022 deaths a
+      fight on the standard Medium Titan, and 0.187 against 0.058 on the standard Large Titan),
+      and a player character who dies or retires while no living Squadmate is in the Squad
+      Pool has no one to promote (promotion, no_squadmate).
+  creation: >-
+    The players choose a template for each starting Squadmate and name it. Its Health lost
+    starts at 0, it is not Down, and its Stress, Scars, Grief, and Critical Injuries start at
+    0 or none. It receives Standard Issue.
+
+# ------------------------------------------------------------------ playtest configuration
+# Playtest rule: the Squad the first playtest runs (owner decisions, item 7, "A now"; decision batch 8,
+# 8-38, amending 7-11 only while it holds). After the first playtest the row is removed, and starting_squad
+# and promotion apply unchanged.
+playtest_configuration:
+  player_characters: 4
+  squadmates: 0
+  holds: For the whole first playtest campaign, from session zero on, and in no other campaign.
+  while_it_holds:
+    - The starting Squad is the 4 player characters and no Squadmates; starting_squadmates and fewer_allowed are not used.
+    - >-
+      Recruit brings no Squadmate and is not offered, so the Squad Action is Honoring the Fallen
+      (data/campaign/downtime.yaml, squad_actions). The tracked value squad-recruit is changed by nothing.
+    - >-
+      No Squadmate serves, so no one is promoted. A player character who dies or retires is replaced by a
+      new character, as promotion.no_squadmate states.
+    - >-
+      A rule that reads a Squadmate finds none. Every Straggler victim is a player character (Chapter 7,
+      section 7.1), and Formation Drill has no effect, since no Squadmate is on a Wing
+      (data/character/talents.yaml, formation-drill).
+  default_rule: Squadmates stay the default rule (starting_squad and promotion; decision batch 7, 7-11).
+
+# ------------------------------------------------------------------ promotion
+promotion:
+  trigger: A player character dies or retires.
+  timing: >-
+    When the procedure in which the death or Retirement happened ends, exactly as Retirement
+    is timed (data/mind/scars.yaml, retirement): the last end step of a Titan Engagement
+    (data/harm/engagement-end.yaml), the last step of a day passing, the end of an
+    outside-harm care window and its Death Rolls, or the end of any other procedure as its
+    rule states. At once if no procedure is under way.
+  who_chooses: the player whose character died or retired
+  eligible: any living Squadmate in the Squad Pool
+  contested: >-
+    Promotions fall due together whenever timing resolves them at the same moment. First,
+    every soldier due to retire at that moment retires, and a retiring Squadmate leaves the
+    Squad Pool. Then every affected player chooses a living Squadmate at the same time. If two
+    or more choose the same one, each rolls a D6; the highest takes it, and ties roll again.
+    Every player who loses chooses again from the living Squadmates no player has taken,
+    repeating the roll for any Squadmate chosen by more than one of them, until every player
+    has a Squadmate or none is left. A player with none left follows no_squadmate.
+  no_squadmate:      # decision batch 7, 7-11; OQ-31
+    creates: >-
+      The player creates a new character by any procedure the campaign allows
+      (data/character/lifepath.yaml, procedures and campaign_choice). The Template Build, when
+      the campaign allows it, is the quickest.
+    joins: >-
+      The new character joins the Squad, with Standard Issue (Chapter 4), at whichever of these
+      comes first: the next Waypoint the Squad reaches while an Expedition is under way; the
+      start of the next Titan Engagement while no Expedition is under way; the next Downtime.
+  steps:
+    - Keep the Squadmate's name, Specialty, attributes (ADR-0011), Talent, Health and Health lost to damage, Resolve, Stress, Scars, Grief, Critical Injuries, Down state, gear, and every field in data/harm/sheet-fields.yaml in its current state. Attributes, Health, and Resolve are not recalculated.
+    - The template Talent counts as the Talent level a player character gains from the Specialty at Graduation.
+    - Roll D66 on the Origin table (rolling again if a condition is not met). Record a Haven and optionally a Canon Tie from it, and gain 1 level in one of its two Talents, following the level caps in talent_cap in data/character/training-years.yaml. A Talent the soldier already holds rises by 1 level. Gain no attribute points.
+    - Roll D66 on Why You Enlisted and record a Drive as its use block states. Gain no attribute point. If the Drive needs a named comrade, name one now.
+    - Roll D66 once on each Training Year's events. From each, gain 1 level in one of its two Talents, following talent_cap in data/character/training-years.yaml. Gain no attribute point and no Merit.
+    - Record Merit and Class Rank as none, and Rank as Private.
+    - The soldier now follows every player character rule, leaves any Wing, and is no longer a Squadmate. It stays in the Squad.
+
+# ------------------------------------------------------------------ templates
+# Key attribute 4, four other attributes 3, one attribute 2: 18 points, the total of a
+# player character before any Top 10 bonus: ADR-0014's Rookie attributes, as amended. The
+# slayer template's attributes are the reference Rookie's (Strength 4, Agility 3, Wits 2,
+# Health 4; OQ-58, OQ-70). The reference Rookie has Talent 1 in the Talent that names the Nape
+# strike, the Body Part strike, Break Free, or Treat Injury (decision batch 2b). No other roll a
+# target measures carries Talent dice, including the dodge, Fly, Break Attention, Ride, and Read
+# (OQ-94). Health and Resolve are precalculated.
+# The Template Build gives a player character the attributes of its chosen Specialty's
+# template from this list (data/character/lifepath.yaml, procedures; data/character/
+# attributes.yaml, creation.built.template_build). It does not take the template's Talent.
+templates:
+  - id: slayer
+    specialty: slayer
+    attributes: {strength: 4, agility: 3, wits: 2, perception: 3, instinct: 3, empathy: 3}
+    talent: {id: clean-cut, level: 1}
+    health: 4
+    resolve: 3
+  - id: flier
+    specialty: flier
+    attributes: {strength: 3, agility: 4, wits: 2, perception: 3, instinct: 3, empathy: 3}
+    talent: {id: slip-away, level: 1}
+    health: 4
+    resolve: 3
+  - id: hunter
+    specialty: hunter
+    attributes: {strength: 3, agility: 3, wits: 3, perception: 4, instinct: 3, empathy: 2}
+    talent: {id: lure, level: 1}
+    health: 3
+    resolve: 3
+  - id: tactician
+    specialty: tactician
+    attributes: {strength: 3, agility: 2, wits: 3, perception: 3, instinct: 4, empathy: 3}
+    talent: {id: titan-reader, level: 1}
+    health: 3
+    resolve: 4
+  - id: leader
+    specialty: leader
+    attributes: {strength: 3, agility: 2, wits: 3, perception: 3, instinct: 3, empathy: 4}
+    talent: {id: steady-voice, level: 1}
+    health: 3
+    resolve: 4
+  - id: medic
+    specialty: medic
+    attributes: {strength: 3, agility: 2, wits: 4, perception: 3, instinct: 3, empathy: 3}
+    talent: {id: field-medicine, level: 1}
+    health: 3
+    resolve: 3
+  - id: engineer
+    specialty: engineer
+    attributes: {strength: 3, agility: 3, wits: 4, perception: 3, instinct: 3, empathy: 2}
+    talent: {id: gearwright, level: 1}
+    health: 3
+    resolve: 3
+  - id: rider
+    specialty: rider
+    attributes: {strength: 3, agility: 4, wits: 2, perception: 3, instinct: 3, empathy: 3}
+    talent: {id: horsemanship, level: 1}
+    health: 4
+    resolve: 3
+  - id: brawler
+    specialty: brawler
+    attributes: {strength: 4, agility: 3, wits: 2, perception: 3, instinct: 3, empathy: 3}
+    talent: {id: grip-breaker, level: 1}
+    health: 4
+    resolve: 3

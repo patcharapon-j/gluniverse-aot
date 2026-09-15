@@ -1,0 +1,254 @@
+# The Lifepath: the order of character creation steps and what each records. Also the two
+# built procedures beside it (the Template Build and the Free Build) and the campaign choice
+# that allows them.
+# Source of truth under ADR-0012. docs/rules/02-character-creation.md (sections 2.3 and 2.11)
+# references this file and does not repeat its rows.
+id: lifepath
+name: Lifepath
+chapter: 02-character-creation
+adrs: [ADR-0003, ADR-0006, ADR-0011, ADR-0012, ADR-0014]
+decided: [OQ-19, OQ-20, OQ-21, OQ-22, OQ-23, OQ-32, OQ-55, OQ-135]
+
+# Any choice this chapter gives the players together is settled this way when they disagree.
+group_choices: >-
+  Each proposed choice is rolled for once, with a D6 rolled by one player who proposed it.
+  The highest roll decides, and choices tied for highest roll again. This covers running the
+  Graduation Exam, the Campaign Year, how many starting Squadmates the Squad takes when fewer
+  than the rule gives are proposed (data/character/squadmates.yaml, starting_squad,
+  fewer_allowed), and the templates of starting Squadmates. The order of Cadets in a Trial
+  is rolled, not chosen (data/character/graduation-exam.yaml, roll_order_within_a_trial).
+  The campaign_choice below is the GM's, not a shared choice.
+
+# ------------------------------------------------------------------ procedures
+# The three ways to create a player character (decision batch 7, 7-1; OQ-135). The Lifepath
+# is always allowed; campaign_choice decides whether the Template Build, the Free Build, or
+# both are allowed beside it. Only the Lifepath reaches a key attribute of 5 or 6, a Top 10
+# Class Rank, or the Graduation Exam.
+procedures:
+  - id: lifepath
+    name: Lifepath
+    allowed: always
+    steps: steps                                   # the steps block below
+    attributes: data/character/attributes.yaml (creation)
+    talent_levels: talent_levels_at_creation
+  - id: template-build
+    name: Template Build
+    allowed: when campaign_choice allows it
+    steps: built_steps
+    attributes: data/character/attributes.yaml (creation.built.template_build)
+    talent_levels: built_steps.talent_levels
+  - id: free-build
+    name: Free Build
+    allowed: when campaign_choice allows it
+    steps: built_steps
+    attributes: data/character/attributes.yaml (creation.built.free_build)
+    talent_levels: built_steps.talent_levels
+
+campaign_choice:
+  who: the GM
+  when: session zero, before the campaign's first soldier is created
+  options:
+    - lifepath only
+    - lifepath and template-build
+    - lifepath and free-build
+    - lifepath, template-build, and free-build
+  changes: never                                   # recorded once for the campaign
+  applies_to: >-
+    every soldier created in the campaign, including a new character created for a player
+    whose character died or retired (data/character/squadmates.yaml, promotion, no_squadmate)
+  each_soldier: >-
+    The player creating a soldier picks any procedure the campaign allows. Players at one
+    table may use different procedures.
+
+# Talent levels a new player character gains with the Lifepath, all at most level 2
+# (data/character/talents.yaml).
+talent_levels_at_creation:
+  total: 5
+  sources:
+    - {source: origin, levels: 1}
+    - {source: training-year-event, levels: 3}   # one per Training Year
+    - {source: specialty, levels: 1}
+
+# The Lifepath's steps (procedures: lifepath).
+steps:
+  - id: campaign-year
+    order: 0
+    who: the players, once for the whole Squad; a replacement character created later only votes on the Exam
+    does: >-
+      If the campaign has no Campaign Year yet, record it, from 845 to 850: the year the
+      campaign begins. It changes only when a rule names a change; no Phase 1 rule does, and
+      the Canon Clock rules (not yet written) will advance it. Origin conditions are tested
+      against the current Campaign Year (data/character/origins.yaml). Then vote on whether to
+      run the Graduation Exam (data/character/graduation-exam.yaml, use). A replacement
+      character created later votes alone, before rolling their own Lifepath, and takes the
+      Exam alone.
+
+  - id: origin
+    order: 1
+    table: data/character/origins.yaml
+    does: >-
+      Set every attribute to 2. Roll D66 on the Origin table, rolling again if the current
+      Campaign Year does not meet the row's condition. Add 1 to each of the row's two attributes. Take level 1 in one
+      of the row's two Talents. Record one of the row's two Havens. The player may record the
+      row's Canon Tie, if it has one.
+
+  - id: why-you-enlisted
+    order: 2
+    table: data/character/enlistment.yaml
+    does: >-
+      Roll D66 on Why You Enlisted and add 1 to the rolled row's attribute. Record the rolled
+      row's Drive, or the Drive of any other row (use in data/character/enlistment.yaml).
+
+  - id: training-year-1
+    order: 3
+    table: data/character/training-years.yaml (year-1)
+    does: >-
+      Roll D66 on the year's events. Add 1 to the event's attribute, gain 1 level in one of
+      the event's two Talents, and add the event's merit_change to Merit. Then make the
+      year's performance roll and add the Merit it earns.
+
+  - id: training-year-2
+    order: 4
+    table: data/character/training-years.yaml (year-2)
+    does: As training-year-1, using year-2.
+
+  - id: training-year-3
+    order: 5
+    table: data/character/training-years.yaml (year-3)
+    does: >-
+      As training-year-1, using year-3. If the players voted at step campaign-year to run the
+      Graduation Exam (data/character/graduation-exam.yaml), the Exam replaces this year's
+      performance roll.
+
+  - id: graduation
+    order: 6
+    tables: [data/character/class-rank.yaml, data/character/specialties.yaml]
+    does: >-
+      In this order: (1) find the Class Rank for the Merit total; (2) choose a Specialty;
+      (3) apply the swap and then the floor (creation.graduation in
+      data/character/attributes.yaml); (4) if the Class Rank is Top 10,
+      record that the graduate declined the Military Police and add 1 to the key attribute,
+      up to 6; (5) gain 1 level in one Talent on the Specialty's list.
+
+  - id: finish
+    order: 7
+    tables: [data/character/attributes.yaml]
+    does: >-
+      Record Health as a row of that many boxes, Resolve, Stress 0, and minimum Stress 0
+      (derived_values). Record Rank: Private. Record Health lost 0, not Down, Grief 0, and no
+      Scars or Critical Injuries.
+      Receive Standard Issue as
+      Chapter 4 states. Name the soldier.
+
+  - id: join-the-squad
+    order: 8
+    tables: [data/character/squadmates.yaml]
+    does: >-
+      Once every player character has finished, create the starting Squadmates
+      (starting_squad in data/character/squadmates.yaml). Each player whose Drive needs a
+      named comrade names one now (drive_rules.named_comrade in data/character/enlistment.yaml).
+
+# ------------------------------------------------------------------ built procedures
+# The Template Build and the Free Build share these steps; only the attributes step differs
+# (decision batch 7, 7-1; OQ-135).
+built_steps:
+  applies_to: [template-build, free-build]
+  talent_levels:
+    total: 5
+    sources:
+      - {source: origin, levels: 1}              # one of the chosen Origin row's two Talents
+      - {source: specialty, levels: 1}           # one Talent on the Specialty's list
+      - {source: any-talent, levels: 3}          # any Talents, one level at a time
+    max_level: 2                                 # talent_cap.max_level_at_creation in data/character/training-years.yaml
+    max_talents_at_level_2: 1
+    rule_talents: no higher than the Talent's max_level in data/character/talents.yaml
+    already_held: A level gained in a Talent the soldier already holds raises it by 1.
+  steps:
+    - id: campaign-year
+      order: 0
+      does: >-
+        If the campaign has no Campaign Year yet, record it, as the Lifepath's campaign-year
+        step states. A built soldier takes no Graduation Exam and earns no Exam Merit,
+        whatever the players vote.
+    - id: specialty
+      order: 1
+      table: data/character/specialties.yaml
+      does: Choose one of the nine Specialties. It is not rolled, has no requirement, and never changes.
+    - id: attributes
+      order: 2
+      table: data/character/attributes.yaml (creation.built)
+      does: >-
+        Template Build: record the chosen Specialty's template ratings (template_build).
+        Free Build: choose one of the two shapes and place its six ratings, with a 4 on the
+        Specialty's key attribute (free_build).
+    - id: origin
+      order: 3
+      table: data/character/origins.yaml
+      does: >-
+        Choose an Origin row whose condition the current Campaign Year meets. Record one of
+        the row's two Havens, and its Canon Tie if the row has one and the player wants it.
+        Gain level 1 in one of the row's two Talents. The row's attributes add nothing.
+    - id: drive
+      order: 4
+      table: data/character/enlistment.yaml
+      does: >-
+        Record the Drive of any Why You Enlisted row. No attribute point is gained.
+    - id: training-years
+      order: 5
+      table: data/character/training-years.yaml
+      does: >-
+        The player may name one event row of each Training Year for the soldier's story. A
+        named row adds no attribute point, Talent level, or Merit. No performance roll is made.
+    - id: talents
+      order: 6
+      tables: [data/character/specialties.yaml, data/character/talents.yaml]
+      does: >-
+        Gain 1 level in one Talent on the Specialty's list, then 3 levels in any Talents,
+        within talent_levels above.
+    - id: no-merit
+      order: 7
+      table: data/character/class-rank.yaml (built_and_promoted)
+      does: >-
+        Record Merit none and Class Rank none. The soldier is not Top 10, has no Military
+        Police offer to decline, and gains no key attribute bonus.
+    - id: finish
+      order: 8
+      does: As the Lifepath's finish step.
+    - id: join-the-squad
+      order: 9
+      does: As the Lifepath's join-the-squad step.
+
+record_on_sheet:
+  - name
+  - origin
+  - haven
+  - canon_tie        # optional
+  - drive
+  - drive_named_comrade   # only if the Drive needs one
+  - drive_used_this_session   # cleared at the start of each session
+  - attributes
+  - specialty
+  - talents          # each once-per-Titan-Engagement use is recorded beside its Talent
+  - merit            # none for a built or promoted soldier (record_on_sheet_built)
+  - class_rank       # none for a built or promoted soldier (record_on_sheet_built)
+  - declined_military_police   # true only for a Top 10 Class Rank
+  - rank             # Private
+  - health           # the rating, kept as a row of that many boxes (data/harm/health.yaml)
+  - health_lost      # Health lost to damage; 0 at creation
+  - down             # false at creation
+  - resolve
+  - stress
+  - minimum_stress
+  - scars
+  - grief
+  - critical_injuries
+  - gear             # Chapter 4
+  - {include: data/harm/sheet-fields.yaml}   # every field Chapter 3 adds (OQ-55)
+
+# What a soldier made with the Template Build or the Free Build records where the Lifepath
+# records a Merit total and a Class Rank (decision batch 7, 7-1). A promoted Squadmate records
+# the same (data/character/squadmates.yaml, promotion).
+record_on_sheet_built:
+  merit: none
+  class_rank: none
+  declined_military_police: false

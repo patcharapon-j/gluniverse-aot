@@ -1,0 +1,3 @@
+# Soldiers grow through Talents, not attributes
+
+Attributes never rise after the Lifepath. XP buys Talent levels, and a Talent's first level can only be bought after using that action successfully without it during the session, or after spending a Train Downtime Action on it. Veterans grow through Talents and through Scars, and the Squad as a whole grows through Squad Points that outlive any one soldier. This follows both Alien RPG Evolved and Coriolis: The Great Dark, neither of which raises attributes, and it keeps canon's premise that training, not raw strength, separates survivors from the dead.

@@ -1,0 +1,17 @@
+[
+ ["M 4PC escapes", {"size": "medium", "policy": "eager", "escapes": true}],
+ ["M 4PC escapes + Hook and Cut", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["hook"]}],
+ ["M 4PC escapes + Hamstring Line", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["hamstring"]}],
+ ["M 4PC escapes + Clear the Hand", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["clear"]}],
+ ["M 4PC escapes + Fall Back", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["fallback"]}],
+ ["M 4PC escapes + Hook and Cut + Hamstring Line", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["hook", "hamstring"]}],
+ ["M 4PC escapes + Hook and Cut + Clear the Hand", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["hook", "clear"]}],
+ ["M 4PC escapes + Hook and Cut + Fall Back", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["hook", "fallback"]}],
+ ["M 4PC escapes + Hamstring Line + Clear the Hand", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["hamstring", "clear"]}],
+ ["M 4PC escapes + Hamstring Line + Fall Back", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["hamstring", "fallback"]}],
+ ["M 4PC escapes + Clear the Hand + Fall Back", {"size": "medium", "policy": "eager", "escapes": true, "tactics": ["clear", "fallback"]}],
+ ["M 4+2 helpers escapes", {"size": "medium", "policy": "eager", "squadmates": 2, "escapes": true}],
+ ["M 4+2 helpers escapes + Hook and Cut + Hamstring Line", {"size": "medium", "policy": "eager", "squadmates": 2, "escapes": true, "tactics": ["hook", "hamstring"]}],
+ ["M 4PC+2 screen escapes + Hook and Cut + Hamstring Line", {"size": "medium", "policy": "eager", "squadmates": 2, "squadmate_role": "screen", "escapes": true, "tactics": ["hook", "hamstring"]}],
+ ["M 4PC+2 screen beside the holder escapes + Hook and Cut + Hamstring Line", {"size": "medium", "policy": "eager", "squadmates": 2, "squadmate_role": "screen2", "escapes": true, "tactics": ["hook", "hamstring"]}]
+]

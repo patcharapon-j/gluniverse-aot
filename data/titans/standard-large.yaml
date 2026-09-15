@@ -1,0 +1,127 @@
+# The standard Large Titan: its stat block and Behavior Table, in the format of
+# data/engagement/titan-format.yaml.
+# Source of truth under ADR-0012. docs/rules/06-standard-titans.md (section 6.4) renders this file
+# with tools/probes/chapter-06/render.py and never writes its rows by hand.
+id: standard-large
+name: Standard Large Titan
+chapter: 06-standard-titans
+adrs: [ADR-0001, ADR-0003, ADR-0005, ADR-0007, ADR-0014, ADR-0015, ADR-0017, ADR-0019]
+decided: [OQ-78, OQ-80, OQ-100, OQ-101, OQ-109, OQ-137, OQ-145]   # Chapter 5's Size Class values and Behavior Table procedure; the Grab mark, this table, and its leg entries (decision batch 4, 4-1, 4-2, and 4-10); each harming effect's Injury Type (decision batch 7, 7-5)
+format: data/engagement/titan-format.yaml (stat_block, behavior_table, entry_fields, tier_rules)
+grab_mark: data/titans/index.yaml (grab_mark)
+
+# ------------------------------------------------------------------ stat block
+# A standard Titan takes every number below from its Size Class row
+# (data/engagement/size-classes.yaml, large). tools/probes/chapter-06/titans.py checks that they match.
+size_class: large
+abnormal: false
+tempo: 1
+nape_depth: 4
+regeneration_clock: 4
+heave: 4   # its Size Class row's Heave rating (data/engagement/size-classes.yaml, heave; decision batch 8, 8-9)
+body_parts:
+  - {id: eyes, kind: eyes, toughness: 2}
+  - {id: left-arm, kind: arm, toughness: 3}
+  - {id: right-arm, kind: arm, toughness: 3}
+  - {id: left-leg, kind: leg, toughness: 2}
+  - {id: right-leg, kind: leg, toughness: 2}
+attention_ladder: standard
+
+# ------------------------------------------------------------------ Behavior Table
+behavior_table:
+  roll: D6
+  entries:
+    - id: loom
+      name: Loom
+      results: [1]
+      tier: terrorize
+      targets: holder
+      position_requirement: [distant, in-reach, on-body, blind-spot]
+      body_parts_used: []
+      attack_dice: 6
+      effects:
+        - {type: stress, amount: 1}
+        - {type: telegraph}
+      fallback: thrash
+      text: >-
+        It rears up to its full height, and the way its bulk leans shows what it will do next.
+
+    - id: heavy-tread
+      name: Heavy Tread
+      results: [2]
+      tier: terrorize
+      targets: holder-and-position
+      position_requirement: [distant, in-reach]
+      body_parts_used: [leg, leg]   # one Broken leg grounds it, and a grounded Titan does not walk (OQ-109)
+      attack_dice: 6
+      effects:
+        - {type: stress, amount: 1}
+      fallback: thrash
+      text: It walks straight at the soldier, and every step shakes the ground under everyone beside them.
+
+    - id: crush
+      name: Crush
+      results: [3]
+      tier: control
+      targets: holder
+      position_requirement: [in-reach]
+      body_parts_used: []
+      attack_dice: 9
+      effects:
+        - {type: critical-injury, injury_location: leg, injury_type: crush, cannot_be_lethal: true}
+      fallback: thrash
+      text: It slams its bulk down beside the soldier, standing or fallen, and pins the soldier's legs under it.
+
+    - id: shrug-off
+      name: Shrug Off
+      results: [4]
+      tier: control
+      targets: holder
+      position_requirement: [on-body, blind-spot]
+      body_parts_used: []
+      attack_dice: 9
+      effects:
+        - {type: knock-loose}
+      fallback: thrash
+      text: It heaves its shoulders and scrapes its back and neck along whatever stands near it.
+
+    - id: bite
+      name: Bite
+      results: [5]
+      tier: kill
+      targets: holder
+      position_requirement: [on-body]
+      body_parts_used: []
+      attack_dice: 12
+      effects:
+        - {type: critical-injury, injury_location: torso, injury_type: bite, cannot_be_lethal: false}
+      fallback: crush
+      text: >-
+        It turns its head to the soldier clinging to its body and bites. A soldier In Reach is too far
+        below its mouth, so it pins them under its bulk instead.
+
+    - id: grab
+      name: Grab
+      results: [6]
+      tier: kill
+      targets: holder
+      position_requirement: [in-reach, on-body]
+      body_parts_used: [arm]
+      attack_dice: 12
+      effects:
+        - {type: grab}
+      fallback: thrash
+      text: A hand bigger than the soldier closes around them and starts to lift.
+
+    - id: thrash
+      name: Thrash
+      results: []
+      tier: thrash
+      targets: holder
+      position_requirement: [distant, in-reach, on-body, blind-spot]
+      body_parts_used: []
+      attack_dice: 9
+      effects:
+        - {type: knock-loose}
+      fallback: none
+      text: It heaves its whole body about, lashing at nothing in particular.

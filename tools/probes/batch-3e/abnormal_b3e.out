@@ -1,0 +1,11 @@
+ladder without current-holder | helpers {'median': 2, 'by3': 76.5, 'nokill12': 1.78, 'nokill12_se': 0.038, 'cis': 1.067, 'cis_se': 0.0036, 'deaths': 0.0304, 'deaths_se': 0.0006} | Large twin deaths 0.0196 +- 0.0006, 12.7 SE past
+ladder without current-holder | screen {'median': 2, 'by3': 77.7, 'nokill12': 1.34, 'nokill12_se': 0.033, 'cis': 0.751, 'cis_se': 0.003, 'deaths': 0.0165, 'deaths_se': 0.0004} | Large twin deaths 0.0106 +- 0.0004, 10.4 SE past
+ladder without current-holder | screen_pair {'median': 2, 'by3': 80.8, 'nokill12': 1.03, 'nokill12_se': 0.029, 'cis': 0.6708, 'cis_se': 0.0028, 'deaths': 0.0137, 'deaths_se': 0.0004} | Large twin deaths 0.0092 +- 0.0004, 8.0 SE past
+nape depth 4 | reference {'median': 3, 'by3': 51.1, 'nokill12': 18.48, 'nokill12_se': 0.112, 'cis': 1.2685, 'cis_se': 0.0049, 'deaths': 0.1717, 'deaths_se': 0.0018} | Large twin deaths 0.1635 +- 0.0021 (3.0 SE), no kill 13.03 +- 0.097 (36.8 SE)
+nape depth 4 | helpers {'median': 3, 'by3': 58.2, 'nokill12': 12.56, 'nokill12_se': 0.096, 'cis': 1.0573, 'cis_se': 0.0043, 'deaths': 0.0511, 'deaths_se': 0.0008} | Large twin deaths 0.0196 +- 0.0006 (31.5 SE), no kill 9.29 +- 0.084 (25.6 SE)
+nape depth 4 | template {'median': 6, 'by3': 29.8, 'nokill12': 37.0, 'nokill12_se': 0.139, 'cis': 1.9036, 'cis_se': 0.006, 'deaths': 0.3444, 'deaths_se': 0.0024} | Large twin deaths 0.2777 +- 0.0027 (18.5 SE), no kill 19.96 +- 0.115 (94.5 SE)
+thrash | standard-small {'resolved_per_fight': 4.169, 'thrash_per_fight': 1.259, 'thrash_share': 30.2, 'thrash_by_position_per_fight': 1.239}
+thrash | standard-medium {'resolved_per_fight': 3.32, 'thrash_per_fight': 1.38, 'thrash_share': 41.6, 'thrash_by_position_per_fight': 1.349}
+thrash | standard-large {'resolved_per_fight': 3.698, 'thrash_per_fight': 1.503, 'thrash_share': 40.6, 'thrash_by_position_per_fight': 1.365}
+thrash | sprinting-abnormal {'resolved_per_fight': 5.198, 'thrash_per_fight': 1.986, 'thrash_share': 38.2, 'thrash_by_position_per_fight': 1.704}
+holder | sprinting-abnormal reference start {'kept_not_closest': 1.452, 'vs_distant_closer': 0.757, 'vs_down': 0.183, 'resolved_counted': 5.144, 'by3': 74.7, 'cis': 0.8148, 'deaths': 0.0735}
