@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import OpenerLayout from '~/layouts/OpenerLayout.astro';
+import { COMPENDIUM_SECTIONS, COMPENDIUM_TABS } from '~/lib/compendium';
+
+const counts: Record<string, number> = {
+  talents: (await getCollection('talents')).length,
+  titans: (await getCollection('titans')).length,
+};
+---
+<OpenerLayout
+  title="Compendium"
+  description="Talents, Actions, Specialties, gear, Squad Tactics, Scars, and Titans, filed for quick reference."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+  runhead={['Part III · Compendium', 'Index of entries']}
+  eyebrow="Part III"
+  lede="Every Talent, Titan, and piece of kit, filed and cross-referenced."
+  plate={{ number: 'Plate IV', caption: 'The quartermaster’s ledger, open on the stores counter.', label: 'An open ledger of Survey Corps stores beside ODM Gear and blades', art: 'compendium-opener' }}
+  stamp="Filed"
+>
+  <ul class="contents">
+    {COMPENDIUM_SECTIONS.map((section) => (
+      <li>
+        <a href={`/compendium/${section.slug}/`}>
+          <span class="cnum" aria-hidden="true"><Icon name={section.slug === 'titans' ? 'ph:person-simple' : 'ph:folder-simple'} class="arrow" /></span>
+          <span class="ctitle">{section.title}</span>
+          <span class="csum">{section.summary}</span>
+          <span class="cmeta lbl">{counts[section.slug] ? `${counts[section.slug]} entries` : 'Open'}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</OpenerLayout>

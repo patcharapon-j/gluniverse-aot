@@ -1,0 +1,29 @@
+---
+import '~/styles/rules.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import DiceKey from '~/components/DiceKey.astro';
+import PushSteps from '~/components/PushSteps.astro';
+import Subsection from '~/components/Subsection.astro';
+import { REFERENCE_TABS } from '~/lib/nav';
+---
+<BaseLayout title="Quick Reference" description="The dice and the Push on one sheet." section="reference" tabs={REFERENCE_TABS} tabsLabel="Reference sections">
+  <section class="sheet sheet--light" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part IV · Reference</span><span>Quick Reference</span></div>
+    <header class="rules-head">
+      <p class="lbl eyebrow">Reference</p>
+      <h1 class="h1" id="page-title">Quick Reference</h1>
+      <p class="lede">The dice, the Push, and the numbers you reach for mid-fight.</p>
+    </header>
+    <div class="qr">
+      <Subsection title="The four kinds of dice" id="qr-dice"><DiceKey /></Subsection>
+      <Subsection title="How a Push works" note="Five steps, in order" id="qr-push"><PushSteps /></Subsection>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .qr {
+    display: grid;
+    gap: clamp(30px, 4vw, 48px);
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+import GmLayout from '~/layouts/GmLayout.astro';
+import EarlyRulesBadge from '~/components/EarlyRulesBadge.astro';
+import { gmChapters, gmTabs } from '~/lib/chapters';
+import { numeral } from '~/lib/nav';
+
+const chapters = await gmChapters();
+const tabs = await gmTabs();
+---
+<GmLayout title="GM's Guide" description="The Commander's copy: running Titans, Expeditions, and the dangers the squad cannot see." tabs={tabs}>
+  <section class="sheet sheet--carbon" aria-labelledby="page-title">
+    <div class="restricted"><span>Restricted: Commanding Officers</span><small>GM's Guide</small></div>
+    <div class="runhead lbl"><span>Part V · GM's Guide</span><span>Commander's copy</span></div>
+    <header class="rules-head">
+      <p class="lbl eyebrow">Briefing</p>
+      <h1 class="h1" id="page-title">GM's Guide</h1>
+      <p class="lede carbon">The same manual, with the pages the squad never sees. Run the Titans honestly, keep the dice in the open, and let the table decide who comes home.</p>
+    </header>
+    <ul class="folders">
+      {chapters.map((chapter, i) => (
+        <li class="folder">
+          <a href={`/gm/${chapter.id}/`} data-tab={`File ${numeral(i)}`}>
+            <b>{chapter.data.title}{chapter.data.earlyRules && <EarlyRulesBadge />}</b>
+            <span>{chapter.data.summary}</span>
+          </a>
+        </li>
+      ))}
+      <li class="folder">
+        <a href="/gm/titan-dossiers/" data-tab="Dossiers">
+          <b>Titan Dossiers</b>
+          <span>Every Titan in full, including the values an Abnormal hides until a Read.</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+</GmLayout>

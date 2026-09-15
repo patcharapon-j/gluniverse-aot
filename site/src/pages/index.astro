@@ -1,0 +1,91 @@
+---
+import '~/styles/home.css';
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Plate from '~/components/Plate.astro';
+
+const entries = [
+  { part: 'Part I', title: 'Learn to Play', href: '/learn/', blurb: 'Your first roll, your first Push, your first Titan.' },
+  { part: 'Part II', title: "Player's Guide", href: '/guide/', blurb: 'Soldiers, Specialties, gear, and the squad.' },
+  { part: 'Part III', title: 'Compendium', href: '/compendium/', blurb: 'Every Talent, Titan, and piece of kit, filed.' },
+  { part: 'Part IV', title: 'Reference', href: '/reference/', blurb: 'The glossary, a quick reference, and the Dice Tray.' },
+];
+---
+<BaseLayout
+  title="Wings of Freedom"
+  description="Wings of Freedom is a tabletop roleplaying game of the Survey Corps. Ride out together. Come back if you can."
+  section="home"
+>
+  <section class="sheet hero" aria-labelledby="hero-title">
+    <!-- Hero scene mount point: the three.js dust and raking light render here. The still cover below is the reduced motion view. -->
+    <div class="hero-scene" id="hero-scene" data-hero-scene aria-hidden="true"></div>
+
+    <div class="runhead lbl"><span>Survey Corps · Field Manual</span><span>Field Copy · Not to leave the Walls</span></div>
+
+    <div class="issue" aria-hidden="true">
+      <div class="field lbl"><span>Issued to</span><i class="hand">Cadet, 104th</i></div>
+      <div class="field lbl"><span>Squad</span><i></i></div>
+      <div class="field lbl"><span>Copy No.</span><i>0847</i></div>
+      <div class="field lbl"><span>Returned by</span><i></i></div>
+      <span class="stamp stamp--dbl issued">Issued</span>
+    </div>
+
+    <div class="hero-grid">
+      <div>
+        <p class="lbl eyebrow">A tabletop roleplaying game</p>
+        <h1 class="title" id="hero-title"><span>Wings of</span> <span>Freedom</span></h1>
+        <p class="tagline">Ride out together. Come back if you can.</p>
+        <p class="pitch">You are soldiers of the Survey Corps. Build your squad, ride beyond the Walls on Expeditions, and bring Titans down with ODM Gear, steel blades, and every comrade who is still in the saddle.</p>
+        <nav aria-label="Start here">
+          <ul class="entries">
+            {entries.map((entry) => (
+              <li>
+                <a class="entry" href={entry.href}>
+                  <span class="lbl">{entry.part}</span>
+                  <b>{entry.title}</b>
+                  <Icon name="ph:arrow-right" class="arrow" aria-hidden="true" />
+                  <small>{entry.blurb}</small>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      <Plate number="Plate I" caption="The Outer Wall at first light." label="A soldier on ODM Gear swings above the Wall while a Titan looms behind it" art="home-hero" seal>
+        <svg viewBox="0 0 400 320" aria-hidden="true">
+          <defs>
+            <linearGradient id="hero-sky" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#6E8474" /><stop offset=".55" stop-color="#34483D" /><stop offset="1" stop-color="#1C2922" /></linearGradient>
+          </defs>
+          <rect width="400" height="320" fill="url(#hero-sky)" />
+          <polygon points="0,0 150,0 330,320 170,320" fill="#F2E6C4" opacity=".09" />
+          <path d="M0 170 Q60 150 120 162 T240 152 T400 160 V320 H0Z" fill="#26362D" />
+          <g fill="#0E1511"><ellipse cx="298" cy="112" rx="30" ry="38" /><path d="M250 190 Q256 146 298 142 Q342 146 350 190Z" /></g>
+          <g fill="#C9BFA4" opacity=".75"><circle cx="287" cy="108" r="2.2" /><circle cx="308" cy="108" r="2.2" /></g>
+          <path d="M284 128 Q298 136 312 128" stroke="#C9BFA4" stroke-opacity=".5" stroke-width="1.2" fill="none" />
+          <rect x="0" y="176" width="400" height="144" fill="#18221D" />
+          <rect x="0" y="170" width="400" height="10" fill="#223029" />
+          <g stroke="#2E3F36" stroke-width="1">
+            <path d="M0 200H400M0 224H400M0 248H400M0 272H400M0 296H400" />
+            <path d="M40 180V200M120 180V200M200 180V200M280 180V200M360 180V200M80 200V224M160 200V224M240 200V224M320 200V224M40 224V248M120 224V248M200 224V248M280 224V248M360 224V248M80 248V272M160 248V272M240 248V272M320 248V272M40 272V296M120 272V296M200 272V296M280 272V296M360 272V296" />
+          </g>
+          <g stroke="#E4DCC5" stroke-width=".9" stroke-opacity=".8"><line x1="148" y1="98" x2="60" y2="174" /><line x1="152" y1="98" x2="232" y2="172" /></g>
+          <g transform="translate(150 92) rotate(-14)" fill="#0B120E">
+            <circle cx="0" cy="-15" r="5" />
+            <path d="M-6-9h12l3 12-4 1 6 16-5 2-7-14-5 14-5-2 5-16-4-1z" />
+            <path d="M-7-8 Q-28-2-34 16 Q-18 8-6 4Z" fill="#2F4B3C" stroke="#0B120E" stroke-width=".8" />
+            <path d="M9 0l18-8M-9 0l-16 6" stroke="#C9CFCB" stroke-width="1.4" />
+          </g>
+          <path d="M110 70q10-4 20 0M96 84q8-3 16 0" stroke="#E4DCC5" stroke-opacity=".4" fill="none" />
+          <rect width="400" height="320" fill="url(#hlines)" opacity=".55" />
+        </svg>
+      </Plate>
+    </div>
+
+    <div class="hero-foot lbl">
+      <span><Icon name="ph:dice-six" aria-hidden="true" />Six-sided dice. Push your luck.</span>
+      <span><Icon name="ph:users-three" aria-hidden="true" />One squad, one GM</span>
+      <span><Icon name="ph:skull" aria-hidden="true" />Every Expedition can kill</span>
+    </div>
+  </section>
+</BaseLayout>

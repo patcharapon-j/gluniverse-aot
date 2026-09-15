@@ -1,0 +1,28 @@
+---
+import '~/styles/compendium.css';
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import InkVignette from '~/components/InkVignette.astro';
+import { COMPENDIUM_SECTIONS, COMPENDIUM_TABS } from '~/lib/compendium';
+
+export const getStaticPaths = (() =>
+  COMPENDIUM_SECTIONS.filter((s) => !s.filed).map((section) => ({
+    params: { section: section.slug },
+    props: { section },
+  }))) satisfies GetStaticPaths;
+
+const { section } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
+---
+<BaseLayout title={section.title} description={section.summary} section="compendium" tabs={COMPENDIUM_TABS} tabsLabel="Compendium sections">
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>{section.title}</span></div>
+    <div class="filed-soon">
+      <div>
+        <p class="lbl eyebrow">Compendium</p>
+        <h1 class="h1" id="page-title">{section.title}</h1>
+        <p class="lede" style="margin-top:14px">{section.summary}</p>
+      </div>
+      <InkVignette caption={section.title} label={`An ink wash scene for ${section.title}`} art={`compendium-${section.slug}`} />
+    </div>
+  </section>
+</BaseLayout>

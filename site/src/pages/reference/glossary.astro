@@ -1,0 +1,53 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { GLOSSARY } from '~/lib/glossary';
+import { REFERENCE_TABS } from '~/lib/nav';
+---
+<BaseLayout title="Glossary" description="Every game term in Wings of Freedom, defined." section="reference" tabs={REFERENCE_TABS} tabsLabel="Reference sections">
+  <section class="sheet sheet--light" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part IV · Reference</span><span>Glossary</span></div>
+    <header class="glossary-head">
+      <p class="lbl eyebrow">Reference</p>
+      <h1 class="h1" id="page-title">Glossary</h1>
+    </header>
+    <dl class="glossary">
+      {GLOSSARY.map((entry) => (
+        <div class="gl-row" id={entry.slug}>
+          <dt>{entry.term}</dt>
+          <dd>{entry.definition}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</BaseLayout>
+
+<style>
+  .glossary-head {
+    margin-bottom: clamp(24px, 4vw, 40px);
+  }
+  .glossary {
+    margin: 0;
+    columns: 2 22rem;
+    column-gap: 48px;
+  }
+  .gl-row {
+    break-inside: avoid;
+    padding: 12px 0 14px;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+    scroll-margin-top: 90px;
+  }
+  .gl-row:target {
+    background: rgba(207, 195, 165, 0.45);
+    box-shadow: -10px 0 0 rgba(207, 195, 165, 0.45), 10px 0 0 rgba(207, 195, 165, 0.45);
+  }
+  dt {
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.25;
+  }
+  dd {
+    margin: 4px 0 0;
+    max-width: 60ch;
+    color: var(--ink-3);
+  }
+</style>

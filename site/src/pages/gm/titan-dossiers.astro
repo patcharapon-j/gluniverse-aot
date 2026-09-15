@@ -1,0 +1,26 @@
+---
+import '~/styles/compendium.css';
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import GmLayout from '~/layouts/GmLayout.astro';
+import TitanSpecimen from '~/components/TitanSpecimen.astro';
+import { gmTabs } from '~/lib/chapters';
+
+const dossiers = (await getCollection('titanDossiers')).sort((a, b) => a.data.order - b.data.order);
+const tabs = await gmTabs();
+---
+<GmLayout title="Titan Dossiers" description="Every Titan in full, including the values an Abnormal hides until a Read." tabs={tabs}>
+  <section class="sheet sheet--carbon" aria-labelledby="page-title">
+    <div class="restricted"><span>Restricted: Commanding Officers</span><small>GM's Guide</small></div>
+    <div class="runhead lbl"><span>Part V · GM's Guide</span><span>Titan Dossiers</span></div>
+    <header class="rules-head">
+      <p class="lbl eyebrow">Dossiers</p>
+      <h1 class="h1" id="page-title">Titan Dossiers</h1>
+      <p class="lede carbon">The full record of every Titan. Values the squad learns only by a Read sit under a bar.</p>
+      <p class="redact-hint lbl"><Icon name="ph:hand-pointing" aria-hidden="true" />Hover or focus a bar to lift it</p>
+    </header>
+    <div class="specimens">
+      {dossiers.map((titan) => <TitanSpecimen titan={titan.data} id={titan.id} mode="gm" />)}
+    </div>
+  </section>
+</GmLayout>

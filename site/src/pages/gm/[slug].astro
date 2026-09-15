@@ -1,0 +1,43 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { render } from 'astro:content';
+import GmLayout from '~/layouts/GmLayout.astro';
+import RulesArticle from '~/components/RulesArticle.astro';
+import { chapterLink, gmChapters, gmTabs } from '~/lib/chapters';
+import { numeral } from '~/lib/nav';
+
+export const getStaticPaths = (async () => {
+  const chapters = await gmChapters();
+  const tabs = await gmTabs();
+  return chapters.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      index: i,
+      tabs,
+      prev: chapterLink(chapters[i - 1], '/gm/'),
+      next: chapterLink(chapters[i + 1], '/gm/'),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry, index, tabs, prev, next } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
+const { Content } = await render(entry);
+const shell = !entry.body?.trim();
+---
+<GmLayout title={entry.data.title} description={entry.data.summary} tabs={tabs}>
+  <RulesArticle
+    title={entry.data.title}
+    summary={entry.data.summary}
+    earlyRules={entry.data.earlyRules}
+    numeral={numeral(index)}
+    part="GM's Guide"
+    shell={shell}
+    art={`gm-${entry.id}`}
+    prev={prev}
+    next={next}
+    restricted
+  >
+    <Content />
+  </RulesArticle>
+</GmLayout>

@@ -1,0 +1,34 @@
+---
+import OpenerLayout from '~/layouts/OpenerLayout.astro';
+import EarlyRulesBadge from '~/components/EarlyRulesBadge.astro';
+import { chapterTabs, guideChapters } from '~/lib/chapters';
+import { numeral } from '~/lib/nav';
+
+const chapters = await guideChapters();
+const tabs = chapterTabs(chapters, '/guide/');
+---
+<OpenerLayout
+  title="Player's Guide"
+  description="Every rule a soldier of the Survey Corps needs, chapter by chapter."
+  section="guide"
+  tabs={tabs}
+  tabsLabel="Chapters"
+  runhead={["Part II · Player's Guide", 'Contents']}
+  eyebrow="Part II"
+  lede="Every rule a soldier needs, from the first roll to the last ride home."
+  plate={{ number: 'Plate III', caption: 'A squad forms up at the gate before an Expedition.', label: 'A Survey Corps squad mounted and waiting at the gate of the Wall', art: 'guide-opener' }}
+  stamp="Field copy"
+>
+  <ol class="contents">
+    {chapters.map((chapter, i) => (
+      <li>
+        <a href={`/guide/${chapter.id}/`}>
+          <span class="cnum" aria-hidden="true">{numeral(i)}</span>
+          <span class="ctitle">{chapter.data.title}{chapter.data.earlyRules && <EarlyRulesBadge />}</span>
+          <span class="csum">{chapter.data.summary}</span>
+          <span class="cmeta lbl">Chapter {numeral(i)}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</OpenerLayout>

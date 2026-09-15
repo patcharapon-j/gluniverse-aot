@@ -1,0 +1,12 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+---
+<BaseLayout title="Page not found" description="This page is not in the manual." section="home" indexed={false}>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Survey Corps · Field Manual</span><span>Missing page</span></div>
+    <p class="lbl eyebrow">Page not found</p>
+    <h1 class="h1" id="page-title">Torn out</h1>
+    <p class="lede" style="margin-top:16px">This page is not in the manual. It may have moved when a chapter was refiled.</p>
+    <p style="margin-top:24px"><a class="btn btn--ghost" href="/">Back to the cover</a></p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import { Icon } from 'astro-icon/components';
+import OpenerLayout from '~/layouts/OpenerLayout.astro';
+---
+<OpenerLayout
+  title="Learn to Play"
+  description="Start here: your first roll, your first Push, and your first Titan."
+  section="learn"
+  runhead={['Part I · Learn to Play', 'Before your first Expedition']}
+  eyebrow="Part I"
+  lede="Your first roll, your first Push, your first Titan."
+  plate={{ number: 'Plate II', caption: 'Cadets at drill on the practice frames.', label: 'Cadets of the Training Corps practicing on ODM Gear frames', art: 'learn-opener' }}
+  stamp="Read first"
+>
+  <ul class="contents">
+    <li>
+      <a href="/guide/rules-of-play/#pushing-your-luck">
+        <span class="cnum" aria-hidden="true">1</span>
+        <span class="ctitle">Pushing Your Luck</span>
+        <span class="csum">A roll that falls short does not have to be the end. Learn how a Push trades Stress for a second chance.</span>
+        <span class="cmeta lbl">The Rules of Play <Icon name="ph:arrow-right" class="arrow" aria-hidden="true" /></span>
+      </a>
+    </li>
+  </ul>
+</OpenerLayout>

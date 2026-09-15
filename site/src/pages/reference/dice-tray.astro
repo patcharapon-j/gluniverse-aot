@@ -1,0 +1,41 @@
+---
+import '~/styles/rules.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { poolHtml } from '~/lib/dice';
+import { REFERENCE_TABS } from '~/lib/nav';
+---
+<BaseLayout title="Dice Tray" description="A field box for rolling your pool and Pushing it." section="reference" tabs={REFERENCE_TABS} tabsLabel="Reference sections">
+  <section class="sheet sheet--light" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part IV · Reference</span><span>Dice Tray</span></div>
+    <header class="rules-head">
+      <p class="lbl eyebrow">Reference</p>
+      <h1 class="h1" id="page-title">Dice Tray</h1>
+      <p class="lede">A field box lined with Survey Corps green, for rolling your pool and Pushing it.</p>
+    </header>
+    <!-- Dice Tray mount point: the three.js tray renders into #dice-tray and listens for wof:try-roll events. -->
+    <div class="tray field-box" id="dice-tray" data-dice-tray>
+      <div class="tray-head">
+        <h2 class="tray-title">The field box</h2>
+        <span class="lbl">Bone, gunmetal, lacquer, and flesh</span>
+      </div>
+      <div class="pool" aria-hidden="true" set:html={poolHtml('base:6,4,?|gear:5|stress:1x|titan:5')}></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .field-box {
+    min-height: 320px;
+    display: grid;
+    align-content: space-between;
+    border: 10px solid #6b4a2e;
+    border-image: linear-gradient(135deg, #7a5634, #4f3520) 1;
+  }
+  .tray-title {
+    font-family: var(--f-stencil);
+    font-weight: 800;
+    font-size: 1.625rem;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+</style>

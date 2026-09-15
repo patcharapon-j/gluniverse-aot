@@ -1,0 +1,40 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { render } from 'astro:content';
+import RulesPage from '~/layouts/RulesPage.astro';
+import { chapterLink, chapterTabs, guideChapters } from '~/lib/chapters';
+import { numeral } from '~/lib/nav';
+
+export const getStaticPaths = (async () => {
+  const chapters = await guideChapters();
+  const tabs = chapterTabs(chapters, '/guide/');
+  return chapters.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      index: i,
+      tabs,
+      prev: chapterLink(chapters[i - 1], '/guide/'),
+      next: chapterLink(chapters[i + 1], '/guide/'),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry, index, tabs, prev, next } = Astro.props as Props;
+const { Content } = await render(entry);
+const shell = !entry.body?.trim();
+---
+<RulesPage
+  title={entry.data.title}
+  summary={entry.data.summary}
+  earlyRules={entry.data.earlyRules}
+  numeral={numeral(index)}
+  shell={shell}
+  art={`guide-${entry.id}`}
+  tabs={tabs}
+  prev={prev}
+  next={next}
+>
+  <Content />
+</RulesPage>
