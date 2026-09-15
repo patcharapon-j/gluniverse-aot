@@ -4,3 +4,10 @@ __pycache__/
 .venv/
 .claude/launch.json
 docs/rules/.lock-*
+
+# website
+site/node_modules/
+site/dist/
+site/.astro/
+site/art-src/
+.vercel/
