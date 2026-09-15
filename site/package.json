@@ -4,7 +4,7 @@
   "type": "module",
   "version": "0.1.0",
   "engines": {
-    "node": ">=22.12.0"
+    "node": "22.x"
   },
   "packageManager": "pnpm@10.10.0",
   "pnpm": {
