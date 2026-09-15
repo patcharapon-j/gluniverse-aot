@@ -12,9 +12,13 @@ import bonusText from '../../../data/core/bonus-dice-sources.yaml?raw';
 /** A Player's Guide chapter slug ("fighting-titans") or an anchor on the same page ("#help"). */
 export type SeeRef = string;
 
+/** A cell: plain text, a choice between options ("A or B"), or text with a smaller note under it. */
+export type Cell = string | { options: string[] } | { text: string; note: string };
+
 export interface TableRow {
-  cells: string[];
-  see: SeeRef[];
+  cells: Cell[];
+  /** Links for the "See" column; a table with no "See" column leaves it out. */
+  see?: SeeRef[];
 }
 
 export interface TableGroup {
@@ -25,9 +29,13 @@ export interface TableGroup {
 export interface CoreTableData {
   caption: string;
   note?: string;
-  /** Column headings, the last of which is the "See" column. */
+  /** Column headings. The last is the "See" column unless `see` is false. */
   columns: string[];
   groups: TableGroup[];
+  /** False for a table with no "See" column. */
+  see?: boolean;
+  /** True when the first column is a die result, kept on one line. */
+  roll?: boolean;
 }
 
 /** Labels for same-page anchors a table row can point to. */

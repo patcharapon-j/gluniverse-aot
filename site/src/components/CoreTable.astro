@@ -1,13 +1,14 @@
 ---
 /**
- * A core rules table, rendered from the shared tables through lib/core-tables.
+ * A rules table, rendered from the shared tables through lib/core-tables and lib/character-tables.
  * Rows stack into labelled cards on narrow screens.
  */
 import { getCollection } from 'astro:content';
-import { bonusDiceSources, PAGE_ANCHORS, rollExceptions, stressChanges, type CoreTableData, type SeeRef } from '~/lib/core-tables';
+import { CHARACTER_TABLES, type CharacterTableId } from '~/lib/character-tables';
+import { bonusDiceSources, PAGE_ANCHORS, rollExceptions, stressChanges, type Cell, type CoreTableData, type SeeRef } from '~/lib/core-tables';
 
 interface Props {
-  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions';
+  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | CharacterTableId;
 }
 const { table } = Astro.props;
 
@@ -15,8 +16,10 @@ const builders: Record<Props['table'], () => CoreTableData> = {
   'stress-changes': stressChanges,
   'bonus-dice': bonusDiceSources,
   'roll-exceptions': rollExceptions,
+  ...CHARACTER_TABLES,
 };
 const data = builders[table]();
+const hasSee = data.see !== false;
 const chapters = new Map((await getCollection('rules')).map((entry) => [entry.id, entry.data.title]));
 
 function link(ref: SeeRef): { href: string; label: string } {
@@ -30,13 +33,17 @@ function link(ref: SeeRef): { href: string; label: string } {
   return { href: `/guide/${ref}/`, label: title };
 }
 
+const cellCount = data.columns.length - (hasSee ? 1 : 0);
 for (const group of data.groups) {
   for (const row of group.rows) {
-    if (row.cells.length !== data.columns.length - 1) throw new Error(`CoreTable: a "${data.caption}" row has the wrong number of cells.`);
+    if (row.cells.length !== cellCount) throw new Error(`CoreTable: a "${data.caption}" row has the wrong number of cells.`);
+    if (hasSee && !row.see) throw new Error(`CoreTable: a "${data.caption}" row has no "See" links.`);
   }
 }
+
+const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell === 'object' && 'options' in cell;
 ---
-<div class="coretable wide">
+<div class:list={['coretable wide', data.roll && 'coretable--roll']}>
   <table>
     <caption>
       <span class="lbl">Table</span>
@@ -55,14 +62,27 @@ for (const group of data.groups) {
         )}
         {group.rows.map((row) => (
           <tr>
-            {row.cells.map((cell, i) =>
-              i === 0 ? <th scope="row" data-label={data.columns[i]}>{cell}</th> : <td data-label={data.columns[i]}>{cell}</td>,
+            {row.cells.map((cell, i) => {
+              const Tag = i === 0 ? 'th' : 'td';
+              return (
+                <Tag scope={i === 0 ? 'row' : undefined} data-label={data.columns[i]}>
+                  {typeof cell === 'string' ? (
+                    cell
+                  ) : isOptions(cell) ? (
+                    cell.options.map((option) => <span class="opt">{option}</span>)
+                  ) : (
+                    <>{cell.text}<span class="cnote">{cell.note}</span></>
+                  )}
+                </Tag>
+              );
+            })}
+            {hasSee && (
+              <td class="see" data-label={data.columns[data.columns.length - 1]}>
+                {(row.see ?? []).map(link).map((l, i) => (
+                  <>{i > 0 && <span class="sep">, </span>}<a href={l.href}>{l.label}</a></>
+                ))}
+              </td>
             )}
-            <td class="see" data-label={data.columns[data.columns.length - 1]}>
-              {row.see.map(link).map((l, i) => (
-                <>{i > 0 && <span class="sep">, </span>}<a href={l.href}>{l.label}</a></>
-              ))}
-            </td>
           </tr>
         ))}
       </tbody>
@@ -126,6 +146,27 @@ for (const group of data.groups) {
   tbody th[scope="row"] {
     font-weight: 600;
   }
+  .coretable--roll tbody th[scope="row"] {
+    white-space: nowrap;
+    font-family: var(--f-type);
+    font-variant-numeric: tabular-nums;
+  }
+  .opt {
+    display: block;
+  }
+  .opt + .opt::before {
+    content: "or ";
+    font-style: italic;
+    color: var(--ink-2);
+  }
+  .cnote {
+    display: block;
+    margin-top: 2px;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
   .group th {
     padding: 6px 10px;
     font-family: var(--f-type);
@@ -169,6 +210,9 @@ for (const group of data.groups) {
     tbody td {
       padding: 2px 0;
       border-top: 0;
+    }
+    .coretable--roll tbody th[scope="row"] {
+      white-space: normal;
     }
     .group th {
       margin-top: 10px;
