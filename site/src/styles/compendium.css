@@ -186,9 +186,11 @@
 /* ---------- Titan specimen reports ---------- */
 .specimens {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 36px;
 }
 .specimen {
+  min-width: 0;
   border: 1.5px solid var(--ink);
   background: var(--paper-hi);
   position: relative;
