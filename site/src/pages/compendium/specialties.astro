@@ -5,7 +5,9 @@ import BaseLayout from '~/layouts/BaseLayout.astro';
 import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
 import IconSlot from '~/components/IconSlot.astro';
+import GlossText from '~/components/GlossText.astro';
 import { COMPENDIUM_TABS, tally } from '~/lib/compendium';
+import { glossifier } from '~/lib/glossify';
 
 const specialties = (await getCollection('specialties')).sort((a, b) => a.data.order - b.data.order);
 const count = specialties.filter((s) => !s.data.general).length;
@@ -59,6 +61,9 @@ const groups: FilterGroup[] = [
           const dice = d.talents.filter((t) => t.kind === 'dice');
           const rule = d.talents.filter((t) => t.kind === 'rule');
           const search = [d.name, d.summary, d.keyAttribute?.name ?? '', ...d.talents.map((t) => t.name)].join(' ').toLowerCase();
+          const gloss = glossifier(['Specialty', 'Talent']);
+          const summary = gloss(d.summary);
+          const issue = gloss(d.issue);
           return (
             <article class="card card--spec" aria-labelledby={s.id} data-cmp-item data-search={search} data-f-attribute={d.keyAttribute?.slug ?? ''}>
               <div class="card-top">
@@ -72,9 +77,9 @@ const groups: FilterGroup[] = [
                   <span class="lbl">{d.talents.length} Talents</span>
                 </div>
               </div>
-              <h3 id={s.id}>{d.general ? 'General Talents' : d.name}</h3>
-              <p class="summary">{d.summary}</p>
-              {d.issue && <p class="issue">{d.issue}</p>}
+              <h2 id={s.id}>{d.general ? 'General Talents' : d.name}</h2>
+              <p class="summary"><GlossText parts={summary} /></p>
+              {d.issue && <p class="issue"><GlossText parts={issue} /></p>}
               {d.general && <p class="issue">The Talent level a Specialty grants never goes into one of these.</p>}
               <div class="talent-cols">
                 {dice.length > 0 && (

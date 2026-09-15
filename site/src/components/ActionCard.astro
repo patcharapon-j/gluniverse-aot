@@ -1,7 +1,9 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import IconSlot from './IconSlot.astro';
+import GlossText from './GlossText.astro';
 import { PAGE_ANCHORS } from '~/lib/core-tables';
+import { glossifier } from '~/lib/glossify';
 
 interface Props {
   action: CollectionEntry<'actions'>;
@@ -22,6 +24,14 @@ const pages = a.pages.map((ref) => {
 });
 
 const search = [a.name, a.kind.name, a.rollLabel, ...a.does, ...a.diceTalents.map((t) => t.name), ...a.ruleTalents.map((t) => t.name)].join(' ').toLowerCase();
+
+// Glossary pop-ups on the first use of each term on this card, in reading order.
+const gloss = glossifier();
+const gear = gloss(a.gear);
+const requires = a.requires.map((r) => gloss(r));
+const needs = gloss(a.needs);
+const does = a.does.map((d) => gloss(d));
+const help = gloss(a.help);
 ---
 <article
   class="card card--action"
@@ -38,22 +48,22 @@ const search = [a.name, a.kind.name, a.rollLabel, ...a.does, ...a.diceTalents.ma
       <span class="lbl">{a.rollLabel}</span>
     </div>
   </div>
-  <h3 id={action.id}>{a.name}</h3>
+  <h2 id={action.id}>{a.name}</h2>
   {a.notInUse && <p class="lbl unused">Not used in current rules</p>}
   <dl class="facts">
-    <div><dt class="lbl">Gear</dt><dd>{a.gear}</dd></div>
-    {a.requires.length > 0 && (
+    <div><dt class="lbl">Gear</dt><dd><GlossText parts={gear} /></dd></div>
+    {requires.length > 0 && (
       <div>
         <dt class="lbl">Requires</dt>
-        <dd><ul>{a.requires.map((r) => <li>{r}</li>)}</ul></dd>
+        <dd><ul>{requires.map((r) => <li><GlossText parts={r} /></li>)}</ul></dd>
       </div>
     )}
-    {a.needs && <div><dt class="lbl">Needs</dt><dd>{a.needs}</dd></div>}
+    {a.needs && <div><dt class="lbl">Needs</dt><dd><GlossText parts={needs} /></dd></div>}
     <div>
       <dt class="lbl">What it does</dt>
-      <dd>{a.does.map((d) => <p>{d}</p>)}</dd>
+      <dd>{does.map((d) => <p><GlossText parts={d} /></p>)}</dd>
     </div>
-    {a.help && <div><dt class="lbl">Help</dt><dd>{a.help}</dd></div>}
+    {a.help && <div><dt class="lbl">Help</dt><dd><GlossText parts={help} /></dd></div>}
   </dl>
   <div class="card-foot">
     {a.diceTalents.length > 0 && (

@@ -1,0 +1,14 @@
+---
+/**
+ * Card text with pop-up buttons on the terms a glossifier marked. The page needs one
+ * GlossaryPopover; its script adds aria-controls and aria-expanded when a term opens,
+ * which keeps a long card list light.
+ */
+import type { GlossSegment } from '~/lib/glossify';
+
+interface Props {
+  parts: GlossSegment[];
+}
+const { parts } = Astro.props;
+---
+{parts.map((part) => (typeof part === 'string' ? part : <button type="button" class="gloss" data-gloss={part.slug} aria-haspopup="dialog">{part.text}</button>))}

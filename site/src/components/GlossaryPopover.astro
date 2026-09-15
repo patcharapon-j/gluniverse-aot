@@ -1,0 +1,89 @@
+---
+/**
+ * One shared glossary pop-up for a page of GlossText card text. One delegated listener serves
+ * every term, and the definitions arrive with the deferred script, cached across pages, so a
+ * long card list gains only small buttons and filtering it costs what it did before.
+ * Use it once per page.
+ */
+import '~/styles/glossary.css';
+---
+<div class="gloss-pop" id="gloss-pop" popover role="dialog" aria-labelledby="gloss-pop-term" tabindex="-1">
+  <b id="gloss-pop-term"></b><span data-gloss-def></span> <a href="/reference/glossary/" data-gloss-link>Open the glossary</a>
+</div>
+
+<script>
+  import { GLOSSARY } from '~/lib/glossary';
+
+  const pop = document.getElementById('gloss-pop');
+  const term = pop?.querySelector<HTMLElement>('#gloss-pop-term');
+  const definition = pop?.querySelector<HTMLElement>('[data-gloss-def]');
+  const link = pop?.querySelector<HTMLAnchorElement>('[data-gloss-link]');
+
+  if (pop && term && definition && link && typeof pop.showPopover === 'function') {
+    const entries = new Map(GLOSSARY.map((entry) => [entry.slug, entry]));
+    let active: HTMLElement | null = null;
+    let closed: { trigger: HTMLElement | null; at: number } = { trigger: null, at: 0 };
+    let returnFocus = false;
+
+    const place = (trigger: HTMLElement) => {
+      const r = trigger.getBoundingClientRect();
+      const width = pop.offsetWidth;
+      const height = pop.offsetHeight;
+      const left = Math.min(Math.max(16, r.left + r.width / 2 - width / 2), window.innerWidth - width - 16);
+      const below = r.bottom + 8;
+      const top = below + height > window.innerHeight - 16 ? Math.max(16, r.top - height - 8) : below;
+      pop.style.left = `${left}px`;
+      pop.style.top = `${top}px`;
+    };
+
+    document.addEventListener('click', (event) => {
+      const trigger = (event.target as Element | null)?.closest<HTMLElement>('.gloss[data-gloss]');
+      if (!trigger) return;
+      const entry = entries.get(trigger.dataset.gloss ?? '');
+      if (!entry) return;
+      // The pointer press on an open term already light-dismissed it: a second tap closes.
+      if (closed.trigger === trigger && performance.now() - closed.at < 400) return;
+      if (active === trigger && pop.matches(':popover-open')) {
+        pop.hidePopover();
+        return;
+      }
+      active?.setAttribute('aria-expanded', 'false');
+      term.textContent = entry.term;
+      definition.textContent = entry.definition;
+      link.href = `/reference/glossary/#${entry.slug}`;
+      active = trigger;
+      if (!pop.matches(':popover-open')) pop.showPopover();
+      trigger.setAttribute('aria-controls', pop.id);
+      trigger.setAttribute('aria-expanded', 'true');
+      place(trigger);
+      // Opened from the keyboard: move focus in, so the definition is read and its link is one Tab away.
+      if (event.detail === 0) pop.focus({ preventScroll: true });
+    });
+
+    pop.addEventListener('beforetoggle', (event) => {
+      if ((event as ToggleEvent).newState !== 'closed') return;
+      closed = { trigger: active, at: performance.now() };
+      returnFocus = pop.contains(document.activeElement);
+    });
+    pop.addEventListener('toggle', () => {
+      if (pop.matches(':popover-open')) return;
+      active?.setAttribute('aria-expanded', 'false');
+      if (returnFocus) active?.focus({ preventScroll: true });
+      active = null;
+    });
+    pop.addEventListener('focusout', (event) => {
+      const next = event.relatedTarget as Node | null;
+      if (next && !pop.contains(next) && pop.matches(':popover-open')) pop.hidePopover();
+    });
+
+    const dismiss = () => {
+      if (pop.matches(':popover-open')) pop.hidePopover();
+    };
+    // Browsers close a popover on Escape themselves; this covers the ones that do not.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') dismiss();
+    });
+    window.addEventListener('scroll', dismiss, { passive: true });
+    window.addEventListener('resize', dismiss, { passive: true });
+  }
+</script>

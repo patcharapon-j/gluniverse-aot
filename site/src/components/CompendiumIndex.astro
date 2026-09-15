@@ -6,6 +6,7 @@
  * Chips in a group are OR'd; groups are AND'd. Without scripts every item shows.
  */
 import { Icon } from 'astro-icon/components';
+import GlossaryPopover from './GlossaryPopover.astro';
 
 export interface FilterOption {
   value: string;
@@ -25,8 +26,10 @@ interface Props {
   plural: string;
   searchLabel: string;
   searchPlaceholder: string;
+  /** The shared glossary pop-up for card text marked with GlossText. On by default. */
+  glossary?: boolean;
 }
-const { id, groups, total, singular, plural, searchLabel, searchPlaceholder } = Astro.props;
+const { id, groups, total, singular, plural, searchLabel, searchPlaceholder, glossary = true } = Astro.props;
 ---
 <div class="cmp" data-cmp={id} data-singular={singular} data-plural={plural}>
   <div class="cmp-head">
@@ -61,6 +64,7 @@ const { id, groups, total, singular, plural, searchLabel, searchPlaceholder } = 
   <slot />
 
   <p class="empty" data-cmp-empty hidden>No {plural} match. Clear a filter or change your search to see more.</p>
+  {glossary && <GlossaryPopover />}
 </div>
 
 <script>

@@ -1,6 +1,8 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import IconSlot from './IconSlot.astro';
+import GlossText from './GlossText.astro';
+import { glossifier } from '~/lib/glossify';
 
 interface Props {
   talent: CollectionEntry<'talents'>;
@@ -13,6 +15,10 @@ const search = [t.name, t.description, t.effect, t.trigger ?? '', ...t.actions.m
   .join(' ')
   .toLowerCase();
 const joiner = (i: number, n: number) => (i === 0 ? '' : i === n - 1 ? ' and ' : ', ');
+
+const gloss = glossifier(['Talent']);
+const trigger = gloss(t.trigger);
+const effect = gloss(t.effect);
 ---
 <article
   class="card"
@@ -31,15 +37,15 @@ const joiner = (i: number, n: number) => (i === 0 ? '' : i === n - 1 ? ' and ' :
       <span class="lbl">{levels}</span>
     </div>
   </div>
-  <h3 id={talent.id}>{t.name}</h3>
+  <h2 id={talent.id}>{t.name}</h2>
   <q>{t.description}</q>
   {t.trigger ? (
     <dl class="rule-text">
-      <div><dt class="lbl">Trigger</dt><dd>{t.trigger}</dd></div>
-      <div><dt class="lbl">Effect</dt><dd>{t.effect}</dd></div>
+      <div><dt class="lbl">Trigger</dt><dd><GlossText parts={trigger} /></dd></div>
+      <div><dt class="lbl">Effect</dt><dd><GlossText parts={effect} /></dd></div>
     </dl>
   ) : (
-    <p class="effect">{t.effect}</p>
+    <p class="effect"><GlossText parts={effect} /></p>
   )}
   <div class="card-foot">
     <p class="lbl">{t.kind === 'dice' ? 'Adds to' : 'Applies to'}: {t.actions.map((a, i) => <Fragment>{i > 0 && ', '}<a href={`/compendium/actions/#${a.slug}`}>{a.name}</a></Fragment>)}</p>
