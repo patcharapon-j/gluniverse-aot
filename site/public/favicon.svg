@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 80 80">
+  <defs>
+    <path id="f" d="M0 0C12-7 34-18 52-16 38-8 19-1 0 5Z"/>
+    <g id="w">
+      <use href="#f" transform="rotate(-62) scale(.62)"/>
+      <use href="#f" transform="rotate(-45) scale(.84)"/>
+      <use href="#f" transform="rotate(-28) scale(1)"/>
+      <use href="#f" transform="rotate(-11) scale(.96)"/>
+      <use href="#f" transform="rotate(6) scale(.74)"/>
+    </g>
+  </defs>
+  <circle r="37" fill="#22322A" stroke="#E4DCC5" stroke-width="3"/>
+  <g transform="translate(0 8) scale(.62)">
+    <g transform="translate(-6 0) scale(-1 1)" fill="#E4DCC5"><use href="#w"/></g>
+    <g transform="translate(6 0)" fill="#7FA0B5" stroke="#22322A" stroke-width="1.2"><use href="#w"/></g>
+  </g>
+</svg>
