@@ -31,7 +31,9 @@ const entries = [
     </div>
 
     <div class="hero-grid">
-      <div>
+      <div class="hero-copy">
+        <!-- Where the three.js scene presses the Wings emblem into the cover. Empty and invisible on its own. -->
+        <div class="hero-emblem" data-hero-emblem aria-hidden="true"></div>
         <p class="lbl eyebrow">A tabletop roleplaying game</p>
         <h1 class="title" id="hero-title"><span>Wings of</span> <span>Freedom</span></h1>
         <p class="tagline">Ride out together. Come back if you can.</p>
@@ -89,3 +91,28 @@ const entries = [
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // The hero scene loads after first paint, and only with motion allowed and WebGL 2.
+  // Otherwise, or if it fails, the still cover stays exactly as it is.
+  const host = document.querySelector<HTMLElement>('[data-hero-scene]');
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (host && !motion.matches && typeof window.WebGL2RenderingContext === 'function') {
+    const start = () => {
+      if (motion.matches) return;
+      import('~/scripts/hero/scene')
+        .then(({ mountHero }) => {
+          const scene = mountHero(host, {
+            emblemAnchor: document.querySelector<HTMLElement>('[data-hero-emblem]'),
+            pointerArea: host.closest<HTMLElement>('.hero'),
+          });
+          motion.addEventListener('change', () => motion.matches && scene.dispose(), { once: true });
+        })
+        .catch((error: unknown) => console.warn('Hero scene unavailable; showing the still cover.', error));
+    };
+    const idle = () => (window.requestIdleCallback ? window.requestIdleCallback(start, { timeout: 2500 }) : window.setTimeout(start, 400));
+    if (document.readyState === 'complete') idle();
+    else window.addEventListener('load', idle, { once: true });
+  }
+</script>
