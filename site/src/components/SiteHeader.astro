@@ -38,6 +38,11 @@ const state = (href: string, key: SectionKey) => (withSlash(href) === path ? 'pa
     <kbd aria-hidden="true">/</kbd>
   </button>
 </header>
+<script is:inline>
+  // Set the folded layout before first paint, so the masthead never reflows when the module below runs.
+  document.querySelector('[data-masthead]')?.classList.add('has-menu');
+  document.querySelector('[data-nav-toggle]')?.removeAttribute('hidden');
+</script>
 
 <script>
   // Below the wide layout the main navigation folds into a Contents card behind a Menu button.
