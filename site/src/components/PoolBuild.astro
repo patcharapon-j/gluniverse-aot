@@ -1,0 +1,168 @@
+---
+/**
+ * The dice pool, built step by step, drawn like the Push diagram. The limits on
+ * each step come from the dice pool table (lib/core-tables).
+ */
+import { Icon } from 'astro-icon/components';
+import { facesHtml } from '~/lib/dice';
+import { poolSteps } from '~/lib/core-tables';
+
+interface Props {
+  fig: string;
+}
+const { fig } = Astro.props;
+const s = poolSteps();
+
+const ROWS: { title: string; icon?: string; dice?: string; text: string; count: string }[] = [
+  {
+    title: 'Name the roll',
+    icon: 'ph:book-open-text',
+    text: 'Pick the Action Catalog entry you roll for. It names the attribute, and the gear that can add Gear Dice.',
+    count: 'No dice',
+  },
+  { title: s.attribute.name, dice: 'base:?,?,?', text: "Add base dice equal to the attribute's rating.", count: s.attribute.count },
+  { title: s.talent.name, dice: 'base:?,?', text: 'Add base dice equal to the level of one Talent that names the entry.', count: s.talent.count },
+  { title: s.bonus.name, dice: 'base:?', text: 'Declare your sources, then add that many base dice.', count: s.bonus.count },
+  { title: s.penalty.name, icon: 'ph:minus-circle', text: 'Remove the base dice each named penalty takes away.', count: s.penalty.count },
+  { title: s.gear.name, dice: 'gear:?,?', text: 'Add dice equal to the current rating of one gear item the entry allows.', count: s.gear.count },
+  { title: s.stress.name, dice: 'stress:?', text: 'Add one die for each point of Stress you carry.', count: s.stress.count },
+];
+---
+<figure class="drawing wide poolbuild" aria-labelledby="fig-pool-caption">
+  <p class="sum">Attribute + one Talent + Bonus Dice + Gear Dice + Stress Dice</p>
+  <ol>
+    {ROWS.map((row, i) => (
+      <li>
+        <span class="n" aria-hidden="true">{i + 1}</span>
+        <div class="mini" aria-hidden="true">
+          {row.icon ? <Icon name={row.icon} /> : <Fragment set:html={facesHtml(row.dice!)} />}
+        </div>
+        <div class="text">
+          <h4>{row.title}</h4>
+          <p>{row.text}</p>
+        </div>
+        <p class="count"><span class="sr">Limit: </span>{row.count}</p>
+      </li>
+    ))}
+  </ol>
+  <figcaption class="titleblock" id="fig-pool-caption"><span>{fig}</span><span>Building the pool</span></figcaption>
+</figure>
+
+<style>
+  .poolbuild {
+    margin: 0;
+  }
+  .sum {
+    margin: 0 0 14px;
+    font-family: var(--f-type);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 28px;
+  }
+  li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 92px minmax(0, 1fr) minmax(0, 15rem);
+    gap: 4px 16px;
+    align-items: center;
+    padding: 10px 0;
+  }
+  li + li {
+    border-top: 1px dashed var(--rule);
+  }
+  li::before {
+    content: "";
+    position: absolute;
+    left: 21px;
+    top: 0;
+    bottom: 0;
+    border-left: 1.5px solid var(--ink);
+  }
+  li:first-child::before {
+    top: 50%;
+  }
+  li:last-child::before {
+    bottom: 50%;
+  }
+  .n {
+    position: relative;
+    z-index: 1;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--ink);
+    font-family: var(--f-stencil);
+    font-weight: 800;
+    font-size: 1.375rem;
+    line-height: 1;
+  }
+  .mini {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  .mini :global(svg) {
+    width: 26px;
+    height: 26px;
+  }
+  h4 {
+    font-family: var(--f-serif);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    line-height: 1.2;
+  }
+  .text p {
+    margin-top: 2px;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--ink-3);
+  }
+  .count {
+    padding-left: 14px;
+    border-left: 1.5px solid var(--ink);
+    font-family: var(--f-type);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 760px) {
+    li {
+      grid-template-columns: 44px minmax(0, 1fr);
+      align-items: start;
+    }
+    .n {
+      grid-row: 1 / span 3;
+    }
+    li::before {
+      top: 0;
+    }
+    li:first-child::before {
+      top: 22px;
+    }
+    li:last-child::before {
+      bottom: auto;
+      height: 22px;
+    }
+    .mini,
+    .text,
+    .count {
+      grid-column: 2;
+    }
+    .count {
+      padding: 4px 0 0;
+      border-left: 0;
+      color: var(--ink-2);
+    }
+  }
+</style>

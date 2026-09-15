@@ -1,0 +1,72 @@
+---
+/** In-page contents for a chapter: one entry per section, linked to its heading. */
+interface Item {
+  id: string;
+  title: string;
+  note?: string;
+}
+interface Props {
+  items: Item[];
+}
+const { items } = Astro.props;
+---
+<nav class="chapter-contents wide" aria-labelledby="chapter-contents-title">
+  <p class="lbl" id="chapter-contents-title">In this chapter</p>
+  <ol>
+    {items.map((item, i) => (
+      <li>
+        <a href={`#${item.id}`}>
+          <span class="n num" aria-hidden="true">{i + 1}</span>
+          <span class="title">{item.title}</span>
+          {item.note && <span class="note">{item.note}</span>}
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .chapter-contents {
+    padding: 12px 0 14px;
+    border-top: 3px double var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .lbl {
+    margin-bottom: 8px;
+    color: var(--ink-2);
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+    gap: 2px 22px;
+  }
+  a {
+    display: grid;
+    grid-template-columns: 1.4em minmax(0, 1fr);
+    gap: 0 6px;
+    padding: 6px 0;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  a:hover .title {
+    color: var(--corps);
+    text-decoration: underline;
+  }
+  .n {
+    font-weight: 700;
+    color: var(--seal);
+  }
+  .title {
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .note {
+    grid-column: 2;
+    font-size: var(--fs-sm);
+    line-height: 1.35;
+    color: var(--ink-2);
+  }
+</style>

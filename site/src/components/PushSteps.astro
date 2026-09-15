@@ -1,6 +1,12 @@
 ---
 import { facesHtml } from '~/lib/dice';
 
+interface Props {
+  /** The figure number in the page's sequence. */
+  fig?: string;
+}
+const { fig = 'Fig. 1' } = Astro.props;
+
 const decideIcon =
   '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4 14h8l8-8m-8 8 8 8" fill="none" stroke="#29241D" stroke-width="1.8"/><path d="M17 4h5v5M17 24h5v-5" fill="none" stroke="#29241D" stroke-width="1.8"/></svg>';
 
@@ -51,5 +57,5 @@ const STEPS = [
       </li>
     ))}
   </ol>
-  <figcaption class="titleblock" id="fig-push-caption"><span>Fig. 1</span><span>The Push</span></figcaption>
+  <figcaption class="titleblock" id="fig-push-caption"><span>{fig}</span><span>The Push</span></figcaption>
 </figure>

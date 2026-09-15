@@ -152,6 +152,7 @@
 /* ---------- Push step diagram ---------- */
 .drawing {
   position: relative;
+  margin-inline: 0;
   border: 1px solid var(--ink);
   padding: clamp(18px, 2.6vw, 30px);
   background-image:
