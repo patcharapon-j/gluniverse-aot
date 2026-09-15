@@ -36,3 +36,8 @@ Player wording for Talents and Action Catalog entries lives in `site/src/content
 8. **Freedom's note names a draft chapter.** `enlistment.yaml` 247 (`notes`) reads "Chapter 4 defines when a soldier is airborne". The table's wording map renders it as "Gear & ODM defines airborne."
 9. **The Squadmate template table checks Health and Resolve in code.** `site/src/lib/character-tables.ts` recomputes each template's Health and Resolve from its ratings with the `attributes.yaml` 152-168 formulas and fails the build if `squadmates.yaml` disagrees. If those formulas change, the check must change with them.
 10. **Design notes left out.** C 88, 293, 323, 392-394, 438-440, 510-512, 593, 619, 629 (reference Rookie and Veteran builds, simulator targets), 686, 712, 754, 791 are design notes, not rules, and are not on the page.
+
+## Owner decisions
+
+- **First campaign setup (2026-09-16).** The rule that a first campaign runs four player characters and no Squadmates is left off the site. It is a playtest setup, not how the finished game is played.
+- **Rewrites paused (2026-09-16).** Chapter rewrites wait until the current rules revision is committed to main. Finished pages then get a resync pass.
