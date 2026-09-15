@@ -11,6 +11,17 @@ Disagreements and unclear rules found while rewriting pages. The page follows th
 5. **DiceKey retypes a table.** `site/src/components/DiceKey.astro` hardcodes the die-type rows instead of rendering `dice-pool.yaml` `die_types`. The wording agrees with the table today. It also labels Titan Dice "Titan Attack Dice", which `CONTEXT.md` does not use as a term. Not changed in this rewrite.
 6. **Glossary pop-up uses an avoid word.** The existing `Titan` entry in `site/src/lib/glossary.ts` calls a Titan "a mindless giant"; `CONTEXT.md` lists "giant" under Avoid. This page does not attach a pop-up to "Titan" for that reason. Not changed in this rewrite.
 
+## Compendium (`site/src/pages/compendium/`: Talents, Actions, Specialties, Origins & Lifepath)
+
+Player wording for Talents and Action Catalog entries lives in `site/src/content/compendium/talent-text.yaml` and `action-text.yaml`, keyed by row id.
+
+1. **Formation Drill and Recruit in the first campaign.** `data/character/squadmates.yaml` (`playtest_configuration`, `while_it_holds`) says no Squadmate serves in the first campaign, so Formation Drill has no effect there and the Recruit Squad Action is not offered (`data/campaign/downtime.yaml`, `squad_actions`, recruit). The configuration is a campaign setting, not the default rule (`default_rule`), so the Formation Drill card and the Squad Action entry state the default rule and say nothing about the first campaign. Owner to confirm.
+2. **Rally outside a Titan Engagement.** `CONTEXT.md` (Rally) says Rally is not an action outside a Titan Engagement. `data/character/action-catalog.yaml` gives `rally` the kind `action` with context `any` and leaves the rest to Chapter 3. The Actions page follows the table (kind: Action) and sends readers to Wounds & Fear for where and how it is made.
+3. **The horse on Break Attention.** `action-catalog.yaml` lists the horse as a Break Attention gear item with no "while mounted"; only the dodge and Leap Clear carry the mounted note (row comments; `docs/rules/02-character-creation.md` 555-564). `data/engagement/attention.yaml` (`break_attention`, `gear`) defers to `horses.yaml` `gear_dice`. The page adds "only while mounted" to the dodge and Leap Clear, not to Break Attention. Unclear whether a Break Attention made with the horse needs the soldier mounted (Loose the Horse reads as sending the horse away).
+4. **Canon Ties name canon characters.** `data/character/origins.yaml` rows name Hannes, Armin Arlert, and Sasha Braus as Canon Ties. The voice guide bars canon characters from in-world quotes and examples; the Origins page shows Canon Ties as table rows, as the table gives them. Owner to confirm.
+5. **Blade Discipline's limit.** The `limit` is `once_per_titan_engagement`, and the row comment adds "also once per Skirmish". `limit_terms.once_per_titan_engagement` already extends that limit to a Leg, a Night Camp, and a Skirmish, so the card shows "Once per Titan Engagement" and the Talents page key explains the extension for every such Talent. No disagreement; noted so a reviewer does not flag the missing Skirmish.
+6. **What Fly, Treat Injury, and Rally need.** The Catalog gives no `needs` for Fly and "set by Chapter 3" for Treat Injury and Rally. The cards say the calling rule or Wounds & Fear sets it, rather than giving a number.
+
 ## Making Your Soldier (`site/src/content/rules/making-your-soldier.mdx`)
 
 `C` = `docs/rules/02-character-creation.md`; tables are in `data/character/`.

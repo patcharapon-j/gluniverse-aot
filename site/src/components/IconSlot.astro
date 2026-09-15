@@ -1,0 +1,34 @@
+---
+/**
+ * A game icon slot, named by meaning in the icon inventory's families: `attr-agility`,
+ * `specialty-slayer`, `talent-dice`. Put `public/icons/<name>.webp` in place and the slot
+ * shows that icon. Until then it draws its family's empty stamp frame (Talents keep their
+ * drawn placeholder symbols). Always decorative: the text beside it carries the meaning.
+ */
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+interface Props {
+  name: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+const { name, size = 'md' } = Astro.props;
+const family = name.slice(0, name.indexOf('-'));
+const art = existsSync(join(process.cwd(), 'public', 'icons', `${name}.webp`)) ? `/icons/${name}.webp` : null;
+
+/** Frame outlines per family, on a 40 unit square (ADR-0023: a fixed frame per family). */
+const FRAMES: Record<string, string> = {
+  attr: 'M20 2.5 35.2 11.25v17.5L20 37.5 4.8 28.75v-17.5z',
+  specialty: 'M10 4h20l6 6v20l-6 6H10l-6-6V10z',
+};
+const frame = FRAMES[family] ?? 'M20 3a17 17 0 1 1-.01 0z';
+---
+<span class:list={['icon-slot', `icon-slot--${size}`]} data-icon={name} aria-hidden="true">
+  {art ? (
+    <img src={art} alt="" width="64" height="64" loading="lazy" decoding="async" />
+  ) : family === 'talent' ? (
+    <svg viewBox="0 0 40 40"><use href={`#${name}`} /></svg>
+  ) : (
+    <svg viewBox="0 0 40 40"><path class="icon-slot-frame" d={frame} /></svg>
+  )}
+</span>

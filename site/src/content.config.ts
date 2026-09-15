@@ -1,7 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { talentsLoader, titansLoader } from './lib/shared-data';
+import { actionsLoader, specialtiesLoader, talentsLoader, titansLoader } from './lib/shared-data';
 
 /**
  * Rules and GM prose. Each page records the chapters and tables it was written
@@ -35,6 +35,8 @@ const gm = defineCollection({
 });
 
 const named = z.object({ slug: z.string(), name: z.string(), order: z.number() });
+const link = z.object({ slug: z.string(), name: z.string() });
+const conditioned = link.extend({ condition: z.string().nullable() });
 
 const talents = defineCollection({
   loader: talentsLoader(),
@@ -44,12 +46,47 @@ const talents = defineCollection({
     kind: z.enum(['dice', 'rule']),
     maxLevel: z.number().int().min(1),
     specialties: z.array(named).min(1),
-    specialtyLabel: z.string(),
-    actions: z.array(z.object({ name: z.string(), condition: z.string().nullable() })).min(1),
+    /** The Action Catalog entries the Talent names, each with its condition. */
+    actions: z.array(conditioned).min(1),
     attributes: z.array(named),
-    effect: z.string().nullable(),
+    effect: z.string(),
+    trigger: z.string().nullable(),
     limit: z.string().nullable(),
     order: z.number(),
+  }),
+});
+
+const actions = defineCollection({
+  loader: actionsLoader(),
+  schema: z.object({
+    name: z.string(),
+    order: z.number(),
+    kind: named,
+    attribute: named.nullable(),
+    rollLabel: z.string(),
+    gear: z.string(),
+    requires: z.array(z.string()),
+    needs: z.string().nullable(),
+    does: z.array(z.string()).min(1),
+    help: z.string().nullable(),
+    /** Player's Guide chapter slugs, optionally with an anchor ("rules-of-play#help"). */
+    pages: z.array(z.string()).min(1),
+    notInUse: z.boolean(),
+    diceTalents: z.array(conditioned),
+    ruleTalents: z.array(link),
+  }),
+});
+
+const specialties = defineCollection({
+  loader: specialtiesLoader(),
+  schema: z.object({
+    name: z.string(),
+    order: z.number(),
+    general: z.boolean(),
+    keyAttribute: named.nullable(),
+    summary: z.string(),
+    issue: z.string().nullable(),
+    talents: z.array(link.extend({ kind: z.enum(['dice', 'rule']) })).min(1),
   }),
 });
 
@@ -86,4 +123,4 @@ const titans = defineCollection({ loader: titansLoader('squad'), schema: titan }
 /** The Commander's copy: every value, for the GM's Guide only. */
 const titanDossiers = defineCollection({ loader: titansLoader('gm'), schema: titan });
 
-export const collections = { rules, gm, talents, titans, titanDossiers };
+export const collections = { rules, gm, talents, actions, specialties, titans, titanDossiers };

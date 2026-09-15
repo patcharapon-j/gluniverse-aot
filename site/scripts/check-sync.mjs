@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // Resync check (ADR-0020). Every rules and GM page records the chapters and tables it was
-// written from, with each file's git blob sha at the time it was last synced. This compares
+// written from, with each file's git blob sha at the time it was last synced. So does every
+// Compendium wording file (src/content/compendium/*.yaml, under `sources`). This compares
 // those shas with the files as they are now and prints a "needs resync" list.
-// It only warns: it never fails the build.
+// It only warns: it never fails the build. A Compendium row with no wording fails the build
+// separately, in the loaders.
 
 import { readdir, readFile, access } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
@@ -13,8 +15,9 @@ import { parse } from 'yaml';
 const siteDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = resolve(siteDir, '..');
 const contentDir = join(siteDir, 'src', 'content');
+const wordingDir = join(contentDir, 'compendium');
 
-async function* walk(dir) {
+async function* walk(dir, pattern) {
   let entries = [];
   try {
     entries = await readdir(dir, { withFileTypes: true });
@@ -23,8 +26,8 @@ async function* walk(dir) {
   }
   for (const entry of entries) {
     const full = join(dir, entry.name);
-    if (entry.isDirectory()) yield* walk(full);
-    else if (/\.mdx?$/.test(entry.name)) yield full;
+    if (entry.isDirectory()) yield* walk(full, pattern);
+    else if (pattern.test(entry.name)) yield full;
   }
 }
 
@@ -46,14 +49,18 @@ async function main() {
   let pages = 0;
   let sources = 0;
 
-  for await (const file of walk(contentDir)) {
+  const files = [];
+  for await (const file of walk(contentDir, /\.mdx?$/)) files.push({ file, read: (text) => frontmatter(text) });
+  for await (const file of walk(wordingDir, /\.ya?ml$/)) files.push({ file, read: (text) => parse(text) ?? {} });
+
+  for (const { file, read } of files) {
     pages += 1;
     const page = relative(siteDir, file);
     let data;
     try {
-      data = frontmatter(await readFile(file, 'utf8'));
+      data = read(await readFile(file, 'utf8'));
     } catch (error) {
-      stale.push({ page, source: '(frontmatter)', reason: `could not be read: ${error.message}` });
+      stale.push({ page, source: '(sources)', reason: `could not be read: ${error.message}` });
       continue;
     }
     const list = Array.isArray(data.sources) ? data.sources : [];
@@ -78,7 +85,7 @@ async function main() {
   }
 
   if (stale.length === 0) {
-    console.log(`[sync] ${pages} pages, ${sources} sources: all in sync.`);
+    console.log(`[sync] ${pages} pages and wording files, ${sources} sources: all in sync.`);
     return;
   }
 
@@ -87,12 +94,12 @@ async function main() {
     if (!byPage.has(item.page)) byPage.set(item.page, []);
     byPage.get(item.page).push(item);
   }
-  console.warn(`\n[sync] ${byPage.size} of ${pages} pages need resync:\n`);
+  console.warn(`\n[sync] ${byPage.size} of ${pages} pages and wording files need resync:\n`);
   for (const [page, items] of byPage) {
     console.warn(`  ${page}`);
     for (const item of items) console.warn(`    - ${item.source}: ${item.reason}`);
   }
-  console.warn('\n[sync] Update the page, then record the new sha from `git hash-object <source>`.\n');
+  console.warn('\n[sync] Update the page or wording, then record the new sha from `git hash-object <source>`.\n');
 }
 
 main().catch((error) => {

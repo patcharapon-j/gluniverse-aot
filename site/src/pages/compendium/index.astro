@@ -3,9 +3,13 @@ import { getCollection } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import OpenerLayout from '~/layouts/OpenerLayout.astro';
 import { COMPENDIUM_SECTIONS, COMPENDIUM_TABS } from '~/lib/compendium';
+import { lifepathTables } from '~/lib/lifepath-tables';
 
 const counts: Record<string, number> = {
   talents: (await getCollection('talents')).length,
+  actions: (await getCollection('actions')).length,
+  specialties: (await getCollection('specialties')).filter((s) => !s.data.general).length,
+  origins: lifepathTables().origins.length,
   titans: (await getCollection('titans')).length,
 };
 ---

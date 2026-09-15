@@ -1,0 +1,193 @@
+---
+import '~/styles/compendium.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import IconSlot from '~/components/IconSlot.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import { COMPENDIUM_TABS } from '~/lib/compendium';
+import { lifepathTables, type Ref } from '~/lib/lifepath-tables';
+
+const { attributes, origins, enlistment, years, classRank } = lifepathTables();
+
+const groups: FilterGroup[] = [
+  {
+    key: 'attribute',
+    label: 'Attribute',
+    options: attributes
+      .map((a) => ({ value: a.slug, label: a.name, count: origins.filter((o) => o.attributes.some((x) => x.slug === a.slug)).length }))
+      .filter((o) => o.count > 0),
+  },
+];
+
+const merit = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : '0');
+const talentHref = (t: Ref) => `/compendium/talents/#${t.slug}`;
+---
+<BaseLayout
+  title="Origins & Lifepath"
+  description="Origins, Why You Enlisted, the three Training Years, and Class Rank, side by side for choosing your soldier's past."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>Origins &amp; Lifepath</span></div>
+    <header class="lp-head">
+      <p class="lbl eyebrow">Compendium</p>
+      <h1 class="h1" id="page-title">Origins &amp; Lifepath</h1>
+      <p class="lede">Where your soldier grew up, why they enlisted, and what three years in the Training Corps made of them.</p>
+      <FieldQuote cite="A quartermaster at the gate">Nobody out here asks where you were born. They ask whether you can ride.</FieldQuote>
+      <p class="see">How to roll these, in what order, and what a built soldier takes from them: <a href="/guide/making-your-soldier/">Making Your Soldier</a>.</p>
+      <nav aria-label="On this page">
+        <ul class="jump">
+          <li><a href="#origins">Origin</a></li>
+          <li><a href="#why-you-enlisted">Why You Enlisted</a></li>
+          <li><a href="#training-years">Training Years</a></li>
+          <li><a href="#class-rank">Class Rank</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="lp-section" aria-labelledby="origins">
+      <CompendiumIndex
+        id="origin-list"
+        groups={groups}
+        total={origins.length}
+        singular="Origin"
+        plural="Origins"
+        searchLabel="Search Origins"
+        searchPlaceholder="Search by place, Talent, or Haven"
+      >
+        <div slot="head">
+          <SectionHead id="origins" eyebrow="Roll D66">Origin</SectionHead>
+          <p class="lp-intro">Each row names two attributes, two Talents to choose from, and two Havens to choose from.</p>
+        </div>
+        <div class="cards">
+          {origins.map((o) => (
+            <article
+              class="card"
+              aria-labelledby={o.id}
+              data-cmp-item
+              data-search={[o.name, o.description, ...o.talents.map((t) => t.name), ...o.havens, o.canonTie?.character ?? ''].join(' ').toLowerCase()}
+              data-f-attribute={o.attributes.map((a) => a.slug).join(' ')}
+            >
+              <div class="card-top">
+                <span class="d66" aria-label={`D66 ${o.roll}`}>{o.roll}</span>
+                <div class="tags">
+                  <span class="lbl">D66</span>
+                  {o.campaignYearMin && <span class="lbl">Campaign Year {o.campaignYearMin} or later</span>}
+                </div>
+              </div>
+              <h3 id={o.id}>{o.name}</h3>
+              <q>{o.description}</q>
+              <dl class="facts">
+                <div>
+                  <dt class="lbl">Attributes</dt>
+                  <dd class="attrs">{o.attributes.map((a) => <span class="attr"><IconSlot name={`attr-${a.slug}`} size="sm" />+1 {a.name}</span>)}</dd>
+                </div>
+                <div>
+                  <dt class="lbl">Talent, choose one</dt>
+                  <dd>{o.talents.map((t, i) => <Fragment>{i > 0 && ' or '}<a href={talentHref(t)}>{t.name}</a></Fragment>)}</dd>
+                </div>
+                <div>
+                  <dt class="lbl">Haven, choose one</dt>
+                  <dd><ul>{o.havens.map((h) => <li>{h}</li>)}</ul></dd>
+                </div>
+                {o.canonTie && (
+                  <div>
+                    <dt class="lbl">Canon Tie, optional</dt>
+                    <dd><b>{o.canonTie.character}.</b> {o.canonTie.link}</dd>
+                  </div>
+                )}
+              </dl>
+            </article>
+          ))}
+        </div>
+      </CompendiumIndex>
+    </section>
+
+    <section class="lp-section" aria-labelledby="why-you-enlisted">
+      <SectionHead id="why-you-enlisted" eyebrow="Roll D66">Why You Enlisted</SectionHead>
+      <p class="lp-intro">Each row names one attribute and a Drive. A Drive lets you shrug off one Fear Roll result per session while its trigger is met.</p>
+      <ol class="ledger">
+        <li class="ledger-head" aria-hidden="true"><span>D66</span><span>Reason and Drive</span><span>Attribute</span></li>
+        {enlistment.map((r) => (
+          <li>
+            <span class="d66"><span class="cell-lbl">D66 </span>{r.roll}</span>
+            <div>
+              <p class="reason">{r.reason}</p>
+              <h3 id={r.id}>{r.drive.name}</h3>
+              <p class="trigger">{r.drive.trigger}</p>
+              {r.drive.namedComrade && <p class="lbl named">Names one comrade</p>}
+            </div>
+            <span class="attr"><span class="cell-lbl">Attribute </span><IconSlot name={`attr-${r.attribute.slug}`} size="sm" />+1 {r.attribute.name}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="lp-section" aria-labelledby="training-years">
+      <SectionHead id="training-years" eyebrow="Three years, roll D66 for each">Training Years</SectionHead>
+      <p class="lp-intro">Each event names one attribute, two Talents to choose from, and a change to Merit, which can be negative. If neither Talent can gain a level, take a level in a Talent on that year's curriculum. Each year also has a performance roll that earns Merit; the Graduation Exam, if played, replaces the third.</p>
+      {years.map((y) => (
+        <div class="year">
+          <div class="year-head">
+            <h3 id={y.id}>{y.title}<span class="year-sub">{y.subtitle}</span></h3>
+            <dl class="year-facts">
+              <div>
+                <dt class="lbl">Performance roll</dt>
+                <dd>{y.performance.map((a) => a.name).join(' or ')}, whichever is higher</dd>
+              </div>
+              <div>
+                <dt class="lbl">Curriculum</dt>
+                <dd>{y.curriculum.map((t, i) => <Fragment>{i > 0 && ', '}<a href={talentHref(t)}>{t.name}</a></Fragment>)}</dd>
+              </div>
+            </dl>
+          </div>
+          <ol class="ledger ledger--events">
+            <li class="ledger-head" aria-hidden="true"><span>D66</span><span>Event</span><span>Attribute</span><span>Talent, choose one</span><span>Merit</span></li>
+            {y.events.map((e) => (
+              <li>
+                <span class="d66"><span class="cell-lbl">D66 </span>{e.roll}</span>
+                <div>
+                  <h4 id={e.id}>{e.name}</h4>
+                  <p class="reason">{e.description}</p>
+                </div>
+                <span class="attr"><span class="cell-lbl">Attribute </span><IconSlot name={`attr-${e.attribute.slug}`} size="sm" />+1 {e.attribute.name}</span>
+                <span><span class="cell-lbl">Talent </span>{e.talents.map((t, i) => <Fragment>{i > 0 && ' or '}<a href={talentHref(t)}>{t.name}</a></Fragment>)}</span>
+                <span class="merit"><span class="cell-lbl">Merit </span>{merit(e.merit)}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </section>
+
+    <section class="lp-section" aria-labelledby="class-rank">
+      <SectionHead id="class-rank" eyebrow="At Graduation">Class Rank</SectionHead>
+      <p class="lp-intro">Your Merit total from all three Training Years sets your Class Rank in a class of {classRank.classSize} graduates. Several graduates can share a rank.</p>
+      <div class="rank-wrap">
+        <table class="rank-table">
+          <caption class="sr">Class Rank by Merit total</caption>
+          <thead>
+            <tr><th scope="col">Merit total</th><th scope="col">Class Rank</th><th scope="col">Top 10</th></tr>
+          </thead>
+          <tbody>
+            {classRank.rows.map((row) => (
+              <tr class:list={[row.top10 && 'top']}>
+                <td>{row.merit}</td>
+                <td>{row.rank}</td>
+                <td>{row.top10 ? <span class="tchip t-top">Top 10</span> : <span class="sr">No</span>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div class="rank-note">
+          <p class="lbl">Top 10</p>
+          <p>You are offered a place in the Military Police and decline it to join the Survey Corps. At Graduation, add {classRank.keyAttributeBonus} to your key attribute, up to 6.</p>
+          <p>Only a Top 10 Class Rank has an effect. A soldier built without the Lifepath has no Merit and no Class Rank.</p>
+        </div>
+      </div>
+    </section>
+  </section>
+</BaseLayout>

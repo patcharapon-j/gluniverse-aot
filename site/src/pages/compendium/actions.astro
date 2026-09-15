@@ -1,0 +1,74 @@
+---
+import '~/styles/compendium.css';
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import ActionCard from '~/components/ActionCard.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import { COMPENDIUM_TABS, tally } from '~/lib/compendium';
+
+const actions = (await getCollection('actions')).sort((a, b) => a.data.name.localeCompare(b.data.name, 'en'));
+const chapters = new Map((await getCollection('rules')).map((entry) => [entry.id, entry.data.title]));
+
+const groups: FilterGroup[] = [
+  { key: 'kind', label: 'Kind', options: tally(actions.map((a) => [a.data.kind])) },
+  { key: 'attribute', label: 'Attribute', options: tally(actions.map((a) => (a.data.attribute ? [a.data.attribute] : []))) },
+];
+---
+<BaseLayout
+  title="Actions"
+  description="Every entry in the Action Catalog: its kind, attribute, gear, requirements, what it does, and the Talents that add to it."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>Actions</span></div>
+    <CompendiumIndex
+      id="actions"
+      groups={groups}
+      total={actions.length}
+      singular="entry"
+      plural="entries"
+      searchLabel="Search Actions"
+      searchPlaceholder="Search by name, effect, or Talent"
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Compendium</p>
+        <h1 class="h1" id="page-title">Actions</h1>
+        <p class="lede">The Action Catalog: everything a soldier can do that the rules name, and the attribute each roll uses.</p>
+        <FieldQuote cite="Survey Corps manual">Know what you can do before the moment asks it of you.</FieldQuote>
+      </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">Action</dt>
+          <dd>Taken as your action in a Titan Engagement or a Skirmish.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Reaction</dt>
+          <dd>Made when a Titan or a Foe acts against you, outside your own turn. It spends a turn, and it is not an action.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Roll</dt>
+          <dd>An attribute roll made when a rule calls for it. Not an action, and it spends no turn of its own.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Option</dt>
+          <dd>A use of another entry, a turn, or a step. Not an action and not a roll, and it spends nothing unless it says so.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Fixed roll</dt>
+          <dd>A roll that is not an attribute roll. It never gains Talent dice; only Rule Talents change it.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Gear</dt>
+          <dd>The items that can give the roll Gear Dice. An item worn down to 0 counts as not had.</dd>
+        </div>
+      </dl>
+      <p class="see">Every soldier can attempt every entry, whatever their Specialty. How rolls, Help, and Reactions work: <a href="/guide/rules-of-play/">The Rules of Play</a>.</p>
+      <div class="cards cards--wide">
+        {actions.map((action) => <ActionCard action={action} chapters={chapters} />)}
+      </div>
+    </CompendiumIndex>
+  </section>
+</BaseLayout>

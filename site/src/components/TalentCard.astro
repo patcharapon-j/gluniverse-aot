@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import IconSlot from './IconSlot.astro';
 
 interface Props {
   talent: CollectionEntry<'talents'>;
@@ -8,15 +9,14 @@ const { talent } = Astro.props;
 const t = talent.data;
 const levels = t.maxLevel > 1 ? `Levels 1 to ${t.maxLevel}` : 'One level';
 const kindLabel = t.kind === 'dice' ? 'Dice Talent' : 'Rule Talent';
-const actionNames = t.actions.map((a) => a.name).join(', ');
-const search = [t.name, t.description, ...t.actions.map((a) => a.name), ...t.specialties.map((s) => s.name), ...t.attributes.map((a) => a.name)]
+const search = [t.name, t.description, t.effect, t.trigger ?? '', ...t.actions.map((a) => a.name), ...t.specialties.map((s) => s.name), ...t.attributes.map((a) => a.name)]
   .join(' ')
   .toLowerCase();
+const joiner = (i: number, n: number) => (i === 0 ? '' : i === n - 1 ? ' and ' : ', ');
 ---
 <article
   class="card"
-  id={talent.id}
-  aria-labelledby={`${talent.id}-name`}
+  aria-labelledby={talent.id}
   data-cmp-item
   data-search={search}
   data-f-type={t.kind}
@@ -24,18 +24,25 @@ const search = [t.name, t.description, ...t.actions.map((a) => a.name), ...t.spe
   data-f-attribute={t.attributes.map((a) => a.slug).join(' ')}
 >
   <div class="card-top">
-    <svg class="ico" aria-hidden="true"><use href={t.kind === 'dice' ? '#talent-dice' : '#talent-rule'} /></svg>
+    <IconSlot name={`talent-${t.kind}`} />
     <div class="tags">
-      <span class="lbl">{t.specialtyLabel}</span>
+      <span class="lbl">{t.specialties.map((s, i) => <Fragment>{joiner(i, t.specialties.length)}<a href={`/compendium/specialties/#${s.slug}`}>{s.name}</a></Fragment>)} Talent</span>
       <span class="lbl">{kindLabel}</span>
       <span class="lbl">{levels}</span>
     </div>
   </div>
-  <h3 id={`${talent.id}-name`}>{t.name}</h3>
+  <h3 id={talent.id}>{t.name}</h3>
   <q>{t.description}</q>
-  {t.effect && <p class="effect">{t.effect}</p>}
+  {t.trigger ? (
+    <dl class="rule-text">
+      <div><dt class="lbl">Trigger</dt><dd>{t.trigger}</dd></div>
+      <div><dt class="lbl">Effect</dt><dd>{t.effect}</dd></div>
+    </dl>
+  ) : (
+    <p class="effect">{t.effect}</p>
+  )}
   <div class="card-foot">
-    <p class="lbl">{t.kind === 'dice' ? 'Adds to' : 'Applies to'}: {actionNames}</p>
-    {t.limit && <p class="lbl limit">{t.limit}</p>}
+    <p class="lbl">{t.kind === 'dice' ? 'Adds to' : 'Applies to'}: {t.actions.map((a, i) => <Fragment>{i > 0 && ', '}<a href={`/compendium/actions/#${a.slug}`}>{a.name}</a></Fragment>)}</p>
+    {t.kind === 'rule' && <p class="lbl limit">{t.limit ?? 'No limit'}</p>}
   </div>
 </article>

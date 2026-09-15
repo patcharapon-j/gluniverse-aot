@@ -3,22 +3,11 @@ import '~/styles/compendium.css';
 import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
 import TalentCard from '~/components/TalentCard.astro';
-import { COMPENDIUM_TABS } from '~/lib/compendium';
+import { COMPENDIUM_TABS, tally } from '~/lib/compendium';
 
 const talents = (await getCollection('talents')).sort((a, b) => a.data.name.localeCompare(b.data.name, 'en'));
-
-function tally(lists: { slug: string; name: string; order: number }[][]) {
-  const found = new Map<string, { value: string; label: string; count: number; order: number }>();
-  for (const list of lists) {
-    for (const item of list) {
-      const row = found.get(item.slug) ?? { value: item.slug, label: item.name, count: 0, order: item.order };
-      row.count += 1;
-      found.set(item.slug, row);
-    }
-  }
-  return [...found.values()].sort((a, b) => a.order - b.order).map(({ value, label, count }) => ({ value, label, count }));
-}
 
 const groups: FilterGroup[] = [
   {
@@ -35,7 +24,7 @@ const groups: FilterGroup[] = [
 ---
 <BaseLayout
   title="Talents"
-  description="Every Talent in Wings of Freedom, filterable by Specialty, type, and attribute."
+  description="Every Talent in Wings of Freedom: what it does, the Actions it applies to, and its Specialty list."
   section="compendium"
   tabs={COMPENDIUM_TABS}
   tabsLabel="Compendium sections"
@@ -49,13 +38,33 @@ const groups: FilterGroup[] = [
       singular="Talent"
       plural="Talents"
       searchLabel="Search Talents"
-      searchPlaceholder="Search by name or Action"
+      searchPlaceholder="Search by name, Action, or effect"
     >
       <div slot="head">
         <p class="lbl eyebrow">Compendium</p>
         <h1 class="h1" id="page-title">Talents</h1>
-        <p class="lede">Practiced skills that add dice to the rolls they name, or change a rule when it matters.</p>
+        <p class="lede">Trained abilities that add dice to the rolls they name, or change a rule when it matters.</p>
+        <FieldQuote cite="A Training Corps instructor">Drill it until your hands know it. The Titan will not wait for your head.</FieldQuote>
       </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">Dice Talent</dt>
+          <dd>Adds base dice equal to its level to a roll for an Action it names, if the roll meets its condition. A roll uses at most one Dice Talent.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Rule Talent</dt>
+          <dd>Changes a rule each time its trigger happens. Rule Talents stack with each other and with the roll's Dice Talent. A trigger that begins "You declare" is met as you declare, before requirements, pool, and cost are checked.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Levels</dt>
+          <dd>From 0 to 3. No Talent is above level 2 when you make your soldier. Holding a one-level Talent means having it.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Once per</dt>
+          <dd>Once in each Titan Engagement, and also once in each Leg, Night Camp, and Skirmish. A Titan Engagement or Skirmish that begins inside a Leg or Night Camp has its own use. The other limits allow one use in each Leg, Night Camp, Skirmish, or Downtime, and none outside it.</dd>
+        </div>
+      </dl>
+      <p class="see">Gaining Talents and choosing your first ones: <a href="/guide/making-your-soldier/">Making Your Soldier</a>.</p>
       <div class="cards">
         {talents.map((talent) => <TalentCard talent={talent} />)}
       </div>
