@@ -1,0 +1,14 @@
+---
+/** A small ink-wash scene inside a rules page. Placeholder wash until the art pass names it. */
+interface Props {
+  caption: string;
+  label: string;
+  art: string;
+  width?: string;
+}
+const { caption, label, art, width = '240px' } = Astro.props;
+---
+<figure class="vignette" data-art-slot={art}>
+  <div class="vignette-art" role="img" aria-label={label} style={`width:${width};aspect-ratio:4 / 3`}></div>
+  <figcaption>{caption}</figcaption>
+</figure>

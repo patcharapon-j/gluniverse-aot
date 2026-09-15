@@ -1,0 +1,15 @@
+---
+/** A rubber stamp. Signposts only: use sparingly (ADR-0023). Decorative unless `announce` is set. */
+interface Props {
+  double?: boolean;
+  tone?: 'seal' | 'green' | 'ink';
+  rotate?: number;
+  class?: string;
+  announce?: boolean;
+}
+const { double = false, tone = 'seal', rotate, class: className, announce = false } = Astro.props;
+---
+<span
+  class:list={['stamp', double && 'stamp--dbl', tone !== 'seal' && `stamp--${tone}`, className]}
+  style={rotate !== undefined ? `transform:rotate(${rotate}deg)` : undefined}
+  aria-hidden={announce ? undefined : 'true'}><slot /></span>

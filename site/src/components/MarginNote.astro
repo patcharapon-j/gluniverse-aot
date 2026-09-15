@@ -1,0 +1,14 @@
+---
+/**
+ * A pencilled margin note. Place it just before the paragraph it annotates.
+ * It floats into the left margin on wide screens and sits inline on narrow ones.
+ */
+interface Props {
+  stamp?: string;
+}
+const { stamp } = Astro.props;
+---
+<div class="marg" role="note">
+  {stamp && <span class="stamp" aria-hidden="true">{stamp}</span>}
+  <div class="marg-text"><slot /></div>
+</div>

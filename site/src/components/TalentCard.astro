@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  talent: CollectionEntry<'talents'>;
+}
+const { talent } = Astro.props;
+const t = talent.data;
+const levels = t.maxLevel > 1 ? `Levels 1 to ${t.maxLevel}` : 'One level';
+const kindLabel = t.kind === 'dice' ? 'Dice Talent' : 'Rule Talent';
+const actionNames = t.actions.map((a) => a.name).join(', ');
+const search = [t.name, t.description, ...t.actions.map((a) => a.name), ...t.specialties.map((s) => s.name), ...t.attributes.map((a) => a.name)]
+  .join(' ')
+  .toLowerCase();
+---
+<article
+  class="card"
+  id={talent.id}
+  aria-labelledby={`${talent.id}-name`}
+  data-cmp-item
+  data-search={search}
+  data-f-type={t.kind}
+  data-f-specialty={t.specialties.map((s) => s.slug).join(' ')}
+  data-f-attribute={t.attributes.map((a) => a.slug).join(' ')}
+>
+  <div class="card-top">
+    <svg class="ico" aria-hidden="true"><use href={t.kind === 'dice' ? '#talent-dice' : '#talent-rule'} /></svg>
+    <div class="tags">
+      <span class="lbl">{t.specialtyLabel}</span>
+      <span class="lbl">{kindLabel}</span>
+      <span class="lbl">{levels}</span>
+    </div>
+  </div>
+  <h3 id={`${talent.id}-name`}>{t.name}</h3>
+  <q>{t.description}</q>
+  {t.effect && <p class="effect">{t.effect}</p>}
+  <div class="card-foot">
+    <p class="lbl">{t.kind === 'dice' ? 'Adds to' : 'Applies to'}: {actionNames}</p>
+    {t.limit && <p class="lbl limit">{t.limit}</p>}
+  </div>
+</article>

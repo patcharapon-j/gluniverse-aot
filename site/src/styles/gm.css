@@ -1,0 +1,216 @@
+/* The Commander's copy (ADR-0023): restricted band, manila tabs, carbon type, redactions. */
+.is-gm .tabs a {
+  background: var(--manila);
+  color: var(--ink);
+}
+.is-gm .tabs a[aria-current="page"] {
+  background: var(--seal);
+  color: var(--paper);
+}
+.is-gm .mainnav a[aria-current="true"],
+.is-gm .mainnav a[aria-current="page"] {
+  border-bottom-color: var(--manila);
+}
+.restricted {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 18px;
+  margin: calc(-1 * clamp(22px, 4.2vw, 60px)) calc(-1 * clamp(22px, 4.2vw, 60px)) clamp(22px, 3.5vw, 36px);
+  padding: 9px clamp(22px, 4.2vw, 60px);
+  background: var(--seal);
+  color: var(--paper);
+  font-family: var(--f-type);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.08) 0 8px, transparent 8px 16px);
+}
+.restricted small {
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.16em;
+  font-weight: 400;
+  opacity: 0.9;
+}
+.sheet--carbon {
+  background-color: #e8e1cb;
+}
+.carbon {
+  color: var(--carbon);
+  font-family: var(--f-type);
+}
+.is-gm .rules-body > p,
+.is-gm .rules-body > ul,
+.is-gm .rules-body > ol,
+.is-gm .rules-head .lede {
+  font-family: var(--f-type);
+  color: var(--carbon);
+  font-size: 1rem;
+  line-height: 1.7;
+  text-shadow: 0 0 0.6px rgba(43, 63, 115, 0.55);
+}
+.is-gm .rules-head .lede {
+  font-size: 1.125rem;
+}
+.is-gm .runhead {
+  color: var(--carbon);
+}
+.is-gm .marg {
+  color: var(--carbon);
+  font-family: var(--f-type);
+  font-style: normal;
+}
+
+/* Redaction bars lift on hover and keyboard focus. */
+.redact {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+  border-radius: 1px;
+}
+.redact::after {
+  content: "";
+  position: absolute;
+  inset: -2px -5px;
+  background: var(--redaction);
+  background-image: var(--grain);
+  transform: rotate(-0.6deg);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.redact:hover::after,
+.redact:focus-visible::after {
+  opacity: 0;
+  transform: rotate(-0.6deg) translateY(-4px);
+}
+.redact:focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: 5px;
+}
+.redact-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--carbon);
+}
+.redact-hint svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* One-time notice */
+.gm-notice {
+  width: min(560px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+  background: var(--manila-hi);
+  background-image: var(--fibre), var(--grain);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+}
+.gm-notice::backdrop {
+  background: rgba(10, 16, 12, 0.78);
+}
+.gm-notice .restricted {
+  margin: 0;
+  padding: 9px 22px;
+}
+.gm-notice-body {
+  padding: 22px 26px 26px;
+  display: grid;
+  gap: 14px;
+}
+.gm-notice h2 {
+  font-family: var(--f-stencil);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.gm-notice p {
+  font-family: var(--f-type);
+  color: var(--carbon);
+  line-height: 1.6;
+}
+.gm-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  margin-top: 6px;
+}
+.gm-notice-actions a {
+  font-family: var(--f-type);
+  font-size: var(--fs-sm);
+}
+
+/* Manila folder tabs on the GM contents list */
+.folders {
+  display: grid;
+  gap: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.folder a {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 18px 22px 20px;
+  background: var(--manila);
+  background-image: var(--grain);
+  text-decoration: none;
+  border: 1px solid var(--manila-dk);
+  margin-top: 22px;
+  transition: transform 0.15s;
+}
+.folder a::before {
+  content: attr(data-tab);
+  position: absolute;
+  left: 18px;
+  top: -24px;
+  height: 24px;
+  padding: 4px 16px 0;
+  font-family: var(--f-type);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--manila);
+  border: 1px solid var(--manila-dk);
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+}
+.folder a:hover {
+  transform: translateY(-2px);
+}
+.folder b {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: 1.25rem;
+}
+.folder span {
+  font-family: var(--f-type);
+  color: var(--carbon);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  max-width: 64ch;
+}
+.dossier-extra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  padding: 10px 22px;
+  border-top: 1.5px dashed var(--rule);
+  font-family: var(--f-type);
+  color: var(--carbon);
+}
+@media (prefers-reduced-motion: reduce) {
+  .redact::after {
+    transition: none;
+  }
+}

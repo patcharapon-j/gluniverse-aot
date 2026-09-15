@@ -1,0 +1,36 @@
+---
+/** Opener pages: full grain, a mounted colour plate with the seal, and one stamp. */
+import '~/styles/opener.css';
+import BaseLayout from './BaseLayout.astro';
+import Plate from '~/components/Plate.astro';
+import type { IndexTab, SectionKey } from '~/lib/nav';
+
+interface Props {
+  title: string;
+  description: string;
+  section: SectionKey;
+  tabs?: IndexTab[];
+  tabsLabel?: string;
+  runhead: [string, string];
+  eyebrow: string;
+  lede: string;
+  plate: { number: string; caption: string; label: string; art: string };
+  stamp?: string;
+}
+const { title, description, section, tabs, tabsLabel, runhead, eyebrow, lede, plate, stamp } = Astro.props;
+---
+<BaseLayout title={title} description={description} section={section} tabs={tabs} tabsLabel={tabsLabel}>
+  <section class="sheet opener-sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>{runhead[0]}</span><span>{runhead[1]}</span></div>
+    <div class="opener-grid">
+      <div>
+        <p class="lbl eyebrow">{eyebrow}</p>
+        <h1 class="h1" id="page-title">{title}</h1>
+        <p class="lede">{lede}</p>
+        {stamp && <span class="stamp stamp--dbl opener-stamp" aria-hidden="true">{stamp}</span>}
+      </div>
+      <Plate number={plate.number} caption={plate.caption} label={plate.label} art={plate.art} seal />
+    </div>
+    <div class="opener-body"><slot /></div>
+  </section>
+</BaseLayout>

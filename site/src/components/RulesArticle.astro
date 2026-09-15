@@ -1,0 +1,36 @@
+---
+import type { ChapterLink } from '~/lib/chapters';
+import EarlyRulesBadge from './EarlyRulesBadge.astro';
+import ChapterNav from './ChapterNav.astro';
+import InkVignette from './InkVignette.astro';
+
+interface Props {
+  title: string;
+  summary: string;
+  earlyRules: boolean;
+  numeral: string;
+  part: string;
+  /** True while the chapter has only its summary. */
+  shell: boolean;
+  art: string;
+  prev?: ChapterLink;
+  next?: ChapterLink;
+  restricted?: boolean;
+}
+const { title, summary, earlyRules, numeral, part, shell, art, prev, next, restricted = false } = Astro.props;
+---
+<article class:list={['sheet sheet--light rules', restricted && 'sheet--carbon']} aria-labelledby="page-title">
+  {restricted && <div class="restricted"><span>Restricted: Commanding Officers</span><small>GM's Guide</small></div>}
+  <div class="runhead lbl"><span>{part} · Chapter {numeral}</span><span>{title}</span></div>
+  <header class="rules-head">
+    <p class="lbl eyebrow">Chapter {numeral}</p>
+    <h1 class="h1" id="page-title">{title}</h1>
+    {earlyRules && <EarlyRulesBadge />}
+    <p class="lede">{summary}</p>
+  </header>
+  <div class="rules-body">
+    <slot />
+    {shell && <InkVignette caption={title} label={`An ink wash scene for ${title}`} art={art} />}
+  </div>
+  <ChapterNav prev={prev} next={next} />
+</article>

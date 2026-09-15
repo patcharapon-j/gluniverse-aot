@@ -1,0 +1,62 @@
+---
+import '@fontsource/big-shoulders-stencil/500.css';
+import '@fontsource/big-shoulders-stencil/700.css';
+import '@fontsource/big-shoulders-stencil/800.css';
+import '@fontsource/big-shoulders-stencil/900.css';
+import '@fontsource/spectral/400.css';
+import '@fontsource/spectral/400-italic.css';
+import '@fontsource/spectral/500.css';
+import '@fontsource/spectral/500-italic.css';
+import '@fontsource/spectral/600.css';
+import '@fontsource/spectral/700.css';
+import '@fontsource/courier-prime/400.css';
+import '@fontsource/courier-prime/700.css';
+import '~/styles/tokens.css';
+import '~/styles/base.css';
+
+import SvgDefs from '~/components/SvgDefs.astro';
+import SiteHeader from '~/components/SiteHeader.astro';
+import IndexTabs from '~/components/IndexTabs.astro';
+import SiteFooter from '~/components/SiteFooter.astro';
+import SearchDialog from '~/components/SearchDialog.astro';
+import type { IndexTab, SectionKey } from '~/lib/nav';
+
+interface Props {
+  title: string;
+  description: string;
+  section: SectionKey;
+  tabs?: IndexTab[];
+  tabsLabel?: string;
+  /** Pages without this are left out of search. The GM's Guide is never indexed. */
+  indexed?: boolean;
+  bodyClass?: string;
+}
+const { title, description, section, tabs = [], tabsLabel = 'Sections', indexed = true, bodyClass } = Astro.props;
+const fullTitle = section === 'home' ? title : `${title} · Wings of Freedom`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#16211B" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{fullTitle}</title>
+  </head>
+  <body class={bodyClass}>
+    <a class="skip" href="#main">Skip to content</a>
+    <SvgDefs />
+    <SiteHeader current={section} />
+    <div class:list={['manual', tabs.length > 0 && 'manual--tabs']}>
+      {tabs.length > 0 && <IndexTabs tabs={tabs} label={tabsLabel} />}
+      <main class="sheets" id="main" data-pagefind-body={indexed ? '' : undefined}>
+        <slot />
+      </main>
+    </div>
+    <SiteFooter />
+    <SearchDialog />
+  </body>
+</html>

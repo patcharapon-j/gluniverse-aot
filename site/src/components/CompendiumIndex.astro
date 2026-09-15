@@ -1,0 +1,124 @@
+---
+/**
+ * A filterable compendium list. Items in the default slot carry
+ * `data-cmp-item`, `data-search` (lowercase text), and one
+ * `data-f-<group>` attribute per filter group with space-separated values.
+ * Chips in a group are OR'd; groups are AND'd. Without scripts every item shows.
+ */
+import { Icon } from 'astro-icon/components';
+
+export interface FilterOption {
+  value: string;
+  label: string;
+  count: number;
+}
+export interface FilterGroup {
+  key: string;
+  label: string;
+  options: FilterOption[];
+}
+interface Props {
+  id: string;
+  groups: FilterGroup[];
+  total: number;
+  singular: string;
+  plural: string;
+  searchLabel: string;
+  searchPlaceholder: string;
+}
+const { id, groups, total, singular, plural, searchLabel, searchPlaceholder } = Astro.props;
+---
+<div class="cmp" data-cmp={id} data-singular={singular} data-plural={plural}>
+  <div class="cmp-head">
+    <div><slot name="head" /></div>
+    <label class="search" data-cmp-tool hidden>
+      <Icon name="ph:magnifying-glass" aria-hidden="true" />
+      <span class="sr">{searchLabel}</span>
+      <input type="search" data-cmp-search placeholder={searchPlaceholder} autocomplete="off" />
+    </label>
+  </div>
+
+  <div class="filters" data-cmp-tool hidden>
+    {groups.map((group) => (
+      <Fragment>
+        <span class="lbl" id={`${id}-${group.key}-label`}>{group.label}</span>
+        <div class="chips" role="group" aria-labelledby={`${id}-${group.key}-label`} data-group={group.key}>
+          {group.options.map((option) => (
+            <button class="chip" type="button" aria-pressed="false" data-value={option.value}>
+              {option.label}<span class="n" aria-label={`, ${option.count}`}>{option.count}</span>
+            </button>
+          ))}
+        </div>
+      </Fragment>
+    ))}
+  </div>
+
+  <div class="count lbl">
+    <span data-cmp-count aria-live="polite">{total} {total === 1 ? singular : plural}</span>
+    <button type="button" class="clear lbl" data-cmp-clear hidden>Clear filters</button>
+  </div>
+
+  <slot />
+
+  <p class="empty" data-cmp-empty hidden>No {plural} match. Clear a filter or change your search to see more.</p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cmp]').forEach((root) => {
+    const items = [...root.querySelectorAll<HTMLElement>('[data-cmp-item]')];
+    const search = root.querySelector<HTMLInputElement>('[data-cmp-search]');
+    const count = root.querySelector<HTMLElement>('[data-cmp-count]');
+    const empty = root.querySelector<HTMLElement>('[data-cmp-empty]');
+    const clear = root.querySelector<HTMLButtonElement>('[data-cmp-clear]');
+    const groups = [...root.querySelectorAll<HTMLElement>('.chips[data-group]')];
+    const singular = root.dataset.singular ?? '';
+    const plural = root.dataset.plural ?? '';
+
+    root.querySelectorAll<HTMLElement>('[data-cmp-tool]').forEach((el) => (el.hidden = false));
+
+    function apply() {
+      const active = groups
+        .map((group) => ({
+          key: group.dataset.group ?? '',
+          chips: [...group.querySelectorAll<HTMLElement>('.chip[aria-pressed="true"]')],
+        }))
+        .filter((g) => g.chips.length > 0);
+      const query = (search?.value ?? '').trim().toLowerCase();
+      let shown = 0;
+      for (const item of items) {
+        let visible = !query || (item.dataset.search ?? '').includes(query);
+        for (const group of active) {
+          if (!visible) break;
+          const values = (item.getAttribute(`data-f-${group.key}`) ?? '').split(' ');
+          visible = group.chips.some((chip) => values.includes(chip.dataset.value ?? ''));
+        }
+        item.hidden = !visible;
+        if (visible) shown += 1;
+      }
+      const filtered = active.length > 0 || query.length > 0;
+      if (count) {
+        const noun = shown === 1 ? singular : plural;
+        const labels = active.flatMap((g) => g.chips.map((c) => c.firstChild?.textContent?.trim() ?? ''));
+        count.textContent = filtered && shown !== items.length ? `${shown} of ${items.length} ${plural}${labels.length ? `: ${labels.join(', ')}` : ''}` : `${shown} ${noun}`;
+      }
+      if (empty) empty.hidden = shown > 0;
+      if (clear) clear.hidden = !filtered;
+    }
+
+    groups.forEach((group) =>
+      group.addEventListener('click', (event) => {
+        const chip = (event.target as HTMLElement).closest<HTMLElement>('.chip');
+        if (!chip) return;
+        chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+        apply();
+      }),
+    );
+    search?.addEventListener('input', apply);
+    clear?.addEventListener('click', () => {
+      groups.forEach((g) => g.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', 'false')));
+      if (search) search.value = '';
+      apply();
+      search?.focus();
+    });
+  });
+</script>

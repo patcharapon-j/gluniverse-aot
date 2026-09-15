@@ -1,0 +1,18 @@
+---
+/** Player links only: the masthead is the single way into the GM's Guide. */
+const links = [
+  { href: '/learn/', label: 'Learn to Play' },
+  { href: '/guide/', label: "Player's Guide" },
+  { href: '/compendium/', label: 'Compendium' },
+  { href: '/reference/', label: 'Reference' },
+];
+---
+<footer class="colophon lbl">
+  <span>Wings of Freedom · Survey Corps Field Manual</span>
+  <nav aria-label="Footer">
+    <ul>
+      {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+    </ul>
+  </nav>
+  <span>A tabletop roleplaying game of the Survey Corps</span>
+</footer>

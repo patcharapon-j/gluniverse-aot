@@ -1,0 +1,14 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  title: string;
+  variant?: 'stop' | 'gas' | 'plain';
+  icon?: string;
+}
+const { title, variant = 'plain', icon } = Astro.props;
+---
+<div class:list={['box', variant !== 'plain' && `box--${variant}`]}>
+  <h4>{icon && <Icon name={icon} aria-hidden="true" />}{title}</h4>
+  <slot />
+</div>

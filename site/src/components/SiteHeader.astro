@@ -1,0 +1,29 @@
+---
+import { Icon } from 'astro-icon/components';
+import { MAIN_NAV, withSlash, type SectionKey } from '~/lib/nav';
+
+interface Props {
+  current: SectionKey;
+}
+const { current } = Astro.props;
+const path = withSlash(Astro.url.pathname);
+const state = (href: string, key: SectionKey) => (withSlash(href) === path ? 'page' : key === current ? 'true' : undefined);
+---
+<header class="masthead">
+  <a class="brand" href="/" aria-label="Wings of Freedom, home">
+    <svg aria-hidden="true"><use href="#brandmark" /></svg>
+    <span><b>Wings of Freedom</b><small>The Survey Corps roleplaying game</small></span>
+  </a>
+  <nav class="mainnav" aria-label="Main">
+    <ul>
+      {MAIN_NAV.map((item) => (
+        <li><a href={item.href} aria-current={state(item.href, item.key)}>{item.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+  <button class="navsearch" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search">
+    <Icon name="ph:magnifying-glass" aria-hidden="true" />
+    <span>Search</span>
+    <kbd aria-hidden="true">/</kbd>
+  </button>
+</header>

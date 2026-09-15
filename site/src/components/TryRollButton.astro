@@ -1,0 +1,46 @@
+---
+/**
+ * "Try this roll". Emits a `wof:try-roll` CustomEvent that bubbles to the
+ * document, with `detail: { pool: { base, gear, stress, titan }, pushable, label }`.
+ * The Dice Tray listens for it; until then the button confirms the pool.
+ */
+import { Icon } from 'astro-icon/components';
+import { describePool, type TryRollPool } from '~/lib/dice';
+
+interface Props {
+  pool: TryRollPool;
+  label?: string;
+  pushable?: boolean;
+}
+const { pool, label = 'Try this roll', pushable = true } = Astro.props;
+const detail = {
+  pool: { base: pool.base, gear: pool.gear ?? 0, stress: pool.stress ?? 0, titan: pool.titan ?? 0 },
+  pushable,
+  label,
+};
+---
+<span class="tryroll">
+  <button type="button" class="btn btn--roll" data-try-roll={JSON.stringify(detail)} data-summary={describePool(pool)}>
+    <Icon name="ph:dice-five" aria-hidden="true" />
+    {label}
+  </button>
+  <span class="tryroll-status lbl" data-try-roll-status aria-live="polite"></span>
+</span>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-try-roll]').forEach((button) => {
+    button.addEventListener('click', () => {
+      let detail: unknown = {};
+      try {
+        detail = JSON.parse(button.dataset.tryRoll ?? '{}');
+      } catch {
+        detail = {};
+      }
+      button.dispatchEvent(new CustomEvent('wof:try-roll', { detail, bubbles: true, composed: true }));
+      button.classList.add('is-pressed');
+      window.setTimeout(() => button.classList.remove('is-pressed'), 180);
+      const status = button.parentElement?.querySelector('[data-try-roll-status]');
+      if (status) status.textContent = `Pool ready: ${button.dataset.summary ?? ''}.`;
+    });
+  });
+</script>

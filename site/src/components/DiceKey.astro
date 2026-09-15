@@ -1,0 +1,66 @@
+---
+import { facesHtml } from '~/lib/dice';
+
+const KINDS = [
+  {
+    cls: 'spec--base',
+    dice: 'base:6',
+    name: 'Base dice',
+    rows: [
+      ['From', 'Your attribute, Talent, and bonus dice.'],
+      ['Succeeds on', '6'],
+      ['On a Push', 'Rolled again unless it shows a 6.'],
+      ['A 1 means', 'Nothing.'],
+    ],
+  },
+  {
+    cls: 'spec--gear',
+    dice: 'gear:6',
+    name: 'Gear Dice',
+    rows: [
+      ['From', 'Your equipment.'],
+      ['Succeeds on', '6'],
+      ['On a Push', 'Never rolled again.'],
+      ['A 1 means', 'If you Pushed, that gear wears down by one. Worn-out ODM Gear Jams.'],
+    ],
+  },
+  {
+    cls: 'spec--stress',
+    dice: 'stress:6',
+    name: 'Stress Dice',
+    rows: [
+      ['From', 'One for each point of Stress you carry.'],
+      ['Succeeds on', '6'],
+      ['On a Push', 'Rolled again unless it shows a 6.'],
+      ['A 1 means', 'A Stress Response.'],
+    ],
+  },
+  {
+    cls: 'spec--titan',
+    dice: 'titan:5',
+    name: 'Titan Attack Dice',
+    rows: [
+      ['From', "The GM, for a Titan's attack."],
+      ['Succeeds on', '5 or 6'],
+      ['On a Push', 'Never Pushed.'],
+      ['Counts', 'Only 5s and 6s.'],
+    ],
+  },
+] as const;
+---
+<ul class="dicekey wide">
+  {KINDS.map((kind) => (
+    <li class:list={['spec', kind.cls]}>
+      <div>
+        <span aria-hidden="true" set:html={facesHtml(kind.dice)}></span>
+        <h4>{kind.name}</h4>
+      </div>
+      {kind.rows.map(([label, value]) => (
+        <dl>
+          <dt class="lbl">{label}</dt>
+          <dd class:list={[label === 'Succeeds on' && 'big num']}>{value}</dd>
+        </dl>
+      ))}
+    </li>
+  ))}
+</ul>

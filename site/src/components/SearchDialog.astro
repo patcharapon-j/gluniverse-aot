@@ -1,0 +1,79 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+<dialog class="search-dialog" id="site-search" aria-labelledby="site-search-title">
+  <header>
+    <h2 id="site-search-title">Search the manual</h2>
+    <button class="search-close" type="button" data-search-close aria-label="Close search">
+      <Icon name="ph:x" aria-hidden="true" />
+    </button>
+  </header>
+  <div class="search-body">
+    <div id="pagefind-search"></div>
+    <p class="search-fallback" data-search-fallback hidden>Search is unavailable right now. Use the index tabs to find your page.</p>
+  </div>
+</dialog>
+
+<script>
+  type PagefindUIConstructor = new (options: Record<string, unknown>) => unknown;
+
+  const dialog = document.getElementById('site-search') as HTMLDialogElement | null;
+  let requested = false;
+
+  function showFallback() {
+    dialog?.querySelector<HTMLElement>('[data-search-fallback]')?.removeAttribute('hidden');
+  }
+
+  function focusInput() {
+    dialog?.querySelector<HTMLInputElement>('input')?.focus();
+  }
+
+  function loadSearch() {
+    if (requested || !dialog) return;
+    requested = true;
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = '/pagefind/pagefind-ui.css';
+    document.head.append(css);
+    const script = document.createElement('script');
+    script.src = '/pagefind/pagefind-ui.js';
+    script.onload = () => {
+      const PagefindUI = (window as unknown as { PagefindUI?: PagefindUIConstructor }).PagefindUI;
+      if (!PagefindUI) return showFallback();
+      new PagefindUI({
+        element: '#pagefind-search',
+        showSubResults: true,
+        showImages: false,
+        resetStyles: false,
+        translations: {
+          placeholder: 'Search Talents, Titans, and rules',
+          zero_results: 'Nothing in the manual matches [SEARCH_TERM].',
+        },
+      });
+      focusInput();
+    };
+    script.onerror = showFallback;
+    document.head.append(script);
+  }
+
+  function openSearch() {
+    if (!dialog) return;
+    if (!dialog.open) dialog.showModal();
+    loadSearch();
+    focusInput();
+  }
+
+  document.querySelectorAll('[data-search-open]').forEach((button) => button.addEventListener('click', openSearch));
+  dialog?.querySelector('[data-search-close]')?.addEventListener('click', () => dialog.close());
+  dialog?.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  document.addEventListener('keydown', (event) => {
+    const target = event.target as HTMLElement | null;
+    const typing = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target?.isContentEditable;
+    if (event.key === '/' && !typing && !event.metaKey && !event.ctrlKey) {
+      event.preventDefault();
+      openSearch();
+    }
+  });
+</script>

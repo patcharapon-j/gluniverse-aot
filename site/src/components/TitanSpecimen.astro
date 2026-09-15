@@ -1,0 +1,166 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import TitanDiagram from './TitanDiagram.astro';
+import Redacted from './Redacted.astro';
+
+type Titan = CollectionEntry<'titans'>['data'];
+type HiddenField = Titan['hidden'][number];
+
+interface Props {
+  titan: Titan;
+  id: string;
+  /** squad: the Compendium view. gm: every value, with a Read's values redacted. */
+  mode?: 'squad' | 'gm';
+}
+const { titan: t, id, mode = 'squad' } = Astro.props;
+const isHidden = (field: HiddenField) => t.hidden.includes(field);
+
+const figs = [
+  { label: 'Tempo', value: t.tempo, note: 'How many times it acts each round.', field: null, seal: false },
+  { label: 'Nape Depth', value: t.napeDepth, note: 'Successes a single Nape strike needs to kill it.', field: 'napeDepth' as const, seal: true },
+  { label: 'Regeneration', value: t.regeneration, note: 'Rounds before its wounds close.', field: 'regeneration' as const, seal: false },
+];
+
+const toughnessKnown = t.bodyParts.every((p) => p.toughness !== null);
+const firstToughness = t.bodyParts[0]?.toughness ?? null;
+const sameToughness = toughnessKnown && t.bodyParts.every((p) => p.toughness === firstToughness);
+const partsLabel = !toughnessKnown
+  ? 'Body Parts · Toughness learned by a Read'
+  : sameToughness && !(mode === 'gm' && isHidden('toughness'))
+    ? `Body Parts · Toughness ${firstToughness} each`
+    : 'Body Parts and Toughness';
+
+const READ_WORDS: Record<HiddenField, string> = {
+  napeDepth: 'its Nape Depth',
+  regeneration: 'how fast it regenerates',
+  toughness: 'the Toughness of a Body Part',
+  attentionLadder: 'what draws its attention',
+};
+const readList = new Intl.ListFormat('en', { type: 'conjunction' }).format(t.hidden.map((h) => READ_WORDS[h]));
+const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', ...t.behaviors.map((b) => b.name)].join(' ').toLowerCase();
+---
+<article
+  class="specimen"
+  id={id}
+  aria-labelledby={`${id}-name`}
+  data-cmp-item
+  data-search={search}
+  data-f-size={t.sizeClass.slug}
+  data-f-kind={t.abnormal ? 'abnormal' : 'standard'}
+>
+  <div class="spec-head">
+    <div>
+      <p class="lbl">Specimen report · Size: {t.sizeClass.name} · {t.sizeClass.height}</p>
+      <h3 id={`${id}-name`}>{t.name}</h3>
+    </div>
+    <span class="stamp stamp--dbl" aria-hidden="true">{t.abnormal ? 'Abnormal' : 'Specimen'}</span>
+  </div>
+
+  <div class="spec-body">
+    <div class="specplate">
+      <TitanDiagram name={t.name} height={t.sizeClass.height} />
+    </div>
+
+    <div class="stats">
+      <dl class="figs">
+        {figs.map((fig) => (
+          <div class="fig">
+            <dt class="lbl">{fig.label}</dt>
+            {fig.value === null ? (
+              <dd class="val val--unknown num"><span aria-hidden="true">?</span><span class="sr">Unknown until a Read</span></dd>
+            ) : mode === 'gm' && fig.field && isHidden(fig.field) ? (
+              <dd class:list={['val num', fig.seal && 'val--seal']}><Redacted value={String(fig.value)} /></dd>
+            ) : (
+              <dd class:list={['val num', fig.seal && 'val--seal']}>{fig.value}</dd>
+            )}
+            <dd class="note">{fig.note}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {mode === 'squad' && t.hidden.length > 0 && (
+        <p class="read-note">
+          <Icon name="ph:eye" aria-hidden="true" />
+          <span>An Abnormal keeps some things to itself. A Read can tell your squad {readList}.</span>
+        </p>
+      )}
+
+      <div>
+        <p class="lbl stat-label">{partsLabel}</p>
+        <ul class="parts">
+          {t.bodyParts.map((part) => (
+            <li class="part">
+              {part.name}
+              {part.toughness === null ? (
+                <span class="pips pips--unknown" aria-hidden="true"><span></span><span></span></span>
+              ) : mode === 'gm' && isHidden('toughness') ? (
+                <Redacted value={`Toughness ${part.toughness}`} />
+              ) : (
+                <span class="pips" role="img" aria-label={`Toughness ${part.toughness}`}>
+                  {Array.from({ length: part.toughness }, () => <span></span>)}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <p class="lbl stat-label">Attack Dice by tier</p>
+        <dl class="tiers">
+          {t.tiers.map((tier) => (
+            <div class="tier">
+              <dt><span class:list={['tchip', `t-${tier.slug}`]}>{tier.name}</span></dt>
+              <dd class="sq" aria-hidden="true">{Array.from({ length: Math.max(...tier.dice) }, () => <span></span>)}</dd>
+              <dd class="tval num">{tier.dice.join(' or ')}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  {mode === 'gm' && (
+    <p class="dossier-extra">
+      {t.heave !== null && <span>Heave {t.heave}</span>}
+      {t.attentionLadder && (
+        <span>Attention: {isHidden('attentionLadder') ? <Redacted value={t.attentionLadder} /> : t.attentionLadder}</span>
+      )}
+    </p>
+  )}
+
+  <div class="bt">
+    <div class="bt-cap">
+      <h4>Behavior Table</h4>
+      <span class="lbl">Roll a d6 when it acts</span>
+    </div>
+    <div class="scroll" tabindex="0" role="region" aria-label={`${t.name} Behavior Table`}>
+      <table>
+        <thead>
+          <tr><th scope="col">d6</th><th scope="col">Behavior</th><th scope="col">Tier</th><th scope="col">Attack Dice</th><th scope="col">What happens</th></tr>
+        </thead>
+        <tbody>
+          {t.behaviors.map((b) => (
+            <tr>
+              <td class="d6 num">{b.roll}</td>
+              <th scope="row">{b.name}</th>
+              <td><span class:list={['tchip', `t-${b.tier.slug}`]}>{b.tier.name}</span></td>
+              <td class="ad num">{b.attackDice ?? 'None'}</td>
+              <td>{b.effect}<span class="q">{b.text}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {t.fallback && (
+      <p class="bt-foot">
+        <span class="lbl">Otherwise</span>
+        <span>
+          <b>{t.fallback.name}.</b> When a rolled behavior cannot happen and has nothing to fall back on, it does this instead. {t.fallback.attackDice} Attack Dice. {t.fallback.effect}
+          <span class="q"> {t.fallback.text}</span>
+        </span>
+      </p>
+    )}
+  </div>
+</article>

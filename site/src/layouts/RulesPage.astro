@@ -1,0 +1,26 @@
+---
+/** Player's Guide chapters: lighter grain, a 68 character column, margin notes. */
+import '~/styles/rules.css';
+import BaseLayout from './BaseLayout.astro';
+import RulesArticle from '~/components/RulesArticle.astro';
+import type { ChapterLink } from '~/lib/chapters';
+import type { IndexTab } from '~/lib/nav';
+
+interface Props {
+  title: string;
+  summary: string;
+  earlyRules: boolean;
+  numeral: string;
+  shell: boolean;
+  art: string;
+  tabs: IndexTab[];
+  prev?: ChapterLink;
+  next?: ChapterLink;
+}
+const { title, summary, earlyRules, numeral, shell, art, tabs, prev, next } = Astro.props;
+---
+<BaseLayout title={title} description={summary} section="guide" tabs={tabs} tabsLabel="Chapters">
+  <RulesArticle title={title} summary={summary} earlyRules={earlyRules} numeral={numeral} part="Player's Guide" shell={shell} art={art} prev={prev} next={next}>
+    <slot />
+  </RulesArticle>
+</BaseLayout>

@@ -1,0 +1,11 @@
+---
+/** An in-world epigraph set in typewriter type. */
+interface Props {
+  cite: string;
+}
+const { cite } = Astro.props;
+---
+<blockquote class="opener">
+  <div class="opener-text"><slot /></div>
+  <cite class="lbl">{cite}</cite>
+</blockquote>

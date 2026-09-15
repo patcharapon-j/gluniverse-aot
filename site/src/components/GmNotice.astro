@@ -1,0 +1,36 @@
+---
+/** One-time notice on entering the GM's Guide, remembered in localStorage when it is available. */
+---
+<dialog class="gm-notice" id="gm-notice" aria-labelledby="gm-notice-title">
+  <div class="restricted" aria-hidden="true"><span>Restricted: Commanding Officers</span></div>
+  <div class="gm-notice-body">
+    <h2 id="gm-notice-title">This section is for the Game Master</h2>
+    <p>The GM's Guide holds what the squad should not know yet: how Titans are run, the numbers a Read reveals, and what waits on the route. If you play a soldier, the Player's Guide has everything you need.</p>
+    <div class="gm-notice-actions">
+      <button type="button" class="btn btn--roll" data-gm-continue>I am the GM</button>
+      <a href="/guide/">Back to the Player's Guide</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const KEY = 'wof:gm-notice-seen';
+  const dialog = document.getElementById('gm-notice') as HTMLDialogElement | null;
+
+  let seen = false;
+  try {
+    seen = window.localStorage.getItem(KEY) === '1';
+  } catch {
+    seen = false;
+  }
+  if (dialog && !seen) dialog.showModal();
+
+  dialog?.querySelector('[data-gm-continue]')?.addEventListener('click', () => {
+    try {
+      window.localStorage.setItem(KEY, '1');
+    } catch {
+      // Storage is blocked: the notice simply shows again on the next visit.
+    }
+    dialog.close();
+  });
+</script>

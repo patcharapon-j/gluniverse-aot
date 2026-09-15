@@ -1,0 +1,8 @@
+---
+/** A value the squad does not see yet. The bar lifts on hover or keyboard focus. */
+interface Props {
+  value: string;
+}
+const { value } = Astro.props;
+---
+<span class="redact" tabindex="0">{value}<span class="sr"> (hidden from the squad until a Read)</span></span>

@@ -1,0 +1,15 @@
+---
+/** A worked example, typed up as a clipped field report. */
+interface Props {
+  id: string;
+  title: string;
+  eyebrow?: string;
+}
+const { id, title, eyebrow = 'Example' } = Astro.props;
+---
+<article class="report wide" aria-labelledby={id}>
+  <svg class="clip" aria-hidden="true"><use href="#clip" /></svg>
+  <p class="lbl eyebrow">{eyebrow}</p>
+  <h3 id={id}>{title}</h3>
+  <slot />
+</article>
