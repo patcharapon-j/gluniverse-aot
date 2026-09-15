@@ -93,12 +93,20 @@ const entries = [
 </BaseLayout>
 
 <script>
-  // The hero scene loads after first paint, and only with motion allowed and WebGL 2.
-  // Otherwise, or if it fails, the still cover stays exactly as it is.
+  // The hero scene loads after first paint, and only where it is cheap: motion allowed, WebGL 2,
+  // and a device that is not low-power. Otherwise, or if it fails, the still cover stays as it is.
   const host = document.querySelector<HTMLElement>('[data-hero-scene]');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  if (host && !motion.matches && typeof window.WebGL2RenderingContext === 'function') {
+  const nav = navigator as Navigator & { connection?: { saveData?: boolean }; deviceMemory?: number };
+  const lowPower =
+    window.matchMedia('(max-width: 767.98px)').matches ||
+    (window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(any-pointer: fine)').matches) ||
+    nav.connection?.saveData === true ||
+    (nav.deviceMemory !== undefined && nav.deviceMemory < 4) ||
+    (navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency < 4);
+
+  if (host && !lowPower && !motion.matches && typeof window.WebGL2RenderingContext === 'function') {
     const start = () => {
       if (motion.matches) return;
       import('~/scripts/hero/scene')
@@ -112,7 +120,9 @@ const entries = [
         .catch((error: unknown) => console.warn('Hero scene unavailable; showing the still cover.', error));
     };
     const idle = () => (window.requestIdleCallback ? window.requestIdleCallback(start, { timeout: 2500 }) : window.setTimeout(start, 400));
-    if (document.readyState === 'complete') idle();
-    else window.addEventListener('load', idle, { once: true });
+    // Two frames after load puts the idle wait behind the first paint, never ahead of it.
+    const afterPaint = () => requestAnimationFrame(() => requestAnimationFrame(idle));
+    if (document.readyState === 'complete') afterPaint();
+    else window.addEventListener('load', afterPaint, { once: true });
   }
 </script>
