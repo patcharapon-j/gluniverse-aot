@@ -15,7 +15,7 @@ Every rewrite agent reads this before touching a page. The site is the finished 
 
 ## Never on the page
 
-ADR, OQ, YAML, data, schema, field, row id, probe, simulator, Monte Carlo, simulation percentages, playtest, provisional, flag, decision batch, catalog id, "Who uses these rules", "tracked value", "dormant", "reserved", internal ids like `nape-strike` or `roll_exceptions`, chapter and section numbers of the design drafts ("Chapter 4, section 4.3"). Link to the site page instead.
+ADR, OQ, YAML, data, schema, "field" in the data sense (a record field; in-world uses like "Field report" and "in the field" are fine), row id, probe, simulator, Monte Carlo, simulation percentages, playtest, provisional, flag, decision batch, catalog id, "Who uses these rules", "tracked value", "dormant", "reserved", internal ids like `nape-strike` or `roll_exceptions`, chapter and section numbers of the design drafts ("Chapter 4, section 4.3"). Link to the site page instead.
 
 ## Rules fidelity
 

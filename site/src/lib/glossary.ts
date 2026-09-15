@@ -63,7 +63,7 @@ const RAW: { term: string; definition: string; aliases?: string[] }[] = [
   { term: 'Stress Response', definition: 'What happens when fear takes hold. A Stress Die showing a 1 sets it off, and you resolve it on the Stress Response table.' },
   { term: 'Talent', aliases: ['Talents'], definition: 'A narrow, practiced ability that adds dice to, or changes a rule for, the actions it names.' },
   { term: 'Tempo', definition: 'How many times a Titan acts each round.' },
-  { term: 'Titan', aliases: ['Titans'], definition: 'A mindless giant that regenerates its wounds and dies only when its Nape is cut deep enough.' },
+  { term: 'Titan', aliases: ['Titans'], definition: 'A mindless, human-shaped creature that regenerates its wounds and dies only when its Nape is cut deep enough.' },
   { term: 'Titan Dice', aliases: ['Titan Attack Dice', 'Titan Attack Die'], definition: 'The dice a Titan attacks with, rolled in the open. They succeed on a 5 or 6 and are never Pushed.' },
   { term: 'Toughness', definition: 'The successes needed, across strikes, to damage a Body Part one step toward broken.' },
 ];
