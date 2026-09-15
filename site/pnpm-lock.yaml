@@ -37,7 +37,7 @@ importers:
         specifier: 0.9.10
         version: 0.9.10(prettier@3.9.6)(typescript@6.0.3)
       '@types/node':
-        specifier: ^22.20.2
+        specifier: 22.20.2
         version: 22.20.2
       pagefind:
         specifier: 1.5.2
