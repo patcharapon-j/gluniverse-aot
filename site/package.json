@@ -17,7 +17,8 @@
     "sync-check": "node scripts/check-sync.mjs",
     "build": "node scripts/check-sync.mjs && astro build && pagefind --site dist",
     "preview": "astro preview --port 4321",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/mdx": "8.0.1",
@@ -27,12 +28,16 @@
     "@iconify-json/ph": "1.2.2",
     "astro": "7.3.2",
     "astro-icon": "1.2.0",
+    "cannon-es": "0.20.0",
+    "three": "0.186.0",
     "yaml": "2.9.1"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@types/node": "22.20.2",
+    "@types/three": "0.186.0",
     "pagefind": "1.5.2",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "5.0.1"
   }
 }

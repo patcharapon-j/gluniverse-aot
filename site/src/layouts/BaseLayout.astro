@@ -19,6 +19,7 @@ import SiteHeader from '~/components/SiteHeader.astro';
 import IndexTabs from '~/components/IndexTabs.astro';
 import SiteFooter from '~/components/SiteFooter.astro';
 import SearchDialog from '~/components/SearchDialog.astro';
+import DiceTrayDialog from '~/components/DiceTrayDialog.astro';
 import type { IndexTab, SectionKey } from '~/lib/nav';
 
 interface Props {
@@ -58,5 +59,6 @@ const fullTitle = section === 'home' ? title : `${title} · Wings of Freedom`;
     </div>
     <SiteFooter />
     <SearchDialog />
+    <DiceTrayDialog />
   </body>
 </html>

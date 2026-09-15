@@ -1,0 +1,49 @@
+---
+/**
+ * The pop-up Dice Tray. Any `wof:try-roll` event opens it preloaded with that
+ * pool. On the Dice Tray page the event loads the page's own tray instead. The
+ * tray's code loads only when the first event arrives.
+ */
+import { Icon } from 'astro-icon/components';
+import DiceTray from './DiceTray.astro';
+---
+<dialog class="tray-dialog" id="dice-tray-dialog" aria-labelledby="dice-tray-dialog-title">
+  <header>
+    <h2 id="dice-tray-dialog-title">Dice Tray</h2>
+    <button class="tray-close" type="button" data-tray-close aria-label="Close the Dice Tray">
+      <Icon name="ph:x" aria-hidden="true" />
+    </button>
+  </header>
+  <DiceTray id="dialog-tray" variant="dialog" heading="Try this roll" />
+</dialog>
+
+<script>
+  const dialog = document.getElementById('dice-tray-dialog') as HTMLDialogElement | null;
+  const loadController = () => import('~/scripts/dice-tray/controller');
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.addEventListener('wof:try-roll', (event) => {
+    const detail = (event as CustomEvent<unknown>).detail;
+    const pageTray = document.querySelector<HTMLElement>('[data-dice-tray][data-variant="page"]');
+    if (pageTray) {
+      void loadController().then(({ trayFor }) => {
+        trayFor(pageTray).load(detail);
+        pageTray.scrollIntoView({ block: 'start', behavior: reduceMotion() ? 'auto' : 'smooth' });
+      });
+      return;
+    }
+    const tray = dialog?.querySelector<HTMLElement>('[data-dice-tray]');
+    if (!dialog || !tray) return;
+    if (!dialog.open) dialog.showModal();
+    void loadController().then(({ trayFor }) => {
+      const controller = trayFor(tray);
+      controller.load(detail);
+      controller.focusRoll();
+    });
+  });
+
+  dialog?.querySelector('[data-tray-close]')?.addEventListener('click', () => dialog.close());
+  dialog?.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+</script>

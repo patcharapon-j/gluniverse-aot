@@ -1,0 +1,361 @@
+/* Dice Tray: the field box (ADR-0023). Builds on .tray from base.css. */
+.dtray {
+  display: grid;
+  gap: clamp(16px, 2.4vw, 24px);
+}
+.dtray :focus-visible {
+  outline: 2px solid #f3e7d6;
+  outline-offset: 3px;
+}
+.dtray-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 20px;
+}
+.dtray-title {
+  font-family: var(--f-stencil);
+  font-weight: 800;
+  font-size: 1.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+.dtray-source {
+  color: var(--cloth-muted);
+}
+
+/* The wooden box lined with green cloth. */
+.dtray-box {
+  border: clamp(8px, 1.3vw, 14px) solid #5d3f25;
+  border-image: linear-gradient(135deg, #8a6340, #4f3520 60%, #3b2716) 1;
+  background-color: #2c4638;
+  background-image: var(--grain), radial-gradient(ellipse at 30% 10%, rgba(255, 255, 255, 0.08), transparent 60%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5), 0 10px 22px -12px rgba(0, 0, 0, 0.7);
+}
+.dtray-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: #140e08;
+}
+.dtray-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.dtray:not(.is-3d) .dtray-stage {
+  display: none;
+}
+.dtray-faces {
+  display: flex;
+  align-items: center;
+  min-height: 84px;
+  padding: 14px 16px;
+}
+.dtray.is-3d .dtray-faces {
+  min-height: 64px;
+  padding-block: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
+}
+.dtray.is-3d .dtray-faces .die {
+  width: 30px;
+  height: 30px;
+}
+.dtray-empty {
+  font-family: var(--f-type);
+  font-size: var(--fs-sm);
+  color: var(--cloth-muted);
+}
+
+/* Controls and report. */
+.dtray-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 22px 32px;
+  align-items: start;
+}
+.dtray fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.dtray legend,
+.dtray-result-title {
+  padding: 0;
+  margin-bottom: 10px;
+  font-family: var(--f-type);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cloth-muted);
+}
+.dtray-counts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 14px 18px;
+}
+.dtray-count {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+}
+.dtray-count label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+}
+.dtray-glyph .die {
+  width: 22px;
+  height: 22px;
+}
+.dtray small {
+  font-family: var(--f-type);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--cloth-muted);
+}
+.stepper {
+  display: inline-grid;
+  grid-template-columns: 44px 3.4em 44px;
+  width: max-content;
+  border: 1px solid rgba(228, 220, 197, 0.45);
+}
+.stepper button {
+  display: grid;
+  place-items: center;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--paper);
+  cursor: pointer;
+}
+.stepper button:hover {
+  background: rgba(228, 220, 197, 0.12);
+}
+.stepper svg {
+  width: 16px;
+  height: 16px;
+}
+.dtray input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  border: 0;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--paper);
+  font-family: var(--f-serif);
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.stepper input {
+  border-inline: 1px solid rgba(228, 220, 197, 0.3);
+}
+.dtray input[type="number"]::-webkit-inner-spin-button,
+.dtray input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.dtray-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+  margin-top: 18px !important;
+}
+.dtray-options legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 2px;
+}
+.dtray-check,
+.dtray-pushes {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.dtray-check input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--corps-hi);
+}
+.dtray .dtray-pushes input {
+  flex: none;
+  width: 3.4em;
+  height: 40px;
+  border: 1px solid rgba(228, 220, 197, 0.45) !important;
+}
+.dtray-options small {
+  flex-basis: 100%;
+}
+.dtray-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+.dtray .btn--push,
+.dtray .btn--quiet {
+  background: transparent;
+  color: var(--paper);
+}
+.dtray .btn--quiet {
+  border-color: rgba(228, 220, 197, 0.45);
+}
+.dtray .btn--push:hover:not([aria-disabled="true"]),
+.dtray .btn--quiet:hover {
+  background: rgba(228, 220, 197, 0.12);
+}
+.dtray .btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.dtray .btn--roll[aria-disabled="true"] {
+  transform: none;
+}
+.dtray-reason {
+  min-height: 1.5em;
+  margin-top: 12px;
+  font-family: var(--f-type);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: #efd2b4;
+}
+.dtray-result {
+  padding: 16px 18px;
+  background: rgba(0, 0, 0, 0.22);
+  border-left: 3px solid var(--corps-hi);
+}
+.dtray-result dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px 18px;
+  margin: 0 0 14px;
+}
+.dtray-result dt {
+  font-family: var(--f-type);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cloth-muted);
+}
+.dtray-result dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.dtray-result dd.big {
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+.dtray-result dd.bad {
+  color: #f0a898;
+  font-weight: 600;
+}
+.dtray-log {
+  min-height: 3em;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(228, 220, 197, 0.25);
+  font-family: var(--f-type);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* The pop-up tray. */
+.tray-dialog {
+  width: min(1040px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  overflow: auto;
+  color: var(--paper);
+  background: var(--cloth);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+}
+.tray-dialog::backdrop {
+  background: rgba(10, 16, 12, 0.72);
+}
+.tray-dialog > header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: var(--cloth);
+  border-bottom: 3px double rgba(228, 220, 197, 0.3);
+}
+.tray-dialog h2 {
+  font-family: var(--f-stencil);
+  font-weight: 800;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.tray-close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(228, 220, 197, 0.4);
+  background: transparent;
+  color: var(--paper);
+  cursor: pointer;
+}
+.tray-close:focus-visible {
+  outline: 2px solid #f3e7d6;
+  outline-offset: 2px;
+}
+.tray-close svg {
+  width: 18px;
+  height: 18px;
+}
+.tray-dialog .dtray {
+  box-shadow: none;
+  border-radius: 0;
+}
+/* A shorter box in the pop-up, so Roll and Push stay in reach. */
+.tray-dialog .dtray-stage {
+  aspect-ratio: auto;
+  height: clamp(220px, 42vh, 440px);
+}
+
+@media (max-width: 760px) {
+  .dtray-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dtray-stage {
+    aspect-ratio: 1 / 1;
+  }
+}
+@media (max-width: 480px) {
+  .tray-dialog {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+  .dtray-counts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dtray .btn {
+    transition: none;
+  }
+}

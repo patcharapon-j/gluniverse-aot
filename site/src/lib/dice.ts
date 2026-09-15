@@ -21,7 +21,7 @@ export const KIND: Record<DieKind, { name: string; plural: string; fill: string;
   base: { name: 'Base die', plural: 'Base', fill: '#EDE6D2', stroke: '#29241D', pip: '#29241D' },
   gear: { name: 'Gear Die', plural: 'Gear', fill: '#56605F', stroke: '#1F2524', pip: '#EFE8D6' },
   stress: { name: 'Stress Die', plural: 'Stress', fill: '#8B2A21', stroke: '#4A140F', pip: '#F3E7D6' },
-  titan: { name: 'Titan Attack Die', plural: 'Titan', fill: '#B38467', stroke: '#5A3C2B', pip: '#29241D' },
+  titan: { name: 'Titan Die', plural: 'Titan', fill: '#B38467', stroke: '#5A3C2B', pip: '#29241D' },
 };
 
 const PIPS: Record<number, [number, number][]> = {
@@ -108,6 +108,6 @@ export function describePool(pool: TryRollPool): string {
   add(pool.base, 'base die', 'base dice');
   add(pool.gear, 'Gear Die', 'Gear Dice');
   add(pool.stress, 'Stress Die', 'Stress Dice');
-  add(pool.titan, 'Titan Attack Die', 'Titan Attack Dice');
+  add(pool.titan, 'Titan Die', 'Titan Dice');
   return new Intl.ListFormat('en', { type: 'conjunction' }).format(parts);
 }
