@@ -3,7 +3,9 @@
  * A filterable compendium list. Items in the default slot carry
  * `data-cmp-item`, `data-search` (lowercase text), and one
  * `data-f-<group>` attribute per filter group with space-separated values.
- * Chips in a group are OR'd; groups are AND'd. Without scripts every item shows.
+ * Chips in a group are OR'd; groups are AND'd. Without scripts every item shows, and the
+ * search and chips are hidden by CSS (scripting: none) rather than revealed by script,
+ * so the list never shifts down when the script runs.
  */
 import { Icon } from 'astro-icon/components';
 import GlossaryPopover from './GlossaryPopover.astro';
@@ -34,14 +36,14 @@ const { id, groups, total, singular, plural, searchLabel, searchPlaceholder, glo
 <div class="cmp" data-cmp={id} data-singular={singular} data-plural={plural}>
   <div class="cmp-head">
     <div><slot name="head" /></div>
-    <label class="search" data-cmp-tool hidden>
+    <label class="search" data-cmp-tool>
       <Icon name="ph:magnifying-glass" aria-hidden="true" />
       <span class="sr">{searchLabel}</span>
       <input type="search" data-cmp-search placeholder={searchPlaceholder} autocomplete="off" />
     </label>
   </div>
 
-  <div class="filters" data-cmp-tool hidden>
+  <div class="filters" data-cmp-tool>
     {groups.map((group) => (
       <Fragment>
         <span class="lbl" id={`${id}-${group.key}-label`}>{group.label}</span>
@@ -77,8 +79,6 @@ const { id, groups, total, singular, plural, searchLabel, searchPlaceholder, glo
     const groups = [...root.querySelectorAll<HTMLElement>('.chips[data-group]')];
     const singular = root.dataset.singular ?? '';
     const plural = root.dataset.plural ?? '';
-
-    root.querySelectorAll<HTMLElement>('[data-cmp-tool]').forEach((el) => (el.hidden = false));
 
     function apply() {
       const active = groups

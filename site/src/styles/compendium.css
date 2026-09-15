@@ -41,6 +41,12 @@
   border-color: var(--corps);
   box-shadow: 0 2px 0 var(--corps);
 }
+/* Search and chips need the script; without it they stay out of the way. */
+@media (scripting: none) {
+  [data-cmp-tool] {
+    display: none;
+  }
+}
 .filters {
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr);
