@@ -1,8 +1,8 @@
 ---
 /**
  * One shared glossary pop-up for a page of GlossText card text. One delegated listener serves
- * every term, and the definitions arrive with the deferred script, cached across pages, so a
- * long card list gains only small buttons and filtering it costs what it did before.
+ * every term, and the definitions load on the first tap as a cached chunk, so a long card
+ * list gains only small buttons and neither page load nor filtering pays for them.
  * Use it once per page.
  */
 import '~/styles/glossary.css';
@@ -12,7 +12,7 @@ import '~/styles/glossary.css';
 </div>
 
 <script>
-  import { GLOSSARY } from '~/lib/glossary';
+  import type { GlossaryEntry } from '~/lib/glossary';
 
   const pop = document.getElementById('gloss-pop');
   const term = pop?.querySelector<HTMLElement>('#gloss-pop-term');
@@ -20,7 +20,10 @@ import '~/styles/glossary.css';
   const link = pop?.querySelector<HTMLAnchorElement>('[data-gloss-link]');
 
   if (pop && term && definition && link && typeof pop.showPopover === 'function') {
-    const entries = new Map(GLOSSARY.map((entry) => [entry.slug, entry]));
+    // The definitions load on the first tap, in their own cached chunk, so page load carries none of them.
+    let entries: Promise<Map<string, GlossaryEntry>> | null = null;
+    const load = () =>
+      (entries ??= import('~/lib/glossary').then(({ GLOSSARY }) => new Map(GLOSSARY.map((entry) => [entry.slug, entry]))));
     let active: HTMLElement | null = null;
     let closed: { trigger: HTMLElement | null; at: number } = { trigger: null, at: 0 };
     let returnFocus = false;
@@ -36,17 +39,18 @@ import '~/styles/glossary.css';
       pop.style.top = `${top}px`;
     };
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener('click', async (event) => {
       const trigger = (event.target as Element | null)?.closest<HTMLElement>('.gloss[data-gloss]');
       if (!trigger) return;
-      const entry = entries.get(trigger.dataset.gloss ?? '');
-      if (!entry) return;
       // The pointer press on an open term already light-dismissed it: a second tap closes.
       if (closed.trigger === trigger && performance.now() - closed.at < 400) return;
       if (active === trigger && pop.matches(':popover-open')) {
         pop.hidePopover();
         return;
       }
+      const fromKeyboard = event.detail === 0;
+      const entry = (await load()).get(trigger.dataset.gloss ?? '');
+      if (!entry) return;
       active?.setAttribute('aria-expanded', 'false');
       term.textContent = entry.term;
       definition.textContent = entry.definition;
@@ -57,7 +61,7 @@ import '~/styles/glossary.css';
       trigger.setAttribute('aria-expanded', 'true');
       place(trigger);
       // Opened from the keyboard: move focus in, so the definition is read and its link is one Tab away.
-      if (event.detail === 0) pop.focus({ preventScroll: true });
+      if (fromKeyboard) pop.focus({ preventScroll: true });
     });
 
     pop.addEventListener('beforetoggle', (event) => {
