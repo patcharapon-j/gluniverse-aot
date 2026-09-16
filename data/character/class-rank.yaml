@@ -4,7 +4,7 @@
 id: class-rank
 name: Class Rank
 chapter: 02-character-creation
-adrs: [ADR-0003, ADR-0012]
+adrs: [ADR-0012, ADR-0024]
 decided: [OQ-21, OQ-135]
 
 class_size: 200    # graduates in a Training Corps class, for describing a Class Rank

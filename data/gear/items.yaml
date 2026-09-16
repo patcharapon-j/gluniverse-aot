@@ -35,7 +35,12 @@ rating_rules:
     Only the items below are gear items. Any other object, such as a rope, is not a gear item: it
     adds no Gear Dice and counts as no item (data/gear/carrying.yaml, items_counted). It has a
     mechanical effect only where another rule names it, as a thrown cloak is named as a decoy
-    for Break Attention (data/engagement/attention.yaml, break_attention, decoys; ADR-0010).
+    for Break Attention (data/engagement/attention.yaml, break_attention, decoys; ADR-0010). Used
+    well on a roll, it may count toward the Circumstances the GM names (data/core/circumstances.yaml),
+    never toward Gear Dice, which only a rated gear item gives and a Push wears (ADR-0004; decision
+    batch 9, 9-16). On a called roll made with an attribute alone, a gear item that helps counts the
+    same way and gives no Gear Dice (data/character/action-catalog.yaml, uncatalogued_actions,
+    rolls_called_by_attribute; decision batch 9, 9-24).
 
 # Decision batch 7, 7-16 (OQ-142).
 kept_item:

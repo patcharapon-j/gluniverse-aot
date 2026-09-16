@@ -5,15 +5,18 @@
 id: engagement-setup
 name: Interim Titan Engagement Setup
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0014]
-decided: [OQ-87, OQ-104, OQ-126, OQ-141]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10)
+adrs: [ADR-0014, ADR-0024]
+decided: [OQ-87, OQ-104, OQ-126, OQ-141, OQ-167]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10); OQ-167: framing (decision batch 9, 9-15)
 
 used_when: >-
   A Titan Engagement begins and the rule that begins it does not name its Anchor Rating, its Focus
   Titan, its Background Titans, or its retreat clock's length. An Expedition's hazard rows name some of
   these, and the kind of the Waypoint names the Anchor Rating (data/expedition/hazards.yaml;
-  data/expedition/route.yaml, waypoint_kinds; decision batch 7, 7-14); a Mission Brief may name more. A value the starting rule
-  names is never rolled or taken from this table.
+  data/expedition/route.yaml, waypoint_kinds; decision batch 7, 7-14); a Mission Brief may name more.
+  Or the GM names, as framing before any roll on this table, the Anchor Rating, the Focus Titan, or
+  the Background Titans with their clock lengths that the starting rule leaves unnamed, and this table
+  fills what is left (docs/rules/05-titan-engagement.md, section 5.1; decision batch 9, 9-15). A value
+  the starting rule or the GM names is never rolled or taken from this table.
 
 steps:
   - id: anchor-rating
@@ -68,4 +71,9 @@ background_titans:
 
 retreat_clock: 8   # segments, for every Titan Engagement this table sets up; no roll (decision batch 5, 5-10, OQ-126)
 
-gm_choices: none
+gm_choices: >-
+  A ruling, as framing: before any roll on this table, the GM may name the Anchor Rating, the Focus
+  Titan (any Titan in data/titans/index.yaml), and the Background Titans with their clock lengths (none, one, or two, each on a clock of 4, 6, or 8 segments; decision batch 9, 9-34),
+  where the starting rule names none of them (docs/rules/05-titan-engagement.md, section 5.1;
+  decision batch 9, 9-15). Nothing else: the retreat clock's length, a value a starting rule names,
+  everyone's Distant start, and a row once rolled stand (ADR-0024, limits 8 and 10).

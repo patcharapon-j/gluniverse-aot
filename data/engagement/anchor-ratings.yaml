@@ -4,7 +4,7 @@
 id: anchor-ratings
 name: Anchor Ratings and Position Steps
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0010]
+adrs: [ADR-0010, ADR-0024]
 decided: [OQ-74, OQ-99]
 
 # The four Positions (data/engagement/positions.yaml gives their meanings).
@@ -31,7 +31,9 @@ step_fields:
     fly (data/character/action-catalog.yaml) with the soldier's own ODM Gear as its gear item,
     needing the successes named. On a success the move ends at the far Position. On a failure it
     ends at failure_ends_at. Either way the soldier is airborne after the move, since it is an
-    ODM move. The roll can be Helped, Pushed, and Covered as Chapter 1 states.
+    ODM move. The roll can be Helped, Pushed, and Covered as Chapter 1 states, and takes
+    Circumstances as any soldier's roll does (data/core/circumstances.yaml, in_titan_engagement);
+    its needs never change (ADR-0024, limit 15).
 
 # One Position step: two Positions joined by a step row of the Titan Engagement's Anchor Rating,
 # whatever kinds of move can make it. Help, Covering, Rally, and aftermath rolls count steps this
@@ -114,4 +116,8 @@ grounded_titan:
     and they never end for it (data/engagement/positions.yaml, corpse; decision batch 8, 8-9, OQ-146).
   decided: [OQ-74, OQ-146]
 
-gm_choices: none   # the GM never picks the Anchor Rating, a step, or whether a move can make it
+gm_choices: >-
+  A ruling, as framing: the Anchor Rating, named before the Titan Engagement starts where no starting
+  rule names it (data/engagement/engagement-setup.yaml, gm_choices; decision batch 9, 9-15). Nothing
+  else: the GM never picks a step, whether a move can make it, or where a move ends (ADR-0024,
+  limit 8).

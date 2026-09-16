@@ -1,19 +1,25 @@
-# Fear Rolls: the closed list of triggers (ADR-0003 item 1), who rolls, the D6 + Stress - Resolve
+# Fear Rolls: the closed list of triggers (ADR-0024, limit 1), who rolls, the D6 + Stress - Resolve
 # table, and what counts as a Fear Roll's result for a Drive.
 # Source of truth under ADR-0012. docs/rules/03-harm-and-mind.md (section 3.12) references this
 # file and renders its tables from it (tools/render/render.py).
 id: fear-rolls
 name: Fear Rolls
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0004, ADR-0008, ADR-0010, ADR-0014, ADR-0019]
+adrs: [ADR-0004, ADR-0008, ADR-0010, ADR-0014, ADR-0019, ADR-0024]
 decided: [OQ-18, OQ-49, OQ-50, OQ-52, OQ-139]
 
 # ------------------------------------------------------------------ triggers (closed list)
+# Decision batch 9, 9-6 and 9-11: the triggers' closed note.
+triggers_closed: >-
+  A Fear Roll is made only when an event on this list happens (ADR-0024, limit 1). gm-horror is the one
+  row the GM reads, and only outside a Titan Engagement; no ruling calls a Fear Roll any other way, and
+  inside a Titan Engagement the listed triggers alone govern.
+
 # A Fear Roll is made only when one of these events happens. A later chapter that creates a new
 # trigger adds a row here. The dice never cause a Fear Roll (ADR-0004).
 # can_arise_outside_titan_engagement marks events that other procedures (such as a Chase) can
 # produce. Outside a Titan Engagement the event causes Fear Rolls only if the rule that creates
-# the situation states who rolls (OQ-36 simulator case).
+# the situation states who rolls (OQ-36 simulator case); gm-horror's are the witnesses the GM names.
 triggers:
   - id: first-titan-engagement
     event: A Titan Engagement starts, and the soldier has never before held a Position in a Titan Engagement.
@@ -52,7 +58,7 @@ triggers:
     can_arise_outside_titan_engagement: true
     rules: [03-harm-and-mind, 05-titan-engagement, 07-playtest-rules]
 
-  - id: first-human-kill   # decision batch 7, 7-17 (ADR-0003, item 1, as amended)
+  - id: first-human-kill   # decision batch 7, 7-17 (ADR-0024, limit 1)
     event: >-
       The soldier kills a person for the first time: damage of Injury Type Cut, Pierce, or Burn they deal
       brings a Foe to 0 Health (data/skirmish/skirmish.yaml, damage, on_a_foe; decision batch 8, 8-30).
@@ -64,6 +70,30 @@ triggers:
     can_arise_outside_titan_engagement: true
     rules: [07-playtest-rules]
     decided: [OQ-143]
+
+  # Decision batch 9, 9-6 (ADR-0024, limit 1; OQ-169, open): the one row the GM reads.
+  - id: gm-horror
+    event: >-
+      Outside a Titan Engagement, an event the GM judges at least as horrifying as a listed trigger, such
+      as a village found devoured, a comrade's body found days after, or a Titan seen from the Wall
+      tearing through a breach.
+    who_rolls: the witnesses the GM names
+    weight: at least a listed trigger's
+    called: >-
+      Rarely, by the GM, as soon as the event has been fully resolved (limits, timing). An event a listed
+      trigger covers uses that trigger's row and never gm-horror as well (limits, one_per_event). Never
+      for an outcome a called roll's stakes named, since a stake is never a Fear Roll (data/core/dice-pool.yaml,
+      called_roll, failure_never; decision batch 9, 9-34). A Skirmish is outside a Titan Engagement, so the
+      trigger is open there (docs/rules/07-playtest-rules.md, section 7.4; decision batch 9, 9-41, item 8).
+    can_arise_outside_titan_engagement: true
+    in_titan_engagement: never   # the listed triggers alone govern; the Grab cells and the deaths bands read Fear results there
+    resolved_as: >-
+      Every Fear Roll: the roll, the table, limits (a Down soldier makes none), and the Drive shrug-off
+      (result, drive).
+    advice: >-
+      Not a rule: at most one gm-horror roll in a scene, and none for a horror the soldiers have already
+      rolled for that day.
+    rules: [03-harm-and-mind]
 
 limits:
   one_per_event: >-
@@ -97,6 +127,7 @@ roll:
     comrade's Resolve instead, if that Resolve is higher, under the Talent's own trigger and limit
     (data/character/talents.yaml); it reads the comrade's Resolve at the same snapshot.
   attribute_roll: false          # no pool, no Push, no Help, no Stress Dice, no Stress Response
+  circumstances: never   # not an attribute roll (data/core/circumstances.yaml, never; decision batch 9, 9-2)
   squadmates: A Squadmate makes Fear Rolls like a player character.
 
 # ------------------------------------------------------------------ result and Drives
@@ -114,7 +145,8 @@ result:
     next-roll penalty lasts until used.
 
 # ------------------------------------------------------------------ the event's Titan
-# Decision batch 7, 7-8 (OQ-139): a row that acts on a Titan names which one, so the GM never picks it.
+# Decision batch 7, 7-8 (OQ-139): a row that acts on a Titan names which one, so the GM never picks it;
+# only gm-horror's may be a Titan the GM names (decision batch 9, 9-6).
 # The draw-attention, stress-gain-nearby, and forced-action effects read it (data/harm/effect-types.yaml).
 event_titan:
   first-titan-engagement: The nearest Focus Titan (nearest, below).
@@ -124,6 +156,10 @@ event_titan:
   comrade-dies: >-
     The Focus Titan whose card or Grab killed the comrade. For a death no Focus Titan's card or Grab
     caused, such as a Death Roll, the nearest Focus Titan (nearest, below).
+  gm-horror: >-
+    None, or the nearest Titan in sight if the GM names one (decision batch 9, 9-6). The event is outside
+    a Titan Engagement, so each effect does what its outside_titan_engagement value states
+    (outside_titan_engagement, below).
   nearest: >-
     The living Focus Titan relative to which the rolling soldier holds the closest Position, in the
     order On Body, Blind Spot, In Reach, Distant, as a fall's reference Titan is found

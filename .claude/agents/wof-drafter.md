@@ -11,7 +11,7 @@ Before writing, read `CONTEXT.md` and every ADR in `docs/adr/`. They are authori
 Rules:
 
 - Use glossary terms exactly as defined in `CONTEXT.md`. Never use a term listed under `_Avoid_`.
-- Follow ADR-0003's drafting requirements checklist. No rule may rest on GM discretion.
+- Follow ADR-0024's limits. The GM rules where ADR-0024 opens judgment (calling a roll, its stakes, Circumstances, framing); everything ADR-0024 keeps closed is written as a rule the GM applies as written, with no unnamed GM choice.
 - Every table lives as YAML in `data/` (ADR-0012). The Markdown chapter in `docs/rules/` references or renders it; never duplicate table contents by hand.
 - Write rules in your own words. Do not copy text from Alien RPG, Coriolis, or Titan World.
 - When the ADRs do not cover something the chapter needs, do not invent a design decision silently. Pick the option most consistent with the ADRs, mark it in the chapter with `PROVISIONAL:`, and append an entry to `docs/rules/OPEN-QUESTIONS.md` (question, options, provisional choice, why).

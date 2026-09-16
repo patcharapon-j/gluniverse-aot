@@ -62,14 +62,25 @@ Where the ADRs left a question open, the rule below cites its entry in `docs/rul
 - **Definitions it owes Chapter 3:** witnesses, the ending, leaving, and a Down soldier's move are defined.
 - **Tuning tests:** Attack Dice are keyed to the fixed needs that were tuned against the Rookie dodge, 3 dice per point (decision batch 8, 8-1), and the Jam test and the six Grab cells are shown in section 5.13. The probe figures there were measured with those fixed needs; the final full simulator rerun re-measured every verdict under Attack Dice, and every target, band, and bar limit was Met (section 5.13; decision batch 8, 8-14 and 8-31; OQ-145). Every ADR-0014 target is met as amended in decision batches 3, 3b, 3c, 3e, and 5 (OQ-79, OQ-81, OQ-95, OQ-98, OQ-127), each under its baseline policy and read with batch 5's tolerances; ADR-0014, as amended in decision batch 4b, reads the prepared-Squad target under the baseline Squad, with the four-striker row reported beside it (section 5.13; OQ-112).
 
-**No rulings.** The GM never decides any of the following:
-- who holds Attention;
-- which behavior a Titan resolves, or against whom;
-- whether a move is allowed, or where a soldier lands;
-- when a Titan regenerates, or when a Background Titan enters;
-- when a Titan Engagement ends.
+**Rulings.** In a Titan Engagement the GM rules on three things, each before the dice are rolled:
+- **Circumstances on the soldiers' rolls.** Standard is the core assumption. The Anchor Rating, Positions, Openings, a grounded Titan, Call It, the Attention restriction, and every penalty a soldier carries already price the fight. The GM names another step (Chapter 1, section 1.4a) only for something no rule prices: rain on the rooftops, smoke over a burning district, full dark, ice, a gale. These are examples, not a list. A step named for a condition applies to every soldier's roll that the condition touches while it lasts, the dodge and the Nape strike included, and the GM says so once ("the rain makes every roll with ODM Gear Hard until it stops", which is every roll whose Gear Dice come from ODM Gear) rather than judging each roll again; when a further condition touches a roll under that step, the GM names one step for that roll weighing both, and steps never add (decision batch 9, 9-4 and 9-26; `data/core/circumstances.yaml`, `in_titan_engagement`). A dodge takes the step in force when the Titan's card comes up, and none is named or changed for it after (decision batch 9, 9-25).
+- **Framing.** Which Titan appears, the Anchor Rating, and the Background Titans with their clocks, as a Mission Brief could name them, before the Titan Engagement starts (section 5.1; decision batch 9, 9-15).
+- **Improvised acts.** The model entry of an act no entry covers, or, when no entry of kind action could model it and it would change nothing the fight tracks, a called roll that spends the action (section 5.4; Chapter 1, section 1.1; decision batch 9, 9-8 and 9-36).
 
-The GM rolls each Next Behavior out of sight and keeps the tracker, but never re-rolls or changes a roll, a row, or a result (ADR-0003, item 8). Every choice in this chapter belongs to a rule, a table row, or a player.
+The GM applies everything else in this chapter as written and rules on none of it:
+- a Titan's Attack Dice and its Titan Dice roll, which take no Circumstances;
+- the Next Behavior once rolled, which entry a Behavior Table resolves, and against whom;
+- the Attention Ladder, and who holds Attention;
+- the Reaction procedure, the whiff, the Critical Injury's rider, and the Grab and its countdown;
+- whether a move is allowed, and where a soldier lands;
+- Nape Depth, Toughness, Regeneration, the Heave rating, and the Openings an entry creates;
+- steam, the falling Titan, and corpse heat;
+- when a Background Titan enters, the retreat clock's length, and when a Titan Engagement ends;
+- a Squad Tactic's condition;
+- a setup row once rolled;
+- the Critical Injury, Stress Response, Fear Roll, Scar, Grief, and Death Roll tables.
+
+A condition that would slow or blind a Titan reaches the table only through the soldiers' dice: a Titan mired to the knee makes the dodge against it Easy, named when it is mired and before its card comes up, or, in rain already named Hard, one step the GM names weighing both; it keeps its Attack Dice (decision batch 9, 9-26). The GM rolls each Next Behavior out of sight and keeps the tracker, and never re-rolls or changes a roll, a row, or a result once the dice are rolled (ADR-0024, limits 8, 14, and 16). What the GM applies as written outside this chapter is the list in Chapter 1, section 1.1, item 6.
 
 ---
 
@@ -79,7 +90,7 @@ The GM rolls each Next Behavior out of sight and keeps the tracker, but never re
 
 `engagement-flow.yaml` (`starting`) lists the steps in order:
 
-1. The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any Background Titans with their clock lengths, and the length of its retreat clock. Anything it does not name comes from `engagement-setup.yaml`. The retreat clock starts empty (section 5.10).
+1. The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any Background Titans with their clock lengths, and the length of its retreat clock. The GM's framing may name what that rule leaves unnamed, except the retreat clock's length (*Framing*, below). Anything neither names comes from `engagement-setup.yaml`. The retreat clock starts empty (section 5.10).
 2. The Focus Titan is labelled A.
 3. Its Body Parts start Intact, it has no Openings, its Regeneration clock is empty, and its hidden Next Behavior is rolled.
 4. Soldiers and horses are placed (`positions.yaml`, `placement`).
@@ -98,15 +109,30 @@ The GM rolls each Next Behavior out of sight and keeps the tracker, but never re
 
 > **Design note (OQ-75):** Everyone starts Distant. A Titan Engagement opens when Titans are sighted, not when they are already in reach, and a single starting Position leaves nothing to judge. A later starting rule, such as an ambush a Mission Brief names, may place soldiers elsewhere; the default holds whenever it names none.
 
+### Framing
+
+The GM frames a Titan Engagement as Command would, and as a Mission Brief could. Before any setup roll is made, the GM may name any of these that the starting rule leaves unnamed (decision batch 9, 9-15):
+- **the Focus Titan:** any Titan in Chapter 6, standard or Abnormal;
+- **the Anchor Rating;**
+- **the Background Titans:** none, one, or two, which Titans they are, and each one's clock of 4, 6, or 8 segments, the counts and lengths the setup table uses (decision batch 9, 9-34).
+
+What the GM names is never rolled, so no `medium_abnormal` roll is made for a Focus Titan the GM names. The setup table fills whatever the starting rule and the GM leave unnamed, and it is the whole setup when the GM names nothing. A value a starting rule names, such as a hazard row's, stands, and the GM never swaps it. These stay closed:
+- everyone starts Distant unless the starting rule names other starting Positions (above);
+- the retreat clock is 8 segments unless a rule names its length;
+- a setup row, once rolled, stands;
+- the Fear Rolls of the start, for a first Titan Engagement and for an Abnormal, are made as the list gives them.
+
+> **Design note (decision batch 9, 9-15; OQ-167):** Choosing the Titan and the ground is Command's authority, and a Mission Brief was always going to carry it; the playtest rules lacked only a place to put it. The warning is about lethality. The setup table's mix is what Chapter 6's bands and section 5.13's rows were measured against, so a table that frames Large Titans with Background Titans every time plays above the tuned lethality. The playtest logs every framed start that departs from the setup table, and the retune reads those fights apart from the rest (OQ-167).
+
 ### The interim setup table
 
-Until Mission Briefs and Expeditions name a Titan Engagement's setup, `engagement-setup.yaml` does:
+Until Mission Briefs and Expeditions name a Titan Engagement's setup, `engagement-setup.yaml` fills whatever the starting rule and the GM's framing leave unnamed:
 1. Roll D6 for the Anchor Rating.
 2. Roll D6 for the Focus Titan's Size Class. The Focus Titan is the standard Titan of that Size Class (`data/titans/index.yaml`, `standard_titans`; Chapter 6). On Medium, roll D6 on `medium_abnormal`: on a 6 the Focus Titan is the Sprinting Abnormal instead (Chapter 6, section 6.5).
 3. Roll D6 for Background Titans and their clock lengths. Then, for each Background Titan the row gives, in the order it lists the clocks, roll D6 on the Size Class table below. Each Background Titan is the standard Titan of the Size Class it rolls (Chapter 6), and the `medium_abnormal` roll is never made for one (`steps`, `background-titans`; decision batch 5, OQ-131).
 4. Give the retreat clock the length the table names for every Titan Engagement it sets up (below). Nothing is rolled for it.
 
-A value the starting rule names is never rolled.
+A value the starting rule or the GM's framing names is never rolled.
 
 <!-- BEGIN RENDERED: interim-setup from data/engagement/engagement-setup.yaml -->
 **Anchor Rating (D6)**
@@ -148,7 +174,7 @@ A value the starting rule names is never rolled.
 
 The Abnormal roll on a Medium result makes the Sprinting Abnormal the Focus Titan of 1 Titan Engagement in 12 that the table sets up (decision batch 4, OQ-104).
 
-> **Design note (OQ-87):** The setup table is a stopgap, like Chapter 4's interim issue. Without it the GM would pick the battlefield and the Titans, which ADR-0003 forbids. Its Background clock lengths are simulator starting values, measured against a retreat rate per Titan Engagement, and they are the second fallback if rounds against two Focus Titans run long (section 5.3). The retreat clock's length is fixed rather than rolled, so every Titan Engagement the table sets up becomes a retreat by the same round if nothing has ended it first (section 5.10; decision batch 5, OQ-126).
+> **Design note (OQ-87):** The setup table is a stopgap, like Chapter 4's interim issue, and the default: it sets up whatever no starting rule and no framing names, and every figure in section 5.13 was measured with it (ADR-0024, limit 10; decision batch 9, 9-15). Its Background clock lengths are simulator starting values, measured against a retreat rate per Titan Engagement, and they are the second fallback if rounds against two Focus Titans run long (section 5.3). The retreat clock's length is fixed rather than rolled, so every Titan Engagement the table sets up becomes a retreat by the same round if nothing has ended it first (section 5.10; decision batch 5, OQ-126).
 
 ---
 
@@ -375,7 +401,7 @@ A **Behavior Table** is a D6 table (`behavior_table`):
 - Its results **escalate:** 1 and 2 give terrorize entries, 3 and 4 control entries, and 5 and 6 kill entries. An entry may cover several results, but all within one tier's pair.
 - Every table also has one **Thrash** entry, which is never rolled. It is what the Titan does when nothing else can happen.
 
-Every entry lists the fields ADR-0003 item 11 requires, plus what the procedure needs (`entry_fields`):
+Every entry lists the fields ADR-0024, limit 11, requires, plus what the procedure needs (`entry_fields`):
 - **Results and tier.**
 - **Targets:**
   - *holder:* only the soldier holding Attention;
@@ -394,7 +420,7 @@ Every entry lists the fields ADR-0003 item 11 requires, plus what the procedure 
 
 No entry names death; only the Grab's devour step does (Chapter 3).
 
-**Titan Dice** (`titan_dice`) are the dice an entry's Attack Dice are rolled with. Each die that shows 5 or 6 is a success. The GM rolls them in the open when a card resolves the entry, and they never Push and never take Bonus Dice, Help, Gear Dice, or Stress Dice. Use a colour no soldier's pool uses. The roll's successes are the card's Severity, and every target of the card cancels against the same roll (section 5.5; ADR-0019).
+**Titan Dice** (`titan_dice`) are the dice an entry's Attack Dice are rolled with. Each die that shows 5 or 6 is a success. The GM rolls them in the open when a card resolves the entry, and they never Push and never take Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances (ADR-0024, limits 8 and 16). Use a colour no soldier's pool uses. The roll's successes are the card's Severity, and every target of the card cancels against the same roll (section 5.5; ADR-0019).
 
 **Effect types** are a closed list (`effect_types`):
 - **stress:** the target gains that much Stress, once, whatever the Net Successes.
@@ -404,6 +430,26 @@ No entry names death; only the Grab's devour step does (Chapter 3).
 - **telegraph:** the next Next Behavior is revealed to every soldier. It applies whether the behavior lands or whiffs, because what the Titan will do next shows either way.
 
 `tuning.yaml` (`simulation_reference_titan`) is a complete example of the format. It is the Titan the simulations fought, not a playable Titan. The playable Titans are in `data/titans/` (Chapter 6).
+
+### Improvised acts
+
+A soldier may attempt an act against a Titan that no entry covers. Before the pool is built, the GM names the **model entry**: the one existing entry whose effect the act imitates. That ruling stands (decision batch 9, 9-8; Chapter 2, section 2.9; `data/character/action-catalog.yaml`, `uncatalogued_actions`, `in_a_fight`). In a fight Chapter 2's steps are not used: an act the soldier describes that is not an entry taken as written is an improvised act, even when a tracked value it would change matches an entry. The model entry is an entry of kind action that the soldier could take in a Titan Engagement, never the dodge, a roll such as Leap Clear, or an option such as Call It (decision batch 9, 9-27). Whether the act can be done at all is ruled first (Chapter 1, section 1.1, item 1). The act:
+- spends the soldier's action;
+- is made with the model entry's attribute, gear items, Talents, and needs, and takes Circumstances as any soldier's roll does; an act modelled on an unrolled entry is not rolled;
+- meets the model entry's requirements and restrictions, such as its Position, the rule that the Attention holder cannot strike the Nape, and a Feint's Position rule;
+- on a success produces only the model entry's effect, at that entry's size.
+
+For example:
+- **A wagon cut loose** to roll across the Titan's path is a Break Attention decoy: Break Attention's needs, its hold of one round of the Titan's cards, and its Openings.
+- **A lantern swung** in the Titan's face is Draw Attention: unrolled, never from Distant, and it sets the loudest flag.
+- **A chimney dropped** on a leg is a Body Part strike on that leg: its successes count toward the leg's Toughness, and it needs the Position a leg is struck from.
+- **A dive behind a chimney stack** is a move if it changes the soldier's Position, and otherwise changes nothing and needs no roll. It is never modelled on the dodge and makes no later dodge easier: Positions already price where a soldier stands.
+
+An improvised act never kills a Titan, never changes Nape Depth, Toughness, Attack Dice, or a card, never cancels or delays a card, never creates more Openings than its model entry could, and never gives an effect no entry has (ADR-0024, limit 9). Only a Nape strike taken as its entry is written kills a Titan; an act modelled on the Nape strike never does. Such an act is resolved as a Nape strike that falls short, whatever its successes: each success creates 1 Opening, created by that soldier, Relentless adds 1 more where its trigger is met (at least 1 success), as a strike that falls short does, and the act sets the hooked-by-strike flag as any Nape strike does, whatever its result (section 5.6). Successes that reach the Titan's Nape Depth create their Openings and nothing else, and the act lowers no Nape Depth (decision batch 9, 9-39). The tracked values of section 5.14 are the menu of effects it can copy.
+
+**A called roll in a Titan Engagement.** An act no entry of kind action could model, that would change nothing the fight tracks (no tracked value of section 5.14, no Position, Attention, Opening, card, or clock), such as hauling a granary's doors shut so the Titan cannot follow the civilians through, is a called roll (Chapter 1, section 1.1). It spends the soldier's action and is made on the soldier's turn; a soldier facing a card dodges, and no called roll stands in for a Reaction (section 5.5; decision batch 9, 9-25 and 9-45). Its Circumstances are Standard unless the GM has named a step for something no rule prices. Help on it is Help as this chapter gives it: a comrade with an unspent action at the same Position or one step away, spending that action. A fall it stakes is low or high as the GM names, never extreme, and the Height steps of Chapter 4 do not raise it, and it lands as section 5.2 gives (`positions.yaml`, `falls_land`): a soldier who falls from On Body or Blind Spot holds In Reach once the fall is resolved, a change of Position the fall rule makes, not the ruling (decision batch 9, 9-44); a time or position cost changes only the situation outside what the fight tracks; and success gives the act, information, or an object that is not a gear item, never a Position, found Squad Supply, or an effect an entry has. It is tried again on a later turn, spending that turn's action (decision batch 9, 9-36 and 9-44).
+
+> **Design note (decision batch 9, 9-8):** Copying an existing effect at its measured size opens the fight to invention without moving a figure: a wagon decoy is a Break Attention row, and a lantern is a Draw Attention row. Naming the model entry before the roll closes the reskin, such as a falling beam that is really a free Nape cut, and only a Nape strike kills (ADR-0007).
 
 ---
 
@@ -445,7 +491,7 @@ When a Focus Titan's card comes up (`resolving_a_card`):
    - If the Titan lacks the Body Parts it uses, the behavior is Thrash.
    - If the holder does not meet its Position requirement, it becomes its fallback.
    - If the fallback repeats the previous behavior or fails either test, the behavior is Thrash.
-6. **Roll and announce.** Announce the behavior's name, tier, and targets to every soldier, then roll its Attack Dice as Titan Dice in the open and announce the successes: the card's Severity, the same for every target.
+6. **Roll and announce.** Announce the behavior's name, tier, and targets to every soldier, then roll its Attack Dice as Titan Dice in the open and announce the successes: the card's Severity, the same for every target. The roll takes no Circumstances, and the GM never re-rolls or adjusts it (ADR-0024, limit 8; ADR-0019).
 7. **Reactions.** On 0 successes the card whiffs against every target, and no one dodges. Otherwise each target dodges, or cancels with an earlier dodge against this Titan, by Chapter 1's *Attack and Reaction* (below). The card lands on a target on 1 or more Net Successes and whiffs on 0.
 8. **Effects.** For each target it lands on, apply the effects in order, targets in card order. Only a Critical Injury reads the Net Successes, and a telegraph applies whether the card landed or whiffed. A target who dies receives none of the card's later effects; every other target still does (decision batch 4, OQ-107).
 9. **Next.** A card that whiffed has still resolved a behavior. The behavior becomes the previous behavior, the Titan's decoys in a row returns to 0, every flag for this Titan clears, and the new Next Behavior is rolled. If the behavior had a telegraph effect, the new Next Behavior is revealed.
@@ -459,6 +505,7 @@ Chapter 1, section 1.9 governs the dodge (*Attack and Reaction*), and nothing he
 - **The turn it spends:** the soldier's earliest wholly unspent turn. A dodge against a Grab, or one whose successes cancelled against a Grab's card, can have that turn given back when the Grab lands (section 5.9).
 - **Forbidden:** a Down soldier cannot dodge, and neither can a soldier holding a state or result that forbids Reactions, such as Grabbed or the Scream Fear Roll row. They cancel nothing, so the card lands on them on 1 or more successes and whiffs on 0.
 - **Call It:** a Called behavior adds its Bonus Dice to a dodge against it (section 5.8).
+- **Circumstances:** the dodge takes Circumstances as any soldier's roll does, at the step in force when the Titan's card comes up, Standard unless the GM named a step before then for something no rule prices, and no step is named or changed for the dodge once the card has come up (Chapter 1, section 1.4a, items 1 and 9; the Rulings paragraph above). The Titan's roll takes none. A condition that hampers the Titan reaches the card only through the dodge: a Titan mired to the knee makes the dodge against it Easy, named when it is mired and before its card comes up, or, in rain already named Hard, one step the GM names weighing both; it loses no Attack Dice (decision batch 9, 9-4 and 9-26).
 
 > **Design note (OQ-80):** Illegal results move up the table instead of being re-rolled, so the hidden die is rolled once and never again. Positions change between the roll and the card, so they are checked only at the card, against a fallback the entry lists. A holding Titan does nothing else because ADR-0019's countdown is all the danger it poses for those turns. Terrorize, control, and kill by result keep lethal harm to a third of rolls, which the kill and Jam figures measured.
 
@@ -503,9 +550,9 @@ To evaluate the ladder (`evaluation`):
 3. Narrow the tied soldiers by each lower rung in turn. At the nearest rung, keep the tied soldiers at the closest Position any of them holds.
 4. If still tied, the current holder keeps Attention. Since nearest has already narrowed the tie, this happens only between soldiers at the same distance (decision batch 3e, 3e-6).
 5. Otherwise the lowest card this round takes it, a Wing Squadmate counting just after its player character. This step is skipped when no cards have been dealt this round, and at an end step, as when a Background Titan enters at the background-clocks end step, because the cards of a round that is ending choose nothing. A Titan that enters mid-round, when a flare fills its clock, is evaluated with that round's cards (section 5.10; decision batch 4b, 4b-3).
-6. Otherwise nothing holds its Attention until its next card, which evaluates the ladder again with that round's cards. Only the start of a Titan Engagement, an end step, and a tie among Wing Squadmates of one player character (none in Phase 1, since a Wing holds one Squadmate) reach this step, because during a round every player character's card is distinct and a Wing Squadmate comes right after its player character's. The order of the Squad sheet chooses nothing (ADR-0003 and ADR-0010, as amended in decision batch 4; OQ-81, as revised in decision batch 4; decision batch 4b, 4b-3).
+6. Otherwise nothing holds its Attention until its next card, which evaluates the ladder again with that round's cards. Only the start of a Titan Engagement, an end step, and a tie among Wing Squadmates of one player character (none in Phase 1, since a Wing holds one Squadmate) reach this step, because during a round every player character's card is distinct and a Wing Squadmate comes right after its player character's. The order of the Squad sheet chooses nothing (ADR-0024 and ADR-0010, as amended in decision batch 4; OQ-81, as revised in decision batch 4; decision batch 4b, 4b-3).
 
-**Flags** are public. Each lasts until the end of the Titan's next card that resolves a behavior, and clears at that card's Next step (`flag_duration`; section 5.5; ADR-0003, item 2, and ADR-0010, as amended in decision batch 3e). A card that resolves nothing leaves every flag standing: each card of a decoy's hold, the last one included, which evaluates the ladder with the flags; a card that comes up while the Titan holds a Grabbed soldier; and a card with no one holding its Attention (OQ-81 and OQ-111, as revised in decision batch 3e). So a flag is always read by the card that acts. The flags are:
+**Flags** are public. Each lasts until the end of the Titan's next card that resolves a behavior, and clears at that card's Next step (`flag_duration`; section 5.5; ADR-0024, limit 2, and ADR-0010, as amended in decision batch 3e). A card that resolves nothing leaves every flag standing: each card of a decoy's hold, the last one included, which evaluates the ladder with the flags; a card that comes up while the Titan holds a Grabbed soldier; and a card with no one holding its Attention (OQ-81 and OQ-111, as revised in decision batch 3e). So a flag is always read by the card that acts. The flags are:
 - **hooked-by-strike:** set by any Nape strike against the Titan, whatever its result (ADR-0010);
 - **just-hurt:** set by a Body Part strike with at least 1 success;
 - **loudest:** set by Draw Attention, or by a Fear Roll result's loudest flag (Chapter 3, section 3.9), never from Distant.
@@ -514,7 +561,7 @@ To evaluate the ladder (`evaluation`):
 
 ### Draw Attention
 
-**Draw Attention** is an unrolled action against one Focus Titan, for a soldier who holds a Position other than Distant relative to it and is not Grabbed (decision batch 5, OQ-113). It sets the loudest flag, which lasts until the end of that Titan's next card that resolves a behavior, like every flag (ADR-0003, item 2, as amended in decision batch 3e).
+**Draw Attention** is an unrolled action against one Focus Titan, for a soldier who holds a Position other than Distant relative to it and is not Grabbed (decision batch 5, OQ-113). It sets the loudest flag, which lasts until the end of that Titan's next card that resolves a behavior, like every flag (ADR-0024, limit 2, as amended in decision batch 3e).
 
 A Chapter 3 Fear Roll row can set the same flag with no action: the soldier holds the loudest flag for the event's Titan, if they hold a Position other than Distant relative to it (`attention.yaml`, `flags`, `loudest`; `data/harm/effect-types.yaml`, `draw-attention`; decision batch 7, 7-8). It lasts and is read exactly as Draw Attention's flag is.
 
@@ -559,7 +606,7 @@ An Abnormal's stat block may name its own ladder (`abnormal_ladder_format`). Its
 
 > **Design note (OQ-81):**
 > - **Ties:** keeping the holder stops Attention flickering between soldiers at the same distance. It does not keep a holder who is farther away than another candidate: the nearest rung narrows first, so the Titan turns to whoever is closest, and a Down soldier is reached only when no one stands closer (decision batch 3e, 3e-6); an Abnormal ladder naming current-holder keeps a Down holder who is not at Distant. On the standard ladder the difference is small: nearest is the highest rung met only about 1.2 times a fight, and the earlier reading kept a holder farther off than the closest candidate 0.002 times a fight or less; the rule never does (`tuning.yaml`, `prepared_squad_kill`, `nearest_rung`). A Titan meant to fixate on the one it chose names current-holder instead.
-> - **Nothing holds:** a tie that the rungs, the holder, and the cards leave standing leaves Attention held by nothing until the Titan's next card. During a round the card step breaks every tie, so only the start of a Titan Engagement, when every soldier is at Distant and no cards are dealt, and an end step reach it (a tie between two Wing Squadmates of one player character would too, but a Wing holds one), and removing the old last step takes no choice from anyone. A Titan that enters mid-round, when a flare fills its clock, is evaluated with that round's cards like any other evaluation in a round (decision batch 4b, 4b-3). That step gave Attention to the soldier listed first on the Squad sheet, an order no rule sets. A standard Titan turned at its first card anyway, but the Sprinting Abnormal's current-holder rung kept that soldier for the fight, so whoever wrote the sheet chose its quarry: listing the strikers first instead of the cutters broke its bar's ceiling by 9 to 16 standard errors. Leaving the tie to the Titan's first card is what already happens when a holder dies, needs no new procedure, and moves no standard Titan's row beyond sampling (ADR-0003 and ADR-0010, as amended in decision batch 4; Chapter 6, section 6.6).
+> - **Nothing holds:** a tie that the rungs, the holder, and the cards leave standing leaves Attention held by nothing until the Titan's next card. During a round the card step breaks every tie, so only the start of a Titan Engagement, when every soldier is at Distant and no cards are dealt, and an end step reach it (a tie between two Wing Squadmates of one player character would too, but a Wing holds one), and removing the old last step takes no choice from anyone. A Titan that enters mid-round, when a flare fills its clock, is evaluated with that round's cards like any other evaluation in a round (decision batch 4b, 4b-3). That step gave Attention to the soldier listed first on the Squad sheet, an order no rule sets. A standard Titan turned at its first card anyway, but the Sprinting Abnormal's current-holder rung kept that soldier for the fight, so whoever wrote the sheet chose its quarry: listing the strikers first instead of the cutters broke its bar's ceiling by 9 to 16 standard errors. Leaving the tie to the Titan's first card is what already happens when a holder dies, needs no new procedure, and moves no standard Titan's row beyond sampling (ADR-0024 and ADR-0010, as amended in decision batch 4; Chapter 6, section 6.6).
 > - **Down soldiers:** a Titan that turns to one only when no one else fits lets comrades shield them by standing closer, without making a lone Down soldier safe; an Abnormal ladder naming current-holder keeps a Down holder who is not at Distant.
 > - **Rescue:** a harder Break Attention that frees a Grabbed soldier is the escape "by breaking Attention" the design brief names.
 > - **Decoys:** each has its own price. A flare costs supply and draws Titans, a horse is lost for the rest of the fight, a cloak works once, and a Feint is made at In Reach or On Body, within the Titan's hands, and costs gas or horse wear, or on foot its Gear Dice. A decoy cannot be laid over one that already holds.
@@ -568,7 +615,7 @@ An Abnormal's stat block may name its own ladder (`abnormal_ladder_format`). Its
 > - **Decoys in a row:** a Titan fooled again before one of its cards has resolved a behavior comes back fixated; once one has, it can be fooled again. Batch 3's count never reset, and with a lone Rookie's few decoys (one horse, two flares, one cloak) it could leave a soldier holding Attention with no legal Break Attention and so no route to the Nape, which ADR-0010 does not allow. Counting only decoys in a row still stops a screen: two Squadmates screening beside the holder leave the Titan resolving 0.64 cards a round and dealing 0.42 Critical Injuries per fight (batch 3's rule 0.67 and 0.47; the holder-only rule with no escalation 0.61 and 0.41), and kill no faster than two helpers (66.8% by round 3 against 68.3%, both rows of the same run of `cases1.json`). A screen is a trade, not a dominant play (section 5.13).
 > - **The Feint** keeps Break Attention available in every state in which a Nape strike is legal, outside a retreat (ADR-0010, as amended in decision batches 3c and 3e). A retreat closes the lone cut by design: no Nape strike is made in one (section 5.10; decision batch 5, OQ-119 and OQ-129). Its three ways follow the Nape strike's gear need: working ODM Gear, a sound horse, or on foot against a grounded Titan, where the Nape strike needs no working ODM Gear either (section 5.7). A Jam delays a Feint rather than ending it: Field Repair (Chapter 4, section 4.8) clears the Jam in the fight, and an empty canister is changed for a spare. The on-foot way closes the one gap batch 3b left, a dry soldier with no spare beside a grounded Titan at Open, who could walk to the Nape and cut it but had no decoy to name. The Feint is priced by exposure rather than by a spent item, and on foot by its missing Gear Dice as well: needing 2, the Rookie's Feint succeeds 49.6% of the time with ODM Gear or a horse and 37.7% on foot (`break_attention_on_foot`). It needs 1 more, so a Squadmate, who never Pushes and needs 3 when it does not hold Attention, rarely lands one (0.03 per fight in the screen, and 0.001 on foot against a grounded Titan). The reset keeps a holder who feints every round from blanking every card: the second Feint in a row needs 3.
 > - **The lone soldier:** 69.9% of lone Rookies reach a usable strike before the retreat clock fills under the rule, against 64.6% under batch 3's rule, where 24.5% ran out of decoys first. The Feint raises a lone fight's Critical Injuries from 0.09 to 0.16 and its deaths from 1.7% to 2.7%, because it is made within reach and a soldier who can still Feint fights on (section 5.13).
-> - **Flags last until the Titan acts:** ADR-0010's struck-first rule means the Titan's turn, not a moment of Attention on a card that does nothing. A hold's last card evaluates the ladder but resolves nothing, so under the earlier rule, where a flag cleared at the card that evaluated the ladder, a striker who fell short took Attention for that one card, lost the flag, and was almost never the target of a behavior. Under one lifetime for every flag, the Titan's next resolved behavior after a hold that ended on a flagged striker lands on that striker 98.9% to 99.8% of the time, against 0.0% to 0.5% under the earlier rule; the rest die, go Down, or are Grabbed first. Such holds come 0.15 times a fight with Hook and Cut and Hamstring Line, 0.26 to 0.29 with the screen beside the holder, and 0.10 in the Small Titan's screen, measured to the 12-round horizon before decision batch 5 (`decoys`, `flags_under_a_hold`; ADR-0003, item 2, and ADR-0010, as amended in decision batch 3e). The striker who takes Attention on the hold's last card cannot cut again until the Titan has acted, which is ADR-0010's restriction doing its work. A separate rule for a card that comes up while the Titan holds a Grabbed soldier buys nothing: such a card finds a flag standing 0.03 times a fight, and the rows with and without it differ within sampling, so the one rule stands and a Titan cut while it holds a soldier turns on the one hooked in its Nape.
+> - **Flags last until the Titan acts:** ADR-0010's struck-first rule means the Titan's turn, not a moment of Attention on a card that does nothing. A hold's last card evaluates the ladder but resolves nothing, so under the earlier rule, where a flag cleared at the card that evaluated the ladder, a striker who fell short took Attention for that one card, lost the flag, and was almost never the target of a behavior. Under one lifetime for every flag, the Titan's next resolved behavior after a hold that ended on a flagged striker lands on that striker 98.9% to 99.8% of the time, against 0.0% to 0.5% under the earlier rule; the rest die, go Down, or are Grabbed first. Such holds come 0.15 times a fight with Hook and Cut and Hamstring Line, 0.26 to 0.29 with the screen beside the holder, and 0.10 in the Small Titan's screen, measured to the 12-round horizon before decision batch 5 (`decoys`, `flags_under_a_hold`; ADR-0024, limit 2, and ADR-0010, as amended in decision batch 3e). The striker who takes Attention on the hold's last card cannot cut again until the Titan has acted, which is ADR-0010's restriction doing its work. A separate rule for a card that comes up while the Titan holds a Grabbed soldier buys nothing: such a card finds a flag standing 0.03 times a fight, and the rows with and without it differ within sampling, so the one rule stands and a Titan cut while it holds a soldier turns on the one hooked in its Nape.
 > - **Rejected:** barring any decoy on a Titan whose last card a decoy spent restores fewer of a screened Titan's cards than escalation does (0.56 against 0.60 a round, each added to the review round 2 rule). For the lone soldier it trades strikes for harm (64.3% reach a strike before the retreat, with 3.86 Titan cards, 0.18 Critical Injuries, and 3.1% devoured per lone fight), and under decoys in a row with the Feint it is moot. Turning a decoyed card into Thrash would knock a lone striker off the Titan before their cut, and a limit per round does nothing against a Tempo 1 Titan.
 
 ---
@@ -890,7 +937,7 @@ When no soldier is standing, a **returner** decides how soon it ends. A returner
 - If no soldier holds a Position at all, or no returner exists, it ends at once.
 - Otherwise the tracker records the round and play goes on. It ends at the round-ends step of the next round if still no soldier is standing, or at once if the last returner is gone. If a soldier stands again first, as when a returner comes back, the record is erased.
 
-If it ends by the second test while a Titan lives, every soldier still holding a Position, each one Down or, past the stay limit, unable to move (above), **dies**, left to the Titans. These deaths have no witnesses and cause no Fear Roll, but they count for Grief. Their left items are not shared out: they leave play with the field (Chapter 4, section 4.11; decision batch 5, OQ-131). The end frees no Pinned soldier: whether or not a Titan lives, every soldier still Pinned when it ends by the second test dies, left under the body, the same death counted for Grief (decision batch 8, 8-21; OQ-157). With no Focus Titan alive, the others go through the end steps as after any kill. Then Chapter 3's end steps run, reading the Positions soldiers held when it ended and each soldier's last Position relative to a Focus Titan that died (section 5.2), and after the last of them Chapter 4 clears every Position record (decision batch 5, OQ-122). The GM never ends a Titan Engagement.
+If it ends by the second test while a Titan lives, every soldier still holding a Position, each one Down or, past the stay limit, unable to move (above), **dies**, left to the Titans. These deaths have no witnesses and cause no Fear Roll, but they count for Grief. Their left items are not shared out: they leave play with the field (Chapter 4, section 4.11; decision batch 5, OQ-131). The end frees no Pinned soldier: whether or not a Titan lives, every soldier still Pinned when it ends by the second test dies, left under the body, the same death counted for Grief (decision batch 8, 8-21; OQ-157). With no Focus Titan alive, the others go through the end steps as after any kill. Then Chapter 3's end steps run, reading the Positions soldiers held when it ended and each soldier's last Position relative to a Focus Titan that died (section 5.2), and after the last of them Chapter 4 clears every Position record (decision batch 5, OQ-122). The GM never ends a Titan Engagement: only these tests do (ADR-0024; the list in Chapter 1, section 1.1, item 6).
 
 **A Titan Engagement always ends** (`always_ends`): by a kill, by no soldier standing, or by the retreat its retreat clock forces. The retreat's forced moves take every standing soldier out, no one returns during it, and once no standing soldier holds a Position the ending tests end it at once (decision batch 5, OQ-126). After the retreat's first rounds, the stay limit closes the moves toward and beside a comrade Pinned under a corpse in every retreat, and beside every comrade while no Focus Titan is alive (section 5.10), so every standing soldier walks out from beside the corpse, even under a Titan that entered during the run-on. A limb-pinned soldier left alone is still standing, and the rounds go on for them. Corpse heat crosses off one of their Health boxes at the start of each of their turns, and they cannot treat themselves, so they go Down unless they free themselves first, which, with no Focus Titan alive, ends the Titan Engagement by the first test. Once no one stands, the second test ends it, and every soldier still Pinned dies under the body (decision batch 8, 8-21, 8-32, and 8-36; OQ-163). A soldier whom a lost-limb grade forbids every move does not keep it running past the stay limit, whether or not a Focus Titan is alive, since a Titan whose entries never reach them is no clock (decision batch 8, 8-34 and 8-36; OQ-165; above). The Squad may still leave earlier by choice.
 
@@ -933,6 +980,8 @@ Every value in `size-classes.yaml` is a starting value for the ADR-0014 simulato
 - the Background clock lengths.
 
 The probe figures in this section's tables were measured with each entry's fixed need of dodge successes, before Attack Dice replaced it at 3 dice per point (decision batch 8, 8-1), and stand as that record. Every verdict in this section reads the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`; decision batch 8, 8-14 and 8-31), in which every target, band, and bar limit is Met and no fight reached the safety cap.
+
+Every figure, target, band, and bar limit in this section is measured at Standard Circumstances with no rulings: no framing beyond the setup table and no improvised acts. A table's rulings change what happens on a given night, not what these figures mean, and the playtest logs every non-Standard step named in a Titan Engagement, the roll it was named on, and every framed start (ADR-0014, as amended in decision batch 9, 9-17; OQ-167).
 
 `tuning.yaml` (`starting_values`) lists them. The simulator re-measures each with the full rules. When it changes one, the YAML file changes and this chapter follows. The numbers below come from the files at the time of writing; if the files change, the files govern.
 
@@ -1074,11 +1123,11 @@ This chapter adds no kind of ODM use Chapter 4 did not count and changes no gas 
   - witnesses and makes Fear Rolls;
   - can be named by a Squad Tactic's condition.
 - **Titans** act only from their Behavior Tables, Attention Ladders, and the procedures in this chapter (ADR-0001). They never build dice pools.
-- **The GM** rolls each hidden Next Behavior, keeps the tracker, and reveals facts, and decides nothing else.
+- **The GM** rolls each hidden Next Behavior, keeps the tracker, and reveals facts, and rules only on what the preface's Rulings paragraph names: Circumstances on the soldiers' rolls, framing, and the model entry of an improvised act.
 
 ### Acts in this chapter
 
-ADR-0003 item 12 requires every consequential act to have a tracked value and a Catalog entry. The acts this chapter lets a soldier choose are:
+ADR-0024, limit 12, keeps the tracked values as an index of what soldiers change by acting, and every rule that creates a clock, counter, or obstacle adds its value with the entries that change it. The acts this chapter lets a soldier choose are:
 
 | Act | Entry | Tracked value |
 |---|---|---|
@@ -1094,6 +1143,7 @@ ADR-0003 item 12 requires every consequential act to have a tracked value and a 
 | Swap initiative cards | `swap-initiative-card` (new, OQ-90) | `initiative-swap` (new) |
 | Use a Squad Tactic | `squad-tactic` (new, OQ-90) | `squad-tactic-use` (new) |
 | Moves, letting go, leaving, and returning | none: these are moves | `position-change` |
+| An improvised act (section 5.4; decision batch 9, 9-8) | its model entry | its model entry's |
 
 These are rules or procedure steps, not acts, so they need no tracked value of their own:
 - rolling the Next Behavior;

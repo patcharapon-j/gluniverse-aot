@@ -11,7 +11,7 @@ Read `CONTEXT.md`, every ADR in `docs/adr/`, the chapter under review in `docs/r
 Check for:
 
 1. Contradictions with the ADRs, the glossary, or other chapters.
-2. Rules that rest on GM discretion, or that break ADR-0003's drafting requirements checklist.
+2. Rules that break ADR-0024's limits: GM judgment reaching something ADR-0024 keeps closed (a result after the roll, a table row, a need, a Titan's dice or cards), or a closed rule that leaves the GM a choice it does not name.
 3. Mechanical bugs, undefined edge cases, and ordering problems. Run small Python dice simulations in a temporary directory when odds matter, and quote the numbers.
 4. Misuse of glossary terms, including any term listed under `_Avoid_`.
 5. Tables that are incomplete, unrollable, or inconsistent between YAML and prose.

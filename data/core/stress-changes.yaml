@@ -6,7 +6,7 @@
 id: stress-changes
 name: Stress Changes
 chapter: 01-core-rules
-adrs: [ADR-0004, ADR-0008]
+adrs: [ADR-0004, ADR-0008, ADR-0024]
 
 starting_value: minimum
 minimum:
@@ -35,7 +35,8 @@ gains:
       character or a Squadmate whose Chapter 2 rules allow Covering. In a Titan
       Engagement they are at the same Position as the Pushing soldier or one Position
       step away. Outside a Titan Engagement they qualify to Help that roll under the
-      rule that called for it. No state or result the soldier holds forbids it (a
+      rule that called for it, or, on a called roll, the GM rules them present and able
+      to Help. No state or result the soldier holds forbids it (a
       forbids field on that state's or result's row; Chapter 1, section 1.9). Only one
       soldier Covers a given Push; if more than one comrade offers, the Pushing soldier
       chooses one. A Push that would re-roll no die cannot be Covered.
@@ -43,6 +44,17 @@ gains:
     also: The Pushing soldier gains no Stress and adds no Stress Die.
     rules: [01-core-rules]
     decided: [OQ-06, OQ-08, OQ-13, OQ-18]
+
+  - id: ruling
+    trigger: >-
+      The soldier fails a called roll whose stakes, named before the roll, were Stress
+      (Chapter 1, section 1.1, item 2).
+    who: the soldier who made the called roll
+    amount: 1
+    limit: once per failed roll, however many times it was Pushed; never on a successful roll
+    rules: [01-core-rules]
+    adrs: [ADR-0024]
+    decided: [OQ-168]
 
   - id: named-gain
     trigger: A table result, a Talent, or a Chapter 7 rule, such as hunger (data/expedition/legs.yaml, rations), names a Stress gain.

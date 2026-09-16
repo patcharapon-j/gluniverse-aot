@@ -4,7 +4,7 @@
 id: why-you-enlisted
 name: Why You Enlisted
 chapter: 02-character-creation
-adrs: [ADR-0003, ADR-0011]
+adrs: [ADR-0011, ADR-0024]
 roll: D66
 decided: [OQ-23, OQ-36]
 
@@ -16,7 +16,7 @@ use:
     Record the rolled row's Drive, or instead the Drive of any other row, chosen by the
     player. Choosing another row's Drive never changes which attribute gained the point.
 
-# How every Drive works. ADR-0003 item 3: every Drive is written as a trigger ("When I ...").
+# How every Drive works. ADR-0024, limit 3: every Drive is written as a trigger ("When I ...").
 drive_rules:
   uses_per_session: 1
   checked_when: >-
@@ -29,7 +29,12 @@ drive_rules:
   acts: >-
     The acts a trigger can name are Action Catalog entry ids (data/character/action-catalog.yaml)
     and push, which means Pushing a roll (Chapter 1, section 1.5). Covering is the Catalog
-    entry cover.
+    entry cover. A called roll counts as the soldier's own act of the entry the GM named for it,
+    and an improvised act in a fight as the soldier's own act of its model entry
+    (data/character/action-catalog.yaml, uncatalogued_actions; ADR-0024, limit 3; decision batch
+    9, 9-6). A called roll made with an attribute alone names no entry, so it is no act. The turn
+    tests keep their timing, so a called roll meets one only where they count turns: in a Titan
+    Engagement, or in a Skirmish (see outside_titan_engagement).
   trigger_tests:
     own_state: >-
       The trigger names Positions the soldier holds, or the soldier's own flight on ODM Gear.

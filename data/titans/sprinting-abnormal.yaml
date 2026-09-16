@@ -5,7 +5,7 @@
 id: sprinting-abnormal
 name: Sprinting Abnormal
 chapter: 06-standard-titans
-adrs: [ADR-0001, ADR-0003, ADR-0005, ADR-0007, ADR-0010, ADR-0014, ADR-0015, ADR-0017, ADR-0019]
+adrs: [ADR-0001, ADR-0005, ADR-0007, ADR-0010, ADR-0014, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
 decided: [OQ-80, OQ-81, OQ-84, OQ-101, OQ-102, OQ-103, OQ-108, OQ-109, OQ-137, OQ-145]   # Chapter 5's table procedure, ladder format, and Read facts; Chapter 6's entries (decision batch 4); each harming effect's Injury Type (decision batch 7, 7-5)
 format: data/engagement/titan-format.yaml (stat_block, abnormal_titan, behavior_table, entry_fields, tier_rules)
 

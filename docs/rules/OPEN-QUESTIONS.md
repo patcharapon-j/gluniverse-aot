@@ -479,6 +479,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Decided (see DECISIONS-2026-09-14.md)
 - **Decision:** Keep (e), which is now the text of ADR-0003 item 9 as amended under OQ-35.
 - **ADR:** ADR-0003 (item 9, via OQ-35)
+- **Revised by batch 9 (9-1, 9-12):** the tracked-values procedure stays as the default order and the list as an index, no longer as a gate. An act that matches no value, or is meant to change none, is ruled on under Chapter 1, section 1.1: a called roll, it happens, or it cannot be done (ADR-0024, limits 9 and 12).
 
 ### OQ-28: Talent list design and Specialty grants
 
@@ -659,6 +660,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Decided (see DECISIONS-2026-09-14.md)
 - **Decision:** (a) and (f): ADR-0003 item 9 is amended so that an action outside the Catalog changes only a tracked value and an act that changes none has no effect; Chapter 4 adds `item-give`, `pass-item`, and the mount and dismount move.
 - **ADR:** ADR-0003 (item 9 rewritten; drafting requirement 12 added)
+- **Revised by batch 9 (9-1, 9-12):** the rejected option "a general obstacle entry with a player-chosen attribute" is not adopted, but its worry no longer holds: GM judgment is valid (ADR-0024), so the bracing-beam example becomes a called Strength roll at needs 1 with the Circumstances and stakes the GM names. "No match means no effect" is withdrawn; "no match means a ruling" replaces it.
 
 ### OQ-36: Drives and once-per-Titan-Engagement Talents outside a Titan Engagement
 
@@ -3115,6 +3117,8 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Simulator case:** none before the playtest; the sequence family under the Expedition cadence once the simulator learns Legs (OQ-116); the In Reach starts (Straggler, Overrun) and the night Abnormal as sensitivity rows then.
 - **Revised by batch 8 (8-7, 8-12):** the Prowlers row's Bandits, and any Bandit group met at night, carry a firebrand (Fight, Burn, damage 1) in place of the club; the rations stock renders as a column of the Squad Supply stock table; a firearm may be loaded outside a Skirmish at any time for 1 shot. The Straggler's Bite rolls no Attack Dice: its Endure roll is its whole test (OQ-145).
 - **Revised by batch 8 (8-35, 8-37, 8-38):** a Leg roll or camp roll no soldier can make fails. A retreat from a Titan Engagement the Night table begins falls back overnight to the Waypoint the day's last Leg started from, and that Leg is ridden again the next day. Recruit brings no Squadmate while the playtest configuration holds (OQ-166).
+- **Revised by batch 9 (9-15):** the GM as Command authors the Mission Brief and may frame a Waypoint scene between Legs on called rolls. The Leg roll, the hazard and Night tables and their modifiers, the Straggler's random victim, and every rolled row are applied as written (ADR-0009 as amended in batch 9).
+- **Revised by batch 9 (9-37):** "their modifiers" reads their amounts and their application, which the route the Brief sets, the night camps made, the Leg roll, and the flare decide; the route's own Distance Bands, Posts, and Hard Ride days are Command's, read as written once the Expedition begins. A Brief's route keeps within the interim route's envelope in the first playtest: 4 to 6 Legs, no Leg deeper than the interim route gives its place, and at most one Depot, never the gate. Phase 2 may widen the bounds (OQ-179).
 
 ### OQ-142: Requisition, the playtest minimum
 
@@ -3341,6 +3345,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Decision:** (a), (b), (c), (d), (f), (g), (h), (i), and (j) confirmed as drafted. (e) amended: Burn kills. A Foe brought to 0 Health by Cut, Pierce, or Burn is dead and Crush alone puts one out cold; the first-human-kill trigger reads the three types, so a flare that kills is a first kill. (j): no Foe Grapples in the playtest and Held stays soldier-only; the Held-soldier rules stay written for Phase 2's Foes, where an MP arrest party is the canon image and a Grappling Foe needs a holding step in the foe rule and an outcome for a Squad that is taken. What a winning Foe group takes when every soldier is Down (an arrest, a Bandit's loot) is Phase 2's; the playtest group leaves and takes nothing (OQ-162).
 - **ADR:** ADR-0018 (`## Amended`, batch 8, 8-30: Burn kills)
 - **Revised by batch 8 (8-33):** (a)'s trooper roll of D3+1 is amended to a fixed group of 4, with the trooper's Grit at 4, so a patrol fights to the last and its Parley needs rise with its Grit; a start that names a number still uses it (OQ-164).
+- **Revised by batch 9 (9-7, 9-14):** item (d)'s "if the Squad approaches unseen" is now a ruling: the GM rules whether the approach is possible, and the Sneak is then made against Watch as written. The foe rule is the default and the GM may direct a Foe with a reason said aloud; Grit is the latest a group breaks. The Parley need reads each Foe kind's new `parley` value in place of Grit (ADR-0018 as amended in batch 9).
 
 ### OQ-156: Positions while the Titan Engagement runs on under a corpse
 
@@ -3483,6 +3488,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Decision:** Three reported figures, each range read exactly with the Cut and Pierce riders on: the reference Squad against a Military Police patrol, 0.02 to 0.04 deaths with a win of at least 90%; the Bandit night ambush with firebrands, 0.01 to 0.03 deaths; one Rookie against one trooper, a win of 50% to 70%. Values (a), recorded in `foes.yaml`: the trooper's `attack_dice` 7, `grit` 4, and `group_size` a fixed 4 (8-30 (a)'s D3+1 amended), so the probe's main row reads four troopers. The Bandit and the Garrison sentry are unchanged. (b)'s sabre would out-cut the Blade Set, and its margin is not needed at the full probe's count; (c) and (d) change four or five fields and put the lone Rookie below even. If the owner wants the ambush inside 0.02 to 0.04, the smallest change to measure is the Bandit's `attack_dice` 5, since that row's deaths are knife Cuts and a firebrand's Burn kills by the day. A Foe still never attacks a Down soldier (8-30 (c)).
 - **ADR:** none (ADR-0014's amendment for 8-31 notes that these are reported figures)
 - **Simulator case:** the Skirmish probe in the final rerun with its main row against four troopers, each figure reported beside its range, and the "without the riders" rows beside each.
+- **Revised by batch 9 (9-14):** the trooper's Grit 4 stays for breaking; its Parley need reads a new `parley` value of 2, because Grit 4 had made a Parley against the Military Police succeed about 2% of the time even with a Push. The probe never Parleys, so its three reported figures are unchanged and no check runs.
 
 ### OQ-165: A soldier who cannot move keeps a run-on retreat open past the stay limit
 
@@ -3514,3 +3520,192 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Decision:** Every recommendation, as the owner chose: 8-35 (D1, the roll fails), 8-36 (D2, limit per pin, with 8-34's reading past it), 8-37 (D3, fall back overnight), 8-38 (D4, a data row), 8-39 (D5, its own use), 8-40 (D6, snapshot), 8-41 (D7, still pinned), 8-42 (D8, the default on the three). Simulator option (b): no full rerun. 8-40's engine change is checked in memory on the Medium reference start, the first-Titan-Engagement row, and the Abnormal's bar, and every changed file gets a snapshot note. R43's erratum is recorded under 8-3.
 - **ADR:** ADR-0009 (`## Amended`, 8-35 and 8-37); ADR-0014 (`## Amended`, 8-39 and 8-40).
 - **Simulator case:** the in-memory checks of 8-40; one full rerun only if a checked row moves beyond sampling or the Medium band reads past 0.08.
+
+### OQ-167: Lethality drift when GMs harden or frame Titan Engagements
+
+- **Type:** Simulator target (a playtest measurement for the target B retune; nothing tuned now)
+- **Arose in:** decision batch 9, 9-4, 9-15, 9-17; `docs/research/gm-judgment/OWNER-DECISIONS.md` (answer 1); `docs/research/gm-judgment/difficulty-mechanics.md` section 2.5 and section 7; `docs/research/gm-judgment/ripple-audit.md` E4, E14; ADR-0014 (`## Amended`, batch 9); ADR-0024 limit 16.
+- **Related:** OQ-132, OQ-140.
+- **Question:** The owner opened the Titan Engagement to the GM's difficulty, read as Circumstances on the soldiers' pools with Standard as the default (9-4), and to framing the start (9-15). A Hard dodge loses 14.5 points of success and 12 points of Push rate for the reference Rookie (research section 2.5), and a start framed with Large Titans and Background Titans plays above the setup mix every band reads. Every ADR-0014 figure is defined at Standard with no rulings. How far does play drift from the baseline, and does the retune (OQ-140) need to price it?
+- **Options:** (a) log and read: the playtest tags every non-Standard step named in a Titan Engagement, the roll it was named on, and every framed start off the setup table, beside every ruling-caused death, Critical Injury, and Scar; the retune reads rules deaths and ruling deaths apart. (b) Sensitivity rows now: the reference Squad with every soldier roll at Hard, with every dodge at Hard, and with framed starts, reported beside the targets. (c) No Circumstances on the dodge inside a Titan Engagement.
+- **Status:** Open, (a) now and (b) at the retune (decision batch 9, 9-17; ADR-0014 as amended). (c) is not taken: the owner said everywhere, and rain that reaches the Fly reaches the dodge made with the same gear.
+- **Decision:** pending the playtest.
+- **ADR:** ADR-0014 (`## Amended`, batch 9); ADR-0024.
+- **Simulator case:** the sensitivity rows of (b), added with the target B retune; no rerun before the playtest.
+- **Revised by batch 9 (9-37):** (a)'s log also tags every route a Mission Brief set (the number of Legs, each Leg's Distance Band and Post, the Hard Ride days, and the Depots) and marks an interim route as rolled, so the retune reads authored Expeditions apart from rolled ones as it reads framed starts apart from the setup table (OQ-179).
+
+### OQ-168: Called rolls, roll proliferation, and the Stress economy
+
+- **Type:** Rules gap (a playtest test of decision batch 9, 9-1 and 9-2)
+- **Arose in:** decision batch 9, 9-1, 9-2, 9-5; `docs/research/gm-judgment/ripple-audit.md` E1, E4, E5; `docs/research/gm-judgment/difficulty-mechanics.md` section 5, item 3; ADR-0004; ADR-0024 limits 9, 14, and 17.
+- **Related:** OQ-04, OQ-167.
+- **Question:** Called rolls were never measured. Each one can be Pushed, and a Push is 1 Stress; Help and a plus step can reach the cap on every called roll so that failure stops meaning anything; a Squad of four can chain attempts at one obstacle. The brakes are closed (stakes named first, no roll without risk, one attempt per changed situation, one cost per failed roll, the cap of 4). Are they enough, and does Stress carried out of social and field scenes into the next Titan Engagement move the fight-start Stress the Grab cells and the deaths bands assume (Rookie 1, Veteran 2)?
+- **Options:** (a) log and read: the playtest counts called rolls per session, their Circumstances, how many were Pushed, the Stress each soldier carries into each Titan Engagement, and every cost paid from the menu. (b) A hard once-per-scene limit on called rolls per soldier. (c) A written cost for Help on a called roll (the helper's time or 1 Stress).
+- **Status:** Open, (a) (decision batch 9, 9-17).
+- **Decision:** pending the playtest.
+- **ADR:** ADR-0024.
+- **Simulator case:** none; if fight-start Stress drifts, the Grab cells and the deaths bands are re-read at the observed Stress as a sensitivity row at the retune.
+
+### OQ-169: GM-called Fear Rolls as a Scar faucet
+
+- **Type:** Rules gap (a playtest test of decision batch 9, 9-6)
+- **Arose in:** decision batch 9, 9-6; `docs/research/gm-judgment/OWNER-DECISIONS.md` (answer 6, "left to GM discretion"); `docs/research/gm-judgment/ripple-audit.md` E11; `data/mind/fear-rolls.yaml` (`gm-horror`); ADR-0008; ADR-0024 limit 1.
+- **Related:** OQ-139, OQ-168.
+- **Question:** Fear rows at high totals give Scars, five Scars retire a soldier, and each Scar raises minimum Stress (ADR-0008). The owner left the once-per-scene cap to discretion, so it is advice in the GM's Guide and not a rule. The closed brakes are the trigger's weight (as horrifying as a listed trigger), the Titan Engagement's closed list, and the Drive shrug-off. Does GM-called horror outside fights add Scars at a rate the veteran spiral was not designed for?
+- **Options:** (a) log and read: the playtest counts every `gm-horror` roll, its total, and any Scar it gave, beside the listed triggers' rolls. (b) Make the once-per-scene limit a rule. (c) `gm-horror` rolls read one row lower on the table.
+- **Status:** Open, (a) (decision batch 9, 9-6).
+- **Decision:** pending the playtest.
+- **ADR:** ADR-0024 (limit 1).
+- **Simulator case:** none; the Fear table and every measured trigger are unchanged.
+
+### OQ-170: Phase 2 content under rulings: Pursue a Lead, table-made Abnormals and Foes
+
+- **Type:** Rules gap (Phase 2; deferred by decision batch 9, 9-20)
+- **Arose in:** decision batch 9, 9-7, 9-16, 9-20; `docs/research/gm-judgment/ripple-audit.md` E18, E20, E21; ADR-0016 (`## Amended`, batch 9); `CONTEXT.md` (Downtime Action: Train, Investigate, Contribute to Research wait for Phase 2).
+- **Related:** OQ-153, OQ-154.
+- **Question:** Three things the audit recommended and the batch deferred. A Downtime Action, working name *Pursue a Lead*, that spends the soldier's action on a called-roll scene inside the Walls with outcomes from a short menu (an Intel Question answered truthfully, a named contact, or Circumstances on the Squad's next Requisition), the playtest stand-in for Investigate. A GM-built Abnormal in the Chapter 5 format with the closed effect list and ladder tests, played as unmeasured and marked so. A GM-built Foe kind on the Foe row fields, Attack Dice and Guard no higher than the trooper's 7 and 4. Which of these ships in Phase 2, and in what order beside the Titans-before-gear order ADR-0016 sets?
+- **Options:** (a) Pursue a Lead with the Downtime rules; Abnormals with the Phase 2 Titans; Foe kinds with the Skirmish rewrite. (b) Pursue a Lead before the second playtest as a playtest rule. (c) None until the full Downtime rules exist.
+- **Status:** Open (Phase 2).
+- **Decision:** pending.
+- **ADR:** ADR-0016 (`## Amended`, batch 9).
+- **Simulator case:** none; each is marked unmeasured until a target reads it.
+
+### OQ-171: The website's dice tray and Compendium under the Circumstances ladder
+
+- **Type:** Rules gap (the site is the owner's separate work; out of every drafting package)
+- **Arose in:** decision batch 9, 9-2, 9-12, 9-20; `docs/research/gm-judgment/ripple-audit.md` E25; `docs/research/gm-judgment/difficulty-mechanics.md` section 8 (Site); `site/src/lib/dice-rules.ts` (rolls any pool from 0 to 12 base dice with no Bonus Dice cap or penalty logic), `site/src/lib/shared-data.ts` (loads the Action Catalog for Compendium cards); ADR-0020.
+- **Related:** OQ-167.
+- **Question:** The site's dice rules encode the pool and the Push and will need the ladder: the floor of 1 base die, the cap of 4, a Circumstances stepper on the roll button, and the `when_called` value in the Action card renderer. The rules-of-play page pins `01-core-rules.md` as its source, so the build flags it as needing resync after the batch, by design (ADR-0020). When does the site take the ladder, and does the GM's Guide page on rulings come with it?
+- **Options:** (a) After the packet's Version 3 and the owner's review, in the owner's site work: resync `rules-of-play.mdx`, add the ladder to `dice-rules.ts` with the floor and the cap, add a `gm/` page on rulings. (b) Before the first playtest. (c) Leave the tray without the ladder (a pool is a pool) and add only the floor.
+- **Status:** Open (owner's site work; no drafting package touches `site/`).
+- **Decision:** pending the owner.
+- **ADR:** none (ADR-0020 to ADR-0023 unchanged).
+- **Simulator case:** none.
+
+### OQ-172: Needs of 2 or more on small pools: the Sneak at Watch 2 and the Parley values after the playtest
+
+- **Type:** Rules gap (a playtest test of decision batch 9, 9-3 and 9-14)
+- **Arose in:** decision batch 9, 9-3, 9-14; `docs/research/gm-judgment/difficulty-mechanics.md` section 2.6 (the Sneak at Watch 2 is 37.7% Pushed for an Agility 3 soldier who cannot be Helped; the Parley against the Military Police was 2.0%); `data/skirmish/foes.yaml` (`parley`, `watch`); `data/skirmish/skirmish.yaml`.
+- **Related:** OQ-155, OQ-164.
+- **Question:** Needs stay in the fiction and the GM never changes one (9-3). 9-14 fixed the Parley by giving each Foe kind its own `parley` value and left Watch and every other closed need as written. The research shows a need of 2 costs about 4 dice at the Sneak's pool, and the Sneak for the Ambush cannot be Helped. Do the trooper's `parley` 2 and the sentry's and trooper's Watch 2 sit where the owner wants after play, and should the Sneak be Helpable by one comrade?
+- **Options:** (a) log and read: the playtest records every Sneak for the Ambush and every Parley, the need, the pool, the Push, and the outcome. (b) Watch 1 for the sentry. (c) Help on the Sneak by one comrade who is not Down, spending nothing. (d) The trooper's `parley` at 3 if the owner wants the Military Police close to immovable.
+- **Status:** Open, (a) (decision batch 9, 9-14).
+- **Decision:** pending the playtest; (d) is the owner's if they want the Military Police to stand firm (`IMPLEMENTATION-PLAN.md`, *Owner questions*).
+- **ADR:** none.
+- **Simulator case:** none; the Skirmish probe never Sneaks or Parleys.
+
+### OQ-173: The passive roll and a plus step of Circumstances
+
+- **Type:** PROVISIONAL (WP-G0: Chapter 1, section 1.1, item 5; `data/core/dice-pool.yaml`, `roll_exceptions`, `passive-roll`)
+- **Arose in:** decision batch 9, 9-2 and 9-10; `docs/research/gm-judgment/IMPLEMENTATION-PLAN.md` (WP-G0 gives the `passive-roll` row `bonus_sources_excluded: all`); ADR-0024, limits 14 and 16.
+- **Related:** OQ-168.
+- **Question:** 9-10 builds a passive roll's pool "with the Circumstances the GM names to themselves; no Bonus Dice", and the plan gives its row `bonus_sources_excluded: all`. 9-2 makes each plus step (Easy, Routine, Effortless) a Bonus Dice source. Does a passive roll the GM names at Easy or better gain the step's dice?
+- **Options:** (a) Every step applies in full: a plus step adds its dice, and every other Bonus Dice source stays excluded. (b) Only Standard and the minus steps apply; a plus step adds nothing to a passive roll. (c) A passive roll takes no Circumstances.
+- **Provisional choice:** (a). The row reads `bonus_sources_excluded: all` with `bonus_sources_allowed: [circumstances]`, and Chapter 1 section 1.1 item 5 says so.
+- **Why:** 9-10 names the Circumstances as part of the passive pool without limiting the step, and 9-2 item 5 gives a step to every attribute roll it does not exclude. "No Bonus Dice" reads as the sources a roller declares (Help, Openings, and the rest), which a soldier who does not know they are rolling cannot declare; the plus step is the one source the GM names. Reading (b) would make an obvious clue no easier to notice than an ordinary one, which is what the plus steps express.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-21)
+- **Decision:** (a). A passive roll takes its Circumstances on the whole ladder: a plus step adds its dice as the `circumstances` Bonus Dice source, and no other Bonus Dice source applies. 9-10's "no Bonus Dice" means the sources a roller declares. The markers in Chapter 1 section 1.1 item 5 and `dice-pool.yaml` become citations of 9-21.
+- **ADR:** none (ADR-0024, limit 14 allows the passive roll under every option).
+- **Simulator case:** none; the simulator makes no passive roll.
+
+### OQ-174: A failed threat, and Size Up, once the Parley reads its own value and Foes can be directed
+
+- **Type:** Rules gap (a reading of decision batch 9, 9-7 and 9-14, for Chapter 7 section 7.4)
+- **Arose in:** WP-G4 drafting; decision batch 9, 9-7 and 9-14; `data/skirmish/skirmish.yaml` (`grit.failed_threat`, `parley`, `size_up`); `data/skirmish/foes.yaml` (`gm_rulings`).
+- **Related:** OQ-155, OQ-164, OQ-172.
+- **Question:** (1) A failed Parley made as a threat raised the group's Grit by 1 "for breaking and for later Parleys". 9-14 moved the Parley need from Grit to each Foe kind's `parley` value and 9-7 keeps the +1 Grit, but neither says whether a failed threat still makes later Parleys harder. (2) Size Up on a Foe group states what each Foe will do on the group's next card "under the foe rule as things stand". Under 9-7 the GM may direct a Foe with a reason, so the answer can be untrue if the GM already means to direct one.
+- **Options:** (1a) a failed threat raises the group's Grit and its Parley value by 1 each; (1b) it raises Grit only, and later Parleys are unchanged. (2a) Size Up also states what a Foe the GM already means to direct will do, and the reason; (2b) Size Up states the foe rule's pick only, and a later direction may differ.
+- **Provisional choice:** (1a) and (2a).
+- **Why:** (1a) keeps what a failed threat did before 9-14, and keeps 9-14's own claim that nothing changes for a Bandit or a Garrison sentry, whose Parley value equals their Grit. (1b) would quietly remove a cost from threats. (2a) keeps Size Up truthful, as Chapter 7 section 7.5 requires, and fits 9-7's rule that a reason the table cannot hear is not a reason. (2b) would make Size Up a guess against a GM who directs.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-22)
+- **Decision:** (1a) and (2a). A failed threat in a Skirmish raises the group's Grit and its Parley value by 1 each for the rest of that Skirmish. On a successful Size Up the GM states the foe rule's pick, or a direction the GM already means with its reason, and what the GM states holds for that Foe's turn on the next card unless something that happens after the Size Up changes it; the GM never directs on that card for a reason held back. The markers in Chapter 7 section 7.4 and `skirmish.yaml` become citations of 9-22.
+- **ADR:** none (ADR-0018 as amended and ADR-0024, limit 8, allow every option).
+- **Simulator case:** none; the Skirmish probe never Parleys or Sizes Up.
+
+### OQ-175: A retreat from a Titan Engagement that a Waypoint scene begins
+
+- **Type:** Rules gap (a reading of decision batch 9, 9-15, for Chapter 7 section 7.1)
+- **Arose in:** WP-G4 drafting; decision batch 9, 9-15; ADR-0009 (`## Amended`, batch 9); `data/expedition/legs.yaml` (`day.waypoint_scene`).
+- **Related:** OQ-141, OQ-152.
+- **Question:** A Waypoint scene may begin a Titan Engagement by the fiction (9-15, item 3). Chapter 7 says where the Squad falls back after a retreat from a Titan Engagement that a Leg's hazard row or the Night table begins, but not from one that a Waypoint scene begins.
+- **Options:** (a) it falls back as one begun by a hazard row of the Leg that reached this Waypoint: to the Waypoint that Leg started from, riding that Leg again with a new Leg roll and a new hazard; (b) the Squad stays at the Waypoint and the scene ends, with no Leg ridden again; (c) the GM's framing of the scene names where it falls back.
+- **Provisional choice:** (a).
+- **Why:** ADR-0009 as amended in batch 7 makes a retreat fall back to the previous Waypoint and ride the Leg again, and batch 9 leaves the guarantee and the ride's engine as written. (a) applies that rule unchanged. (b) would make a retreat inside a scene cheaper than the same retreat on the Leg. (c) would put a retreat's cost in a ruling after the fight has begun.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-23)
+- **Decision:** (a). The scene ends, and the Squad falls back as from a Titan Engagement begun by a hazard row of the Leg that reached this Waypoint: it rides that Leg again from step 1, counted among the day's Legs, and step 7 applies again on arrival, including a Depot's Standard Issue. The markers in Chapter 7 section 7.1 and `legs.yaml` become citations of 9-23.
+- **ADR:** ADR-0009 (as amended; the guarantee unchanged under every option).
+- **Simulator case:** none; no Expedition figure is measured before the playtest.
+
+### OQ-176: Gear Dice on a called roll made with an attribute alone
+
+- **Type:** Rules gap (a reading made while applying decision batch 9, WP-G1)
+- **Arose in:** decision batch 9, 9-1, 9-9, 9-12, 9-16; Chapter 2, section 2.9 (*Rolls called by attribute*); `data/character/action-catalog.yaml` (`uncatalogued_actions`, `rolls_called_by_attribute`).
+- **Related:** OQ-27, OQ-35, OQ-168.
+- **Question:** A rule that calls for an attribute roll without naming a Catalog entry gives Gear Dice only from a gear item that rule names. When the GM calls a roll on an attribute alone because no `when_called` entry fits, may the ruling name a rated gear item the act plainly uses (a tool kit, ODM Gear), which would then add its Gear Dice and wear on a Push?
+- **Options:** (a) No: a ruling is not a rule that names a gear item, so the roll takes no Gear Dice, and any item that helps, rated or improvised, is part of its Circumstances. (b) Yes: the GM may name one rated item the act uses; it adds its Gear Dice and wears as on any roll. (c) The GM names the closest entry that lists the item, even an entry not marked `when_called`.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-24)
+- **Decision:** (a). A called roll made with an attribute alone takes no Gear Dice. A gear item that helps counts toward its Circumstances, as any object does, and cannot be worn by a Push on that roll. Gear Dice reach a called roll only through the entry the GM names (`fly` for ODM Gear, `ride` for the horse). Chapter 4 section 4.1 and `items.yaml` gain one sentence each, and the markers in Chapter 2 section 2.9 and `action-catalog.yaml` become citations of 9-24. (b) lets a ruling add dice beside the one-step ladder, and (c) reopens the entries 9-12 kept out of called rolls.
+- **ADR:** ADR-0024 (limits 9 and 16); ADR-0004; ADR-0006.
+- **Simulator case:** none; called rolls are not measured (9-17).
+
+### OQ-177: Damage a ruling names that brings a wounded soldier to 0 Health
+
+- **Type:** Owner question (the GM judgment review round 1, Opus M4; triaged in `docs/research/gm-judgment/REVIEW-FIX-PLAN-round-1.md`)
+- **Arose in:** `docs/reviews/gm-judgment-review-1.md`, M4; decision batch 9, 9-5; `docs/rules/03-harm-and-mind.md`, section 3.1 (*Harm a ruling names*; *Losing Health*); `data/harm/health.yaml` (`harm_kinds`, `damage`, `procedure` and `by_ruling`); ADR-0005 (as amended); `docs/research/gm-judgment/OWNER-DECISIONS.md`, answer 5.
+- **Related:** OQ-167, OQ-168.
+- **Question:** The owner said a failure's cost is never a direct Critical Injury (answer 5), and 9-5 read that as "only through Health": damage of 1 to 3 reaches the Critical Injury tables only at 0 Health. For a soldier at 3 current Health or less, which describes most soldiers after one fall or one Skirmish, the menu's damage makes the failed called roll itself put them Down with a Critical Injury rolled at once, which can be lethal and start a Death Roll's time limit. Example: Brandt, at 2 current Health after a Bandit ambush, fails a called Endure to carry a civilian across a ford, staked at 2 Crush damage, and is Down with a Crush Critical Injury. Is that within "never a direct Critical Injury"?
+- **Options:** (a) Damage a ruling names never takes current Health below 1: it stops at 1, so it never makes a soldier Down or inflicts a Critical Injury. (b) Damage a ruling names that brings Health to 0 makes the soldier Down with no immediate Critical Injury (an ADR-0005 amendment). (c) Keep the rule; the GM states the soldier's current Health with the stakes, so the table sees the risk before the dice, and the playtest logs every such Critical Injury. Under each option the damage of a fall a ruling names is treated as that damage is, unless the owner says otherwise.
+- **Status:** Decided by the owner on 2026-09-16 (see DECISIONS-2026-09-14.md, *Batch 9*, 9-35).
+- **Decision:** (c). The rule stands: damage a ruling names that brings current Health to 0 makes the soldier Down with the immediate Critical Injury that all damage gives. When a called roll's stakes name damage or a fall, the GM states the soldier's current Health aloud with the stakes, so the table sees before the dice whether a failure can put the soldier Down. The playtest log (9-17) tags every Critical Injury that damage a ruling named caused, and the question is read again at the retune as a playtest question.
+- **ADR:** none amended. Options (a) and (b) would have amended ADR-0005; under (c) its Health box paragraph applies as written, and its batch 9 review paragraph records the answer in place of its OQ-177 sentence. ADR-0024, limit 17, is unchanged.
+- **Simulator case:** none; rulings are not measured (9-17).
+
+### OQ-178: The GM judgment review round 1's decisions
+
+- **Type:** Rules gap (the two round 1 reviews of decision batch 9, triaged in `docs/research/gm-judgment/REVIEW-FIX-PLAN-round-1.md`)
+- **Arose in:** `docs/reviews/gm-judgment-review-1.md` (Opus: C1, M1, M2, M3, M5, M6, M7, M8, m5, m7 to m12) and `docs/reviews/gm-judgment-review-1-astra.md` (Astra: C1, M1, M2). Chapters 1, 2, 3, 4, 5, and 7; `CONTEXT.md`; `data/core/`; `data/character/action-catalog.yaml`; `data/mind/fear-rolls.yaml`; `data/gear/squad-supply.yaml`, `falls.yaml`; `data/engagement/engagement-setup.yaml`; `data/skirmish/skirmish.yaml`, `foes.yaml`; `data/expedition/legs.yaml`, `hazards.yaml`; ADR-0005; ADR-0024.
+- **Related:** OQ-167, OQ-168, OQ-169, OQ-172, OQ-175, OQ-177.
+- **Question:** The gaps the triage could not close without a ruling: when a Reaction's Circumstances are named (C1); a lasting step meeting a further condition (M6); a matched tracked value bypassing the model entry, and which entries may be a model (M5, Astra C1); what Help and a retry cost and when it falls (M2, Astra M1); found supplies per roll against per place (M1); an extreme fall named by a ruling (M3); what success gives (M7); whether a passive roll is a called roll (M8); a Waypoint-scene retreat with no Leg slot left that day (Astra M2); and seven minor readings (a shared act, "Hard", the Straggler's Endure, a lone Foe running, the Parley note's figures, `gm-horror` after a staked outcome, framed Background Titans).
+- **Options:** as the review files and the plan's section 2 state.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-25 to 9-34, and erratum 2 under 9-14)
+- **Decision:** 9-25 (a Reaction takes the step in force when the attacker's card comes up); 9-26 (one step per roll, weighed, never added; "every ODM roll" is every roll whose Gear Dice come from ODM Gear); 9-27 (in a fight the steps are not used; a model entry is an `action` the soldier could take there; only a Nape strike taken as written kills; taking cover is a move); 9-28 (Help's and a retry's cost is time or position only, falling when taken on); 9-29 (a place yields Squad Supply to one called search); 9-30 (a ruling's fall is low or high); 9-31 (success never gives a gear item, Stress relief, healing, a Commendation, a Research Point, or Faction Standing); 9-32 (a passive roll is not a called roll and has no stakes); 9-33 (the next Leg slot, or camp at the fallback and ride as the next day's first); 9-34 (the seven minor readings). Opus M4 is OQ-177, for the owner.
+- **ADR:** ADR-0024 (limits 9, 14, 16, 17; `## Amended`); ADR-0005 (`## Amended`, 9-30).
+- **Simulator case:** none; no closed number changes (9-17), and no edited YAML field is read by a simulator guard.
+
+### OQ-179: A called roll inside a fight, and the bounds of a Mission Brief's route
+
+- **Type:** ADR question (the two findings of the GM judgment review round 2 that needed a ruling; the round's other findings are the Opus decider's)
+- **Arose in:** `docs/reviews/gm-judgment-review-2.md` (Opus M1 and M3). Chapter 1 section 1.1 (items 1, 4, and the Help sentence), 1.3, 1.8, 1.9; Chapter 2 section 2.9 and its *Acts* paragraph; Chapters 5 and 7's Rulings paragraphs; Chapter 7 sections 7.1 (*The route*, *Waypoint scenes*) and 7.4 (*What a soldier can do*); `data/core/dice-pool.yaml`, `circumstances.yaml`; `data/character/action-catalog.yaml`; `data/skirmish/skirmish.yaml`; `data/expedition/route.yaml`, `hazards.yaml`; ADR-0009; ADR-0014; ADR-0024.
+- **Related:** OQ-141, OQ-167, OQ-168, OQ-178.
+- **Question:** (M1) Batch 9 never said whether a called roll can be made inside a Titan Engagement or a Skirmish, and four rules answered differently: item 1 named no context, item 4 and the Help sentence assumed one exists in a fight, Chapter 2 section 2.9 split the called roll into *Outside a fight* and the improvised act into *In a fight*, and Chapter 7's Skirmish action list was closed against one. An act no entry of kind `action` could model (hauling a granary's doors shut so the Titan cannot follow the civilians) had no answer, and the stakes menu, one cost per failed roll, 9-35's Health statement, Help, retries, and the fall band each read differently by the answer. (M3) The Brief the GM writes sets three of the Leg Hazard roll's five modifiers (the Distance Band, the Post, the Pace), which Chapter 1 item 6 and Chapter 7's *Decided* note listed as applied as written, and nothing bounded the route's Legs or how many Waypoints were Depots, which ADR-0009's attrition rests on; nor did 9-17's log tag an authored route.
+- **Options:** (M1) (a) a called roll is an outside-a-fight instrument, and an act no entry can model in a fight happens, cannot be done, or is described with no roll; (b) a called roll may be made in a fight for an act no entry of kind `action` could model and that changes nothing the fight tracks, spending the action, with Help as the fight gives it, a low or high fall, and a time-or-position cost and a success that touch nothing the fight tracks. (M3) (a) reword the closed sentences to name the amounts and their application as closed and the route's values as Command's; (b) bound the route to the interim route's envelope; (c) tag the framed route in the playtest log; in any combination.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-36 and 9-37)
+- **Decision:** (M1) option (b), 9-36: the model entry is tried first, so an act whose effect any entry has is an improvised act; a called roll in a fight is the residue, for the act that lives in the fiction beside the fight; it spends the action, Help on it is the fight's Help with no cost the GM names, its fall is low or high and the Height steps never raise it, its time or position cost and its success touch nothing the fight tracks, it is tried again on a later turn, and Chapter 2's Drive sentence stands as written. (M3) all three, 9-37: the closed sentences read "their rolls and their modifiers' amounts, which the route, the night camps made, the Leg roll, and the flare decide"; a Brief's route has 4 to 6 Legs, no Leg deeper than the interim route gives its place, and at most one Depot, never the gate, with Posts and Hard Ride days Command's under the day rules; the playtest log tags every route a Brief set and marks an interim route as rolled.
+- **ADR:** ADR-0024 (limits 7, 9, 17; `## Amended`, 9-36); ADR-0009 (`## Amended`, 9-37); ADR-0014 (`## Amended`, 9-37).
+- **Simulator case:** none; no closed number changes (9-17), no Expedition figure is measured before the playtest, and a called roll in a fight reaches nothing the simulator measures.
+
+### OQ-180: The GM judgment review round 2's remaining decisions
+
+- **Type:** Rules gap (the findings of the GM judgment review round 2 other than the two OQ-179 covers, triaged in `docs/research/gm-judgment/REVIEW-FIX-PLAN-round-2.md`)
+- **Arose in:** `docs/reviews/gm-judgment-review-2.md` (Opus: C1, M2, m1 to m9) and `docs/reviews/gm-judgment-review-2-astra.md` (Astra: M1, and m1, already fixed). Chapter 1 section 1.1; Chapter 2 section 2.9; Chapter 4 sections 4.6 and 4.10; Chapter 5 section 5.4; Chapter 7 sections 7.1 and 7.4; `data/core/circumstances.yaml`, `dice-pool.yaml`; `data/gear/falls.yaml`, `squad-supply.yaml`; `data/engagement/titan-harm.yaml`; `data/character/action-catalog.yaml`; `data/skirmish/skirmish.yaml`, `foes.yaml`; `data/mind/fear-rolls.yaml`; `data/expedition/legs.yaml`, `hazards.yaml`; `data/campaign/downtime.yaml`; `tools/render/render.py`; ADR-0024, limit 17.
+- **Related:** OQ-141, OQ-167, OQ-168, OQ-169, OQ-177, OQ-178, OQ-179.
+- **Question:** (C1) Inside a Titan Engagement, Chapter 4's *Height* procedure still read a Position for a fall a ruling names and then raised the band, so the fall reached extreme, against 9-30 and ADR-0024 limit 17, whose cap has no exception for a fight. (M2) An improvised act modelled on the Nape strike had no defined outcome when its successes reached the Nape Depth, since 9-27 removed the kill and left the threshold band empty, so rolling better paid worse. (Astra M1) After a Waypoint-scene retreat with no Leg slot left, the Squad camps at the Waypoint the last Leg started from, but the Night procedure read the abandoned Waypoint's terrain for the Anchor Rating, and a second retreat sent the Squad where it already was; nothing said whether the Night modifier keeps the last ridden Leg's Distance Band, or what became of the queued repeat. (m1 to m9) Nine smaller readings: what "a place" is for a called search; the payer clauses 9-34 item 1 lost in application; how far "any roll a Leg Hazard or Night row calls for" reaches; where the ladder's hazard timing lives; the Skirmish's model entry and the options it wrongly offered; the infirmary roll's comment marker; a table-made Foe kind that appears in no chapter; `gm-horror` in a Skirmish; and 9-35's Health sentence, absent where a GM stakes a fall.
+- **Options:** as the review files state, each finding with two or three. For C1: (1) a general rule-or-ruling step in *Height*; (2) a carve-out for a ruling's fall only; (3) reverse 9-30, which needs the owner. For M2: (1) the act creates Openings as a strike that falls short does; (2) take the Nape strike out of the model set; (3) it produces nothing at the threshold. For Astra M1: record the camp's Waypoint separately, or write a fallback-camp exception into the Night procedure.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-38 to 9-41)
+- **Decision:** (C1) option (2), 9-38: *Height* gains a first step that stops at a band already named, so a fall a ruling names is low or high and never extreme in a Titan Engagement as well as outside one, while a knock loose, letting go, and a release from a lift, which name no band, still take the steps. (M2) option (1), 9-39: an act modelled on the Nape strike is resolved as a strike that falls short whatever its successes, 1 Opening per success with Relentless adding 1 more and the flag set, and successes that reach the Nape Depth create their Openings and nothing else. (Astra M1) 9-40: the camp's own Waypoint sets the Anchor Rating of a Titan Engagement the Night table begins; a retreat at a camp already at the fallback Waypoint moves it no further and consumes no second camp roll, ration, or night hazard; the night hazard keeps the Distance Band of the day's last ridden Leg; and 9-33's queued repeat is unchanged. (m1 to m9) 9-41, as its nine items give, including an erratum on 9-34 item 3. Astra's m1 needed no decision: the two ADR-0003 citations in ADR-0016 and ADR-0019 are already replaced with ADR-0024 limits, verified by grep.
+- **ADR:** none. Each item applies a limit ADR-0024 already carries; limit 17 is unchanged and 9-38 makes Chapter 4 obey it, which 9-36's fall reading depends on.
+- **Owner may veto:** 9-41 item 1's cap of two called searches a Waypoint scene, which extends 9-29 and is unmeasured, so the playtest logs the units found; and 9-41 item 7's deferral of a table-made Foe kind to Phase 2, which states what 9-7 item 5 already decided and closes a power the YAML read as live.
+- **Simulator case:** none; no closed number changes (9-17), no simulator family makes an improvised act or a called roll, and no Expedition figure is measured before the playtest.
+
+### OQ-181: The GM judgment review round 3's decisions
+
+- **Type:** Rules gap (the findings of the GM judgment review round 3 that needed a ruling, triaged in `docs/research/gm-judgment/REVIEW-FIX-PLAN-round-3.md`)
+- **Arose in:** `docs/reviews/gm-judgment-review-3.md` (Opus: M1, M2, M3, m1, m2, m5, m6, m7; m3 and m4 are records fixes) and `docs/reviews/gm-judgment-review-3-fable.md` (Fable: m1 to m7; m8 is the same records fix as Opus m3). Chapter 1 sections 1.1, 1.5, 1.8, 1.9; Chapter 2 section 2.9 and Appendix 2A; Chapter 4 sections 4.6 and 4.10; Chapter 5 section 5.4; Chapter 7 sections 7.1 and 7.4; `CONTEXT.md`; `data/core/dice-pool.yaml`, `bonus-dice-sources.yaml`; `data/character/action-catalog.yaml`; `data/engagement/titan-harm.yaml`; `data/gear/falls.yaml`, `squad-supply.yaml`; `data/skirmish/skirmish.yaml`; `data/expedition/legs.yaml`, `hazards.yaml`; ADR-0024, limits 7 and 17.
+- **Related:** OQ-168, OQ-178, OQ-179, OQ-180.
+- **Question:** (M1) A Skirmish is outside a Titan Engagement, so `bonus-dice-sources.yaml` `help`, the glossary's **Help**, Chapter 1's Covering and Help requirements, Chapter 2 section 2.9, and the Catalog's nine `when_called` rows still gave a called roll in a Skirmish the GM-ruled Help, free or at a cost the GM names, that 9-36 replaced with the Skirmish's Help at an action each. (M2) Before 9-36 a Skirmish had no called roll, so `fly`'s "as a called roll outside a Titan Engagement" and Chapter 7's "no Fly roll" never met; now one GM could name Fly with its Gear Dice and another Agility alone for the same act. (M3) A fall staked on a called roll at On Body or Blind Spot lands the soldier at In Reach by `falls_land`, a Position the same rule says a called roll never touches. (Minors) The turn and the Reaction ban of 9-36 in no chapter; the hooked-by-strike flag and Relentless's trigger by pointer only; the Skirmish's parenthetical short of Attack Dice and Watch; "Otherwise" before the default in section 2.9; found Squad Supply in Chapter 1's fight success list and not Chapter 5's; a fallback camp at the departure gate with no Waypoint kind.
+- **Options:** (M1) narrow the stale sentences and give the pointed-at file the fight's clause; or replace all of them with one pointer. (M2) forbid Fly in a Skirmish with Agility alone in its place; or allow it as the one Fly roll, with no airborne soldier. (M3) the fall lands as `falls_land` gives, the "nothing the fight tracks" limit binding the act, the cost, and the success; or no fall is staked at On Body or Blind Spot.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 9*, 9-42 to 9-45)
+- **Decision:** (M1) 9-42, the review's options 1 and 2 together: no new rule, every "as the GM rules" Help sentence scoped to outside a Titan Engagement and a Skirmish, and `bonus-dice-sources.yaml`, the glossary, Chapter 1, Chapter 2, and the nine Catalog rows carry the Skirmish's Help. (M2) 9-43, option 2: the GM may name Fly, the one Fly roll a Skirmish has; it takes the ODM Gear's Gear Dice (9-24), makes no soldier airborne, makes no Gas Roll, drops no one on a Jam, and gives no Engaged or Apart, all as Chapter 4 already reads. (M3) 9-44, option 1: a staked fall is a fall in full and lands as `falls_land` gives; the change of Position is the fall rule's, not the ruling's; ADR-0024 limit 17 says so. (Minors) 9-45, six items: the turn and the Reaction ban printed; the flag and Relentless's trigger in words; Attack Dice and Watch named; the model entry read first; no found Squad Supply in a fight; a camp at the departure gate rolls the setup table and the Expedition goes on.
+- **ADR:** ADR-0024 (limit 17; `## Amended`, 9-44). ADR-0006, ADR-0010, and ADR-0013: the four operative ADR-0003 citations 9-18's sweep left inside `docs/adr/` now cite ADR-0024 limits (review round 3, Opus m4).
+- **Owner may veto:** 9-43, which opens Fly to a called roll in a Skirmish and reads Chapter 7's "no Fly roll" as "no Fly roll a rule calls for"; and 9-45 item 5, which closes found Squad Supply to a called roll in a fight.
+- **Simulator case:** none; no closed number changes (9-17), no simulator family makes a called roll, and no Expedition figure is measured before the playtest.

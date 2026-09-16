@@ -4,7 +4,7 @@
 id: down
 name: Down
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0005, ADR-0015, ADR-0019]
+adrs: [ADR-0005, ADR-0015, ADR-0019, ADR-0024]
 decided: [OQ-18, OQ-45]
 
 # A soldier is Down while at least one condition is true. Check after any change to Health lost,

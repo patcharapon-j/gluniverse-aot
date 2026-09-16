@@ -9,7 +9,7 @@
 id: background-titans
 name: Background Titans and the Retreat
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0010, ADR-0014]
+adrs: [ADR-0010, ADR-0014, ADR-0024]
 decided: [OQ-87, OQ-99, OQ-119, OQ-126, OQ-129, OQ-163]
 
 background_titan:

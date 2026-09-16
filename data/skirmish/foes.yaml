@@ -9,14 +9,18 @@ id: foes
 name: Foes
 chapter: 07-playtest-rules
 status: playtest
-adrs: [ADR-0003, ADR-0014, ADR-0018, ADR-0019]
-decided: [OQ-143, OQ-145, OQ-155, OQ-164]
+adrs: [ADR-0014, ADR-0016, ADR-0018, ADR-0019, ADR-0024]
+decided: [OQ-143, OQ-145, OQ-155, OQ-164, OQ-172]
 
 row_fields:
-  attack_dice: base dice the Foe rolls for every attack it makes, succeeding on 6, never Pushed, with no other dice
-  guard_dice: base dice the Foe rolls as its cancelling roll against each attack on it (guard)
+  attack_dice: base dice the Foe rolls for every attack it makes, succeeding on 6, never Pushed, with no other dice and no Circumstances
+  guard_dice: base dice the Foe rolls as its cancelling roll against each attack on it (guard), with no Circumstances
   health: the damage it takes before it is out of the Skirmish
-  grit: how many of the group must be out of the Skirmish before it breaks; also the base of a Parley's needs
+  grit: >-
+    how many of the group must be out of the Skirmish before it breaks: the latest point at which it breaks,
+    since the GM may break it sooner with a reason (gm_rulings)
+  # decision batch 9, 9-14 (OQ-172): the Parley need reads this value, not Grit
+  parley: the base successes a Parley against a group of this kind needs (data/skirmish/skirmish.yaml, parley)
   watch: the successes a Sneak roll needs for the ambush against the group
   group_size: how many Foes the group has when the Skirmish's start names no number
   fight_weapon: the weapon its Fight attacks use (data/skirmish/skirmish.yaml, weapons)
@@ -30,6 +34,7 @@ foes:
     guard_dice: 3
     health: 3
     grit: 1
+    parley: 1   # decision batch 9, 9-14: equal to its Grit, so nothing changes for a Bandit
     watch: 1
     group_size: {fixed: 3}
     fight_weapon:
@@ -48,6 +53,10 @@ foes:
     guard_dice: 4
     health: 4
     grit: 4
+    # decision batch 9, 9-14 (OQ-172): the trooper's Grit before 8-33 raised it to 4 for breaking. At Grit 4
+    # a Parley read its Grit and Stand down needed 5 in a Skirmish, 2.0% Pushed with two helpers. The owner
+    # may set 3 or higher if the Military Police are meant to stand firm.
+    parley: 2
     watch: 2
     group_size: {fixed: 4}
     fight_weapon: sabre
@@ -59,6 +68,7 @@ foes:
     guard_dice: 3
     health: 4
     grit: 1
+    parley: 1   # decision batch 9, 9-14: equal to its Grit, so nothing changes for a sentry
     watch: 2
     group_size: {fixed: 2}
     fight_weapon: bare-hands   # decision batch 8, 8-30 (OQ-155, item b): a musket is never fired at an Engaged target
@@ -108,7 +118,51 @@ guard:
   spends: nothing
   ambush: No Guard is rolled against an attack the ambush leaves unanswered (data/skirmish/skirmish.yaml, ambush).
 
-# The closed foe rule (ADR-0003, item 8; ADR-0018). Every Foe acts by these steps and no others.
+# The foe rule's preface (decision batch 9, 9-7; ADR-0018, as amended; ADR-0024, limit 8). Playtest rule:
+# Phase 2 replaces the direction rule with the rest of this file.
+gm_rulings:
+  default: Every Foe acts by the foe rule (foe_rule). It is the default and the Skirmish probe's baseline.
+  directed_by_ruling:
+    when: >-
+      On a Foe's turn, when the fiction gives that Foe a reason, the GM may direct its target or its action
+      in place of the foe rule's pick.
+    reason: >-
+      The GM says the reason aloud before the Foe acts, such as "the sergeant goes for the medic who shot
+      his man". A reason the table cannot hear is not a reason.
+    limits: >-
+      A directed Foe still takes only a turn the foe rule's steps can give (it Fights, Shoots, reloads,
+      closes in and Fights, or does nothing), with its kind's weapons, and never attacks a Down soldier.
+      A directed Foe never leaves the Skirmish alone: a Foe leaves only at 0 Health or when its group breaks
+      or surrenders, and a GM who wants a Foe to run breaks its group sooner (breaking_sooner; decision batch
+      9, 9-34).
+    # decision batch 9, 9-22 (OQ-174)
+    after_size_up: >-
+      On the group's next card after a successful Size Up, each Foe does what the GM stated unless
+      something that happens after the Size Up changes it (data/skirmish/skirmish.yaml, size_up, holds).
+  breaking_sooner: >-
+    The GM may break a group, or have it surrender, before it reaches its Grit, with a reason said aloud
+    (the officer falls; the sergeant sees the flare); never later (data/skirmish/skirmish.yaml, grit).
+  ambush_approach: >-
+    The GM rules whether the Squad can approach a group unseen at all (data/skirmish/skirmish.yaml, ambush,
+    squad_attempt).
+  stands: >-
+    A Foe's Attack Dice and Guard, rolled in the open from its row and never adjusted; damage and Net
+    Successes; whether a Foe at 0 Health is dead or out cold; that a Foe never Pushes, Helps, or Covers;
+    that a Foe never attacks a Down soldier; a Held Foe's rule; and a failed threat's rise. The rest the
+    GM applies as written is the list in Chapter 1, section 1.1, item 6.
+  # decision batch 9, 9-7, item 5 (ADR-0016, as amended): none ships in the first playtest
+  table_made: >-
+    A Foe kind a table makes waits for Phase 2: none ships in the first playtest, and no chapter gives the
+    GM the power to add one (docs/rules/07-playtest-rules.md, section 7.4). When Phase 2 adds one, it uses
+    these row fields, with Attack Dice no higher than 7 and Guard no higher than 4 (the Military Police
+    trooper's), and is played as unmeasured (decision batch 9, 9-7, item 5, and 9-41, item 7; ADR-0016, as
+    amended).
+
+# A Foe's Attack Dice and Guard take no Circumstances (decision batch 9, 9-2 and 9-7; Chapter 1, section 1.4a).
+circumstances: never
+
+# The foe rule (ADR-0018, as amended; ADR-0024, limit 8): the steps every Foe acts by unless the GM directs it
+# (gm_rulings).
 foe_rule:
   when: On the Foe group's card, each Foe still in the Skirmish that has not broken takes one turn, in label order.
   # decision batch 8, 8-30 (OQ-155, item c): a Foe never targets a Down soldier

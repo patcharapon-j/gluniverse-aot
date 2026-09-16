@@ -5,7 +5,7 @@
 id: bonus-dice-sources
 name: Bonus Dice Sources
 chapter: 01-core-rules
-adrs: [ADR-0006, ADR-0007, ADR-0010, ADR-0018]
+adrs: [ADR-0006, ADR-0007, ADR-0010, ADR-0018, ADR-0024]
 cap_per_roll: 4
 die_type: base
 declare: before the roll; no source can be added after the dice are rolled
@@ -19,8 +19,8 @@ sources:
     max_units: 3
     applies_to: >-
       any attribute roll except one whose roll_exceptions row in data/core/dice-pool.yaml
-      excludes help (the Death Roll and the performance roll), or whose own rule forbids
-      Help (such as the first two Trials of the Graduation Exam)
+      excludes help (the Death Roll, the performance roll, and the passive roll), or whose own
+      rule forbids Help (such as the first two Trials of the Graduation Exam)
     condition: >-
       The helper is a soldier other than the roller, is not Down, and is a player
       character or a Squadmate whose Chapter 2 action list includes Help. The helper
@@ -33,14 +33,44 @@ sources:
       action a result spends in advance begins its round spent) and is at the same
       Position as the roller or one Position step away.
     condition_outside_titan_engagement: >-
-      The rule that calls for the roll allows Help and states who qualifies to Help
+      On a roll a rule calls for, that rule allows Help and states who qualifies to Help
       and what Help spends. If that rule says nothing about Help, the roll cannot be
-      Helped.
+      Helped. On a called roll outside a Titan Engagement and a Skirmish (Chapter 1,
+      section 1.1), the helper is present and able to help concretely, as the GM rules.
+      In a Skirmish, on a called roll as on any roll there, the helper is a comrade
+      taking part who is not Down, whether Engaged or Apart (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42).
     spends_in_titan_engagement: the helper's action
-    spends_outside_titan_engagement: what the rule that calls for the roll states
+    spends_outside_titan_engagement: >-
+      On a roll a rule calls for, what that rule states. On a called roll outside a Titan
+      Engagement and a Skirmish, nothing, unless the GM names before the dice a cost of
+      time or position, which falls when Help is declared, whatever the result (Chapter 1,
+      section 1.8; decision batch 9, 9-28). In a Skirmish, the helper's action, and the GM
+      names no cost for it (decision batch 9, 9-36 and 9-42).
     rules: [01-core-rules]
-    adrs: [ADR-0003, ADR-0010]
+    adrs: [ADR-0024, ADR-0010]
     decided: [OQ-03, OQ-08, OQ-13, OQ-17, OQ-18]
+
+  - id: circumstances
+    name: Circumstances
+    category: circumstances
+    dice_per_unit:        # by the plus step the GM named (data/core/circumstances.yaml, steps)
+      easy: 1
+      routine: 2
+      effortless: 3
+    unit: plus step of Circumstances
+    max_units: 1          # one step per roll
+    applies_to: >-
+      any attribute roll a soldier or a Squadmate makes, except the rolls
+      data/core/circumstances.yaml lists under never
+    condition: >-
+      The GM named Easy, Routine, or Effortless as the roll's Circumstances, with the stakes
+      and before Bonus Dice are declared (Chapter 1, sections 1.1 and 1.4a). It is the one
+      source a ruling names.
+    declared_by: the GM, with the stakes
+    spends: nothing
+    rules: [01-core-rules]
+    adrs: [ADR-0024, ADR-0006]
 
   - id: opening
     name: Opening

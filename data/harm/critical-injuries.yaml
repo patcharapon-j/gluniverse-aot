@@ -5,7 +5,7 @@
 id: critical-injuries
 name: Critical Injuries
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0005, ADR-0012, ADR-0015, ADR-0017, ADR-0019]
+adrs: [ADR-0005, ADR-0012, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
 decided: [OQ-41, OQ-42, OQ-137, OQ-138, OQ-145, OQ-147, OQ-150]   # sides, Injury Type, the Bite rider, and lost limbs: decision batch 7, 7-4 to 7-6; the Burn, Cut, and Pierce riders, stacking, and prosthetics: decision batch 8, 8-8, 8-10, 8-11, 8-15
 
 # ------------------------------------------------------------------ Injury Types (ADR-0017)
@@ -31,7 +31,8 @@ type_rules:
   named_by: >-
     Every rule that inflicts a Critical Injury names its Injury Type, and every rule that deals damage names the
     Injury Type that the Critical Injury it inflicts at 0 current Health records (data/harm/health.yaml,
-    harm_kinds). The GM never picks a type.
+    harm_kinds). The GM never picks a type: damage a ruling names takes the Injury Type of its source
+    (data/harm/health.yaml, harm_kinds, damage, by_ruling).
   picks: >-
     The Injury Type picks which of the row's names the Critical Injury shows, and applies any rider its table
     carries for that type (type_riders). It changes nothing else.
@@ -114,7 +115,7 @@ gaining:
       crush (data/engagement/grab.yaml, grab_lands, rider), a fall from a knock loose, damage, a
       Stress gain, or any Critical Injury a rule other than a Behavior Table entry inflicts
       (ADR-0005 and ADR-0019, as amended in decision batch 8).
-  gm_choices: none   # the GM never picks an Injury Location, a side, an Injury Type, a row, or whether cannot_be_lethal applies
+  gm_choices: none   # ADR-0024, limit 17 (decision batch 9, 9-11): the GM never picks an Injury Location, a side, an Injury Type, a row, or whether cannot_be_lethal applies
 
 worsening:
   per_held_injury: 2
@@ -593,8 +594,8 @@ lost_limb_riders:
     forbids_entries: >-
       Action Catalog entry ids the soldier cannot take, make, or use, read as effect type forbids-entries
       (data/harm/effect-types.yaml). The drafter's choice under decision batch 7, 7-6: a new effect type, rather
-      than widening Chapter 1's forbids hook, which names Pushing, Help, Covering, and Reactions (ADR-0003,
-      item 13).
+      than widening Chapter 1's forbids hook, which names Pushing, Help, Covering, and Reactions (ADR-0024,
+      limit 13).
     forbids_decoys: Break Attention decoy ids the soldier cannot name (data/engagement/attention.yaml, break_attention, decoys)
     no_gear_dice_from: >-
       Items that supply no Gear Dice to the listed entries for this soldier. The entry is still rolled, with Gear
@@ -618,7 +619,7 @@ lost_limb_riders:
     with_help: >-
       A mount or a dismount is made only with a comrade's help, as the grade's mount_with_help states, and
       never otherwise (decision batch 8, 8-11 and 8-25).
-  gm_choices: none
+  gm_choices: none   # ADR-0024, limit 17 (decision batch 9, 9-11): no ruling picks or changes a lost-limb grade
   grades:
     - id: one-arm
       name: One arm lost

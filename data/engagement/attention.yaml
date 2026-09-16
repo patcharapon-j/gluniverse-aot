@@ -5,7 +5,7 @@
 id: attention
 name: Attention
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0010]
+adrs: [ADR-0010, ADR-0024]
 decided: [OQ-75, OQ-81, OQ-87, OQ-99, OQ-102, OQ-111]
 
 holder: >-
@@ -80,7 +80,7 @@ flag_duration: >-
   the hold's last card, which evaluates the ladder with the flags; a card that comes up while the
   Titan holds a Grabbed soldier; and a card with no one holding its Attention. So a flag set before
   or during a hold, or while the Titan holds a soldier, is read again by the Titan's next card that
-  resolves a behavior, and a Nape striker who falls short draws that behavior (ADR-0003, item 2, and
+  resolves a behavior, and a Nape striker who falls short draws that behavior (ADR-0024, limit 2, and
   ADR-0010, as amended in decision batch 3e; OQ-81 and OQ-111, as revised in decision batch 3e).
 flags:
   - id: hooked-by-strike
@@ -209,9 +209,9 @@ evaluation:
         Phase 1, since a Wing holds one Squadmate) reach this step, since during a round every player
         character's card is distinct and a Wing Squadmate comes right after its player character's;
         the Titan's next card evaluates the ladder with that round's cards dealt. The order of the
-        Squad sheet chooses nothing (ADR-0003 and ADR-0010, as amended in decision batch 4; OQ-81, as
+        Squad sheet chooses nothing (ADR-0024 and ADR-0010, as amended in decision batch 4; OQ-81, as
         revised in decision batch 4, 4-3; decision batch 4b, 4b-3).
-  gm_choices: none   # the GM never picks the holder
+  gm_choices: none (ADR-0024, limit 8; ADR-0010)   # the GM never picks the holder; no ruling picks Attention or a target (decision batch 9, 9-4)
 
 # ------------------------------------------------------------------ Draw Attention
 draw_attention:
@@ -226,7 +226,7 @@ draw_attention:
     a behavior (flag_duration). It moves Attention only when the Titan next evaluates its ladder,
     and a card that resolves nothing, including the last card of a decoy's hold, leaves the flag
     standing.
-  adrs: [ADR-0003]   # item 2, as amended in decision batch 3e
+  adrs: [ADR-0024]   # limit 2, as amended in decision batch 3e
 
 # ------------------------------------------------------------------ Break Attention
 break_attention:

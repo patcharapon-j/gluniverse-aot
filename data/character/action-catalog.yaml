@@ -7,16 +7,16 @@
 id: action-catalog
 name: Action Catalog
 chapter: 02-character-creation
-adrs: [ADR-0003, ADR-0006, ADR-0010, ADR-0015, ADR-0018, ADR-0019]
-decided: [OQ-11, OQ-25, OQ-26, OQ-27, OQ-33, OQ-35, OQ-141, OQ-142, OQ-143, OQ-146]
+adrs: [ADR-0006, ADR-0010, ADR-0015, ADR-0018, ADR-0019, ADR-0024]
+decided: [OQ-11, OQ-25, OQ-26, OQ-27, OQ-33, OQ-35, OQ-141, OQ-142, OQ-143, OQ-146, OQ-176, OQ-179]
 
 # kind:
 #   action      Taken as a soldier's action in a Titan Engagement or a Skirmish (Chapter 1,
 #               section 1.9; Chapter 7, section 7.4).
 #   reaction    Made when a Titan or a Foe acts against the soldier, outside the soldier's own
 #               turn; spends a turn (Chapter 1, section 1.9). Not an action.
-#   roll        An attribute roll made when a rule calls for it. Not an action, and it spends no
-#               turn of its own.
+#   roll        An attribute roll made when a rule calls for it, or, for an entry whose rolled is
+#               when_called, when the GM calls one. Not an action, and it spends no turn of its own.
 #   option      A use of another entry or rule, such as spending a Read's successes. Not an
 #               action and not a roll. It spends nothing of its own unless its notes or its
 #               calling rule say so.
@@ -25,6 +25,10 @@ decided: [OQ-11, OQ-25, OQ-26, OQ-27, OQ-33, OQ-35, OQ-141, OQ-142, OQ-143, OQ-1
 # rolled:
 #   when_taken         Rolled every time the entry is taken or made.
 #   when_a_rule_calls  Rolled only when the owning rule calls for it.
+#   when_called        Rolled when a rule calls for it, or when the GM calls a roll for an act this
+#                      entry fits (Chapter 1, section 1.1; uncatalogued_actions below; decision
+#                      batch 9, 9-12). Nine entries: spot, size-up, survive, persuade, endure,
+#                      sneak, recall, ride, and fly.
 #   never              Never rolled.
 # gear: the gear items that can supply Gear Dice (Chapter 1, section 1.3, step 6). Items are
 #   defined in Chapter 4.
@@ -38,7 +42,8 @@ decided: [OQ-11, OQ-25, OQ-26, OQ-27, OQ-33, OQ-35, OQ-141, OQ-142, OQ-143, OQ-1
 #   Since decision batch 7 (7-14, 7-16, 7-17) Chapter 7 calls for every entry that was dormant or
 #   reserved, so no entry carries either field. Both stay in the format for entries later rules add.
 # changes: the tracked values (listed under tracked_values) the entry can change, used by
-#   the procedure for actions outside the Catalog.
+#   the procedure for actions outside the Catalog as its default order and as an index, not a
+#   gate (ADR-0024, limit 12).
 # help_outside_titan_engagement: the Help requirement Chapter 1, section 1.8 (OQ-08), asks
 #   every rule that calls for a roll outside a Titan Engagement to state.
 
@@ -58,9 +63,11 @@ gear_requirement:
     An entry with requires_gear false and no gear item available is rolled without Gear Dice
     (Chapter 1, section 1.3, step 6).
 
-# The values an action outside the Catalog can be meant to change. A later chapter whose rule
-# creates a new value that soldiers change by acting adds a row here, or creates it as a
-# rule-named-value.
+# The values an action outside the Catalog can be meant to change: an index of what soldiers change
+# by acting, kept for Talents, the Foundry system, and the menu of effects an improvised act in a
+# fight can take (uncatalogued_actions, in_a_fight). It is no longer a gate (ADR-0024, limit 12;
+# decision batch 9, 9-12). A later chapter whose rule creates a new value that soldiers change by
+# acting adds a row here, or creates it as a rule-named-value.
 tracked_values:
   - {id: stress-raise, name: raise a soldier's Stress, rules: [01-core-rules]}
   - {id: stress-response-clear, name: "end a Stress Response, or a pending Fear Roll result (a forced step or a forced strike not yet made)", rules: [03-harm-and-mind]}
@@ -89,10 +96,10 @@ tracked_values:
   - {id: roll-dice-add, name: add a die to a comrade's roll, rules: [01-core-rules]}
   - {id: behavior-avoid, name: avoid a behavior or attack aimed at oneself, rules: [01-core-rules, 05-titan-engagement, 07-playtest-rules]}
   - {id: position-change, name: "change Position, or become Engaged with or Apart from a Foe in a Skirmish", rules: [05-titan-engagement, 07-playtest-rules], changed_by: "a move, not a Catalog entry"}
-  # Decision batch 8, 8-9 (ADR-0003 item 12, as amended; OQ-146): the falling Titan's values.
+  # Decision batch 8, 8-9 (ADR-0024, limit 12; OQ-146): the falling Titan's values.
   - {id: pinned, name: "get out from under a falling Titan's body, or free a soldier it pins", rules: [05-titan-engagement]}
   - {id: heave-count, name: add successes toward the Heave rating of a body that pins a soldier, rules: [05-titan-engagement]}
-  # Chapter 7, the playtest rules (decision batch 7; ADR-0003 item 12 as amended). Each is changed only
+  # Chapter 7, the playtest rules (decision batch 7; ADR-0024, limit 12). Each is changed only
   # by the entries whose calling rule reads it.
   - {id: leg-outcome, name: "settle what a Leg costs in rations and how its hazard roll is adjusted", rules: [07-playtest-rules]}
   - {id: camp-outcome, name: "settle whether a Night Camp gives Camp Relief and how its night hazard roll is adjusted", rules: [07-playtest-rules]}
@@ -189,9 +196,9 @@ entries:
     context: titan-engagement
     requirements: data/engagement/attention.yaml (draw_attention)
     changes: [draw-attention-set]
-    notes: Not from Distant (decision batch 5, OQ-113). Sets the loudest flag, which lasts until the end of the Titan's next card that resolves a behavior; a card that resolves nothing, under a decoy's hold, while the Titan holds a Grabbed soldier, or with no one holding its Attention, leaves it standing (ADR-0003, item 2, as amended in decision batch 3e; data/engagement/attention.yaml, flag_duration).
+    notes: Not from Distant (decision batch 5, OQ-113). Sets the loudest flag, which lasts until the end of the Titan's next card that resolves a behavior; a card that resolves nothing, under a decoy's hold, while the Titan holds a Grabbed soldier, or with no one holding its Attention, leaves it standing (ADR-0024, limit 2, as first amended in decision batch 3e; data/engagement/attention.yaml, flag_duration).
     rules: [05-titan-engagement]
-    adrs: [ADR-0003]
+    adrs: [ADR-0024]
 
   - id: read
     name: Read
@@ -302,7 +309,7 @@ entries:
     help_outside_titan_engagement: not taken outside a Titan Engagement
     rules: [05-titan-engagement]
     decided: [OQ-146]
-    adrs: [ADR-0003]
+    adrs: [ADR-0024]
 
   - id: change-canister
     name: Change Canister
@@ -330,7 +337,7 @@ entries:
     changes: [item-give]
     notes: data/gear/carrying.yaml (passing_items) lists which items can be passed and what passing spends.
     rules: [04-gear]
-    adrs: [ADR-0003]
+    adrs: [ADR-0024]
     decided: [OQ-35, OQ-60, OQ-65]
 
   - id: take-item
@@ -349,7 +356,7 @@ entries:
     changes: [item-take]
     notes: data/gear/carrying.yaml (taking_items) lists which items can be taken and what taking spends.
     rules: [04-gear]
-    adrs: [ADR-0003]
+    adrs: [ADR-0024]
     decided: [OQ-60, OQ-61, OQ-65, OQ-68]
 
   - id: mount-or-dismount
@@ -418,7 +425,11 @@ entries:
     context: any
     requirements: Chapter 1, section 1.8.
     changes: [roll-dice-add]
-    notes: Outside a Titan Engagement, Help is allowed only where the rule that calls for the roll allows it (OQ-08).
+    notes: >-
+      Outside a Titan Engagement, Help is allowed only where the rule that calls for the roll allows it
+      (OQ-08), and on a called roll outside a Skirmish as the GM rules, in a Skirmish as the
+      Skirmish's Help (Chapter 1, section 1.8; Chapter 7, section 7.4; decision batch 9, 9-12 and
+      9-42).
     rules: [01-core-rules]
 
   - id: cover
@@ -579,7 +590,7 @@ entries:
       releases (decision batch 8, 8-12).
     rules: [07-playtest-rules]
     decided: [OQ-148]
-    adrs: [ADR-0003, ADR-0018]
+    adrs: [ADR-0018, ADR-0024]
 
   # ------------------------------------------------ Harm, gear, and mind (Chapters 3 and 4)
   - id: treat-injury
@@ -637,15 +648,33 @@ entries:
   - id: fly
     name: Fly
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: agility
     gear: [odm-gear]
     requires_gear: true
     without_gear: not_possible
     context: any
-    requirements: Called by a Chapter 4 or Chapter 5 rule, such as a Position change that needs a roll.
+    requirements: >-
+      Called by a Chapter 4 or Chapter 5 rule, such as a Position change that needs a roll. Also made
+      as a called roll outside a Titan Engagement, a Skirmish included, when the GM calls one for an
+      act this entry fits, such as reaching a rooftop (Chapter 1, section 1.1; Chapter 2, section
+      2.9). In a Skirmish it is the one Fly roll there is: it takes this entry's Gear Dice, makes no
+      soldier airborne, since a ruling is not a rule that says so (data/gear/odm-gear.yaml,
+      airborne), makes no Gas Roll, and gives no Engaged or Apart (data/skirmish/skirmish.yaml,
+      actions, called_roll; decision batch 9, 9-43).
+    needs: >-
+      in a Titan Engagement, set by the Chapter 4 or Chapter 5 rule that calls for it (the Anchor
+      Rating's rows); outside a Titan Engagement, 1
     changes: []
-    help_outside_titan_engagement: stated by the rule that calls for the roll
+    help_outside_titan_engagement: >-
+      Stated by the rule that calls for the roll.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [04-gear, 05-titan-engagement]
 
   - id: leap-clear
@@ -665,12 +694,12 @@ entries:
     help_outside_titan_engagement: not made outside a Titan Engagement
     rules: [05-titan-engagement]
     decided: [OQ-146]
-    adrs: [ADR-0003, ADR-0019]
+    adrs: [ADR-0019, ADR-0024]
 
   - id: ride
     name: Ride
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: agility
     gear: [horse]
     requires_gear: true
@@ -680,12 +709,21 @@ entries:
       Called by the Leg roll on a Hard Ride, whatever the Formation Post (Chapter 7, section 7.1).
       The horse counts as not had while the soldier is not mounted on it (data/gear/items.yaml). The
       Chase rules (not yet written) may also call for it.
-    needs: 1 on a Leg roll (Chapter 7, section 7.1)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: 1 on a Leg roll (Chapter 7, section 7.1); 1 on a called roll
     changes: [leg-outcome]
     help_outside_titan_engagement: >-
       On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
       nothing, each at most once per Leg (Chapter 7, section 7.1). A roll another rule calls for
       states its own.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-121, OQ-141]   # live since decision batch 7, 7-14; dormant under batch 5, 5-3
 
@@ -709,7 +747,9 @@ entries:
     rolled: when_a_rule_calls
     attribute: null
     context: any
-    requirements: Called by the closed list of Fear Roll triggers in Chapter 3.
+    requirements: >-
+      Called by the Fear Roll triggers in Chapter 3: a closed list with one row the GM reads, gm-horror,
+      outside a Titan Engagement (ADR-0024, limit 1; decision batch 9, 9-6).
     changes: []
     rules: [03-harm-and-mind]
 
@@ -739,25 +779,37 @@ entries:
   - id: spot
     name: Spot
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: perception
     gear: []
     context: any
     requirements: >-
       Called by the Leg roll at the Vanguard, Signal Relay, and Rear Guard Formation Posts on a
       Steady Leg (Chapter 7, section 7.1).
-    needs: 1 on a Leg roll (Chapter 7, section 7.1)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: 1 on a Leg roll (Chapter 7, section 7.1); 1 on a called roll
+    notes: >-
+      A passive roll is a Spot or a Size Up the GM makes out of sight, for something the soldier does
+      not know is there, outside a Titan Engagement and a Skirmish (Chapter 1, section 1.1, item 5).
     changes: [leg-outcome]
     help_outside_titan_engagement: >-
       On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
       nothing, each at most once per Leg (Chapter 7, section 7.1). A roll another rule calls for
       states its own.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-141]
   - id: size-up
     name: Size Up
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: instinct
     gear: []
     context: any
@@ -765,39 +817,59 @@ entries:
       Called once per Downtime, before any Requisition roll, to lower the ledger (Chapter 7,
       section 7.3); and in a Skirmish, once per Foe group, to learn about that group (Chapter 7,
       section 7.4).
-    needs: 1 (Chapter 7, sections 7.3 and 7.4)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: 1 (Chapter 7, sections 7.3 and 7.4); 1 on a called roll
     notes: >-
       Judging a person's intent. Observing a Titan is Read, not Size Up. In a Skirmish it is made
       on the soldier's action (Chapter 7, section 7.4).
+      A passive roll is a Spot or a Size Up the GM makes out of sight, for something the soldier does
+      not know is there, outside a Titan Engagement and a Skirmish (Chapter 1, section 1.1, item 5).
     changes: [ledger-lower, foe-intent-reveal]
     help_outside_titan_engagement: >-
-      Never Helped and never retried: neither the Requisition rule nor the Skirmish rule allows
+      On Requisition and in a Skirmish, never Helped and never retried: neither rule allows
       Help on it (Chapter 7, sections 7.3 and 7.4). A roll another rule calls for states its own.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-142, OQ-143]
   - id: survive
     name: Survive
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: instinct
     gear: []
     context: any
     requirements: >-
       Called by the Leg roll at the Flank Scout and Supply Wagon Formation Posts on a Steady Leg,
       and by the camp roll at a Night Camp (Chapter 7, section 7.1).
-    needs: 1 (Chapter 7, section 7.1)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: 1 (Chapter 7, section 7.1); 1 on a called roll
     changes: [leg-outcome, camp-outcome]
     help_outside_titan_engagement: >-
       On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
       nothing, each at most once per Leg; on the camp roll, up to three comrades on the Expedition
       who are not Down may Help, spending nothing (Chapter 7, section 7.1). A roll another rule
       calls for states its own.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-141]
   - id: persuade
     name: Persuade
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: empathy
     gear: []
     context: any
@@ -806,10 +878,13 @@ entries:
       rolling (Chapter 7, section 7.3); by a Parley, once per Skirmish, on the soldier's action; and by a
       Parley outside a Skirmish, made before a Foe group with no Skirmish under way and never again by
       the same soldier with that group (Chapter 7, section 7.4).
-    needs: set by Chapter 7 (sections 7.3 and 7.4)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: set by Chapter 7 (sections 7.3 and 7.4); 1 on a called roll
     notes: >-
       A Parley made as a threat rolls Strength in place of Empathy. It is still made for persuade,
-      so a Talent that names persuade still adds its dice (Chapter 7, section 7.4).
+      so a Talent that names persuade still adds its dice (Chapter 7, section 7.4). A called Persuade
+      the GM rules is a threat rolls Strength the same way (decision batch 9, 9-13).
     changes: [requisition-grant, foe-yield]
     help_outside_titan_engagement: >-
       On a Requisition roll, up to three comrades in the Squad who are not Down may Help; a player
@@ -817,59 +892,93 @@ entries:
       per Downtime (Chapter 7, section 7.3). On a Parley in a Skirmish, up to three comrades taking
       part who are not Down may Help, each spending their action, whether Engaged or Apart; a
       Parley outside a Skirmish is never Helped (Chapter 7, section 7.4).
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-142, OQ-143]
   - id: endure
     name: Endure
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: strength
     gear: []
     context: any
     requirements: >-
       Called by the Leg roll at the Center Formation Post on a Steady Leg, and by the Straggler row
       of the Leg Hazard table for its victim (Chapter 7, section 7.1).
-    needs: 1 (Chapter 7, section 7.1)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: 1 (Chapter 7, section 7.1); 1 on a called roll
     changes: [leg-outcome, hazard-outcome]
     help_outside_titan_engagement: >-
       On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending
       nothing, each at most once per Leg; the Straggler row's roll is never Helped (Chapter 7,
       section 7.1). A roll another rule calls for states its own.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-141]
   - id: sneak
     name: Sneak
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: agility
     gear: []
     context: any
     requirements: >-
       Called before a Skirmish's first round when the Squad approaches a Foe group unseen: one
       soldier rolls it for the ambush (Chapter 7, section 7.4).
-    needs: the Foe group's Watch (Chapter 7, section 7.4)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: the Foe group's Watch (Chapter 7, section 7.4); 1 on a called roll
     changes: [ambush-set]
     help_outside_titan_engagement: >-
-      Never Helped and never retried (Chapter 7, section 7.4). A roll another rule calls for states
-      its own.
+      For the ambush, never Helped and never retried (Chapter 7, section 7.4). A roll another rule
+      calls for states its own.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-143]
   - id: recall
     name: Recall
     kind: roll
-    rolled: when_a_rule_calls
+    rolled: when_called   # decision batch 9, 9-12
     attribute: wits
     gear: []
     context: any
     requirements: >-
       Called by a Requisition roll, which the roller makes with Persuade or Recall, chosen before
       rolling (Chapter 7, section 7.3).
-    needs: set by Chapter 7 (section 7.3)
+      Also made as a called roll when the GM calls one for an act this entry fits (Chapter 1,
+      section 1.1; Chapter 2, section 2.9).
+    needs: set by Chapter 7 (section 7.3); 1 on a called roll
     changes: [requisition-grant]
     help_outside_titan_engagement: >-
       On a Requisition roll, up to three comrades in the Squad who are not Down may Help; a player
       character who Helps spends their own Requisition this Downtime, and a Squadmate may Help once
       per Downtime (Chapter 7, section 7.3). A roll another rule calls for states its own.
+      On a called roll outside a Skirmish, up to three comrades who are present and able to help
+      concretely may Help, as the GM rules; in a Skirmish, Help on a called roll is the Skirmish's
+      Help, each helper spending their action, at no cost the GM names (data/skirmish/skirmish.yaml,
+      rolls, called-roll; decision batch 9, 9-36 and 9-42); Help spends nothing unless the GM names a cost of time or position for it,
+      which falls when Help is declared (Chapter 1, section 1.8; decision batch 9, 9-28); a comrade
+      who could Help may Cover (Chapter 1, section 1.8; decision
+      batch 9, 9-12).
     rules: [07-playtest-rules]
     decided: [OQ-142]
 
@@ -892,7 +1001,7 @@ entries:
       or on Help to one. The Squadmate relief is a result of the procedure, not this option.
     rules: [07-playtest-rules]
     decided: [OQ-153]
-    adrs: [ADR-0003]
+    adrs: [ADR-0024]
 
   - id: squad-action
     name: Squad Action
@@ -909,7 +1018,7 @@ entries:
     notes: The rows are kept in data/campaign/downtime.yaml.
     rules: [07-playtest-rules]
     decided: [OQ-153]
-    adrs: [ADR-0003]
+    adrs: [ADR-0024]
 
   # ------------------------------------------------ Lifepath
   - id: performance-roll
@@ -924,15 +1033,22 @@ entries:
     help_outside_titan_engagement: never Helped
     rules: [02-character-creation]
 
-# Section 2.9: actions that are not in the Catalog (ADR-0003, item 9). Follow the steps in order.
+# Section 2.9: actions that are not in the Catalog (ADR-0024, limits 9 and 12; decision batch 9, 9-1,
+# 9-8, 9-12). Outside a fight, the steps are the default order for an action meant to change a tracked
+# value (9-27). An action
+# they do not resolve goes to no_value_or_no_match, and in a fight to in_a_fight.
 uncatalogued_actions:
+  # decision batch 9, 9-27
+  where: >-
+    Outside a Titan Engagement and a Skirmish. In a fight the steps are not used, and in_a_fight
+    applies.
   steps:
     - id: name-the-change
       text: >-
         The player names the one tracked value (tracked_values above) the action is meant to
         change. The description of the action never limits which value the player names; the
         named value alone decides which entries can be used. If it is meant to change none of
-        them, the action needs no roll and has no mechanical effect; stop here.
+        them, the GM rules on it (no_value_or_no_match); stop here.
     - id: moves
       text: >-
         If the value is position-change, the action is a move, resolved by Chapter 5; stop here.
@@ -951,14 +1067,82 @@ uncatalogued_actions:
       text: >-
         If no listed entry can be used and the value is a rule-named-value, make the attribute
         roll its creating rule names, using the attribute alone (rolls_called_by_attribute).
-        Otherwise the action cannot change that value. It needs no roll and has no mechanical
-        effect.
+        Otherwise the steps cannot change that value, and the GM rules on the action
+        (no_value_or_no_match).
+  no_value_or_no_match: >-
+    An action meant to change no tracked value, or one that step no-match leaves unresolved, is a
+    ruling under Chapter 1, section 1.1, made before anyone rolls. In a Titan Engagement or a
+    Skirmish, in_a_fight applies. Anywhere else the GM says that it happens with no roll, that it
+    cannot be done, or that it is a called roll. For a called roll the GM names, before the pool is
+    built: the Catalog entry closest to the act, from the entries whose rolled is when_called, or an
+    attribute alone if none fits (rolls_called_by_attribute); its Circumstances (Chapter 1, section
+    1.4a), Standard if the GM names none; and its stakes, what failure costs from the menu in
+    Chapter 1, section 1.1, item 2, and, where it is not obvious, what success gives
+    (data/core/dice-pool.yaml, called_roll, success_gives; never a gear item). A called roll
+    needs 1 success. It is made for the named entry for every purpose that follows: the entry's
+    attribute and gear items, gear_requirement, and every Talent that names the entry. It can be
+    Pushed and Covered, and Help on it is as the GM rules (Chapter 1, section 1.8). Once the dice
+    are rolled, the entry, the Circumstances, and the stakes do not change, and the result stands.
+  in_a_fight: >-
+    In a Titan Engagement or a Skirmish the steps are not used. A soldier's action is Help, a
+    Catalog entry the soldier names and takes as it is written, or an improvised act: an act the
+    soldier describes that is not an entry taken as written, even when a tracked value it would
+    change matches an entry (decision batch 9, 9-8 and 9-27). Whether a described act is an entry
+    taken as written is part of the GM's ruling on its model entry. When no entry of kind action the
+    soldier could take in that fight has an effect the act imitates, and the act would change nothing
+    the fight tracks (no value in tracked_values, no Position, Engaged or Apart, Attention, Opening,
+    card, clock, or Foe value), it is a called roll (data/core/dice-pool.yaml, called_roll,
+    in_a_fight): it spends the action, Help on it is the fight's, and it never gives an effect an
+    entry has (decision batch 9, 9-36). If it would change nothing, it
+    is described and needs no roll; if the
+    GM judges that it cannot be done, the GM says so before anyone rolls (Chapter 1, section 1.1,
+    item 1). When an entry of kind action the soldier could take in that fight can model it, before the
+    pool is built, the GM names its model entry: the one existing
+    entry whose effect the act imitates, with tracked_values above as the menu of effects. A model
+    entry is an entry of kind action that the soldier could take in that fight: in a Titan
+    Engagement, one whose context is titan-engagement or any; in a Skirmish, one Chapter 7, section
+    7.4, allows. It is never an entry of kind reaction, roll, fixed-roll, or option. That
+    ruling stands. The act spends the soldier's action. It is made as the model entry is made:
+    rolled only if that entry is rolled, with its attribute, gear items, Talents, and needs, and with
+    Circumstances as any roll. It meets every requirement and restriction of the model entry (the
+    soldier holding a Titan's Attention still cannot strike its Nape; a Feint keeps its Position
+    rule; a Foe's Guard still rolls). On a success it produces only the model entry's effect, at
+    that entry's size. It never kills a Titan; never changes Nape Depth, Toughness, Attack Dice, or
+    a card; never cancels or delays a card; never creates more Openings than the model entry could;
+    and never gives an effect that no entry has. Only a Nape strike taken as its entry is written
+    kills a Titan; an act modelled on the Nape strike never does. An act modelled on the Nape strike
+    is resolved as a Nape strike that falls short, whatever its successes: each success creates 1
+    Opening, Relentless adds 1 more on at least 1 success, the act sets the hooked-by-strike flag, and
+    successes that reach the Titan's Nape Depth create their
+    Openings and nothing else (data/engagement/titan-harm.yaml, nape_strikes, modelled; decision
+    batch 9, 9-39). Examples: a supply wagon cut loose
+    to roll past a Titan is Break Attention, with its needs; a swung lantern is Draw Attention, never
+    from Distant; a chimney dropped on a Titan's leg is a Body Part strike whose successes count
+    toward that leg's Toughness; a rope thrown to a comrade is Help or Lift Comrade; an object that
+    is not a gear item, hurled at a person, is a Shoot at damage 1 and Crush, with no Gear Dice
+    (data/skirmish/skirmish.yaml, improvised_act and weapons). A dive behind a chimney stack is a
+    move if it changes the soldier's Position, and otherwise changes nothing and needs no roll; it is
+    never modelled on the dodge and gives no Circumstances to a later dodge, since Positions already
+    price where a soldier stands (decision batch 9, 9-27).
+  # decision batch 9, 9-24 (OQ-176): the called-roll sentences.
   rolls_called_by_attribute: >-
     A rule that calls for an attribute roll without naming a Catalog entry calls for that
     attribute alone: no Talent dice, and Gear Dice only from a gear item that rule names.
     Every other pool step in Chapter 1, section 1.3, applies, and the rule states its Help
-    requirement (Chapter 1, section 1.8).
+    requirement (Chapter 1, section 1.8). A called roll made with an attribute alone is built the
+    same way, with Help as the GM rules outside a fight and as the fight's Help in one (Chapter 1,
+    section 1.8; decision batch 9, 9-42). A ruling is not a rule that names a gear item, so a called
+    roll made with an attribute alone takes no Gear Dice: a gear item or other object that helps
+    counts toward its Circumstances (data/gear/items.yaml, other_objects) and, giving no Gear Dice,
+    cannot be worn by a Push on it. A called roll the GM names for `fly` or `ride` takes that entry's
+    Gear Dice (decision batch 9, 9-24).
   gm_rulings: >-
-    The GM does not decide whether an action is possible, which entry it uses, or what it
-    changes. The steps above decide. What a soldier does that changes no tracked value is
-    described freely and has no mechanical effect.
+    The GM rules, before the dice: whether an action the steps do not resolve happens, cannot be
+    done, or is a called roll, and a called roll's entry or attribute, Circumstances, and stakes
+    (no_value_or_no_match); and, in a fight, whether a described act is an entry taken as written,
+    an improvised act with its model entry, or a called roll (in_a_fight)
+    (ADR-0024, limits 9 and 12; decision batch 9, 9-1, 9-8, 9-12). The GM applies as written: the
+    steps, outside a fight, as the default order for an action meant to change a tracked value; the entry the player
+    picks at step match; gear_requirement; the rule that a Talent adds dice only to a roll made for
+    an entry it names; and every roll's needs, which no ruling raises or lowers. Everything else the
+    GM applies as written is the list in Chapter 1, section 1.1, item 6.

@@ -4,7 +4,7 @@
 id: standard-issue
 name: Standard Issue
 chapter: 04-gear
-adrs: [ADR-0003, ADR-0014]
+adrs: [ADR-0014, ADR-0024]
 decided: [OQ-59, OQ-72, OQ-93, OQ-141, OQ-148]
 # Revised by decision batch 2b (docs/rules/DECISIONS-2026-09-14.md, Batch 2b): by_funding.horse_rating
 # (Major 2), and receiving.steps odm-gear, horse, and decline and interim_issue.differences (Minor 5).
@@ -142,7 +142,10 @@ receiving:
     At a step that would replace a kept item or make it leave play, the soldier may hand the kept item
     in and take the issue in its place; keeping it is the default (data/gear/items.yaml, kept_item;
     decision batch 8, 8-12).
-  gm: The GM never adds, removes, or changes an item of Standard Issue.
+  gm: >-
+    none (ADR-0024; Chapter 1, section 1.1, item 6; decision batch 9, 9-11 and 9-16). The GM never adds,
+    removes, or changes an item of Standard Issue or when it is received; an item off the list comes only
+    by Requisition (Chapter 7, section 7.3).
   squad_supply: >-
     When every soldier in the Squad receives Standard Issue together, Squad Supply is restocked
     too (data/gear/squad-supply.yaml, stock).

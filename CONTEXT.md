@@ -106,7 +106,7 @@ A narrow trained ability that adds dice or bends a rule, but only for the action
 _Avoid_: skill, feat, perk
 
 **Action Catalog**:
-The complete list of named actions a soldier can take, which Talents reference by name.
+The complete list of named actions and rolls a soldier can take, which Talents reference by name and which a called roll is made for (the closest entry marked `when_called`, or an attribute alone). An improvised act in a fight uses one entry as its model.
 _Avoid_: move list
 
 **Wits**:
@@ -165,12 +165,28 @@ _Avoid_: willpower, sanity
 Dice contributed by equipment. When a Pushed roll is final, each Gear Die showing 1 wears that equipment down by 1.
 
 **Help**:
-Adding 1 die to a comrade's roll, up to 3 helpers. In a Titan Engagement it spends the helper's action and needs the same Position or one step away; outside one, the rule that calls for the roll states who can Help and what it spends.
+Adding 1 die to a comrade's roll, up to 3 helpers. In a Titan Engagement it spends the helper's action and needs the same Position or one step away; in a Skirmish it spends the helper's action and needs a comrade taking part who is not Down; outside both, the rule that calls for the roll states who can Help and what it spends, and on a called roll the GM rules who is present and able, with Help spending nothing unless the GM names a cost of time or position, which falls when Help is declared.
 _Avoid_: assist
 
 **Bonus Dice**:
-Dice from Help, Openings, and the other sources a rule names, such as Call It, a grounded Titan, or the Ambush, which together can add at most 4 to a roll.
+Dice from Help, Openings, and the other sources a rule names, such as Call It, a grounded Titan, the Ambush, or a plus step of Circumstances, which together can add at most 4 to a roll.
 _Avoid_: advantage, modifier
+
+**Called roll**:
+A roll the GM calls for an act no rule covers, when its outcome is in doubt and failure would cost something. Before the pool is built the GM names its Catalog entry or attribute, its Circumstances, and its Stakes; it needs 1 success, can be Pushed, Covered, and Helped, outside a Titan Engagement and a Skirmish as the GM rules, and its result stands. In a Titan Engagement or a Skirmish it spends the action and is made only for an act no entry of kind action in that fight could model and that changes nothing the fight tracks; Help on it is then the fight's Help. A passive roll is not a called roll: it is a Spot or Size Up the GM makes out of sight for something the soldier does not know is there, outside a fight, with no stakes, no Push, no Help, and no Stress Response, and failing it means only that the soldier does not notice.
+_Avoid_: skill check, ad hoc roll, GM roll
+
+**Circumstances**:
+The one step of the seven-step ladder the GM names for a roll's situation: Effortless (+3), Routine (+2), Easy (+1), Standard (nothing), Hard, Harsh, or Desperate (a 1, 2, or 3 die penalty). Standard when the GM names none. Plus steps are Bonus Dice under the cap of 4; minus steps are penalties after the cap, base dice only, never below 1 base die, never Gear or Stress Dice. They change dice, never what a roll needs, and never touch Titan Dice or a Foe's dice. In a Titan Engagement the assumption is Standard, and the GM names a step only for something no rule already prices. Hard alone always names this step; the Pace is always written in full as Hard Ride, and the Talents Hard to Kill and Hard Rider keep their names.
+_Avoid_: difficulty, modifier, DC, target number, advantage, disadvantage
+
+**Stakes**:
+What the GM names before a called roll is made: what success gives (the act, information, a position, an object that is not a gear item, or found Squad Supply; never a gear item), and what failure costs from the closed menu (it does not happen; 1 Stress; a fall; damage of 1 to 3; a lost item or unit of Squad Supply; lost time or a worse position). A Critical Injury is never handed out as a cost, though damage that brings current Health to 0 inflicts one as all damage does, so the GM states the soldier's current Health with any stakes that name damage or a fall. Named before the dice, fixed once they roll.
+_Avoid_: consequence, complication (as rules terms), DC
+
+**Ruling**:
+A call the GM makes where the rules are silent: whether to roll, which entry a called roll uses, its Circumstances and Stakes, whether a retry is possible, how a Foe with a reason acts, and how a scene is framed. A ruling acts before the dice and never changes a die, a row, a card, or a need. The rules the GM applies as written are listed in Chapter 1, section 1.1.
+_Avoid_: fiat, house rule, discretion (as a rules term)
 
 **Rally**:
 The Empathy entry in the Action Catalog that clears one of a comrade's lasting Stress Responses or pending Fear results for each success, but never their Stress. In a Titan Engagement it is an action. Outside one it is not an action: any soldier who is not Down may Rally a comrade. No soldier can Rally themselves.
@@ -189,7 +205,7 @@ The attack's successes left after the Reaction's have cancelled them one for one
 _Avoid_: margin, degrees of success, extra successes
 
 **Fear Roll**:
-A roll forced by a horrifying event, such as a Titan seizing a comrade, rather than by the dice.
+A roll forced by a horrifying event on the closed list of triggers, such as a Titan seizing a comrade, rather than by the dice. Outside a Titan Engagement the GM may call one for an event as horrifying as a listed trigger; inside one, only the list does.
 _Avoid_: Panic Roll
 
 **Scar**:
@@ -291,7 +307,7 @@ The pool a Behavior Table entry or a Foe's weapon rolls when it resolves: 3, 6, 
 _Avoid_: Severity (that is the number rolled), attack pool, difficulty, dice rating
 
 **Titan Dice**:
-The dice a Titan's Attack Dice are rolled with, in the open when its card comes up: a die kind that succeeds on 5 or 6, never Pushes, and takes no Bonus Dice, Help, Gear Dice, or Stress Dice. Use a colour no soldier's pool uses.
+The dice a Titan's Attack Dice are rolled with, in the open when its card comes up: a die kind that succeeds on 5 or 6, never Pushes, and takes no Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances. Use a colour no soldier's pool uses.
 _Avoid_: monster dice, GM dice
 
 **Thrash**:
@@ -523,7 +539,7 @@ A scene in which soldiers fight people, such as Military Police, bandits, or a G
 _Avoid_: combat, encounter, battle, fight scene, human Titan Engagement
 
 **Foe**:
-A person or group of people the Squad fights in a Skirmish, run from the foe list by a closed targeting rule. At 0 Health a Foe is dead by a blade, a shot, or fire, and out cold by a blow.
+A person or group of people the Squad fights in a Skirmish, run from the foe list by the foe rule unless the GM directs one with a reason said aloud. Its Attack Dice and Guard are rolled in the open and never adjusted. At 0 Health a Foe is dead by a blade, a shot, or fire, and out cold by a blow.
 _Avoid_: enemy, mob, monster, NPC combatant
 
 **Engaged**:
@@ -539,7 +555,7 @@ Grappled by a person in a Skirmish: unable to move or break away, and able to at
 _Avoid_: Grabbed (reserved for Titans), pinned, restrained
 
 **Grit**:
-How many of a Foe group's members must be out of the Skirmish before the group breaks and leaves, and the base of the successes a Parley needs.
+How many of a Foe group's members must be out of the Skirmish before the group breaks and leaves: the latest point at which it breaks, since the GM may break it sooner with a reason. Each Foe kind's Parley value, not its Grit, sets what a Parley needs.
 _Avoid_: morale, Resolve, courage
 
 **Guard**:
@@ -555,7 +571,7 @@ The side that acts first in round 1 of a Skirmish. Its attacks on a target that 
 _Avoid_: surprise round, sneak attack
 
 **Parley**:
-The once-per-Skirmish Persuade roll (or Strength roll, to threaten) that asks a Foe group to stand down, let the Squad pass, answer a question, or surrender.
+The once-per-Skirmish Persuade roll (or Strength roll, to threaten) that asks a Foe group to stand down, let the Squad pass, answer a question, or surrender. It needs the group's Parley value (plus 1 in a Skirmish, minus 1 per Foe out, never below 1) plus the ask. Talking to anyone who is not a Foe group is a called roll.
 _Avoid_: negotiation check, social combat
 
 **Shot**:
@@ -609,7 +625,7 @@ A reusable template for a set piece, made of an objective clock, a threat clock,
 _Avoid_: scenario type, mini-game
 
 **Mission Brief**:
-The GM's record of an assigned mission: objective, route, Distance Band, expected Titans, one complication, and rewards.
+The GM's record of an assigned mission: objective, route, Distance Band, expected Titans, one complication, and rewards. Its route keeps within the bounds Chapter 7 gives: 4 to 6 Legs, no Leg deeper than the interim route gives its place, and at most one Depot; the hazard roll reads it as written.
 _Avoid_: adventure, scenario
 
 **Canon Proximity**:

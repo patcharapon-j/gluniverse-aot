@@ -5,7 +5,7 @@
 id: grab
 name: The Grab
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0005, ADR-0010, ADR-0014, ADR-0015, ADR-0017, ADR-0019]
+adrs: [ADR-0005, ADR-0010, ADR-0014, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
 decided: [OQ-85, OQ-86, OQ-99, OQ-137, OQ-145, OQ-146, OQ-151]
 constraints_met: [OQ-18, OQ-39, OQ-42, OQ-50]
 

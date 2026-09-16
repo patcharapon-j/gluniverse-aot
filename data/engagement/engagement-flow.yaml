@@ -4,7 +4,7 @@
 id: engagement-flow
 name: Starting and Ending a Titan Engagement
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0008, ADR-0010, ADR-0014]
+adrs: [ADR-0008, ADR-0010, ADR-0014, ADR-0024]
 decided: [OQ-86, OQ-87, OQ-88, OQ-122, OQ-126, OQ-146, OQ-163, OQ-165]
 
 # ------------------------------------------------------------------ starting
@@ -13,8 +13,11 @@ starting:
     - id: setup
       text: >-
         The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any
-        Background Titans with their clock lengths, and the length of its retreat clock. Any of
-        these it does not name comes from data/engagement/engagement-setup.yaml. The retreat clock
+        Background Titans with their clock lengths, and the length of its retreat clock. The GM's
+        framing may name the Anchor Rating, the Focus Titan, and the Background Titans with their
+        clock lengths where the rule does not (data/engagement/engagement-setup.yaml, gm_choices;
+        decision batch 9, 9-15). Any of these neither names comes from
+        data/engagement/engagement-setup.yaml. The retreat clock
         starts empty (data/engagement/background-titans.yaml, retreat_clock).
     - id: label
       text: The Focus Titan is labelled A (data/gear/sheet-fields.yaml, focus_titan_label).
@@ -157,4 +160,6 @@ ending:
     last Position, recorded horse Position, and left-item record is cleared
     (data/engagement/positions.yaml, a_focus_titan_dies; data/gear/horses.yaml,
     titan_engagement_ends; data/gear/carrying.yaml, leaving_play).
-  gm: The GM never ends a Titan Engagement. Only these tests do.
+  gm: >-
+    none (ADR-0024; decision batch 9, 9-11): the GM never ends a Titan Engagement. Only these tests
+    do.

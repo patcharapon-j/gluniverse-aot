@@ -5,7 +5,7 @@
 id: graduation-exam
 name: Graduation Exam
 chapter: 02-character-creation
-adrs: [ADR-0003, ADR-0012]
+adrs: [ADR-0012, ADR-0024]
 decided: [OQ-05, OQ-18, OQ-22, OQ-37]
 
 use:
@@ -25,6 +25,7 @@ conditions:
   titan_engagement: false     # no rounds, turns, Positions, Attention, or Titans
   gas_rolls: false
   blade_sets_counted: false
+  circumstances: never   # decision batch 9, 9-2: the Trials are creation, before play (data/core/circumstances.yaml, never)
   exam_issue:
     - item: training ODM Gear
       counts_as: odm-gear
@@ -46,7 +47,8 @@ conditions:
     Talent that names the entry, Bonus Dice only from the squad field exercise's Help, Gear
     Dice from the exam issue item listed for the entry, and Stress Dice. A roll can be Pushed
     only where its Trial's push is true; the other Trials forbid a Push by their own rule
-    (Chapter 1, section 1.5). Rule Talents that name the entry apply.
+    (Chapter 1, section 1.5). Rule Talents that name the entry apply. No Trial roll takes
+    Circumstances (Chapter 1, section 1.4a).
   requirements_ignored: >-
     Requirements of an entry that need a Titan, a Position, Attention, a Grabbed or Down
     soldier, a patient, a comrade with a Stress Response, or a worn or Jammed item do not

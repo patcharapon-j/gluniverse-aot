@@ -4,7 +4,7 @@
 id: squad-supply
 name: Squad Supply
 chapter: 04-gear
-adrs: [ADR-0003, ADR-0009, ADR-0016, ADR-0018]
+adrs: [ADR-0009, ADR-0016, ADR-0018, ADR-0024]
 decided: [OQ-44, OQ-67, OQ-141, OQ-142, OQ-143, OQ-148]
 
 held_by: >-
@@ -34,15 +34,32 @@ kinds:
     uses: >-
       Reload spends 1 unit to load one flintlock pistol or musket
       (data/character/action-catalog.yaml, reload; Chapter 7, section 7.4). No other rule spends
-      shot.
+      shot; a failed called roll whose stakes named 1 unit of shot spends it (spending).
 
 units: >-
   Each kind is a whole number of units, never below 0. A use needs a unit of its kind. With none
   left, the use cannot be made, except where Chapter 7, section 7.1, says what a Leg or a night
   camp with no rations costs.
 spending: >-
-  A unit is spent only by a rule that names its kind, and added only by a restock (stock, when_set)
-  or a Requisition (Chapter 7, section 7.3). The GM never spends, adds, or removes units.
+  A unit is spent only by a rule that names its kind, or by a failed called roll whose stakes named
+  1 unit of one kind (Chapter 1, section 1.1, item 2). A unit is added only by a restock (stock,
+  when_set), a Requisition (Chapter 7, section 7.3), or a ruling on a successful called search (a Spot
+  or a Survive) of a place the GM names with the stakes: the GM may add at most 1 unit per success, of
+  one kind of Squad Supply that place plausibly holds. A place yields Squad Supply to one called search
+  only: once a called search of it is rolled, whatever its result, no later roll finds Squad Supply
+  there, and the other soldiers present search it by Helping that roll. A place is one building,
+  wagon, cache, or the like the Squad can search in one go, named by the GM with the stakes. A
+  Waypoint scene (data/expedition/legs.yaml, day, waypoint_scene) yields Squad Supply to at most two
+  called searches, whatever the number of places the GM names in it; no later search in that scene
+  finds Squad Supply, whatever its result (decision batch 9, 9-41, item 1). No called search is made in
+  a Titan Engagement or a Skirmish (data/core/dice-pool.yaml, called_roll, success_gives); a place at
+  hand is searched once the fight has ended, under these caps (decision batch 9, 9-45). Nothing else
+  adds units by ruling (decision batch 9, 9-5 and 9-29).
+gm: >-
+  A staked unit, 1 of one kind per failed called roll, and found supplies, capped as spending states
+  (decision batch 9, 9-5 and 9-11). Every other spend and add is a rule's, and the GM spends, adds, or
+  removes units in no other way (ADR-0024, limits 14 and 17). The playtest logs the units a called
+  search finds (decision batch 9, 9-17 and 9-41).
 sheet: The Squad sheet records each kind's units (data/gear/sheet-fields.yaml, squad_sheet).
 
 stock:

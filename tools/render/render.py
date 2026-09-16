@@ -1,7 +1,7 @@
-"""Renders the rulebook's tables from data/ YAML into Chapters 2 to 5 and 7 of docs/rules/ (ADR-0012).
+"""Renders the rulebook's tables from data/ YAML into Chapters 1 to 5 and 7 of docs/rules/ (ADR-0012).
 
 Run from the repository root with PyYAML:
-- `uv run --with pyyaml python tools/render/render.py write` replaces every rendered block in Chapters 2 to 5 and 7.
+- `uv run --with pyyaml python tools/render/render.py write` replaces every rendered block in Chapters 1 to 5 and 7.
   `render.py write docs/rules/07-playtest-rules.md` (one or more chapter paths) rewrites only those chapters, so a
   drafter can render under one chapter's lock while other packages edit the rest.
 - `uv run --with pyyaml python tools/render/render.py check` exits 1 if any rendered block differs from its YAML,
@@ -29,13 +29,15 @@ import yaml
 sys.dont_write_bytecode = True
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+CH1 = "docs/rules/01-core-rules.md"
 CH2 = "docs/rules/02-character-creation.md"
 CH3 = "docs/rules/03-harm-and-mind.md"
 CH4 = "docs/rules/04-gear.md"
 CH5 = "docs/rules/05-titan-engagement.md"
 CH7 = "docs/rules/07-playtest-rules.md"
-CHAPTERS = [CH2, CH3, CH4, CH5, CH7]
+CHAPTERS = [CH1, CH2, CH3, CH4, CH5, CH7]
 
+CIRC = "data/core/circumstances.yaml"
 ATTR = "data/character/attributes.yaml"
 ORIG = "data/character/origins.yaml"
 ENL = "data/character/enlistment.yaml"
@@ -501,7 +503,8 @@ ENTRY_KEYS = {"id", "name", "kind", "rolled", "attribute", "gear", "requires_gea
               "requirements", "needs", "changes", "help_outside_titan_engagement", "rules", "decided", "adrs", "notes",
               "option_of", "reserved", "dormant"}
 KIND = {"action": "action", "reaction": "Reaction", "roll": "roll", "option": "option", "fixed-roll": "fixed roll"}
-ROLLED = {"when_taken": "when taken", "when_a_rule_calls": "when a rule calls for it", "never": "never"}
+ROLLED = {"when_taken": "when taken", "when_a_rule_calls": "when a rule calls for it",
+          "when_called": "when a rule or the GM calls for it", "never": "never"}   # decision batch 9, 9-12
 CONTEXT = {"titan-engagement": "in a Titan Engagement", "any": "anywhere", "lifepath": "in the Lifepath"}
 WITHOUT = {"not_possible": "yes; without it the entry cannot be used", "attribute_alone": "yes; without it, attribute alone"}
 
@@ -1161,8 +1164,8 @@ def b_skirmish_weapons():
     return table(["Weapon", "Attack", "Injury Type", "Damage", "Target", "Gear Dice from", "Spends", "Used by", "Notes"], rows)
 
 
-FOE_KEYS = ("id", "name", "who", "attack_dice", "guard_dice", "health", "grit", "watch", "group_size", "fight_weapon",
-            "shoot_weapon")
+FOE_KEYS = ("id", "name", "who", "attack_dice", "guard_dice", "health", "grit", "parley", "watch", "group_size",
+            "fight_weapon", "shoot_weapon")
 
 
 def b_foes():
@@ -1178,7 +1181,7 @@ def b_foes():
     for f in load(FOES)["foes"]:
         where = f"{FOES} foes {f.get('id')}"
         expect_keys(f, set(FOE_KEYS), where, required=FOE_KEYS)
-        for k in ("attack_dice", "guard_dice", "health", "grit", "watch"):
+        for k in ("attack_dice", "guard_dice", "health", "grit", "parley", "watch"):   # parley: decision batch 9, 9-14
             whole(f[k], f"{where} {k}")
         gs = f["group_size"]
         if "fixed" in gs:
@@ -1200,8 +1203,10 @@ def b_foes():
                 fight += (f"; at night, a {weapon(n['with'], 'fight', where).lower()} in place of a "
                           f"{weapon(n['replaces'], 'fight', where).lower()}")
         shoot = weapon(f["shoot_weapon"], "shoot", where) if f["shoot_weapon"] else "none"
-        rows.append([f["name"], f["attack_dice"], f["guard_dice"], fight, shoot, f["health"], f["grit"], f["watch"], size])
-    return table(["Foe", "Attack Dice", "Guard", "Fight with", "Shoot with", "Health", "Grit", "Watch", "Group"], rows)
+        rows.append([f["name"], f["attack_dice"], f["guard_dice"], fight, shoot, f["health"], f["grit"], f["parley"],
+                     f["watch"], size])
+    return table(["Foe", "Attack Dice", "Guard", "Fight with", "Shoot with", "Health", "Grit", "Parley", "Watch", "Group"],
+                 rows)
 
 
 FOE_NEVER = {"push": "Push", "help": "Help", "cover": "Cover", "grapple": "Grapple", "break-free": "Break Free",
@@ -1252,7 +1257,9 @@ def b_rolls(src):
     rows = []
     for r in load(src)["rolls"]:
         where = f"{src} rolls {r.get('id')}"
-        expect_keys(r, set(ROLL_KEYS) | {"changes", "notes"}, where, required=ROLL_KEYS)
+        # decision batch 9, 9-41, item 6: circumstances is an optional marker key, read by the
+        # exclusion audit (data/core/circumstances.yaml, never) and never rendered into a table.
+        expect_keys(r, set(ROLL_KEYS) | {"changes", "notes", "circumstances"}, where, required=ROLL_KEYS)
         for k in ROLL_KEYS:
             if not folded(r[k]):
                 raise RenderError(f"{where}: {k} is empty")
@@ -1295,6 +1302,37 @@ def b_pinned_entries():
     return table(["Pin", "May take", "Cannot take"], rows)
 
 
+def b_circumstances():
+    """The Circumstances ladder (decision batch 9, 9-2; ADR-0024, limit 16).
+
+    The effect column is read from each step's dice and kind, so the chapter never states a step's dice by hand.
+    """
+    rows = []
+    for s in load(CIRC)["steps"]:
+        keys = ("id", "name", "dice", "kind")
+        where = f"{CIRC} steps {s.get('id')}"
+        expect_keys(s, set(keys), where, required=keys)
+        n, kind = s["dice"], s["kind"]
+        if not isinstance(n, int) or isinstance(n, bool):
+            raise RenderError(f"{where}: dice is not a whole number: {n!r}")
+        if kind == "bonus":
+            if n < 1:
+                raise RenderError(f"{where}: a bonus step adds {n} dice")
+            effect_ = f"+{n} Bonus {'Die' if n == 1 else 'Dice'}"
+        elif kind == "none":
+            if n != 0:
+                raise RenderError(f"{where}: a step of kind none moves {n} dice")
+            effect_ = "nothing"
+        elif kind == "penalty":
+            if n > -1:
+                raise RenderError(f"{where}: a penalty step removes {n} dice")
+            effect_ = f"a {-n}-die penalty"
+        else:
+            raise RenderError(f"{where}: unknown kind {kind!r}")
+        rows.append([s["name"], effect_])
+    return table(["Circumstances", "Effect on the pool"], rows)
+
+
 # ------------------------------------------------------------------ registry
 BLOCKS = {}
 
@@ -1305,6 +1343,7 @@ def block(name, chapter_, source, fn):
     BLOCKS[name] = dict(chapter=chapter_, source=source, fn=fn)
 
 
+block("circumstances", CH1, CIRC, b_circumstances)
 block("attributes", CH2, ATTR, b_attributes)
 block("origins", CH2, ORIG, b_origins)
 block("why-you-enlisted", CH2, ENL, b_enlistment)

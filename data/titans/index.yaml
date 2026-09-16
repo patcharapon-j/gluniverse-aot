@@ -7,7 +7,7 @@
 id: chapter-6-titans
 name: Chapter 6 Titans
 chapter: 06-standard-titans
-adrs: [ADR-0001, ADR-0003, ADR-0010, ADR-0012, ADR-0013]
+adrs: [ADR-0001, ADR-0010, ADR-0012, ADR-0013, ADR-0024]
 decided: [OQ-100, OQ-102, OQ-103, OQ-104, OQ-108, OQ-110]   # decision batch 4 (4-1, 4-3, 4-4, 4-5, 4-9, 4-11)
 
 # ------------------------------------------------------------------ the standard Titans

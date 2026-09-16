@@ -5,7 +5,7 @@
 id: death-rolls
 name: Lethal Injuries and Death Rolls
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0015, ADR-0019]
+adrs: [ADR-0015, ADR-0019, ADR-0024]
 decided: [OQ-43, OQ-54, OQ-56, OQ-57]
 
 # ------------------------------------------------------------------ time limits
@@ -73,6 +73,7 @@ death_roll:
     (data/core/dice-pool.yaml, roll_exceptions). No Gear Dice, because the entry allows no gear.
     No listed Bonus Dice source applies to it.
   needs: 1
+  circumstances: never   # no step of the ladder applies (data/core/circumstances.yaml, never; decision batch 9, 9-2)
   one_roll_per_injury: >-
     Each lethal Critical Injury whose limit runs out causes its own Death Roll. When several run
     out at the same moment, roll for each in the order the soldier's player chooses. The first

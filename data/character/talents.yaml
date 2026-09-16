@@ -8,7 +8,7 @@
 id: talents
 name: Talents
 chapter: 02-character-creation
-adrs: [ADR-0003, ADR-0006, ADR-0011, ADR-0014, ADR-0016]
+adrs: [ADR-0006, ADR-0011, ADR-0014, ADR-0016, ADR-0024]
 decided: [OQ-20, OQ-26, OQ-28, OQ-33, OQ-34, OQ-36, OQ-136]
 
 talent_rules:
@@ -204,9 +204,9 @@ talents:
     type: dice
     max_level: 3
     names: [persuade, size-up]
-    condition:   # Chapter 7, section 7.4: the Parley and Size Up in a Skirmish
-      persuade: "in a Skirmish"
-      size-up: "in a Skirmish"
+    condition:   # decision batch 9, 9-13: talking a person down, in a Skirmish or on any called roll
+      persuade: "against a person"
+      size-up: "against a person"
     specialties: [leader]
     decided: [OQ-136]
   # ---------------------------------------------------------------- Medic
@@ -323,8 +323,8 @@ talents:
     type: dice
     max_level: 3
     names: [persuade]
-    condition:   # Chapter 7, section 7.4: a Parley made as a threat rolls Strength for persuade
-      persuade: "on a Parley made as a threat"
+    condition:   # decision batch 9, 9-13: a Parley made as a threat, or a called Persuade the GM rules is a threat; both roll Strength
+      persuade: "on a roll made as a threat"
     specialties: [brawler]
     decided: [OQ-136]
   # ---------------------------------------------------------------- general

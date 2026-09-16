@@ -17,7 +17,7 @@ prompt=$dir/$slug-r$round-$suffix-prompt.md
   print -r -- "- Another reviewer writes \`docs/reviews/$slug-review-$round.md\` in parallel. Do not read or edit it."
   print -r -- "- Do not edit any project file except your own review. Write it to \`docs/reviews/$slug-review-$round-$suffix.md\`. Count only findings still open this round."
   print
-  print -r -- "Severity guide: Critical = contradicts an ADR or glossary without being logged as an open question, rests on GM discretion, or is a rules bug that breaks play or makes an ADR-0014 target unreachable. Major = undefined edge case or ordering problem likely in normal play, or a significant odds, balance, or fidelity problem. Minor = wording, clarity, small gaps."
+  print -r -- "Severity guide: Critical = contradicts an ADR or glossary without being logged as an open question, lets GM judgment reach something ADR-0024 keeps closed, or is a rules bug that breaks play or makes an ADR-0014 target unreachable. Major = undefined edge case or ordering problem likely in normal play, or a significant odds, balance, or fidelity problem. Minor = wording, clarity, small gaps."
   print
   print -r -- "Final message: under 80 words, the review file path and counts of Critical, Major, and Minor findings."
 } > $prompt

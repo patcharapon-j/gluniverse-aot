@@ -1,0 +1,192 @@
+# The Circumstances ladder: the one step the GM names for the situation an attribute roll is made in.
+# Source of truth under ADR-0012. docs/rules/01-core-rules.md (sections 1.1, 1.3, and 1.4a) references
+# this file and does not repeat its rows. Edit this file, not the chapter.
+# Decision batch 9, 9-2 (the ladder), 9-3 (needs), 9-4 (the Titan Engagement), 9-13 (Talents), 9-17
+# (measurement).
+id: circumstances
+name: Circumstances
+chapter: 01-core-rules
+adrs: [ADR-0024, ADR-0006]
+
+# steps, from the most favourable to the least.
+# dice: the Bonus Dice a plus step adds (positive), or the base dice a minus step removes (negative).
+# kind: bonus (the circumstances source in data/core/bonus-dice-sources.yaml), penalty (a dice
+#   penalty, data/core/dice-pool.yaml, components, penalty), or none.
+default: standard
+steps:
+  - id: effortless
+    name: Effortless
+    dice: 3
+    kind: bonus
+  - id: routine
+    name: Routine
+    dice: 2
+    kind: bonus
+  - id: easy
+    name: Easy
+    dice: 1
+    kind: bonus
+  - id: standard
+    name: Standard
+    dice: 0
+    kind: none
+  - id: hard
+    name: Hard
+    dice: -1
+    kind: penalty
+  - id: harsh
+    name: Harsh
+    dice: -2
+    kind: penalty
+  - id: desperate
+    name: Desperate
+    dice: -3
+    kind: penalty
+
+one_step_per_roll: >-
+  The GM weighs everything about the moment and names one step for the roll. Rain, dark, and a
+  snapped strap are one judgment, not three steps. A step named for a lasting condition is the step
+  of every roll that condition touches while it lasts (in_titan_engagement, lasting_condition). When
+  a further condition touches a roll already under a lasting step, the GM names one step for that
+  roll, weighing both; steps never add, and the lasting step applies again to later rolls the further
+  condition does not touch (decision batch 9, 9-26). A roll whose Circumstances the GM does not name
+  is Standard.
+named_by: the GM
+named_when: >-
+  With the stakes, before Bonus Dice are declared (Chapter 1, section 1.3, step 1), so that the
+  player can answer a minus step with Help or another source. For a roll a rule calls for, the GM
+  names only its Circumstances; its entry, its needs, its Help, and what its failure does are its
+  rule's (Chapter 1, section 1.1, item 2).
+reactions: >-             # decision batch 9, 9-25
+  A Reaction takes the step in force when the attacker's card comes up: a Titan's card
+  (docs/rules/05-titan-engagement.md, section 5.5) or a Foe group's card
+  (docs/rules/07-playtest-rules.md, section 7.4). Until that card ends, no step is named, raised, or
+  lowered for a Reaction against it, and a condition that arises during the card applies from the
+  next card. A dodge whose successes cancel against a later card that round keeps the step it was
+  rolled at.
+hazard_rows: >-           # decision batch 9, 9-34, item 3, as narrowed by 9-41, item 3
+  The Straggler's Endure roll, and any other roll a Leg Hazard or Night row's own text calls for,
+  takes the step in force when the hazard is rolled: Standard, unless the GM named a step before
+  then for a lasting condition of the Leg that touches it. No step is named or changed for it after,
+  and none for the danger the row itself describes (data/expedition/hazards.yaml, rolls,
+  straggler-endure). A Titan Engagement or a Skirmish a row begins takes its Circumstances as any
+  fight does (reactions, in_titan_engagement).
+fixed: >-
+  The step is a fact of the roll, like its entry. A Talent, a Push, or a Cover never changes it,
+  and nothing changes it once the dice are rolled (ADR-0024, limit 14).
+bonus_step: >-
+  Effortless, Routine, and Easy are one Bonus Dice source, circumstances
+  (data/core/bonus-dice-sources.yaml), and count toward the cap of 4 with every other source. The
+  roller chooses under the cap as for any source, and a plus step the cap leaves out spends nothing.
+penalty_step: >-
+  Hard, Harsh, and Desperate are one dice penalty (data/core/dice-pool.yaml, components, penalty).
+  It is applied after the Bonus Dice cap, removes base dice only, adds up with every other penalty
+  the soldier carries, never takes the base dice below 1, and never removes Gear Dice or Stress Dice.
+applies_to: >-
+  Every attribute roll a soldier or a Squadmate makes, except the rolls under never: a called roll,
+  an action from the Action Catalog, a Reaction, and every roll a rule calls for, such as the Leg
+  roll, the camp roll, a Requisition roll, a Sneak, a Parley, Treat Injury, Field Repair, Fly, Leap
+  Clear, a Nape strike, and a dodge.
+group_roll: A roll made for a group takes one step, on its roller's pool.
+passive_roll: >-
+  The GM names the step to themselves (data/core/dice-pool.yaml, roll_exceptions, passive-roll).
+
+never:
+  # Attribute rolls that take no Circumstances. Each carries circumstances: never on its own row or
+  # in its own file.
+  rolls:
+    - id: death-roll
+      name: Death Roll
+      marked_in: data/core/dice-pool.yaml   # roll_exceptions, death-roll
+    - id: performance-roll
+      name: Performance roll
+      marked_in: data/core/dice-pool.yaml   # roll_exceptions, performance-roll
+    - id: graduation-exam-trials
+      name: The Graduation Exam's Trials
+      marked_in: data/character/graduation-exam.yaml   # trials; made during character creation, before play
+  # Dice outside every soldier's pool, rolled in the open and never adjusted.
+  opposing_dice:
+    - id: titan-dice
+      name: Titan Dice
+      marked_in: data/engagement/titan-format.yaml   # titan_dice, never
+      adrs: [ADR-0019]
+    - id: foe-attack-dice
+      name: A Foe's Attack Dice
+      marked_in: data/skirmish/foes.yaml
+      adrs: [ADR-0018]
+    - id: foe-guard-dice
+      name: A Foe's Guard
+      marked_in: data/skirmish/foes.yaml
+      adrs: [ADR-0018]
+  not_attribute_rolls: >-
+    Every roll that is not an attribute roll (Chapter 1, section 1.3) rolls exactly the dice its rule
+    states and takes no Circumstances: a Gas Roll, the fall roll, the infirmary roll, and every roll
+    on a table.
+
+too_easy: >-
+  A task easier than Effortless is not rolled. It happens.
+impossible: >-
+  A task the GM judges impossible is not rolled. It does not happen, and the GM says so before
+  anyone rolls. Anything possible is at worst Desperate.
+plus_steps_serve: >-
+  Routine and Effortless mostly serve a soldier who carries penalties: an injured soldier doing
+  something simple rolls at Routine and keeps their dice.
+never_changes_needs: true            # ADR-0024, limit 15; decision batch 9, 9-3
+talents_never_change_a_step: true    # ADR-0016, Talent guardrail 10; decision batch 9, 9-13
+
+in_titan_engagement:
+  default: standard
+  already_priced:
+    - the Anchor Rating
+    - Positions
+    - Openings
+    - a grounded Titan
+    - Call It
+    - the Attention restriction
+    - every penalty a soldier carries
+  named_only_for: something no rule already prices
+  examples:            # examples only, not a complete list
+    - rain on the rooftops
+    - smoke over a burning district
+    - full dark
+    - ice
+    - a gale
+  reaches: >-
+    Every attribute roll a soldier or a Squadmate makes in the fight, the dodge and the Nape strike
+    included, and a called roll made in the fight (data/core/dice-pool.yaml, called_roll,
+    in_a_fight), under the same default. A dodge takes the step in force when the Titan's card comes
+    up (reactions).
+  lasting_condition: >-
+    A step named for a condition applies to every roll that condition touches while it lasts. The GM
+    says so once (rain makes every roll whose Gear Dice come from ODM Gear Hard until it stops) and
+    does not name a step roll by roll. When a further condition touches a roll under a lasting step,
+    the GM names one step for that roll weighing both, before its pool is built, or for a dodge when
+    the Titan's card comes up (reactions); steps never add (one_step_per_roll; decision batch 9,
+    9-26).
+  titan_conditions: >-
+    A condition that would slow or blind a Titan reaches the table only through the soldiers' dice. A
+    Titan mired to the knee makes the dodge against it Easy, named when it is mired and before its
+    card comes up; if a lasting step already covers that dodge, such as rain at Hard, the GM names
+    one step for it weighing both. The Titan loses no Attack Dice.
+  never:
+    - a Titan's Attack Dice and the Titan Dice roll
+    - which entry a Behavior Table resolves, and against whom
+    - the Next Behavior, once rolled
+    - the Attention Ladder and who holds Attention
+    - the Reaction procedure, the whiff, the rider, and the Grab countdown
+    - Nape Depth, Toughness, Regeneration, and the Heave rating
+    - the Openings an entry creates
+    - steam, the falling Titan, and corpse heat
+    - the Critical Injury, Stress Response, Fear Roll, Scar, Grief, and Death Roll tables
+    - the retreat clock's length
+    - the end tests
+  rules: [05-titan-engagement]
+  measured_at: >-
+    Every ADR-0014 target, band, bar limit, and reported row is measured at Standard, with no
+    rulings (ADR-0014, as amended; decision batch 9, 9-17).
+  playtest_log: >-
+    The playtest logs every step other than Standard named in a Titan Engagement, and the roll it was
+    named for (OQ-167).
+
+rules: [01-core-rules]
+decided: [OQ-167, OQ-168]

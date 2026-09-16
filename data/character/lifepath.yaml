@@ -6,7 +6,7 @@
 id: lifepath
 name: Lifepath
 chapter: 02-character-creation
-adrs: [ADR-0003, ADR-0006, ADR-0011, ADR-0012, ADR-0014]
+adrs: [ADR-0006, ADR-0011, ADR-0012, ADR-0014, ADR-0024]
 decided: [OQ-19, OQ-20, OQ-21, OQ-22, OQ-23, OQ-32, OQ-55, OQ-135]
 
 # Any choice this chapter gives the players together is settled this way when they disagree.
