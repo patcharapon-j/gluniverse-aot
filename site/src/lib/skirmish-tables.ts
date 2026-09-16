@@ -176,14 +176,14 @@ export function roundSteps(): FlowStep[] {
     {
       title: 'The Foe group’s card.',
       icon: 'ph:users-three',
-      text: 'Each Foe still in the Skirmish takes one turn, in number order. It Fights, Shoots, reloads, closes in and Fights, or does nothing, and it never attacks a Down soldier.',
+      text: 'Each Foe still in the Skirmish takes one turn, in number order. Whatever it does, it never attacks a Down soldier.',
       exit: { kind: 'cover', label: 'Answer it', text: 'Each attack on you can be answered with a Block or a Dodge, one Reaction against each Foe per round.' },
     },
     {
       title: 'End of the round.',
       icon: 'ph:flag-banner',
       text: 'Every Foe of a group that has broken leaves. Then check the ending tests.',
-      exit: { kind: 'stop', label: 'The Squad leaves', text: 'This is the moment you may declare it, when everyone still standing is Apart, holds no Foe, and every Down comrade is carried.' },
+      exit: { kind: 'stop', label: 'The Squad leaves', text: 'This is the moment you may declare it, when everyone still standing is Apart, is not Held, holds no Foe, and every Down comrade is carried.' },
     },
   ];
 }
@@ -216,6 +216,13 @@ const ACTION_WORDING: Record<string, { does: string; note?: string }> = {
   'mount-or-dismount': { does: 'Mounts or dismounts your horse. A move may include one of these as well.' },
 };
 
+/**
+ * The entries the Skirmish lists that are not actions: Release spends nothing, and the other
+ * three are options the gear rules give (data/character/action-catalog.yaml, kind: option).
+ * They are listed apart so the action list stays the list of things an action can buy.
+ */
+const NOT_ACTIONS = ['release', 'swap-blade-set', 'shed-load', 'mount-or-dismount'];
+
 export function actionsTable(): CoreTableData {
   const T = 'What a soldier can do';
   const row = (id: string): { cells: Cell[] } => {
@@ -223,14 +230,24 @@ export function actionsTable(): CoreTableData {
     const name = named(entryNames, id, 'Catalog entry', T);
     return { cells: [name, w.note ? { text: w.does, note: w.note } : w.does] };
   };
+  const listed = [...doc.actions.skirmish_entries, ...doc.actions.other_entries];
+  for (const id of NOT_ACTIONS) {
+    if (!listed.includes(id)) throw new Error(`${T}: "${id}" is no longer one of the Skirmish's entries.`);
+  }
+  const isAction = (id: string) => !NOT_ACTIONS.includes(id);
   return {
-    caption: 'A soldier’s action in a Skirmish',
-    note: 'One action a turn, and one of these. Nothing used only against Titans can be taken.',
+    caption: 'What a soldier can do in a Skirmish',
+    note: 'One action a turn, and one of the actions below. Nothing used only against Titans can be taken.',
     columns: ['Entry', 'What it does here'],
     see: false,
     groups: [
-      { heading: 'The Skirmish’s own', rows: doc.actions.skirmish_entries.map(row) },
-      { heading: 'Carried over from the rest of the rules', rows: doc.actions.other_entries.map(row) },
+      { heading: 'Actions: the Skirmish’s own', rows: doc.actions.skirmish_entries.filter(isAction).map(row) },
+      { heading: 'Actions: carried over from the rest of the rules', rows: doc.actions.other_entries.filter(isAction).map(row) },
+      {
+        heading: 'Not actions',
+        note: 'These four cost you no action. Release spends nothing at all, and the other three are taken as the gear rules give them, at any point of your turn.',
+        rows: NOT_ACTIONS.map(row),
+      },
     ],
   };
 }

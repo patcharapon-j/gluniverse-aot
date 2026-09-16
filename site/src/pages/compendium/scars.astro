@@ -100,7 +100,7 @@ const cards = scars.map((scar) => {
               <div><dt class="lbl">Effect</dt><dd><GlossText parts={text.effect} /></dd></div>
               <div><dt class="lbl">Always</dt><dd>Minimum Stress +1, Resolve +1.</dd></div>
               {scar.squadmateRerolls && (
-                <div><dt class="lbl">Squadmates</dt><dd>A Squadmate rolls again on this row, because it never Pushes and never Covers.</dd></div>
+                <div><dt class="lbl">Squadmates</dt><dd>A Squadmate rolls again on this row, because {scar.squadmateReason}.</dd></div>
               )}
             </dl>
             <div class="card-foot">

@@ -27,6 +27,8 @@ export interface TableRow {
 
 export interface TableGroup {
   heading?: string;
+  /** A line under the heading, for a group whose rows work differently from the rest. */
+  note?: string;
   rows: TableRow[];
 }
 

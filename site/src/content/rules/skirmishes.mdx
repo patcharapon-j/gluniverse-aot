@@ -212,7 +212,7 @@ An attack that lands deals its weapon's **damage, plus 1 for each Net Success be
 
 It is <GlossaryTerm term="Damage" /> as the wound rules give it, at a rolled <GlossaryTerm term="Injury Location" />. It marks Health lost, and at 0 <GlossaryTerm term="Current Health">current Health</GlossaryTerm> you are Down and gain a Critical Injury of the weapon's Injury Type, which takes its name and any rider from that type's table. **A person never inflicts a Critical Injury directly.**
 
-**Cut and Pierce** reach you here as they reach you nowhere else, and they carry riders:
+**Cut and Pierce** reach you in two ways only: from a Foe's weapon here, and as damage the stakes of a <GlossaryTerm term="Called roll">called roll</GlossaryTerm> named. Both carry riders:
 
 - a **lethal Cut bleeds**, so its <GlossaryTerm term="Death Roll" /> comes at the end of each of your turns until it is treated;
 - a **Pierce from the 7 row up holds the ball**, so <GlossaryTerm term="Treat Injury" /> on it takes a 1-die penalty, and it does not heal until it is treated.
@@ -229,27 +229,23 @@ At 0 Health it is **out of the Skirmish**: dead if the damage was {zero.killed},
 
 <FieldReport id="example-exchange" title="An exchange in the doorway">
 
-Private Jost Halden is Engaged with a trooper. Strength 3, a Blade Set rated 2, Stress 2.
+Private Jost Halden is Engaged with a Foe in the doorway. Strength 3, a Blade Set rated 2, Stress 2. Everything below is his side of the exchange: the Foe's numbers stay with the GM, and what reaches Jost is a roll in the open and a number said aloud.
 
 <PoolRows rows={[{ label: 'The cut', pool: 'base:6,4,2|gear:6,3|stress:6,5', successes: 3 }]} />
 
 <TryRollButton pool={{ base: 3, gear: 2, stress: 2 }} label="Try Jost's cut" />
 
-<GlossaryTerm term="Severity" /> 3, announced. The GM rolls the trooper's Guard in the open, as base dice, and it finds one 6.
+<GlossaryTerm term="Severity" /> 3, announced. The GM rolls the Foe's Guard in the open, and it cancels one.
 
-<PoolRows rows={[{ label: 'The Guard', pool: 'base:6,2,4', successes: 1 }]} />
+Two Net Successes are left. The Blade Set deals 2, plus 1 for the second Net Success: 3 damage of Cut.
 
-One success cancels one, leaving 2 Net Successes. The Blade Set deals 2, plus 1 for the second Net Success: 3 damage of Cut.
+**The Foe group's card.** The Foe cuts back with a sabre. The GM rolls its attack in the open and announces Severity 2. That number is all Jost needs: two successes are coming at him unless he cancels them.
 
-**The Foe group's card.** The trooper cuts back with its sabre, rolling its Attack Dice in the open.
-
-<PoolRows rows={[{ label: 'The sabre', pool: 'base:6,6,2,3', successes: 2 }]} />
-
-<TryRollButton pool={{ base: 4 }} pushable={false} label="Try the trooper's attack" />
-
-Severity 2. Jost Blocks with the same blades, and this time the dice are thinner.
+Jost answers with a Block, the same blades, and this time the dice are thinner.
 
 <PoolRows rows={[{ label: 'The Block', pool: 'base:6,1,3|gear:5,2|stress:4,2', successes: 1 }]} />
+
+<TryRollButton pool={{ base: 3, gear: 2, stress: 2 }} label="Try Jost's Block" />
 
 One of the two cancelled, so 1 Net Success. The sabre deals 2, with nothing added, and Jost loses 2 Health. Half a Block is still half the harm.
 

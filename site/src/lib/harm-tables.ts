@@ -1067,8 +1067,11 @@ const scarsDoc = parse(scarsText) as {
   table: { roll: string; rows: RawScar[] };
 };
 
-/** Each Scar's trigger and effect, written for players. */
-const SCAR_WORDING: Record<string, { trigger: string; effect: string }> = {
+/**
+ * Each Scar's trigger and effect, written for players. `squadmate` is the reason a Squadmate
+ * rolls again on that row, and belongs to exactly the rows the table marks.
+ */
+const SCAR_WORDING: Record<string, { trigger: string; effect: string; squadmate?: string }> = {
   'the-closing-hand': {
     trigger: 'You dodge a behavior that can Grab, which its Behavior Table marks.',
     effect: '1-die penalty on that dodge only.',
@@ -1083,11 +1086,12 @@ const SCAR_WORDING: Record<string, { trigger: string; effect: string }> = {
   'reckless-blade': {
     trigger: 'Your Nape strike or Body Part strike falls short of what it needs and you are allowed to Push it.',
     effect: 'You must Push that roll.',
+    squadmate: 'it never Pushes',
   },
   'nerves-on-edge': { trigger: 'For the first time in a Titan Engagement, a Titan’s card resolves a behavior against you.', effect: 'Gain 1 Stress.' },
   'fear-of-falling': { trigger: 'You roll Fly.', effect: '1-die penalty on Fly.' },
   'blood-on-the-blade': { trigger: 'Your Nape strike kills a Titan.', effect: 'Gain 1 Stress, after the Nape-kill Stress relief.' },
-  'carrying-their-weight': { trigger: 'You Cover a comrade’s Push.', effect: 'Gain 1 Stress, on top of the Covering Stress.' },
+  'carrying-their-weight': { trigger: 'You Cover a comrade’s Push.', effect: 'Gain 1 Stress, on top of the Covering Stress.', squadmate: 'it never Covers' },
   'second-guessing': { trigger: 'You roll Read or Break Attention.', effect: '1-die penalty on Read and Break Attention.' },
   'old-nightmare': { trigger: 'You make a Fear Roll for an Abnormal or a second Focus Titan.', effect: 'That Fear Roll’s total is raised by 1.' },
 };
@@ -1135,6 +1139,8 @@ export interface ScarEntry {
   effect: string;
   kind: { slug: string; name: string; order: number };
   squadmateRerolls: boolean;
+  /** Why a Squadmate rolls again on this row; empty when it keeps the row. */
+  squadmateReason: string | null;
   search: string;
 }
 
@@ -1145,6 +1151,10 @@ export function scarEntries(): ScarEntry[] {
     const w = wording(SCAR_WORDING, row.id, T);
     const first = row.effects[0];
     if (!first) throw new Error(`${T}: the Scar "${row.id}" carries no effect.`);
+    const rerolls = row.squadmate_rerolls === true;
+    if (rerolls !== Boolean(w.squadmate)) {
+      throw new Error(`${T}: the Scar "${row.id}" needs a reason a Squadmate rolls again, and only rows that reroll take one.`);
+    }
     return {
       slug: row.id,
       name: row.name,
@@ -1152,7 +1162,8 @@ export function scarEntries(): ScarEntry[] {
       trigger: w.trigger,
       effect: w.effect,
       kind: wording(SCAR_KINDS, first.type, T),
-      squadmateRerolls: row.squadmate_rerolls === true,
+      squadmateRerolls: rerolls,
+      squadmateReason: w.squadmate ?? null,
       search: [row.name, w.trigger, w.effect].join(' '),
     };
   });

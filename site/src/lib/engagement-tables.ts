@@ -718,7 +718,7 @@ interface RawTactic {
 
 const TACTIC_WORDING: Record<string, { condition: string; declared: string; effect: string; icon: string }> = {
   'hook-and-cut': {
-    condition: 'A Break Attention against a Titan has just succeeded, a comrade at Blind Spot with an unspent action can make a Nape strike, and no retreat is under way.',
+    condition: 'A Break Attention against a Focus Titan has just succeeded, and a comrade at Blind Spot relative to that Titan is neither Down nor Grabbed, has an unspent action this round, and meets the Nape strike’s requirements, with no retreat under way.',
     declared: 'That comrade’s player, once every step of the Break Attention is resolved, a freed soldier’s release included, and before any other rule acts.',
     effect: 'That comrade strikes the Nape at once, spending their action, whether or not their card has come up. They may spend the Openings the Break Attention created.',
     icon: 'tactic-hook-and-cut',
@@ -736,9 +736,9 @@ const TACTIC_WORDING: Record<string, { condition: string; declared: string; effe
     icon: 'tactic-clear-the-hand',
   },
   'fall-back': {
-    condition: 'The wings step begins, with a soldier at On Body or Blind Spot who is not Down, Grabbed, or carried.',
+    condition: 'The wings step begins, with a soldier at On Body or Blind Spot relative to a Focus Titan who is not Down, Grabbed, or carried.',
     declared: 'Any such soldier’s player, before Wings are assigned or kept.',
-    effect: 'Each such soldier may hold In Reach instead, with no fall. Each player chooses for their own soldier. It is not a move, not a fall, and not ODM use.',
+    effect: 'Each such soldier may hold In Reach relative to that Titan instead, and each player chooses for their own soldier. The change is made by this rule, not by the soldier’s own move: it is not a fall, it is not ODM use, and it leaves you airborne or not exactly as you were.',
     icon: 'tactic-fall-back',
   },
 };

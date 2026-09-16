@@ -80,7 +80,10 @@ const isLines = (cell: Cell): cell is { lines: string[] } => typeof cell === 'ob
       <tbody>
         {group.heading && (
           <tr class="group">
-            <th scope="rowgroup" colspan={data.columns.length}>{group.heading}</th>
+            <th scope="rowgroup" colspan={data.columns.length}>
+              {group.heading}
+              {group.note && <span class="gnote">{group.note}</span>}
+            </th>
           </tr>
         )}
         {group.rows.map((row) => (
@@ -206,6 +209,17 @@ const isLines = (cell: Cell): cell is { lines: string[] } => typeof cell === 'ob
     color: var(--corps);
     background: rgba(207, 195, 165, 0.35);
     border-top: 1px solid var(--ink);
+  }
+  .group .gnote {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--f-serif);
+    font-size: var(--fs-sm);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1.4;
+    color: var(--ink-2);
   }
   .see a {
     white-space: nowrap;
