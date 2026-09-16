@@ -6,7 +6,7 @@
   "compatibility": { "minimum": "14", "verified": "14" },
   "authors": [{ "name": "Patcharapon Joksamut" }],
   "esmodules": ["wings-of-freedom.mjs"],
-  "styles": [{ "src": "styles/fonts.css" }],
+  "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
   "documentTypes": {
     "Actor": {

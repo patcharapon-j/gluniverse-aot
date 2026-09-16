@@ -105,7 +105,8 @@
       "items_carried": "Items carried",
       "overloaded": "Overloaded",
       "jammed": "Jammed",
-      "lame": "Lame"
+      "lame": "Lame",
+      "stress": "Stress"
     },
     "Pack": {
       "talents": "Talents",
@@ -217,7 +218,7 @@
           "pinned": {
             "label": "Pinned",
             "active": {
-              "label": "Pinned"
+              "label": "Under a body now"
             },
             "body": {
               "label": "Under body"
@@ -877,6 +878,304 @@
     },
     "Error": {
       "dataShape": "Wings of Freedom: {what} does not match the system data. Rebuild the system."
+    },
+    "Settings": {
+      "motion": {
+        "name": "Motion",
+        "hint": "How much the Wings of Freedom sheets move: Full, Reduced (fades only), or Off. Your system's reduced-motion preference caps Full at Reduced. Only you see this.",
+        "full": "Full",
+        "reduced": "Reduced",
+        "off": "Off"
+      },
+      "gore": {
+        "name": "Gore",
+        "short": "Gore",
+        "hint": "How wounds are drawn on the soldier figure: Low (clinical hatching), Standard, or Graphic. Only you see this.",
+        "low": "Low",
+        "standard": "Standard",
+        "graphic": "Graphic"
+      }
+    },
+    "Sheet": {
+      "label": {
+        "soldier": "Soldier personnel file"
+      },
+      "none": "None",
+      "choose": "Choose",
+      "add": "Add",
+      "ordinal": "Class Rank {n}",
+      "tab": {
+        "label": "Soldier file",
+        "soldier": "Soldier",
+        "kit": "Kit",
+        "wounds": "Wounds & Mind",
+        "record": "Record"
+      },
+      "foot": {
+        "left": "Wings of Freedom, field dossier",
+        "right": "Personnel division"
+      },
+      "header": {
+        "kicker": "Survey Corps personnel record",
+        "file": "File",
+        "name": "Soldier name",
+        "plate": "Plate",
+        "portrait": "Portrait of {name}",
+        "portraitEdit": "Change the portrait"
+      },
+      "state": {
+        "standing": "Standing",
+        "outOfGas": "Out of gas",
+        "handlesEmpty": "Handles empty",
+        "horseLame": "Horse lame",
+        "carrying": "Carrying {name}",
+        "carriedBy": "Carried by {name}",
+        "nextRoll": "Next roll −{dice}"
+      },
+      "menu": {
+        "open": "Open",
+        "remove": "Remove"
+      },
+      "remove": {
+        "title": "Remove from the sheet",
+        "body": "Remove {name} from this soldier?"
+      },
+      "aria": {
+        "rating": "{label}: {value} of {max}",
+        "setTo": "Set {label} to {value}",
+        "lower": "Lower {label}",
+        "raise": "Raise {label}",
+        "pool": "{base} base dice, {gear} Gear Dice, {stress} Stress Dice"
+      },
+      "health": {
+        "boxes": "Health boxes",
+        "crossedTip": "Crossed off by an untreated Critical Injury. Treating it gives the box back.",
+        "box": {
+          "clean": "Health box {n}, held",
+          "damaged": "Health box {n}, lost to damage",
+          "crossed": "Health box {n}, crossed off by a Critical Injury"
+        }
+      },
+      "stress": {
+        "min": "min {n}",
+        "lower": "Lower Stress",
+        "raise": "Raise Stress",
+        "boxes": "Stress boxes, one Stress Die each",
+        "box": "Stress box {n}"
+      },
+      "resolve": {
+        "short": "{base} + Scars {scars} − Grief {grief}",
+        "floorTip": "The formula gives {n}; the system keeps Resolve at 0 (rules question open)."
+      },
+      "down": {
+        "toggle": "Mark Down or Standing",
+        "ruleSaysDown": "By the rules this soldier is Down: current Health is 0, or an untreated injury keeps them Down.",
+        "ruleSaysUp": "By the rules this soldier is not Down.",
+        "match": "Match the rules",
+        "byRuleYes": "(the rules say Down)",
+        "byRuleNo": "(the rules say not Down)"
+      },
+      "gas": {
+        "title": "Gas",
+        "noOdm": "No ODM Gear",
+        "dry": "Dry",
+        "odm": "ODM {current}/{rating}",
+        "odmDice": "ODM Gear, {current} of {rating} Gear Dice",
+        "spares": "Spare: {list}",
+        "noSpare": "No spare canister",
+        "spend": "Spend 1",
+        "change": "Change",
+        "changeTip": "Change Canister: fit the fullest spare; the old canister stays a spare if it has gas."
+      },
+      "blades": {
+        "title": "Blade Sets",
+        "inHandles": "Handles:",
+        "empty": "Handles empty",
+        "ruin": "Ruin",
+        "ruinTip": "Any wear ruins a Blade Set: it is discarded and the handles are empty.",
+        "swap": "Swap",
+        "disciplineReady": "Discipline ready",
+        "disciplineUsed": "Discipline used"
+      },
+      "soldier": {
+        "attributes": "Attributes",
+        "attributesHint": "Each dot is a base die",
+        "rolls": "Quick rolls",
+        "rollsHint": "The dots are the pool you roll",
+        "talents": "Talents",
+        "noTalents": "No Talents yet.",
+        "enlistment": "Enlistment",
+        "driveUsed": "Drive used",
+        "key": "Key",
+        "keyTip": "The key attribute of the Specialty can reach {max}.",
+        "keyLine": "{attr}, up to {max}"
+      },
+      "talent": {
+        "dice": "Dice",
+        "rule": "Rule",
+        "markUsed": "Mark used",
+        "markReady": "Mark ready"
+      },
+      "talentDice": "+{dice} base dice on {entries}",
+      "rolls": {
+        "bonus": "Bonus Dice, next roll",
+        "bonusN": "{n} Bonus Dice",
+        "bonusHint": "Help, Openings and the like, up to {cap}",
+        "titanEngagement": "Titan Engagement",
+        "any": "Anywhere",
+        "fixed": "Fixed rolls",
+        "d6": "D6",
+        "dice": "dice"
+      },
+      "roll": {
+        "noGear": "Needs {gear}",
+        "noGearDice": "No Gear Dice",
+        "attributeAlone": "Attribute alone (no gear)",
+        "bonus": "Bonus",
+        "stub": "{actor}: {name}. Rolling arrives in the next build.",
+        "fixed": {
+          "fear-roll": "D6 + Stress {stress} − Resolve {resolve}",
+          "stress-response-roll": "D6 + Stress {stress} − Resolve {resolve}",
+          "gas-roll": "Count the 1s: each lowers the Gas Rating by 1"
+        }
+      },
+      "legend": {
+        "attribute": "attribute",
+        "talent": "Talent",
+        "bonus": "Bonus",
+        "penalty": "penalty",
+        "gear": "Gear",
+        "stress": "Stress"
+      },
+      "effect": {
+        "penalty": "−{dice} die: {entries}",
+        "stressGain": "+{amount} Stress",
+        "fearRollTotal": "+{amount} to the Fear Roll total",
+        "pushStress": "+{amount} Stress on every Push",
+        "loseSuccesses": "Lose {amount} success",
+        "spendNextTurn": "Lose your next turn",
+        "zeroSuccesses": "No successes"
+      },
+      "drop": {
+        "hint": "Drop one from the compendium",
+        "set": "{what} set to {name}.",
+        "talentMax": "{name} is already at its highest level.",
+        "talentUp": "{name} raised to level {level}.",
+        "onlyOne": "This soldier already has {name}.",
+        "notHere": "A {type} does not go on a Soldier sheet.",
+        "talents": "Drop Talents here. Dropping a held Talent raises its level.",
+        "specialty": "Drop a Specialty",
+        "origin": "Drop an Origin",
+        "gear": "Drop gear from the compendium here.",
+        "injuries": "Drop a Critical Injury row here; you pick its Injury Type and side."
+      },
+      "kit": {
+        "issued": "Issued equipment",
+        "issuedHint": "Boxes are Gear Dice",
+        "status": "Status",
+        "article": "Article",
+        "gearDice": "Gear Dice",
+        "unrated": "Unrated",
+        "noGear": "No gear recorded.",
+        "diceOf": "{name}: {current} of {rating} Gear Dice",
+        "keep": "Mark kept",
+        "unkeep": "Unmark kept",
+        "gasHint": "Full Gas Rating {full}",
+        "fitted": "Fitted",
+        "fit": "Fit",
+        "spareN": "Spare canister {n}",
+        "addSpare": "Add a spare",
+        "load": "Load",
+        "loadHint": "Strength + 4",
+        "loadAria": "{items} items carried of {limit}",
+        "engagement": "Titan Engagement",
+        "engagementHint": "Positions by Focus Titan",
+        "noPositions": "No Position recorded.",
+        "addPosition": "Add a Position",
+        "leftAtHint": "After death in a Titan Engagement",
+        "commaList": "Items, separated by commas"
+      },
+      "status": {
+        "carried": "Carried",
+        "mounted": "Mounted",
+        "dismounted": "Dismounted",
+        "inHandles": "In handles",
+        "loaded": "Loaded",
+        "empty": "Empty",
+        "fitted": "Fitted",
+        "spent": "Spent"
+      },
+      "figure": {
+        "caption": "Fig. 1, front",
+        "sides": "R · L",
+        "aria": "Soldier body diagram: {list}",
+        "ariaNone": "Soldier body diagram, no Critical Injuries"
+      },
+      "injury": {
+        "treated": "Treated",
+        "untreated": "untreated",
+        "bleeding": "Untreated",
+        "treat": "Treat",
+        "untreat": "Untreat",
+        "roll": "2D6 {range}",
+        "permanent": "Permanent",
+        "lethal": "Lethal, time limit: {limit}",
+        "noLimit": "No time limit",
+        "scarred": "Scar gained",
+        "days": "Healing days, {left} left",
+        "day": "Day {n}",
+        "dayDone": "Day {n}, healed",
+        "holdsBox": "Untreated: crosses off 1 Health box",
+        "dialogTitle": "Critical Injury: {name}",
+        "dialogHint": "The rule that inflicts the injury names its Injury Type; arms and legs also take a side.",
+        "apply": "Record the injury"
+      },
+      "wounds": {
+        "healthHint": "Down at 0",
+        "healthFormula": "ceil((Str <b>{str}</b> + Agi <b>{agi}</b>) / 2) = <b>{health}</b>",
+        "current": "Current Health {current} of {health}; {crossed} crossed off",
+        "injuries": "Critical Injuries",
+        "injuriesHint": "{held} held, {untreated} untreated",
+        "noInjuries": "No Critical Injuries.",
+        "stressHint": "Each box is a Stress Die",
+        "stressNote": "Minimum {min}: one per Scar. Every attribute roll adds one Stress Die per box.",
+        "resolveFormula": "ceil((Ins <b>{ins}</b> + Emp <b>{emp}</b>) / 2) = <b>{base}</b>, + Scars <b>{scars}</b>, − Grief <b>{grief}</b> = <b>{resolve}</b>",
+        "scarsGrief": "Scars and Grief",
+        "scarsHint": "{n} of {max}",
+        "noScars": "No Scars.",
+        "addScar": "Add a Scar",
+        "griefN": "Grief {n}",
+        "griefNote": "{n} of {max} count against Resolve",
+        "noResponses": "None held. A Stress Die showing 1 rolls on the table.",
+        "addResponse": "Add a lasting Stress Response",
+        "clearResponse": "Clear (Rally, or its ending)",
+        "field": "Field record",
+        "fieldHint": "Harm and mind fields the rules track",
+        "noFear": "None pending.",
+        "rowId": "Row id",
+        "body": "Body",
+        "addRally": "Add a comrade"
+      },
+      "ends": {
+        "titan-engagement-end": "Ends with the Titan Engagement",
+        "day": "Ends when a day passes",
+        "rule": "Ends as its rule states"
+      },
+      "fear": {
+        "forced-move": "Forced step",
+        "forced-action": "Forced strike"
+      },
+      "record": {
+        "service": "Service record",
+        "name": "Name",
+        "specialtyLine": "{name} (key: {attr})",
+        "declined": "Declined the MP",
+        "enlisted": "Enlisted",
+        "noSpecialty": "No Specialty",
+        "top10": "Top 10",
+        "xpAria": "{n} XP",
+        "notesHint": "Click the pen to write"
+      }
     }
   }
 }

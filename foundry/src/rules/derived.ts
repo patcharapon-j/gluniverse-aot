@@ -18,11 +18,20 @@ export function health(a: Pick<Attributes, 'strength' | 'agility'>): number {
   return Math.ceil((a.strength + a.agility) / 2);
 }
 
+/** The lowest Resolve the system shows and rolls with (owner decision; docs/rules-questions.md). */
+export const RESOLVE_FLOOR = 0;
+
 /**
  * Resolve: (instinct + empathy) / 2 rounded up, plus 1 per Scar, minus 1 per point of Grief (at
- * most 3 count). The data sets no floor, so none is applied (core-plan open question 1).
+ * most 3 count), never below 0. The rules set no floor (data/mind/grief.yaml, resolve_floor); the
+ * owner clamps it at 0 until the rules session confirms (foundry/docs/rules-questions.md).
  */
 export function resolve(a: Pick<Attributes, 'instinct' | 'empathy'>, scars: number, grief: number): number {
+  return Math.max(RESOLVE_FLOOR, resolveUnclamped(a, scars, grief));
+}
+
+/** The formula's own value, which can be negative. Shown beside a clamped Resolve. */
+export function resolveUnclamped(a: Pick<Attributes, 'instinct' | 'empathy'>, scars: number, grief: number): number {
   return Math.ceil((a.instinct + a.empathy) / 2) + scars - Math.min(Math.max(grief, 0), MAX_GRIEF_COUNTED);
 }
 
@@ -149,6 +158,8 @@ export interface SoldierInputs {
 export interface SoldierDerived {
   health: number;
   resolve: number;
+  /** The Resolve formula before the 0 floor; below 0 only when Grief outweighs the rest. */
+  resolve_unclamped: number;
   minimum_stress: number;
   stress_effective: number;
   untreated_critical_injuries: number;
@@ -174,6 +185,7 @@ export function deriveSoldier(i: SoldierInputs): SoldierDerived {
   return {
     health: h,
     resolve: resolve(i.attributes, i.scars, i.grief),
+    resolve_unclamped: resolveUnclamped(i.attributes, i.scars, i.grief),
     minimum_stress: min,
     stress_effective: effectiveStress(i.stress, min),
     untreated_critical_injuries: untreated,

@@ -563,6 +563,15 @@ export const dicePoolFile = z.looseObject({
       push_keeps_faces: z.array(z.number().int()),
     }),
   ),
+  components: z.array(z.looseObject({ id: z.enum(['attribute', 'talent', 'bonus', 'penalty', 'gear', 'stress']) })),
+  roll_exceptions: z.array(
+    z.looseObject({
+      roll: id,
+      entries: z.array(id).optional(),
+      components_excluded: z.array(z.enum(['attribute', 'talent', 'bonus', 'gear', 'stress'])),
+      push_allowed: z.boolean(),
+    }),
+  ),
 });
 
 export const circumstancesFile = z.looseObject({
@@ -577,6 +586,53 @@ export const bonusDiceSourcesFile = z.looseObject({
   id: z.literal('bonus-dice-sources'),
   cap_per_roll: z.number().int().min(1),
   die_type: z.literal('base'),
+});
+
+// ---------------------------------------------------------------- mind/scars.yaml, mind/stress-responses.yaml
+
+/** A Scar or Stress Response effect as the sheet reads it: penalties name entries, the rest is shown by type. */
+const mindEffect = z.union([
+  penaltyEffect.extend({ applies_to: text.optional() }),
+  z.looseObject({ type: z.enum(['stress-gain', 'fear-roll-total', 'other', 'push-stress', 'lose-successes', 'spend-next-turn', 'zero-successes']) }),
+]);
+
+export const scarsFile = z.looseObject({
+  id: z.literal('scars'),
+  gaining: z.looseObject({ maximum: z.number().int().min(1) }),
+  table: z.looseObject({
+    roll: z.literal('D66'),
+    rows: z
+      .array(
+        z.strictObject({
+          id,
+          name: text,
+          results: z.array(z.number().int().min(11).max(66)).min(1),
+          trigger: text,
+          effects: z.array(mindEffect),
+          squadmate_rerolls: z.boolean().optional(),
+        }),
+      )
+      .min(1),
+  }),
+});
+
+export const stressResponsesFile = z.looseObject({
+  id: z.literal('stress-responses'),
+  table: z.looseObject({
+    roll: z.literal('D6 + Stress - Resolve'),
+    rows: z
+      .array(
+        z.strictObject({
+          id,
+          name: text,
+          results: z.strictObject({ min: z.number().int().nullable(), max: z.number().int().nullable() }),
+          duration: z.enum(['instant', 'lasting']),
+          text,
+          effects: z.array(mindEffect),
+        }),
+      )
+      .min(1),
+  }),
 });
 
 // ---------------------------------------------------------------- site player wording

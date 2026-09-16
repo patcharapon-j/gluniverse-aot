@@ -64,6 +64,8 @@ export const FILES = {
   dicePool: ['data/core/dice-pool.yaml', S.dicePoolFile],
   circumstances: ['data/core/circumstances.yaml', S.circumstancesFile],
   bonusDice: ['data/core/bonus-dice-sources.yaml', S.bonusDiceSourcesFile],
+  scars: ['data/mind/scars.yaml', S.scarsFile],
+  stressResponses: ['data/mind/stress-responses.yaml', S.stressResponsesFile],
   talentWording: ['site/src/content/compendium/talent-text.yaml', S.talentWordingFile],
   gearWording: ['site/src/content/compendium/gear-text.yaml', S.gearWordingFile],
   actionWording: ['site/src/content/compendium/action-text.yaml', S.actionWordingFile],
@@ -121,6 +123,14 @@ function crossCheck(t: Tables): void {
   for (const x of t.talents.talents) {
     if (x.type === 'rule' && !(t.talentWording.talents[x.id]?.trigger && t.talentWording.talents[x.id]?.effect)) {
       fail(FILES.talentWording[0], `the Rule Talent "${x.id}" has no player wording`);
+    }
+  }
+  for (const [file, rows] of [[FILES.scars[0], t.scars.table.rows], [FILES.stressResponses[0], t.stressResponses.table.rows]] as const) {
+    for (const row of rows) {
+      for (const e of row.effects) {
+        if (e.type !== 'penalty') continue;
+        for (const n of (e as { entries: string[] }).entries) if (!actions.has(n)) fail(file, `"${row.id}" names "${n}", which is not an Action Catalog entry`);
+      }
     }
   }
   const ladders = new Set(['standard', ...t.titanIndex.ladders.map((l) => l.id)]);

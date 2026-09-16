@@ -14,6 +14,7 @@ import {
   minimumStress,
   overloaded,
   resolve,
+  resolveUnclamped,
   foeCurrentHealth,
   effectiveStress,
 } from '../src/rules/derived.ts';
@@ -51,8 +52,12 @@ describe('Health and Resolve (data/character/attributes.yaml)', () => {
     expect(resolve({ instinct: 3, empathy: 4 }, 2, 3)).toBe(3);
   });
 
-  it('has no floor, as the data sets none', () => {
-    expect(resolve({ instinct: 2, empathy: 2 }, 0, 3)).toBe(-1);
+  it('never goes below 0 (owner decision; the rules set no floor)', () => {
+    expect(resolveUnclamped({ instinct: 2, empathy: 2 }, 0, 3)).toBe(-1);
+    expect(resolve({ instinct: 2, empathy: 2 }, 0, 3)).toBe(0);
+    expect(resolve({ instinct: 2, empathy: 2 }, 0, 2)).toBe(0);
+    expect(resolve({ instinct: 2, empathy: 2 }, 1, 3)).toBe(0);
+    expect(resolve({ instinct: 3, empathy: 2 }, 0, 2)).toBe(1);
   });
 
   it('sets minimum Stress to the number of Scars', () => {

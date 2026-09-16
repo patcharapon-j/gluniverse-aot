@@ -18,3 +18,9 @@ declare module 'virtual:wof-config' {
   const config: unknown;
   export default config;
 }
+
+declare module '*.svelte' {
+  import type { Component } from 'svelte';
+  const component: Component<any>;
+  export default component;
+}

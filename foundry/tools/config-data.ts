@@ -42,6 +42,27 @@ function checkConstants(t: Tables): void {
   for (const item of t.gearItems.items) gearSubtype(item.id);
 }
 
+export interface MindEffect {
+  type: string;
+  dice?: number;
+  entries?: string[];
+  amount?: number;
+  /** When a penalty applies only in a narrower case than every roll of its entries. */
+  appliesTo?: string;
+  text?: string;
+}
+
+function mindEffects(effects: readonly Record<string, unknown>[]): MindEffect[] {
+  return effects.map((e) => ({
+    type: String(e.type),
+    ...(typeof e.dice === 'number' ? { dice: e.dice } : {}),
+    ...(Array.isArray(e.entries) ? { entries: e.entries as string[] } : {}),
+    ...(typeof e.amount === 'number' ? { amount: e.amount } : {}),
+    ...(typeof e.applies_to === 'string' ? { appliesTo: e.applies_to } : {}),
+    ...(typeof e.text === 'string' ? { text: e.text } : {}),
+  }));
+}
+
 export function buildConfig(t: Tables) {
   checkConstants(t);
   const funding = t.standardIssue.funding.until_funding_rules;
@@ -84,6 +105,8 @@ export function buildConfig(t: Tables) {
     },
     standardIssue: { funding, row: t.standardIssue.by_funding.find((r) => r.funding === funding) ?? null },
     dieTypes: t.dicePool.die_types.map((d) => ({ id: d.id, name: d.name, successFaces: d.success_faces, pushReRolls: d.push_re_rolls_faces })),
+    penaltyFloor: Number((t.dicePool.components.find((c) => c.id === 'penalty') as { min_base_dice_after?: unknown } | undefined)?.min_base_dice_after ?? 1),
+    rollExceptions: t.dicePool.roll_exceptions.map((r) => ({ roll: r.roll, entries: r.entries ?? [r.roll], excluded: r.components_excluded, pushAllowed: r.push_allowed })),
     titanDice: { successFaces: [...t.titanFormat.titan_dice.success_faces] },
     circumstances: t.circumstances.steps,
     bonusDiceCap: t.bonusDice.cap_per_roll,
@@ -102,6 +125,16 @@ export function buildConfig(t: Tables) {
       heave: c.heave,
     })),
     gripToughness: t.sizeClasses.grip_toughness,
+    scars: t.scars.table.rows.map((r) => ({ id: r.id, name: r.name, results: r.results, trigger: r.trigger, effects: mindEffects(r.effects) })),
+    maxScars: t.scars.gaining.maximum,
+    stressResponses: t.stressResponses.table.rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      lasting: r.duration === 'lasting',
+      text: r.text,
+      effects: mindEffects(r.effects),
+    })),
+    maxGrief: MAX_GRIEF_COUNTED,
     attentionLadders: [{ id: 'standard', name: null as string | null }, ...t.titanIndex.ladders.map((l) => ({ id: l.id, name: l.name }))],
   };
 }
