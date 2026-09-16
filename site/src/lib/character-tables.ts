@@ -481,7 +481,7 @@ const SQUADMATE_RULE_WORDING: Record<string, { rule: string; note?: string; appl
   'Gas Rolls': { rule: 'Gas Rolls', note: 'Always two dice, because it never Pushes.' },
   'Blade Sets, carried items, and Overloaded': { rule: 'Blade Sets, carried items, and Overloaded' },
   'Talent dice and rule Talents': { rule: 'Talent dice and rule Talents', note: 'Only its template Talent.' },
-  'XP and gaining Talents': { rule: 'XP and new Talent levels', applies: 'Set by the advancement rules', note: 'Advancement rules are not covered yet.' },
+  'XP and gaining Talents': { rule: 'XP and new Talent levels', applies: 'Set by the advancement rules', note: 'No current rule gives a Squadmate XP or Talent levels.' },
   'Downtime Actions': { rule: 'Downtime Actions', note: 'Each Downtime it takes the Squadmate relief instead.' },
 };
 
