@@ -23,7 +23,7 @@ if (states.length < 3) throw new Error('GrappleStates: a hold has a start, a mid
     {states.map((state) => (
       <li class:list={['state', `state--${state.kind}`]}>
         <span class="pip" aria-hidden="true"><Icon name={state.icon} /></span>
-        <h4>{state.label}</h4>
+        <h3>{state.label}</h3>
         <p>{state.text}</p>
         {state.note && <p class="aside">{state.note}</p>}
       </li>
@@ -90,11 +90,11 @@ if (states.length < 3) throw new Error('GrappleStates: a hold has a start, a mid
     border-width: 2px;
     border-color: var(--seal);
   }
-  .state h4,
+  .state h3,
   .state p {
     grid-column: 2;
   }
-  .state h4 {
+  .state h3 {
     font-family: var(--f-type);
     font-weight: 700;
     font-size: var(--fs-xs);
@@ -102,7 +102,7 @@ if (states.length < 3) throw new Error('GrappleStates: a hold has a start, a mid
     text-transform: uppercase;
     padding-top: 9px;
   }
-  .state--end h4 {
+  .state--end h3 {
     color: var(--seal);
   }
   .state p {

@@ -142,7 +142,7 @@ body.is-gm {
   border-color: var(--carbon);
   font-family: var(--f-type);
 }
-.is-gm .box h4 {
+.is-gm .box h3 {
   color: var(--carbon);
 }
 .is-gm .box--gas {

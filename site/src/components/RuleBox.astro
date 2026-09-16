@@ -9,6 +9,6 @@ interface Props {
 const { title, variant = 'plain', icon } = Astro.props;
 ---
 <div class:list={['box', variant !== 'plain' && `box--${variant}`]}>
-  <h4>{icon && <Icon name={icon} aria-hidden="true" />}{title}</h4>
+  <h3>{icon && <Icon name={icon} aria-hidden="true" />}{title}</h3>
   <slot />
 </div>

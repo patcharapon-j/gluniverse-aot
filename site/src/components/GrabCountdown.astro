@@ -70,7 +70,7 @@ const MARKS = [
         <span class="pip" aria-hidden="true">
           {mark.slot ? <IconSlot name={mark.slot} size="sm" /> : mark.icon ? <Icon name={mark.icon} /> : null}
         </span>
-        <h4>{mark.label}</h4>
+        <h3>{mark.label}</h3>
         <p>{mark.text}</p>
         {mark.note && <p class="aside">{mark.note}</p>}
       </li>
@@ -140,11 +140,11 @@ const MARKS = [
     border-width: 2px;
     border-color: var(--seal);
   }
-  .mark h4,
+  .mark h3,
   .mark p {
     grid-column: 2;
   }
-  .mark h4 {
+  .mark h3 {
     font-family: var(--f-type);
     font-weight: 700;
     font-size: var(--fs-xs);
@@ -152,8 +152,8 @@ const MARKS = [
     text-transform: uppercase;
     padding-top: 9px;
   }
-  .mark--deadline h4,
-  .mark--devour h4 {
+  .mark--deadline h3,
+  .mark--devour h3 {
     color: var(--seal);
   }
   .mark p {

@@ -54,7 +54,7 @@ const STEPS = [
     {STEPS.map((step, i) => (
       <li class="station">
         <span class="callout" aria-hidden="true">{i + 1}</span>
-        <h4>{step.title}</h4>
+        <h3>{step.title}</h3>
         <div class="mini" aria-hidden="true">
           <Fragment set:html={step.mini} />
           {step.icon && <IconSlot name={step.icon} size="sm" />}

@@ -24,7 +24,7 @@ const isSlot = (name: string) => !name.includes(':');
     {round.map((step, i) => (
       <li class="station">
         <span class="callout" aria-hidden="true">{i + 1}</span>
-        <h4>{step.title}</h4>
+        <h3>{step.title}</h3>
         <div class="mini" aria-hidden="true">
           {isSlot(step.icon) ? <IconSlot name={step.icon} size="sm" /> : <Icon name={step.icon} />}
         </div>
@@ -44,7 +44,7 @@ const isSlot = (name: string) => !name.includes(':');
       {end.map((step) => (
         <li>
           <div class="body">
-            <h5>{step.title}</h5>
+            <h4>{step.title}</h4>
             <p>{step.text}</p>
             {step.exit && <p class="caveat"><b>{step.exit.label}<span class="sr">: </span></b>{step.exit.text}</p>}
           </div>
@@ -103,7 +103,7 @@ const isSlot = (name: string) => !name.includes(':');
     grid-column: 2;
     grid-row: 1;
   }
-  .endsteps h5 {
+  .endsteps h4 {
     font-family: var(--f-serif);
     font-weight: 700;
     font-size: 1rem;

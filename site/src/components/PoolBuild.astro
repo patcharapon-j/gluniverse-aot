@@ -43,7 +43,7 @@ const ROWS: { title: string; icon?: string; dice?: string; text: string; count: 
           {row.icon ? <Icon name={row.icon} /> : <Fragment set:html={facesHtml(row.dice!)} />}
         </div>
         <div class="text">
-          <h4>{row.title}</h4>
+          <h3>{row.title}</h3>
           <p>{row.text}</p>
         </div>
         <p class="count"><span class="sr">Limit: </span>{row.count}</p>
@@ -121,7 +121,7 @@ const ROWS: { title: string; icon?: string; dice?: string; text: string; count: 
     width: 26px;
     height: 26px;
   }
-  h4 {
+  h3 {
     font-family: var(--f-serif);
     font-weight: 700;
     font-size: 1.0625rem;

@@ -25,7 +25,7 @@ const SLOTS: Record<string, string> = { 'stress-response': 'roll-stress', 'fear-
       <section class="path" aria-labelledby={`mind-${path.id}`}>
         <header>
           <IconSlot name={SLOTS[path.id]} size="md" />
-          <h4 id={`mind-${path.id}`}>{path.title}</h4>
+          <h3 id={`mind-${path.id}`}>{path.title}</h3>
           <p class="total num">{path.total}</p>
         </header>
         <ol>
@@ -71,7 +71,7 @@ const SLOTS: Record<string, string> = { 'stress-response': 'roll-stress', 'fear-
   .path header :global(.icon-slot) {
     grid-row: 1 / span 2;
   }
-  .path h4 {
+  .path h3 {
     font-family: var(--f-type);
     font-weight: 700;
     font-size: var(--fs-xs);

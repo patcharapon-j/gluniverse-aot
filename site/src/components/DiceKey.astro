@@ -59,7 +59,7 @@ const KINDS = [
       <div>
         <span aria-hidden="true" set:html={facesHtml(kind.dice)}></span>
         <IconSlot name={kind.icon} />
-        <h4>{kind.name}</h4>
+        <h3>{kind.name}</h3>
       </div>
       {kind.rows.map(([label, value]) => (
         <dl>

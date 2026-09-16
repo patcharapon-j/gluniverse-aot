@@ -34,7 +34,7 @@ const isSlot = (name: string) => !name.includes(':');
     {steps.map((step, i) => (
       <li class="station">
         <span class="callout" aria-hidden="true">{i + 1}</span>
-        <h4>{step.title}</h4>
+        <h3>{step.title}</h3>
         {(step.dice || step.icon) && (
           <div class="mini" aria-hidden="true">
             {step.icon ? (
@@ -102,12 +102,12 @@ const isSlot = (name: string) => !name.includes(':');
     grid-row: 1 / span 3;
     align-self: start;
   }
-  .flow--rows h4,
+  .flow--rows h3,
   .flow--rows .mini,
   .flow--rows p {
     grid-column: 2;
   }
-  .flow--rows h4 {
+  .flow--rows h3 {
     margin-top: 9px;
     text-align: left;
   }
