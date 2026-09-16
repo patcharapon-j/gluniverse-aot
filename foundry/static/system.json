@@ -5,6 +5,11 @@
   "version": "0.1.0",
   "compatibility": { "minimum": "14", "verified": "14" },
   "authors": [{ "name": "Patcharapon Joksamut" }],
+  "background": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp",
+  "media": [
+    { "type": "setup", "url": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp", "thumbnail": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp" },
+    { "type": "cover", "url": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp" }
+  ],
   "esmodules": ["wings-of-freedom.mjs"],
   "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }, { "src": "styles/chat.css" }],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],

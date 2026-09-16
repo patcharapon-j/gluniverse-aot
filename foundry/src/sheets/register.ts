@@ -1,4 +1,5 @@
 /** Registers every system sheet as the default for its document types (core-plan 2b, 2c). */
+import { isReplaceableImg, specialtyPortrait } from '../art.ts';
 import { SYSTEM_ID } from '../config.ts';
 import { prototypeTokenDefaults, type ActorType } from '../token-defaults.ts';
 import { defineFoeSheet, defineItemSheet, defineTitanSheet } from './other-sheets.ts';
@@ -50,5 +51,21 @@ export function registerTokenDefaults() {
       }
     }
     actor.updateSource(update);
+  });
+}
+
+/**
+ * A Soldier or Squadmate that still wears a placeholder (Foundry's, or another Specialty's
+ * portrait) takes the portrait of the Specialty it is given, on its sheet plate and its token.
+ */
+export function registerPortraits() {
+  Hooks.on('createItem', (item: any, _options: any, userId: string) => {
+    const actor = item.parent;
+    if (userId !== game.user.id || item.type !== 'specialty' || !actor || !['soldier', 'squadmate'].includes(actor.type)) return;
+    const img = specialtyPortrait(item.system.specialty_id);
+    if (!img || img === actor.img || !isReplaceableImg(actor.img)) return;
+    const update: Record<string, unknown> = { img };
+    if (isReplaceableImg(actor.prototypeToken?.texture?.src)) update['prototypeToken.texture.src'] = img;
+    actor.update(update);
   });
 }

@@ -885,7 +885,12 @@
         "hint": "How much the Wings of Freedom sheets move: Full, Reduced (fades only), or Off. Your system's reduced-motion preference caps Full at Reduced. Only you see this.",
         "full": "Full",
         "reduced": "Reduced",
-        "off": "Off"
+        "off": "Off",
+        "fullHint": "Sheets settle, jolt, and flash; the gas and blade widgets animate.",
+        "reducedHint": "Short fades and colour only. Nothing slides or shakes.",
+        "offHint": "No movement. The gas and blade widgets are drawn still.",
+        "menuHint": "How much the sheets move. Only you see this.",
+        "osReduced": "Your system asks for reduced motion, so Full plays as Reduced."
       },
       "gore": {
         "name": "Gore",
@@ -893,29 +898,50 @@
         "hint": "How wounds are drawn on the soldier figure: Low (clinical hatching), Standard, or Graphic. Only you see this.",
         "low": "Low",
         "standard": "Standard",
-        "graphic": "Graphic"
+        "graphic": "Graphic",
+        "lowHint": "Wounds as clinical hatching and dashed outlines. No blood.",
+        "standardHint": "Muted blood and cuts. No spatter or bone.",
+        "graphicHint": "Spatter, pooled blood, and bone; blood drips when Motion is Full.",
+        "menuHint": "How wounds show on the inked soldier and Titan. Only you see this."
       },
       "autoApply": {
         "stress": {
           "name": "Auto-apply: Stress",
-          "hint": "Roll cards change Stress themselves: a Push, a Cover, a Stress Response, a Fear result, and a failed called roll staked on Stress. Off: the card lists the change with an Apply button."
+          "hint": "Roll cards change Stress themselves: a Push, a Cover, a Stress Response, a Fear result, and a failed called roll staked on Stress. Off: the card lists the change with an Apply button.",
+          "short": "Stress"
         },
         "wear": {
           "name": "Auto-apply: gear wear",
-          "hint": "A Pushed roll’s Gear Dice showing 1 wear the gear item (a Blade Set is ruined), with any wear-ignoring Talent used. Off: the card lists the wear with an Apply button."
+          "hint": "A Pushed roll’s Gear Dice showing 1 wear the gear item (a Blade Set is ruined), with any wear-ignoring Talent used. Off: the card lists the wear with an Apply button.",
+          "short": "Gear wear"
         },
         "stressResponse": {
           "name": "Auto-apply: Stress Responses",
-          "hint": "A lasting Stress Response rolled on a card is recorded on the soldier. Off: the card lists it with an Apply button."
+          "hint": "A lasting Stress Response rolled on a card is recorded on the soldier. Off: the card lists it with an Apply button.",
+          "short": "Stress Responses"
         },
         "gas": {
           "name": "Auto-apply: Gas Rating",
-          "hint": "A Gas Roll lowers the Gas Rating, and a Pushed ODM Gear roll marks the round’s Gas Roll as three dice. Off: the card lists the change with an Apply button."
+          "hint": "A Gas Roll lowers the Gas Rating, and a Pushed ODM Gear roll marks the round’s Gas Roll as three dice. Off: the card lists the change with an Apply button.",
+          "short": "Gas Rating"
         },
         "fear": {
           "name": "Auto-apply: Fear results and penalties",
-          "hint": "A Fear result’s next-roll penalty and forced move or strike are recorded, a used next-roll penalty is cleared, and a Drive shrug-off is marked. Off: the card lists them with an Apply button."
+          "hint": "A Fear result’s next-roll penalty and forced move or strike are recorded, a used next-roll penalty is cleared, and a Drive shrug-off is marked. Off: the card lists them with an Apply button.",
+          "short": "Fear results and penalties"
         }
+      },
+      "menu": {
+        "name": "Wings of Freedom preferences",
+        "label": "Open preferences",
+        "hint": "Motion and Gore for you; for the GM, which roll consequences apply themselves.",
+        "title": "Wings of Freedom preferences",
+        "heading": "Preferences",
+        "intro": "Motion and Gore are yours alone. Other players keep their own.",
+        "autoApply": "Roll consequences apply themselves",
+        "autoApplyHint": "A category switched off still lists its changes on the roll card, with an Apply button.",
+        "gmOnly": "GM",
+        "save": "Save preferences"
       }
     },
     "Sheet": {
@@ -1617,6 +1643,35 @@
         "for": "For",
         "roll": "Roll it",
         "rolled": "Rolled."
+      }
+    },
+    "Status": {
+      "down": "Down",
+      "untreated-injury": "Untreated Critical Injury",
+      "grabbed": "Grabbed",
+      "pinned": "Pinned",
+      "held": "Held",
+      "engaged": "Engaged",
+      "airborne": "Airborne",
+      "jammed": "Jammed",
+      "overloaded": "Overloaded",
+      "mounted": "Mounted",
+      "lame-horse": "Lame horse",
+      "carrying": "Carrying a comrade",
+      "carried": "Carried by a comrade",
+      "followsSheet": "{status} follows the soldier's sheet. Change it there.",
+      "derivedHint": "follows the sheet"
+    },
+    "Dice": {
+      "texture": {
+        "bone": "Wings of Freedom: bone",
+        "flesh": "Wings of Freedom: Titan flesh"
+      },
+      "colorset": {
+        "db": "Wings of Freedom: base dice (bone)",
+        "dg": "Wings of Freedom: Gear Dice (gunmetal)",
+        "ds": "Wings of Freedom: Stress Dice (wax red)",
+        "dt": "Wings of Freedom: Titan Dice (flesh)"
       }
     }
   }

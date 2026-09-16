@@ -9,6 +9,7 @@ import { docId } from './data/ids.ts';
 import { checkPlayerText, escapeHtml, format, hyphenatedIds } from './data/wording.ts';
 import { gearSubtype } from './config-data.ts';
 import { prototypeTokenDefaults, type ActorType } from '../src/token-defaults.ts';
+import { foePlate, gearIcon, iconPath, specialtyPortrait, titanPlate, titanTokenIcon } from '../src/art.ts';
 
 export const SYSTEM_ID = 'wings-of-freedom';
 export const CORE_VERSION = '14.365';
@@ -26,15 +27,13 @@ export const PACKS: { name: PackName; type: 'Item' | 'Actor' }[] = [
   { name: 'foes', type: 'Actor' },
 ];
 
+// Pack images (ADR-0027; src/art.ts). Talents take the dice or rule stamp, Origins the Corps emblem
+// (2f may give them their own), Critical Injury rows the injury stamp.
 const ICON = {
-  talent: 'icons/svg/book.svg',
-  specialty: 'icons/svg/combat.svg',
-  origin: 'icons/svg/village.svg',
-  gear: 'icons/svg/item-bag.svg',
-  injury: 'icons/svg/blood.svg',
-  titan: 'icons/svg/skull.svg',
-  squadmate: 'icons/svg/mystery-man.svg',
-  foe: 'icons/svg/sword.svg',
+  talent: (type: string) => iconPath(type === 'dice' ? 'talent-dice' : 'talent-rule'),
+  specialty: (id: string) => iconPath(`specialty-${id}`),
+  origin: iconPath('brand-emblem'),
+  injury: iconPath('harm-critical-injury'),
 };
 
 type Doc = Record<string, any>;
@@ -113,7 +112,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
       sort,
       ownership: { default: 0 },
       flags: { [SYSTEM_ID]: { sourceId: key } },
-      prototypeToken: { name, ...prototypeTokenDefaults(type, { sizeClass: system.size_class }), texture: { src: type === 'titan' ? `systems/${SYSTEM_ID}/assets/icons/titan-${system.abnormal ? 'abnormal' : system.size_class}.webp` : img } },
+      prototypeToken: { name, ...prototypeTokenDefaults(type, { sizeClass: system.size_class }), texture: { src: type === 'titan' ? titanTokenIcon(system.size_class, system.abnormal) : img } },
       _stats: stats(opts.systemVersion),
     };
   };
@@ -154,7 +153,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
       [L.Card.Talent.entries, andList.format(named.map((n) => n.name))],
       [L.Card.Talent.specialties, andList.format(specialties)],
     ]);
-    return item('talents', x.id, x.name, 'talent', ICON.talent, {
+    return item('talents', x.id, x.name, 'talent', ICON.talent(x.type), {
       talent_id: x.id,
       description: body,
       type: x.type,
@@ -184,7 +183,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
         [L.Card.Specialty.talents, andList.format(s.talents.map((x) => talentById.get(x)!.name))],
       ]) +
       (issue ? p(format(L.Card.Specialty.issue, { item: gearName.get(issue.item)!.toLowerCase(), rating: issue.rating })) : '');
-    return item('specialties', s.id, s.name, 'specialty', ICON.specialty, {
+    return item('specialties', s.id, s.name, 'specialty', ICON.specialty(s.id), {
       specialty_id: s.id,
       key_attribute: s.key_attribute,
       summary: body,
@@ -240,7 +239,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
       (w.not_had.length ? h(L.Card.Gear.notHad) + ul(w.not_had.map((x) => s('not-had note', x))) : '') +
       (w.restore.length ? h(L.Card.Gear.restore) + ul(w.restore.map((x) => s('restore note', x))) : '') +
       ((w.extra ?? []).length ? h(L.Card.Gear.notes) + ul((w.extra ?? []).map((x) => s('note', x))) : '');
-    return item('gear', g.id, g.name, 'gear', ICON.gear, {
+    return item('gear', g.id, g.name, 'gear', gearIcon(g.id), {
       item_id: g.id,
       subtype,
       rated: g.rated,
@@ -336,11 +335,9 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
 
   // ------------------------------------------------------------ Titans
   // The website's colour plate for each playable Titan (site/src/assets/plates, downscaled).
-  const titanPlate = (x: { id: string; size_class: string }) =>
-    `systems/${SYSTEM_ID}/assets/plates/plate-titan-${x.id.startsWith('standard-') ? x.size_class : x.id}.webp`;
   const hiddenForAbnormal = { toughness: false, nape_depth: false, regeneration_clock: false, attention_ladder: false };
   const titans = t.titans.map((x, i) =>
-    actor('titans', x.id, x.name, 'titan', titanPlate(x), {
+    actor('titans', x.id, x.name, 'titan', titanPlate(x.id, x.size_class), {
       size_class: x.size_class,
       abnormal: x.abnormal,
       tempo: x.tempo,
@@ -378,7 +375,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
     const talent = talentById.get(m.talent.id)!;
     const bladeRating = t.standardIssue.every_row.blade_set_rating;
     const kit = issueRow(m.specialty);
-    return actor('squadmates', m.id, specialty.name, 'squadmate', ICON.squadmate, {
+    return actor('squadmates', m.id, specialty.name, 'squadmate', specialtyPortrait(m.specialty)!, {
       attributes: m.attributes,
       health_lost: 0,
       down: false,
@@ -406,7 +403,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
   const foes = t.foes.foes.map((x, i) => {
     const fix = 'Fix the Foe row in data/skirmish/foes.yaml.';
     const weapon = typeof x.fight_weapon === 'string' ? { fixed: x.fight_weapon, roll: '', rows: [], at_night: { replaces: '', with: '' } } : { fixed: '', roll: x.fight_weapon.roll, rows: x.fight_weapon.rows, at_night: x.fight_weapon.at_night ?? { replaces: '', with: '' } };
-    return actor('foes', x.id, x.name, 'foe', ICON.foe, {
+    return actor('foes', x.id, x.name, 'foe', foePlate(x.id), {
       kind: x.id,
       who: say(`The description of "${x.name}"`, x.who, fix),
       attack_dice: x.attack_dice,

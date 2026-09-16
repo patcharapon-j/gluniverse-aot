@@ -118,7 +118,7 @@
     </div>
   </header>
 
-  <Vitals {view} />
+  <Vitals {view} compact />
 
   <Tabs tabs={TABS} {sheetState} {sheet} onselect={select} label={t('WOF.Squad.tab.label')} />
 

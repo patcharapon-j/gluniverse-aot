@@ -5,7 +5,7 @@
  * kind with successes lit and 1s marked, a big count, Stakes only when set, small Push and Cover,
  * the Stress Response line, and the "Applied" line with Undo.
  */
-import { SYSTEM_ID } from '../config.ts';
+import { actionIcon, entryIcon, iconPath } from '../art.ts';
 import { attackResult, finalSuccesses, rawSuccesses, undoButton, type DiceFaces, type DieKind, type Op } from '../rules/roll.ts';
 
 export const FLAG = 'card';
@@ -147,8 +147,7 @@ type T = (key: string, data?: Record<string, unknown>) => string;
 export const esc = (s: unknown): string =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
-const ICONS = `systems/${SYSTEM_ID}/assets/icons`;
-const icon = (name: string) => `${ICONS}/${name}.webp`;
+const icon = iconPath;
 
 // ---------------------------------------------------------------- dice icons (ported from the locked preview)
 
@@ -205,9 +204,10 @@ function dots(groups: [string, number][], label: string, why = ''): string {
   return `<span class="dots sm" role="img" aria-label="${esc(label)}"${why ? ` data-tooltip="${esc(why)}"` : ''}>${inner}</span>`;
 }
 
-function header(t: T, c: { img: string; name: string; time: string; who: string }, extra: string, isGM: boolean, flag = ''): string {
+function header(t: T, c: { img: string; name: string; time: string; who: string; glyph?: string }, extra: string, isGM: boolean, flag = ''): string {
+  const glyph = c.glyph ? `<img class="act" src="${esc(c.glyph)}" alt="">` : '';
   const del = isGM ? `<a class="del" data-action="deleteMessage" aria-label="${esc(t('COMMON.Delete'))}"><i class="fa-solid fa-trash" inert></i></a>` : '';
-  return `<header class="rc-h"><img class="av" src="${esc(c.img)}" alt="${esc(c.who)}" data-tooltip="${esc(c.who)}"><strong>${esc(c.name)}</strong>${extra}${flag}<time>${esc(c.time)}</time>${del}</header>`;
+  return `<header class="rc-h"><img class="av" src="${esc(c.img)}" alt="${esc(c.who)}" data-tooltip="${esc(c.who)}">${glyph}<strong data-tooltip="${esc(c.name)}">${esc(c.name)}</strong>${extra}${flag}<time>${esc(c.time)}</time>${del}</header>`;
 }
 
 function drow(kind: string, iconName: string, label: string, faces: string): string {
@@ -317,7 +317,8 @@ function actionCard(t: T, c: ActionCard, v: CardViewer, deathRows: { id: string;
     if (push || cover) acts = `<div class="rc-a">${push}${cover}${note}</div>`;
   }
   const newGlyph = newStress ? ` data-fresh="1"` : '';
-  return `${header(t, { img: c.img, name: c.name, time: c.time, who: c.actorName }, glyphs, v.isGM, flags)}
+  const glyph = c.entry ? entryIcon({ id: c.entry, attribute: c.attribute }) : undefined;
+  return `${header(t, { img: c.img, name: c.name, time: c.time, who: c.actorName, glyph }, glyphs, v.isGM, flags)}
 <div class="rc-b"${newGlyph}>
   <div class="dice">${rows}</div>
   <div class="result"><span class="big${out.failed ? ' none' : ''}">${s}</span><span class="rt"><b>${esc(out.label)}</b>${esc(out.text)}</span></div>
@@ -338,7 +339,8 @@ function tableCard(t: T, c: TableCard, v: CardViewer): string {
     v.drive && v.owner && !c.shrugged && c.table === 'fear' && r.effects.length ? `<button class="mini" type="button" data-wof-act="shrug">${esc(t('WOF.Roll.fear.shrug'))}</button>` : '',
     v.gallows && v.owner && !r.rerolled && c.table === 'stress-response' ? `<button class="mini" type="button" data-wof-act="gallows">${esc(t('WOF.Roll.gallows'))}</button>` : '',
   ].join('');
-  return `${header(t, { img: c.img, name: title, time: c.time, who: c.actorName }, math, v.isGM)}
+  const glyph = actionIcon(c.table === 'fear' ? 'fear-roll' : 'stress-response-roll');
+  return `${header(t, { img: c.img, name: title, time: c.time, who: c.actorName, glyph }, math, v.isGM)}
 <div class="rc-b">
   <div class="dice">${drow('d6', iconName, 'D6', dieIcon(t, 'base', r.d6, { plain: true }))}</div>
   <div class="result"><span class="big">${r.total}</span><span class="rt"><b>${esc(c.table === 'fear' ? t('WOF.Roll.fear.label') : t('WOF.Roll.response'))}</b>${esc(r.name)}${
@@ -351,7 +353,7 @@ function tableCard(t: T, c: TableCard, v: CardViewer): string {
 
 function gasCard(t: T, c: GasCard, v: CardViewer): string {
   const math = `<span class="flag">${esc(t('WOF.Roll.gas.dice', { n: c.faces.length }))}</span>`;
-  return `${header(t, { img: c.img, name: t('WOF.Roll.gas.title'), time: c.time, who: c.actorName }, math, v.isGM)}
+  return `${header(t, { img: c.img, name: t('WOF.Roll.gas.title'), time: c.time, who: c.actorName, glyph: actionIcon('gas-roll') }, math, v.isGM)}
 <div class="rc-b">
   <div class="dice">${drow('d6', 'gear-gas-canister', 'D6', c.faces.map((f) => dieIcon(t, 'base', f, { plain: true })).join(''))}</div>
   <div class="result"><span class="big${c.lost ? ' none' : ''}">${c.lost}</span><span class="rt"><b>${esc(t('WOF.Roll.gas.lostLabel'))}</b>${esc(t('WOF.Roll.gas.rating', { from: c.from, to: c.to }))}</span></div>

@@ -6,8 +6,9 @@
   import { clickHealthBox, clickStressBox, fitBladeSet, fitCanister, ruinBladeInHandles, setField, spendGas, stepStress } from '../soldier-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
+  import Widget3d from './Widget3d.svelte';
 
-  let { view }: { view: SoldierView } = $props();
+  let { view, compact = false }: { view: SoldierView; compact?: boolean } = $props();
   const { actor } = sheetContext();
   const s = $derived(view.system);
   const d = $derived(view.derived);
@@ -26,6 +27,9 @@
   const discipline = $derived(view.talents.find((x) => x.talentId === 'blade-discipline') ?? null);
   const stressBoxes = $derived(Math.max(6, d.stress_effective + 1));
   const bestSpare = $derived(s.spare_canisters.length ? s.spare_canisters.indexOf(Math.max(...s.spare_canisters)) : -1);
+
+  const gasState = $derived({ level: s.gas_rating, full: view.fullGas, spares: [...s.spare_canisters].sort((a, b) => b - a), dull: !odm || d.jammed });
+  const bladeState = $derived({ inHandles: !!inHandles, carried: carried.length });
 
   const boxLabel = (b: string, i: number) => t(`WOF.Sheet.health.box.${b}`, { n: i + 1 });
 
@@ -59,6 +63,16 @@
     });
   }
 </script>
+
+{#snippet can(x: number, level: number, scale: number, dim: boolean)}
+  <g transform="translate({x} {4 + 48 * (1 - scale)}) scale({scale})" opacity={dim ? 0.8 : 1}>
+    <rect x="0" y="6" width="22" height="44" rx="6" fill={gasState.dull && !dim ? '#8a9096' : '#c3c9ce'} stroke="#2a2e32" />
+    <rect x="7" y="0" width="8" height="7" fill="#b9924a" stroke="#6e5325" />
+    {#each Array.from({ length: gasState.full }) as _, i (i)}
+      <rect x="2" y={42 - i * (36 / gasState.full)} width="18" height={Math.max(3, 36 / gasState.full - 4)} fill={i < level ? '#8e2323' : '#4a4f55'} />
+    {/each}
+  </g>
+{/snippet}
 
 <div class="vitals">
   <!-- Health -->
@@ -129,7 +143,7 @@
     </span>
   </div>
 
-  <!-- Gas: the three.js canister widget mounts in the .still slot in step 2e -->
+  <!-- Gas: the fitted canister and the spares (three.js widget, or the drawn still) -->
   <div class="vit gasv" bind:this={gasEl}>
     <div class="vhead">
       <span class="lbl"><img class="ic s16" src={icon('gear-gas-canister')} alt="" />{t('WOF.Sheet.gas.title')}</span>
@@ -138,7 +152,14 @@
       </span>
     </div>
     <div class="w3 gas">
-      <div class="still" data-widget="gas" data-slot="2e" aria-hidden="true"><img src={icon('gear-gas-canister')} alt="" /></div>
+      {#if !compact}<Widget3d kind="gas" values={gasState}>
+        {#snippet still()}
+          <svg viewBox="0 0 96 56" width="96" height="56">
+            {@render can(10, gasState.level, 1, false)}
+            {#each gasState.spares.slice(0, 3) as g, i (i)}{@render can(50 + i * 15, g, 0.62, true)}{/each}
+          </svg>
+        {/snippet}
+      </Widget3d>{/if}
       <div class="wtxt">
         <span class="val">{s.gas_rating}<small>/{view.fullGas}</small></span>
         <span class="note">{s.spare_canisters.length ? t('WOF.Sheet.gas.spares', { list: s.spare_canisters.join(', ') }) : t('WOF.Sheet.gas.noSpare')}</span>
@@ -157,14 +178,27 @@
     </div>
   </div>
 
-  <!-- Blade Sets: the three.js blade widget mounts in the .still slot in step 2e -->
+  <!-- Blade Sets: the set in the handles and the carried sets (three.js widget, or the drawn still) -->
   <div class="vit bladev" bind:this={bladeEl}>
     <div class="vhead">
       <span class="lbl"><img class="ic s16" src={icon('gear-blades')} alt="" />{t('WOF.Sheet.blades.title')}</span>
       {#if discipline}<span class="note">{discipline.used ? t('WOF.Sheet.blades.disciplineUsed') : t('WOF.Sheet.blades.disciplineReady')}</span>{/if}
     </div>
     <div class="w3 blades">
-      <div class="still" data-widget="blades" data-slot="2e" aria-hidden="true"><img src={icon('gear-blades')} alt="" /></div>
+      {#if !compact}<Widget3d kind="blades" values={bladeState}>
+        {#snippet still()}
+          <svg viewBox="0 0 120 56" width="120" height="56">
+            <rect x="4" y="30" width="36" height="20" fill="#7c848b" stroke="#2a2d31" />
+            {#each Array.from({ length: Math.min(4, bladeState.carried) }) as _, i (i)}<path d="M40 {47 - i * 5}h40l6 2h-46z" fill="#c9cfd4" stroke="#5d646b" stroke-width=".8" />{/each}
+            <rect x="4" y="8" width="30" height="12" fill="#2a2d31" />
+            <rect x="10" y="18" width="6" height="8" fill="#2a2d31" />
+            {#if bladeState.inHandles}
+              <path d="M34 9h66l8 3h-74z" fill="#dfe4e8" stroke="#5d646b" stroke-width=".8" />
+              <path d="M34 15h66l8 3h-74z" fill="#dfe4e8" stroke="#5d646b" stroke-width=".8" />
+            {/if}
+          </svg>
+        {/snippet}
+      </Widget3d>{/if}
       <div class="wtxt">
         <span class="val"><span class:red-text={!inHandles}>{inHandles ? 1 : 0}</span><small> + {carried.length}</small></span>
         <span class="note">

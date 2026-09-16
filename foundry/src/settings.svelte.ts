@@ -5,6 +5,7 @@
 import { SYSTEM_ID } from './config.ts';
 import type { GoreLevel, MotionMode } from './motion/tokens.ts';
 import { APPLY_CATEGORIES, type ApplyCategory } from './rules/roll.ts';
+import { registerSettingsMenu } from './settings-menu.ts';
 
 export const viewer = $state({ motion: 'full' as MotionMode, gore: 'standard' as GoreLevel, reducedByOS: false });
 
@@ -16,7 +17,8 @@ export function motionMode(): MotionMode {
 
 /**
  * World settings, GM only: auto-apply per category (ADR-0026). A category switched off still lists
- * its changes on the card, with an Apply button.
+ * its changes on the card, with an Apply button. They are set in the preferences menu
+ * (settings-menu.ts), not listed one by one in Configure Settings.
  */
 export function registerWorldSettings(): void {
   for (const cat of APPLY_CATEGORIES) {
@@ -24,7 +26,7 @@ export function registerWorldSettings(): void {
       name: `WOF.Settings.autoApply.${cat}.name`,
       hint: `WOF.Settings.autoApply.${cat}.hint`,
       scope: 'world',
-      config: true,
+      config: false,
       restricted: true,
       type: Boolean,
       default: true,
@@ -39,6 +41,7 @@ export function autoApply(): Record<ApplyCategory, boolean> {
 
 export function registerSettings(): void {
   registerWorldSettings();
+  registerSettingsMenu();
   game.settings.register(SYSTEM_ID, 'motion', {
     name: 'WOF.Settings.motion.name',
     hint: 'WOF.Settings.motion.hint',

@@ -13,6 +13,7 @@ declare const Hooks: {
   callAll(hook: string, ...args: any[]): boolean;
 };
 declare const ui: any;
+declare const CONST: any;
 
 declare module 'virtual:wof-config' {
   const config: unknown;

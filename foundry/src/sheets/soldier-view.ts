@@ -3,7 +3,7 @@
  * values, its embedded Items in sheet order, and each Action Catalog quick roll with its preview
  * pool. Rebuilt on every Foundry render and handed to Svelte as one raw state value.
  */
-import { SYSTEM_ID } from '../config.ts';
+import { actionIcon, CORE_DEFAULT_IMGS, gearIcon, iconPath } from '../art.ts';
 import type { SoldierDerived } from '../rules/derived.ts';
 import { healingDaysTotal, type InjuryType, type TypeRider } from '../rules/harm.ts';
 import { actorPool, entryBlock, poolInputs } from '../dice/actor-pool.ts';
@@ -11,8 +11,7 @@ import { previewPool, type PoolPreview } from '../rules/pool.ts';
 import type { MindEffect } from '../../tools/config-data.ts';
 import { severityOf, type Severity } from './figure.ts';
 
-export const ICONS = `systems/${SYSTEM_ID}/assets/icons`;
-export const icon = (name: string) => `${ICONS}/${name}.webp`;
+export const icon = iconPath;
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
@@ -108,6 +107,8 @@ export interface SoldierView {
   uuid: string;
   name: string;
   img: string;
+  /** The actor has no portrait yet: the plate shows the emblem until a Specialty brings one. */
+  placeholder: boolean;
   editable: boolean;
   isGM: boolean;
   system: any;
@@ -129,32 +130,6 @@ export interface SoldierView {
 }
 
 const specialtyIcon = (id: string) => icon(`specialty-${id}`);
-
-const GEAR_ICONS: Record<string, string> = {
-  'odm-gear': 'gear-odm',
-  'blade-set': 'gear-blades',
-  'flintlock-pistol': 'gear-firearm',
-  musket: 'gear-firearm',
-  horse: 'gear-horse',
-  'medical-kit': 'gear-medical-kit',
-  'tool-kit': 'gear-medical-kit',
-  'prosthetic-arm': 'gear-prosthetic',
-  'prosthetic-leg': 'gear-prosthetic',
-};
-
-const ACTION_ICONS: Record<string, string> = {
-  'nape-strike': 'action-nape-strike',
-  fly: 'action-fly',
-  dodge: 'action-dodge',
-  rally: 'action-rally',
-  'fear-roll': 'harm-fear',
-  'stress-response-roll': 'roll-stress',
-  'gas-roll': 'gear-gas-canister',
-  'death-roll': 'harm-death-roll',
-  'treat-injury': 'gear-medical-kit',
-  ride: 'gear-horse',
-  shoot: 'gear-firearm',
-};
 
 /** Entry names joined as the sheet writes them. */
 export function entryNames(ids: readonly string[]): string {
@@ -274,7 +249,7 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
       id: i.id,
       name: i.name,
       img: i.img,
-      icon: icon(GEAR_ICONS[s.item_id] ?? 'gear-odm'),
+      icon: gearIcon(s.item_id),
       itemId: s.item_id,
       subtype: s.subtype,
       rated: s.rated,
@@ -365,7 +340,7 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
       pool,
       why,
       blockedReason,
-      icon: icon(ACTION_ICONS[e.id] ?? (e.attribute ? `attr-${e.attribute}` : 'harm-fear')),
+      icon: actionIcon(e.id),
     });
   }
 
@@ -396,7 +371,8 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     id: actor.id,
     uuid: actor.uuid,
     name: actor.name,
-    img: actor.img,
+    img: CORE_DEFAULT_IMGS.has(actor.img ?? '') ? icon('brand-emblem') : actor.img,
+    placeholder: CORE_DEFAULT_IMGS.has(actor.img ?? ''),
     editable: opts.editable,
     isGM: !!game.user?.isGM,
     system: source,

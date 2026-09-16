@@ -44,7 +44,10 @@
 }
 .wof-card.titanic .rc-h { background: linear-gradient(160deg, #5a2a22, #381812); border-bottom-color: var(--red); }
 .wof-card .rc-h .av { width: 24px; height: 24px; object-fit: cover; object-position: 50% 10%; border: 1px solid var(--brass); flex: 0 0 24px; }
-.wof-card .rc-h strong { font: 700 var(--t-base)/1 var(--fd); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; max-width: 62%; }
+/* The name keeps its width; the pool glyphs (flex-basis 0) give way first, then the name shrinks. */
+.wof-card .rc-h strong { font: 700 var(--t-base)/1 var(--fd); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 3em; flex: 0 1 auto; }
+.wof-card .rc-h .av + .act { margin-left: calc(var(--s1) * -1); }
+.wof-card .rc-h .act { width: 20px; height: 20px; flex: 0 0 20px; padding: 1px; background: var(--paper-hi); border: 1px solid var(--brass); object-fit: contain; }
 .wof-card .rc-h .flag { font: var(--t-xs)/1 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--brass-hi); white-space: nowrap; }
 .wof-card .rc-h .tier-ic { width: 16px; height: 16px; filter: invert(.92) sepia(.4); flex: 0 0 16px; }
 .wof-card .rc-h time { margin-left: auto; font: var(--t-xs)/1 var(--fl); color: #bfae8c; white-space: nowrap; }

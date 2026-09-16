@@ -68,6 +68,18 @@ describe('pack documents', () => {
     expect(slayer.items.some((i: any) => i.system.subtype === 'kit')).toBe(false);
   });
 
+  it('gives every entry an image the system ships', () => {
+    const shipped = (src: string) => existsSync(join(FOUNDRY_ROOT, 'static', src.replace('systems/wings-of-freedom/', '')));
+    const embedded = all.flatMap((d) => d.items ?? []);
+    for (const d of [...all, ...embedded]) {
+      expect(d.img, d.name).toMatch(/^systems\/wings-of-freedom\/assets\//);
+      expect(shipped(d.img), d.img).toBe(true);
+      if (d.prototypeToken) expect(shipped(d.prototypeToken.texture.src), d.prototypeToken.texture.src).toBe(true);
+    }
+    expect(docs.squadmates.map((d) => d.img)).toContain('systems/wings-of-freedom/assets/portraits/portrait-slayer.webp');
+    expect(docs.foes.map((d) => d.img)).toContain('systems/wings-of-freedom/assets/plates/plate-foe-bandit.webp');
+  });
+
   it('keeps the Titan stat blocks as the data writes them', () => {
     const medium = docs.titans.find((d) => d.flags['wings-of-freedom'].sourceId === 'standard-medium')!;
     expect(medium.system).toMatchObject({ size_class: 'medium', tempo: 1, nape_depth: 4, regeneration_clock: 3, heave: 3 });

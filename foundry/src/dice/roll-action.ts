@@ -5,7 +5,7 @@
  */
 import type { AttributeId } from '../rules/derived.ts';
 import { buildRollPool, entryNeeds, responseDue, type Circumstance, type Op } from '../rules/roll.ts';
-import { icon } from '../sheets/soldier-view.ts';
+import { entryIcon } from '../art.ts';
 import { actorPool, entryBlock, exceptionFor, poolInputs, type ActorPool } from './actor-pool.ts';
 import { applyNew, ops } from './apply.ts';
 import type { ActionCard, CallCard } from './card.ts';
@@ -26,24 +26,7 @@ export interface RollActionOptions {
   attributeAlone?: AttributeId;
 }
 
-const ACTION_ICONS: Record<string, string> = {
-  'nape-strike': 'action-nape-strike',
-  'body-part-strike': 'body-arm',
-  fly: 'action-fly',
-  dodge: 'action-dodge',
-  rally: 'action-rally',
-  'death-roll': 'harm-death-roll',
-  'treat-injury': 'gear-medical-kit',
-  'field-repair': 'gear-medical-kit',
-  ride: 'gear-horse',
-  shoot: 'gear-firearm',
-  fight: 'gear-blades',
-  block: 'gear-blades',
-};
-
-export function entryIcon(entry: any): string {
-  return icon(ACTION_ICONS[entry.id] ?? (entry.attribute ? `attr-${entry.attribute}` : 'harm-fear'));
-}
+export { entryIcon };
 
 /** The pseudo entry of a called roll made on an attribute alone (dice-pool.yaml, called_roll; action-catalog.yaml, rolls_called_by_attribute). */
 export function attributeEntry(attribute: AttributeId) {

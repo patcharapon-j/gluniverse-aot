@@ -3,6 +3,8 @@
  * 2a: data models, derived data, system config, fonts. 2b: the Soldier sheet, Motion and Gore.
  * 2c: the Titan, Squadmate, and Foe sheets, the item slips, and prototype Token defaults.
  * 2d: the four die kinds, the roll dialog, roll cards with Push, Cover, auto-apply, and Undo.
+ * 2e: Dice So Nice presets, the three.js gas and blade widgets, the preferences menu, token status
+ * effects bound to the model, and default art.
  */
 import { buildSystemConfig, SYSTEM_ID } from './config.ts';
 import { callRoll } from './dice/call.ts';
@@ -11,15 +13,21 @@ import { registerProxy } from './dice/proxy.ts';
 import { rollTitanAttack } from './dice/reactions.ts';
 import { rollAction } from './dice/roll-action.ts';
 import { rollFear, rollGas, rollStressResponse } from './dice/tables.ts';
+import { registerDiceSoNice } from './dice/dsn.ts';
 import { defineDice } from './dice/terms.ts';
+import { defineActorDocument, defineTokenHUD, registerStatusEffects } from './documents/actor.ts';
+import { widgetStats } from './motion/widgets.ts';
 import { registerFonts } from './fonts.ts';
 import { defineActorModels } from './models/actors.ts';
 import { defineItemModels } from './models/items.ts';
 import { loadSettings, registerSettings } from './settings.svelte.ts';
-import { registerSheets, registerTokenDefaults } from './sheets/register.ts';
+import { registerPortraits, registerSheets, registerTokenDefaults } from './sheets/register.ts';
 
 Hooks.once('init', () => {
   CONFIG.WOF = buildSystemConfig();
+  CONFIG.Actor.documentClass = defineActorDocument();
+  CONFIG.Token.hudClass = defineTokenHUD();
+  registerStatusEffects();
 
   Object.assign(CONFIG.Actor.dataModels, defineActorModels());
   Object.assign(CONFIG.Item.dataModels, defineItemModels());
@@ -32,13 +40,15 @@ Hooks.once('init', () => {
   };
 
   defineDice();
+  registerDiceSoNice();
   registerProxy();
   registerChat();
   registerFonts();
   registerSettings();
   registerSheets();
   registerTokenDefaults();
-  game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse };
+  registerPortraits();
+  game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse, widgetStats };
   console.log(`${SYSTEM_ID} | initialised: ${CONFIG.WOF.actionCatalog.length} Action Catalog entries`);
 });
 
