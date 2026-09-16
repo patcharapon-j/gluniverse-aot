@@ -1,0 +1,61 @@
+/* Glossary terms and their pop-ups, on rules pages and on Compendium card text. */
+.gloss {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: help;
+  text-decoration: underline dotted var(--pencil);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.gloss:hover,
+.gloss[aria-expanded="true"] {
+  color: var(--corps);
+  text-decoration-style: solid;
+}
+.gloss-pop {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(320px, calc(100vw - 32px));
+  padding: 12px 14px 12px;
+  color: var(--ink);
+  background: var(--paper-hi);
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--paper-shade), 0 16px 30px -18px rgba(0, 0, 0, 0.6);
+  font-family: var(--f-serif);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  text-align: left;
+  text-shadow: none;
+}
+.gloss-pop:focus {
+  outline: none;
+}
+.gloss-pop:focus-visible {
+  box-shadow: 0 0 0 3px var(--seal), 4px 4px 0 var(--paper-shade);
+}
+.gloss-pop :focus-visible {
+  outline-color: var(--seal);
+}
+.gloss-pop b {
+  display: block;
+  font-family: var(--f-type);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--seal);
+  margin-bottom: 4px;
+}
+.gloss-pop a {
+  display: inline-block;
+  margin-top: 2px;
+  padding-block: 4px;
+  color: var(--ink);
+  font-family: var(--f-type);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

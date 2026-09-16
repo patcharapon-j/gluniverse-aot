@@ -1,0 +1,58 @@
+---
+import '~/styles/compendium.css';
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import TitanSpecimen from '~/components/TitanSpecimen.astro';
+import { COMPENDIUM_TABS } from '~/lib/compendium';
+
+const titans = (await getCollection('titans')).sort((a, b) => a.data.order - b.data.order);
+
+const sizes = new Map<string, { value: string; label: string; count: number }>();
+for (const t of titans) {
+  const row = sizes.get(t.data.sizeClass.slug) ?? { value: t.data.sizeClass.slug, label: t.data.sizeClass.name, count: 0 };
+  row.count += 1;
+  sizes.set(row.value, row);
+}
+
+const groups: FilterGroup[] = [
+  { key: 'size', label: 'Size', options: [...sizes.values()] },
+  {
+    key: 'kind',
+    label: 'Kind',
+    options: [
+      { value: 'standard', label: 'Standard', count: titans.filter((t) => !t.data.abnormal).length },
+      { value: 'abnormal', label: 'Abnormal', count: titans.filter((t) => t.data.abnormal).length },
+    ],
+  },
+];
+---
+<BaseLayout
+  title="Titans"
+  description="Titans as your squad sees them: Size Class, Tempo, Nape Depth, Body Parts, and the Behavior Table."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>Titans</span></div>
+    <CompendiumIndex
+      id="titans"
+      groups={groups}
+      total={titans.length}
+      singular="Titan"
+      plural="Titans"
+      searchLabel="Search Titans"
+      searchPlaceholder="Search Titans and behaviors"
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Compendium</p>
+        <h1 class="h1" id="page-title">Titans</h1>
+        <p class="lede">What your squad knows before the fight: how big, how fast, how deep the cut, and what it does when it turns on you.</p>
+      </div>
+      <div class="specimens">
+        {titans.map((titan) => <TitanSpecimen titan={titan.data} id={titan.id} />)}
+      </div>
+    </CompendiumIndex>
+  </section>
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+import { poolHtml } from '~/lib/dice';
+
+interface Row {
+  label: string;
+  /** Compact dice notation, for example "base:6,3|gear:1l|stress:3n". */
+  pool: string;
+  successes: number;
+}
+interface Props {
+  rows: Row[];
+}
+const { rows } = Astro.props;
+---
+<div class="rolls">
+  {rows.map((row) => (
+    <div class="rollrow">
+      <span class="lbl">{row.label}</span>
+      <div class="pool" set:html={poolHtml(row.pool)}></div>
+      <span class="tally num">{row.successes} <small>{row.successes === 1 ? 'success' : 'successes'}</small></span>
+    </div>
+  ))}
+</div>

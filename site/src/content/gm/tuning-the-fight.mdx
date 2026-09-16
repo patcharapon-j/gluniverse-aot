@@ -1,0 +1,112 @@
+---
+title: Tuning the Fight
+summary: What a fight should feel like before you change anything, which levers are yours, and which numbers are never yours to move.
+section: gm
+order: 3
+tab: Tuning
+sources:
+  - path: docs/rules/05-titan-engagement.md
+    sha: "08b7bf455d7d385faedf5a8dd7116eb25b062336"
+  - path: docs/rules/06-standard-titans.md
+    sha: "7648f7b102a054d9615d9982bd53f169d2605139"
+  - path: data/engagement/tuning.yaml
+    sha: "7f9200171adbe0b11ea156006d0d88d7fcdd3136"
+  - path: data/titans/tuning.yaml
+    sha: "919862c739567c35e7ab52d81c6c668785b93111"
+  - path: data/engagement/engagement-setup.yaml
+    sha: "b84e5d55db3cec0b3c771fe616a9c9c356be6121"
+---
+
+import ChapterContents from '~/components/ChapterContents.astro';
+import CommanderNote from '~/components/CommanderNote.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import InkVignette from '~/components/InkVignette.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Subsection from '~/components/Subsection.astro';
+import { RETREAT_CLOCK } from '~/lib/gm-tables';
+
+<FieldQuote cite="Survey Corps manual, on command">A commander who changes the odds after the order has changed nothing but their own conscience.</FieldQuote>
+
+The fights in this book already have a shape. Before you reach for anything, know what that shape is, so you can tell a bad night from a broken rule.
+
+<ChapterContents items={[
+  { id: 'what-to-expect', title: 'What to Expect', note: 'How a fight should go when nothing is touched' },
+  { id: 'your-levers', title: 'Your Levers', note: 'What you may change, and when' },
+  { id: 'never-yours', title: 'Never Yours to Move', note: 'The numbers that hold everything up' },
+]} />
+
+<SectionHead id="what-to-expect" eyebrow="Section 1">What to Expect</SectionHead>
+
+<Subsection title="How long a Titan takes" id="how-long-a-titan-takes">
+
+- **A prepared Squad of four kills a Medium Titan in about three rounds.** Most fights are over by the third or fourth, and a few drag past that. Round three is the round to picture when you are pacing a session.
+- **A Small Titan usually falls in two,** and still costs more than the Medium Titan does, because it acts twice a round and takes twice as many swings at whoever holds its Attention.
+- **A Large Titan kills in about the same round as the Medium one, but it drags.** A real share of fights against it end with the Squad out of gas, out of room, or out on the retreat with the Titan still standing. It deals close to twice the Medium Titan's harm along the way.
+- **The Sprinting Abnormal falls sooner than the Medium Titan and later than the Small one,** and it hurts about as much as the Small Titan while killing rather more often.
+
+</Subsection>
+
+<Subsection title="What every fight costs" id="what-every-fight-costs">
+
+- **Every fight costs something.** Expect a Critical Injury in most fights, and a Grab every few. A fight nobody bled in is unusual, not the baseline.
+- **Deaths are rare, and they are supposed to be.** Across many fights a Squad will lose someone, but no single standard fight is expected to kill. When one does, it is because a Grab went unanswered or a soldier was already carrying too much.
+- **A Grab is the sharp end.** With one comrade close enough to act, a Grabbed soldier dies about one time in three. Alone, about two times in three. That gap is the whole argument for staying near each other, and it is the number to have in mind when you decide how far the Squad has scattered.
+- **A first Titan fight is slower and costlier than the ones after it,** because of the Fear Roll it begins with. Do not read a bloody first fight as a sign the rules are too hard.
+- **A canister of gas lasts about eight rounds of ODM use,** and about six for a soldier Pushing every round. That is why the retreat clock is {RETREAT_CLOCK} segments: the run for the walls begins as the gas runs low.
+
+</Subsection>
+
+<MarginNote stamp="Read twice">A Squad that comes home whole from a Medium Titan played it well. A Squad that comes home whole from a Large Titan with two Background Titans got lucky, and should be told so.</MarginNote>
+
+<Subsection title="Where the hard nights come from" id="where-the-hard-nights-come-from">
+
+- **Soldiers built without Talents.** A Squad of plain templates against a Large Titan is the hardest standard fight in the book: it takes a round longer, ends with no kill far more often, and costs twice the harm. That is not a fight to frame casually.
+- **Two Focus Titans at once.** Rounds against two run near half an hour and roughly double what the Squad faces. The clocks keep this rare on purpose. If your table's rounds are dragging, this is usually why.
+- **Scattering.** Most of the lethality in these rules lives in the Grab, and the Grab's lethality lives in how far away everybody else is.
+
+</Subsection>
+
+<InkVignette caption="The third round, and the blades have not reached the Nape yet." label="A soldier swinging in against a Titan's shoulder while comrades circle below" art="gm-tuning-the-fight-third-round" />
+
+<CommanderNote title="What the Squad will work out">
+
+Squads that leave the legs alone and send everyone at the Nape do better than Squads that cut legs first: they kill sooner and take less harm, even though the rules reward a grounded Titan. It is a real edge in the rules as they stand. Do not steer the table either way, and do not price it back with a ruling. Let them find it, and let the Titan's own Behavior Table answer for it.
+
+</CommanderNote>
+
+<SectionHead id="your-levers" eyebrow="Section 2">Your Levers</SectionHead>
+
+Everything here is set before the dice, in the open, and never mid-fight.
+
+<Subsection title="Before a fight begins" id="before-a-fight-begins">
+
+- **The Titan.** A Small Titan for a quick, sharp scene. The Medium Titan when you want the standard fight. The Large Titan when the scene is meant to be survived rather than won. The Sprinting Abnormal when you want the table to feel that the rules have changed.
+- **The ground.** The Anchor Rating decides which Position changes ODM Gear allows, and it changes a fight more than most Titans do. Open ground is a harder fight than a Giant Forest for the same Titan.
+- **Background Titans.** None, one, or two, each on a clock of 4, 6, or 8 segments. This is the strongest lever you have, and the easiest to overspend.
+- **Support.** Squadmates who Help, a decoy screen, and the Squad Tactics the Squad holds all end fights sooner without making them trivial. Under the strongest support a Medium Titan still takes two or three rounds and still draws blood.
+
+</Subsection>
+
+<Subsection title="Between fights" id="between-fights">
+
+If a run of fights has gone badly, the honest fixes are all outside the fight: frame smaller Titans for a while, give the Squad better ground, let Downtime do its work, and let a Squadmate ride with them. If it has gone too easily, lean the other way. Both changes happen where the players can see them.
+
+</Subsection>
+
+<SectionHead id="never-yours" eyebrow="Section 3">Never Yours to Move</SectionHead>
+
+<RuleBox variant="stop" title="Leave these exactly as written" icon="ph:prohibit">
+
+- **A Titan's numbers.** Tempo, Nape Depth, Regeneration, Toughness, Heave, and Attack Dice, standard or Abnormal. Every one of them is load-bearing for how long a fight runs and how much it costs.
+- **The Behavior Tables and the Attention Ladders.** You never pick the row, the fallback, the target, or the order. The table picks, and the Positions decide.
+- **An open roll, once it has fallen.** Attack Dice are rolled where everyone can see them and stand as they are. So do the setup table, the hazard and Night tables, and every roll on a table.
+- **The hidden Next Behavior.** Rolled once, face down, and never rolled again or swapped for something better.
+- **Which of an Abnormal's numbers a Read reveals,** and the price of each one.
+- **The clocks and the retreat.** The Background clocks, the retreat clock's length once a rule or the setup table has named it, the forced moves, the stay limit, and the two tests that end a fight.
+- **What a ruling may cost.** One stake, from the closed menu, and never a Critical Injury handed out directly, a Death Roll, a Scar, Grief, a Fear Roll, Stress relief, or healing.
+
+</RuleBox>
+
+The point of all of this is not to tie your hands. It is that the dread only works while the table believes the Titan is real, and a Titan whose numbers move when the night goes badly is not real. Frame hard, rule fast, and let the dice fall where they fall.

@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string;
+  note?: string;
+  id?: string;
+}
+const { title, note, id } = Astro.props;
+---
+<section class="subsection" aria-labelledby={id}>
+  <div class="sub">
+    <h3 class="h3" id={id}>{title}</h3>
+    {note && <span class="lbl">{note}</span>}
+  </div>
+  <slot />
+</section>

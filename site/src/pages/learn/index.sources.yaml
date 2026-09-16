@@ -1,0 +1,31 @@
+# Sources for the page beside this file (scripts/check-sync.mjs).
+#
+# Learn to Play is a page, not a content entry, so it has no frontmatter to
+# carry its `sources`. This sidecar records them instead: `<page>.sources.yaml`
+# beside `<page>.astro`. Astro does not route a .yaml under src/pages, so the
+# file is only ever read by the resync check.
+#
+# The page states no rule of its own. Every rule on it is the simple case of a
+# rule a finished chapter already owns, so its sources are those chapters, which
+# carry their own `docs/rules` and `data/` shas in their frontmatter, plus the
+# few tables the page reads directly. What it claims, line by line, is in
+# site/design/claims/learn-to-play.md.
+sources:
+  - path: site/src/content/rules/rules-of-play.mdx
+    sha: "2991fca91892ee8b98f66db29cd42b66580cc4fd"
+  - path: site/src/content/rules/fighting-titans.mdx
+    sha: "df757265fd1415f124a4921ba22370b26991b35b"
+  - path: site/src/content/rules/making-your-soldier.mdx
+    sha: "e0f323a092b528af27b1ec546594430204a5c92e"
+  - path: site/src/content/rules/gear-and-odm.mdx
+    sha: "ad1fa713ee3473c9f3bc7a734b61fe2e0ae6657e"
+  - path: data/character/action-catalog.yaml
+    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+  - path: data/gear/items.yaml
+    sha: "a4422fa6230a092d786f8e3d3c3fd02849a96b57"
+  - path: data/engagement/anchor-ratings.yaml
+    sha: "58c764314a0d63fe5a03040dcfa63df615829585"
+  - path: data/engagement/attention.yaml
+    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
+  - path: data/engagement/size-classes.yaml
+    sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"

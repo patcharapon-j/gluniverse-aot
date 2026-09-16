@@ -1,0 +1,185 @@
+---
+import '~/styles/compendium.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import CoreTable from '~/components/CoreTable.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import GlossText from '~/components/GlossText.astro';
+import IconSlot from '~/components/IconSlot.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import { COMPENDIUM_TABS, tally } from '~/lib/compendium';
+import { carryingLimit, defaultFunding, gasNumbers, gearEntries, supplyEntries } from '~/lib/gear-tables';
+import { glossifier } from '~/lib/glossify';
+
+const items = gearEntries();
+const supply = supplyEntries();
+const gas = gasNumbers();
+const funding = defaultFunding();
+
+const groups: FilterGroup[] = [
+  { key: 'family', label: 'Kind', options: tally(items.map((i) => [i.family])) },
+  {
+    key: 'dice',
+    label: 'Gear Dice',
+    options: [
+      { value: 'rated', label: 'Rated', count: items.filter((i) => i.rated).length },
+      { value: 'unrated', label: 'Not rated', count: items.filter((i) => !i.rated).length },
+    ],
+  },
+];
+
+/** Glossary pop-ups on the first use of each term on a card, in reading order. */
+const cards = items.map((item) => {
+  const gloss = glossifier(['Gear item']);
+  return {
+    item,
+    what: gloss(item.what),
+    gearDice: gloss(item.gearDice),
+    notHad: item.notHad.map((t) => gloss(t)),
+    atZero: gloss(item.atZero),
+    wear: gloss(item.wear),
+    restore: item.restore.map((t) => gloss(t)),
+    carried: gloss(item.carried),
+    extra: item.extra.map((t) => gloss(t)),
+  };
+});
+---
+<BaseLayout
+  title="Gear"
+  description="Every gear item in Wings of Freedom: its rating, what it adds dice to, when it counts as not had, what 0 means, and how it comes back."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>Gear</span></div>
+    <CompendiumIndex
+      id="gear"
+      groups={groups}
+      total={items.length}
+      singular="item"
+      plural="items"
+      searchLabel="Search gear"
+      searchPlaceholder="Search by name, roll, or state"
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Compendium</p>
+        <h1 class="h1" id="page-title">Gear</h1>
+        <p class="lede">Everything the Corps signs out to you, and everything a Push can take away from you.</p>
+        <FieldQuote cite="A quartermaster, to a new intake">There are ten things on this list. Whatever else you pick up out there is just something you are holding.</FieldQuote>
+      </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">Rating</dt>
+          <dd>1 to 3, set when you receive the item, and it never changes. A gas canister and a prosthetic have none.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Current rating</dt>
+          <dd>0 up to the rating, and the item's Gear Dice. Wear lowers it, and a repair, a restock, or a replacement raises it.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Counts as not had</dt>
+          <dd>The entry cannot use it, and it adds no dice. An item at 0 always counts as not had, and some count as not had while they are whole.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Items</dt>
+          <dd>What it weighs against your carrying limit of {carryingLimit()}. Past that limit you are Overloaded.</dd>
+        </div>
+        <div>
+          <dt class="lbl">One item a roll</dt>
+          <dd>A roll takes Gear Dice from at most one item. If more than one qualifies, choose before you roll.</dd>
+        </div>
+      </dl>
+      <p class="see">Ratings, wear, gas, falls, and carrying in full: <a href="/guide/gear-and-odm/">Gear &amp; ODM</a>. Every entry an item adds dice to: <a href="/compendium/actions/">Actions</a>.</p>
+      <div class="cards cards--wide">
+        {cards.map(({ item, ...text }) => (
+          <article
+            class="card"
+            id={item.id}
+            aria-labelledby={`${item.id}-name`}
+            data-cmp-item
+            data-search={item.search}
+            data-f-family={item.family.slug}
+            data-f-dice={item.rated ? 'rated' : 'unrated'}
+          >
+            <div class="card-top">
+              <IconSlot name={item.icon} />
+              <div class="tags">
+                <span class="lbl">{item.family.name}</span>
+                <span class="lbl">{item.rating}</span>
+                <span class="lbl">{item.carriedAs}</span>
+              </div>
+            </div>
+            <h2 id={`${item.id}-name`}>{item.name}</h2>
+            <q><GlossText parts={text.what} /></q>
+            <dl class="facts">
+              <div><dt class="lbl">Gear Dice on</dt><dd><GlossText parts={text.gearDice} /></dd></div>
+              {text.notHad.length > 0 && (
+                <div>
+                  <dt class="lbl">Counts as not had</dt>
+                  <dd><ul>{text.notHad.map((t) => <li><GlossText parts={t} /></li>)}</ul></dd>
+                </div>
+              )}
+              <div><dt class="lbl">At 0</dt><dd><GlossText parts={text.atZero} /></dd></div>
+              <div><dt class="lbl">Wear</dt><dd><GlossText parts={text.wear} /></dd></div>
+              {text.restore.length > 0 && (
+                <div>
+                  <dt class="lbl">How it comes back</dt>
+                  <dd><ul>{text.restore.map((t) => <li><GlossText parts={t} /></li>)}</ul></dd>
+                </div>
+              )}
+              <div><dt class="lbl">Carrying</dt><dd><GlossText parts={text.carried} /></dd></div>
+              {text.extra.length > 0 && (
+                <div>
+                  <dt class="lbl">Also</dt>
+                  <dd>{text.extra.map((t) => <p><GlossText parts={t} /></p>)}</dd>
+                </div>
+              )}
+            </dl>
+            <div class="card-foot">
+              <p class="lbl">Full rules: <a href={item.href}>Gear &amp; ODM</a></p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </CompendiumIndex>
+
+    <section class="lp-section" aria-labelledby="squad-supply">
+      <SectionHead id="squad-supply" eyebrow="Held by the Squad">Squad Supply</SectionHead>
+      <p class="lp-intro">
+        Four kinds of shared supply, each a whole number of units that never drops below 0. No soldier carries any of it, it counts as no item, and no death or
+        Retirement takes any of it away. The counts below are what the Squad holds at Funding {funding}.
+      </p>
+      <div class="cards">
+        {supply.map((kind) => (
+          <article class="card" id={kind.id} aria-labelledby={`${kind.id}-name`}>
+            <div class="card-top">
+              <IconSlot name={kind.icon} />
+              <div class="tags"><span class="lbl">Squad Supply</span><span class="lbl">{kind.stock} units at Funding {funding}</span></div>
+            </div>
+            <h3 id={`${kind.id}-name`}>{kind.name}</h3>
+            <q>{kind.what}</q>
+            <dl class="facts">
+              <div><dt class="lbl">What spends it</dt><dd>{kind.spentBy}</dd></div>
+            </dl>
+          </article>
+        ))}
+      </div>
+      <CoreTable table="squad-supply-stock" />
+      <p class="see">
+        Restocking, the caps on what a search can find, and what a failed called roll can cost the Squad: <a href="/guide/gear-and-odm/#squad-supply">Gear &amp; ODM</a>.
+      </p>
+    </section>
+
+    <section class="lp-section" aria-labelledby="standard-issue">
+      <SectionHead id="standard-issue" eyebrow="What the Corps hands you">Standard Issue</SectionHead>
+      <p class="lp-intro">
+        Every soldier receives this on joining the Squad and whenever a rule issues it. A full canister holds Gas Rating {gas.full}, and Funding stays at {funding} until the
+        Funding rules are written.
+      </p>
+      <CoreTable table="standard-issue" />
+      <CoreTable table="standard-issue-specialty" />
+      <p class="see">The steps of receiving it, what the interim issue does differently, and what you may decline: <a href="/guide/gear-and-odm/#what-you-are-issued">Gear &amp; ODM</a>.</p>
+    </section>
+  </section>
+</BaseLayout>

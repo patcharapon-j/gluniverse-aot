@@ -1,0 +1,122 @@
+---
+/**
+ * The round, drawn step by step, with the end steps as a second column. The step
+ * list and its order come from the round table (lib/engagement-tables); a step with
+ * no player wording fails the build.
+ */
+import { Icon } from 'astro-icon/components';
+import IconSlot from './IconSlot.astro';
+import { roundSteps } from '~/lib/engagement-tables';
+
+interface Props {
+  fig: string;
+}
+const { fig } = Astro.props;
+const { round, end } = roundSteps();
+// The five-station drawing in rules.css lays the round out across the page.
+if (round.length !== 5) throw new Error('RoundDiagram: the drawing lays the round out as exactly five steps.');
+
+/** An icon name with no colon is a slot in the site's icon set; one with a colon is a line icon. */
+const isSlot = (name: string) => !name.includes(':');
+---
+<figure class="drawing wide roundfig" aria-labelledby="fig-round-caption">
+  <ol class="flow">
+    {round.map((step, i) => (
+      <li class="station">
+        <span class="callout" aria-hidden="true">{i + 1}</span>
+        <h3>{step.title}</h3>
+        <div class="mini" aria-hidden="true">
+          {isSlot(step.icon) ? <IconSlot name={step.icon} size="sm" /> : <Icon name={step.icon} />}
+        </div>
+        <p>{step.text}</p>
+        {step.exit && (
+          <div class:list={['exit', `exit--${step.exit.kind}`]}>
+            <b>{step.exit.label}<span class="sr">: </span></b>{step.exit.text}
+          </div>
+        )}
+      </li>
+    ))}
+  </ol>
+
+  <div class="endsteps">
+    <p class="lbl">The end steps, in order</p>
+    <ol>
+      {end.map((step) => (
+        <li>
+          <div class="body">
+            <h4>{step.title}</h4>
+            <p>{step.text}</p>
+            {step.exit && <p class="caveat"><b>{step.exit.label}<span class="sr">: </span></b>{step.exit.text}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <figcaption class="titleblock" id="fig-round-caption"><span>{fig}</span><span>One round</span></figcaption>
+</figure>
+
+<style>
+  .endsteps {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 3px double var(--rule);
+  }
+  .endsteps > .lbl {
+    margin-bottom: 10px;
+    color: var(--ink-2);
+  }
+  .endsteps ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 12px 20px;
+    counter-reset: endstep;
+  }
+  .endsteps li {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 0 10px;
+    align-items: start;
+    padding-top: 8px;
+    border-top: 1px dashed var(--rule);
+  }
+  .endsteps li::before {
+    counter-increment: endstep;
+    content: counter(endstep);
+    grid-column: 1;
+    grid-row: 1;
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    font-family: var(--f-stencil);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    line-height: 1;
+  }
+  .endsteps .body {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .endsteps h4 {
+    font-family: var(--f-serif);
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  .endsteps p {
+    margin-top: 3px;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--ink-3);
+  }
+  .endsteps .caveat {
+    color: var(--ink-2);
+    font-style: italic;
+  }
+</style>

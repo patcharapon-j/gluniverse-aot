@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import OpenerLayout from '~/layouts/OpenerLayout.astro';
+import { COMPENDIUM_SECTIONS, COMPENDIUM_TABS } from '~/lib/compendium';
+import { gearEntries } from '~/lib/gear-tables';
+import { lifepathTables } from '~/lib/lifepath-tables';
+import plate from '~/assets/plates/plate-compendium.webp';
+
+const counts: Record<string, number> = {
+  talents: (await getCollection('talents')).length,
+  actions: (await getCollection('actions')).length,
+  specialties: (await getCollection('specialties')).filter((s) => !s.data.general).length,
+  origins: lifepathTables().origins.length,
+  titans: (await getCollection('titans')).length,
+  gear: gearEntries().length,
+};
+---
+<OpenerLayout
+  title="Compendium"
+  description="Talents, Actions, Specialties, gear, Squad Tactics, Scars, and Titans, filed for quick reference."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+  runhead={['Part III · Compendium', 'Index of entries']}
+  eyebrow="Part III"
+  lede="Every Talent, Titan, and piece of kit, filed and cross-referenced."
+  plate={{
+    number: 'Plate IV',
+    caption: 'The archivist’s desk, with the specimen sketches pinned above it.',
+    label: 'A desk holding a bound ledger, a quill and inkwell, a magnifying glass, an ODM blade and a pistol, below pinned anatomical sketches of Titan heads and a hand',
+    art: 'compendium-opener',
+    image: plate,
+    maxWidth: 560,
+  }}
+  stamp="Filed"
+>
+  <ul class="contents">
+    {COMPENDIUM_SECTIONS.map((section) => (
+      <li>
+        <a href={`/compendium/${section.slug}/`}>
+          <span class="cnum" aria-hidden="true"><Icon name={section.slug === 'titans' ? 'ph:person-simple' : 'ph:folder-simple'} class="arrow" /></span>
+          <span class="ctitle">{section.title}</span>
+          <span class="csum">{section.summary}</span>
+          <span class="cmeta lbl">{counts[section.slug] ? `${counts[section.slug]} entries` : 'Open'}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</OpenerLayout>

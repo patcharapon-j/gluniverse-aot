@@ -1,0 +1,104 @@
+---
+import '~/styles/compendium.css';
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import IconSlot from '~/components/IconSlot.astro';
+import GlossText from '~/components/GlossText.astro';
+import { COMPENDIUM_TABS, tally } from '~/lib/compendium';
+import { glossifier } from '~/lib/glossify';
+
+const specialties = (await getCollection('specialties')).sort((a, b) => a.data.order - b.data.order);
+const count = specialties.filter((s) => !s.data.general).length;
+
+const groups: FilterGroup[] = [
+  { key: 'attribute', label: 'Key attribute', options: tally(specialties.map((s) => (s.data.keyAttribute ? [s.data.keyAttribute] : []))) },
+];
+---
+<BaseLayout
+  title="Specialties"
+  description="The nine Specialties of Wings of Freedom, each with its key attribute and Talent list, and the general Talents."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>Specialties</span></div>
+    <CompendiumIndex
+      id="specialties"
+      groups={groups}
+      total={specialties.length}
+      singular="list"
+      plural="lists"
+      searchLabel="Search Specialties"
+      searchPlaceholder="Search by name or Talent"
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Compendium</p>
+        <h1 class="h1" id="page-title">Specialties</h1>
+        <p class="lede">What your soldier trained to do best. A Specialty sets a key attribute and a list of eight Talents.</p>
+        <FieldQuote cite="A Squad Leader to new graduates">Every squad needs a blade, a sharp pair of eyes, and someone who can stop the bleeding.</FieldQuote>
+      </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">Key attribute</dt>
+          <dd>The only attribute that can be rated 6.</dd>
+        </div>
+        <div>
+          <dt class="lbl">One Talent level</dt>
+          <dd>At Graduation, or at a build's Talents step, 1 level in one Talent on the Specialty's list, at most level 2.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Never permission</dt>
+          <dd>Any soldier can attempt any Action and hold any Talent, including one on another Specialty's list.</dd>
+        </div>
+      </dl>
+      <p class="see">Choosing a Specialty and setting your key attribute: <a href="/guide/making-your-soldier/">Making Your Soldier</a>. {count} Specialties and the general list.</p>
+      <div class="cards">
+        {specialties.map((s) => {
+          const d = s.data;
+          const dice = d.talents.filter((t) => t.kind === 'dice');
+          const rule = d.talents.filter((t) => t.kind === 'rule');
+          const search = [d.name, d.summary, d.keyAttribute?.name ?? '', ...d.talents.map((t) => t.name)].join(' ').toLowerCase();
+          const gloss = glossifier(['Specialty', 'Talent']);
+          const summary = gloss(d.summary);
+          const issue = gloss(d.issue);
+          return (
+            <article class="card card--spec" aria-labelledby={s.id} data-cmp-item data-search={search} data-f-attribute={d.keyAttribute?.slug ?? ''}>
+              <div class="card-top">
+                {!d.general && <IconSlot name={`specialty-${s.id}`} size="lg" />}
+                <div class="tags">
+                  {d.keyAttribute ? (
+                    <span class="lbl attr"><IconSlot name={`attr-${d.keyAttribute.slug}`} size="sm" />Key attribute: {d.keyAttribute.name}</span>
+                  ) : (
+                    <span class="lbl">Open to any soldier</span>
+                  )}
+                  <span class="lbl">{d.talents.length} Talents</span>
+                </div>
+              </div>
+              <h2 id={s.id}>{d.general ? 'General Talents' : d.name}</h2>
+              <p class="summary"><GlossText parts={summary} /></p>
+              {d.issue && <p class="issue"><GlossText parts={issue} /></p>}
+              {d.general && <p class="issue">The Talent level a Specialty grants never goes into one of these.</p>}
+              <div class="talent-cols">
+                {dice.length > 0 && (
+                  <div>
+                    <p class="lbl">Dice Talents</p>
+                    <ul class="tlist">{dice.map((t) => <li><a href={`/compendium/talents/#${t.slug}`}>{t.name}</a></li>)}</ul>
+                  </div>
+                )}
+                {rule.length > 0 && (
+                  <div>
+                    <p class="lbl">Rule Talents</p>
+                    <ul class="tlist">{rule.map((t) => <li><a href={`/compendium/talents/#${t.slug}`}>{t.name}</a></li>)}</ul>
+                  </div>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </CompendiumIndex>
+  </section>
+</BaseLayout>

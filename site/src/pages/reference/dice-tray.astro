@@ -1,0 +1,23 @@
+---
+import '~/styles/rules.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import DiceTray from '~/components/DiceTray.astro';
+import { REFERENCE_TABS } from '~/lib/nav';
+---
+<BaseLayout title="Dice Tray" description="A field box for rolling your pool and Pushing it." section="reference" tabs={REFERENCE_TABS} tabsLabel="Reference sections">
+  <section class="sheet sheet--light" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part IV · Reference</span><span>Dice Tray</span></div>
+    <header class="rules-head">
+      <p class="lbl eyebrow">Reference</p>
+      <h1 class="h1" id="page-title">Dice Tray</h1>
+      <p class="lede">A field box lined with Survey Corps green, for rolling your pool and Pushing it.</p>
+    </header>
+    <DiceTray id="page-tray" variant="page" />
+  </section>
+</BaseLayout>
+
+<script>
+  import { trayFor } from '~/scripts/dice-tray/controller';
+
+  document.querySelectorAll<HTMLElement>('[data-dice-tray][data-variant="page"]').forEach((root) => trayFor(root));
+</script>

@@ -1,0 +1,120 @@
+---
+import '~/styles/compendium.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import CoreTable from '~/components/CoreTable.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import GlossText from '~/components/GlossText.astro';
+import IconSlot from '~/components/IconSlot.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import { COMPENDIUM_TABS, tally } from '~/lib/compendium';
+import { scarEntries, scarMaximum, scarRoll } from '~/lib/harm-tables';
+import { glossifier } from '~/lib/glossify';
+
+const scars = scarEntries();
+const maximum = scarMaximum();
+const roll = scarRoll();
+
+const groups: FilterGroup[] = [
+  { key: 'kind', label: 'What it does', options: tally(scars.map((s) => [s.kind])) },
+  {
+    key: 'squadmate',
+    label: 'Squadmates',
+    options: [
+      { value: 'rolls-again', label: 'Rolls again', count: scars.filter((s) => s.squadmateRerolls).length },
+      { value: 'keeps', label: 'Keeps it', count: scars.filter((s) => !s.squadmateRerolls).length },
+    ],
+  },
+];
+
+/** Glossary pop-ups on the first use of each term on a card, in reading order. */
+const cards = scars.map((scar) => {
+  const gloss = glossifier(['Scar']);
+  return { scar, trigger: gloss(scar.trigger), effect: gloss(scar.effect) };
+});
+---
+<BaseLayout
+  title="Scars"
+  description="Every Scar in Wings of Freedom: what sets it off, what it does, and what five of them mean."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>Scars</span></div>
+    <CompendiumIndex
+      id="scars"
+      groups={groups}
+      total={scars.length}
+      singular="Scar"
+      plural="Scars"
+      searchLabel="Search Scars"
+      searchPlaceholder="Search by name or trigger"
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Compendium</p>
+        <h1 class="h1" id="page-title">Scars</h1>
+        <p class="lede">What a soldier carries out of the fight and never puts down. Each one steadies you and costs you, in the same breath.</p>
+        <FieldQuote cite="From a Cadet's diary">The veterans are the calm ones. I used to think that meant nothing had happened to them.</FieldQuote>
+      </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">Where they come from</dt>
+          <dd>A Fear Roll result that gives one, or a lethal Critical Injury stabilized while you live. Nothing else gives a Scar.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Rolled on {roll}</dt>
+          <dd>Roll again if you already hold the row. A Squadmate also rolls again on a row it could never meet.</dd>
+        </div>
+        <div>
+          <dt class="lbl">What every Scar does</dt>
+          <dd>Your minimum Stress rises by 1, and your Resolve rises by 1. Then the row's own trigger and effect, permanently.</dd>
+        </div>
+        <div>
+          <dt class="lbl">{maximum} and you are done</dt>
+          <dd>At {maximum} Scars you must retire. A Scar gained at {maximum} does nothing, and no rule ever removes one.</dd>
+        </div>
+      </dl>
+      <p class="see">Gaining one, what it changes, and Retirement in full: <a href="/guide/wounds-and-fear/#scars-and-grief">Wounds &amp; Fear</a>. The rolls that give them: <a href="/guide/wounds-and-fear/#fear">Fear</a>.</p>
+      <div class="cards">
+        {cards.map(({ scar, ...text }) => (
+          <article
+            class="card"
+            id={scar.slug}
+            aria-labelledby={`${scar.slug}-name`}
+            data-cmp-item
+            data-search={scar.search.toLowerCase()}
+            data-f-kind={scar.kind.slug}
+            data-f-squadmate={scar.squadmateRerolls ? 'rolls-again' : 'keeps'}
+          >
+            <div class="card-top">
+              <IconSlot name="harm-scar" size="lg" />
+              <div class="tags">
+                <span class="lbl">{roll} {scar.roll}</span>
+                <span class="lbl">{scar.kind.name}</span>
+              </div>
+            </div>
+            <h2 id={`${scar.slug}-name`}>{scar.name}</h2>
+            <dl class="facts">
+              <div><dt class="lbl">Trigger</dt><dd><GlossText parts={text.trigger} /></dd></div>
+              <div><dt class="lbl">Effect</dt><dd><GlossText parts={text.effect} /></dd></div>
+              <div><dt class="lbl">Always</dt><dd>Minimum Stress +1, Resolve +1.</dd></div>
+              {scar.squadmateRerolls && (
+                <div><dt class="lbl">Squadmates</dt><dd>A Squadmate rolls again on this row, because {scar.squadmateReason}.</dd></div>
+              )}
+            </dl>
+            <div class="card-foot">
+              <p class="lbl">Full rules: <a href="/guide/wounds-and-fear/#scars-and-grief">Wounds &amp; Fear</a></p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </CompendiumIndex>
+
+    <section class="lp-section" aria-labelledby="the-table">
+      <SectionHead id="the-table" eyebrow="Rolled in one place">The Scar table</SectionHead>
+      <p class="lp-intro">The whole table at a glance, for the moment at the table when somebody has to roll one.</p>
+      <CoreTable table="scars" />
+    </section>
+  </section>
+</BaseLayout>

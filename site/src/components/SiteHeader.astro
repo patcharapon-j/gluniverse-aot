@@ -1,0 +1,105 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import { MAIN_NAV, withSlash, type SectionKey } from '~/lib/nav';
+import emblem from '~/assets/icons/brand-emblem.webp';
+// The masthead sits on the dark cloth band, so it prints the wordmark in parchment ink.
+import wordmark from '~/assets/icons/brand-wordmark-light.webp';
+
+interface Props {
+  current?: SectionKey;
+}
+const { current } = Astro.props;
+const path = withSlash(Astro.url.pathname);
+const state = (href: string, key: SectionKey) => (withSlash(href) === path ? 'page' : key === current ? 'true' : undefined);
+---
+<header class="masthead" data-masthead>
+  <a class="brand" href="/" aria-label="Wings of Freedom, home">
+    <Image class="brand-emblem" src={emblem} alt="" width={68} height={68} loading="eager" decoding="async" />
+    <span>
+      {/*
+        The wordmark is drawn art, so it carries no text of its own. `.brand-text` holds the
+        real words underneath it, invisible but read by assistive tech, and the script below
+        brings it back as type if the image never loads.
+      */}
+      <b>
+        <Image class="brand-wordmark" src={wordmark} alt="" width={320} loading="eager" decoding="async" data-brand-wordmark />
+        <span class="brand-text">Wings of Freedom</span>
+      </b>
+      <small>The Survey Corps roleplaying game</small>
+    </span>
+  </a>
+  <nav class="mainnav" aria-label="Main">
+    <button class="navmenu" type="button" aria-expanded="false" aria-controls="mainnav-list" data-nav-toggle hidden>
+      <Icon name="ph:list" class="navmenu-open" aria-hidden="true" />
+      <Icon name="ph:x" class="navmenu-close" aria-hidden="true" />
+      <span>Menu</span>
+    </button>
+    <ul id="mainnav-list">
+      {MAIN_NAV.map((item) => (
+        <li>
+          <a href={item.href} aria-current={state(item.href, item.key)}>
+            <span>{item.label}</span>
+            {item.key === 'gm' && <span class="mn-tag" aria-hidden="true">GM only</span>}
+            <Icon name="ph:arrow-right" class="mn-arrow" aria-hidden="true" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <button class="navsearch" type="button" data-search-open aria-haspopup="dialog" aria-controls="site-search">
+    <Icon name="ph:magnifying-glass" aria-hidden="true" />
+    <span>Search</span>
+    <kbd aria-hidden="true">/</kbd>
+  </button>
+</header>
+<script is:inline>
+  // Set the folded layout before first paint, so the masthead never reflows when the module below runs.
+  document.querySelector('[data-masthead]')?.classList.add('has-menu');
+  document.querySelector('[data-nav-toggle]')?.removeAttribute('hidden');
+
+  // If the drawn wordmark never loads, drop it: `.brand-text:only-child` then shows the
+  // typographic wordmark in the site's stencil face instead of an empty gap.
+  (function () {
+    var mark = document.querySelector('[data-brand-wordmark]');
+    if (!mark) return;
+    var drop = function () {
+      mark.remove();
+    };
+    if (mark.complete && mark.naturalWidth === 0) drop();
+    else mark.addEventListener('error', drop, { once: true });
+  })();
+</script>
+
+<script>
+  // Below the wide layout the main navigation folds into a Contents card behind a Menu button.
+  // Without scripts the links keep their scrolling row.
+  const header = document.querySelector<HTMLElement>('[data-masthead]');
+  const toggle = header?.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+
+  if (header && toggle) {
+    const isOpen = () => header.classList.contains('is-open');
+    const setOpen = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    header.classList.add('has-menu');
+    toggle.hidden = false;
+
+    toggle.addEventListener('click', () => setOpen(!isOpen()));
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !isOpen()) return;
+      setOpen(false);
+      toggle.focus();
+    });
+    document.addEventListener('click', (event) => {
+      if (isOpen() && !header.contains(event.target as Node)) setOpen(false);
+    });
+    header.addEventListener('focusout', (event) => {
+      const next = event.relatedTarget as Node | null;
+      if (isOpen() && next && !header.contains(next)) setOpen(false);
+    });
+    window.matchMedia('(max-width: 1240px)').addEventListener('change', () => setOpen(false));
+  }
+</script>

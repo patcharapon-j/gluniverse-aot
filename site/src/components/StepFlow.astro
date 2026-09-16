@@ -1,0 +1,137 @@
+---
+/**
+ * A drafted procedure: numbered stations, each with an optional exit note.
+ * Shares the Push diagram's drawing styles (rules.css) but runs as rows, with the
+ * exit note beside each step, so steps with longer text stay readable. Because it
+ * runs as rows, a procedure of any length lays out; one step is not a procedure.
+ */
+import { Icon } from 'astro-icon/components';
+import IconSlot from './IconSlot.astro';
+import { facesHtml } from '~/lib/dice';
+
+interface Step {
+  title: string;
+  text: string;
+  /** Compact dice notation for the small drawing, for example "titan:5,6". */
+  dice?: string;
+  icon?: string;
+  exit?: { kind: 'stop' | 'note' | 'cover'; label: string; text: string };
+}
+interface Props {
+  id: string;
+  fig: string;
+  title: string;
+  steps: Step[];
+}
+const { id, fig, title, steps } = Astro.props;
+if (steps.length < 2) throw new Error(`StepFlow "${title}": the drawing lays out a procedure of two steps or more.`);
+
+/** An icon name with no colon is a slot in the site's icon set; one with a colon is a line icon. */
+const isSlot = (name: string) => !name.includes(':');
+---
+<figure class="drawing wide" aria-labelledby={`${id}-caption`}>
+  <ol class="flow flow--rows">
+    {steps.map((step, i) => (
+      <li class="station">
+        <span class="callout" aria-hidden="true">{i + 1}</span>
+        <h3>{step.title}</h3>
+        {(step.dice || step.icon) && (
+          <div class="mini" aria-hidden="true">
+            {step.icon ? (
+              isSlot(step.icon) ? <IconSlot name={step.icon} size="sm" /> : <Icon name={step.icon} />
+            ) : (
+              <Fragment set:html={facesHtml(step.dice!)} />
+            )}
+          </div>
+        )}
+        <p>{step.text}</p>
+        {step.exit && (
+          <div class:list={['exit', `exit--${step.exit.kind}`]}>
+            <b>{step.exit.label}<span class="sr">: </span></b>{step.exit.text}
+          </div>
+        )}
+      </li>
+    ))}
+  </ol>
+  <figcaption class="titleblock" id={`${id}-caption`}><span>{fig}</span><span>{title}</span></figcaption>
+</figure>
+
+<style>
+  /* Rows instead of columns: overrides the five-column Push layout in rules.css at every width. */
+  .flow--rows {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-bottom: 30px;
+  }
+  .flow--rows .station {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) minmax(0, 17rem);
+    column-gap: 18px;
+    row-gap: 4px;
+    align-items: start;
+    min-height: 0;
+    padding: 12px 0;
+  }
+  .flow--rows .station + .station {
+    border-top: 1px dashed var(--rule);
+  }
+  .flow--rows .station::before {
+    top: 0;
+    bottom: 0;
+    left: 21px;
+    right: auto;
+    height: auto;
+    border-top: 0;
+    border-left: 1.5px solid var(--ink);
+  }
+  .flow--rows .station:first-child::before {
+    top: 34px;
+  }
+  .flow--rows .station:last-child::before {
+    bottom: auto;
+    height: 34px;
+  }
+  .flow--rows .station:not(:last-child)::after {
+    display: none;
+  }
+  .flow--rows .callout {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    align-self: start;
+  }
+  .flow--rows h3,
+  .flow--rows .mini,
+  .flow--rows p {
+    grid-column: 2;
+  }
+  .flow--rows h3 {
+    margin-top: 9px;
+    text-align: left;
+  }
+  .flow--rows .mini {
+    justify-content: flex-start;
+  }
+  .flow--rows .exit {
+    grid-column: 3;
+    grid-row: 1 / span 3;
+    align-self: center;
+    margin-top: 0;
+  }
+  .flow--rows .exit::before {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .flow--rows .station {
+      grid-template-columns: 44px minmax(0, 1fr);
+    }
+    .flow--rows .exit {
+      grid-column: 2;
+      grid-row: auto;
+      margin-top: 4px;
+    }
+  }
+</style>

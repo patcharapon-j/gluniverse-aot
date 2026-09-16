@@ -1,0 +1,23 @@
+---
+/**
+ * The Commander's copy (ADR-0023). Same manual, restricted band, carbon type,
+ * manila tabs. Never indexed for search, so player searches never lead here.
+ */
+import '~/styles/rules.css';
+import '~/styles/opener.css';
+import '~/styles/gm.css';
+import BaseLayout from './BaseLayout.astro';
+import GmNotice from '~/components/GmNotice.astro';
+import type { IndexTab } from '~/lib/nav';
+
+interface Props {
+  title: string;
+  description: string;
+  tabs: IndexTab[];
+}
+const { title, description, tabs } = Astro.props;
+---
+<BaseLayout title={title} description={description} section="gm" tabs={tabs} tabsLabel="GM's Guide sections" indexed={false} bodyClass="is-gm">
+  <slot />
+  <GmNotice />
+</BaseLayout>

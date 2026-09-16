@@ -1,0 +1,44 @@
+---
+/** A game term with a pop-up definition. Unknown terms fail the build so no pop-up is ever empty. */
+import '~/styles/glossary.css';
+import { getGlossaryEntry } from '~/lib/glossary';
+
+interface Props {
+  term: string;
+}
+const { term } = Astro.props;
+const entry = getGlossaryEntry(term);
+if (!entry) throw new Error(`GlossaryTerm: "${term}" has no glossary entry.`);
+const id = `gloss-${entry.slug}-${Math.random().toString(36).slice(2, 8)}`;
+const hasText = Astro.slots.has('default');
+---
+<button type="button" class="gloss" popovertarget={id}>{hasText ? <slot /> : term}</button><span class="gloss-pop" id={id} popover><b>{entry.term}</b>{entry.definition} <a href={`/reference/glossary/#${entry.slug}`}>Open the glossary</a></span>
+
+<script>
+  function place(pop: HTMLElement) {
+    const trigger = document.querySelector<HTMLElement>(`[popovertarget="${pop.id}"]`);
+    if (!trigger) return;
+    const r = trigger.getBoundingClientRect();
+    const width = pop.offsetWidth;
+    const left = Math.min(Math.max(16, r.left + r.width / 2 - width / 2), window.innerWidth - width - 16);
+    const height = pop.offsetHeight;
+    const below = r.bottom + 8;
+    const top = below + height > window.innerHeight - 16 ? Math.max(16, r.top - height - 8) : below;
+    pop.style.left = `${left}px`;
+    pop.style.top = `${top}px`;
+  }
+
+  document.querySelectorAll<HTMLElement>('.gloss-pop').forEach((pop) => {
+    pop.addEventListener('toggle', (event) => {
+      if ((event as ToggleEvent).newState === 'open') place(pop);
+    });
+  });
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      document.querySelectorAll<HTMLElement>('.gloss-pop:popover-open').forEach((pop) => pop.hidePopover());
+    },
+    { passive: true },
+  );
+</script>

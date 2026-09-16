@@ -1,0 +1,35 @@
+---
+import { withSlash, type IndexTab } from '~/lib/nav';
+
+interface Props {
+  tabs: IndexTab[];
+  label: string;
+}
+const { tabs, label } = Astro.props;
+const path = withSlash(Astro.url.pathname);
+---
+<nav class="tabs-nav" aria-label={label}>
+  <ul class:list={['tabs', tabs.length > 5 && 'tabs--dense']}>
+    {tabs.map((tab) => (
+      <li>
+        <a href={tab.href} aria-current={withSlash(tab.href) === path ? 'page' : undefined}>
+          <svg class="clip" aria-hidden="true"><use href="#clip" /></svg>
+          {tab.numeral && <span class="tnum" aria-hidden="true">{tab.numeral}</span>}
+          {tab.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  // On narrow screens the tabs scroll sideways: bring the current one into view on load.
+  document.querySelectorAll<HTMLElement>('.tabs').forEach((list) => {
+    if (list.scrollWidth <= list.clientWidth) return;
+    const current = list.querySelector<HTMLElement>('[aria-current="page"]')?.parentElement;
+    if (!current) return;
+    const box = list.getBoundingClientRect();
+    const tab = current.getBoundingClientRect();
+    list.scrollLeft += tab.left - box.left - (box.width - tab.width) / 2;
+  });
+</script>

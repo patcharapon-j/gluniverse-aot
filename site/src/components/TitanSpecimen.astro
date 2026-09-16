@@ -1,0 +1,237 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import TitanDiagram from './TitanDiagram.astro';
+import IconSlot from './IconSlot.astro';
+import Redacted from './Redacted.astro';
+import GlossText from './GlossText.astro';
+import { glossifier } from '~/lib/glossify';
+import plateSmall from '~/assets/plates/plate-titan-small.webp';
+import plateMedium from '~/assets/plates/plate-titan-medium.webp';
+import plateLarge from '~/assets/plates/plate-titan-large.webp';
+import plateAbnormal from '~/assets/plates/plate-titan-sprinting-abnormal.webp';
+
+type Titan = CollectionEntry<'titans'>['data'];
+type HiddenField = Titan['hidden'][number];
+
+interface Props {
+  titan: Titan;
+  id: string;
+  /** squad: the Compendium view. gm: every value, with a Read's values redacted. */
+  mode?: 'squad' | 'gm';
+}
+const { titan: t, id, mode = 'squad' } = Astro.props;
+const isHidden = (field: HiddenField) => t.hidden.includes(field);
+
+/** The specimen's portrait, by Size Class, with one plate for every Abnormal. */
+const PORTRAITS: Record<string, { image: ImageMetadata; alt: string }> = {
+  small: { image: plateSmall, alt: 'A Small Titan reaching over a low stone wall in an overgrown ruined village' },
+  medium: { image: plateMedium, alt: 'A gaunt Medium Titan hunched among giant forest trees, one long arm reaching down toward the viewer' },
+  large: { image: plateLarge, alt: 'A Large Titan tearing a tree loose above a pine forest, mounted soldiers looking up from below' },
+  abnormal: { image: plateAbnormal, alt: 'An Abnormal Titan sprinting on all fours across open grass toward a rider, its mouth wide open' },
+};
+const portrait = PORTRAITS[t.abnormal ? 'abnormal' : t.sizeClass.slug];
+const sizeIcon = t.abnormal ? 'titan-abnormal' : `titan-${t.sizeClass.slug}`;
+
+/** Body Part icons by the part's kind. The Nape's icon is not drawn yet. */
+function partIcon(name: string): string | null {
+  const n = name.toLowerCase();
+  if (n.includes('eye')) return 'body-eyes';
+  if (n.includes('arm')) return 'body-arm';
+  if (n.includes('leg')) return 'body-leg';
+  if (n.includes('nape')) return 'body-nape';
+  return null;
+}
+/** Only the three tiers that have a stamp icon; a tier without one shows no slot. */
+const TIER_ICONS = new Set(['control', 'kill', 'terrorize']);
+
+const figs = [
+  { label: 'Tempo', value: t.tempo, note: 'How many times it acts each round.', field: null, seal: false },
+  { label: 'Nape Depth', value: t.napeDepth, note: 'Successes a single Nape strike needs to kill it.', field: 'napeDepth' as const, seal: true },
+  { label: 'Regeneration', value: t.regeneration, note: 'Rounds before its wounds close.', field: 'regeneration' as const, seal: false },
+];
+
+const toughnessKnown = t.bodyParts.every((p) => p.toughness !== null);
+const firstToughness = t.bodyParts[0]?.toughness ?? null;
+const sameToughness = toughnessKnown && t.bodyParts.every((p) => p.toughness === firstToughness);
+const partsLabel = !toughnessKnown
+  ? 'Body Parts · Toughness learned by a Read'
+  : sameToughness && !(mode === 'gm' && isHidden('toughness'))
+    ? `Body Parts · Toughness ${firstToughness} each`
+    : 'Body Parts and Toughness';
+
+const READ_WORDS: Record<HiddenField, string> = {
+  napeDepth: 'its Nape Depth',
+  regeneration: 'how fast it regenerates',
+  toughness: 'the Toughness of a Body Part',
+  attentionLadder: 'what draws its attention',
+};
+const readList = new Intl.ListFormat('en', { type: 'conjunction' }).format(t.hidden.map((h) => READ_WORDS[h]));
+const search = [t.name, t.sizeClass.name, t.abnormal ? 'abnormal' : 'standard', ...t.behaviors.map((b) => b.name)].join(' ').toLowerCase();
+
+// Glossary pop-ups on the first use of each term in this report, in reading order.
+// Every report is about a Titan, and "Legs" here is a Body Part, not an Expedition Leg.
+const gloss = glossifier(['Titan', 'Leg']);
+const readNote = mode === 'squad' && t.hidden.length > 0 ? gloss(`An Abnormal keeps some things to itself. A Read can tell your squad ${readList}.`) : [];
+const behaviors = t.behaviors.map((b) => ({ ...b, parts: gloss(b.effect) }));
+const fallbackEffect = t.fallback ? gloss(t.fallback.effect) : [];
+const tableId = `${id}-behaviors`;
+---
+<article
+  class="specimen"
+  id={id}
+  aria-labelledby={`${id}-name`}
+  data-cmp-item
+  data-search={search}
+  data-f-size={t.sizeClass.slug}
+  data-f-kind={t.abnormal ? 'abnormal' : 'standard'}
+>
+  <div class="spec-head">
+    <div>
+      <p class="lbl">Specimen report · Size: {t.sizeClass.name} · {t.sizeClass.height}</p>
+      {/* The size icon is decorative: the Size Class is written in the line above. */}
+      <h2 id={`${id}-name`}><IconSlot name={sizeIcon} /><span>{t.name}</span></h2>
+    </div>
+    <span class="stamp stamp--dbl" aria-hidden="true">{t.abnormal ? 'Abnormal' : 'Specimen'}</span>
+  </div>
+
+  <div class="spec-body">
+    <div class="specplate">
+      {portrait && (
+        <Image
+          class="spec-portrait"
+          src={portrait.image}
+          alt={portrait.alt}
+          widths={[320, 640]}
+          sizes="(max-width: 1080px) 60vw, 320px"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+      <TitanDiagram name={t.name} height={t.sizeClass.height} />
+    </div>
+
+    <div class="stats">
+      <dl class="figs">
+        {figs.map((fig) => (
+          <div class="fig">
+            <dt class="lbl">{fig.label}</dt>
+            {fig.value === null ? (
+              <dd class="val val--unknown num"><span aria-hidden="true">?</span><span class="sr">Unknown until a Read</span></dd>
+            ) : mode === 'gm' && fig.field && isHidden(fig.field) ? (
+              <dd class:list={['val num', fig.seal && 'val--seal']}><Redacted value={String(fig.value)} label={fig.label} /></dd>
+            ) : (
+              <dd class:list={['val num', fig.seal && 'val--seal']}>{fig.value}</dd>
+            )}
+            <dd class="note">{fig.note}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {readNote.length > 0 && (
+        <p class="read-note">
+          <Icon name="ph:eye" aria-hidden="true" />
+          <span><GlossText parts={readNote} /></span>
+        </p>
+      )}
+
+      <div>
+        <p class="lbl stat-label">{partsLabel}</p>
+        <ul class="parts">
+          {t.bodyParts.map((part) => (
+            <li class="part">
+              {partIcon(part.name) && <IconSlot name={partIcon(part.name)!} size="sm" />}
+              {part.name}
+              {part.toughness === null ? (
+                <span class="pips pips--unknown" aria-hidden="true"><span></span><span></span></span>
+              ) : mode === 'gm' && isHidden('toughness') ? (
+                <Redacted value={`Toughness ${part.toughness}`} label={`${part.name} Toughness`} />
+              ) : (
+                <span class="pips" role="img" aria-label={`Toughness ${part.toughness}`}>
+                  {Array.from({ length: part.toughness }, () => <span></span>)}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <p class="lbl stat-label">Attack Dice by tier</p>
+        <dl class="tiers">
+          {t.tiers.map((tier) => (
+            <div class="tier">
+              <dt>
+                <span class:list={['tchip', `t-${tier.slug}`]}>
+                  <span class="tdia" aria-hidden="true"></span>
+                  {TIER_ICONS.has(tier.slug) && <IconSlot name={`tier-${tier.slug}`} size="sm" />}
+                  {tier.name}
+                </span>
+              </dt>
+              <dd class="sq" aria-hidden="true">{Array.from({ length: Math.max(...tier.dice) }, () => <span></span>)}</dd>
+              <dd class="tval num">{tier.dice.join(' or ')}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  {mode === 'gm' && (
+    <p class="dossier-extra">
+      {t.heave !== null && <span>Heave {t.heave}</span>}
+      {t.attentionLadder && (
+        <span>Attention: {isHidden('attentionLadder') ? <Redacted value={t.attentionLadder} label="Attention" /> : t.attentionLadder}</span>
+      )}
+    </p>
+  )}
+
+  <div class="bt">
+    <div class="bt-cap">
+      <h3 id={tableId}>Behavior Table</h3>
+      <span class="lbl">Roll a d6 when it acts</span>
+    </div>
+    <!-- Explicit table roles keep the table's meaning where narrow reports restyle rows as cards. -->
+    <div class="scroll">
+      <table role="table" aria-labelledby={tableId}>
+        <thead role="rowgroup">
+          <tr role="row">
+            <th scope="col" role="columnheader">d6</th>
+            <th scope="col" role="columnheader">Behavior</th>
+            <th scope="col" role="columnheader">Tier</th>
+            <th scope="col" role="columnheader">Attack Dice</th>
+            <th scope="col" role="columnheader">What happens</th>
+          </tr>
+        </thead>
+        <tbody role="rowgroup">
+          {behaviors.map((b) => (
+            <tr role="row">
+              <td class="d6 num" role="cell">{b.roll}</td>
+              <th scope="row" role="rowheader">{b.name}</th>
+              <td class="btier" role="cell">
+                <span class:list={['tchip', `t-${b.tier.slug}`]}>
+                  <span class="tdia" aria-hidden="true"></span>
+                  {TIER_ICONS.has(b.tier.slug) && <IconSlot name={`tier-${b.tier.slug}`} size="sm" />}
+                  {b.tier.name}
+                </span>
+              </td>
+              <td class="ad num" role="cell" data-label="Attack Dice">{b.attackDice ?? 'None'}</td>
+              <td class="beff" role="cell"><GlossText parts={b.parts} /><span class="q">{b.text}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {t.fallback && (
+      <p class="bt-foot">
+        <span class="lbl">Otherwise</span>
+        <span>
+          <b>{t.fallback.name}.</b> When a rolled behavior cannot happen and has nothing to fall back on, it does this instead. {t.fallback.attackDice} Attack Dice. <GlossText parts={fallbackEffect} />
+          <span class="q"> {t.fallback.text}</span>
+        </span>
+      </p>
+    )}
+  </div>
+</article>

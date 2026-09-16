@@ -1,0 +1,32 @@
+---
+import { poolHtml, type TryRollPool } from '~/lib/dice';
+import TryRollButton from './TryRollButton.astro';
+
+interface Props {
+  title?: string;
+  caption: string;
+  pool: TryRollPool;
+}
+const { title = 'Try this roll', caption, pool } = Astro.props;
+const notation = (
+  [
+    ['base', pool.base],
+    ['gear', pool.gear ?? 0],
+    ['stress', pool.stress ?? 0],
+    ['titan', pool.titan ?? 0],
+  ] as const
+)
+  .filter(([, n]) => n > 0)
+  .map(([kind, n]) => `${kind}:${Array.from({ length: n }, () => '?').join(',')}`)
+  .join('|');
+---
+<div class="tray wide">
+  <div class="tray-head">
+    <h3>{title}</h3>
+    <span class="lbl">{caption}</span>
+  </div>
+  <div class="pool" aria-hidden="true" set:html={poolHtml(notation)}></div>
+  <div class="tray-controls">
+    <TryRollButton pool={pool} />
+  </div>
+</div>

@@ -1,0 +1,678 @@
+---
+title: The Rules of Play
+summary: How every roll works. Build your pool, read the Circumstances, Push your luck, and answer a Titan's attack.
+section: guide
+order: 1
+tab: Rules
+sources:
+  - path: docs/rules/01-core-rules.md
+    sha: "2495d67ea59ed62935146757841a8c95a2e16808"
+  - path: data/core/dice-pool.yaml
+    sha: "6469a403a81cf26738be5251ec88670160059d3f"
+  - path: data/core/circumstances.yaml
+    sha: "c052e05ec93aa886814301884f43e8605565e75a"
+  - path: data/core/stress-changes.yaml
+    sha: "80c428f9122a1a8d20a10eaa5b855a75b0bc2a13"
+  - path: data/core/bonus-dice-sources.yaml
+    sha: "798b05a4cdeddcb03033a72e1a70dc7b31438d66"
+---
+
+import BoxPair from '~/components/BoxPair.astro';
+import ChapterContents from '~/components/ChapterContents.astro';
+import CoreTable from '~/components/CoreTable.astro';
+import DiceKey from '~/components/DiceKey.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import FieldReport from '~/components/FieldReport.astro';
+import GlossaryTerm from '~/components/GlossaryTerm.astro';
+import InkVignette from '~/components/InkVignette.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import Plate from '~/components/Plate.astro';
+import PoolBuild from '~/components/PoolBuild.astro';
+import PoolRows from '~/components/PoolRows.astro';
+import PushSteps from '~/components/PushSteps.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import StepFlow from '~/components/StepFlow.astro';
+import Subsection from '~/components/Subsection.astro';
+import TryRollButton from '~/components/TryRollButton.astro';
+import platePlay from '~/assets/plates/plate-rules-of-play.webp';
+import { exceptionText } from '~/lib/core-tables';
+
+<FieldQuote cite="Instructor's saying, Training Corps">Count your sixes, not your chances. The dice have already decided.</FieldQuote>
+
+<Plate number="Plate VI" caption="The squad reads the map by lamplight, the night before the ride." label="Five soldiers leaning over a map covered in markers at a lamplit table in a night camp" art="guide-rules-of-play-opener" image={platePlay} crop="21 / 9" maxWidth={900} />
+
+<ChapterContents items={[
+  { id: 'dice-and-successes', title: 'Dice and Successes', note: 'When you roll, the pool, counting sixes' },
+  { id: 'circumstances', title: 'Circumstances', note: 'The ladder, one step, what it changes' },
+  { id: 'when-the-gm-calls-a-roll', title: 'When the GM Calls a Roll', note: 'Called rolls, stakes, trying again' },
+  { id: 'pushing-your-luck', title: 'Pushing Your Luck', note: 'The Push, Covering, finishing a roll' },
+  { id: 'stress', title: 'Stress', note: 'What it gives and what it takes' },
+  { id: 'bonus-dice-and-help', title: 'Bonus Dice and Help', note: 'Sources, the cap, comrades' },
+  { id: 'turns-actions-and-reactions', title: 'Turns, Actions, and Reactions', note: 'Rounds, dodges, attacks' },
+]} />
+
+<SectionHead id="dice-and-successes" eyebrow="Section 1">Dice and Successes</SectionHead>
+
+<FieldQuote cite="Survey Corps manual, first page">A soldier does not argue with the dice. A soldier decides what to do about them.</FieldQuote>
+
+Every roll works the same way: build a pool of six-sided dice, roll it, and count the sixes.
+
+<Subsection title="When you roll" note="And what stands after" id="when-you-roll">
+
+1. **Roll when it matters.** You roll when you take an action whose <GlossaryTerm term="Action Catalog" /> entry is rolled, when a rule or a table result calls for a roll, or when the GM calls one for something no rule covers. Nothing else needs dice: a task you have the time, the tools, and the training for simply happens, and a task that cannot be done is never rolled.
+2. **Results stand.** Once the dice are rolled, the GM never overrides a die or a table result, never has it rolled again, and never ignores it, and never changes what the roll was for, its <GlossaryTerm term="Circumstances" />, or its <GlossaryTerm term="Stakes">stakes</GlossaryTerm>. A roll changes only through a <GlossaryTerm term="Push" /> or a rule that names the change.
+3. **The GM rules before the dice, never after.** Where a rule is silent the GM makes the call, and the call is part of the rules: whether to roll, what the roll uses, how the moment tilts your pool, and what a failure costs. All of it is said out loud before anyone picks up a die.
+4. **Rolled in the open.** <GlossaryTerm term="Titan Dice" />, a <GlossaryTerm term="Foe">Foe's</GlossaryTerm> Attack Dice and Guard, the hazard and Night tables, the setup table, and every roll on a table are made where the table can see them. Two rolls are not: a Titan's Next Behavior, rolled once and standing, and a <GlossaryTerm term="Passive roll">passive roll</GlossaryTerm>.
+
+</Subsection>
+
+<MarginNote>Where the GM rules, and where the GM never does: <a href="#when-the-gm-calls-a-roll">Section 3</a>.</MarginNote>
+
+<Subsection title="Dice" note="Six sides, four kinds" id="dice">
+
+- Every die has six sides. **D6** means roll one die. **xD6** means roll x dice and add them together: only table results and other rolls that add dice up use it, never a dice pool. **D66** means roll two dice, reading the first as tens and the second as ones, for a result from 11 to 66.
+- A dice pool holds three kinds of die: <GlossaryTerm term="base dice" />, <GlossaryTerm term="Gear Dice" />, and <GlossaryTerm term="Stress Dice" />. Give each kind its own colour so they stay apart during a Push. Bonus Dice are base dice.
+- **Every 6 is a success,** whatever kind of die shows it.
+- A Titan's attack rolls Titan Dice. They belong to no pool, succeed on a 5 or 6, never Push, and never take Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances.
+
+<DiceKey />
+
+</Subsection>
+
+<Subsection title="Attribute rolls" id="attribute-rolls">
+
+A roll is an **attribute roll** if its rule names an attribute. Rolled actions, <GlossaryTerm term="Reactions" />, <GlossaryTerm term="Death Roll">Death Rolls</GlossaryTerm> (which name Strength), <GlossaryTerm term="Called roll">called rolls</GlossaryTerm>, and attribute rolls a rule calls for are all attribute rolls. Only attribute rolls use a dice pool, count successes, and can be Pushed.
+
+Other rolls, such as a <GlossaryTerm term="Gas Roll" /> or a roll on a table, roll exactly the dice their rule states. They add nothing to those dice, take no Circumstances, and cannot be Pushed.
+
+</Subsection>
+
+<Subsection title="Building the pool" note="Seven steps, in order" id="building-the-pool">
+
+<PoolBuild fig="Fig. 1" />
+
+</Subsection>
+
+<MarginNote>Every entry, with its attribute and gear: <a href="/compendium/actions/">Compendium, Actions</a>.</MarginNote>
+
+What each step needs beyond the drawing:
+
+- **Name the roll.** Every attribute roll is made for one Action Catalog entry, unless a rule, or the GM for a called roll, calls for an attribute directly (below). Most entries are actions. A few are rolls that are not actions, and the Catalog marks them: the dodge, the block, and the Death Roll are never taken as actions, but a <GlossaryTerm term="Talent" /> can name them like any other entry. The GM names the roll's Circumstances at this step, before any Bonus Dice are declared.
+- **Talent.** A roll can use at most one Talent that adds dice, and only one that names the roll's entry. If the Talent sets a condition for that entry, its dice join only a roll that meets it: Horsemanship adds its dice to a dodge only when you are mounted and dodge with the horse's Gear Dice. Talents that bend a rule instead of adding dice apply whenever their trigger happens, and stack with each other and with the dice-adding Talent.
+- **Penalties.** Every penalty comes from a named rule, such as a result on a table in <a href="/guide/wounds-and-fear/">Wounds & Fear</a>, or from a minus step of Circumstances. Penalties add up, and all of them apply after the Bonus Dice cap.
+- **Gear Dice.** An item worn down to 0 adds no dice. If more than one item qualifies, choose one before rolling. If the entry allows no gear item, the roll has no Gear Dice.
+- **Stress Dice.** They are part of every attribute roll except the rolls on the table below.
+
+<MarginNote>Talents and the Catalog in full: <a href="/guide/making-your-soldier/">Making Your Soldier</a>.</MarginNote>
+
+<BoxPair>
+<RuleBox title="Rolls called by attribute" icon="ph:user-focus">
+
+A rule, or the GM for a called roll, can call for an attribute roll without naming a Catalog entry. That roll uses the attribute alone: no Talent dice, since an untrained soldier still rolls their full attribute. Every other step still applies: Bonus Dice from any source that covers the roll, Gear Dice only from a gear item the calling rule names, and Stress Dice.
+
+A called roll made on an attribute alone names no gear item, so it has no Gear Dice. A tool or another object that helps you counts toward the roll's Circumstances instead.
+
+</RuleBox>
+<RuleBox title="Acts no rule covers" icon="ph:question">
+
+Outside a fight, an act meant to change one of the values the rules name still goes through the steps in <a href="/guide/making-your-soldier/">Making Your Soldier</a>, which pick the Catalog entry that changes it. That list of values is an index, not a gate: an act that matches none of it is ruled on, not left without effect. Either way the act ends as a Catalog entry, an attribute alone, or a <a href="#called-rolls">called roll</a>.
+
+In a <GlossaryTerm term="Titan Engagement" /> or a <GlossaryTerm term="Skirmish" /> those steps are not used. An act that is not an entry taken as written is an <a href="#improvised-acts">improvised act</a>.
+
+</RuleBox>
+</BoxPair>
+
+The Death Roll has no Stress Dice, so it never causes a <GlossaryTerm term="Stress Response" />, and it cannot be Helped. A roll leaves out part of the pool only when its own rule says so and it appears on this table. A roll's own procedure can still forbid Help or a Push without appearing here, as the Graduation Exam's Trials do.
+
+<CoreTable table="roll-exceptions" />
+
+<Subsection title="Counting successes" id="counting-successes">
+
+1. The roll is final once you have stopped Pushing, or cannot Push. Count every die showing a 6: each is one success.
+2. The roll succeeds if it has at least as many successes as it needs. A roll needs **1 success** unless its rule names another number, and every such number is a quantity in the world or a tuned value: a Nape strike, for one, needs the Titan's <GlossaryTerm term="Nape Depth" />, and a Parley starts from a Foe group's Parley value. A called roll always needs 1. The GM never raises or lowers what a roll needs, and Circumstances never change it. A Reaction needs no number of its own, because its successes cancel an attack's. A failed roll does only what its rule states for a failure, or, on a called roll, what the GM staked. If the rule states nothing, the failure has no effect.
+3. Successes beyond what the roll needs do only what that roll's rule lists. Some rules add successes up across several rolls instead, such as <GlossaryTerm term="Toughness" />.
+4. **Each success is used once.** A success that counts toward what the roll needs cannot also pay for another effect. The one exception is a Reaction, whose successes cancel against several attacks from the same Titan or Foe in the same round.
+
+</Subsection>
+
+<FieldReport id="example-liesel" title="Liesel builds a Nape strike">
+
+Private Liesel Adler strikes a Titan's <GlossaryTerm term="Nape" />. The Nape strike entry names Strength and lets a Blade Set add Gear Dice. The GM names no step, so the roll is Standard.
+
+- Strength 3: 3 base dice.
+- Her Talent Clean Cut, at level 2, names the Nape strike: 2 base dice.
+- Oskar's strike earlier left an <GlossaryTerm term="Opening" />, and Liesel declares it: 1 Bonus Die.
+- No penalty applies. Her Blade Set is rated 2: 2 Gear Dice. Her Stress is 1: 1 Stress Die.
+
+<PoolRows rows={[{ label: 'The roll', pool: 'base:6,2,6,4,1,3|gear:6,1|stress:5', successes: 3 }]} />
+
+Three 6s, three successes, against the Titan's Nape Depth. No Stress Die shows a 1, so she could still Push.
+
+<TryRollButton pool={{ base: 6, gear: 2, stress: 1 }} label="Try Liesel's roll" />
+
+</FieldReport>
+
+<SectionHead id="circumstances" eyebrow="Section 2">Circumstances</SectionHead>
+
+<FieldQuote cite="Survey Corps manual">Rain does not make the Nape shallower. It makes your hands worse.</FieldQuote>
+
+Every attribute roll is made somewhere, in weather, in the dark, on a footing that holds or does not. **Circumstances** are the one step of a seven-step ladder the GM names for that moment. Name none and the roll is Standard.
+
+<CoreTable table="circumstances" />
+
+1. **One step per roll.** The GM weighs everything about the moment and names one step. Rain, dark, and a snapped strap are one judgment, not three. A step named for a lasting condition is the step of every roll that condition touches while it lasts. When a further condition touches a roll already under a lasting step, the GM names one step for that roll, weighing both. Steps never add, and the lasting step goes on applying to the rolls the further condition does not touch.
+2. **Named with the stakes,** before any Bonus Dice are declared, so you can answer a minus step with <GlossaryTerm term="Help" /> or another source.
+3. **Plus steps are Bonus Dice.** Effortless, Routine, and Easy are one Bonus Dice source, and count toward the cap of 4 with Help, <GlossaryTerm term="Opening">Openings</GlossaryTerm>, and every other source. You choose under the cap as for any source, and a plus step the cap leaves out spends nothing.
+4. **Minus steps are penalties.** Hard, Harsh, and Desperate go through the pool's penalty step: after the Bonus Dice cap, base dice only, adding up with every penalty you carry from a <GlossaryTerm term="Critical Injury" />, a Stress Response, or a <GlossaryTerm term="Fear Roll" /> result. They never take your base dice below 1, and never remove Gear Dice or Stress Dice. However bad the moment, you always roll at least one base die, so a 6 can always save you.
+5. **Which rolls.** Every attribute roll you or a <GlossaryTerm term="Squadmate" /> make takes a step: an action, a Reaction, a called roll, and every roll a rule calls for. A roll made for a group takes one step, on its roller's pool. No step reaches a roll that is not an attribute roll, the Death Roll, the performance roll, the Graduation Exam's Trials, Titan Dice, or a Foe's Attack Dice and Guard.
+6. **Needs never change.** Circumstances change dice, never what a roll needs. A Nape strike against a Nape Depth of 4 at Hard still needs 4 successes, out of one die fewer.
+7. **Fixed once named.** The step is a fact of the roll, like its entry. A Talent, a Push, or a <GlossaryTerm term="Cover" /> never changes it, and nothing changes it once the dice are rolled.
+8. **A Reaction takes the step in force when the attacker's card comes up.** Until that card ends, no step is named, raised, or lowered for a Reaction against it, and a condition that arises during the card counts from the next card. A dodge whose successes cancel against a later card that round keeps the step it was rolled at.
+9. **Too easy, or impossible.** A task easier than Effortless is not rolled: it happens. A task the GM judges impossible is not rolled either, and the GM says so before anyone rolls. Anything possible is at worst Desperate.
+
+<MarginNote stamp="Read twice">Routine and Effortless mostly serve a soldier carrying penalties. An injured soldier doing something simple rolls at Routine and keeps their dice.</MarginNote>
+
+<InkVignette caption="Rain sheets off a rooftop as a soldier tests her footing before firing an anchor." label="A soldier bracing on a rain-slick rooftop" art="guide-rules-of-play-circumstances" />
+
+<RuleBox title="In a Titan Engagement" icon="ph:cloud-rain">
+
+Standard is the assumption in a Titan fight. The <GlossaryTerm term="Anchor Rating" />, <GlossaryTerm term="Position">Positions</GlossaryTerm>, Openings, a grounded Titan, <GlossaryTerm term="Call It" />, the Attention restriction, and every penalty you carry already price the fight, so the GM names another step only for something no rule prices: rain on the rooftops, smoke over a burning district, full dark, ice, a gale.
+
+A step reaches every attribute roll a soldier makes in the fight, the dodge and the Nape strike among them. It never reaches the Titan. A condition that would slow or blind a Titan comes to the table through your dice instead: a Titan mired to the knee makes the dodge against it Easy, named when it is mired and before its card comes up. The Titan loses no Attack Dice, and its cards, its Attention, and its tables take no step at all.
+
+</RuleBox>
+
+<MarginNote>A Leg Hazard's or a Night row's own roll takes the step in force when the hazard is rolled, and no step is named for the danger the row describes: <a href="/guide/expeditions-and-downtime/">Expeditions & Downtime</a>.</MarginNote>
+
+<SectionHead id="when-the-gm-calls-a-roll" eyebrow="Section 3">When the GM Calls a Roll</SectionHead>
+
+<FieldQuote cite="A Squad Leader, to a new recruit">Tell me what you are doing and what you are afraid of. I will tell you what it costs.</FieldQuote>
+
+Most of what a soldier does has a rule. When something does not, the GM rules on it, and the ruling is part of the rules. Every <GlossaryTerm term="Ruling">ruling</GlossaryTerm> comes before the dice: once they fall, they stand.
+
+<Subsection title="Called rolls" id="called-rolls">
+
+The GM calls a roll, a **called roll**, when you attempt something no rule covers, its outcome is in doubt, and failure would cost something. Rolls are called sparingly: a roll is for a moment with something at stake.
+
+<StepFlow id="fig-called" fig="Fig. 2" title="A called roll" steps={[
+  {
+    title: "The GM decides.",
+    icon: "ph:scales",
+    text: "Something no rule covers, in doubt, with a cost for failing. Then the GM calls a roll.",
+    exit: { kind: "note", label: "No roll", text: "It simply happens if failure would change nothing, or if you have the time, the tools, and the training. If it cannot be done, the GM says so now." },
+  },
+  {
+    title: "The GM names the roll.",
+    icon: "ph:book-open-text",
+    text: "The Catalog entry closest to the act, from the entries the Catalog marks as rolled when called, or an attribute alone if none fits.",
+    exit: { kind: "note", label: "Attribute alone", text: "No Talent dice and no Gear Dice. A tool that helps you counts toward the Circumstances instead." },
+  },
+  {
+    title: "The GM names the Circumstances and the stakes.",
+    icon: "ph:warning",
+    text: "One step of the ladder, and what failure costs from the closed menu below. Where it is not obvious, what success gives as well.",
+    exit: { kind: "cover", label: "Your call", text: "You can change your approach, or withdraw, before any die is rolled." },
+  },
+  {
+    title: "Build and roll.",
+    dice: "base:?|stress:?",
+    text: "The pool is built as any pool is. The roll needs 1 success. It can be Helped, Covered, and Pushed like any attribute roll.",
+    exit: { kind: "note", label: "Fixed", text: "From the moment the dice are rolled, the entry, the step, and the stakes cannot change." },
+  },
+  {
+    title: "The result stands.",
+    dice: "base:6",
+    text: "On a success you get what was named. On a failure the one staked cost falls, and nothing else.",
+    exit: { kind: "stop", label: "One cost", text: "Either it does not happen; or it happens at the cost; or it does not happen and the cost falls anyway." },
+  },
+]} />
+
+<MarginNote>The entries a called roll can use are marked in the <a href="/compendium/actions/">Compendium, Actions</a>.</MarginNote>
+
+**One act, one roll.** An act whose single outcome succeeds or fails for several soldiers at once is one called roll, made by one soldier the players choose. The others Help. A stake of Stress, damage, or a fall falls on the soldier who rolled; a lost item is that soldier's, a lost unit is the Squad's, and time or position falls on the situation. An act each soldier makes for themselves is each soldier's own roll.
+
+</Subsection>
+
+<Subsection title="What failure costs" id="what-failure-costs">
+
+The GM stakes one cost, out loud, before the dice. A failed called roll costs that and nothing else, and one failed roll costs one thing however many times you Pushed it. A failure should move the story on, not halt it.
+
+<CoreTable table="called-roll-costs" />
+
+**Never staked.** A Critical Injury handed out directly, an injury location, an injury row, or a time limit on one; a Death Roll, a Scar, or <GlossaryTerm term="Grief" />; a Fear Roll; Stress relief, a Health box, healing time, or a care window opened or closed; a Titan's roll, a Foe's roll, or a table result. The GM states your current Health with any stake that names damage or a fall.
+
+**What success gives.** The act itself, information, a better position the next roll reckons with, an object that is not a gear item, or Squad Supply found within the caps in <a href="/guide/gear-and-odm/">Gear & ODM</a>, though never Squad Supply in a fight, since a called search is made outside one. Never a gear item, Stress relief, a Health box or healing, a Commendation, a Research Point, or a change in Faction Standing: each of those comes only from its own rule.
+
+</Subsection>
+
+<MarginNote>Help and Covering on a called roll: <a href="#help">Help</a> and <a href="#covering">Covering</a>.</MarginNote>
+
+<BoxPair>
+<RuleBox title="A called roll in a fight" icon="ph:crosshair">
+
+In a Titan Engagement or a Skirmish, a called roll is the last resort, not the first. An act you describe is first a Catalog entry taken as written, then an <a href="#improvised-acts">improvised act</a> with a model entry. It is a called roll only when no entry of kind Action you could take in that fight could model it, and when it would change nothing the fight tracks: no Position, no Attention, no Opening, no card, no clock, no Foe's values, and none of the values the rules name.
+
+It spends your action and is made on your turn. It never gives an effect an entry has, and never stands in for a Reaction: facing an attack, you dodge or block. Help on it is the fight's Help, each helper spending their action, at no cost the GM names. A fall it costs is a fall in full, and where it drops you is the fall rule's to say.
+
+</RuleBox>
+<RuleBox variant="stop" title="What a ruling never touches" icon="ph:prohibit">
+
+The GM applies all of these as written:
+
+- the Push, Covering, and Help's effect and cap. No ruling forbids or forces a Push: only a written rule or the exceptions table does;
+- the sources of Bonus Dice, the cap of 4, penalties, and what a roll needs. Circumstances is the one source a ruling names;
+- the fixed rolls and their tables: the Fear Roll, the Stress Response roll, the Gas Roll, the Death Roll, the performance roll, the fall roll, and the infirmary roll;
+- the Critical Injury, Stress Response, Scar, and Grief tables, <GlossaryTerm term="Down" />, Death Rolls, healing, and care windows;
+- Stress relief, which comes only from a trigger on the Stress table;
+- gear wear, <GlossaryTerm term="Standard Issue" />, Funding, the Ledger, and one Requisition per <GlossaryTerm term="Downtime" />;
+- <GlossaryTerm term="Behavior Table">Behavior Tables</GlossaryTerm>, the Attention Ladder, Attack Dice and Titan Dice, the Reaction procedure, that only a Nape strike kills a Titan, the size of Openings, Steam, the Falling Titan, Corpse Heat, the Grab countdown, <GlossaryTerm term="Regeneration" />, the retreat clock, and the end tests;
+- a standard Titan's numbers, and which of them a <GlossaryTerm term="Read" /> reveals;
+- the Leg roll, except its Circumstances, the Leg Hazard and Night tables with their rolls and their amounts, the rule that a Leg always advances, rations, and which soldier is the Straggler;
+- Squadmates, whom the players direct, though the GM may voice one;
+- and every die and table result, once it is rolled.
+
+</RuleBox>
+</BoxPair>
+
+<Subsection title="Passive rolls" id="passive-rolls">
+
+{exceptionText('passive-roll')}
+
+A passive roll is made outside a Titan Engagement and a Skirmish.
+
+- The GM builds your pool as it stands: your attribute, the Talent that names the entry, Gear Dice if the entry allows them, and Stress Dice, with the Circumstances the GM names to themselves. A plus step adds its dice, and no other Bonus Dice source applies.
+- You learn the result only through what you notice.
+- It is not a called roll. It has no stakes, and failing it means only that you did not notice.
+
+Say you are looking, and you roll Spot in the open, as a called roll.
+
+</Subsection>
+
+<Subsection title="Trying again" id="trying-again">
+
+- **In a Titan Engagement or a Skirmish,** you can attempt an action again on a later turn, a called roll among them, spending that turn's action and nothing else.
+- **Outside one,** a rule that says a roll is never tried again is final. Otherwise you try the same thing again only when something has changed: a new approach, a better tool, another soldier, or time spent. The GM names the cost of that change, time or position, before the new roll. It falls when you try again, whatever the result, and it is not the new roll's stakes.
+- Each soldier gets one attempt at a given obstacle per changed situation.
+
+</Subsection>
+
+<FieldReport id="example-mila-shed" title="Mila talks her way into the shed">
+
+Private Mila Brandt wants into a locked supply shed at night, and a Garrison sergeant holds the key. No rule covers talking him into it, his answer is in doubt, and a refusal would cost the Squad. The GM calls a roll and names it:
+
+- **The roll.** Persuade, the entry closest to the act.
+- **The Circumstances.** Hard. The sergeant is half asleep and under orders.
+- **The stakes.** On a success he opens the shed. On a failure it stays shut and he sends a runner to the Squad's officer: time and position.
+
+Mila has Empathy 3, no Talent that names Persuade, and Stress 1. Persuade allows no gear item. Private Oskar Wendt stands beside her and backs her up, so the GM rules him present and able. He Helps, and it spends him nothing.
+
+Her pool is 3 attribute dice, plus 1 Bonus Die from Oskar, less 1 for Hard after the cap: 3 base dice, and 1 Stress Die. Oskar's Help has cancelled the step.
+
+<PoolRows rows={[
+  { label: 'First roll', pool: 'base:5,2,4|stress:3', successes: 0 },
+  { label: 'After the Push', pool: 'base:6,1,3|stress:2,5', successes: 1 },
+]} />
+
+No success, and no Stress Die shows a 1, so Mila Pushes: 1 Stress, a new Stress Die, and every base die and Stress Die rolled again. One 6. The sergeant unlocks the shed.
+
+<TryRollButton pool={{ base: 3, stress: 1 }} label="Try Mila's roll" />
+
+Had the Push failed too, the stakes would have fallen as named and nothing more: the shed shut, the runner gone. The GM could not raise what the roll needed, add a second cost, or change the step after the roll, and Mila could try again only once something had changed.
+
+</FieldReport>
+
+<SectionHead id="pushing-your-luck" eyebrow="Section 4">Pushing Your Luck</SectionHead>
+
+<FieldQuote cite="Survey Corps manual">Every Cadet learns to count their gas. Every veteran learns when to spend it anyway.</FieldQuote>
+
+<MarginNote stamp="Read twice">You can Push a success too. One 6 will not reach a Nape Depth of 4.</MarginNote>
+
+A Push trades <GlossaryTerm term="Stress" />, and sometimes wear on your gear, for a second chance at successes. You can Push after a failed roll or after a successful one.
+
+<Subsection title="How a Push works" note="Five steps, in order" id="the-push">
+<PushSteps fig="Fig. 3" />
+</Subsection>
+
+Bonus Dice are base dice, so a Push rolls them again unless they show a 6. A Gear Die showing 1 stays locked in the pool. The limit of one Stress Response holds however many Stress Dice show a 1, and however many Pushes a Talent allows.
+
+<InkVignette caption="A soldier hangs on taut ODM lines below a Titan's Nape, gas venting from her canister." label="A soldier on ODM lines beneath a Titan's Nape" art="guide-rules-of-play-push" />
+
+<MarginNote>Gas Rolls, wear, Jams, and horses: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
+
+<BoxPair>
+<RuleBox variant="stop" title="You cannot Push when" icon="ph:prohibit">
+
+- any Stress Die showed a 1 on the roll, or after an earlier Push of it;
+- the roll's rule forbids a Push, as it does for a Death Roll and the first two Trials of the <GlossaryTerm term="Graduation Exam" />;
+- the roll is a passive roll, which you do not know was made;
+- the roll is not an attribute roll;
+- you have already Pushed it as many times as you are allowed: once, unless a Talent allows more;
+- a state or result you hold forbids it, as being Down does.
+
+Each extra Push a Talent allows follows the same five steps. No ruling ever forbids or forces a Push.
+
+</RuleBox>
+<RuleBox variant="gas" title="Pushing burns gas" icon="ph:wind">
+
+If you Push a roll whose gear item is <GlossaryTerm term="ODM Gear" />, your Gas Roll that round is **three** dice instead of two. It is three however many of that round's rolls you Pushed with ODM Gear. A Push after your Gas Roll for the round has been made does not change it.
+
+A Pushed dodge made with ODM Gear counts, even though a Reaction is not an action. A Pushed dodge made with your horse while mounted does not: its Gear Dice showing 1 wear the horse, not ODM Gear, and it does not by itself make the Gas Roll three dice.
+
+</RuleBox>
+</BoxPair>
+
+<Subsection title="Gear Dice and wear" id="gear-dice-and-wear">
+
+If the roll was Pushed, each Gear Die showing a 1 when the roll is final wears the gear item that supplied it by one point. Gear Dice are never rolled again, so these are the 1s from the first roll. A roll that was not Pushed causes no wear, even when Gear Dice show 1. What wear does depends on the item: ODM Gear worn down to 0 <GlossaryTerm term="Jam">Jams</GlossaryTerm>.
+
+</Subsection>
+
+<MarginNote stamp="In order">A Stress Response is resolved before the roll's effect, and wear comes last.</MarginNote>
+
+<Subsection title="Finishing a roll" note="Four steps, in order" id="finishing-a-roll">
+
+When a roll is final, resolve it in this order:
+
+1. **Count successes.**
+2. **Resolve any Stress Response** on the table in <a href="/guide/wounds-and-fear/">Wounds & Fear</a>, using your Stress after any Push, unless the roll's own rule names another resolution, as the Graduation Exam does. That roll still has its Stress Response, and still cannot be Pushed after it: only how it is resolved changes. If the result changes the roll or the action, apply that change now. A changed success count is the roll's count for every later use of it, including a Reaction's cancelling against later attacks.
+3. **Apply the roll's effect,** or, on a failed called roll, the cost that was staked.
+4. **Apply wear** from Gear Dice showing 1, if the roll was Pushed.
+
+</Subsection>
+
+<MarginNote>When a comrade Covers, the Stress is theirs, not yours. Say it out loud before anyone picks up a die.</MarginNote>
+
+<Subsection title="Covering" id="covering">
+
+To Cover a comrade is to take on the Stress of their Push.
+
+**Who can Cover.** A soldier who meets all of these:
+
+- They are not the Pushing soldier, and they are not Down.
+- They are a player character: a Squadmate never Covers.
+- In a Titan Engagement, they are at the same Position as the Pushing soldier or one Position step away, the same requirement as Help.
+- Outside a Titan Engagement, they qualify to Help that roll: under the rule that called for it, or, in a Skirmish, under the Skirmish's Help rule, or, on a called roll outside a Skirmish, as the GM rules. If a rule that called for a roll allows no Help, no one can Cover the roll.
+- No state or result they hold forbids it.
+
+**When.** After the Push is declared and before any die is rolled again. Only one soldier can Cover a Push, and the Pushing soldier can refuse the offer. If more than one comrade offers, the Pushing soldier chooses one. A Push that would roll no die again, because every base die and Stress Die already shows 6, cannot be Covered.
+
+**What it takes.** The Covering soldier gains 1 Stress. Covering is not an action and spends neither the move nor the action. Outside a Titan Engagement it also spends nothing: it needs only the eligibility Help has on that roll, not what Help spends.
+
+**Effect.** The Pushing soldier gains no Stress and adds no new Stress Die. Nothing else about the Push changes: their Stress Dice are still rolled again, a Stress Die showing 1 still gives *them* a Stress Response, and their Gear Dice showing 1 still wear their gear. The Covering soldier makes no roll, so Covering never gives them a Stress Response.
+
+</Subsection>
+
+<FieldReport id="example-greta" title="Greta Pushes at the Nape">
+
+Private Greta Voss strikes the Nape with 5 base dice, 2 Gear Dice from her Blade Set, and 1 Stress Die. She rolls one 6, short of the Nape Depth. She Pushes: she gains 1 Stress, adds a new Stress Die, and rolls again every base die and Stress Die not showing a 6.
+
+<PoolRows rows={[
+  { label: 'First roll', pool: 'base:6,3,2,4,1|gear:5,1|stress:3', successes: 1 },
+  { label: 'After the Push', pool: 'base:6k,6,4,2,5|gear:5l,1lx|stress:6,3n', successes: 3 },
+]} />
+
+Her Gear Dice keep their faces. The Push turns up two more 6s, and no Stress Die shows a 1: three successes. One Gear Die shows a 1 on a Pushed roll, so her Blade Set takes a point of wear, and any wear ruins a Blade Set.
+
+<TryRollButton pool={{ base: 5, gear: 2, stress: 1 }} label="Try Greta's roll" />
+
+</FieldReport>
+
+<SectionHead id="stress" eyebrow="Section 5">Stress</SectionHead>
+
+<FieldQuote cite="From a Cadet's diary">My hands stopped shaking on the third Titan. I think that is worse.</FieldQuote>
+
+Stress is your mounting fear and adrenaline: it makes you more capable and more likely to break.
+
+Every attribute roll gets Stress Dice equal to your current Stress, except a roll with a Stress Dice exception, such as the Death Roll. A Stress Die showing 6 is a success like any other, and a Stress Die showing 1 sets off a Stress Response. Stress carries over between Titan Engagements, <GlossaryTerm term="Expeditions" />, and sessions, and changes only through the triggers on the table below.
+
+<InkVignette caption="A soldier on a rooftop grips her handles in shaking hands as a Titan's shadow crosses the street below." label="A soldier steadying her hands on a rooftop" art="guide-rules-of-play-stress" />
+
+<MarginNote>Scars, Resolve, and retiring: <a href="/guide/wounds-and-fear/">Wounds & Fear</a>.</MarginNote>
+
+<Subsection title="Minimum Stress" id="minimum-stress">
+
+- Your minimum Stress equals your number of <GlossaryTerm term="Scars" />. With no Scars, it is 0.
+- Stress never drops below your minimum. Any loss stops there.
+- If you gain a Scar while your Stress is below the new minimum, your Stress rises to it immediately.
+
+So a soldier with Scars always rolls at least that many Stress Dice. Each Scar also raises <GlossaryTerm term="Resolve" /> by 1, and Resolve counts against Stress Response and Fear Roll results. A soldier with five Scars must retire.
+
+</Subsection>
+
+<MarginNote>Night Camps and Downtime: <a href="/guide/expeditions-and-downtime/">Expeditions & Downtime</a>.</MarginNote>
+
+<Subsection title="Gaining and losing Stress" id="gaining-and-losing-stress">
+
+Stress changes only through a trigger on this table. The GM never raises or lowers it without one, and a ruling changes it only as the stakes of a called roll.
+
+<CoreTable table="stress-changes" />
+
+- **Both at once.** A Nape kill that also ends the Titan Engagement sets off both losses, and each applies in full.
+- **Holding a Position** is the test for being in a Titan Engagement. The loss when it ends goes to every soldier who held a Position at any point, including one who left before the end: a Squad that retreats still gets it, however many rounds its soldiers took to leave. The loss for a Nape kill goes to every soldier who holds a Position at the moment of the kill, not only the one who struck. A soldier who has already left holds no Position and gets nothing from the kill.
+- **Rally.** A comrade's <GlossaryTerm term="Rally" /> clears your Stress Response but does not lower your Stress.
+- **Downtime.** During Downtime, your <GlossaryTerm term="Haven" /> lets you lower Stress and Grief through <GlossaryTerm term="Downtime Actions" /> such as Visit Haven.
+
+</Subsection>
+
+<Subsection title="Stress Responses and Fear Rolls" id="stress-responses-and-fear-rolls">
+
+- Only a Stress Die showing 1 triggers a **Stress Response**, and a roll causes at most one. A roll with no Stress Dice, such as a Death Roll, never causes one, and neither does a passive roll. The Stress Response table, and how Resolve counts against it, are in Wounds & Fear.
+- The dice never trigger a **Fear Roll**. It comes from a horrifying event on the closed list of triggers in Wounds & Fear. One row of that list is the GM's to read: outside a Titan Engagement, an event at least as horrifying as a listed trigger. Inside one, only the list calls a Fear Roll.
+
+</Subsection>
+
+<SectionHead id="bonus-dice-and-help" eyebrow="Section 6">Bonus Dice and Help</SectionHead>
+
+<FieldQuote cite="A Squad Leader, before the gate opens">Nobody cuts alone. If you can reach them, you can help them.</FieldQuote>
+
+Bonus Dice are extra base dice from Help, Openings, a plus step of Circumstances, and the situations on this table.
+
+<CoreTable table="bonus-dice" />
+
+1. **Listed sources only.** Nothing that is not on this table adds Bonus Dice. Circumstances is the one source a ruling names: the GM names the step, and the table gives its dice.
+2. **Declare before rolling.** Every source is declared before the dice are rolled. None can be added afterwards, not even before a Push.
+3. **Cap.** A roll gets at most **4** Bonus Dice from all sources together.
+4. **Choosing under the cap.** If more Bonus Dice are available than the cap allows, you pick which sources to use. Unused sources are not spent: Openings stay on the Titan, a comrade whose Help is not used keeps their action, and a plus step spends nothing.
+5. **Bonus Dice are base dice.** They succeed on a 6, a Push rolls them again unless they show a 6, and a 1 on one does nothing.
+6. **Penalties come after the cap,** a minus step among them.
+
+<InkVignette caption="One soldier braces on a chimney and steadies a comrade's line as she swings in toward the Nape." label="A soldier steadying a comrade's ODM line" art="guide-rules-of-play-help" />
+
+<Subsection title="Help" id="help">
+
+A comrade can Help by adding 1 die to your roll. Up to 3 comrades can Help one roll. A **comrade** is any other soldier in the <GlossaryTerm term="Squad" />, player character or Squadmate.
+
+**Requirements.** A comrade can Help only if all of these are true:
+
+- They are not the soldier rolling, and they are not Down.
+- They are a player character, or a Squadmate whose action list includes Help.
+- The roll allows Help: the table of rolls with exceptions does not rule it out, as it does for the Death Roll, the performance roll, and a passive roll, and the roll's own rule does not forbid it.
+- They declare the Help before the roll.
+- In a Titan Engagement, they have an unspent action this round, and they are at the same Position as the roller or one Position step away. A turn or an action spent in advance, by a Reaction or a result, begins its round spent.
+- Outside a Titan Engagement, they meet the requirement for that roll: the one its calling rule states, the Skirmish's own requirement in a Skirmish, or, on a called roll outside a Skirmish, the GM's ruling that they are present and able to help in a way you could point at.
+- No state or result they hold forbids it.
+
+<MarginNote>Position steps for each Anchor Rating: <a href="/guide/fighting-titans/">Fighting Titans</a>.</MarginNote>
+
+**Effect.** Each helper adds 1 Bonus Die, and Help dice count toward the Bonus Dice cap. The helper does not roll: they cannot Push the roll, gain no Stress from it, and suffer no Stress Response from it.
+
+**What it spends.** In a Titan Engagement, the helper's action. You can Help outside your own turn, such as on a comrade's turn or during a comrade's Reaction, as long as your action is unspent this round. If your own turn comes later in the round, it has only its move.
+
+**Outside a Titan Engagement** there are no Positions and no rounds:
+
+- **On a roll a rule calls for,** Help is allowed only where that rule allows it, and that rule states who qualifies and what Help spends. Every such rule says so, whether it is an Action Catalog entry, a Chase, an Expedition rule, or a Downtime rule. If it says nothing about Help, the roll cannot be Helped or Covered.
+- **On a called roll,** up to 3 comrades who are present and able to help in a way you could point at may Help, as the GM rules. It spends them nothing, unless the GM names a cost of time or position for it before the dice: that cost falls when the comrade declares Help, whatever the roll's result, and it is not the roll's stakes. A comrade who could Help may Cover.
+- **In a Skirmish,** on a called roll as on any roll there, a helper is a comrade taking part who is not Down, Engaged or Apart, and Help spends their action. The GM names no cost for it. Help on a called roll in a Titan Engagement is the fight's Help in the same way.
+
+The limits under **Effect** still apply.
+
+</Subsection>
+
+<FieldReport id="example-emil" title="Emil at the cap">
+
+Private Emil Faber strikes the Nape of a Titan with a Broken leg. Two comrades' strikes have left 2 Openings on it, and Greta, one Position step away with her action unspent, offers Help. That is 2 Bonus Dice for the grounded Titan, 2 for the Openings, and 1 for Help: 5, one over the cap.
+
+Emil declares the Broken leg and both Openings. Greta's Help is not used, so she keeps her action. With Strength 3, no Talent that names the Nape strike, a Blade Set rated 2, and no Stress, his pool is 7 base dice and 2 Gear Dice.
+
+<TryRollButton pool={{ base: 7, gear: 2 }} label="Try Emil's roll" />
+
+</FieldReport>
+
+<SectionHead id="turns-actions-and-reactions" eyebrow="Section 7">Turns, Actions, and Reactions</SectionHead>
+
+<FieldQuote cite="Survey Corps manual">A Titan does not wait its turn. Neither do you.</FieldQuote>
+
+A Titan Engagement runs in rounds, and every soldier's time in it is counted in turns. <a href="/guide/fighting-titans/">Fighting Titans</a> sets the order of play within a round, including initiative cards, <GlossaryTerm term="Tempo" />, and <GlossaryTerm term="Wings" />.
+
+<Subsection title="Turns and actions" id="turns-and-actions">
+
+- **Your turn.** Each round, every player character takes one **turn**, made up of one **move** and one **action**. Fighting Titans says how a turn is ordered and what a move can do. As a baseline, a move changes your Position by one step. Being <GlossaryTerm term="Overloaded" /> makes every ODM move spend your action as well.
+- **Actions.** An action is Help, one Action Catalog entry other than the entries the Catalog marks as not an action, an <a href="#improvised-acts">improvised act</a>, or a called roll for an act no entry could model.
+- **Once per round.** Your move and your action can each be spent once per round, and cannot be saved for a later round. Both refresh at the start of each round, except a move or action already spent in advance, which begins its round spent.
+- **Declining.** You may decline your move, your action, or both when your turn comes up. Whatever is left unspent after your turn stays available until the round ends, but only for Help and Reactions, and a Reaction needs both the move and the action. A move held alone can do nothing once your card has passed. Whatever is held is lost when the round ends.
+- **Spending a turn.** When a rule spends one of your turns, such as a Reaction or a result in Wounds & Fear, it spends your earliest turn, starting with this round's, whose move and action are both unspent. If this round's turn has any part spent, the rule spends the next such turn, skipping any turn whose move or action is already spent in advance.
+- **Spent at the start of the round.** A turn spent in advance, by a Reaction or a result, begins its round with its move and action already spent. An action a result spends in advance without its move, such as a "next action spent" result, begins its round spent, and the turn keeps its move. Every rule that asks whether your move or action is spent this round reads that state, not what you did during the round. So:
+  - if your turn was spent in advance, you cannot Help that round, cannot make a Reaction with that turn, and hold nothing to decline;
+  - if only your action was spent in advance, you cannot Help that round or make a Reaction with that turn, and can hold only the move.
+- **What can forbid.** A state or result can forbid you to Push, Help, Cover, or make a Reaction only by naming which of the four it forbids. That is the only way a state or result forbids them, and the usual requirements, bans on particular rolls, and Squadmate limits still apply. Down forbids all four. Being <GlossaryTerm term="Grabbed" /> forbids Help, Covering, and Reactions.
+- **Not actions:** Reactions, Pushing, Covering, declaring Bonus Dice sources, and spending Openings on the roll they join.
+
+</Subsection>
+
+<Subsection title="Improvised acts" id="improvised-acts">
+
+In a Titan Engagement or a Skirmish you can attempt something no entry covers. Before the pool is built, the GM names the one existing entry whose effect your act imitates, its **model entry**, and that ruling stands.
+
+- An act you describe that is not an entry taken as written is an improvised act, even when the value it would change matches an entry.
+- The model entry is an entry of kind Action you could take in that fight. Never a Reaction, a roll, a fixed roll, or an option.
+- The act spends your action, and is rolled with the model entry's attribute, gear items, Talents, and needs, taking Circumstances as any roll does. An act modelled on an entry that is not rolled is not rolled either.
+- On a success it produces only the model entry's effect, at that entry's size, and it carries that entry's restrictions. It never kills a Titan, never changes a Nape Depth, a Toughness, Attack Dice, or a card, never cancels or delays a card, never creates more Openings than the model entry could, and never gives an effect no entry has. Only a Nape strike taken as its entry is written kills a Titan.
+- An act no entry of kind Action could model, that would change nothing the fight tracks, is a <a href="#called-rolls">called roll</a> instead.
+
+Fighting Titans and <a href="/guide/skirmishes/">Skirmishes</a> give worked examples.
+
+</Subsection>
+
+<InkVignette caption="A Titan's hand sweeps through a courtyard as a soldier fires her anchors and pulls clear." label="A soldier dodging a Titan's sweeping hand" art="guide-rules-of-play-reaction" />
+
+<MarginNote>The Grab and its countdown: <a href="/guide/fighting-titans/">Fighting Titans</a>.</MarginNote>
+
+<Subsection title="Reactions" id="reactions">
+
+A **Reaction** is a dodge or block you make when a Titan or a Foe acts against you, outside your own turn. Against a Titan, that moment is when one of its cards resolves a behavior against you and its <GlossaryTerm term="Attack Dice" /> have been rolled.
+
+- A Reaction is an attribute roll with a full pool, rolled for its own Catalog entry. It can be Helped and Pushed like any other attribute roll.
+- A Reaction **spends one whole turn** of yours: both a move and an action.
+- **When you can react.** Whether or not you have acted this round, you can make a Reaction if both of these are true:
+  - you have not already made a Reaction against that Titan, or that Foe, this round;
+  - no state or result you hold forbids it.
+
+  No Reaction is made against an attack that scored 0 successes, so you keep your Reaction for a later attack.
+- **Which turn it spends.** Your earliest turn, starting with this round's, whose move and action are both unspent:
+  - If neither the move nor the action of this round's turn has been spent, the Reaction spends this round's turn.
+  - Otherwise it spends your next turn in full, and whatever is left of this round's turn can still be used on your card, if it has not yet come.
+  - If that next turn already has its move or action spent, it spends the turn after, and so on.
+  - When a Titan's Grab lands on you, and your dodge against that card, or the earlier dodge whose successes cancelled against that card, spent a turn later than your first counted Grab turn, the Grab gives that later turn back.
+  - A turn spent in advance still happens when it comes up, and counts as one of your turns for any rule that counts turns, such as a Grab. It begins its round with no move and no action, so you cannot Help or hold anything that round.
+- **When the Titan Engagement ends.** Turns and actions spent in advance, by a Reaction or a result, exist only inside the Titan Engagement where they were spent. When it ends, every one that has not yet come up is cancelled. You owe nothing, and start your next Titan Engagement with every turn unspent.
+
+</Subsection>
+
+<MarginNote>A Foe's Guard, the block, and the ambush: <a href="/guide/skirmishes/">Skirmishes</a>.</MarginNote>
+
+<Subsection title="Attack and Reaction" note="One procedure for every attack" id="attack-and-reaction">
+
+An attack's successes are its <GlossaryTerm term="Severity" />, and what a Reaction leaves of them are its <GlossaryTerm term="Net Successes" />. Every attack a Reaction can answer, from a Titan or from a person, is resolved by this one procedure. Fighting Titans adds only what belongs to Titans, and Skirmishes only what belongs to people.
+
+<StepFlow id="fig-attack" fig="Fig. 4" title="Attack and Reaction" steps={[
+  {
+    title: "The attack roll.",
+    dice: "titan:5,2,6",
+    text: "The acting side rolls and finishes its roll first, including any Push its rules allow. Its successes are its Severity, announced to every target.",
+    exit: { kind: "note", label: "Fixed", text: "A soldier attacking a person may Push. A Titan or a Foe never Pushes. From then on the attack roll never changes." },
+  },
+  {
+    title: "The Reaction.",
+    dice: "base:?|gear:?|stress:?",
+    text: "Each target decides whether to react, knowing the Severity, and rolls for its own Catalog entry, with Help and Bonus Dice declared before the roll, at the step fixed when the card came up. The reacting side Pushes last.",
+    exit: { kind: "cover", label: "Already reacted", text: "Against that Titan or Foe this round, a target rolls nothing new: that Reaction's successes cancel against this attack." },
+  },
+  {
+    title: "Cancel.",
+    dice: "titan:6|base:6",
+    text: "Each success of the finished Reaction cancels one of the attack's successes.",
+    exit: { kind: "note", label: "Finished", text: "The Reaction changes only through its own Push and step 2 of Finishing a roll." },
+  },
+  {
+    title: "Land or whiff.",
+    dice: "titan:5",
+    text: "The attack's successes left over are its Net Successes against that target.",
+    exit: { kind: "stop", label: "1 or more lands", text: "Its effect reads the Net Successes wherever its rule names them. On 0 it whiffs and does nothing to that target." },
+  },
+  {
+    title: "No Reaction.",
+    dice: "titan:6,5",
+    text: "A target who makes no Reaction, or whom a state or result forbids one, cancels nothing: every success of the attack is net against them.",
+    exit: { kind: "stop", label: "0 successes", text: "The attack whiffs against every target, including one who cannot react, and no Reaction is made against it." },
+  },
+]} />
+
+Every target of one attack cancels against the same attack roll with their own Reaction, so one attack can land on one target and whiff against another.
+
+</Subsection>
+
+<BoxPair>
+<RuleBox title="Against a Titan" icon="ph:person-simple-run">
+
+The only Reaction is a **dodge**, because Titans cannot be blocked. A dodge is an Agility roll that takes its Gear Dice from ODM Gear, or from your horse while you are mounted, one item per roll. The Titan's attack roll is its behavior's Attack Dice, rolled as Titan Dice.
+
+One Reaction covers every card that Titan plays that round:
+
+- You make at most one Reaction against each Titan per round.
+- When one of its cards resolves a behavior against you and scores at least 1 success, you choose whether to dodge. If you don't, every success is net against you, and you can still dodge a later card from that Titan this round.
+- Once rolled, the dodge's successes, counted after step 2 of <a href="#finishing-a-roll">Finishing a roll</a>, cancel against the card it answered and, separately, against every later card that Titan resolves against you that round. Each card lands or whiffs on its own Net Successes.
+- Cancelling against a later card does not use the dodge's successes up.
+- A landed card that inflicts a Critical Injury adds 1 to that roll for each Net Success beyond the first. A Grab, a knock loose, and a Stress gain take nothing extra.
+
+</RuleBox>
+<RuleBox title="Against a person" icon="ph:sword">
+
+In a Skirmish, the Reaction is a dodge or a **block**, as the attack allows. Blocking is possible only against an attack whose rules allow it: a Foe's Fight attack in a Skirmish. No Titan allows it.
+
+The Reaction cancels as the procedure states. One Reaction covers every attack that Foe makes against you that round, cancelling against each separately, and a landed attack deals its weapon's damage plus 1 for each Net Success beyond the first.
+
+Skirmishes gives which attacks each Reaction answers, a Foe's Guard, and the ambush.
+
+</RuleBox>
+</BoxPair>
+
+<FieldReport id="example-mila" title="Mila dodges, Oskar Covers" eyebrow="Example of play">
+
+The Attack Dice here are for illustration. Each Titan's real ones are on its Behavior Table in the <a href="/compendium/titans/">Compendium</a>.
+
+A Titan's first card this round resolves a sweeping behavior against Private Mila Brandt, rolling 6 Attack Dice as Titan Dice in the open. The 5 and the 6 are successes: Severity 2.
+
+<PoolRows rows={[{ label: "Titan's attack", pool: 'titan:5,2,6,1,3,4', successes: 2 }]} />
+
+<TryRollButton pool={{ base: 0, titan: 6 }} pushable={false} label="Try the Titan's roll" />
+
+Mila dodges. She has spent neither her move nor her action this round, so the Reaction spends this round's turn.
+
+- **Pool.** Agility 4, and no Talent of hers names the dodge. She is not mounted, so her Gear Dice come from her ODM Gear, rated 2. Private Oskar Wendt is at her Position with his action unspent, so he Helps: 1 Bonus Die, and his own turn later this round will have only its move. Her Stress is 1. Nothing about the rooftops is out of the ordinary, so the step is Standard. That makes 5 base dice, 2 Gear Dice, and 1 Stress Die.
+- **Roll.** One success, one short of cancelling the attack's two. No Stress Die shows a 1, so she can Push.
+- **Push.** Oskar offers to Cover. He gains 1 Stress, and Mila gains none and adds no new Stress Die. She keeps her base 6 and rolls again her other four base dice and her Stress Die. Both Gear Dice stay as they are, the 1 locked. The Stress Die comes up 1: Mila suffers one Stress Response.
+
+<PoolRows rows={[
+  { label: 'First roll', pool: 'base:6,4,3,1,2|gear:1,5|stress:3', successes: 1 },
+  { label: 'After the Push', pool: 'base:6k,6,2,5,1|gear:1lx,5l|stress:1x', successes: 2 },
+]} />
+
+<TryRollButton pool={{ base: 5, gear: 2, stress: 1 }} label="Try Mila's dodge" />
+
+- **Finish.** Two successes. The Stress Response is resolved at Mila's Stress of 1. Unless that result changes the Reaction, her two successes cancel the attack's two, leaving no Net Successes, so it whiffs against her. Last, one Gear Die shows a 1 on a Pushed roll, so her ODM Gear takes a point of wear.
+- **Gas.** The dodge was a Pushed roll using ODM Gear, so Mila's Gas Roll this round is three dice.
+- **The second card.** Later this round the same Titan resolves another behavior against Mila, and its Attack Dice score 1 success. She has already made her one Reaction against this Titan this round, so she rolls nothing new: her dodge's two successes cancel that one, and it whiffs too. Had it scored 3, 1 would have been net, and the behavior would have landed on her.
+- **Oskar.** If a card targets Oskar after he has Helped, he can still dodge. His action is spent, so the Reaction spends his whole next turn. He keeps this round's move, which he can still use on his card if it has not yet come. His next turn begins its round with its move and action already spent, so next round he cannot Help anyone.
+
+</FieldReport>

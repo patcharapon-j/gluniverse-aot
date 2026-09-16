@@ -1,0 +1,144 @@
+---
+/**
+ * One Foe kind's record on the Commander's copy: its numbers under bars, its weapons, and how it
+ * plays (ADR-0023). Every value comes from the Foe tables through lib/gm-foe-tables.
+ */
+import Redacted from './Redacted.astro';
+import { foeRecords } from '~/lib/gm-foe-tables';
+
+interface Props {
+  /** The Foe kind's id, such as "bandit". */
+  foe: string;
+  /** The id the heading anchors to, so a page's contents can link to it. */
+  id?: string;
+}
+const { foe, id = foe } = Astro.props;
+
+const record = foeRecords().find((r) => r.id === foe);
+if (!record) throw new Error(`FoeDossier: there is no Foe kind "${foe}".`);
+---
+<article class="foe wide" id={id} aria-labelledby={`${id}-name`}>
+  <div class="foe-head">
+    <div>
+      <p class="lbl">Foe record · Group of {record.group}</p>
+      <h3 id={`${id}-name`}>{record.name}</h3>
+      <p class="who">{record.who}</p>
+    </div>
+    <span class="stamp stamp--dbl" aria-hidden="true">Foe</span>
+  </div>
+
+  <dl class="foe-figs">
+    {record.stats.map((stat) => (
+      <div class="fig">
+        <dt class="lbl">{stat.label}</dt>
+        <dd class="val num">{stat.hidden ? <Redacted value={stat.value} label={`${record.name}: ${stat.label}`} /> : stat.value}</dd>
+        <dd class="note">{stat.note}</dd>
+      </div>
+    ))}
+  </dl>
+
+  <div class="foe-arms">
+    <p class="lbl">Weapons</p>
+    <ul>
+      {record.weapons.map((w) => (
+        <li>
+          <b>{w.name}</b>
+          <span class="line">{w.line}</span>
+          {w.note && <span class="wnote">{w.note}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <p class="foe-running">{record.running}</p>
+</article>
+
+<style>
+  .foe {
+    margin-top: clamp(26px, 3.5vw, 40px);
+    padding: 16px 18px 18px;
+    border: 1px solid var(--ink);
+    border-top: 3px solid var(--ink);
+    background: rgba(255, 253, 246, 0.35);
+  }
+  .foe-head {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .foe-head h3 {
+    margin: 4px 0 0;
+    font-family: var(--f-stencil);
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+    letter-spacing: 0.02em;
+  }
+  .who {
+    margin: 4px 0 0;
+    font-size: var(--fs-sm);
+    color: var(--ink-2);
+  }
+  .foe-figs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
+    gap: 12px 14px;
+    margin: 16px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+  }
+  .fig {
+    margin: 0;
+  }
+  .fig .val {
+    margin: 2px 0 0;
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .fig .note {
+    margin: 4px 0 0;
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+    color: var(--ink-2);
+  }
+  .foe-arms {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+  }
+  .foe-arms ul {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
+  }
+  .foe-arms li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    align-items: baseline;
+    font-size: var(--fs-sm);
+  }
+  .foe-arms .line {
+    font-variant-numeric: tabular-nums;
+  }
+  .foe-arms .wnote {
+    color: var(--ink-2);
+    font-size: var(--fs-xs);
+  }
+  .foe-running {
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+  }
+
+  @media (max-width: 560px) {
+    .foe {
+      padding: 14px 14px 16px;
+    }
+    .foe-head .stamp {
+      display: none;
+    }
+  }
+</style>

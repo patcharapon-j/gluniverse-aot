@@ -1,0 +1,70 @@
+---
+/**
+ * A full-colour plate mounted with a paper border and caption (ADR-0023).
+ * `art` names the illustration, so an art pass can find every frame. Pass the
+ * approved plate as `image` and Astro serves it sized and lazily; a frame whose
+ * plate is not drawn yet keeps the default slot's placeholder.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import sealWax from '../assets/icons/seal-wax.webp';
+
+/** The seal is drawn at most 132 px wide (`.seal`), so it is served at twice that. */
+const SEAL_PX = 264;
+
+interface Props {
+  number: string;
+  caption: string;
+  /** Describes the scene for screen readers, and is the plate's alt text. */
+  label: string;
+  art: string;
+  ratio?: string;
+  seal?: boolean;
+  /** The approved plate. Without it the frame keeps its placeholder. */
+  image?: ImageMetadata;
+  /** Crops the plate to this ratio instead of letting it keep its own. */
+  crop?: string;
+  /** The widest the plate is ever drawn, in px. Sets the sizes Astro generates. */
+  maxWidth?: number;
+  /** True only for a plate above the fold. Every other plate loads lazily. */
+  eager?: boolean;
+}
+const { number, caption, label, art, ratio = '5 / 4', seal = false, image, crop, maxWidth = 720, eager = false } = Astro.props;
+
+// The drawn width and twice it for dense screens, never upscaled past the file itself.
+const widths = image ? [...new Set([Math.round(maxWidth / 2), maxWidth, maxWidth * 2])].filter((w) => w <= image.width) : [];
+if (image && widths.length === 0) widths.push(image.width);
+const sizes = `(max-width: 900px) 100vw, ${maxWidth}px`;
+---
+<figure class="plate" data-art-slot={art}>
+  {seal && <Image class="seal" src={sealWax} alt="" width={SEAL_PX} height={SEAL_PX} loading="lazy" decoding="async" />}
+  <div class="plate-frame">
+    {image ? (
+      <Image
+        class:list={['plate-art', 'plate-art--photo', crop && 'plate-art--crop']}
+        src={image}
+        alt={label}
+        widths={widths}
+        sizes={sizes}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        style={crop ? `aspect-ratio:${crop}` : undefined}
+      />
+    ) : (
+      <div class="plate-art" role="img" aria-label={label} style={`aspect-ratio:${ratio}`}>
+        <slot>
+          <svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="400" height="320" fill="#34483D" />
+            <polygon points="40,0 170,0 330,320 190,320" fill="#F2E6C4" opacity=".08" />
+            <path d="M0 200 Q80 176 160 190 T320 180 T400 188 V320 H0Z" fill="#26362D" />
+            <g fill="#0E1511" opacity=".85"><ellipse cx="300" cy="150" rx="22" ry="28" /><path d="M262 214 Q268 180 300 176 Q334 180 340 214Z" /></g>
+            <rect x="0" y="214" width="400" height="106" fill="#18221D" />
+            <g stroke="#2E3F36" stroke-width="1"><path d="M0 238H400M0 262H400M0 286H400M0 310H400" /></g>
+            <rect width="400" height="320" fill="url(#hlines)" opacity=".55" />
+          </svg>
+        </slot>
+      </div>
+    )}
+  </div>
+  <figcaption class="lbl"><span>{number}</span><em>{caption}</em></figcaption>
+</figure>

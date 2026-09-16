@@ -1,0 +1,612 @@
+---
+title: Wounds & Fear
+summary: What harm does to the body and fear does to the mind. Health, Critical Injuries, Stress Responses, Fear Rolls, Scars, and Grief.
+section: guide
+order: 3
+tab: Wounds
+sources:
+  - path: docs/rules/03-harm-and-mind.md
+    sha: "a6860da989665e645cc6b17cfcc8b096ba90b1b6"
+  - path: data/harm/health.yaml
+    sha: "8faf7ebabffd9190a59a30ba3c4830eff0509c49"
+  - path: data/harm/critical-injuries.yaml
+    sha: "9d7db8d62faaccb3df532a58cc83ab8b5a3886c8"
+  - path: data/harm/down.yaml
+    sha: "c3243cb5b30c2b17c7f35fde886aa6334a7ee7cd"
+  - path: data/harm/death-rolls.yaml
+    sha: "66dd2a154f48e9036242cd6c26de2ef46c4ee9a6"
+  - path: data/harm/treat-injury.yaml
+    sha: "28603f6905aaa187b8239f2df6b3c4756bef8dda"
+  - path: data/harm/healing.yaml
+    sha: "b7a951ef936cfc44c757fc57c8e0fd935f3efba4"
+  - path: data/harm/effect-types.yaml
+    sha: "09be8cce7c8f1b04b114c49c0e31106a5729cc3d"
+  - path: data/harm/engagement-end.yaml
+    sha: "45e8b648aafbc2fcf57bd252e6804473e0b7362e"
+  - path: data/mind/stress-responses.yaml
+    sha: "2c3784df8eb65e5eb83bb80b1391c7074f7d9fa4"
+  - path: data/mind/fear-rolls.yaml
+    sha: "6b6e4d5d77bf9c68bdd2ef02fd9c4229d0e1dd99"
+  - path: data/mind/scars.yaml
+    sha: "018484c414d0f46667c3e0b059fa666984097e05"
+  - path: data/mind/grief.yaml
+    sha: "35aa2e0d22c9f4ad9e6c66f902b6eeb28b9d3e42"
+  - path: data/character/action-catalog.yaml
+    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+---
+
+import BoxPair from '~/components/BoxPair.astro';
+import ChapterContents from '~/components/ChapterContents.astro';
+import CoreTable from '~/components/CoreTable.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import FieldReport from '~/components/FieldReport.astro';
+import GlossaryTerm from '~/components/GlossaryTerm.astro';
+import HarmTrack from '~/components/HarmTrack.astro';
+import IconKey from '~/components/IconKey.astro';
+import InkVignette from '~/components/InkVignette.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import MindPaths from '~/components/MindPaths.astro';
+import Plate from '~/components/Plate.astro';
+import PoolRows from '~/components/PoolRows.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import StepFlow from '~/components/StepFlow.astro';
+import Subsection from '~/components/Subsection.astro';
+import TryRollButton from '~/components/TryRollButton.astro';
+import { criticalInjurySteps, dayStepsList, injuryTypes, scarMaximum, griefMaximum } from '~/lib/harm-tables';
+import plate from '~/assets/plates/plate-wounds-and-fear.webp';
+
+export const TYPE_NOTES = {
+  crush: 'The Titan wound. Hands, feet, and the ground.',
+  bite: 'Teeth take the limb, and it bleeds fast.',
+  burn: 'Slow and hard to treat. Healing doubled.',
+  cut: 'An edge. Its lethal rows bleed by the turn.',
+  pierce: 'A shot. From the 7 row up it lodges and will not heal untreated.',
+};
+
+<FieldQuote cite="Survey Corps manual, on casualties">Nobody comes back whole. The work is deciding what you can still do with what is left.</FieldQuote>
+
+<Plate
+  number="Plate VIII"
+  caption="A field dressing in the mud, after the column has moved on."
+  label="Two Survey Corps soldiers in the rain beside a fallen horse, one binding a splint onto the other's leg on a muddy battlefield below the Wall"
+  art="guide-wounds-and-fear"
+  image={plate}
+  crop="21 / 9"
+  maxWidth={900}
+/>
+
+<ChapterContents items={[
+  { id: 'health-and-harm', title: 'Health and Harm', note: 'Boxes, damage, and what a Titan does instead' },
+  { id: 'critical-injuries', title: 'Critical Injuries', note: 'Location, type, and the four tables' },
+  { id: 'down-and-dying', title: 'Down and Dying', note: 'Time limits and the Death Roll' },
+  { id: 'treating-wounds', title: 'Treating Wounds', note: 'Treat Injury, care windows, healing' },
+  { id: 'stress-responses-and-rally', title: 'Stress Responses and Rally', note: 'When the nerve goes' },
+  { id: 'fear', title: 'Fear', note: 'Seven triggers and what they cost' },
+  { id: 'scars-and-grief', title: 'Scars and Grief', note: 'What a soldier carries out' },
+  { id: 'after-the-fight', title: 'After the Fight', note: 'Nine steps, in order' },
+]} />
+
+<SectionHead id="health-and-harm" eyebrow="Section 1">Health and Harm</SectionHead>
+
+<FieldQuote cite="Instructor's saying, Training Corps">It does not wear you down. It takes a piece and you go on without it.</FieldQuote>
+
+<Subsection title="The row of boxes" id="the-row-of-boxes">
+
+Your **<GlossaryTerm term="Health" />** is half of Strength plus Agility, rounded up. Attributes never rise, so Health never changes. Keep it as a row of that many boxes, each one clean, marked by damage, or crossed off.
+
+- **Each untreated <GlossaryTerm term="Critical Injury" /> you hold crosses off one box,** whatever inflicted it. The boxes crossed off are the smaller of your untreated Critical Injuries and your Health, so you can hold more untreated Critical Injuries than you have Health: the extra ones cross off nothing, and treating one of them gives back no box until fewer untreated Critical Injuries remain than you have Health.
+- **Health lost** is what damage has marked. It is never more than your Health minus the boxes crossed off.
+- **<GlossaryTerm term="Current Health" />** is your Health, minus the boxes crossed off, minus Health lost. It never goes below 0, and at 0 you are <GlossaryTerm term="Down" />.
+
+Health is small on purpose, because a <GlossaryTerm term="Titan attack" /> goes around it.
+
+</Subsection>
+
+<HarmTrack fig="Fig. 1" />
+
+<Subsection title="The three kinds of harm" id="kinds-of-harm">
+
+<CoreTable table="harm-kinds" />
+
+**A Critical Injury with no clean box** crosses off a box marked by damage instead, and your Health lost falls by 1. If every box is already crossed off, it crosses off none. **A Critical Injury that crosses off your last box** puts you Down and inflicts no further Critical Injury: only damage that brings you to 0, or damage taken at 0, gives one.
+
+</Subsection>
+
+<MarginNote>What a <GlossaryTerm term="Ruling">ruling</GlossaryTerm> is, and the closed menu a called roll's stakes come from: <a href="/guide/rules-of-play/#what-failure-costs">The Rules of Play</a>.</MarginNote>
+
+<Subsection title="Harm the GM names" id="harm-a-ruling-names">
+
+When the GM calls a roll, the <GlossaryTerm term="Stakes">stakes</GlossaryTerm> named before the dice may say that failure harms you. They can name one of two harms and no other:
+
+- **<GlossaryTerm term="Damage" /> of 1 to 3,** of the <GlossaryTerm term="Injury Type" /> of its source: Crush for a blow or a hard knock, Cut for an edge, Pierce for a point, Burn for fire. It follows the rules above, so it reaches a Critical Injury only at 0 current Health, and that Critical Injury's <GlossaryTerm term="Injury Location" /> is rolled.
+- **A fall,** low or high as the GM names for its height, never extreme, or low if the GM names none.
+
+The harm is named with the stakes and does not change once the dice are rolled, and the GM says your current Health aloud with it, so the table knows beforehand whether a failure can put you Down with a Critical Injury. It is never 4 damage or more: 4 is a musket's, and a musket is rolled. No ruling gives a Critical Injury, death, a <GlossaryTerm term="Death Roll" />, a <GlossaryTerm term="Scar" />, or <GlossaryTerm term="Grief" /> directly, names an Injury Location, a row, or a time limit, or opens or closes a <GlossaryTerm term="Care window">care window</GlossaryTerm>. Harm a ruling causes away from a fight holds a care window exactly as any other event's harm does.
+
+</Subsection>
+
+<Subsection title="Titan attacks go around Health" id="titan-attacks">
+
+A **Titan attack** is the harm a <GlossaryTerm term="Behavior Table" /> entry inflicts on you when a Titan's card resolves that behavior against you. Every such harm is a Titan attack, and only the harm the entry itself names: a fall you take because the attack put you Down while airborne is the kind that other rule names.
+
+- **It is always a Critical Injury and never damage,** whatever your Health. No entry names death.
+- Each entry that harms lists its Injury Location, fixed or rolled, its Injury Type, and whether its Critical Injury cannot be lethal. A Titan's Bite is Bite; every other Titan attack is Crush.
+- **It is rolled.** The entry's <GlossaryTerm term="Attack Dice" /> are rolled as <GlossaryTerm term="Titan Dice" />, and the attack lands on 1 or more <GlossaryTerm term="Net Successes" /> after your <GlossaryTerm term="Reaction" /> cancels. A roll of 0 successes whiffs against everyone. A soldier who cannot react, such as a Down soldier, cancels nothing, so it lands on 1 or more successes.
+- **The Grab's crush** is a torso Critical Injury of Injury Type Crush that cannot be lethal. **The Grab countdown is not a Titan attack:** the lift and the devour are steps of the Grab, roll no Attack Dice, and no Reaction answers either. The devour names death.
+- **Three harms a Titan's body deals are not Titan attacks either.** They roll no Attack Dice, no Reaction answers them, and none takes the Net Success rider. **Steam** is Burn damage, so it reaches the Critical Injury tables only at 0 current Health, and a steam roll of 0 inflicts nothing at all. **A falling Titan** gives a soldier in its path who fails to <GlossaryTerm term="Leap Clear" /> a Crush Critical Injury that cannot be lethal, and <GlossaryTerm term="Pinned">Pins</GlossaryTerm> them. **Corpse heat** gives a soldier Pinned under a <GlossaryTerm term="Corpse">corpse</GlossaryTerm> a Burn Critical Injury at the start of each of their turns, and 1 Burn damage to each soldier who <GlossaryTerm term="Heave">Heaves</GlossaryTerm> the corpse.
+
+So a soldier with no Health lost at all can be Down, or dying, from Titan attacks alone: each one crosses off a box, and a row can put you Down or be lethal. A soldier already at 0 takes a Titan attack exactly as anyone else does.
+
+</Subsection>
+
+<MarginNote>The Grab, the falling body, steam, and corpse heat, with their own procedures: <a href="/guide/fighting-titans/#the-grab">Fighting Titans</a>.</MarginNote>
+
+<CoreTable table="health-restore" />
+
+<Subsection title="How to read an effect" id="effects">
+
+Every row in this chapter names its effects from one closed list, so each has exactly one reading.
+
+<CoreTable table="harm-effects" />
+
+- **Penalties add up,** from Critical Injuries, lasting Stress Responses, Scars, and <GlossaryTerm term="Circumstances" /> alike. They never take your base dice below 1 and never remove <GlossaryTerm term="Gear Dice" /> or <GlossaryTerm term="Stress Dice" />.
+- **No row in this chapter damages or wears gear.** The two Fear results that touch gear use the Blade Set and <GlossaryTerm term="Gas Roll" /> rules in Gear & ODM.
+- **Only the forced-strike row forbids Help or Covering.** Down forbids both on its own account. No row causes a <GlossaryTerm term="Fear Roll" />, or any roll by a comrade.
+
+</Subsection>
+
+<SectionHead id="critical-injuries" eyebrow="Section 2">Critical Injuries</SectionHead>
+
+<FieldQuote cite="From a Cadet's diary">The surgeon asked which arm. I could not tell him.</FieldQuote>
+
+A Critical Injury is a lasting wound tied to an Injury Location and an Injury Type. Its row says whether it puts you Down, whether it can kill and how fast, what it does while you hold it, and how long it takes to heal.
+
+<IconKey title="The five Injury Types" items={injuryTypes().map((type) => ({ icon: type.icon, label: type.name, note: TYPE_NOTES[type.id] }))} />
+
+<CoreTable table="injury-types" />
+
+The type picks which of the row's names your wound shows and applies its table's rider for that type, if there is one. Everything else on the row is the same for every type. **Blast** is a delivery and not a type: a rule that names one inflicts two Critical Injuries, one Burn and one Crush, each at its own rolled Injury Location. No rule yet names a blast. And **no row on these tables wounds the mind.** The Stress on the lowest torso and head rows stays, no lethal row gains Stress, and lasting harm to the mind comes from the second half of this chapter.
+
+<StepFlow id="fig-injury" fig="Fig. 2" title="Gaining a Critical Injury" steps={criticalInjurySteps()} />
+
+<CoreTable table="injury-location" />
+
+<Subsection title="The four tables" id="the-four-tables">
+
+The arm table serves both arms and the leg table both legs. Every table has an open-ended first row and last row, so every total finds a row however much <GlossaryTerm term="Worsening">worsening</GlossaryTerm> and however many Net Successes are added to it. Instant death appears only at totals 2D6 alone cannot reach, so a first Critical Injury at a location kills you outright only when the Net Success rider lifts the total.
+
+<CoreTable table="injuries-arm" />
+
+<CoreTable table="injuries-leg" />
+
+<CoreTable table="injuries-torso" />
+
+<CoreTable table="injuries-head" />
+
+<CoreTable table="injury-riders" />
+
+</Subsection>
+
+<InkVignette caption="A soldier braces a shoulder against a beam while a comrade cuts the sleeve away." label="A soldier cutting a comrade's sleeve away to reach a wound" art="guide-wounds-and-fear-injury" />
+
+<Subsection title="Holding and treating" id="holding-and-treating">
+
+- You **hold** a Critical Injury from the moment you gain it until it heals. Held ones count toward worsening, treated or not, and a healed one whose row has permanent effects goes on counting.
+- **Sides are tracked.** An arm or leg Critical Injury is held at its side; the torso and the head have none. A row with permanent effects is gained at most once per side at an arm or a leg, and at most once at the head.
+- A Critical Injury becomes **treated** when a <GlossaryTerm term="Treat Injury" /> roll succeeds on it. Treating does three things: it stabilizes a lethal one, it ends a Down row's hold on you, and it gives back the Health box, unless you still hold at least as many untreated Critical Injuries as Health. It never removes the row's effects, and a treated Critical Injury keeps its healing time and still counts toward worsening.
+- **No Critical Injury damages or removes gear.**
+
+</Subsection>
+
+<Subsection title="Lost limbs" id="lost-limbs">
+
+<IconKey title="What a lost limb costs" items={[
+  { icon: 'body-arm', label: 'An arm', note: 'One is a penalty. Both is the ban the ODM handles demand.' },
+  { icon: 'body-leg', label: 'A leg', note: 'One makes the ground slow. Both end movement of every kind.' },
+]} />
+
+A side is lost when you gain the 13 or more row of the arm or leg table there. It stays lost after that Critical Injury heals, and a later roll of that row at the same side uses its repeat row, so the same limb is never lost twice. A grade applies from the moment you meet it, for as long as you live, on top of the row's own permanent effects. Those stack with everything else: two lost legs dodge, Fly, and Ride at a 4-die penalty, and two lost arms strike at 4.
+
+<CoreTable table="lost-limbs" />
+
+- **Cannot take** means you cannot take, make, or use the entry, and nothing that needs its roll can be done, such as a Position change that needs a Fly roll. A forbidden <GlossaryTerm term="Decoy">decoy</GlossaryTerm> cannot be named for <GlossaryTerm term="Break Attention" />.
+- **A move that also spends your action** cannot be made if that action is already spent, as an <GlossaryTerm term="Overloaded" /> soldier's ODM move cannot. Away from a Titan Engagement this does nothing unless the rule for the procedure under way says otherwise.
+- **A move that cannot be made** leaves you holding the Position you are placed at.
+- **No Gear Dice from an item** still rolls the entry, with Gear Dice from any other item it allows. A soldier with both arms lost takes the horse's Gear Dice on the dodge while mounted and none from <GlossaryTerm term="ODM Gear" />, and Leap Clear takes none from ODM Gear either.
+- **Carried.** A soldier the both-legs grade forbids to move may be lifted and carried by Lift Comrade, at their consent, and keeps their action for entries that need no move. A Pinned soldier is never lifted.
+- **Medical Retirement.** A soldier who has lost both arms or both legs may retire, at the player's choice.
+
+**Prosthetics.** A prosthetic arm or leg is a gear item, obtained by Requisition at Limited Scarcity, one per Requisition; a player character may obtain one for a <GlossaryTerm term="Squadmate" />. It is fitted to one lost side during a <GlossaryTerm term="Downtime" />, once the Critical Injury that lost that side has healed, at most one per side. Fitting needs no roll and spends nothing, and it stays fitted for as long as you live. A grade is then read against your sides lost at its row **less the prosthetics of that kind fitted**, so one lost arm with a prosthetic meets no arm grade, and both arms lost with one prosthetic meet the one-arm grade. Two of a kind never lower the grade past the one-limb grade. The row's own permanent effects stay at every side lost, prosthetic or not, and stack. A <GlossaryTerm term="Prosthetic" /> gives no dice to any roll, is never a weapon, and cannot be obtained before the loss at that side has healed.
+
+</Subsection>
+
+<SectionHead id="down-and-dying" eyebrow="Section 3">Down and Dying</SectionHead>
+
+<FieldQuote cite="A Squad Leader, on the ride back">Count them on the horses, not on the ground. The ground lies.</FieldQuote>
+
+<Subsection title="Down" id="down">
+
+You are **Down** while either of these is true, checked whenever your Health lost changes, a Critical Injury is gained or heals, or one becomes treated:
+
+1. **Your current Health is 0,** from damage, from untreated Critical Injuries crossing off every box, or both.
+2. **You hold an untreated Critical Injury whose row says so.**
+
+<BoxPair>
+<RuleBox title="What you can still do" icon="ph:hand">
+
+- **Your turns still happen,** each with its move and no action, and each still counts as a turn for every rule that counts turns, such as a time limit or the Grab countdown.
+- **Your move** can only make the change Fighting Titans allows a Down soldier.
+- **You make Death Rolls.**
+- **You can be helped:** the patient of Treat Injury, the target of <GlossaryTerm term="Rally" />, and lifted with Lift Comrade.
+- Stress, lasting Stress Responses, Grief, Scars, and a <GlossaryTerm term="Grabbed" /> state all stay as they are, and you can still gain Stress, Critical Injuries, Scars, and Grief from any rule that names them.
+
+</RuleBox>
+<RuleBox title="What you cannot do" variant="stop" icon="ph:prohibit">
+
+- **Take any action,** <GlossaryTerm term="Help" /> included, and every Action Catalog entry whose kind is an action.
+- **<GlossaryTerm term="Push" />, Help, <GlossaryTerm term="Cover" />, or make a Reaction.** A behavior you cannot react to lands.
+- **Make any attribute roll but a Death Roll.** So you never Push, never roll Stress Dice, and never suffer a Stress Response while Down.
+- **Make a Fear Roll.**
+
+</RuleBox>
+</BoxPair>
+
+A Grabbed soldier who becomes Down stays Grabbed and cannot take Break Free, because it is an action. A comrade can still free them, with a strike on the holding arm or with Pry Loose.
+
+**Down ends at once** when your current Health is above 0 and you hold no untreated Critical Injury whose row says otherwise. Only three things bring that about: treating or healing a Critical Injury, a revive that erases damage marks, and a day passing, which erases them all. Nothing else ends Down.
+
+</Subsection>
+
+<Subsection title="Down and this round's turns" id="down-and-turns">
+
+Becoming Down or ending Down never spends or restores a turn by itself.
+
+- **Becoming Down after this round's turn has begun or ended:** you lose any action of that turn you still hold, even if Down ends before the round does. That action counts as spent for every rule that asks, such as which turn a Reaction spends.
+- **Becoming Down before this round's turn comes up:** nothing is taken from it. If Down has ended by the time it comes up, it has its move and its action.
+- **A turn that begins while you are Down** has its move, and its action counts as spent for every rule that asks. It stays spent if Down ends during or after that turn. A turn that has not yet begun keeps its action.
+- **Ending Down restores nothing already spent.** A turn or action a Reaction or a result has spent stays spent, and a future turn already spent in full stays wholly spent.
+
+</Subsection>
+
+<Subsection title="Lethal Critical Injuries" id="time-limits">
+
+A lethal Critical Injury carries a time limit, and each time the limit runs out you make a Death Roll.
+
+<CoreTable table="time-limits" />
+
+**Away from a Titan Engagement and a <GlossaryTerm term="Skirmish" /> there are no turns.** A Critical Injury gained there with a turn or an end-of-fight limit runs out once, right after the care window held for that harm. After a Death Roll made away from both, including every one made at the end steps of either, a turn or end-of-fight limit you survived becomes a daily one. A Death Roll made during a Skirmish, at the end of your turn, follows its outcome row as one made during a Titan Engagement does.
+
+</Subsection>
+
+<Subsection title="The Death Roll" id="the-death-roll">
+
+- **Pool:** Strength, plus the dice of one Talent that names the Death Roll, such as Hard to Kill, minus that Critical Injury's Death Roll penalty.
+- **Left out:** no Stress Dice, no Help, no Push, no Circumstances, and no gear. No source of <GlossaryTerm term="Bonus Dice" /> reaches it.
+- **Needs 1 success.**
+- **One roll per Critical Injury.** If several run out at the same moment, you choose the order. The first failed roll kills you, and no more are made.
+- It is not an action and spends nothing.
+
+<CoreTable table="death-roll-outcomes" />
+
+<MarginNote stamp="Read twice">Strength buys you nothing else in the mud. It is the one attribute that decides whether you get up.</MarginNote>
+
+A Strength 4 soldier with a Death Roll penalty of 1 rolls 3 base dice and no others.
+
+<TryRollButton pool={{ base: 3 }} pushable={false} label="Try a Death Roll" />
+
+</Subsection>
+
+<Subsection title="Dying" id="dying">
+
+You die from a failed Death Roll, an instant-death row, or any rule that names death, such as the Grab's devour. A dead soldier leaves play and holds no Position.
+
+- A dead player character is replaced by promotion or a new character when the procedure the death happened in ends.
+- A dead Squadmate leaves the <GlossaryTerm term="Squad Pool" />.
+- Every <GlossaryTerm term="Drive" /> that named the dead soldier can never trigger again.
+- The death is a Fear Roll trigger, and it gives Grief.
+- What happens to the dead soldier's gear is in Gear & ODM.
+
+</Subsection>
+
+<SectionHead id="treating-wounds" eyebrow="Section 4">Treating Wounds</SectionHead>
+
+<FieldQuote cite="Survey Corps manual, on field medicine">Stop the bleeding, name the wound, write the time. Everything else waits for the wall.</FieldQuote>
+
+**Treat Injury** is a Wits action. It takes its Gear Dice from a medical kit, and without one it rolls Wits alone. Declare one use and one patient before you roll.
+
+<CoreTable table="treat-injury-uses" />
+
+When damage brought a soldier to 0 and the Critical Injury it gave crossed off a box already marked by damage, one success on a revive raises their current Health to 1 and ends Down, unless a Down row still holds them.
+
+<Subsection title="What changes the roll" id="what-changes-the-roll">
+
+- **Circumstances,** as on any attribute roll: the one step the GM names, Standard if none. Surgery in driving rain or by a guttering lantern might be Hard. A minus step adds up with the self-treatment penalty and a Pierce's penalty, and no step changes the 1 success the roll needs. In a Titan Engagement Standard is the default, and another step is named only for something no rule already prices.
+- **A Burn** is treated only by a treater who has a medical kit, or who spends 1 medical unit of Squad Supply on the roll. Without either the roll is not made: Wits alone is not allowed. The only medical unit ever spent on a roll is the care bonus in a care window, which gives its Bonus Die as well, so in a fight only a kit will do. An aftermath roll never reaches a Burn, because every lethal Burn row runs out by the day.
+- **A Pierce** from the 7 row up takes a 1-die penalty on every treat use on it, in a fight, as an aftermath roll, and in a care window alike, added to the self-treatment penalty when you treat yourself.
+- **Talents.** Field Medicine adds dice, Sure Hands allows a second Push, and Careful Nursing halves the healing time of a comrade's Critical Injury you treat.
+
+</Subsection>
+
+<Subsection title="Patients" id="patients">
+
+Any other living soldier, player character or Squadmate. You may use treat on your own Critical Injury at a penalty of 2 base dice, and you can never revive yourself, because a Down soldier takes no action and makes no roll but the Death Roll. In a care window the patient must also be a living soldier in that window's scope.
+
+</Subsection>
+
+<Subsection title="In a fight" id="in-a-fight">
+
+In a Titan Engagement Treat Injury is an action, and the patient must hold the same Position as you. It can be Helped, Pushed, and Covered, and a failed use can be tried again on a later turn. Two soldiers who have both left a Titan Engagement that is still under way count as holding the same Position, for the roll and for Help and Covering on it. In a <a href="/guide/skirmishes/">Skirmish</a> it is an action in the same way, with no Position requirement.
+
+</Subsection>
+
+<MarginNote>Medical kits, restocking one, and the medical Squad Supply that buys a Bonus Die in a care window: <a href="/guide/gear-and-odm/">Gear & ODM</a>, which also says which care windows take a Field Repair.</MarginNote>
+
+<FieldReport id="example-treat" title="Two dice and a lung">
+
+Private Mila Brandt holds Private Oskar Wendt's Position. He holds an untreated Punctured Lung, lethal, running out when the fight ends. She declares Treat Injury, the treat use, on that Critical Injury. Wits 2 and a medical kit rated 1 give 2 base dice and 1 Gear Die, with 1 Stress Die for her Stress of 1.
+
+<PoolRows rows={[{ label: 'The treatment', pool: 'base:6,3|gear:4|stress:2', successes: 1 }]} />
+
+<TryRollButton pool={{ base: 2, gear: 1, stress: 1 }} label="Try Mila's treatment" />
+
+One success is all it needs. The Punctured Lung is treated and stabilized: no time limit, no Death Roll at the end of the fight. It keeps its penalty on Fly and the dodge, and its 14 days of healing, and it still counts toward worsening at his torso. His Health box comes back, because he now holds fewer untreated Critical Injuries than his Health.
+
+</FieldReport>
+
+<Subsection title="Care windows" id="care-windows">
+
+Away from a Titan Engagement and a Skirmish, Treat Injury is rolled only in a **care window**, or as an **aftermath roll** when a fight ends. Each window has a scope: the soldiers who take part in it.
+
+<CoreTable table="care-windows" />
+
+In a care window:
+
+- A patient must be a living soldier in the window's scope. The scope limits patients as well as rollers, helpers, and Coverers.
+- **Every living soldier in the scope who is not Down may make one roll,** for any use and patient the window allows. There is no Position requirement.
+- **Help** may come from a living soldier in the scope who is not Down and is not the one rolling, and only if they have not yet rolled or Helped in this window. It is declared before the roll and spends their own roll for the window. At most 3 soldiers Help one roll.
+- **Covering** is open to anyone who qualifies to Help that roll, even a soldier who has already rolled or Helped. Covering spends nothing.
+- The players choose the order of rolls, with the usual roll-off if they disagree. Squadmates take part.
+- **A failed roll can be tried again only in a later care window.**
+
+</Subsection>
+
+<Subsection title="Aftermath rolls" id="aftermath-rolls">
+
+When a Titan Engagement or a Skirmish ends, each dying soldier gets one chance at treatment before the end-of-fight Death Rolls.
+
+- **Patient:** a living soldier, Down or not, holding an untreated lethal Critical Injury that runs out at the end of the fight, including a turn limit that has just become one.
+- **One roll per patient, one roll per treater.** The players choose the treater: a living soldier who is not Down and who held, at the moment the fight ended, the patient's Position or one step from it; or the patient, if not Down, treating themselves with the self-treatment penalty. Positions are compared as they stood at that moment, relative to the Focus Titan alive last, using the Positions relative to its corpse if it died. Two soldiers who had both left count as holding the same Position, and a soldier who had left never counts as sharing a Position with, or standing one step from, a soldier still in the fight. A Skirmish has no Positions, so everyone who took part counts as holding the patient's Position.
+- **The roll** is treat, on one untreated lethal Critical Injury of the patient's that runs out now, chosen by the players. A success treats and stabilizes it and gives back its Health box, which can end the patient's Down before the Death Rolls.
+- **A failure uses up the patient's attempt.** No other treater, and no other Critical Injury of the same patient, can reopen it before the Death Rolls.
+- **Nobody Helps or Covers an aftermath roll.** It can be Pushed, and Sure Hands allows a second Push. It is not a care window, so it does not use up the treater's roll in the window that follows. The players choose the order.
+
+</Subsection>
+
+<MarginNote>Delaying the end of a fight buys your medic another roll and buys the Titans another card. That trade is yours to make.</MarginNote>
+
+<Subsection title="Healing time" id="healing-time">
+
+Healing is measured in **days**. A day passes at each Night Camp of an Expedition, on each of Downtime's seven days at the infirmary, and, while no Expedition and no Downtime is under way, at the start of each session, before the interim issue, or once the procedure under way has ended. Stress and Grief do not change on that interim day. **No day passes inside a Titan Engagement.**
+
+Each time a day passes, in this order:
+
+<ol>{dayStepsList().map((step) => (<li>{step}</li>))}</ol>
+
+Downtime's days run the infirmary's steps in place of these: an infirmary roll comes before that day's Death Rolls, and no care window is held on them.
+
+- **A lethal Critical Injury cannot heal while it is still lethal.** Its healing time stops at 1 day until it is <GlossaryTerm term="Stabilized">stabilized</GlossaryTerm>.
+- **An untreated Pierce from the 7 row up** keeps its healing time while untreated: it heals only after a Treat Injury roll has succeeded on it, and until then it keeps its effects and its crossed-off box. One that Death Rolls have stabilized is still untreated, so it still does not heal. A Burn's healing days are doubled by its own rider.
+- **When it heals** it stops being held. Its effects end, and if it was untreated it gives back its Health box, unless you still hold at least as many untreated Critical Injuries as Health. If its row has permanent effects they stay, and it keeps counting toward worsening at its Injury Location; any other healed Critical Injury stops counting.
+- **Careful Nursing** halves the remaining healing time, rounding up, when its holder's Treat Injury roll succeeds on a comrade's Critical Injury. Once per Critical Injury, and never on the soldier's own.
+
+</Subsection>
+
+<SectionHead id="stress-responses-and-rally" eyebrow="Section 5">Stress Responses and Rally</SectionHead>
+
+<FieldQuote cite="From a Cadet's diary">I heard the order. I could not make my hands agree to it.</FieldQuote>
+
+Your **<GlossaryTerm term="Resolve" />** is half of Instinct plus Empathy, rounded up, plus 1 for each Scar and minus 1 for each point of Grief. It counts against both of the rolls below, and it has no floor: with enough Grief it falls to 0 or below, which raises both totals. **Iron Nerve** counts your Resolve as 1 higher on your own Stress Response, and **Unshaken Command** can let a nearby comrade's Fear Roll use its holder's Resolve instead, if that is higher.
+
+<MindPaths fig="Fig. 3" />
+
+<Subsection title="The Stress Response" id="the-stress-response">
+
+A <GlossaryTerm term="Stress Response" /> happens only when a Stress Die shows 1 on an attribute roll, or after a Push of it, and a roll never causes more than one. Resolve it after the successes are counted and before the roll takes effect: roll **D6 + Stress − Resolve** and find the row. Use your Stress after any Push of the roll, and your current Resolve. There is no pool, no Push, no Help, no Stress Dice, and no Circumstances.
+
+A roll whose own rule names another resolution for its Stress Response, such as a <GlossaryTerm term="Graduation Exam" /> Trial, still has the Stress Response and still cannot be Pushed after it, but does not use this table.
+
+<CoreTable table="stress-responses" />
+
+- An **instant** result applies once, to the roll that caused it. It can take successes from the roll, make it fail, spend your next turn, or add Stress.
+- A **lasting** result you hold. Its effects apply from your next roll on and never change the roll that caused it, and you can hold several different ones.
+- **Already held.** If the row found is a lasting row you already hold, use the next row down the table instead, and again while that row is also one you hold.
+
+A lasting result ends when Rally clears it, when the Titan Engagement it was gained in ends, or, gained away from one, when the rule that called for the roll says so, or when a day passes if that rule says nothing. A result gained at the steps after a fight ends was gained outside it. A Down soldier keeps the lasting results they hold.
+
+</Subsection>
+
+<Subsection title="Rally" id="rally">
+
+**Rally** is an Empathy action that talks a comrade back.
+
+- **Target:** a comrade, player character or Squadmate, holding at least one lasting Stress Response or a pending Fear result, a forced step or a forced strike not yet made. The target may be Down. You can never Rally yourself.
+- **Needs 1 success, and each success clears one** of those results, chosen by the Rallying player. On a failure nothing happens.
+- **Rally never lowers Stress.**
+- **In a Titan Engagement** it is an action. The target must hold your Position or one step away, and Carrying Voice adds one more step. It can be Helped, and a failed Rally can be tried again on a later turn. Two soldiers who have both left count as sharing a Position, for the roll and for Help and Covering on it.
+- **Away from one,** any soldier who is not Down may Rally a comrade, with no Help and no Covering. You can Rally a given comrade once, and again only after they gain another lasting Stress Response or pending Fear result.
+- **Steady Voice** adds dice.
+
+</Subsection>
+
+<MarginNote>The whole table of Stress gains and losses, with its triggers: <a href="/guide/rules-of-play/#gaining-and-losing-stress">The Rules of Play</a>.</MarginNote>
+
+<Subsection title="Stress in the field" id="stress-in-the-field">
+
+Out here, Stress changes through these and nothing else. **Gains:** a Push, Covering, any table result or Talent that names a gain, and 1 Stress for a failed called roll whose stakes named it. In this chapter the rows that name a gain are some Critical Injury, Stress Response, Fear Roll, and Scar rows. **Losses:** the end of a Titan Engagement and a Nape kill, 1 each; the Camp Relief at a Night Camp and the end of a Skirmish, 1 each; and Recover, Visit Haven, and the Squadmate relief in Downtime, 2 each. **Minimum:** your Stress never drops below your number of Scars, and rises to a new minimum at once.
+
+</Subsection>
+
+<SectionHead id="fear" eyebrow="Section 6">Fear</SectionHead>
+
+<FieldQuote cite="A Squad Leader, after the gate">Half the squad saw it happen. That is the part I have to lead tomorrow.</FieldQuote>
+
+A **Fear Roll** comes only from a horrifying event on the closed list below. The dice never cause one.
+
+<CoreTable table="fear-triggers" />
+
+<Subsection title="The horror the GM names" id="the-gms-trigger">
+
+One row is the GM's to read, and it is read rarely.
+
+- **Weight.** The event must be at least as horrifying as a listed trigger. An event a listed trigger already covers, such as a comrade's death, uses that trigger's row and never this one as well.
+- **Never inside a Titan Engagement.** There the listed triggers alone govern, and no ruling calls a Fear Roll.
+- **Never for an outcome a called roll's stakes named,** because a stake is never a Fear Roll. A listed trigger that outcome later meets still applies.
+- **The roll is every Fear Roll's:** the same table, the same limits, the same Drive shrug-off.
+- **Advice, not a rule:** at most one such roll in a scene, and none for a horror the Squad has already rolled for that day.
+
+</Subsection>
+
+<Subsection title="Limits and the snapshot" id="fear-limits">
+
+- **One Fear Roll per soldier per event,** even if the event matches several triggers.
+- **A Down soldier makes none.**
+- **A death during the steps after a fight ends causes none.**
+- Fear Rolls are made as soon as the event has been fully resolved, and Grief from a death waits until every Fear Roll that death causes has resolved, each Drive decision included.
+- **One snapshot per event.** Everyone who rolls for one event rolls together, each total read from their Stress, Resolve, and Scars as they stood when the event was resolved, Unshaken Command reading the comrade's Resolve at that same moment. Find every row first, then each player makes their Drive decision, then every result not shrugged off applies. No result of the event, a Scar or Stress to comrades included, changes another soldier's total for it: that counts from their next roll on, and the order of the rolls changes nothing.
+
+</Subsection>
+
+<Subsection title="The roll" id="the-fear-roll">
+
+Roll **D6 + Stress − Resolve** and find the row. There is no pool, no Push, no Help, no Stress Dice, no Circumstances, and no Stress Response. Two Scars raise the total for certain triggers, and a Squadmate makes Fear Rolls like a player character.
+
+Every row is instant, and the rows escalate. A total of 0 or less costs nothing. Totals of 1 and 2 add Stress, a penalty on your next roll, or a Gas Roll, and never cost the action or the turn. Totals of 3 and 4 spend your next action. Totals of 5 and 6 spend your next turn. Totals of 7 or more spend your next turn and give a Scar, and 8 or more spend the next two. From 6 up the rows also forbid Reactions until the end of your next turn to begin, or the second turn spent on a row that spends two, so a Titan's card then lands on 1 or more of its successes and a card scoring 0 still spares you.
+
+<CoreTable table="fear-rolls" />
+
+A forced strike appears only on a row of 7 or more, a dropped Blade Set only on a row that spends the action or the turn, and Stress to comrades only on the top row. No row causes another Fear Roll, and no row helps you.
+
+</Subsection>
+
+<Subsection title="The event's Titan" id="the-events-titan">
+
+An effect that acts on a Titan acts on **the event's Titan**, which the trigger names: the Abnormal; the Titan that entered; the Focus Titan holding the Grabbed comrade; the Focus Titan whose card or Grab killed the comrade. For your first Titan Engagement, and for a death no Focus Titan's card or Grab caused, it is the nearest Focus Titan: the living one you hold the closest Position to, in the order On Body, Blind Spot, In Reach, Distant, and on a tie the one with the earliest label. For the GM's own trigger there is none, or the nearest Titan in sight if the GM names one, and every effect then does what it does away from a fight.
+
+If the event's Titan has died by the time the result applies, the nearest Focus Titan takes its place. If none is alive, those effects do nothing.
+
+</Subsection>
+
+<RuleBox title="What a Drive shrugs off" icon="ph:flame">
+
+A Fear Roll's **result** is every effect of its row: any Stress gain, to you or to comrades nearby, a spent action or turn, a ban on Reactions, the loudest mark, a forced step, a forced strike, a dropped Blade Set, a Gas Roll, and a Scar. When your Drive shrugs off the result, none of them happen, the Stress to comrades included. The Fear Roll still counts as made.
+
+</RuleBox>
+
+<SectionHead id="scars-and-grief" eyebrow="Section 7">Scars and Grief</SectionHead>
+
+<FieldQuote cite="Survey Corps manual, on veterans">The steady ones are not the ones who felt nothing. They are the ones who found where to put it.</FieldQuote>
+
+<Subsection title="Gaining a Scar" id="gaining-a-scar">
+
+A Scar comes from one of two things and nothing else: **a Fear Roll row with a Scar taking effect,** which a Drive that shrugs off the result prevents, and **a lethal Critical Injury stabilized while you live,** by a Treat Injury success or by a Death Roll that slows a daily limit. Each Critical Injury gives this Scar at most once. Then, in order:
+
+1. **Roll D66** on the Scar table. If you already hold that Scar, roll again. A Squadmate also rolls again on a row marked for it.
+2. **Record it.** No rule removes a Scar.
+3. **Your minimum Stress rises by 1,** and your Stress rises to it at once if it is below.
+4. **Your Resolve rises by 1.**
+5. **At five Scars you must retire.**
+
+You never hold more than {scarMaximum()} Scars, and a Scar gained at {scarMaximum()} does nothing.
+
+</Subsection>
+
+<Subsection title="What a Scar does" id="what-a-scar-does">
+
+Every Scar raises your minimum Stress and your Resolve by 1, so a veteran always rolls Stress Dice and resists Stress Responses and Fear Rolls better than a recruit. Each row also names a moment and what it does to you there.
+
+<CoreTable table="scars" />
+
+When one death sets off both Survivor's Guilt and your own Fear Roll for that death, the Scar's Stress comes after the roll, so it never raises the roll's total. A soldier who makes no Fear Roll for the death gains the Stress when the death happens.
+
+</Subsection>
+
+<InkVignette caption="A row of empty bunks, and one soldier still sitting on the edge of hers." label="A soldier sitting alone on a bunk in an empty barracks" art="guide-wounds-and-fear-grief" />
+
+<Subsection title="Retirement" id="retirement">
+
+A soldier with five Scars **must** retire. A soldier who has lost both arms or both legs **may** retire, at the player's choice, whatever prosthetics are fitted, since the loss stands. That choice is offered when the procedure the soldier met it in ends, or at once if none is under way, and again at the end of every Downtime while the loss stands. Declining is not final. A Squadmate may take it, the players choosing as one table with the usual roll-off. Once chosen, Retirement happens at the moment a fifth Scar gained then would give.
+
+**<GlossaryTerm term="Retirement" /> never interrupts a procedure.**
+
+- A fifth Scar gained during a Titan Engagement, or at any of the steps after it ends, retires the soldier at the last of those steps.
+- One gained while a day passes retires them after that day's last step.
+- One gained in a care window held for harm away from a fight retires them after that window and the Death Rolls that follow it, if any.
+- Any other fifth Scar retires them when the procedure it was gained in ends, as that procedure's rule states, or at once if none is under way.
+
+Until then the soldier follows every rule as normal. They then leave play and become an instructor or a Squad contact. A retiring player character is replaced by promotion or a new character, and a retiring Squadmate leaves the Squad Pool. Every Drive that named them can never trigger again. **Retirement gives no Grief and is not a Fear Roll trigger.**
+
+</Subsection>
+
+<Subsection title="Grief" id="grief">
+
+**Grief** is what a death leaves in the people who were there.
+
+- **Who gains it.** A death during a Titan Engagement, including one at the steps after it ends, gives Grief to every other living soldier in the Squad who held a Position at any point during that fight. A death during a Skirmish, including one at its end steps, gives it to every other living soldier who took part. Any other death of a soldier in the Squad gives it to every other living soldier in the Squad.
+- **How much.** The deaths of one Titan Engagement give each such soldier 1 Grief in total, however many comrades died. So do the deaths of one Skirmish, the deaths of one day passing, and the deaths from one event away from a fight together with the Death Rolls that follow its care window. A later procedure may state that all deaths during it count as one event. Any other death gives 1. On top of that, a soldier whose Drive named a dead soldier gains 1 more for that soldier, and a soldier with the Numb Scar gains 1 more for each death. Both additions go only to a soldier who gains Grief from that death at all.
+- **When.** For a death during a Titan Engagement or a Skirmish, or at its end steps, at the Grief step when the fight ends, so Grief never changes Resolve during the fight the comrade died in. For any other death, immediately after every Fear Roll that death causes has resolved, each Drive decision and result included, or immediately if it causes none. Either way, a death's Grief never applies before that death's own Fear Rolls.
+- **Limit.** You hold at most {griefMaximum()} Grief. Anything beyond that is lost.
+- **Effect.** Each point lowers your Resolve by 1, with no floor. Grief does nothing else.
+- **Losing it.** No rule in the field lowers Grief. In Downtime, Visit Haven lowers a soldier's by 2, Honoring the Fallen lowers every soldier's by 1, and the Squadmate relief lowers each Squadmate's by 1.
+
+Retirement, promotion, and a Squadmate leaving the Squad Pool give no Grief. Squadmates gain Grief like player characters.
+
+</Subsection>
+
+<SectionHead id="after-the-fight" eyebrow="Section 8">After the Fight</SectionHead>
+
+<FieldQuote cite="A Squad Leader, on the order of things">Nobody is dead until we have counted. Nobody goes home until we have counted twice.</FieldQuote>
+
+<CoreTable table="engagement-end" />
+
+<Subsection title="Soldiers who left, and soldiers still Pinned" id="left-and-pinned">
+
+A living soldier who left a Titan Engagement while it went on holds no Position in it, but until it ends they are still in it for every rule in this chapter.
+
+- They still take a turn each round, and each of those turns counts for every rule that counts turns, so a turn limit keeps running out and a result can spend the turn.
+- For Treat Injury and Rally, for Help and Covering on those rolls, and for aftermath rolls, **two soldiers who have both left count as holding the same Position.** One who has left never counts as sharing a Position with, or standing one step from, a soldier who still holds one.
+- Every step above applies to them when the fight ends.
+
+**A fight does not end by its no-Focus-Titan test while a soldier lies Pinned:** the rounds go on until the last Pinned soldier is freed or dies. Its end frees no one, and every soldier still Pinned when it ends by the no-soldier-standing test dies under the body, counted for Grief.
+
+</Subsection>
+
+<RuleBox title="Squadmates" icon="ph:users-three">
+
+A <GlossaryTerm term="Squadmate" /> uses every rule in this chapter, with three differences: it has no Drive, so it never shrugs off a Fear Roll result; it never Pushes, so extra Stress on a Push does nothing for it and it does not Push a forced strike that falls short; and it rolls again on a Scar whose trigger is a Push or a Cover.
+
+</RuleBox>
+
+<FieldReport id="example-bad-round" title="A bad round, and the hour after it">
+
+Private Oskar Wendt has Strength 3 and Agility 3, so Health 3: a row of three boxes. Instinct 3 and Empathy 3 give him Resolve 3. His Wits is 2, he carries a medical kit rated 1, and his Stress is 1.
+
+**A Titan attack.** Before his card comes up, a Titan's card resolves an attack against him for 2 successes. He dodges and scores 1, cancelling one, so 1 Net Success remains: it lands, with no rider. The Injury Location is rolled and D6 shows 5, the torso, which has no side. He holds no torso Critical Injury, so there is no worsening.
+
+<TryRollButton pool={{ base: 2 }} pushable={false} label="Try the 2D6 wound roll" />
+
+2D6 shows 11: a Punctured Lung, the Crush name, lethal when the fight ends, not a Down row, 1 die off Fly and the dodge. The Titan attack adds nothing to his Health lost, but the untreated wound crosses off a box: current Health 2.
+
+**A second attack.** A later card that round lands on him at a fixed head location, again with 1 Net Success. 2D6 shows 8: a Head Blow, Down until treated. It crosses off a second box, leaving current Health 1, and its row puts him Down. He can make no Reaction and no Fear Roll.
+
+**Treatment.** Private Mila Brandt holds his Position with an unspent action and treats the Head Blow. It becomes treated, its box comes back, current Health 2, and with no untreated Down row holding him, Down ends. Ending Down restores nothing: this round's turn, which his dodge spent, stays spent.
+
+**The end of the fight.** A comrade's Nape strike kills the Titan. Everyone holding a Position takes the Nape-kill relief and the end-of-fight relief, and both Oskar's Stress and Mila's fall to their minimum of 0. The Punctured Lung is still untreated and still lethal, so Oskar gets one aftermath roll before its Death Roll. Mila still holds his Position, so the players choose her. Wits 2 and the kit give 3 dice at Stress 0, with no 6, and she does not Push. That failure uses up his one attempt.
+
+**The Death Roll.** The limit runs out. Oskar rolls Strength 3 with no penalty and turns up one 6: he lives. The roll was made outside the fight, so the limit becomes a daily one.
+
+<TryRollButton pool={{ base: 3 }} pushable={false} label="Try Oskar's Death Roll" />
+
+**The care window.** The aftermath roll used up nobody's roll in the window, and all three held a Position in the fight, so all three are in its scope. Mila uses treat on the lung and fails. Private Hale, with no kit, rolls Wits 2 at Stress 0 and finds no 6. Oskar then treats himself with 1 base die, after the 2-die self-treatment penalty, and his kit's Gear Die: no 6 either. When the next day passes there will be another care window before his next Death Roll, and if someone stabilizes the lung then, its box comes back and Oskar gains a Scar for surviving it.
+
+</FieldReport>

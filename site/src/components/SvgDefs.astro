@@ -1,0 +1,25 @@
+---
+/**
+ * Shared SVG symbols: paper clips and placeholder game icons.
+ *
+ * The brand emblem is no longer drawn here. It is generated art, committed as
+ * `src/assets/icons/brand-emblem.webp` and served through astro:assets.
+ */
+---
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="clip" viewBox="0 0 14 32"><path d="M4.5 27V7a3 3 0 0 1 6 0v17a5 5 0 0 1-10 0V9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" /></symbol>
+    <symbol id="talent-dice" viewBox="0 0 40 40">
+      <path d="M20 2.5 35.5 7.5v11.5c0 10.2-6.8 16.4-15.5 19-8.7-2.6-15.5-8.8-15.5-19V7.5z" fill="#ECE5D1" stroke="#29241D" stroke-width="1.6" />
+      <path d="M13 28.5 25.5 11l2 3L15.5 31z M27 28.5 14.5 11l-2 3 12 17z" fill="#5C5343" stroke="#29241D" stroke-width=".8" />
+      <path d="M11 26.5l3.5 3.5M29 26.5 25.5 30" stroke="#8B2A21" stroke-width="2.6" />
+    </symbol>
+    <symbol id="talent-rule" viewBox="0 0 40 40">
+      <path d="M20 2.5 35.5 7.5v11.5c0 10.2-6.8 16.4-15.5 19-8.7-2.6-15.5-8.8-15.5-19V7.5z" fill="#ECE5D1" stroke="#29241D" stroke-width="1.6" />
+      <path d="M12.5 13h15M12.5 18.5h15M12.5 24h9" stroke="#29241D" stroke-width="1.8" />
+      <circle cx="26.5" cy="26" r="3.6" fill="#8B2A21" />
+    </symbol>
+    <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="4" stroke="#29241D" stroke-width="1.1" /></pattern>
+    <pattern id="hlines" width="3" height="3" patternUnits="userSpaceOnUse"><line x1="0" y1=".5" x2="3" y2=".5" stroke="#0B120E" stroke-width=".7" stroke-opacity=".55" /></pattern>
+  </defs>
+</svg>

@@ -1,0 +1,92 @@
+---
+import '@fontsource/big-shoulders-stencil/500.css';
+import '@fontsource/big-shoulders-stencil/700.css';
+import '@fontsource/big-shoulders-stencil/800.css';
+import '@fontsource/big-shoulders-stencil/900.css';
+import '@fontsource/spectral/400.css';
+import '@fontsource/spectral/400-italic.css';
+import '@fontsource/spectral/500.css';
+import '@fontsource/spectral/500-italic.css';
+import '@fontsource/spectral/600.css';
+import '@fontsource/spectral/700.css';
+import '@fontsource/courier-prime/400.css';
+import '@fontsource/courier-prime/700.css';
+import '~/styles/tokens.css';
+import '~/styles/base.css';
+
+import SvgDefs from '~/components/SvgDefs.astro';
+import SiteHeader from '~/components/SiteHeader.astro';
+import IndexTabs from '~/components/IndexTabs.astro';
+import SiteFooter from '~/components/SiteFooter.astro';
+import SearchDialog from '~/components/SearchDialog.astro';
+import DiceTrayDialog from '~/components/DiceTrayDialog.astro';
+import type { IndexTab, SectionKey } from '~/lib/nav';
+
+interface Props {
+  title: string;
+  description: string;
+  /** The masthead entry to mark as current. "none" belongs to a page that sits in no section, such as 404. */
+  section: SectionKey | 'none';
+  tabs?: IndexTab[];
+  tabsLabel?: string;
+  /** Pages without this are left out of search. The GM's Guide is never indexed. */
+  indexed?: boolean;
+  bodyClass?: string;
+}
+const { title, description, section, tabs = [], tabsLabel = 'Sections', indexed = true, bodyClass } = Astro.props;
+const fullTitle = section === 'home' ? title : `${title} · Wings of Freedom`;
+
+/**
+ * Link previews want an absolute image URL. Vercel sets the production host at build time
+ * (ADR-0021); a local build has no host, so the path stays site-relative there.
+ */
+const host = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const ogImage = host ? `https://${host}/og.jpg` : '/og.jpg';
+const ogImageAlt =
+  'The Wings of Freedom emblem stamped on the aged paper cover of a Survey Corps field manual, beside the title.';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#16211B" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {/* The manual stays unlisted (noindex above), but a pasted link should still show its cover. */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Wings of Freedom" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    <title>{fullTitle}</title>
+  </head>
+  <body class={bodyClass}>
+    <a class="skip" href="#main">Skip to content</a>
+    <SvgDefs />
+    <SiteHeader current={section === 'none' ? undefined : section} />
+    <div class:list={['manual', tabs.length > 0 && 'manual--tabs']}>
+      {tabs.length > 0 && <IndexTabs tabs={tabs} label={tabsLabel} />}
+      <main class="sheets" id="main" data-pagefind-body={indexed ? '' : undefined}>
+        <slot />
+      </main>
+    </div>
+    <SiteFooter />
+    <SearchDialog />
+    <DiceTrayDialog />
+  </body>
+</html>

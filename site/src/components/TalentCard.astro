@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import IconSlot from './IconSlot.astro';
+import GlossText from './GlossText.astro';
+import { glossifier } from '~/lib/glossify';
+
+interface Props {
+  talent: CollectionEntry<'talents'>;
+}
+const { talent } = Astro.props;
+const t = talent.data;
+const levels = t.maxLevel > 1 ? `Levels 1 to ${t.maxLevel}` : 'One level';
+const kindLabel = t.kind === 'dice' ? 'Dice Talent' : 'Rule Talent';
+const search = [t.name, t.description, t.effect, t.trigger ?? '', ...t.actions.map((a) => a.name), ...t.specialties.map((s) => s.name), ...t.attributes.map((a) => a.name)]
+  .join(' ')
+  .toLowerCase();
+const joiner = (i: number, n: number) => (i === 0 ? '' : i === n - 1 ? ' and ' : ', ');
+
+const gloss = glossifier(['Talent']);
+const trigger = gloss(t.trigger);
+const effect = gloss(t.effect);
+---
+<article
+  class="card"
+  aria-labelledby={talent.id}
+  data-cmp-item
+  data-search={search}
+  data-f-type={t.kind}
+  data-f-specialty={t.specialties.map((s) => s.slug).join(' ')}
+  data-f-attribute={t.attributes.map((a) => a.slug).join(' ')}
+>
+  <div class="card-top">
+    <IconSlot name={`talent-${t.kind}`} />
+    <div class="tags">
+      <span class="lbl">{t.specialties.map((s, i) => <Fragment>{joiner(i, t.specialties.length)}<a href={`/compendium/specialties/#${s.slug}`}>{s.name}</a></Fragment>)} Talent</span>
+      <span class="lbl">{kindLabel}</span>
+      <span class="lbl">{levels}</span>
+    </div>
+  </div>
+  <h2 id={talent.id}>{t.name}</h2>
+  <q>{t.description}</q>
+  {t.trigger ? (
+    <dl class="rule-text">
+      <div><dt class="lbl">Trigger</dt><dd><GlossText parts={trigger} /></dd></div>
+      <div><dt class="lbl">Effect</dt><dd><GlossText parts={effect} /></dd></div>
+    </dl>
+  ) : (
+    <p class="effect"><GlossText parts={effect} /></p>
+  )}
+  <div class="card-foot">
+    <p class="lbl">{t.kind === 'dice' ? 'Adds to' : 'Applies to'}: {t.actions.map((a, i) => <Fragment>{i > 0 && ', '}<a href={`/compendium/actions/#${a.slug}`}>{a.name}</a></Fragment>)}</p>
+    {t.kind === 'rule' && <p class="lbl limit">{t.limit ?? 'No limit'}</p>}
+  </div>
+</article>

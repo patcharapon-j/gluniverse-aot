@@ -1,0 +1,10 @@
+---
+/** The red band across the top of every Commander's copy page (ADR-0023). */
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  note?: string;
+}
+const { note = "GM's Guide" } = Astro.props;
+---
+<div class="restricted"><span class="restricted-title"><Icon name="ph:lock-simple" aria-hidden="true" />Restricted: Commanding Officers</span><small>{note}</small></div>

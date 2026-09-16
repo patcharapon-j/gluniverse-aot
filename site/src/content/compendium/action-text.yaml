@@ -1,0 +1,564 @@
+# Player wording for the Action Catalog entries, keyed by the entry's id in
+# data/character/action-catalog.yaml. The Catalog's requirement and effect text points at other tables
+# and sections, so every entry needs wording here: `does` and `pages` at least. An entry with no
+# wording, or wording that still carries a reference, fails the build (site/src/lib/shared-data.ts).
+#
+#   requires   what the soldier must meet, one sentence per item
+#   needs      the successes the roll needs
+#   does       what it does, one paragraph per item
+#   help       who can Help it where the usual Help rules do not decide
+#   gear_note  a sentence added after the gear line
+#   pages      the Player's Guide chapters holding the full rules ("rules-of-play#help" for an anchor)
+#
+# Kind, attribute, gear, and the Talents that name an entry come from the Catalog itself.
+# Never change a rule's meaning. When a source below changes, check the wording against it and record
+# the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
+sources:
+  - path: data/character/action-catalog.yaml
+    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+  - path: data/engagement/attention.yaml
+    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
+  - path: data/engagement/read.yaml
+    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
+  - path: data/engagement/round.yaml
+    sha: "e03cf49bfa0f41b2b3b50c3fa5f107d490f6d1e0"
+  - path: data/engagement/squad-tactics.yaml
+    sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
+  - path: data/engagement/titan-harm.yaml
+    sha: "1ceaf068ccaa41d90e42df94483dba0334200786"
+  - path: data/engagement/grab.yaml
+    sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
+  - path: data/gear/carrying.yaml
+    sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
+  - path: data/gear/horses.yaml
+    sha: "879202de4b48ec13bf78e1e56a8bc461fdf6d72d"
+  - path: data/gear/odm-gear.yaml
+    sha: "79daa17608d56b70fc4d1835336f10cb552d7246"
+  - path: data/gear/blade-sets.yaml
+    sha: "e62aaab8e850513bbce923e7a8b7a66a9d1f5e2e"
+  - path: data/gear/squad-supply.yaml
+    sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
+  - path: data/gear/field-repair.yaml
+    sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
+  - path: data/harm/treat-injury.yaml
+    sha: "28603f6905aaa187b8239f2df6b3c4756bef8dda"
+  - path: data/campaign/downtime.yaml
+    sha: "d5e2091e7d41e0f0eefdad38f71f584c856dfce3"
+  - path: data/core/dice-pool.yaml
+    sha: "6469a403a81cf26738be5251ec88670160059d3f"
+
+actions:
+  # ---------------------------------------------------------------- Titan Engagement actions
+  nape-strike:
+    requires:
+      - Taken only in a Titan Engagement.
+      - You hold Blind Spot relative to the Titan and do not hold its Attention.
+      - You are not Grabbed.
+      - Your ODM Gear counts as had, not Jammed and with a Gas Rating above 0, unless the Titan is grounded.
+      - No retreat is under way.
+    needs: The struck Titan's Nape Depth, in this one roll.
+    does:
+      - If the successes reach the Nape Depth, the Titan dies. If they fall short, each success creates 1 Opening, which your comrades can spend and you never can.
+      - Openings, a grounded Titan, and Help can add Bonus Dice, up to the cap of 4. Making the strike counts as hooking into the Titan. Its successes never count toward a later Nape strike, except as Openings.
+    pages: [fighting-titans, gear-and-odm]
+
+  body-part-strike:
+    requires:
+      - Taken only in a Titan Engagement.
+      - You hold a Position the struck Body Part can be struck from. Against a grounded Titan, every Body Part can be struck from In Reach, On Body, or Blind Spot.
+      - An arm that holds a Grabbed soldier can be struck only from In Reach, On Body, or Blind Spot before that soldier is lifted, and only from On Body or Blind Spot after, grounded or not, unless Clear the Hand widens it.
+      - The Body Part is not Broken, and you are not Grabbed.
+      - From On Body or Blind Spot, your ODM Gear counts as had, unless the Titan is grounded.
+    needs: "1"
+    does:
+      - Each success adds 1 to the Body Part's count. When the count reaches its Toughness, the Body Part moves one state toward Broken and its count returns to 0. Once it is Broken, each remaining success creates 1 Opening.
+      - Striking the arm that holds a Grabbed soldier frees them when it becomes Broken. So does cutting the Body Part that pins a soldier.
+    pages: [fighting-titans, gear-and-odm]
+
+  break-attention:
+    requires:
+      - Taken only in a Titan Engagement.
+      - You hold a Position relative to the Titan and are not Grabbed.
+      - No decoy already holds the Titan's Attention.
+      - You meet one decoy's requirement, and name that decoy before rolling.
+    needs: >-
+      1 if you hold the Titan's Attention, otherwise 2. Against a Titan that holds a Grabbed soldier, 2 whoever
+      rolls. Add 1 for a Feint, and 1 for each decoy that has held the Titan's Attention since its last card that
+      resolved a behavior.
+    does:
+      - On a success the decoy holds the Titan's Attention at once, for its next cards, as many as its Tempo. Those cards resolve no behavior.
+      - Each success beyond what the roll needs creates 1 Opening. Against a Titan that holds a Grabbed soldier, a success frees them.
+      - On a failure nothing happens, and anything the decoy spent when you declared it stays spent.
+    gear_note: A Feint names its own gear, which can be none. A roll made with ODM Gear counts as using your ODM Gear this round.
+    pages: [fighting-titans]
+
+  draw-attention:
+    requires:
+      - Taken only in a Titan Engagement.
+      - You hold a Position other than Distant relative to the Titan, and are not Grabbed.
+    does:
+      - You become the loudest, brightest thing on that Titan's Attention Ladder until the end of its next card that resolves a behavior.
+      - Its Attention moves only when it next checks its Attention Ladder. A card that resolves nothing, including the last card of a decoy's hold, leaves you the loudest.
+    pages: [fighting-titans]
+
+  read:
+    requires:
+      - Taken only in a Titan Engagement.
+      - You hold a Position relative to the Titan and are not Grabbed.
+    needs: "1"
+    does:
+      - For each success, pick one fact about the Titan, each fact once per Read. Any Titan shows its Next Behavior. An Abnormal can also show one Body Part's Toughness, its Nape Depth, its Regeneration clock, or its Attention Ladder, which stay known for the rest of the Titan Engagement.
+      - The GM reveals every picked fact to every soldier at once. A success that picks no fact is lost, unless Call It spends it. From Distant, the Read gains Bonus Dice.
+    pages: [fighting-titans]
+
+  call-it:
+    requires:
+      - The same Read revealed the Titan's Next Behavior. You declare Call It when the Read's facts are picked.
+    needs: 2 of the Read's successes, the one that revealed the Next Behavior and one more.
+    does:
+      - Every target other than you who dodges the card that resolves that behavior gains Bonus Dice on the dodge, even when the card resolves it as its fallback or as Thrash. You gain none from your own Call It.
+      - A target who already cancelled with a dodge made earlier this round against that Titan gains nothing. A Next Behavior can be Called once.
+    pages: [fighting-titans]
+
+  break-free:
+    requires:
+      - In a Titan Engagement, you are Grabbed and not Down, or you hold Pry Loose and act for a Grabbed comrade.
+      - In a Skirmish, you are Held and not Down.
+      - Taken nowhere else.
+    needs: 2. Once a Titan has lifted you, the roll takes a 2-die penalty.
+    does:
+      - On a success you are freed.
+    help: >-
+      In a Titan Engagement, Help as usual, with Positions compared relative to the Titan holding you. In a
+      Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether
+      Engaged or Apart.
+    pages: [fighting-titans, skirmishes]
+
+  swap-initiative-card:
+    requires:
+      - Only in the swap step of a round in a Titan Engagement, before the round's first card comes up.
+      - Two soldiers who each hold a card this round and are neither Down nor Grabbed, at the same Position or one Position step apart, or who have both left the Titan Engagement.
+      - Both soldiers agree.
+    does:
+      - The two soldiers exchange their cards. Each soldier takes part in at most one swap each round, and a Titan's card is never swapped.
+      - It is not an action and spends neither your move nor your action.
+    pages: [fighting-titans]
+
+  squad-tactic:
+    requires:
+      - Your Squad holds the Squad Tactic, and its condition is met.
+    does:
+      - Each Squad Tactic the Squad holds can be used once per Titan Engagement. The player the tactic names declares it at the moment it names, and the use is spent as soon as it is declared.
+    pages: [fighting-titans]
+
+  lift-comrade:
+    requires:
+      - The comrade is Down, or is not Down, agrees, and cannot move because of injuries to both legs.
+      - In a Titan Engagement, the comrade holds your Position and is not Pinned. Outside one, the comrade takes part in the same procedure as you.
+      - The comrade is not Grabbed and not already carried.
+      - You are not Down, carry no other comrade, and are not carried.
+    does:
+      - You carry the comrade. No roll. In a Titan Engagement it spends your action; outside one it spends nothing.
+    pages: [gear-and-odm, fighting-titans]
+
+  heave:
+    requires:
+      - Taken only in a Titan Engagement.
+      - You hold In Reach or On Body relative to a body that pins at least one soldier.
+      - You are not Down, Grabbed, carried, or Pinned by the whole body. A soldier Pinned by one of the Titan's arms or legs may Heave the body that pins them.
+    needs: "1"
+    does:
+      - Each success adds 1 to the body's heave count. When the count reaches the body's Heave rating, every soldier it pins is freed. The count carries over between Heaves by different soldiers.
+      - Heaving a corpse costs you 1 Burn damage after the roll, whatever its result.
+    help: Comrades who hold your Position may Help, each spending their action.
+    pages: [fighting-titans]
+
+  change-canister:
+    requires:
+      - You carry a spare gas canister.
+    does:
+      - Fit one spare canister. Its Gas Rating becomes yours. The canister it replaces becomes a spare if it still has gas, and is discarded if it is at 0.
+      - No roll. In a Titan Engagement it spends your action; outside one it spends nothing. You can change a canister while airborne.
+    pages: [gear-and-odm]
+
+  pass-item:
+    requires:
+      - You are not Down.
+      - The receiver is a living comrade at your Position, and may be Down or Grabbed. Outside a Titan Engagement, the receiver takes part in the same procedure as you.
+    does:
+      - Give one item. You can pass a spare gas canister, your fitted canister if it has gas, a Blade Set not in the handles, a medical kit, a tool kit, or a flintlock pistol or musket. Never ODM Gear, the Blade Set in the handles, a horse, a carried comrade, or Squad Supply.
+      - No roll, so it is never Helped or Covered. In a Titan Engagement it spends your action; outside one it spends nothing.
+    pages: [gear-and-odm]
+
+  take-item:
+    requires:
+      - You are not Down.
+      - A Down comrade who is not Grabbed holds your Position, or, in a Titan Engagement only, a dead comrade's left items lie at your Position.
+      - Outside a Titan Engagement, the Down comrade takes part in the same procedure as you.
+    does:
+      - Take one item the Down comrade could pass, or one of the left items. Left items are never taken outside a Titan Engagement; they are shared out instead.
+      - No roll. In a Titan Engagement it spends your action; outside one it spends nothing.
+    pages: [gear-and-odm]
+
+  mount-or-dismount:
+    requires:
+      - To mount, you have your own horse, it is not lame, and in a Titan Engagement it holds your Position.
+      - To mount, you are not airborne, Down, or carried, and in a Titan Engagement not Grabbed.
+      - A soldier who has lost both arms mounts and dismounts only with a comrade's help.
+      - To dismount, you are mounted.
+    does:
+      - In a Titan Engagement it is part of a move, never an action. A move can include one mount or one dismount, and a horse you dismount stays at your Position.
+      - Outside a Titan Engagement you mount or dismount when the procedure under way says so.
+    pages: [gear-and-odm]
+
+  swap-blade-set:
+    requires:
+      - Your handles are empty, you carry a Blade Set, and you are not Down.
+    does:
+      - Fit a carried Blade Set into your handles. In a Titan Engagement, once during each of your own turns, spending neither your move nor your action. Outside one, at any time.
+    pages: [gear-and-odm]
+
+  shed-load:
+    requires:
+      - You are not Down.
+    does:
+      - Drop a carried item, which leaves play, set down a comrade you carry, who then holds your Position, or stop being carried.
+      - In a Titan Engagement, at any point in your own turn, as often as you like, spending neither your move nor your action. No one is set down, or stops being carried, while the carrier is airborne. Outside a Titan Engagement, at any time.
+    pages: [gear-and-odm]
+
+  restock-medical-kit:
+    requires:
+      - Only in a care window. You are a living soldier taking part in it and not Down.
+    does:
+      - Spend 1 medical unit of Squad Supply to raise one medical kit's current rating to its rating. No roll.
+      - Each medical kit can be restocked once per window, and it uses up no one's Treat Injury or Field Repair roll there.
+    pages: [gear-and-odm, wounds-and-fear]
+
+  # ---------------------------------------------------------------- Core
+  help:
+    does:
+      - Add 1 die to a comrade's roll. Up to 3 comrades can Help one roll, and each die counts toward the Bonus Dice cap of 4.
+      - In a Titan Engagement it spends your action, and you must be at the roller's Position or one step away. Outside a Titan Engagement, you can Help only where the rule that calls for the roll allows it.
+      - On a roll the GM calls for, you can Help if you are present and able to help with the act, as the GM rules. It spends nothing unless the GM names a cost of time or position for it before the dice, which falls when you declare the Help, whatever the roll gives. In a Skirmish that Help is the Skirmish's, spending your action.
+    pages: [rules-of-play#help]
+
+  cover:
+    requires:
+      - A comrade has declared a Push, and no die has been rolled again yet.
+      - You are a player character. In a Titan Engagement you are at the Pushing soldier's Position or one step away. Outside one, you qualify to Help that roll.
+    does:
+      - You take on the Stress of the Push. You gain 1 Stress, and the Pushing soldier gains no Stress and adds no new Stress Die. Covering is not an action.
+    pages: [rules-of-play#covering]
+
+  # ---------------------------------------------------------------- Reactions
+  dodge:
+    requires:
+      - In a Titan Engagement, against a Titan's behavior.
+      - In a Skirmish, against a Foe's Fight attack or shot, and never while Held.
+    needs: None of its own.
+    does:
+      - Each success cancels one of the attack's successes, and the attack lands on 1 or more Net Successes. A Reaction spends one whole turn of yours.
+      - When a dodge made with the horse is Pushed, its Gear Dice showing 1 wear the horse, not ODM Gear, and it does not by itself make your Gas Roll three dice.
+    gear_note: The horse only while you are mounted.
+    help: In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether Engaged or Apart.
+    pages: [rules-of-play, fighting-titans, skirmishes]
+
+  block:
+    requires:
+      - Only against a Foe's Fight attack in a Skirmish. No Titan can be blocked, so a Block is never made in a Titan Engagement.
+    needs: None of its own.
+    does:
+      - Each success cancels one of the Fight attack's successes, and the attack lands on 1 or more Net Successes.
+    help: In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether Engaged or Apart.
+    pages: [rules-of-play, skirmishes]
+
+  # ---------------------------------------------------------------- Skirmish
+  fight:
+    requires:
+      - In a Skirmish, against one Foe you are Engaged with. Never against a Titan.
+      - Use the Blade Set in your handles, or fight bare-handed or with an object that is not a gear item, which gives no Gear Dice. A Grapple is a Fight made with no Gear Dice.
+      - While Held, you Fight only your holder, bare-handed. While you hold a Foe, you Fight only that Foe, bare-handed.
+    needs: 1 Net Success after the Foe's Guard cancels.
+    does:
+      - A Fight that lands deals its weapon's damage, plus 1 for each Net Success beyond the first, with the weapon's Injury Type.
+      - A Grapple that lands deals no damage and makes the Foe Held.
+    help: In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether Engaged or Apart.
+    pages: [skirmishes]
+
+  shoot:
+    requires:
+      - In a Skirmish, against one Foe, Engaged or Apart. Never in a Titan Engagement.
+      - You hold a loaded firearm, or fire a flare at a person, which needs 1 flare in Squad Supply and no firearm.
+      - Never a musket against a Foe you are Engaged with. Not while you are Held or hold a Foe.
+    needs: 1 Net Success after the Foe's Guard cancels.
+    does:
+      - A firearm gives its Gear Dice. A Pushed Gear Die showing 1 wears it, and at current rating 0 it cannot be fired until Field Repair or Maintain Gear restores it. The roll empties the firearm.
+      - A fired flare spends 1 flare and no shot, and takes no Gear Dice.
+    help: In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether Engaged or Apart.
+    pages: [skirmishes, gear-and-odm]
+
+  reload:
+    requires:
+      - You have an empty flintlock pistol or musket, and Squad Supply holds at least 1 shot.
+      - In a Skirmish, the limits on a soldier who holds a Foe apply.
+    does:
+      - Load one firearm and spend 1 shot. In a Skirmish it also spends your action, and for a musket your move.
+      - Outside a Skirmish it spends nothing else, can be made at any time, and the firearm stays loaded until it is fired. It is never made in a Titan Engagement.
+    pages: [skirmishes, gear-and-odm]
+
+  release:
+    requires:
+      - You hold a Foe with a Grapple, in a Skirmish.
+    does:
+      - Let go of the Foe, with no roll, spending neither your move nor your action. A Foe never releases.
+    pages: [skirmishes]
+
+  # ---------------------------------------------------------------- Harm, gear, and mind
+  treat-injury:
+    requires:
+      - Wounds & Fear sets which comrades you can treat, and from which Position.
+    needs: Set by Wounds & Fear.
+    does:
+      - Revive a Down soldier at 0 Health, restoring 1 Health lost per success. Or treat one untreated Critical Injury you name.
+      - A treated Critical Injury gives back the Health box it crossed off, unless the patient still holds at least as many untreated Critical Injuries as Health. A lethal one is stabilized.
+    help: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action,
+      whether Engaged or Apart. Otherwise the Wounds & Fear procedure that calls for the roll says who can Help.
+    pages: [wounds-and-fear]
+
+  rally:
+    requires:
+      - Wounds & Fear sets which comrades you can Rally, and from which Position.
+    needs: Set by Wounds & Fear.
+    does:
+      - Ends a comrade's Stress Response, or a Fear Roll result they have not yet carried out, such as a forced step or strike. It never lowers Stress.
+    help: >-
+      In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action,
+      whether Engaged or Apart. Otherwise the Wounds & Fear procedure that calls for the roll says who can Help.
+    pages: [wounds-and-fear]
+
+  field-repair:
+    requires:
+      - Name the item before rolling. ODM Gear, a tool kit, a flintlock pistol, or a musket, never a Blade Set, a horse, a medical kit, or the tool kit giving this roll its Gear Dice.
+      - In a Titan Engagement, the item is your own or belongs to a comrade at your Position.
+      - Outside a Titan Engagement, only in a care window held when a Titan Engagement ends, when a day passes on an Expedition, or on the interim day, for an item of any soldier taking part in it. Never at another time.
+    needs: "1"
+    does:
+      - The item's current rating rises by 1 for each success, to at most its rating. ODM Gear that rises above 0 is no longer Jammed.
+      - In a Titan Engagement it spends your action, and a failed roll can be tried again on a later turn. In a care window, each soldier taking part who is not Down gets one Field Repair roll, separate from their Treat Injury roll, and a failed roll waits for a later window.
+    help: >-
+      In a care window, a soldier taking part who is not Down, and who has not yet made or Helped a Field Repair
+      roll in it, may Help, which spends their roll for the window. At most 3 soldiers Help one roll.
+    pages: [gear-and-odm]
+
+  fly:
+    requires:
+      - Called by a rule, such as a Position change that needs a roll. Not an action.
+      - Outside a Titan Engagement, also made when the GM calls a roll for an act this entry fits, such as reaching a rooftop.
+    needs: In a Titan Engagement, set by the rule that calls for the roll. Outside one, 1.
+    does:
+      - Rolled when a rule calls for it. That rule says what the roll needs and what it does.
+      - "On a called roll it gives what the GM staked before the dice. In a Skirmish it is the one Fly roll there is: it takes its Gear Dice, makes no Gas Roll, never makes you airborne, and leaves you neither Engaged nor Apart."
+    help: >-
+      The rule that calls for the roll says who can Help. On a called roll, up to three comrades who are present
+      and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or position
+      when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
+    pages: [gear-and-odm, fighting-titans]
+
+  leap-clear:
+    requires:
+      - Called by a falling Titan for each soldier in its path who is not airborne, not Down, and not carried. Made only in a Titan Engagement.
+    needs: "1"
+    does:
+      - A success clears you to In Reach. A failure pins you.
+      - It is not an action and not a Reaction, and it spends nothing.
+    gear_note: The horse only while you are mounted.
+    pages: [fighting-titans]
+
+  ride:
+    requires:
+      - Called by the Leg roll on a Hard Ride, whatever your Formation Post.
+      - The horse counts as not had while you are not mounted on it.
+      - Also made when the GM calls a roll for an act this entry fits, such as riding down a street a Titan is crossing.
+    needs: 1 on a Leg roll, and 1 on a called roll.
+    does:
+      - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted.
+      - On a called roll it gives what the GM staked before the dice, and it takes this entry's Gear Dice.
+    help: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
+      most once per Leg. On a called roll, up to three comrades who are present and able to help may Help, as the
+      GM rules, spending nothing unless the GM names a cost of time or position when the Help is declared. In a
+      Skirmish that Help is the Skirmish's, each helper spending their action.
+    pages: [expeditions-and-downtime]
+
+  death-roll:
+    requires:
+      - Called by Wounds & Fear.
+    needs: "1"
+    does:
+      - Takes no Stress Dice, so it never causes a Stress Response. It cannot be Helped or Pushed, and takes no step of Circumstances. Talent dice still count.
+    pages: [wounds-and-fear, rules-of-play]
+
+  fear-roll:
+    requires:
+      - Called only by the Fear Roll triggers in Wounds & Fear, such as a comrade becoming Grabbed or dying.
+    does:
+      - Not an attribute roll. No Talent adds dice to it, and it takes no step of Circumstances; only Rule Talents change it.
+    pages: [wounds-and-fear]
+
+  stress-response-roll:
+    requires:
+      - Called when a Stress Die shows 1.
+    does:
+      - Not an attribute roll. No Talent adds dice to it, and it takes no step of Circumstances; only Rule Talents change it. Its table is in Wounds & Fear.
+    pages: [wounds-and-fear, rules-of-play]
+
+  gas-roll:
+    requires:
+      - Called at the end of each round for every soldier who used ODM Gear in it, once however many times they used it.
+    does:
+      - Roll 2 dice, or 3 if you made a Pushed roll with ODM Gear this round. Each die showing 1 lowers your Gas Rating by 1, to a minimum of 0. The dice are not added, and a 6 does nothing.
+      - Not an attribute roll. It cannot be Pushed, Helped, or Covered, takes no step of Circumstances, and never causes a Stress Response.
+    pages: [gear-and-odm]
+
+  # ---------------------------------------------------------------- Expeditions, Downtime, and Skirmishes
+  spot:
+    requires:
+      - Called by the Leg roll at the Vanguard, Signal Relay, and Rear Guard Formation Posts on a Steady Leg.
+      - Also made when the GM calls a roll for an act this entry fits, such as searching a ruined house or watching a road.
+    needs: 1 on a Leg roll, and 1 on a called roll.
+    does:
+      - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted.
+      - On a called roll it gives what the GM staked before the dice.
+      - A passive roll is a Spot the GM makes out of sight, for something you do not know is there, outside a Titan Engagement and a Skirmish. It is not a called roll, and failing it means only that you do not notice. Say that you are looking and the GM calls a roll in the open instead.
+    help: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
+      most once per Leg. On a called roll, up to three comrades who are present and able to help may Help, as the
+      GM rules, spending nothing unless the GM names a cost of time or position when the Help is declared. In a
+      Skirmish that Help is the Skirmish's, each helper spending their action.
+    pages: [expeditions-and-downtime]
+
+  size-up:
+    requires:
+      - Called once per Downtime, before any Requisition roll, to lower the Ledger.
+      - In a Skirmish, called once per Foe group, on your action, to learn about that group.
+      - Also made when the GM calls a roll for an act this entry fits, such as reading a stranger at a gate.
+    needs: 1, and 1 on a called roll.
+    does:
+      - Judging what a person intends. Watching a Titan is a Read, not Size Up.
+      - In Downtime it lowers the Ledger for the Squad. In a Skirmish it reveals the Foe group's Grit, how many more of it must fall before it breaks, and what each of its Foes does on its next card.
+      - On a called roll it gives what the GM staked before the dice. A passive roll is a Size Up the GM makes out of sight, for something you do not know is there, outside a Titan Engagement and a Skirmish. It is not a called roll, and failing it means only that you do not notice.
+    help: >-
+      On a Requisition roll and in a Skirmish, never Helped and never tried again. On a called roll, up to three
+      comrades who are present and able to help may Help, as the GM rules, spending nothing unless the GM names a
+      cost of time or position when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper
+      spending their action.
+    pages: [expeditions-and-downtime, skirmishes]
+
+  survive:
+    requires:
+      - Called by the Leg roll at the Flank Scout and Supply Wagon Formation Posts on a Steady Leg, and by the camp roll at a Night Camp.
+      - Also made when the GM calls a roll for an act this entry fits, such as finding water or shelter in a ruin.
+    needs: 1, and 1 on a called roll.
+    does:
+      - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted. On the camp roll, it settles whether the Night Camp gives Camp Relief and how its night hazard roll is adjusted.
+      - On a called roll it gives what the GM staked before the dice.
+    help: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
+      most once per Leg. On the camp roll, up to three comrades on the Expedition who are not Down may Help,
+      spending nothing. On a called roll, up to three comrades who are present and able to help may Help, as the
+      GM rules, spending nothing unless the GM names a cost of time or position when the Help is declared. In a
+      Skirmish that Help is the Skirmish's, each helper spending their action.
+    pages: [expeditions-and-downtime]
+
+  persuade:
+    requires:
+      - Called by a Requisition roll, made with Persuade or Recall, chosen before rolling.
+      - Called by a Parley in a Skirmish, once per Skirmish, on your action.
+      - Called by a Parley outside a Skirmish, made before a Foe group with no Skirmish under way, and never again by the same soldier with that group.
+      - Also made when the GM calls a roll for an act this entry fits, such as talking down anyone who is not a Foe group.
+    needs: Set by the Requisition and Skirmish rules, and 1 on a called roll.
+    does:
+      - On a Requisition roll it can have Command grant the Requisition. On a Parley it can make a Foe group yield.
+      - A Parley made as a threat rolls Strength in place of Empathy, and so does a called Persuade the GM rules is a threat. Either is still Persuade, so a Talent that names Persuade still adds its dice.
+      - On a called roll it gives what the GM staked before the dice.
+    help: >-
+      On a Requisition roll, up to three comrades in the Squad who are not Down may Help. A player character who
+      Helps spends their own Requisition this Downtime, and a Squadmate may Help once per Downtime. On a Parley in
+      a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether
+      Engaged or Apart. A Parley outside a Skirmish is never Helped. On a called roll, up to three comrades who are
+      present and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or
+      position when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
+    pages: [expeditions-and-downtime, skirmishes]
+
+  endure:
+    requires:
+      - Called by the Leg roll at the Center Formation Post on a Steady Leg, and by the Straggler row of the Leg Hazard table for its victim.
+      - "Also made when the GM calls a roll for an act this entry fits: hardship borne over hours, not a moment's effort."
+    needs: 1, and 1 on a called roll.
+    does:
+      - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted. On the Straggler row, it lets the victim escape the harm the row names.
+      - On a called roll it gives what the GM staked before the dice.
+    help: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
+      most once per Leg. The Straggler row's roll is never Helped. On a called roll, up to three comrades who are
+      present and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or
+      position when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
+    pages: [expeditions-and-downtime]
+
+  sneak:
+    requires:
+      - Called before a Skirmish's first round when the Squad approaches a Foe group unseen. One soldier rolls it for the ambush.
+      - Also made when the GM calls a roll for an act this entry fits, such as slipping past a watch post.
+    needs: The Foe group's Watch for the ambush, and 1 on a called roll.
+    does:
+      - A success gives the Squad the ambush against that Foe group.
+      - On a called roll it gives what the GM staked before the dice.
+    help: >-
+      For the ambush, never Helped and never tried again. On a called roll, up to three comrades who are present
+      and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or position
+      when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
+    pages: [skirmishes]
+
+  recall:
+    requires:
+      - Called by a Requisition roll, made with Persuade or Recall, chosen before rolling.
+      - Also made when the GM calls a roll for an act this entry fits, such as remembering what a report said about a district.
+    needs: Set by the Requisition rules, and 1 on a called roll.
+    does:
+      - It can have Command grant the Requisition.
+      - On a called roll it gives what the GM staked before the dice.
+    help: >-
+      On a Requisition roll, up to three comrades in the Squad who are not Down may Help. A player character who
+      Helps spends their own Requisition this Downtime, and a Squadmate may Help once per Downtime. On a called
+      roll, up to three comrades who are present and able to help may Help, as the GM rules, spending nothing
+      unless the GM names a cost of time or position when the Help is declared. In a Skirmish that Help is the
+      Skirmish's, each helper spending their action.
+    pages: [expeditions-and-downtime]
+
+  downtime-action:
+    requires:
+      - Each player character, once per Downtime. Squadmates take none.
+    does:
+      - "Recover: you lose 2 Stress."
+      - "Visit Haven: you go home to your Haven and lose 2 Stress and 2 Grief."
+      - "Requisition: you make one Requisition, or Help a comrade's Requisition roll with it."
+      - "Maintain Gear: every rated item you hold returns to its rating. ODM Gear is no longer Jammed, a lame horse is no longer lame, and a worn kit or firearm is whole again. A ruined Blade Set stays ruined."
+    pages: [expeditions-and-downtime]
+
+  squad-action:
+    requires:
+      - The whole Squad, once per Downtime.
+    does:
+      - "Honoring the Fallen: every soldier in the Squad loses 1 Grief."
+      - "Recruit: new Squadmates join until the Squad Pool holds 6 minus the number of player characters. The players choose each one's template and name it, and it joins as a starting Squadmate does, with Standard Issue."
+    pages: [expeditions-and-downtime]
+
+  # ---------------------------------------------------------------- Lifepath
+  performance-roll:
+    requires:
+      - Called once in each Training Year, after that year's event.
+    does:
+      - Roll attribute dice only, with no Talent dice, Bonus Dice, Gear Dice, or Stress Dice, and no step of Circumstances. It cannot be Pushed or Helped. Its successes earn Merit.
+      - If the players run the Graduation Exam, the Exam replaces the third year's performance roll.
+    pages: [making-your-soldier]

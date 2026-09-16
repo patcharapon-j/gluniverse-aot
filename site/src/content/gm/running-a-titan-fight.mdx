@@ -1,0 +1,337 @@
+---
+title: Running a Titan Fight
+summary: Set the ground and the Titan, keep one tracker, roll the Next Behavior out of sight, and let the clocks decide when the Squad has stayed too long.
+section: gm
+order: 1
+tab: Titan Fights
+sources:
+  - path: docs/rules/05-titan-engagement.md
+    sha: "08b7bf455d7d385faedf5a8dd7116eb25b062336"
+  - path: docs/rules/01-core-rules.md
+    sha: "2495d67ea59ed62935146757841a8c95a2e16808"
+  - path: data/engagement/engagement-flow.yaml
+    sha: "cfe5b9f455be8feab4a6245b0dc7f4ec2b9eb369"
+  - path: data/engagement/engagement-setup.yaml
+    sha: "b84e5d55db3cec0b3c771fe616a9c9c356be6121"
+  - path: data/engagement/anchor-ratings.yaml
+    sha: "58c764314a0d63fe5a03040dcfa63df615829585"
+  - path: data/engagement/size-classes.yaml
+    sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
+  - path: data/engagement/round.yaml
+    sha: "e03cf49bfa0f41b2b3b50c3fa5f107d490f6d1e0"
+  - path: data/engagement/behavior-procedure.yaml
+    sha: "64aea8898bffe969c1ef291ad04dbe163f63c5a4"
+  - path: data/engagement/background-titans.yaml
+    sha: "73866d452b9e21debfa69cf2cd76a007112e7613"
+  - path: data/titans/index.yaml
+    sha: "c64683a5b889e6cf9fb38cbc30c21bcba54c6952"
+---
+
+import ChapterContents from '~/components/ChapterContents.astro';
+import CommanderNote from '~/components/CommanderNote.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import FieldReport from '~/components/FieldReport.astro';
+import GmTable from '~/components/GmTable.astro';
+import InkVignette from '~/components/InkVignette.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import StepFlow from '~/components/StepFlow.astro';
+import Subsection from '~/components/Subsection.astro';
+import { RETREAT_CLOCK, abnormalShare } from '~/lib/gm-tables';
+
+<FieldQuote cite="Standing order to Squad Leaders">You do not decide how it ends. You decide what it meets.</FieldQuote>
+
+A Titan fight runs itself once it is set up. Your work is the setup, one tracker, one hidden roll, and the honesty to let every open die stand.
+
+<ChapterContents items={[
+  { id: 'making-the-call', title: 'Making the Call', note: 'When to roll, the step, the stakes' },
+  { id: 'setting-up-the-fight', title: 'Setting Up the Fight', note: 'The order, your framing, the setup table' },
+  { id: 'what-you-track', title: 'What You Track', note: 'The tracker, the card, the clock on the table' },
+  { id: 'the-next-behavior', title: 'Rolling the Next Behavior', note: 'The one roll you make out of sight' },
+  { id: 'background-titans', title: 'Background Titans and the Retreat', note: 'Clocks, entering, the run for the walls' },
+]} />
+
+<SectionHead id="making-the-call" eyebrow="Section 1">Making the Call</SectionHead>
+
+<FieldQuote cite="Survey Corps manual, on command">An order given late is an order given badly.</FieldQuote>
+
+Your judgment is part of the rules, and it works in one direction: **you rule before the dice, never after them.** Once they are rolled, every die and every table result stands as it fell. You never re-roll one, ignore one, or change what a roll was for, the step you named, or what you staked. The players never have to wonder whether the fight is real.
+
+Everything below is also how you rule outside a fight. <a href="/guide/rules-of-play/">The Rules of Play</a> carries the rules themselves, and the players read them: this page is how to use them well.
+
+<Subsection title="When to call a roll" id="when-to-call-a-roll">
+
+Call a roll when all three are true: no rule covers the act, its outcome is in doubt, and failure would cost something.
+
+- If failure would change nothing, or the soldier has the time, the tools, and the training, it simply happens. Say so and move on.
+- If it cannot be done, say so now, before anyone reaches for a die.
+- Name the roll: the Catalog entry closest to the act, from the entries marked as rolled when called, or an attribute alone when none fits. An attribute alone takes no Talent dice and no Gear Dice, and a tool that helps counts toward the step instead.
+- A called roll always needs 1 success, whatever it is for. You never raise that.
+
+Rolls are called sparingly. A roll is a moment with something at stake, and calling one for everything turns a scene into a queue.
+
+</Subsection>
+
+<Subsection title="Choosing the step" note="Circumstances" id="choosing-the-step">
+
+Weigh everything about the moment and name **one step** of the ladder. Rain, dark, and a snapped strap are one judgment, not three. Name it with the stakes, before anyone declares Bonus Dice, so a soldier can answer a minus step with Help.
+
+- **Standard is the assumption in a Titan fight.** The Anchor Rating, the Positions, Openings, a grounded Titan, Call It, the Attention restriction, and every penalty a soldier carries already price the fight. Name another step only for something no rule prices: rain on the rooftops, smoke over a burning district, full dark, ice, a gale.
+- **It reaches the soldiers' pools only.** The Titan's Attack Dice, its cards, its Attention, and its tables take no step at all. A condition that would slow or blind a Titan comes to the table through your soldiers' dice: a Titan mired to the knee makes the dodge against it Easy, named while it is mired and before its card comes up. It loses no Attack Dice.
+- **A Reaction takes the step in force when the attacker's card comes up.** Once that card is up, no step is named, raised, or lowered for a Reaction against it.
+- **A step never changes what a roll needs.** A Nape strike against a Nape Depth of 4 at Hard still needs 4 successes, out of one die fewer.
+
+</Subsection>
+
+<MarginNote stamp="Read twice">Routine and Effortless are for a soldier carrying penalties. An injured soldier doing something simple keeps their dice.</MarginNote>
+
+<Subsection title="Setting the stakes" id="setting-the-stakes">
+
+Stake one cost, out loud, before the dice: it does not happen, 1 Stress, a fall, 1 to 3 damage of a named Injury Type, a lost item or unit, or time and position. A failed roll costs that and nothing else, once, however many times it was Pushed. Where success is not obvious, say what it gives as well.
+
+- **State the soldier's current Health** with any stake that names damage or a fall. Damage does what all damage does, and a soldier already near the bottom should know it before they choose.
+- **A failure moves the story on.** "The window closes, and the patrol is on the stair" is a stake. "Nothing happens" is a stop.
+- **What success gives:** the act, information, a better position the next roll reckons with, an object that is not a gear item, or found Squad Supply within its caps. Never a gear item, Stress relief, a Health box or healing, a Commendation, a Research Point, or a change in Faction Standing. Each of those has its own rule.
+
+</Subsection>
+
+<InkVignette caption="A Squad Leader calls the step and the price before the dice leave the hand." label="A soldier's hand holding back a second soldier at the edge of a rooftop" art="gm-running-a-titan-fight-call" />
+
+<RuleBox title="A called roll inside the fight" icon="ph:crosshair">
+
+In a Titan fight a called roll is the last resort, not the first. An act a player describes is first a Catalog entry taken as written, then an improvised act with a model entry. It is a called roll only when no entry of kind Action they could take in that fight could model it, and when it changes nothing the fight tracks: no Position, no Attention, no Opening, no card, no clock, and none of the values the rules name.
+
+It spends the action and is made on the soldier's turn. It never gives an effect an entry has, and never stands in for a Reaction: facing an attack, a soldier dodges or blocks. Help on it is the fight's Help, each helper spending their action, at no cost you name. A fall it costs is a fall in full, low or high and never extreme, and where it drops them is the fall rule's to say.
+
+</RuleBox>
+
+<RuleBox variant="stop" title="What a ruling never touches in a fight" icon="ph:prohibit">
+
+You apply all of these as written, whatever the night wants:
+
+- Behavior Tables, the Attention Ladder, Attack Dice and Titan Dice, and the Reaction procedure;
+- that only a Nape strike kills a Titan, the size of Openings, Steam, the falling Titan, Corpse Heat, the Grab countdown, and Regeneration;
+- the Background clocks, the retreat clock, the retreat's forced moves, and the two tests that end a fight;
+- a standard Titan's numbers, and which of an Abnormal's numbers a Read reveals;
+- and every die and table result, once it is rolled.
+
+The full list, in and out of a fight, is on <a href="/guide/rules-of-play/">The Rules of Play</a>.
+
+</RuleBox>
+
+<SectionHead id="setting-up-the-fight" eyebrow="Section 2">Setting Up the Fight</SectionHead>
+
+<FieldQuote cite="Field order, Wall Rose garrison">Ground first. Then numbers. Then names.</FieldQuote>
+
+When a fight starts is scene framing. How it starts, runs, and ends is not.
+
+<Subsection title="The order of setup" id="the-order-of-setup">
+
+1. The rule that begins the fight names its Anchor Rating, one Focus Titan, any Background Titans with their clock lengths, and the length of the retreat clock. Your framing may name what that rule leaves unnamed, except the retreat clock's length. Anything neither names comes from the setup table below. The retreat clock starts empty.
+2. Label the Focus Titan **A**.
+3. Its Body Parts start Intact, it has no Openings, its Regeneration clock is empty, and you roll its hidden Next Behavior.
+4. Place the soldiers and the horses.
+5. The Titan evaluates its Attention Ladder, with no cards dealt. If a rung picks out one soldier, that soldier holds its Attention from setup, as the Straggler's victim does, placed at In Reach while everyone else is at Distant. Otherwise nothing holds it and its first card turns it, which is what happens whenever a Squad of two or more starts with everyone at the same Position.
+6. The soldiers make the Fear Rolls for a first Titan fight and for an Abnormal.
+7. The Squad's Squad Tactics become unused.
+8. Round 1 begins.
+
+</Subsection>
+
+<MarginNote>Every soldier who takes part starts Distant unless the rule that begins the fight places named soldiers elsewhere. Mounted soldiers stay mounted, no one is airborne, and a dismounted soldier's horse holds Distant.</MarginNote>
+
+<Subsection title="What you may frame" id="what-you-may-frame">
+
+Frame the fight as Command would, and as a Mission Brief could. Before any setup roll, you may name whatever the starting rule leaves unnamed:
+
+- **the Focus Titan:** any Titan on the <a href="/gm/titans/">Titans</a> page, standard or Abnormal;
+- **the Anchor Rating;**
+- **the Background Titans:** none, one, or two, which Titans they are, and each one's clock of 4, 6, or 8 segments.
+
+What you name is never rolled, so no Abnormal roll is made for a Focus Titan you named. A value the starting rule names, such as a hazard row's, stands, and you never swap it.
+
+These stay closed to you: everyone starts Distant unless the starting rule places them; the retreat clock is {RETREAT_CLOCK} segments unless a rule names its length; a setup row, once rolled, stands; and the Fear Rolls of the start are made as the list gives them.
+
+</Subsection>
+
+<CommanderNote title="Framing and lethality">
+
+The setup table's mix is the fight these rules are built around. A table that frames a Large Titan with two Background Titans every time is running a deadlier game than the one the numbers were set for, and it will bury a Squad. Frame for the story you want, and know which way you have leaned.
+
+</CommanderNote>
+
+<GmTable table="interim-setup" />
+
+Roll for each part in the order the table gives, and skip whatever the starting rule or your framing already named. On a Medium Focus Titan, and only there, roll again on the second table: that is what makes the Sprinting Abnormal the Focus Titan of {abnormalShare()} the table sets up. A Background Titan the table gives is always the standard Titan of its class and never rolls for an Abnormal, though a rule that begins a fight may still name one.
+
+<SectionHead id="what-you-track" eyebrow="Section 3">What You Track</SectionHead>
+
+<FieldQuote cite="A Squad Leader's notebook, recovered">One page. If it is not on the page, it is not in the fight.</FieldQuote>
+
+Keep one tracker: an Engagement line, one row per Focus Titan, one row per Background Titan, and a row that stays behind for each corpse. The players keep the rest on their own sheets, and their Positions relative to every living Focus Titan sit in one place, the positions column of each Squad sheet row. Read the ladder straight off that column.
+
+<GmTable table="gm-tracker" />
+
+<Subsection title="When to update it" id="when-to-update-it">
+
+Each round, update the tracker after the deal, after each Titan card, after each strike or Break Attention, after each counted turn of a Grabbed soldier, after each fall of a Titan's body and each Heave, and at the end steps.
+
+</Subsection>
+
+<Subsection title="Keeping the round moving" id="keeping-the-round-moving">
+
+- **On a Titan's card,** read its row left to right in the order of the card procedure: holding, decoy, Attention, choose, roll and announce, Reactions, effects, next.
+- **Roll together** anything that does not depend on anything else: the Gas Rolls at the end of the round, and the Fear Rolls every witness makes for one event.
+- **Expect the time it takes.** One Focus Titan against four player characters and two Squadmates, all tracked, runs 12 to 20 minutes a round. A round with a Grab runs to the top of that, plus the witnesses' Fear Rolls. A round against two Focus Titans runs to half an hour, which is why the Background clocks are as long as they are.
+
+</Subsection>
+
+<SectionHead id="the-next-behavior" eyebrow="Section 4">Rolling the Next Behavior</SectionHead>
+
+<FieldQuote cite="Instructor's saying, Training Corps">It has already decided. You have not.</FieldQuote>
+
+A Focus Titan always has a hidden **Next Behavior**. You roll it where the players cannot see and record it face down. It is the one roll of yours they never see, and it is rolled once: no re-roll, no second thought, no change of row.
+
+<Subsection title="When it is rolled" id="when-it-is-rolled">
+
+Roll a new Next Behavior when the Titan becomes a Focus Titan, after each of its cards that resolved a behavior, and after a card that came up while a decoy held its Attention.
+
+A card that resolves nothing because the Titan holds a Grabbed soldier, or because nobody holds its Attention, keeps the Next Behavior as it stands.
+
+</Subsection>
+
+<StepFlow id="fig-next-behavior" fig="Fig. 1" title="Rolling the Next Behavior" steps={[
+  {
+    title: "Roll out of sight.",
+    dice: "titan:5",
+    text: "Roll a D6 behind your screen and find the entry that holds the result.",
+    exit: { kind: "note", label: "Never checked", text: "Rolling never looks at Positions or Attention. Those are decided when a card comes up, not now." },
+  },
+  {
+    title: "Test the entry.",
+    icon: "ph:check-square",
+    text: "It can be rolled unless it is the Titan's previous behavior, or it needs Body Parts the Titan no longer has unbroken.",
+    exit: { kind: "note", label: "No repeats", text: "Nothing follows itself, except Thrash." },
+  },
+  {
+    title: "Move up if it cannot.",
+    icon: "ph:arrow-up",
+    text: "Take the entry holding the next higher result, wrapping from 6 to 1, skip what you have already tested, and test it the same way.",
+    exit: { kind: "note", label: "Shares shift", text: "A blocked entry passes its share to the entry above it, so with both arms Broken a Titan bites where it would have grabbed." },
+  },
+  {
+    title: "Thrash if nothing passes.",
+    icon: "ph:wind",
+    text: "If no entry can be rolled, the Next Behavior is Thrash. Thrash can always happen.",
+    exit: { kind: "note", label: "Its own line", text: "Each Titan's Thrash is written for its body, and it is the behavior you will resolve most." },
+  },
+  {
+    title: "Record it face down.",
+    icon: "ph:eye-slash",
+    text: "It stays hidden until a Read reveals it, a telegraph reveals it, or a card resolves it.",
+    exit: { kind: "stop", label: "It stands", text: "Rolled once. You never re-roll it, change its row, or choose in its place." },
+  },
+]} />
+
+<MarginNote>A telegraph shows the squad what is coming: when a card resolves a behavior with a telegraph, reveal the new Next Behavior. It stays revealed until a card resolves it or a decoy's card spends it.</MarginNote>
+
+<Subsection title="Running the card" id="running-the-card">
+
+<a href="/guide/fighting-titans/">Fighting Titans</a> carries the card itself, and the players know it. Your side of it is the bookkeeping, in this order:
+
+1. **Dead.** A dead Titan's card does nothing.
+2. **Holding.** If it holds a living Grabbed soldier, the card resolves nothing. Do not evaluate the ladder, keep the Next Behavior, and leave standing what it has noticed.
+3. **Decoy.** If a decoy holds its Attention, the card resolves nothing and the hold has one card fewer left. The Next Behavior still counts as spent: it becomes the previous behavior, any Call It on it ends, and you roll a new one. If that was the hold's last card, the hold ends and you evaluate the ladder; otherwise the decoy keeps Attention and you do not. Either way what it has noticed stays, and its count of decoys in a row does not change.
+4. **Attention.** Otherwise evaluate the ladder. If nobody holds its Attention, the card resolves nothing and what it has noticed stays.
+5. **Choose.** Take the Next Behavior's entry. Without the Body Parts it uses, it is Thrash. If the holder does not meet its Position requirement, it becomes its fallback, and a fallback that repeats the previous behavior or fails either test is Thrash.
+6. **Roll and announce.** Say the behavior's name, its tier, and its targets, then roll its Attack Dice as Titan Dice **in the open**. The successes are the card's Severity, the same for every target. The roll takes no step and you never re-roll or adjust it.
+7. **Reactions and effects.** On 0 successes the card whiffs against everyone and nobody dodges. Otherwise each target answers it, and the effects fall in card order.
+8. **Next.** A card that whiffed has still resolved a behavior. The behavior becomes the previous behavior, decoys in a row returns to 0, everything it had noticed clears, and you roll the new Next Behavior.
+
+</Subsection>
+
+<FieldReport id="example-medium-card" title="A card on the Medium Titan">
+
+The Medium Titan's card comes up in round 2. It holds nobody, no decoy is up, and the ladder gives its Attention to Private Oskar Wendt, who struck its Nape last turn and fell short at Blind Spot.
+
+The Next Behavior, face down since the last card, is Grab. Oskar is at Blind Spot, and Grab wants In Reach or On Body, so the card falls back, and its fallback is Thrash.
+
+The GM announces Thrash, its tier, and its target, and rolls its Attack Dice in the open where everyone can count them. Two successes. Oskar dodges and cancels one. One Net Success lands, and it knocks him loose.
+
+Then the bookkeeping: Thrash is now the previous behavior, decoys in a row goes to 0, what the Titan had noticed clears, and a new Next Behavior is rolled face down. Oskar falls.
+
+</FieldReport>
+
+<SectionHead id="background-titans" eyebrow="Section 5">Background Titans and the Retreat</SectionHead>
+
+<FieldQuote cite="Survey Corps manual">Titans come to a fight that lasts. That is the whole of the lesson.</FieldQuote>
+
+A **Background Titan** is not a Titan in play. It is a closing clock. Its Size Class, the record you will run it from, and its clock are public, except the values an Abnormal keeps until a Read, and no soldier holds a Position relative to it.
+
+<Subsection title="The clocks" id="the-clocks">
+
+- Every Background Titan's clock fills 1 segment at the background-clocks end step of each round.
+- It also fills 1 segment for each flare spent on Break Attention, as soon as that Break Attention and any Hook and Cut it allows are resolved, whether they succeeded or not. A clock a flare fills resolves there and then, mid-round.
+- A flare never fills the retreat clock.
+- When several clocks are full at once, resolve them in the order your tracker lists them.
+
+</Subsection>
+
+<Subsection title="When a clock fills" id="when-a-clock-fills">
+
+At most two Focus Titans are ever in play. If fewer than two are alive when a clock fills, that Background Titan **enters** as a Focus Titan:
+
+- it takes the next unused label and starts clean;
+- every soldier holds Distant relative to it, and it evaluates its Attention. At an end step no cards choose, so a tie the rungs leave standing leaves its Attention held by nothing until its first card. A flare that fills its clock mid-round lets that round's cards break the tie;
+- if it is now one of two Focus Titans, the soldiers make the second Focus Titan Fear Roll; if it is an Abnormal, the Abnormal one. Either way, one Fear Roll per soldier for the event;
+- it is dealt cards from the next round.
+
+If two Focus Titans are already alive, it does not enter. The fight becomes a **retreat** instead.
+
+</Subsection>
+
+<Subsection title="The retreat clock" id="the-retreat-clock">
+
+Every fight carries a retreat clock, whatever Titans are in it. The rule that begins the fight names its length, or the setup table gives it {RETREAT_CLOCK} segments. It starts empty, and its filled segments sit on the Engagement line where everyone can see them.
+
+It fills 1 segment at the background-clocks end step of each round, last, after every Background clock has filled and every full clock has resolved. So a Background Titan whose clock fills on the same end step enters before the retreat begins. When the retreat clock is full, the fight becomes a retreat.
+
+</Subsection>
+
+<MarginNote stamp="Why 8">A full canister lasts about eight rounds of ODM use. The retreat begins as the gas runs low, and a Squad that lingers past it is a Squad the Titans are gathering on.</MarginNote>
+
+<Subsection title="Running the retreat" id="running-the-retreat">
+
+From the moment it begins: no Background clock fills again, the retreat clock does not fill, and no Titan enters. Each living Focus Titan's Regeneration clock still fills.
+
+**Moves are forced.** Every soldier who holds a Position and is not Down, Grabbed, or carried must spend each move on one of these, their choice:
+
+1. a step along a shortest chain toward Distant, relative to the earliest-labelled Focus Titan they are not yet Distant from, and once Distant from every Focus Titan, toward Distant relative to the earliest-labelled corpse they are not yet Distant from;
+2. leaving, once Distant from every Focus Titan and every corpse;
+3. a step that brings them fewer Position steps from a Down, Grabbed, or Pinned comrade who is not carried;
+4. staying put, if they already share such a comrade's Position and have already taken, earlier that turn, an action for that comrade: Treat Injury, or for a Grabbed comrade Pry Loose, a strike on the holding arm, or Break Attention against the holding Titan, or for a Pinned comrade Heave against the pinning body or a strike on the pinning Body Part.
+
+Lift Comrade is not on that list. A soldier who lifts a comrade carries them and heads out by option 1 or 2. A soldier who can do none of these may let go, or change nothing.
+
+**The order.** The forced move comes before the action, with two exceptions: a stay-put move comes after the action taken for that comrade, and a move on a turn whose action is Lift Comrade comes after the lift, so a soldier can lift a comrade and carry them clear in the same turn.
+
+**No return.** A soldier who has left cannot come back during a retreat.
+
+**Actions are not limited,** only ordered after the forced move, with one exception: **no Nape strike is made during a retreat,** neither on a soldier's own turn nor through Hook and Cut. Body Part strikes, Break Attention, Pry Loose, Treat Injury, and Lift Comrade are all still taken.
+
+</Subsection>
+
+<RuleBox title="The stay limit" icon="ph:hourglass">
+
+Options 3 and 4 for a comrade the limit covers are open only on the retreat's first rounds, as many rounds as the retreat clock has segments, counted from the round after the one in which the retreat began. That is what the Engagement line records the beginning round for.
+
+The limit covers a comrade Pinned under a corpse, in every retreat, and every comrade, Pinned, Down, or Grabbed, while no Focus Titan is alive. From the next round on, no soldier steps toward or stays with such a comrade: each move is option 1 or 2, or letting go, or changing nothing. While a Focus Titan is alive, a Down or Grabbed comrade, or one Pinned under a living Titan, has no such limit.
+
+From the first round past the limit, in every retreat, a soldier whom a lost-limb grade forbids every move is not standing, which is how a fight beside a corpse ends instead of running for ever.
+
+</RuleBox>
+
+<InkVignette caption="The last two out, one carried, the corpse steaming behind them." label="Two soldiers on a horse riding away from a steaming Titan corpse" art="gm-running-a-titan-fight-retreat" />
+
+A retreat keeps the fight running until everyone is out or the Titans are dead. It is not an ending: the two tests that end a fight are on <a href="/guide/fighting-titans/">Fighting Titans</a>, and you never end a fight yourself. Only those tests do.

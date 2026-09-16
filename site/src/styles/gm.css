@@ -1,0 +1,379 @@
+/* The Commander's copy (ADR-0023): restricted band, manila folder tabs, carbon type, redactions. */
+
+/* A seal-red edge above the masthead marks every page of the copy. */
+body.is-gm {
+  box-shadow: inset 0 5px 0 var(--seal);
+}
+
+/* The Commander's opener plate, mounted under the briefing. */
+.gm-plate {
+  max-width: 720px;
+  margin: 0 auto clamp(26px, 4vw, 44px);
+}
+
+/* ---------- manila folder tabs ---------- */
+.is-gm .tabs a {
+  background-color: var(--manila);
+  background-image: var(--grain);
+  color: var(--ink);
+  border: 1px solid var(--manila-dk);
+  border-left: 0;
+  border-radius: 0 12px 12px 0 / 0 18px 18px 0;
+  box-shadow: inset 5px 0 6px -4px rgba(70, 48, 12, 0.55);
+}
+.is-gm .tabs a .clip {
+  display: none;
+}
+.is-gm .tabs a:hover {
+  background-color: var(--manila-hi);
+}
+.is-gm .tabs a[aria-current="page"] {
+  background-color: var(--manila-hi);
+  color: var(--ink);
+  transform: translateX(5px);
+  box-shadow: inset 4px 0 0 var(--seal), 2px 3px 0 -1px var(--manila-dk);
+}
+.is-gm .mainnav a[aria-current="true"],
+.is-gm .mainnav a[aria-current="page"] {
+  border-bottom-color: var(--manila);
+}
+
+/* ---------- restricted band ---------- */
+.restricted {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 18px;
+  margin: calc(-1 * clamp(22px, 4.2vw, 60px)) calc(-1 * clamp(22px, 4.2vw, 60px)) clamp(22px, 3.5vw, 36px);
+  padding: 9px clamp(22px, 4.2vw, 60px);
+  background: var(--seal);
+  color: var(--paper);
+  font-family: var(--f-type);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.08) 0 8px, transparent 8px 16px);
+}
+.restricted-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.restricted-title svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.restricted small {
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.16em;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* ---------- carbon copy type ---------- */
+.sheet--carbon {
+  background-color: #e8e1cb;
+}
+.carbon {
+  color: var(--carbon);
+  font-family: var(--f-type);
+  text-shadow: 0 0 0.6px rgba(43, 63, 115, 0.55);
+}
+.is-gm .rules-body > p,
+.is-gm .rules-body > ul,
+.is-gm .rules-body > ol,
+.is-gm .rules-head .lede {
+  font-family: var(--f-type);
+  color: var(--carbon);
+  font-size: 1rem;
+  line-height: 1.7;
+  text-shadow: 0 0 0.6px rgba(43, 63, 115, 0.55);
+}
+.is-gm .rules-head .lede {
+  font-size: 1.125rem;
+}
+.is-gm .runhead {
+  color: var(--carbon);
+}
+.is-gm .marg {
+  color: var(--carbon);
+  font-family: var(--f-type);
+  font-style: normal;
+}
+
+/* GM callouts: a blue typewriter slip, and the manual's boxes and reports typed in carbon. */
+.carbon-note,
+.is-gm .box,
+.is-gm .report {
+  color: var(--carbon);
+  text-shadow: 0 0 0.6px rgba(43, 63, 115, 0.5);
+}
+.carbon-note {
+  display: grid;
+  gap: 10px;
+  max-width: 62ch;
+  padding: 14px 18px 16px;
+  font-family: var(--f-type);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  background-color: #ede8d8;
+  background-image:
+    radial-gradient(ellipse at 12% 20%, rgba(43, 63, 115, 0.08), transparent 55%),
+    repeating-linear-gradient(transparent 0 25px, rgba(43, 63, 115, 0.1) 25px 26px);
+  border: 1px solid rgba(43, 63, 115, 0.4);
+  box-shadow: 3px 3px 0 -1px rgba(43, 63, 115, 0.2);
+}
+.carbon-note-head {
+  color: var(--carbon);
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(43, 63, 115, 0.5);
+}
+.carbon-note-body {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+.is-gm .box {
+  border-color: var(--carbon);
+  font-family: var(--f-type);
+}
+.is-gm .box h3 {
+  color: var(--carbon);
+}
+.is-gm .box--gas {
+  color: var(--paper);
+  text-shadow: none;
+}
+.is-gm .report {
+  background-image: repeating-linear-gradient(transparent 0 27px, rgba(43, 63, 115, 0.16) 27px 28px);
+}
+.is-gm .report h3,
+.is-gm .report p {
+  color: var(--carbon);
+}
+.btn--carbon {
+  background: transparent;
+  color: var(--carbon);
+  border-color: currentColor;
+}
+.btn--carbon:hover {
+  background: rgba(43, 63, 115, 0.1);
+}
+.btn--carbon[aria-pressed="true"] {
+  background: rgba(43, 63, 115, 0.12);
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+/* ---------- redaction bars ---------- */
+/*
+ * The bar is a button laid over the value. It lifts while hovered (on devices that hover)
+ * or focused, and stays lifted once pressed, clicked, or tapped (aria-expanded).
+ */
+.redact {
+  position: relative;
+  display: inline-block;
+}
+.redact-bar {
+  position: absolute;
+  inset: -3px -6px;
+  margin: 0;
+  padding: 0;
+  border: 1px dashed transparent;
+  border-radius: 1px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.redact-bar::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background-color: var(--redaction);
+  background-image: var(--grain);
+  transform: rotate(-0.6deg);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.redact-bar[aria-expanded="true"],
+.redact-bar:focus-visible {
+  border-color: rgba(29, 26, 22, 0.45);
+}
+.redact-bar[aria-expanded="true"]::before,
+.redact-bar:focus-visible::before {
+  opacity: 0;
+  transform: rotate(-0.6deg) translateY(-6px);
+}
+@media (hover: hover) {
+  .redact:hover .redact-bar {
+    border-color: rgba(29, 26, 22, 0.45);
+  }
+  .redact:hover .redact-bar::before {
+    opacity: 0;
+    transform: rotate(-0.6deg) translateY(-6px);
+  }
+}
+.redact-bar:focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: 3px;
+}
+.redact-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.redact-hint svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* ---------- one-time notice ---------- */
+.gm-notice {
+  width: min(560px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+  background: var(--manila-hi);
+  background-image: var(--fibre), var(--grain);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+}
+.gm-notice::backdrop {
+  background: rgba(10, 16, 12, 0.78);
+}
+.gm-notice .restricted {
+  margin: 0;
+  padding: 9px 22px;
+}
+.gm-notice-body {
+  padding: 22px 26px 26px;
+  display: grid;
+  gap: 14px;
+}
+.gm-notice h2 {
+  font-family: var(--f-stencil);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.gm-notice p {
+  font-family: var(--f-type);
+  color: var(--carbon);
+  line-height: 1.6;
+}
+.gm-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  margin-top: 6px;
+}
+.gm-notice-actions a {
+  display: inline-block;
+  padding-block: 8px;
+  font-family: var(--f-type);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- manila folders on the GM contents list ---------- */
+.folders {
+  display: grid;
+  gap: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.folder a {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 18px 22px 20px;
+  background: var(--manila);
+  background-image: var(--grain);
+  text-decoration: none;
+  border: 1px solid var(--manila-dk);
+  margin-top: 22px;
+  transition: transform 0.15s;
+}
+.folder a::before {
+  content: attr(data-tab);
+  position: absolute;
+  left: 18px;
+  top: -24px;
+  height: 24px;
+  padding: 4px 16px 0;
+  font-family: var(--f-type);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--manila);
+  border: 1px solid var(--manila-dk);
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+}
+.folder a:hover {
+  transform: translateY(-2px);
+}
+.folder b {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: 1.25rem;
+}
+.folder span {
+  font-family: var(--f-type);
+  color: var(--carbon);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  max-width: 64ch;
+}
+.dossier-extra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  padding: 10px 22px;
+  border-top: 1.5px dashed var(--rule);
+  font-family: var(--f-type);
+  color: var(--carbon);
+}
+
+@media (max-width: 900px) {
+  .is-gm .tabs a {
+    padding-left: 14px;
+    border: 1px solid var(--manila-dk);
+    border-top: 0;
+    border-radius: 0 0 12px 12px / 0 0 16px 16px;
+    box-shadow: inset 0 5px 6px -4px rgba(70, 48, 12, 0.55);
+  }
+  .is-gm .tabs a[aria-current="page"] {
+    transform: translateY(3px);
+    box-shadow: inset 0 -4px 0 var(--seal), 2px 2px 0 -1px var(--manila-dk);
+  }
+}
+@media (max-width: 640px) {
+  .dossier-extra {
+    padding-inline: 14px;
+  }
+}
+@media (max-width: 480px) {
+  .restricted {
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+  }
+  .carbon-note {
+    padding: 12px 14px 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .redact-bar::before,
+  .folder a {
+    transition: none;
+  }
+}

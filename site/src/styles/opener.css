@@ -1,0 +1,91 @@
+/* Opener sheets: section covers with a plate, and their contents lists. */
+.opener-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(26px, 4vw, 56px);
+  align-items: start;
+}
+.opener-grid .h1 {
+  margin-bottom: 18px;
+}
+.opener-stamp {
+  margin-top: 24px;
+  transform: rotate(-5deg);
+  font-size: 1rem;
+}
+.opener-body {
+  margin-top: clamp(30px, 4.5vw, 52px);
+}
+.contents {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 3px double var(--rule);
+}
+.contents li {
+  border-bottom: 1px solid rgba(156, 144, 120, 0.6);
+}
+.contents a {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 14px 4px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.contents a:hover {
+  background: rgba(207, 195, 165, 0.35);
+}
+.contents .cnum {
+  font-family: var(--f-stencil);
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--ink-2);
+}
+.contents .ctitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-weight: 700;
+  font-size: 1.1875rem;
+  line-height: 1.25;
+}
+.contents .csum {
+  grid-column: 2;
+  color: var(--ink-3);
+  font-size: 0.9688rem;
+  line-height: 1.45;
+  max-width: 62ch;
+}
+.contents .cmeta {
+  grid-column: 3;
+  grid-row: 1;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.contents .arrow {
+  width: 18px;
+  height: 18px;
+  vertical-align: -3px;
+}
+
+@media (max-width: 900px) {
+  .opener-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .opener-grid .plate {
+    max-width: 520px;
+  }
+}
+@media (max-width: 560px) {
+  .contents a {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+  }
+  .contents .cmeta {
+    grid-column: 2;
+    grid-row: auto;
+  }
+}

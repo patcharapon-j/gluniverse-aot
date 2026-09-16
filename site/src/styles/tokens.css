@@ -1,0 +1,79 @@
+/*
+ * Field Manual tokens (ADR-0023). Paper is the only theme; colours stay
+ * role-named so a later night mode can swap values without a redesign.
+ *
+ * Type is locked: Big Shoulders Stencil for display (500 to 900), Spectral for
+ * body text and every stat number with tabular figures (400 to 700, italics
+ * 400 and 500), Courier Prime for stamps, labels, and field reports (400, 700).
+ * The scale is the approved concept's: a 17px base stepping by roughly a major
+ * third, with fluid display sizes.
+ */
+:root {
+  /* Surfaces */
+  --cloth: #16211b;
+  --cloth-2: #22322a;
+  --cloth-line: #2c3f35;
+  --cloth-ink: #c9d1c4;
+  --cloth-muted: #a9b7a9;
+  --paper: #e4dcc5;
+  --paper-hi: #ece5d1;
+  --paper-shade: #cfc3a5;
+
+  /* Ink */
+  --ink: #29241d;
+  --ink-2: #5c5343;
+  --ink-3: #3a342a;
+  --rule: #9c9078;
+  --pencil: #46566b;
+
+  /* Accents */
+  --corps: #2f4b3c;
+  --corps-hi: #3e6250;
+  --seal: #8b2a21;
+  --seal-dk: #5e1a13;
+  --steel: #56605f;
+  --flesh: #b38467;
+
+  /* Commander's copy */
+  --manila: #d6be86;
+  --manila-hi: #e2cd9a;
+  --manila-dk: #b39a60;
+  --carbon: #2b3f73;
+  --redaction: #1d1a16;
+
+  /* Dice kinds: material and value, not colour alone */
+  --die-base: #ede6d2;
+  --die-gear: #56605f;
+  --die-stress: #8b2a21;
+  --die-titan: #b38467;
+
+  /* Type families */
+  --f-stencil: "Big Shoulders Stencil", "Arial Narrow", Impact, sans-serif;
+  --f-serif: "Spectral", "Iowan Old Style", Georgia, serif;
+  --f-type: "Courier Prime", "Courier New", ui-monospace, monospace;
+
+  /* Type scale */
+  --fs-2xs: 0.625rem;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1.0625rem;
+  --fs-md: 1.3125rem;
+  --fs-lg: 1.75rem;
+  --fs-xl: 2.5rem;
+  --fs-2xl: clamp(2.75rem, 6vw, 4.75rem);
+  --fs-hero: clamp(3.75rem, 10vw, 8.25rem);
+  --lh-body: 1.6;
+  --measure: 68ch;
+
+  /* Layout */
+  --gutter: 16px;
+  --page-max: 1240px;
+  --note-w: 180px;
+  --note-gap: 36px;
+
+  /* Textures */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .18 0 0 0 0 .1 0 0 0 .2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .18 0 0 0 0 .1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .45' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  --wear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3.2 2.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+}

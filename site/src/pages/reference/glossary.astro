@@ -1,0 +1,163 @@
+---
+import '~/styles/compendium.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import IconSlot from '~/components/IconSlot.astro';
+import { GLOSSARY } from '~/lib/glossary';
+import { guideChapters } from '~/lib/chapters';
+import { REFERENCE_TABS } from '~/lib/nav';
+
+/**
+ * A stamp icon for the terms that have one, by glossary slug. Decorative: the
+ * term and its definition carry the meaning. Terms whose icon would be
+ * ambiguous (a Specialty, a Size Class) are left without one.
+ */
+const ICONS: Record<string, string> = {
+  abnormal: 'titan-abnormal',
+  'base-dice': 'die-base',
+  'blade-set': 'gear-blades',
+  'critical-injury': 'harm-critical-injury',
+  'death-roll': 'harm-death-roll',
+  down: 'harm-down',
+  'fear-roll': 'harm-fear',
+  'gas-roll': 'gear-gas-canister',
+  'gear-dice': 'die-gear',
+  health: 'harm-health',
+  nape: 'body-nape',
+  'odm-gear': 'gear-odm',
+  push: 'roll-push',
+  scar: 'harm-scar',
+  stress: 'roll-stress',
+  'stress-dice': 'die-stress',
+  talent: 'talent-dice',
+  'titan-dice': 'die-titan-attack',
+};
+
+/** The four Positions, shown together on the one entry that explains them. */
+const POSITIONS = ['pos-distant', 'pos-in-reach', 'pos-on-body', 'pos-blind-spot'];
+
+// The chapters in reading order, so the chips run the way the Player's Guide does.
+const chapters = await guideChapters();
+const groups: FilterGroup[] = [
+  {
+    key: 'chapter',
+    label: 'Chapter',
+    options: chapters.map((chapter) => ({
+      value: chapter.id,
+      label: chapter.data.tab,
+      count: GLOSSARY.filter((entry) => entry.chapter === chapter.id).length,
+    })),
+  },
+];
+const title = new Map(chapters.map((chapter) => [chapter.id, chapter.data.title]));
+
+const entries = GLOSSARY.map((entry) => ({
+  ...entry,
+  chapterTitle: title.get(entry.chapter) ?? entry.chapter,
+  search: [entry.term, ...entry.aliases, entry.definition].join(' ').toLowerCase(),
+}));
+---
+<BaseLayout
+  title="Glossary"
+  description="Every game term in Wings of Freedom, defined in a sentence or two, with the chapter that carries its rule."
+  section="reference"
+  tabs={REFERENCE_TABS}
+  tabsLabel="Reference sections"
+>
+  <section class="sheet sheet--light" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part IV · Reference</span><span>Glossary</span></div>
+    <CompendiumIndex
+      id="glossary"
+      groups={groups}
+      total={entries.length}
+      singular="term"
+      plural="terms"
+      searchLabel="Search the glossary"
+      searchPlaceholder="Search by term or definition"
+      glossary={false}
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Reference</p>
+        <h1 class="h1" id="page-title">Glossary</h1>
+        <p class="lede">Every term the rules give a meaning of its own, in a sentence or two, with the chapter that carries the rule behind it.</p>
+        <FieldQuote cite="Survey Corps manual, on the drill book">Learn the words before the ride. Out there nobody has time to explain what they just shouted.</FieldQuote>
+      </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">One definition</dt>
+          <dd>Every pop-up on this site shows the entry you see here. There is no second wording anywhere.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Where the rule is</dt>
+          <dd>Each entry links to the chapter that carries its rule. Filter by chapter to read one chapter's terms together.</dd>
+        </div>
+        <div>
+          <dt class="lbl">What it is not</dt>
+          <dd>A summary. An entry tells you what a term means, not how the whole rule runs.</dd>
+        </div>
+      </dl>
+      <p class="see">The numbers you reach for mid-fight: <a href="/reference/quick-reference/">Quick Reference</a>.</p>
+      <dl class="glossary">
+        {entries.map((entry) => (
+          <div class="gl-row" id={entry.slug} data-cmp-item data-search={entry.search} data-f-chapter={entry.chapter}>
+            <dt>{ICONS[entry.slug] && <IconSlot name={ICONS[entry.slug]} size="sm" />}{entry.term}</dt>
+            <dd>
+              {entry.definition}
+              {entry.slug === 'position' && (
+                <span class="gl-icons" aria-hidden="true">{POSITIONS.map((name) => <IconSlot name={name} size="sm" />)}</span>
+              )}
+              <a class="gl-see lbl" href={`/guide/${entry.chapter}/`}>{entry.chapterTitle}</a>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </CompendiumIndex>
+  </section>
+</BaseLayout>
+
+<style>
+  .glossary {
+    margin: 0;
+    columns: 2 22rem;
+    column-gap: 48px;
+  }
+  .gl-row {
+    break-inside: avoid;
+    padding: 12px 0 14px;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+    scroll-margin-top: 90px;
+  }
+  .gl-row:target {
+    background: rgba(207, 195, 165, 0.45);
+    box-shadow: -10px 0 0 rgba(207, 195, 165, 0.45), 10px 0 0 rgba(207, 195, 165, 0.45);
+  }
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.25;
+  }
+  dd {
+    margin: 4px 0 0;
+    max-width: 60ch;
+    color: var(--ink-3);
+  }
+  .gl-icons {
+    display: inline-flex;
+    gap: 6px;
+    margin-left: 8px;
+    vertical-align: -5px;
+  }
+  .gl-see {
+    display: block;
+    margin-top: 6px;
+    color: var(--ink-2);
+    font-size: var(--fs-2xs);
+  }
+  .gl-see::before {
+    content: "See ";
+  }
+</style>

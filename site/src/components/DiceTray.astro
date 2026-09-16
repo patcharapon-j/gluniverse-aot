@@ -1,0 +1,106 @@
+---
+/**
+ * The Dice Tray (ADR-0020, ADR-0023): a field box for rolling a pool and
+ * Pushing it. Markup only; ~/scripts/dice-tray/controller.ts mounts it, from
+ * the Dice Tray page or from DiceTrayDialog when a `wof:try-roll` event fires.
+ */
+import '~/styles/dice-tray.css';
+import { Icon } from 'astro-icon/components';
+import IconSlot from './IconSlot.astro';
+import { facesHtml, type DieKind } from '~/lib/dice';
+import { POOL_LIMITS, PUSH_LIMITS, type Pool } from '~/lib/dice-rules';
+
+interface Props {
+  /** Prefix for element ids; unique per page. */
+  id: string;
+  variant: 'page' | 'dialog';
+  pool?: Pool;
+  heading?: string;
+}
+const { id, variant, pool = { base: 5, gear: 2, stress: 1, titan: 0 }, heading = 'The field box' } = Astro.props;
+
+const KINDS: Array<{ kind: DieKind; name: string; face: string; icon: string; note: string; minus: string; plus: string }> = [
+  { kind: 'base', name: 'Base dice', face: 'base:6', icon: 'die-base', note: 'Bone. Succeed on 6.', minus: 'One fewer base die', plus: 'One more base die' },
+  { kind: 'gear', name: 'Gear Dice', face: 'gear:6', icon: 'die-gear', note: 'Gunmetal. Succeed on 6. Never re-rolled.', minus: 'One fewer Gear Die', plus: 'One more Gear Die' },
+  { kind: 'stress', name: 'Stress Dice', face: 'stress:6', icon: 'die-stress', note: 'Lacquer. Succeed on 6. A 1 is a Stress Response.', minus: 'One fewer Stress Die', plus: 'One more Stress Die' },
+  { kind: 'titan', name: 'Titan Dice', face: 'titan:5', icon: 'die-titan-attack', note: 'Flesh. Succeed on 5 or 6. Never Pushed.', minus: 'One fewer Titan Die', plus: 'One more Titan Die' },
+];
+const HeadingTag = variant === 'page' ? 'h2' : 'h3';
+---
+<div class="tray dtray" data-dice-tray data-variant={variant} id={id}>
+  <div class="dtray-head">
+    <HeadingTag class="dtray-title" id={`${id}-title`}>{heading}</HeadingTag>
+    <span class="lbl dtray-source" data-tray-source>Bone, gunmetal, lacquer, and flesh</span>
+  </div>
+
+  <div class="dtray-box">
+    <div class="dtray-stage" data-tray-stage></div>
+    <div class="dtray-faces" data-tray-faces aria-label="Dice showing"></div>
+  </div>
+
+  <div class="dtray-panels">
+    <form class="dtray-form" data-tray-form aria-labelledby={`${id}-title`}>
+      <fieldset>
+        <legend>Your pool</legend>
+        <div class="dtray-counts">
+          {KINDS.map(({ kind, name, face, icon, note, minus, plus }) => (
+            <div class="dtray-count" data-kind={kind}>
+              <label for={`${id}-${kind}`}>
+                <span class="dtray-glyph" aria-hidden="true" set:html={facesHtml(face, 'die')} />
+                <span class="dtray-stamp"><IconSlot name={icon} size="sm" /></span>
+                {name}
+              </label>
+              <div class="stepper">
+                <button type="button" data-step="-1" data-kind={kind} aria-label={minus}><Icon name="ph:minus" aria-hidden="true" /></button>
+                <input
+                  id={`${id}-${kind}`}
+                  name={kind}
+                  type="number"
+                  inputmode="numeric"
+                  min={POOL_LIMITS[kind].min}
+                  max={POOL_LIMITS[kind].max}
+                  value={pool[kind]}
+                  aria-describedby={`${id}-${kind}-note`}
+                />
+                <button type="button" data-step="1" data-kind={kind} aria-label={plus}><Icon name="ph:plus" aria-hidden="true" /></button>
+              </div>
+              <small id={`${id}-${kind}-note`}>{note}</small>
+            </div>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="dtray-options">
+        <legend>Pushing</legend>
+        <label class="dtray-check">
+          <input type="checkbox" name="cover" />
+          A comrade Covers the Push
+        </label>
+        <label class="dtray-pushes" for={`${id}-pushes`}>
+          Pushes allowed
+          <input id={`${id}-pushes`} name="pushes" type="number" inputmode="numeric" min={PUSH_LIMITS.min} max={PUSH_LIMITS.max} value="1" aria-describedby={`${id}-pushes-note`} />
+        </label>
+        <small id={`${id}-pushes-note`}>One, unless a Talent allows more.</small>
+      </fieldset>
+
+      <div class="dtray-actions">
+        <button type="submit" class="btn btn--roll" data-tray-roll aria-disabled="false">
+          <Icon name="ph:dice-five" aria-hidden="true" />Roll
+        </button>
+        <button type="button" class="btn btn--push" data-tray-push aria-disabled="true" aria-describedby={`${id}-reason`}>
+          <Icon name="ph:arrow-clockwise" aria-hidden="true" />Push
+        </button>
+        <button type="button" class="btn btn--quiet" data-tray-reset>
+          <Icon name="ph:arrow-counter-clockwise" aria-hidden="true" />Reset
+        </button>
+      </div>
+      <p class="dtray-reason" id={`${id}-reason`} data-tray-reason>Roll first. You can Push after a roll.</p>
+    </form>
+
+    <section class="dtray-result" aria-labelledby={`${id}-result-title`}>
+      <p class="lbl dtray-result-title" id={`${id}-result-title`}>Field report</p>
+      <dl data-tray-result></dl>
+      <p class="dtray-log" data-tray-log aria-live="polite" aria-atomic="true"></p>
+    </section>
+  </div>
+</div>

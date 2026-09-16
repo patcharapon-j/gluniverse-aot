@@ -1,0 +1,319 @@
+---
+/**
+ * A rules table, rendered from the shared tables through lib/core-tables, lib/character-tables,
+ * and lib/engagement-tables. Rows stack into labelled cards on narrow screens.
+ */
+import { getCollection } from 'astro:content';
+import { CHARACTER_TABLES, type CharacterTableId } from '~/lib/character-tables';
+import { ENGAGEMENT_TABLES, type EngagementTableId } from '~/lib/engagement-tables';
+import { EXPEDITION_TABLES, type ExpeditionTableId } from '~/lib/expedition-tables';
+import { GEAR_TABLES, type GearTableId } from '~/lib/gear-tables';
+import { HARM_TABLES, type HarmTableId } from '~/lib/harm-tables';
+import { SKIRMISH_TABLES, type SkirmishTableId } from '~/lib/skirmish-tables';
+import {
+  bonusDiceSources,
+  circumstancesLadder,
+  failureMenu,
+  PAGE_ANCHORS,
+  rollExceptions,
+  stressChanges,
+  type Cell,
+  type CoreTableData,
+  type SeeRef,
+} from '~/lib/core-tables';
+
+interface Props {
+  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId | HarmTableId | GearTableId | ExpeditionTableId | SkirmishTableId;
+}
+const { table } = Astro.props;
+
+const builders: Record<Props['table'], () => CoreTableData> = {
+  'stress-changes': stressChanges,
+  'bonus-dice': bonusDiceSources,
+  'roll-exceptions': rollExceptions,
+  circumstances: circumstancesLadder,
+  'called-roll-costs': failureMenu,
+  ...CHARACTER_TABLES,
+  ...ENGAGEMENT_TABLES,
+  ...GEAR_TABLES,
+  ...HARM_TABLES,
+  ...EXPEDITION_TABLES,
+  ...SKIRMISH_TABLES,
+};
+const data = builders[table]();
+const hasSee = data.see !== false;
+const chapters = new Map((await getCollection('rules')).map((entry) => [entry.id, entry.data.title]));
+
+function link(ref: SeeRef): { href: string; label: string } {
+  if (ref.startsWith('#')) {
+    const label = PAGE_ANCHORS[ref];
+    if (!label) throw new Error(`CoreTable: no label for the anchor "${ref}".`);
+    return { href: ref, label };
+  }
+  const title = chapters.get(ref);
+  if (!title) throw new Error(`CoreTable: no Player's Guide chapter "${ref}".`);
+  return { href: `/guide/${ref}/`, label: title };
+}
+
+const cellCount = data.columns.length - (hasSee ? 1 : 0);
+for (const group of data.groups) {
+  for (const row of group.rows) {
+    if (row.cells.length !== cellCount) throw new Error(`CoreTable: a "${data.caption}" row has the wrong number of cells.`);
+    if (hasSee && !row.see) throw new Error(`CoreTable: a "${data.caption}" row has no "See" links.`);
+  }
+}
+
+const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell === 'object' && 'options' in cell;
+const isLines = (cell: Cell): cell is { lines: string[] } => typeof cell === 'object' && 'lines' in cell;
+---
+<div class:list={['coretable wide', data.roll && 'coretable--roll']}>
+  <table>
+    <caption>
+      <span class="lbl">Table</span>
+      <b>{data.caption}</b>
+      {data.note && <span class="note">{data.note}</span>}
+    </caption>
+    <thead>
+      <tr>{data.columns.map((column) => <th scope="col">{column}</th>)}</tr>
+    </thead>
+    {data.groups.map((group) => (
+      <tbody>
+        {group.heading && (
+          <tr class="group">
+            <th scope="rowgroup" colspan={data.columns.length}>
+              {group.heading}
+              {group.note && <span class="gnote">{group.note}</span>}
+            </th>
+          </tr>
+        )}
+        {group.rows.map((row) => (
+          <tr>
+            {row.cells.map((cell, i) => {
+              const Tag = i === 0 ? 'th' : 'td';
+              return (
+                <Tag scope={i === 0 ? 'row' : undefined} data-label={data.columns[i]}>
+                  {typeof cell === 'string' ? (
+                    cell
+                  ) : isOptions(cell) ? (
+                    cell.options.map((option) => <span class="opt">{option}</span>)
+                  ) : isLines(cell) ? (
+                    cell.lines.map((line) => <span class="line">{line}</span>)
+                  ) : (
+                    <>{cell.text}<span class="cnote">{cell.note}</span></>
+                  )}
+                </Tag>
+              );
+            })}
+            {hasSee && (
+              <td class="see" data-label={data.columns[data.columns.length - 1]}>
+                {(row.see ?? []).map(link).map((l, i) => (
+                  <>{i > 0 && <span class="sep">, </span>}<a href={l.href}>{l.label}</a></>
+                ))}
+              </td>
+            )}
+          </tr>
+        ))}
+      </tbody>
+    ))}
+  </table>
+</div>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-bottom: 2px solid var(--ink);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding-bottom: 10px;
+  }
+  caption .lbl {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 1px 6px;
+    border: 1px solid var(--ink-2);
+    color: var(--ink-2);
+    font-size: var(--fs-2xs);
+  }
+  caption b {
+    font-family: var(--f-type);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  caption .note {
+    display: block;
+    margin-top: 6px;
+    font-style: italic;
+    font-size: var(--fs-sm);
+    color: var(--ink-2);
+  }
+  thead th {
+    padding: 8px 10px;
+    text-align: left;
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  tbody th,
+  tbody td {
+    padding: 9px 10px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+  }
+  tbody th[scope="row"] {
+    font-weight: 600;
+  }
+  .coretable--roll tbody th[scope="row"] {
+    white-space: nowrap;
+    font-family: var(--f-type);
+    font-variant-numeric: tabular-nums;
+  }
+  .opt,
+  .line {
+    display: block;
+  }
+  .line + .line {
+    margin-top: 2px;
+  }
+  .opt + .opt::before {
+    content: "or ";
+    font-style: italic;
+    color: var(--ink-2);
+  }
+  .cnote {
+    display: block;
+    margin-top: 2px;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .group th {
+    padding: 6px 10px;
+    font-family: var(--f-type);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--corps);
+    background: rgba(207, 195, 165, 0.35);
+    border-top: 1px solid var(--ink);
+  }
+  .group .gnote {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--f-serif);
+    font-size: var(--fs-sm);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .see a {
+    white-space: nowrap;
+  }
+
+  /* Above the stacking breakpoint a table with more columns than the page
+     column can hold scrolls inside its own box instead of pushing the whole
+     page sideways. The script below makes it a tab stop only while it really
+     does scroll, so a table that fits is never one. */
+  @media (min-width: 761px) {
+    .coretable {
+      overflow-x: auto;
+    }
+    .coretable:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: -3px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    table,
+    caption,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    tbody tr {
+      padding: 10px 0;
+      border-top: 1px solid rgba(156, 144, 120, 0.6);
+    }
+    tbody tr.group {
+      padding: 0;
+      border-top: 0;
+    }
+    tbody th,
+    tbody td {
+      padding: 2px 0;
+      border-top: 0;
+    }
+    .coretable--roll tbody th[scope="row"] {
+      white-space: normal;
+    }
+    .group th {
+      margin-top: 10px;
+      padding: 6px 8px;
+      border-top: 1px solid var(--ink);
+    }
+    tbody td::before {
+      content: attr(data-label);
+      display: block;
+      margin-top: 6px;
+      font-family: var(--f-type);
+      font-size: var(--fs-2xs);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+    }
+    .see a {
+      white-space: normal;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * A scroll container has to be reachable from the keyboard, but only while it
+   * actually scrolls. Below the stacking breakpoint the table is a list of
+   * cards and scrolls at no width, so the tab stop is taken away again.
+   */
+  function markScrollingTables() {
+    for (const box of document.querySelectorAll<HTMLElement>('.coretable')) {
+      const scrolls = box.scrollWidth > box.clientWidth + 1;
+      if (scrolls) {
+        box.setAttribute('tabindex', '0');
+        box.setAttribute('role', 'group');
+        const caption = box.querySelector('caption b')?.textContent?.trim();
+        box.setAttribute('aria-label', caption ? `${caption} table, scrolls sideways` : 'Table, scrolls sideways');
+      } else {
+        box.removeAttribute('tabindex');
+        box.removeAttribute('role');
+        box.removeAttribute('aria-label');
+      }
+    }
+  }
+
+  markScrollingTables();
+  addEventListener('resize', markScrollingTables, { passive: true });
+</script>

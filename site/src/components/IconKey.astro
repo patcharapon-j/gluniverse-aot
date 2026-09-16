@@ -1,0 +1,72 @@
+---
+/**
+ * A labelled row of icons from the site's icon set, used as a key beside a table.
+ * The icons are decorative; each label carries the meaning.
+ */
+import IconSlot from './IconSlot.astro';
+
+interface Item {
+  icon: string;
+  label: string;
+  note?: string;
+}
+interface Props {
+  title?: string;
+  items: Item[];
+}
+const { title, items } = Astro.props;
+if (items.length === 0) throw new Error('IconKey: a key with no entries says nothing.');
+---
+<div class="iconkey">
+  {title && <p class="lbl">{title}</p>}
+  <ul>
+    {items.map((item) => (
+      <li>
+        <IconSlot name={item.icon} size="lg" />
+        <span class="name">{item.label}</span>
+        {item.note && <span class="note">{item.note}</span>}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .iconkey {
+    margin: 18px 0;
+    padding: 12px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .iconkey > .lbl {
+    margin-bottom: 10px;
+    color: var(--ink-2);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 12px 18px;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 0 10px;
+    align-items: center;
+  }
+  .name {
+    grid-column: 2;
+    font-family: var(--f-type);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .note {
+    grid-column: 2;
+    font-size: var(--fs-sm);
+    line-height: 1.35;
+    color: var(--ink-2);
+  }
+</style>

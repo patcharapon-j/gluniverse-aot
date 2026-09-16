@@ -1,0 +1,106 @@
+---
+/**
+ * The two rolls of the mind side by side: the Stress Response the dice force, and the Fear
+ * Roll only a listed event forces. Both totals come from the mind tables (lib/harm-tables),
+ * so a change to either roll's formula redraws the paths.
+ */
+import IconSlot from './IconSlot.astro';
+import { mindPaths } from '~/lib/harm-tables';
+
+interface Props {
+  fig: string;
+}
+const { fig } = Astro.props;
+const paths = mindPaths();
+const SLOTS: Record<string, string> = { 'stress-response': 'roll-stress', 'fear-roll': 'harm-fear' };
+---
+<figure class="drawing wide mindfig" aria-labelledby="fig-mind-caption">
+  <p class="lead">
+    Both rolls are the same arithmetic and neither is an attribute roll: no pool, no Push, no Help, no Stress Dice, no Circumstances.
+    What differs is what sets them off, and what a result can take from you.
+  </p>
+
+  <div class="paths">
+    {paths.map((path) => (
+      <section class="path" aria-labelledby={`mind-${path.id}`}>
+        <header>
+          <IconSlot name={SLOTS[path.id]} size="md" />
+          <h3 id={`mind-${path.id}`}>{path.title}</h3>
+          <p class="total num">{path.total}</p>
+        </header>
+        <ol>
+          {path.steps.map((step) => (
+            <li>
+              <b>{step.title}</b> {step.text}
+            </li>
+          ))}
+        </ol>
+        <p class="foot">{path.foot}</p>
+      </section>
+    ))}
+  </div>
+
+  <figcaption class="titleblock" id="fig-mind-caption"><span>{fig}</span><span>The two rolls of the mind</span></figcaption>
+</figure>
+
+<style>
+  .mindfig .lead {
+    margin: 0 0 18px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .paths {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 18px;
+    padding-bottom: 26px;
+  }
+  .path {
+    border: 1px solid var(--rule);
+    padding: 14px 16px 16px;
+  }
+  .path header {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 0 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .path header :global(.icon-slot) {
+    grid-row: 1 / span 2;
+  }
+  .path h3 {
+    font-family: var(--f-type);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .total {
+    font-size: var(--fs-sm);
+    color: var(--seal);
+    letter-spacing: 0.04em;
+  }
+  .path ol {
+    margin: 12px 0 0;
+    padding-left: 1.2em;
+  }
+  .path li {
+    margin-bottom: 8px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .path li b {
+    font-weight: 700;
+  }
+  .path .foot {
+    margin: 12px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-2);
+    font-size: var(--fs-sm);
+    line-height: 1.45;
+  }
+</style>

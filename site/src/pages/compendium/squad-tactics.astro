@@ -1,0 +1,100 @@
+---
+import '~/styles/compendium.css';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import CoreTable from '~/components/CoreTable.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import GlossText from '~/components/GlossText.astro';
+import IconSlot from '~/components/IconSlot.astro';
+import { COMPENDIUM_TABS, tally } from '~/lib/compendium';
+import { squadTacticEntries, squadTacticsHeld } from '~/lib/engagement-tables';
+import { glossifier } from '~/lib/glossify';
+
+const tactics = squadTacticEntries();
+const held = squadTacticsHeld();
+
+const groups: FilterGroup[] = [{ key: 'kind', label: 'What it is for', options: tally(tactics.map((t) => [t.kind])) }];
+
+/** Glossary pop-ups on the first use of each term on a card, in reading order. */
+const cards = tactics.map((tactic) => {
+  const gloss = glossifier(['Squad Tactic']);
+  return { tactic, condition: gloss(tactic.condition), declared: gloss(tactic.declared), effect: gloss(tactic.effect) };
+});
+---
+<BaseLayout
+  title="Squad Tactics"
+  description="Every Squad Tactic in Wings of Freedom: what sets it up, who calls it, and what it does."
+  section="compendium"
+  tabs={COMPENDIUM_TABS}
+  tabsLabel="Compendium sections"
+>
+  <section class="sheet" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Part III · Compendium</span><span>Squad Tactics</span></div>
+    <CompendiumIndex
+      id="squad-tactics"
+      groups={groups}
+      total={tactics.length}
+      singular="tactic"
+      plural="tactics"
+      searchLabel="Search Squad Tactics"
+      searchPlaceholder="Search by name or condition"
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Compendium</p>
+        <h1 class="h1" id="page-title">Squad Tactics</h1>
+        <p class="lede">Drilled moves that belong to the Squad rather than to any one soldier. You practise them until they are one word, and then you call them.</p>
+        <FieldQuote cite="A Squad Leader, on drill">We do not invent it in the moment. Somebody shouts two syllables and four people already know where to be.</FieldQuote>
+      </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">Owned by the Squad</dt>
+          <dd>Not by any one soldier. Promotions and new soldiers never change which ones you hold.</dd>
+        </div>
+        <div>
+          <dt class="lbl">You hold {held}</dt>
+          <dd>Chosen together before the Squad's first Titan Engagement, with the usual roll-off if you disagree.</dd>
+        </div>
+        <div>
+          <dt class="lbl">Once each fight</dt>
+          <dd>Each tactic you hold can be used once per Titan Engagement, when its condition is met.</dd>
+        </div>
+        <div>
+          <dt class="lbl">An option, not an action</dt>
+          <dd>Using one spends nothing of its own. The use is spent the moment it is declared.</dd>
+        </div>
+      </dl>
+      <p class="see">How a Squad holds and calls them: <a href="/guide/fighting-titans/#squad-tactics">Fighting Titans</a>. Everything a Titan fight puts in their way, from Attention to the Grab: <a href="/guide/fighting-titans/">the same chapter</a>.</p>
+      <div class="cards cards--wide">
+        {cards.map(({ tactic, ...text }) => (
+          <article
+            class="card"
+            id={tactic.slug}
+            aria-labelledby={`${tactic.slug}-name`}
+            data-cmp-item
+            data-search={tactic.search.toLowerCase()}
+            data-f-kind={tactic.kind.slug}
+          >
+            <div class="card-top">
+              <IconSlot name={tactic.icon} size="lg" />
+              <div class="tags">
+                <span class="lbl">{tactic.kind.name}</span>
+                <span class="lbl">Once a fight</span>
+              </div>
+            </div>
+            <h2 id={`${tactic.slug}-name`}>{tactic.name}</h2>
+            <dl class="facts">
+              <div><dt class="lbl">Condition</dt><dd><GlossText parts={text.condition} /></dd></div>
+              <div><dt class="lbl">Declared by, and when</dt><dd><GlossText parts={text.declared} /></dd></div>
+              <div><dt class="lbl">Effect</dt><dd><GlossText parts={text.effect} /></dd></div>
+            </dl>
+            <div class="card-foot">
+              <p class="lbl">Full rules: <a href="/guide/fighting-titans/#squad-tactics">Fighting Titans</a></p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </CompendiumIndex>
+
+    <CoreTable table="squad-tactics" />
+  </section>
+</BaseLayout>
