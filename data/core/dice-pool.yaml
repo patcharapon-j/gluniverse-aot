@@ -290,6 +290,12 @@ roll_exceptions:
       The GM rolls for a soldier, out of sight, to notice something the soldier does not know is there
       (Chapter 1, section 1.1, item 5; decision batch 9, 9-10). A soldier who says they are looking
       rolls Spot in the open as a called roll instead.
+    player_text: >-
+      Some things you never know to look for. When one of them is there, the GM rolls your Spot or
+      Size Up out of sight, with your own dice and whatever the circumstances give: an easier step
+      adds its dice, and nothing else does, so no comrade Helps you, nobody Covers you, and the roll
+      is never Pushed. A Stress Die showing 1 does nothing, because you never know you rolled.
+      Failing means only that you do not notice.
     secret: true
     called_roll: false
     stakes: none                 # failing it means only that the soldier does not notice (decision batch 9, 9-32)
