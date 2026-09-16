@@ -102,7 +102,7 @@ const EFFECT_TEXT: Record<string, (e: RawEffect, table: string) => string> = {
   'no-reactions': () => 'no Reactions',
   'fear-roll-total': (e) => `Fear Roll total raised by ${e.amount}`,
   'gain-scar': () => 'gain a Scar',
-  'draw-attention': () => "you are the loudest thing on the event's Titan, never from Distant",
+  'draw-attention': () => "you take the loudest mark on the event's Titan, never from Distant",
   'stress-gain-nearby': (e) => `comrades within 1 Position step gain ${e.amount} Stress`,
   'forced-move': (e) => `1 step toward ${e.toward === 'distant' ? 'Distant' : 'the nearest comrade'} at the start of your next turn`,
   'forced-action': () => "your next action is a strike on the event's Titan, Pushed if it falls short",
@@ -151,7 +151,7 @@ const healthDoc = parse(healthText) as {
 /** What each kind of harm does to a soldier, and what names it. */
 const HARM_KIND_WORDING: Record<string, { does: string; named: string }> = {
   damage: {
-    does: 'Marks that many Health boxes. At 0 current Health it gives a Critical Injury instead, of the damage’s own Injury Type.',
+    does: 'Marks that many Health boxes. Damage that brings you to 0 marks the boxes and gives a Critical Injury of its own Injury Type; damage taken while you are already at 0 gives one instead of marking anything.',
     named: 'A fall, steam, a Heave against a corpse, a Foe’s weapon, and a called roll whose stakes named it.',
   },
   'critical-injury': {
@@ -314,7 +314,6 @@ const EFFECT_WORDING: Record<string, { name: string; does: string; outside?: str
 
 const OUTSIDE_STANDARD: Record<string, string> = {
   applies: 'It applies.',
-  'no effect': 'Nothing.',
 };
 
 export function effectTypesTable(): CoreTableData {
@@ -826,7 +825,7 @@ const USE_WORDING: Record<string, { name: string; patient: string; success: stri
   revive: {
     name: 'Revive',
     patient: 'A Down comrade at 0 current Health whose Health lost is above 0. Nobody revives themselves.',
-    success: 'Restore 1 Health lost per success, up to their Health lost, erasing that many damage marks. Crossed-off boxes do not come back, and a Down row still holds them.',
+    success: 'Restore 1 Health lost per success, up to their Health lost, erasing that many damage marks. Crossed-off boxes do not come back, and Down goes on if a Down row still holds them.',
   },
   treat: {
     name: 'Treat',
