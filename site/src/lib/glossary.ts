@@ -296,6 +296,19 @@ const RAW: { term: string; definition: string; aliases?: string[] }[] = [
   { term: 'ODM move', aliases: ['ODM moves'], definition: 'A move you make on your own ODM Gear. It needs a harness that is not Jammed and gas above 0, and it is what makes you airborne.' },
   { term: 'Running dry', aliases: ['run dry', 'runs dry', 'ran dry'], definition: 'Reaching Gas Rating 0. Your ODM Gear counts as not had until you have gas again, but running dry never drops you.' },
   { term: 'Squad Supply', definition: 'The rations, flares, medical supplies, and shot the Squad holds together. No soldier carries it, and it counts as no item.' },
+  { term: 'Mission Brief', definition: "Command's written orders for an Expedition: the Waypoints in order, each Leg's Distance Band and Formation Post, and the days a Hard Ride is ordered." },
+  { term: 'Distance Band', aliases: ['Distance Bands'], definition: 'How far out a Leg carries the Squad: Near, Far, or Deep. The deeper the Leg, the worse its hazard reads.' },
+  { term: 'Formation Post', aliases: ['Formation Posts'], definition: 'Where the whole Squad rides in the long-range formation. It sets the entry the Leg roll uses and what the Leg adds to its hazard, and it changes only at a Waypoint.' },
+  { term: 'Hard Ride', aliases: ['Hard Rides'], definition: "A third Leg squeezed in before dark. It is ridden on Ride, costs twice the rations, and makes the Leg's hazard worse by 1." },
+  { term: 'Lead', definition: 'The soldier who makes a Leg roll: one soldier on the Expedition who is not Down, chosen by the players. On a Hard Ride the Lead must be mounted.' },
+  { term: 'Depot', aliases: ['Depots'], definition: 'A Waypoint stocked by the Corps. Reaching one gives every soldier a full Standard Issue and restocks Squad Supply.' },
+  { term: 'Waypoint scene', aliases: ['Waypoint scenes'], definition: 'A scene the GM frames at a Waypoint between Legs. It runs on called rolls, rides no Leg, and reads no hazard.' },
+  { term: 'Camp Relief', definition: 'The 1 Stress every soldier on the Expedition loses when the camp roll succeeds and the camp does not meet hunger.' },
+  { term: 'Hunger', definition: 'What a Leg or a Night Camp meets when the Squad holds fewer rations than it must spend. It costs every ration left and 1 Stress each, and it cancels the Camp Relief.' },
+  { term: 'Requisition', aliases: ['Requisitions'], definition: 'The Downtime Action that asks Command for gear beyond Standard Issue. There are no prices: Funding, Scarcity, and your roll decide.' },
+  { term: 'Scarcity', definition: 'How hard an item is to come by: Standard, Limited, or Rare. It sets the successes a Requisition roll needs, and Funding decides which Scarcity Command will consider.' },
+  { term: 'Ledger', definition: "Command's patience within one Downtime. It starts at 0, rises by 1 with each Requisition granted, and adds itself to what the next roll needs." },
+  { term: 'Squad Action', aliases: ['Squad Actions'], definition: 'The one action the Squad takes together each Downtime, chosen by the players.' },
 ];
 
 const slugify = (s: string) =>

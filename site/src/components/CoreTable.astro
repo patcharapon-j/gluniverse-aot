@@ -6,6 +6,7 @@
 import { getCollection } from 'astro:content';
 import { CHARACTER_TABLES, type CharacterTableId } from '~/lib/character-tables';
 import { ENGAGEMENT_TABLES, type EngagementTableId } from '~/lib/engagement-tables';
+import { EXPEDITION_TABLES, type ExpeditionTableId } from '~/lib/expedition-tables';
 import { GEAR_TABLES, type GearTableId } from '~/lib/gear-tables';
 import { HARM_TABLES, type HarmTableId } from '~/lib/harm-tables';
 import {
@@ -21,7 +22,7 @@ import {
 } from '~/lib/core-tables';
 
 interface Props {
-  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId | HarmTableId | GearTableId;
+  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId | HarmTableId | GearTableId | ExpeditionTableId;
 }
 const { table } = Astro.props;
 
@@ -35,6 +36,7 @@ const builders: Record<Props['table'], () => CoreTableData> = {
   ...ENGAGEMENT_TABLES,
   ...GEAR_TABLES,
   ...HARM_TABLES,
+  ...EXPEDITION_TABLES,
 };
 const data = builders[table]();
 const hasSee = data.see !== false;
