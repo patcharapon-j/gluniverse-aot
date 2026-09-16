@@ -488,7 +488,7 @@ export function gasRollFlow(): FlowStep[] {
     {
       title: `${dice} dice, or ${pushedDice} after a Push.`,
       icon: 'ph:dice-three',
-      text: `${pushedDice} dice if any roll you Pushed this round had your ODM Gear as its gear item, however many such rolls there were. A Pushed dodge made with your horse does not count. Light Trigger turns a ${pushedDice}-die roll back into ${dice}.`,
+      text: `${pushedDice} dice if any roll you Pushed this round had your ODM Gear as its gear item, however many such rolls there were. A Pushed dodge made with your horse does not count. Light Trigger turns a ${pushedDice}-die roll back into ${dice}, once per Titan Engagement.`,
       exit: { kind: 'note', label: 'One roll', text: `The extra gas a Push costs is the ${pushedDice === 3 ? 'third' : `${pushedDice}th`} die of that one roll, never a second roll.` },
     },
     {
@@ -552,7 +552,7 @@ export function wearFlow(): FlowStep[] {
     {
       title: 'A Jam.',
       icon: 'gear-odm',
-      text: 'No Gear Dice, no ODM move, and no Nape strike or Body Part strike from On Body or Blind Spot. Your Gas Rating does not change, and you still make the Gas Roll for the round it Jammed in, but none afterwards.',
+      text: 'No Gear Dice, no ODM move, and no Nape strike or Body Part strike from On Body or Blind Spot. Your Gas Rating does not change, and you still make the Gas Roll for the round it Jammed in, but none while it stays Jammed.',
       exit: { kind: 'stop', label: 'Airborne', text: 'You fall, once the roll that Jammed it is finished. It ends when Field Repair or a Standard Issue harness lifts the current rating above 0.' },
     },
   ];

@@ -202,7 +202,7 @@ carrying:
   each-flintlock-pistol: Each flintlock pistol
   each-musket: Each musket
   each-prosthetic-arm-or-prosthetic-leg: Each prosthetic fitted to you
-  a-comrade-the-soldier-carries: A comrade you carry, plus every item they carry
+  a-comrade-the-soldier-carries: A comrade you carry, whose own items each count again by their own row
   a-horse: A horse
   squad-supply: Squad Supply
 
