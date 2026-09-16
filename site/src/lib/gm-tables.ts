@@ -104,7 +104,7 @@ export function interimSetup(): CoreTableData {
 
   return {
     caption: 'Interim Titan Engagement setup',
-    note: `Roll each part the starting rule and your framing leave unnamed, in this order. The retreat clock is never rolled: it has ${RETREAT_CLOCK} segments in every Titan Engagement this table sets up.`,
+    note: `Roll each part the starting rule and your framing leave unnamed. Background Titans are rolled before the Size Class of each one. The retreat clock is never rolled: it has ${RETREAT_CLOCK} segments in every Titan Engagement this table sets up.`,
     columns: ['D6', 'What it gives'],
     see: false,
     roll: true,
@@ -185,7 +185,7 @@ const TRACKER_WORDING: Record<string, { name: string; text: string }> = {
   },
   'focus_titan_row/next-behavior-face-down-until': { name: 'Next Behavior', text: 'Face down until a Read, a telegraph, or a card reveals it. The one thing on the tracker the squad never sees.' },
   'focus_titan_row/previous-behavior': { name: 'Previous behavior', text: 'What it last resolved. Nothing can be rolled back to back.' },
-  'focus_titan_row/call-it-on-the-next': { name: 'Call It', text: 'Whether a Read has Called the Next Behavior, which gives every other target Bonus Dice on a dodge against it.' },
+  'focus_titan_row/call-it-on-the-next': { name: 'Call It', text: 'Whether a Read has Called the Next Behavior, which gives every target other than the Reader Bonus Dice on a dodge against it.' },
   'focus_titan_row/each-body-part-s-state-and': { name: 'Body Parts', text: "Each part's state and its count of successes toward the next state." },
   'focus_titan_row/openings-with-the-soldier-who': { name: 'Openings', text: 'How many stand, and who made each, since no one spends an Opening they made themselves.' },
   'focus_titan_row/regeneration-clock-filled-segments-of': {
@@ -339,9 +339,9 @@ export function behaviorRequirements(titan: string): CoreTableData {
 const RUNG_WORDING: Record<string, Rung> = {
   'hooked-into-its-body': {
     name: 'Hooked into it',
-    text: 'A soldier On Body, or one whose strike has just hooked into it. A Nape striker who falls short turns it first, as on every ladder.',
+    text: 'A soldier On Body, or one whose Nape strike has just hooked into it. A Nape striker who falls short turns it first, as on every ladder.',
   },
-  'loudest-or-brightest': { name: 'The loudest or brightest', text: 'A soldier who has made themselves heard or seen, wherever they stand. Only Draw Attention does that, and never from Distant.' },
+  'loudest-or-brightest': { name: 'The loudest or brightest', text: 'A soldier who has made themselves heard or seen, wherever they stand. Draw Attention, or a Fear Roll result that names this Titan, does that, and never from Distant.' },
   'current-holder': {
     name: 'Whoever it is already running down',
     text: 'The soldier who holds its Attention, while they hold a Position other than Distant. A holder who gets away to Distant, mounted or on foot, is no longer its quarry. A Down soldier can meet this.',
