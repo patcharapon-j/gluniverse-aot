@@ -1,7 +1,11 @@
 ---
+import '~/styles/compendium.css';
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import CompendiumIndex, { type FilterGroup } from '~/components/CompendiumIndex.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
 import IconSlot from '~/components/IconSlot.astro';
 import { GLOSSARY } from '~/lib/glossary';
+import { guideChapters } from '~/lib/chapters';
 import { REFERENCE_TABS } from '~/lib/nav';
 
 /**
@@ -32,34 +36,87 @@ const ICONS: Record<string, string> = {
 
 /** The four Positions, shown together on the one entry that explains them. */
 const POSITIONS = ['pos-distant', 'pos-in-reach', 'pos-on-body', 'pos-blind-spot'];
+
+// The chapters in reading order, so the chips run the way the Player's Guide does.
+const chapters = await guideChapters();
+const groups: FilterGroup[] = [
+  {
+    key: 'chapter',
+    label: 'Chapter',
+    options: chapters.map((chapter) => ({
+      value: chapter.id,
+      label: chapter.data.tab,
+      count: GLOSSARY.filter((entry) => entry.chapter === chapter.id).length,
+    })),
+  },
+];
+const title = new Map(chapters.map((chapter) => [chapter.id, chapter.data.title]));
+
+const entries = GLOSSARY.map((entry) => ({
+  ...entry,
+  chapterTitle: title.get(entry.chapter) ?? entry.chapter,
+  search: [entry.term, ...entry.aliases, entry.definition].join(' ').toLowerCase(),
+}));
 ---
-<BaseLayout title="Glossary" description="Every game term in Wings of Freedom, defined." section="reference" tabs={REFERENCE_TABS} tabsLabel="Reference sections">
+<BaseLayout
+  title="Glossary"
+  description="Every game term in Wings of Freedom, defined in a sentence or two, with the chapter that carries its rule."
+  section="reference"
+  tabs={REFERENCE_TABS}
+  tabsLabel="Reference sections"
+>
   <section class="sheet sheet--light" aria-labelledby="page-title">
     <div class="runhead lbl"><span>Part IV · Reference</span><span>Glossary</span></div>
-    <header class="glossary-head">
-      <p class="lbl eyebrow">Reference</p>
-      <h1 class="h1" id="page-title">Glossary</h1>
-    </header>
-    <dl class="glossary">
-      {GLOSSARY.map((entry) => (
-        <div class="gl-row" id={entry.slug}>
-          <dt>{ICONS[entry.slug] && <IconSlot name={ICONS[entry.slug]} size="sm" />}{entry.term}</dt>
-          <dd>
-            {entry.definition}
-            {entry.slug === 'position' && (
-              <span class="gl-icons" aria-hidden="true">{POSITIONS.map((name) => <IconSlot name={name} size="sm" />)}</span>
-            )}
-          </dd>
+    <CompendiumIndex
+      id="glossary"
+      groups={groups}
+      total={entries.length}
+      singular="term"
+      plural="terms"
+      searchLabel="Search the glossary"
+      searchPlaceholder="Search by term or definition"
+      glossary={false}
+    >
+      <div slot="head">
+        <p class="lbl eyebrow">Reference</p>
+        <h1 class="h1" id="page-title">Glossary</h1>
+        <p class="lede">Every term the rules give a meaning of its own, in a sentence or two, with the chapter that carries the rule behind it.</p>
+        <FieldQuote cite="Survey Corps manual, on the drill book">Learn the words before the ride. Out there nobody has time to explain what they just shouted.</FieldQuote>
+      </div>
+      <dl class="key">
+        <div>
+          <dt class="lbl">One definition</dt>
+          <dd>Every pop-up on this site shows the entry you see here. There is no second wording anywhere.</dd>
         </div>
-      ))}
-    </dl>
+        <div>
+          <dt class="lbl">Where the rule is</dt>
+          <dd>Each entry links to the chapter that carries its rule. Filter by chapter to read one chapter's terms together.</dd>
+        </div>
+        <div>
+          <dt class="lbl">What it is not</dt>
+          <dd>A summary. An entry tells you what a term means, not how the whole rule runs.</dd>
+        </div>
+      </dl>
+      <p class="see">The numbers you reach for mid-fight: <a href="/reference/quick-reference/">Quick Reference</a>.</p>
+      <dl class="glossary">
+        {entries.map((entry) => (
+          <div class="gl-row" id={entry.slug} data-cmp-item data-search={entry.search} data-f-chapter={entry.chapter}>
+            <dt>{ICONS[entry.slug] && <IconSlot name={ICONS[entry.slug]} size="sm" />}{entry.term}</dt>
+            <dd>
+              {entry.definition}
+              {entry.slug === 'position' && (
+                <span class="gl-icons" aria-hidden="true">{POSITIONS.map((name) => <IconSlot name={name} size="sm" />)}</span>
+              )}
+              <a class="gl-see lbl" href={`/guide/${entry.chapter}/`}>{entry.chapterTitle}</a>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </CompendiumIndex>
   </section>
 </BaseLayout>
 
 <style>
-  .glossary-head {
-    margin-bottom: clamp(24px, 4vw, 40px);
-  }
   .glossary {
     margin: 0;
     columns: 2 22rem;
@@ -93,5 +150,14 @@ const POSITIONS = ['pos-distant', 'pos-in-reach', 'pos-on-body', 'pos-blind-spot
     gap: 6px;
     margin-left: 8px;
     vertical-align: -5px;
+  }
+  .gl-see {
+    display: block;
+    margin-top: 6px;
+    color: var(--ink-2);
+    font-size: var(--fs-2xs);
+  }
+  .gl-see::before {
+    content: "See ";
   }
 </style>
