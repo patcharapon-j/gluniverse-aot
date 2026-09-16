@@ -17,19 +17,24 @@ const ROWS: { title: string; icon?: string; dice?: string; text: string; count: 
   {
     title: 'Name the roll',
     icon: 'ph:book-open-text',
-    text: 'Pick the Action Catalog entry you roll for. It names the attribute, and the gear that can add Gear Dice.',
+    text: "Pick the Action Catalog entry you roll for. It names the attribute, and the gear that can add Gear Dice. The GM names the roll's Circumstances now, before any Bonus Dice.",
     count: 'No dice',
   },
   { title: s.attribute.name, dice: 'base:?,?,?', text: "Add base dice equal to the attribute's rating.", count: s.attribute.count },
   { title: s.talent.name, dice: 'base:?,?', text: 'Add base dice equal to the level of one Talent that names the entry.', count: s.talent.count },
-  { title: s.bonus.name, dice: 'base:?', text: 'Declare your sources, then add that many base dice.', count: s.bonus.count },
-  { title: s.penalty.name, icon: 'ph:minus-circle', text: 'Remove the base dice each named penalty takes away.', count: s.penalty.count },
+  { title: s.bonus.name, dice: 'base:?', text: 'Declare your sources, a plus step of Circumstances among them, then add that many base dice.', count: s.bonus.count },
+  {
+    title: s.penalty.name,
+    icon: 'ph:minus-circle',
+    text: 'Remove the base dice each penalty takes away, a minus step of Circumstances among them.',
+    count: s.penalty.count,
+  },
   { title: s.gear.name, dice: 'gear:?,?', text: 'Add dice equal to the current rating of one gear item the entry allows.', count: s.gear.count },
   { title: s.stress.name, dice: 'stress:?', text: 'Add one die for each point of Stress you carry.', count: s.stress.count },
 ];
 ---
 <figure class="drawing wide poolbuild" aria-labelledby="fig-pool-caption">
-  <p class="sum">Attribute + one Talent + Bonus Dice + Gear Dice + Stress Dice</p>
+  <p class="sum">Attribute + one Talent + Bonus Dice + Gear Dice + Stress Dice, less any penalties</p>
   <ol>
     {ROWS.map((row, i) => (
       <li>

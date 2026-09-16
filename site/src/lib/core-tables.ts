@@ -8,6 +8,7 @@ import { parse } from 'yaml';
 import dicePoolText from '../../../data/core/dice-pool.yaml?raw';
 import stressText from '../../../data/core/stress-changes.yaml?raw';
 import bonusText from '../../../data/core/bonus-dice-sources.yaml?raw';
+import circumstancesText from '../../../data/core/circumstances.yaml?raw';
 
 /** A Player's Guide chapter slug ("fighting-titans") or an anchor on the same page ("#help"). */
 export type SeeRef = string;
@@ -43,9 +44,13 @@ export const PAGE_ANCHORS: Record<string, string> = {
   '#pushing-your-luck': 'Pushing Your Luck',
   '#covering': 'Covering',
   '#help': 'Help',
+  '#circumstances': 'Circumstances',
+  '#called-rolls': 'Called rolls',
+  '#passive-rolls': 'Passive rolls',
 };
 
 const andList = new Intl.ListFormat('en', { type: 'conjunction' });
+const orList = new Intl.ListFormat('en', { type: 'disjunction' });
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function wording<T>(map: Record<string, T>, id: string, table: string): T {
@@ -75,8 +80,15 @@ interface RawException {
   push_allowed: boolean;
   talent_dice_allowed: boolean;
 }
+interface RawFailure {
+  id: string;
+}
 
-const dicePool = parse(dicePoolText) as { components: RawComponent[]; roll_exceptions: RawException[] };
+const dicePool = parse(dicePoolText) as {
+  components: RawComponent[];
+  roll_exceptions: RawException[];
+  called_roll: { failure_menu: RawFailure[] };
+};
 
 const POOL_ORDER = ['attribute', 'talent', 'bonus', 'penalty', 'gear', 'stress'] as const;
 type PoolId = (typeof POOL_ORDER)[number];
@@ -114,6 +126,7 @@ export function poolSteps(): Record<PoolId, PoolStep> {
 const EXCEPTION_WORDING: Record<string, { attribute?: string; see: SeeRef[] }> = {
   'death-roll': { see: ['wounds-and-fear'] },
   'performance-roll': { attribute: "The higher of the Training Year's performance attributes", see: ['making-your-soldier'] },
+  'passive-roll': { attribute: 'The attribute of the entry the GM rolls for', see: ['#passive-rolls'] },
 };
 
 const LEFT_OUT: Record<string, string> = { talent: 'Talent dice' };
@@ -149,6 +162,105 @@ export function rollExceptions(): CoreTableData {
   };
 }
 
+// ---------------------------------------------------------------- What a failed called roll costs
+
+const FAILURE_WORDING: Record<string, { name: string; text: string }> = {
+  'it-does-not-happen': {
+    name: 'It does not happen',
+    text: 'Nothing beyond the failure itself. The GM can always stake this, and it is what a roll costs when the GM stakes nothing else.',
+  },
+  stress: { name: '1 Stress', text: 'You gain 1 Stress: once for the roll, however many times you Pushed it, and never on a success.' },
+  fall: {
+    name: 'A fall',
+    text: "A low or a high fall, as the GM names from the height, and never an extreme one. In a fight it is a fall in full, and where it drops you is the fall rule's to say, not the ruling's.",
+  },
+  damage: {
+    name: 'Damage',
+    text: '1 to 3 damage of a named Injury Type, such as Crush for a blow, Cut for an edge, Pierce for a point, or Burn for fire. Never 4 or more. The GM states your current Health with any stake that names damage or a fall.',
+  },
+  'lost-item-or-unit': {
+    name: 'A lost item or unit',
+    text: 'One item you carry is lost, or 1 unit of one kind of Squad Supply is spent. Never gear wear, which is the price of a Push.',
+  },
+  'time-or-position': {
+    name: 'Time or position',
+    text: 'The situation changes, described, and the next roll has to reckon with it: the window closes, the patrol arrives, the door is barred, the Squad is noticed, or a fight begins. In a fight it touches nothing the fight tracks: never a Position, a card, a turn, a move, an action beyond the one the act spent, Attention, an Opening, or a clock.',
+  },
+};
+
+/** The closed menu of what a failed called roll can cost. */
+export function failureMenu(): CoreTableData {
+  return {
+    caption: 'What a failed called roll costs',
+    note: 'The GM stakes one of these before the dice are rolled. A failed roll costs that, and nothing else.',
+    columns: ['Cost', 'What it means'],
+    see: false,
+    groups: [
+      {
+        rows: dicePool.called_roll.failure_menu.map((r) => {
+          const w = wording(FAILURE_WORDING, r.id, 'Called roll costs');
+          return { cells: [w.name, w.text] };
+        }),
+      },
+    ],
+  };
+}
+
+// ---------------------------------------------------------------- Circumstances
+
+interface RawStep {
+  id: string;
+  name: string;
+  dice: number;
+  kind: 'bonus' | 'penalty' | 'none';
+}
+
+const circumstances = parse(circumstancesText) as { default: string; steps: RawStep[] };
+
+const CIRCUMSTANCE_WORDING: Record<string, string> = {
+  effortless: 'You could hardly fail. An easier task than this is not rolled at all.',
+  routine: 'Nothing stands in your way but the task itself.',
+  easy: 'Something about the moment is on your side.',
+  standard: 'The assumption behind every roll, and the step you are at when the GM names none.',
+  hard: 'Something is working against you.',
+  harsh: 'The moment is badly against you.',
+  desperate: 'As bad as it gets and still possible. Nothing is worse than this.',
+};
+
+/** What a step does to your pool, in words, from its kind and its dice. */
+function stepDice(step: RawStep): string {
+  const n = Math.abs(step.dice);
+  if (step.kind === 'none') {
+    if (step.dice !== 0) throw new Error(`Circumstances: "${step.id}" changes dice but counts as neither a source nor a penalty.`);
+    return 'No change';
+  }
+  if (step.kind === 'bonus') {
+    if (step.dice <= 0) throw new Error(`Circumstances: "${step.id}" is a Bonus Dice source but adds no dice.`);
+    return `+${n} Bonus ${n === 1 ? 'Die' : 'Dice'}`;
+  }
+  if (step.kind === 'penalty') {
+    if (step.dice >= 0) throw new Error(`Circumstances: "${step.id}" is a penalty but removes no dice.`);
+    return `A ${n}-die penalty`;
+  }
+  throw new Error(`Circumstances: "${step.id}" has a kind with no player wording.`);
+}
+
+export function circumstancesLadder(): CoreTableData {
+  const fallback = circumstances.steps.find((s) => s.id === circumstances.default);
+  if (!fallback) throw new Error('Circumstances: the default step is not on the ladder.');
+  return {
+    caption: 'Circumstances',
+    note: `One step for the roll, named by the GM before any Bonus Dice are declared. A roll the GM names no step for is ${fallback.name}.`,
+    columns: ['Step', 'Your pool', 'What it means'],
+    see: false,
+    groups: [
+      {
+        rows: circumstances.steps.map((s) => ({ cells: [s.name, stepDice(s), wording(CIRCUMSTANCE_WORDING, s.id, 'Circumstances')] })),
+      },
+    ],
+  };
+}
+
 // ---------------------------------------------------------------- Stress changes
 
 interface RawStressRow {
@@ -166,6 +278,7 @@ interface RawStress {
 const STRESS_WORDING: Record<string, { trigger: string; who: string; amount?: string; see: SeeRef[] }> = {
   push: { trigger: 'You Push a roll, and no one Covers the Push.', who: 'You', see: ['#pushing-your-luck'] },
   cover: { trigger: "You Cover a comrade's Push.", who: 'You', see: ['#covering'] },
+  ruling: { trigger: 'You fail a called roll whose stakes, named before the roll, were Stress.', who: 'You', see: ['#called-rolls'] },
   'named-gain': {
     trigger:
       'A table result, a Talent, or an Expedition rule such as hunger names a gain. A Fear Roll result that spreads fear gives its Stress to every comrade within one Position step of the soldier who rolled: that is Stress, not a roll, and causes no Fear Roll.',
@@ -228,7 +341,7 @@ export function stressChanges(): CoreTableData {
 interface RawSource {
   id: string;
   name: string;
-  dice_per_unit: number;
+  dice_per_unit: number | Record<string, number>;
   unit: string;
   max_units: number | null;
   spends?: string;
@@ -238,10 +351,16 @@ const BONUS_WORDING: Record<string, { unit?: [string, string]; addsTo: string; w
   help: {
     unit: ['helper', 'helpers'],
     addsTo:
-      'Any attribute roll except the Death Roll, the performance roll, and a roll whose own rule forbids Help, such as the first two Trials of the Graduation Exam.',
+      'Any attribute roll except the Death Roll, the performance roll, a passive roll, and a roll whose own rule forbids Help, such as the first two Trials of the Graduation Exam.',
     when: 'The helper meets every Help requirement.',
-    spends: "In a Titan Engagement, the helper's action. Outside one, what the rule calling for the roll states.",
+    spends:
+      "In a Titan Engagement or a Skirmish, the helper's action. On a roll a rule calls for outside both, what that rule states. On a called roll outside both, nothing, unless the GM names a cost of time or position before the dice.",
     see: ['#help'],
+  },
+  circumstances: {
+    addsTo: 'Any attribute roll you or a Squadmate make, except the rolls that take no Circumstances.',
+    when: 'The GM named Easy, Routine, or Effortless as the Circumstances, with the stakes and before any Bonus Dice are declared.',
+    see: ['#circumstances'],
   },
   opening: {
     unit: ['Opening spent', 'Openings spent'],
@@ -281,7 +400,19 @@ export function bonusDiceSources(): CoreTableData {
         rows: doc.sources.map((s) => {
           const w = wording(BONUS_WORDING, s.id, 'Bonus Dice sources');
           let dice: string;
-          if (s.unit === 'roll' || s.max_units === 1) dice = String(s.dice_per_unit);
+          if (typeof s.dice_per_unit === 'object') {
+            // A source whose dice depend on a named step, such as Circumstances.
+            const steps = new Map(circumstances.steps.map((step) => [step.id, step.name]));
+            dice = orList.format(
+              Object.entries(s.dice_per_unit)
+                .sort((a, b) => a[1] - b[1])
+                .map(([id, n]) => {
+                  const name = steps.get(id);
+                  if (!name) throw new Error(`Bonus Dice sources: "${s.id}" names a step "${id}" that is not on the Circumstances ladder.`);
+                  return `${n} at ${name}`;
+                }),
+            );
+          } else if (s.unit === 'roll' || s.max_units === 1) dice = String(s.dice_per_unit);
           else if (w.unit) dice = `${s.dice_per_unit} per ${w.unit[0]}${s.max_units ? `, up to ${s.max_units} ${w.unit[1]}` : ''}`;
           else throw new Error(`Bonus Dice sources: "${s.id}" has a unit with no player wording.`);
           const spends = w.spends ?? (s.spends === 'nothing' ? 'Nothing' : null);

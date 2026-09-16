@@ -86,6 +86,39 @@ const RAW: { term: string; definition: string; aliases?: string[] }[] = [
   { term: 'Training Year', aliases: ['Training Years'], definition: 'One of the three Lifepath steps spent in the Training Corps, each with an event and a performance roll.' },
   { term: 'Trial', aliases: ['Trials'], definition: 'One of the three tests of the Graduation Exam: the ODM balance test, the Titan dummy course, and the squad field exercise.' },
   { term: 'Waypoint', aliases: ['Waypoints'], definition: 'A named stopping point on an Expedition route, such as a forest, an abandoned town, or a supply depot.' },
+  {
+    term: 'Called roll',
+    aliases: ['called rolls'],
+    definition:
+      'A roll the GM calls for an act no rule covers, when the outcome is in doubt and failure would cost something. The GM names its entry, its Circumstances, and its stakes before the pool is built, and the result stands.',
+  },
+  {
+    term: 'Circumstances',
+    definition:
+      'The one step of a seven-step ladder, from Effortless to Desperate, that the GM names for the situation a roll is made in. A plus step adds Bonus Dice, a minus step is a penalty, and it changes dice, never what the roll needs.',
+  },
+  {
+    term: 'Improvised act',
+    aliases: ['improvised acts'],
+    definition:
+      "An act in a fight that is not a Catalog entry taken as written. The GM names one entry as its model, and the act does only what that entry does, at that entry's size.",
+  },
+  {
+    term: 'Passive roll',
+    aliases: ['passive rolls'],
+    definition:
+      'A Spot or Size Up the GM makes for you out of sight, against something you do not know is there. It has no stakes, cannot be Helped or Pushed, and you learn its result only through what you notice.',
+  },
+  {
+    term: 'Ruling',
+    definition:
+      'A call the GM makes where the rules are silent: whether to roll, what the roll uses, its Circumstances, and its stakes. A ruling comes before the dice and never changes a die, a table result, a card, or what a roll needs.',
+  },
+  {
+    term: 'Stakes',
+    definition:
+      'What the GM names before a called roll: what failure costs, from a closed menu, and, where it is not obvious, what success gives. Once the dice are rolled they cannot change.',
+  },
 ];
 
 const slugify = (s: string) =>

@@ -5,10 +5,20 @@
  */
 import { getCollection } from 'astro:content';
 import { CHARACTER_TABLES, type CharacterTableId } from '~/lib/character-tables';
-import { bonusDiceSources, PAGE_ANCHORS, rollExceptions, stressChanges, type Cell, type CoreTableData, type SeeRef } from '~/lib/core-tables';
+import {
+  bonusDiceSources,
+  circumstancesLadder,
+  failureMenu,
+  PAGE_ANCHORS,
+  rollExceptions,
+  stressChanges,
+  type Cell,
+  type CoreTableData,
+  type SeeRef,
+} from '~/lib/core-tables';
 
 interface Props {
-  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | CharacterTableId;
+  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId;
 }
 const { table } = Astro.props;
 
@@ -16,6 +26,8 @@ const builders: Record<Props['table'], () => CoreTableData> = {
   'stress-changes': stressChanges,
   'bonus-dice': bonusDiceSources,
   'roll-exceptions': rollExceptions,
+  circumstances: circumstancesLadder,
+  'called-roll-costs': failureMenu,
   ...CHARACTER_TABLES,
 };
 const data = builders[table]();
