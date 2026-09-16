@@ -276,7 +276,7 @@ const DOWNTIME_STEPS: Record<string, StepWording> = {
     text: 'Each player character takes one, in the order the players choose. Each Squadmate takes the Squadmate relief instead.',
     icon: 'ph:clipboard-text',
   },
-  'squad-action': { title: 'The Squad Action', text: 'The Squad takes one, chosen by the players.', icon: 'specialty-leader' },
+  'squad-action': { title: 'The Squad Action', text: 'The Squad takes one, chosen by the players. In these rules that is Honoring the Fallen, since Recruit is not offered.', icon: 'specialty-leader' },
   'after-actions': {
     title: 'After the actions',
     text: 'In order: what Command granted arrives, prosthetics are fitted, medical Retirement is offered again, then every Retirement and promotion due resolves.',
@@ -573,7 +573,7 @@ const DOWNTIME_ACTION_TEXT: Record<string, string> = {
 
 const SQUAD_ACTION_TEXT: Record<string, string> = {
   'honoring-the-fallen': 'The Squad buries its dead properly. Every soldier in the Squad loses 1 Grief.',
-  recruit: 'New Squadmates join until the Squad holds 6 soldiers counting the player characters. The players choose each one’s template and name it, and it joins with Standard Issue.',
+  recruit: 'Not offered in these rules, and it brings no Squadmate. When it is offered, new Squadmates join until the Squad holds 6 soldiers counting the player characters. The players choose each one’s template and name it, and it joins with Standard Issue.',
 };
 
 export function downtimeActionsTable(): CoreTableData {
@@ -633,7 +633,7 @@ const LIST_TEXT: Record<string, string> = {
   'blade-set-2': 'Any wear still ruins it.',
   'medical-kit-2': 'Nothing else.',
   'tool-kit-2': 'Nothing else.',
-  'flintlock-pistol': 'It arrives empty, and counts as 1 item.',
+  'flintlock-pistol': 'It arrives empty.',
   musket: 'It arrives empty, and counts as 2 items.',
   prosthetic: 'One per Requisition, of the kind of a side the named soldier has lost and has no prosthetic on, and only once that loss has healed. You may name a Squadmate as its soldier. It is fitted during a Downtime.',
   'odm-gear-3': 'It replaces your own harness, which leaves play.',

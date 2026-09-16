@@ -88,7 +88,7 @@ The route is set once, before the Expedition begins, and nothing changes it afte
 - **The Waypoints in order,** each with its kind and whether it is a <GlossaryTerm term="Depot">Depot</GlossaryTerm>. The last is a gate of the Walls.
 - **For the Leg that leads to each Waypoint,** its <GlossaryTerm term="Distance Band" /> (Near, Far, or Deep) and its <GlossaryTerm term="Formation Post" />.
 - **The days Command orders a <GlossaryTerm term="Hard Ride" />,** counted from the Expedition's first.
-- **The <GlossaryTerm term="Abnormal" />** the route's own tables name, when it is not the Sprinting Abnormal.
+- **The <GlossaryTerm term="Abnormal" />** the hazard tables name, when it is not the Sprinting Abnormal.
 
 A Brief holds {bounds.legs} Legs and {bounds.depots} Depot, which is never the gate, and no Leg is deeper than its place allows: the first and last are Near, the second and second-to-last are Near or Far, and every Leg between them can be Deep. A Hard Ride is ordered at most once a day, and only as that day's third Leg.
 
@@ -157,7 +157,7 @@ One soldier rides at the head of the formation and reads the ground for everyone
 - **It needs 1 success.**
 - **<GlossaryTerm term="Help" />.** Up to 3 comrades on the Expedition who are not Down, spending nothing. Each soldier Helps at most once a Leg.
 - **<GlossaryTerm term="Push">Pushed</GlossaryTerm> and <GlossaryTerm term="Cover">Covered</GlossaryTerm>** as usual, and **never tried again**. A Leg ridden again after a retreat makes a new Leg roll.
-- **With nobody to roll,** as when every living soldier is Down, or when no soldier who is not Down is mounted on their own horse on a Hard Ride, the roll fails, with no Help and no Push. You still reach the Waypoint, the Down ride in the wagon, and nothing else changes. A hazard that names the Lead does nothing when there is no Lead.
+- **With nobody to roll,** as when every living soldier is Down, or when no soldier who is not Down is mounted on their own horse on a Hard Ride, the roll fails, with no Help and no Push. You still reach the Waypoint, the Down ride in the wagon, the Leg still spends its 2 rations and adds its +1, and nothing else changes. A hazard that names the Lead does nothing when there is no Lead.
 
 </Subsection>
 
@@ -194,7 +194,7 @@ One hazard takes a soldier off the back of the formation, and the Squad does not
 1. **Which kind.** Roll {straggler.die}: on {straggler.squadmate} the victim is a <GlossaryTerm term="Squadmate" />, on {straggler.character} a player character. Only living soldiers on the Expedition who are not Down count. If none of that kind counts, use the other kind; if neither has one, the hazard is resolved as a plain Titan attack on the formation instead.
 2. **Which soldier.** Number the soldiers of that kind 1 upward in Squad sheet order and roll {straggler.die}, rolling again any result above the count. Every one of them is equally likely, and the order on the sheet chooses nothing.
 3. **Endure.** The victim rolls Endure. It needs 1 success, cannot be Helped or Covered, can be Pushed, and is never tried again.
-4. **On a failure** they take a {straggler.injury} <GlossaryTerm term="Critical Injury" /> at a rolled <GlossaryTerm term="Injury Location" />, which can be lethal. It is a Titan's harm, but it is not a behavior: no <GlossaryTerm term="Attack Dice" /> are rolled, no <GlossaryTerm term="Reaction" /> answers it, and the Critical Injury roll adds nothing for <GlossaryTerm term="Net Successes" />. It counts as gained as the Titan Engagement begins, so no separate care window is held for it and its time runs as one gained in that fight.
+4. **On a failure** they take a {straggler.injury} <GlossaryTerm term="Critical Injury" /> at a rolled <GlossaryTerm term="Injury Location" />, which can be lethal. It is a Titan's harm, but it is not a Behavior Table card: no <GlossaryTerm term="Attack Dice" /> are rolled, no <GlossaryTerm term="Reaction" /> answers it, and the Critical Injury roll adds nothing for <GlossaryTerm term="Net Successes" />. It counts as gained as the Titan Engagement begins, so no separate care window is held for it and its time runs as one gained in that fight.
 5. **Then the fight begins,** with the victim at In Reach and every other soldier at Distant.
 
 </Subsection>
@@ -340,7 +340,7 @@ On a success Command grants the row and the ledger rises by 1. On a failure Comm
 
 The ledger is Command's patience within one Downtime. It starts at **0** and counts the Requisitions Command has already granted the Squad this Downtime, and it is added to what the next roll needs.
 
-Ask fourth at Funding 3 and a Limited item needs 2 successes for the Scarcity and 3 more for the ledger. Order your asks accordingly.
+Ask after three grants at Funding 3 and a Limited item needs 2 successes for the Scarcity and 3 more for the ledger. Order your asks accordingly.
 
 </RuleBox>
 <RuleBox title="Size Up on the quartermaster" icon="ph:eye">
