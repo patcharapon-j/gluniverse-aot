@@ -87,7 +87,7 @@ fails the build.
 ### The Foes
 
 58. Three Foe kinds are the whole list, and the GM adds none. C7 599; `foes.yaml` 153-159.
-59. Each kind's Attack Dice, Guard, Health, Grit, Parley value, Watch, group size, and weapons, all rendered from the table with the numbers under bars. C7 588-593; `foes.yaml` 29-75. Rendered by `foeRecords()` through `FoeDossier.astro`.
+59. Each kind's Attack Dice, Guard, Health, Grit, Parley value, Watch, group size, and weapons, all rendered from the table. Attack Dice, Guard, Health, Grit, Parley value, and Watch sit under bars; the group size and the weapons are printed openly. C7 588-593; `foes.yaml` 29-75. Rendered by `foeRecords()` through `FoeDossier.astro`.
 60. A Bandit rolls D6 for its weapon as the Skirmish begins (1 to 3 a club, 4 to 6 a knife) and carries a firebrand in place of a club at night. C7 590; `foes.yaml` 40-45.
 61. Each weapon's Injury Type, damage, and target come from the weapons table: sabre Cut 2 Engaged, knife Cut 1 Engaged, club Crush 1 Engaged, firebrand Burn 1 Engaged, flintlock pistol Pierce 2 either, musket Pierce 4 Apart only, bare hands Crush 1 Engaged. C7 558-569; `skirmish.yaml` 210-318.
 62. A Size Up buys the group's Grit and how many more must be out before it breaks, said aloud; everything else is learned by fighting, with Attack Dice and Guard rolled in the open. C7 663; `skirmish.yaml` 391-408.

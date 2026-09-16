@@ -204,7 +204,7 @@ const STEP_WORDING: Record<string, { title: string; text: string; exit?: FoeRule
     exit: { kind: 'note', label: 'Last attacker', text: 'Whoever most recently rolled Fight or Shoot against this Foe, whether it landed or not. A soldier who strikes it takes it off a comrade.' },
   },
   loaded: {
-    title: 'Does it hold a loaded firearm?',
+    title: 'Does it hold a loaded firearm, with a candidate left?',
     text: 'It Shoots its last attacker, or, with none, the candidate with the lowest card. A musket is never fired at a soldier the Foe is Engaged with, which is why step 2 comes first.',
   },
   empty: { title: 'Is its firearm empty?', text: 'It reloads, and that is its whole turn. A Foe never runs out of shot.' },
