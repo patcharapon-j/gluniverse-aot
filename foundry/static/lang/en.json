@@ -1592,6 +1592,7 @@
       "notOwner": "You do not own this soldier.",
       "noGM": "No GM is connected to make this change.",
       "gmFailed": "The GM’s client could not make this change.",
+      "pushNotMade": "The GM’s client did not make the Push.",
       "actionFailed": "The card could not be updated. See the console.",
       "noSoldier": "You own no soldier who can do this.",
       "pickSoldier": "Soldier",

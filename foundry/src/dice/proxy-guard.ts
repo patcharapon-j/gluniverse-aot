@@ -8,8 +8,11 @@
  *   made), on the card's roller or on a comrade who agreed to Cover that roll, on a path a card op
  *   can touch, with the value the op gives. Ownership and any other field are never changed.
  * - An item is created or deleted only as a recorded op says: same actor, id and item type.
+ * - A Push on a card the user did not post is asked for by the roller's owner and made by the GM
+ *   itself: the GM rolls the card's non-6 base and Stress dice and derives every change from the
+ *   stored card, so only whether the Push may be made is checked here.
  */
-import { listValue, numValue, type Op } from '../rules/roll.ts';
+import { listValue, numValue, pushBlock, type Op } from '../rules/roll.ts';
 import { successesOf, type Card } from './card.ts';
 
 /** What the guard needs to know about the world, as the GM's client sees it. */
@@ -146,6 +149,25 @@ function checkAnswer(w: GuardWorld, callId: string, stored: Extract<Card, { kind
   const card = answer?.card;
   if (!answer || card?.kind !== 'action' || card.call !== callId || card.actor !== stored.actor) return 'the answer is not a roll for this call';
   if (answer.author !== w.userId || !w.owns(stored.actor)) return 'the answer belongs to another user';
+  return null;
+}
+
+// ---------------------------------------------------------------- Push requests
+
+/**
+ * Why the user may not have the GM Push this card, or null. The card must be an action roll on a
+ * soldier the user owns, still Pushable by its record, and a Cover on it must still be agreed. The
+ * GM's Push checks the roller's Down itself.
+ */
+export function checkPushRequest(w: GuardWorld, messageId: string): string | null {
+  const card = w.message(messageId)?.card;
+  if (!card) return 'the card is gone';
+  if (card.kind !== 'action') return 'only an action roll is Pushed';
+  if (!w.owns(card.actor)) return 'only the roller’s owner Pushes';
+  if (w.actor(card.actor)?.type !== 'soldier') return 'only a soldier Pushes';
+  const block = pushBlock({ dice: card.dice, pushes: card.pushes, maxPushes: card.maxPushes, pushAllowed: card.pushAllowed, down: false });
+  if (block) return `the roll cannot be Pushed (${block})`;
+  if (card.cover && !w.covering(card.cover.actor).includes(messageId)) return 'the soldier has not agreed to Cover this roll';
   return null;
 }
 

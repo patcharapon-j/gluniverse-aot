@@ -3,11 +3,12 @@
  * (CONFIG.queries; core-plan 2d): recording a Cover, a Reaction or a call's answer on a card another
  * user posted, the state of a card's ops after an Undo on a card the GM posted, and the Stress a
  * comrade takes for Covering. The GM's client checks each request against the card
- * (src/dice/proxy-guard.ts) before it writes anything.
+ * (src/dice/proxy-guard.ts) before it writes anything. A Push on a card the GM posted is asked for
+ * by the roller's owner and made by the GM's client itself, dice and all (core-plan decision 19).
  */
 import { SYSTEM_ID } from '../config.ts';
 import { FLAG, plainSummary, type Card } from './card.ts';
-import { checkCardRewrite, checkCreateItem, checkDeleteItem, checkOpUpdate, recordRun, type GuardWorld, type Ledger, type OpContext } from './proxy-guard.ts';
+import { checkCardRewrite, checkCreateItem, checkDeleteItem, checkOpUpdate, checkPushRequest, recordRun, type GuardWorld, type Ledger, type OpContext } from './proxy-guard.ts';
 
 const QUERY = `${SYSTEM_ID}.proxy`;
 
@@ -19,7 +20,18 @@ type Request =
   | { kind: 'card'; message: string; card: Card }
   | { kind: 'update'; uuid: string; data: Record<string, unknown>; ctx: OpContext }
   | { kind: 'create-item'; actor: string; data: Record<string, unknown>; ctx: OpContext }
-  | { kind: 'delete-item'; uuid: string; ctx: OpContext };
+  | { kind: 'delete-item'; uuid: string; ctx: OpContext }
+  | { kind: 'push'; message: string };
+
+/** How the GM's client makes a Push (src/dice/card-actions.ts, passed in to keep the imports one way). */
+export interface PushRunner {
+  /** Why the roller cannot Push now (Down), from the live actor, or null. */
+  blocked(message: any): Promise<string | null>;
+  /** Makes the Push and returns the saved card, or null when nothing was pushed. */
+  run(message: any): Promise<Card | null>;
+}
+
+let pushRunner: PushRunner | null = null;
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
@@ -75,6 +87,14 @@ async function refusal(req: Request, user: any): Promise<string | null> {
     }
     case 'create-item':
       return checkCreateItem(w, ledger, req.ctx, req.actor, req.data ?? {});
+    case 'push': {
+      const why = checkPushRequest(w, req.message);
+      if (why) return why;
+      const message = game.messages.get(req.message);
+      if (message?.canUserModify(user, 'update')) return 'the card’s author Pushes it themselves';
+      if (!pushRunner) return 'the GM’s client cannot Push';
+      return pushRunner.blocked(message);
+    }
     case 'delete-item': {
       const doc = await foundry.utils.fromUuid(req.uuid);
       if (doc?.documentName !== 'Item' || doc.parent?.documentName !== 'Actor') return 'the item is gone';
@@ -87,6 +107,14 @@ async function refusal(req: Request, user: any): Promise<string | null> {
 
 async function perform(req: Request): Promise<boolean> {
   switch (req.kind) {
+    case 'push': {
+      const message = game.messages.get(req.message);
+      const card = message && (await pushRunner!.run(message));
+      if (!card) return false;
+      // The GM moved the Covering comrade's Stress itself: record it, so a replayed Redo is refused.
+      for (const op of card.ops) if (op.state === 'done') recordRun(ledger, card, { message: req.message, op, dir: 1 });
+      return true;
+    }
     case 'card': {
       const message = game.messages.get(req.message);
       if (!message) return false;
@@ -119,7 +147,8 @@ async function perform(req: Request): Promise<boolean> {
   return true;
 }
 
-export function registerProxy(): void {
+export function registerProxy(push: PushRunner): void {
+  pushRunner = push;
   CONFIG.queries[QUERY] = async (req: Request, { user }: { user: any }) => {
     if (!game.user.isGM) throw new Error('only a GM performs Wings of Freedom card changes');
     if (!user?.isGM) {
@@ -167,6 +196,11 @@ export async function writeCard(message: any, card: Card, rolls?: string[]): Pro
     return false;
   }
   return viaGM({ kind: 'card', message: message.id, card });
+}
+
+/** Asks the GM to Push a card the user may not update (the GM posted it for the user's soldier). */
+export function pushViaGM(message: any): Promise<boolean> {
+  return viaGM({ kind: 'push', message: message.id });
 }
 
 /** Records on the user's own soldier that its owner agrees to Cover this roll, or withdraws. */

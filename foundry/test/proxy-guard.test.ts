@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { ActionCard, AttackCard, CallCard, Card } from '../src/dice/card.ts';
-import { checkCardRewrite, checkCreateItem, checkDeleteItem, checkOpUpdate, recordRun, type GuardWorld, type Ledger, type OpContext } from '../src/dice/proxy-guard.ts';
+import { checkCardRewrite, checkCreateItem, checkDeleteItem, checkOpUpdate, checkPushRequest, recordRun, type GuardWorld, type Ledger, type OpContext } from '../src/dice/proxy-guard.ts';
 import type { DeleteOp, NumOp, Op, SetOp } from '../src/rules/roll.ts';
 
 // Alice owns soldier A (the roller), Bob owns soldier B (a comrade); the GM owns the Titan T.
@@ -118,6 +118,8 @@ beforeEach(() => {
     call: { author: 'gm', card: clone(call) },
     dodge: { author: 'alice', card: action({ entry: 'dodge', name: 'Dodge', dice: { base: [6, 6, 1], gear: [], stress: [3] }, attack: { message: 'attack', name: 'Grab', severity: 2 } }) },
     answer: { author: 'alice', card: action({ entry: 'climb', call: 'call' }) },
+    // The GM's called roll for Alice's soldier, not yet Pushed.
+    gmCalled: { author: 'gm', card: action({ entry: 'climb', called: true, stakes: { id: 'stress', text: 'Stress' }, needs: 1, dice: { base: [6, 2, 3], gear: [], stress: [4] } }) },
   };
   stress = { [A]: 2, [B]: 4 };
   covering = { [B]: ['gmRoll'] };
@@ -260,5 +262,65 @@ describe('GM proxy guard: the legitimate flows still pass', () => {
 
   it('Called roll: the answer is recorded on the GM’s call card', () => {
     expect(rewrite(alice(), 'call', (c) => (c.rolled = 'answer'))).toBeNull();
+  });
+});
+
+describe('GM proxy guard: a soldier’s owner Pushes a roll the GM posted (core-plan decision 19)', () => {
+  it('lets the owner ask for the Push, and the GM’s Cover cost is then on record', () => {
+    expect(checkPushRequest(alice(), 'gmCalled')).toBeNull();
+    // Covered by Bob, who agreed.
+    covering[B] = ['gmCalled'];
+    messages.gmCalled.card = action({ ...messages.gmCalled.card, cover: { actor: B, name: 'Bob Soldier' } } as ActionCard);
+    expect(checkPushRequest(alice(), 'gmCalled')).toBeNull();
+    // After the GM's Push, the Cover cost it moved cannot be applied again.
+    const cost = coverOp(4);
+    messages.gmCalled.card.ops = [cost];
+    const redo = { message: 'gmCalled', op: cost, dir: 1 as const };
+    recordRun(ledger, messages.gmCalled.card, redo);
+    stress[B] = 5;
+    expect(update(alice(), redo, { actor: B }, { 'system.stress': 6 })).not.toBeNull();
+    // Undo still gives it back.
+    expect(update(alice(), { ...redo, dir: -1 }, { actor: B }, { 'system.stress': 4 })).toBeNull();
+  });
+
+  it('refuses a user who does not own the soldier', () => {
+    expect(checkPushRequest(bob(), 'gmCalled')).not.toBeNull();
+    expect(checkPushRequest(world('carol'), 'gmCalled')).not.toBeNull();
+    // Owning the Covering soldier is not enough either.
+    covering[B] = ['gmCalled'];
+    messages.gmCalled.card = action({ ...messages.gmCalled.card, cover: { actor: B, name: 'Bob Soldier' } } as ActionCard);
+    expect(checkPushRequest(bob(), 'gmCalled')).not.toBeNull();
+  });
+
+  it('refuses a Push the card no longer allows, on another kind of card, or on a Cover withdrawn', () => {
+    const variants: Partial<ActionCard>[] = [
+      { pushes: 1 },
+      { pushAllowed: false },
+      { dice: { base: [6, 2], gear: [], stress: [1] } },
+      { dice: { base: [6, 6], gear: [], stress: [6] } },
+    ];
+    for (const v of variants) {
+      messages.gmCalled.card = action({ ...messages.gmCalled.card, ...v } as ActionCard);
+      expect(checkPushRequest(alice(), 'gmCalled')).not.toBeNull();
+    }
+    expect(checkPushRequest(alice(), 'attack')).not.toBeNull();
+    expect(checkPushRequest(alice(), 'call')).not.toBeNull();
+    expect(checkPushRequest(alice(), 'gone')).not.toBeNull();
+    // A Squadmate never Pushes.
+    OWNERS[S].push('alice');
+    try {
+      messages.gmCalled.card = action({ actor: S });
+      expect(checkPushRequest(alice(), 'gmCalled')).not.toBeNull();
+    } finally {
+      OWNERS[S].pop();
+    }
+    messages.gmCalled.card = action({ cover: { actor: B, name: 'Bob Soldier' } });
+    expect(checkPushRequest(alice(), 'gmCalled')).not.toBeNull();
+  });
+
+  it('still refuses the owner writing the pushed dice or its ops over the GM’s card', () => {
+    expect(rewrite(alice(), 'gmCalled', (c) => ((c.dice.base = [6, 6, 6]), (c.pushes = 1)))).not.toBeNull();
+    expect(rewrite(alice(), 'gmCalled', (c) => ((c.dice.stress = [4, 6]), (c.fresh = 1), (c.pushes = 1)))).not.toBeNull();
+    expect(rewrite(alice(), 'gmCalled', (c) => c.ops.push(stressOp(A, 2, 3)))).not.toBeNull();
   });
 });

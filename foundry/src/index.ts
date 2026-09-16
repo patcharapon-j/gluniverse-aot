@@ -9,6 +9,7 @@
  */
 import { buildSystemConfig, SYSTEM_ID } from './config.ts';
 import { callRoll } from './dice/call.ts';
+import { pushRunner } from './dice/card-actions.ts';
 import { registerChat } from './dice/chat.ts';
 import { registerProxy } from './dice/proxy.ts';
 import { rollTitanAttack } from './dice/reactions.ts';
@@ -43,7 +44,7 @@ Hooks.once('init', () => {
 
   defineDice();
   registerDiceSoNice();
-  registerProxy();
+  registerProxy(pushRunner);
   registerChat();
   registerFonts();
   registerSettings();

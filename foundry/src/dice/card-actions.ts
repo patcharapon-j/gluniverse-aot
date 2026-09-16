@@ -9,7 +9,7 @@ import { actorPool } from './actor-pool.ts';
 import { applyNew, cardAction, dropOps, ops } from './apply.ts';
 import type { ActionCard, AttackCard, CallCard, TableCard } from './card.ts';
 import { cardOf, ownSoldiers, pickSoldier, readyTalent, rollResponse, saveCard, stakesOps, t, usedTalentOp } from './post.ts';
-import { setCovering } from './proxy.ts';
+import { pushViaGM, setCovering, type PushRunner } from './proxy.ts';
 import { recordReaction } from './reactions.ts';
 import { rollAction } from './roll-action.ts';
 import { PUSHED_ODM_FLAG, rollGas } from './tables.ts';
@@ -18,14 +18,15 @@ import { showDice, WofRoll } from './terms.ts';
 /** One card action at a time per message, so a double click never pushes twice. */
 const busy = new Set<string>();
 
-async function once(message: any, fn: () => Promise<unknown>): Promise<void> {
-  if (busy.has(message.id)) return;
+async function once<T>(message: any, fn: () => Promise<T>): Promise<T | undefined> {
+  if (busy.has(message.id)) return undefined;
   busy.add(message.id);
   try {
-    await fn();
+    return await fn();
   } catch (err) {
     console.error('wings-of-freedom | card action failed', err);
     ui.notifications.error(t('WOF.Roll.actionFailed'));
+    return undefined;
   } finally {
     busy.delete(message.id);
   }
@@ -45,7 +46,9 @@ export function currentPushBlock(card: ActionCard, actor: any | null) {
 
 export function push(message: any) {
   return once(message, async () => {
-    const card = structuredClone(cardOf(message)) as ActionCard;
+    if (message.canUserModify(game.user, 'update')) return pushCard(message);
+    // A card the GM posted for this user's soldier: the GM's client makes the Push (core-plan decision 19).
+    const card = cardOf(message) as ActionCard;
     const actor = await actorOf(card);
     if (!actor?.isOwner) return;
     const block = currentPushBlock(card, actor);
@@ -53,76 +56,101 @@ export function push(message: any) {
       ui.notifications.warn(pushBlockText(block));
       return;
     }
-    const ap = actorPool(actor);
-    const second = card.pushes === 1;
-    const fresh: Op[] = [];
-
-    // Stress: the pusher's, or the Covering comrade's (stress-changes.yaml, push and cover).
-    const covered = !!card.cover;
-    if (covered) {
-      const coverer = await foundry.utils.fromUuid(card.cover!.actor);
-      if (coverer) fresh.push(ops.stress(coverer, 1, t('WOF.Roll.op.cover', { name: coverer.name })));
-    } else {
-      const n = pushStress(false, ap.heldEffects);
-      fresh.push(ops.stress(actor, n, t('WOF.Roll.op.push', { n })));
-    }
-    if (second) {
-      // The second Push a Talent allows (Sure Hands; Stay with the Column, once per Leg).
-      const used = card.entry === 'endure' ? usedTalentOp(ap, 'stay-with-the-column', 'stress') : null;
-      if (used) fresh.push(used);
-    }
-
-    // Roll only the dice the Push picks up, so Dice So Nice shows just those.
-    const counts = rerollCounts(card.dice);
-    const roll = await WofRoll().rollPool({ base: counts.base, stress: counts.stress + (covered ? 0 : 1) });
-    await showDice(roll, message.whisper?.length ? message.whisper : null, message.blind);
-    const pushed = applyPush(card.dice, { base: roll.facesOf('base'), stress: roll.facesOf('stress') }, !covered);
-    card.dice = pushed.dice;
-    card.fresh = pushed.fresh;
-    card.pushes += 1;
-    card.pool.stress = pushed.dice.stress.length;
-
-    // The outcome is worked out again from the pushed dice.
-    card.ops = await dropOps(card.ops, (o) => !!o.outcome, message.id);
-    const rolls = [...message.rolls, roll];
-
-    // A Stress Die 1 after the Push: one Stress Response, with the Stress after the Push.
-    if (responseDue(card.dice, !!card.response, card.responses)) {
-      const stressNow = actor.system.derived.stress_effective + (covered ? 0 : pushStress(false, ap.heldEffects));
-      const r = await rollResponse(ap, stressNow, { show: true });
-      rolls.push(r.roll);
-      card.response = r.response;
-      fresh.push(...r.ops);
-    }
-
-    // Wear: each Gear Die showing 1 once the roll is Pushed, once (data/gear/items.yaml, wear).
-    const gear = card.pool.gear;
-    if (!second && gear?.id) {
-      const points = wearPoints(card.dice.gear, true);
-      const item = actor.items.get(gear.id);
-      if (points && item) {
-        const talentId = WEAR_TALENTS[gear.itemId];
-        const talent = talentId ? readyTalent(ap, talentId) : null;
-        const w = wearOutcome(gear.itemId, item.system.current, points, talent ? 1 : 0);
-        // Every wear-ignoring Talent is limited, so its use is recorded (and given back by Undo).
-        const used = w.ignored && talentId ? usedTalentOp(ap, talentId, 'wear') : null;
-        if (used) fresh.push({ ...used, label: t('WOF.Roll.op.wearIgnored', { name: talent!.name }) });
-        if (w.ruined) fresh.push(ops.remove('wear', actor, item, t('WOF.Roll.op.ruined', { name: item.name })));
-        else if (w.left) {
-          const state = item.system.current - w.left <= 0 ? (item.system.subtype === 'odm' ? t('WOF.Derived.jammed') : item.system.subtype === 'horse' ? t('WOF.Derived.lame') : '') : '';
-          fresh.push(ops.num('wear', actor, item, 'system.current', item.system.current, w.after, t('WOF.Roll.op.wear', { name: item.name, n: w.left, state: state ? ` (${state})` : '' }), 0, item.system.rating));
-        }
-      }
-      // A Pushed roll on ODM Gear makes this round's Gas Roll three dice (odm-gear.yaml, gas_roll.dice).
-      if (gear.itemId === 'odm-gear') fresh.push(ops.set('gas', actor, null, PUSHED_ODM_FLAG, !!foundry.utils.getProperty(actor, PUSHED_ODM_FLAG), true, t('WOF.Roll.op.pushedOdm', { n: CONFIG.WOF.gas.rollDicePushed })));
-    }
-
-    const applied = await applyNew(fresh, message.id);
-    const outcome = await applyNew(stakesOps(card, actor), message.id);
-    card.ops = [...card.ops, ...applied, ...outcome];
-    await saveCard(message, card, rolls);
-    if (card.attack) await recordReaction(card.attack.message, card, message.id);
+    // The GM's client warns of its own errors; a refused or dropped Push is reported here.
+    if (!(await pushViaGM(message))) ui.notifications.warn(t('WOF.Roll.pushNotMade'));
   });
+}
+
+/** The GM's side of a Push a player asked for: the live Down check, and the Push itself. */
+export const pushRunner: PushRunner = {
+  async blocked(message) {
+    const card = cardOf(message);
+    const actor = card?.kind === 'action' ? await actorOf(card) : null;
+    return actor ? currentPushBlock(card as ActionCard, actor) : 'the roller is gone';
+  },
+  run: async (message) => (await once(message, () => pushCard(message))) ?? null,
+};
+
+/** Pushes the card: rolls its non-6 base and Stress dice, applies what the Push causes, and saves it. Returns the saved card. */
+async function pushCard(message: any): Promise<ActionCard | null> {
+  const card = structuredClone(cardOf(message)) as ActionCard;
+  const actor = await actorOf(card);
+  if (!actor?.isOwner) return null;
+  const block = currentPushBlock(card, actor);
+  if (block) {
+    ui.notifications.warn(pushBlockText(block));
+    return null;
+  }
+  const ap = actorPool(actor);
+  const second = card.pushes === 1;
+  const fresh: Op[] = [];
+
+  // Stress: the pusher's, or the Covering comrade's (stress-changes.yaml, push and cover).
+  const covered = !!card.cover;
+  if (covered) {
+    const coverer = await foundry.utils.fromUuid(card.cover!.actor);
+    if (coverer) fresh.push(ops.stress(coverer, 1, t('WOF.Roll.op.cover', { name: coverer.name })));
+  } else {
+    const n = pushStress(false, ap.heldEffects);
+    fresh.push(ops.stress(actor, n, t('WOF.Roll.op.push', { n })));
+  }
+  if (second) {
+    // The second Push a Talent allows (Sure Hands; Stay with the Column, once per Leg).
+    const used = card.entry === 'endure' ? usedTalentOp(ap, 'stay-with-the-column', 'stress') : null;
+    if (used) fresh.push(used);
+  }
+
+  // Roll only the dice the Push picks up, so Dice So Nice shows just those.
+  const counts = rerollCounts(card.dice);
+  const roll = await WofRoll().rollPool({ base: counts.base, stress: counts.stress + (covered ? 0 : 1) });
+  await showDice(roll, message.whisper?.length ? message.whisper : null, message.blind);
+  const pushed = applyPush(card.dice, { base: roll.facesOf('base'), stress: roll.facesOf('stress') }, !covered);
+  card.dice = pushed.dice;
+  card.fresh = pushed.fresh;
+  card.pushes += 1;
+  card.pool.stress = pushed.dice.stress.length;
+
+  // The outcome is worked out again from the pushed dice.
+  card.ops = await dropOps(card.ops, (o) => !!o.outcome, message.id);
+  const rolls = [...message.rolls, roll];
+
+  // A Stress Die 1 after the Push: one Stress Response, with the Stress after the Push.
+  if (responseDue(card.dice, !!card.response, card.responses)) {
+    const stressNow = actor.system.derived.stress_effective + (covered ? 0 : pushStress(false, ap.heldEffects));
+    const r = await rollResponse(ap, stressNow, { show: true });
+    rolls.push(r.roll);
+    card.response = r.response;
+    fresh.push(...r.ops);
+  }
+
+  // Wear: each Gear Die showing 1 once the roll is Pushed, once (data/gear/items.yaml, wear).
+  const gear = card.pool.gear;
+  if (!second && gear?.id) {
+    const points = wearPoints(card.dice.gear, true);
+    const item = actor.items.get(gear.id);
+    if (points && item) {
+      const talentId = WEAR_TALENTS[gear.itemId];
+      const talent = talentId ? readyTalent(ap, talentId) : null;
+      const w = wearOutcome(gear.itemId, item.system.current, points, talent ? 1 : 0);
+      // Every wear-ignoring Talent is limited, so its use is recorded (and given back by Undo).
+      const used = w.ignored && talentId ? usedTalentOp(ap, talentId, 'wear') : null;
+      if (used) fresh.push({ ...used, label: t('WOF.Roll.op.wearIgnored', { name: talent!.name }) });
+      if (w.ruined) fresh.push(ops.remove('wear', actor, item, t('WOF.Roll.op.ruined', { name: item.name })));
+      else if (w.left) {
+        const state = item.system.current - w.left <= 0 ? (item.system.subtype === 'odm' ? t('WOF.Derived.jammed') : item.system.subtype === 'horse' ? t('WOF.Derived.lame') : '') : '';
+        fresh.push(ops.num('wear', actor, item, 'system.current', item.system.current, w.after, t('WOF.Roll.op.wear', { name: item.name, n: w.left, state: state ? ` (${state})` : '' }), 0, item.system.rating));
+      }
+    }
+    // A Pushed roll on ODM Gear makes this round's Gas Roll three dice (odm-gear.yaml, gas_roll.dice).
+    if (gear.itemId === 'odm-gear') fresh.push(ops.set('gas', actor, null, PUSHED_ODM_FLAG, !!foundry.utils.getProperty(actor, PUSHED_ODM_FLAG), true, t('WOF.Roll.op.pushedOdm', { n: CONFIG.WOF.gas.rollDicePushed })));
+  }
+
+  const applied = await applyNew(fresh, message.id);
+  const outcome = await applyNew(stakesOps(card, actor), message.id);
+  card.ops = [...card.ops, ...applied, ...outcome];
+  if (!(await saveCard(message, card, rolls))) return null;
+  if (card.attack) await recordReaction(card.attack.message, card, message.id);
+  return card;
 }
 
 export function cover(message: any) {
