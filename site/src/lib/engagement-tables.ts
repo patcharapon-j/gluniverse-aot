@@ -245,7 +245,7 @@ const EFFECT_WORDING: Record<string, string> = {
 const TIER_LIMIT_WORDING: Record<string, string> = {
   terrorize: 'Nothing else. It frightens you and shows you what is coming.',
   control: 'No Critical Injury it inflicts can be lethal.',
-  kill: 'A Critical Injury it inflicts can be lethal. Only this tier Grabs, and a Grab entry does nothing else.',
+  kill: 'A Critical Injury it inflicts can be lethal. Only this tier Grabs, and a Grab entry inflicts nothing else.',
   thrash: 'It works at any Position, needs no Body Part, and nothing it inflicts is lethal.',
 };
 
@@ -556,7 +556,7 @@ export function pinnedEntriesTable(): CoreTableData {
   if (pins.length === 0) throw new Error(`${T}: no pin kinds have player wording.`);
   return {
     caption: 'What a Pinned soldier can still do',
-    note: 'Help, Covering, and Reactions are set by the pin itself. A Death Roll, a Fear Roll, and a Gas Roll are never forbidden.',
+    note: 'Help, Covering, and Reactions are set by the pin itself.',
     columns: ['Pin', 'You may still take', 'You cannot take'],
     see: false,
     groups: [
@@ -798,7 +798,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   wings: {
     title: 'Wings.',
     icon: 'ph:users-three',
-    text: 'Assign each Squadmate to one player character’s Wing, or to none. Wings stand until a soldier dies, leaves, goes Down, or is Grabbed, or a Focus Titan enters or dies.',
+    text: 'Assign each Squadmate to one player character’s Wing, or to none. A Wing holds at most one Squadmate. Wings may be changed at a later wings step only if, since the last one, a soldier died, left, went Down, or was Grabbed, or a Focus Titan entered or died.',
     exit: { kind: 'note', label: 'Fall Back', text: 'This is the moment the Fall Back Squad Tactic is declared, before Wings are assigned or kept.' },
   },
   deal: {
@@ -816,7 +816,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   play: {
     title: 'Play the cards, lowest first.',
     icon: 'ph:sort-ascending',
-    text: 'On your card you take your turn: one move and one action, in either order, never splitting the move around the action. Then the Squadmate on your Wing takes its turn. On a Focus Titan’s card, the card resolves.',
+    text: 'On your card you take your turn: one move and one action, in either order, never splitting the move around the action. Then the Squadmate on your Wing takes its turn, even when that turn was spent in advance. On a Focus Titan’s card, the card resolves.',
     exit: { kind: 'cover', label: 'Under a retreat', text: 'The forced move comes first.' },
   },
   end: {
