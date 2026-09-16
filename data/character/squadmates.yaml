@@ -5,7 +5,7 @@
 id: squadmates
 name: Squadmates
 chapter: 02-character-creation
-adrs: [ADR-0003, ADR-0006, ADR-0010, ADR-0011, ADR-0014]
+adrs: [ADR-0006, ADR-0010, ADR-0011, ADR-0014, ADR-0024]
 decided: [OQ-29, OQ-30, OQ-31, OQ-38, OQ-55, OQ-58, OQ-70, OQ-94, OQ-135]
 
 # ------------------------------------------------------------------ stat block
@@ -100,7 +100,9 @@ wing:
     disagreement_off_a_wing: >-
       Each proposed choice is rolled for once, with a D6 rolled by one player who proposed
       it. The highest roll decides. Choices tied for highest roll again.
-    gm: the GM never directs a Squadmate
+    gm: >-
+      none: the GM never directs a Squadmate, though the GM may voice one; the players direct it
+      (ADR-0024; Chapter 1, section 1.1, item 6)
 
 # ------------------------------------------------------------------ starting Squad
 starting_squad:

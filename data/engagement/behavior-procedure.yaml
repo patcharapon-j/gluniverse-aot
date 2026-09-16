@@ -5,7 +5,7 @@
 id: behavior-procedure
 name: Next Behavior and Titan Cards
 chapter: 05-titan-engagement
-adrs: [ADR-0001, ADR-0003, ADR-0010, ADR-0015, ADR-0019]
+adrs: [ADR-0001, ADR-0010, ADR-0015, ADR-0019, ADR-0024]
 decided: [OQ-80, OQ-107, OQ-145]
 
 # ------------------------------------------------------------------ the Next Behavior
@@ -14,7 +14,7 @@ next_behavior:
     The GM rolls the Next Behavior where the players cannot see it and records it face down on the
     tracker (data/engagement/round.yaml, gm_tracker). It is revealed only by a Read
     (data/engagement/read.yaml), by a telegraph effect, or when a card resolves it. The GM never
-    re-rolls it, changes its row, or makes any choice this file does not name (ADR-0003, item 8).
+    re-rolls it, changes its row, or makes any choice this file does not name (ADR-0024, limit 8).
   rolled_when:
     - The Titan becomes a Focus Titan.
     - One of its cards has resolved a behavior (resolving_a_card, next).
@@ -89,8 +89,8 @@ resolving_a_card:
         Announce the behavior's name, tier, and targets to every soldier. If the entry lists
         attack_dice, roll that many Titan Dice in the open (data/engagement/titan-format.yaml,
         titan_dice) and announce the successes: the card's Severity, the same number for every
-        target. An entry with no attack_dice rolls nothing and harms no one. The GM never re-rolls or
-        adjusts the roll (ADR-0003, item 8; ADR-0019).
+        target. An entry with no attack_dice rolls nothing and harms no one. The roll takes no
+        Circumstances, and the GM never re-rolls or adjusts it (ADR-0024, limits 8 and 16; ADR-0019).
     - id: reactions
       text: >-
         If the roll scored 0 successes, the card whiffs against every target, a target who cannot make
@@ -113,10 +113,10 @@ resolving_a_card:
         timing) states.
     - id: next
       text: >-
-        The card has resolved a behavior whether it landed or whiffed (ADR-0003, item 2; decision
+        The card has resolved a behavior whether it landed or whiffed (ADR-0024, limit 2; decision
         batch 8, 8-1). The behavior becomes the previous behavior, the Titan's decoys in a row returns to 0
         (data/engagement/attention.yaml, break_attention, needs_rule), and every flag for this Titan
         clears (data/engagement/attention.yaml, flag_duration; decision batch 3e). Roll the new Next Behavior
         (next_behavior, roll). If the behavior had a telegraph effect, reveal the new Next Behavior to every
         soldier. It stays revealed until a card resolves it or a decoy's card spends it.
-  gm_choices: none   # the GM never picks a row, a fallback, a target, or an order
+  gm_choices: none (ADR-0024, limit 8)   # the GM never picks a row, a fallback, a target, or an order

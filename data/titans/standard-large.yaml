@@ -5,7 +5,7 @@
 id: standard-large
 name: Standard Large Titan
 chapter: 06-standard-titans
-adrs: [ADR-0001, ADR-0003, ADR-0005, ADR-0007, ADR-0014, ADR-0015, ADR-0017, ADR-0019]
+adrs: [ADR-0001, ADR-0005, ADR-0007, ADR-0014, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
 decided: [OQ-78, OQ-80, OQ-100, OQ-101, OQ-109, OQ-137, OQ-145]   # Chapter 5's Size Class values and Behavior Table procedure; the Grab mark, this table, and its leg entries (decision batch 4, 4-1, 4-2, and 4-10); each harming effect's Injury Type (decision batch 7, 7-5)
 format: data/engagement/titan-format.yaml (stat_block, behavior_table, entry_fields, tier_rules)
 grab_mark: data/titans/index.yaml (grab_mark)

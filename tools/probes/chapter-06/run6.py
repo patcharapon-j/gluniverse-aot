@@ -94,7 +94,7 @@ def heave_problems():
 
 
 def injury_type_problems():
-    """ADR-0003 item 11, as amended in decision batch 7 (7-5, OQ-137): every harming effect names its Injury Type.
+    """ADR-0024, limit 11, as amended in decision batch 7 (7-5, OQ-137): every harming effect names its Injury Type.
     A critical-injury effect names it in injury_type, a Bite entry's is bite and every other entry's crush; a grab
     effect's harm is the Grab's crush, whose type grab.yaml names; a knock-loose fall's type is the one falls.yaml
     names."""

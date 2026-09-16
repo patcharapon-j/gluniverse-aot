@@ -4,7 +4,7 @@
 id: grief
 name: Grief
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0008]
+adrs: [ADR-0008, ADR-0024]
 decided: [OQ-52, OQ-141, OQ-143]
 
 gaining:

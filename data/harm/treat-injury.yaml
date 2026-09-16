@@ -6,13 +6,20 @@
 id: treat-injury
 name: Treat Injury
 chapter: 03-harm-and-mind
-adrs: [ADR-0003]
+adrs: [ADR-0024]
 decided: [OQ-44, OQ-56, OQ-57, OQ-138, OQ-150]
 
 entry: treat-injury
 attribute: wits
 gear: medical-kit    # Chapter 4 sets the item, its rating, and wear; without one, Wits alone (gear_requirement)
 needs: 1
+# Decision batch 9, 9-2: an attribute roll, so it takes Circumstances (data/core/circumstances.yaml).
+circumstances: >-
+  As any attribute roll: the one step the GM names with the roll, Standard if none, such as Hard for
+  field surgery in driving rain. A minus step adds up with the self-treatment penalty and a type
+  rider's penalty. No step changes needs. In a Titan Engagement Standard is the default, and another
+  step is named only for something no rule already prices (data/core/circumstances.yaml,
+  in_titan_engagement).
 
 # Declare one use before rolling. One roll is one use on one patient.
 uses:

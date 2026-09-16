@@ -6,7 +6,7 @@
 id: titan-format
 name: Titan Stat Blocks and Behavior Tables
 chapter: 05-titan-engagement
-adrs: [ADR-0001, ADR-0003, ADR-0005, ADR-0007, ADR-0015, ADR-0017, ADR-0019]
+adrs: [ADR-0001, ADR-0005, ADR-0007, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
 decided: [OQ-78, OQ-80, OQ-82, OQ-137, OQ-145]
 
 # ------------------------------------------------------------------ stat block
@@ -60,9 +60,11 @@ titan_dice:
   rolled: >-
     By the GM, in the open, when a card resolves the entry (data/engagement/behavior-procedure.yaml,
     resolving_a_card, roll-and-announce). The pool is the entry's attack_dice and nothing else.
+  circumstances: never   # data/core/circumstances.yaml, never (decision batch 9, 9-2 and 9-4)
   never: >-
-    Titan Dice never Push and never take Bonus Dice, Help, Gear Dice, or Stress Dice. The GM never
-    re-rolls or adjusts them (ADR-0003, item 8). A Titan never makes a Reaction.
+    Titan Dice never Push and never take Bonus Dice, Help, Gear Dice, or Stress Dice, and never take
+    Circumstances. The GM never re-rolls or adjusts them (ADR-0024, limits 8 and 16; decision batch
+    9, 9-4). A Titan never makes a Reaction.
   colour: A colour no soldier's pool uses, so the Titan's roll never mixes with base, Gear, or Stress Dice.
   successes: >-
     The roll's successes are the card's Severity, the same number for every target of the card
@@ -102,7 +104,7 @@ entry_fields:
     The id of another entry in the same table that happens instead when the Attention holder does
     not meet position_requirement, or thrash. Thrash's own fallback is none.
   text: >-
-    What the soldiers see. Flavour only: no procedure step reads it (ADR-0003). It names none of the
+    What the soldiers see. Flavour only: no procedure step reads it (ADR-0024). It names none of the
     Titan's own Body Parts of a kind the entry does not list in body_parts_used (added for Chapter 6,
     OQ-100 and OQ-105).
 
@@ -125,7 +127,7 @@ tier_rules:
     attack_dice: The Size Class control pool (data/engagement/size-classes.yaml, attack_dice).
     fallback: none
   every_entry: >-
-    ADR-0003 item 11, as amended in decision batches 7 and 8: every entry lists
+    ADR-0024, limit 11, as amended in decision batches 7 and 8: every entry lists
     position_requirement, body_parts_used, attack_dice (none for an entry whose only effect is
     telegraph), and fallback, and every harming effect lists its Injury Type. A critical-injury
     effect names it in injury_type. A grab effect's crush is Crush (data/engagement/grab.yaml,

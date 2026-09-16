@@ -6,7 +6,7 @@
 id: read
 name: Read and Call It
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0010, ADR-0015, ADR-0019]
+adrs: [ADR-0010, ADR-0015, ADR-0019, ADR-0024]
 decided: [OQ-84, OQ-145]
 
 # ------------------------------------------------------------------ Read

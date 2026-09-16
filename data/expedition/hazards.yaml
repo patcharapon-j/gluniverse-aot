@@ -8,18 +8,21 @@ id: hazards
 name: Leg Hazards and the Night Table
 chapter: 07-playtest-rules
 status: playtest
-adrs: [ADR-0003, ADR-0005, ADR-0009, ADR-0014, ADR-0017, ADR-0019]
-decided: [OQ-141, OQ-145]
+adrs: [ADR-0005, ADR-0009, ADR-0014, ADR-0017, ADR-0019, ADR-0024]
+decided: [OQ-141, OQ-145, OQ-179]
 
 table_rolls: >-
   The hazard roll, the night hazard roll, the Straggler's victim rolls, and the interim route's rolls
-  are table rolls, not attribute rolls: no pool, no Push, no Help, no Stress Dice, and never retried
-  (Chapter 1, section 1.3). They are rolled in the open, and nobody re-rolls or changes one
-  (Chapter 1, section 1.1).
+  are table rolls, not attribute rolls: no pool, no Push, no Help, no Stress Dice, no Circumstances, and
+  never retried (Chapter 1, sections 1.3 and 1.4a). They are rolled in the open, and nobody re-rolls or
+  changes one (Chapter 1, section 1.1).
+# decision batch 9, 9-11 and 9-15: none, citing ADR-0024
 choices: >-
   A row that lets the players choose is a shared choice, settled by the roll-off in
   data/character/lifepath.yaml (group_choices) when they disagree. The GM chooses nothing on either
-  table.
+  table (ADR-0024, limit 8): the GM rolls both in the open, describes the row that comes up, and never
+  softens or swaps it; a danger the GM authors belongs to a Waypoint scene (data/expedition/legs.yaml,
+  day, waypoint_scene), never in place of a roll.
 
 # Closed list of the effect types these rows use. Every row names at least one, or none for nothing.
 effect_types:
@@ -51,6 +54,9 @@ effect_types:
 # ------------------------------------------------------------------ Leg Hazard table
 leg_hazards:
   roll: D6
+  # decision batch 9, 9-37 (OQ-179): the amounts are closed; the route the Mission Brief sets
+  # (data/expedition/route.yaml, bounds), the night camps made, the Leg roll, and the flare decide which
+  # apply, and no ruling adds, removes, or changes one
   modifiers:
     distance_band: {near: 0, far: 1, deep: 2}   # the Leg's Distance Band (data/expedition/route.yaml)
     per_night_camp_made: 1   # for each night camp already made on this Expedition
@@ -178,17 +184,22 @@ straggler:
 night:
   roll: D6
   modifiers:
-    distance_band: the Distance Band of the day's last Leg (leg_hazards, modifiers, distance_band)   # decision batch 8, 8-27 (OQ-152, item f)
+    distance_band: the Distance Band of the day's last Leg (leg_hazards, modifiers, distance_band)   # decision batch 8, 8-27 (OQ-152, item f), the Leg the Squad rode, unchanged by a Waypoint-scene retreat or a fallback camp (decision batch 9, 9-40)
     camp_roll_failed: 1
   unused_modifiers: Nights outside, the Formation Post, the Pace, and the Leg roll add nothing to this roll.
-  # decision batch 8, 8-27 (OQ-152, item f)
+  # decision batch 8, 8-27 (OQ-152, item f); decision batch 9, 9-40
   anchor_rating: >-
-    A Titan Engagement this table begins takes its Anchor Rating from the kind of the Waypoint the day's
-    last Leg reached (data/expedition/route.yaml, waypoint_kinds).
+    A Titan Engagement this table begins takes its Anchor Rating from the kind of the Waypoint the camp is
+    made at (data/expedition/legs.yaml, night_camp, at_waypoint; data/expedition/route.yaml,
+    waypoint_kinds), which is the Waypoint the day's last Leg reached unless a Waypoint-scene retreat left
+    no Leg slot that day (decision batch 9, 9-40). A camp at the gate the Expedition left rolls it on the
+    setup table, as a gate gives none (data/expedition/route.yaml, kind_rules, gate; decision batch 9, 9-45).
   # decision batch 8, 8-37
   retreat: >-
     A Titan Engagement this table begins that becomes a retreat before it ends falls back overnight
-    (data/expedition/legs.yaml, night_camp, retreat).
+    (data/expedition/legs.yaml, night_camp, retreat). A retreat at a camp already made at the fallback
+    Waypoint moves the camp no further (data/expedition/legs.yaml, night_camp, retreat; decision batch 9,
+    9-40).
   rows:
     - id: quiet-night
       name: Quiet night
@@ -248,6 +259,7 @@ rolls:
     help: Never.
     push: Never.
     retry: Never.
+    notes: Takes no Circumstances. The GM describes the row that comes up and never softens or swaps it.
   - id: straggler-endure
     name: The Straggler's Endure roll
     who: The Straggler's victim.
@@ -256,4 +268,8 @@ rolls:
     help: Never.
     push: Allowed, and Covering is not, since no one qualifies to Help (Chapter 1, section 1.5).
     retry: Never.
+    notes: >-
+      Takes the Circumstances in force when the hazard roll was made, Standard unless the GM named a step
+      before then for a lasting condition of the Leg that touches it; no step is named or changed for it
+      after, and none for the row's own danger (decision batch 9, 9-34).
     changes: [hazard-outcome]

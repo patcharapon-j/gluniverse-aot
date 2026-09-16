@@ -8,7 +8,7 @@ id: requisition
 name: Requisition
 chapter: 07-playtest-rules
 status: playtest
-adrs: [ADR-0003, ADR-0006, ADR-0014, ADR-0016, ADR-0017]
+adrs: [ADR-0006, ADR-0014, ADR-0016, ADR-0017, ADR-0024]
 decided: [OQ-142, OQ-147, OQ-148]
 
 when: >-
@@ -73,6 +73,19 @@ grant:
 # (decision batch 8, 8-10). Phase 2 rows carry a canon label and, where a Discovery gates them, its name
 # and Canon Clock year.
 list:
+  # decision batch 9, 9-16 (ADR-0016, as amended; ADR-0024). Playtest rule: Phase 2 replaces it.
+  gm_may_add:
+    what: >-
+      The GM may add a row to the list for their table: an item that meets the charter (ADR-0016), at a
+      Scarcity the era rules allow, with the row fields below.
+    measured_floor: >-
+      An added item that rates a measured roll (ODM Gear, a Blade Set, a horse, or a firearm) is at least
+      Limited.
+    marked: unmeasured
+    where: An added row is the table's own and is never written into this file; the rows below are the playtest list.
+    stands: >-
+      The Funding gate, the ledger, one Requisition per Downtime, and Command's answer once the roll is
+      made. Wear and Standard Issue are Chapter 4's and stand too.
   row_fields:
     id: the row's id
     name: what the row gives, as printed
@@ -236,6 +249,10 @@ rolls:
       spends nothing.
     push: Allowed, and a comrade who qualifies to Help may Cover it (Chapter 1, section 1.5). Stress gained rides out on the next Expedition.
     retry: Never this Downtime; it was the soldier's one Requisition.
+    # decision batch 9, 9-16: leverage is Circumstances
+    notes: >-
+      The GM may name the Circumstances for leverage, such as a favour owed, a Commendation, or a captured
+      specimen (Chapter 1, section 1.4a). Scarcity and the ledger are needs and never change.
     changes: [requisition-grant]
   - id: size-up-for-the-ledger
     name: Size Up on the quartermaster

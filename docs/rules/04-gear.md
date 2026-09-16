@@ -32,15 +32,15 @@ Chapter 7 gives the Expedition rules (rations, Legs, when a day passes, and when
 - `data/gear/sheet-fields.yaml`: what the gear field holds, the one-line Squad sheet row, and the Squad sheet's Squad Supply counts.
 - The Catalog rows this chapter owns are in `data/character/action-catalog.yaml`, and the `medical-supplies` source is in `data/core/bonus-dice-sources.yaml` (section 4.13).
 
-Where the ADRs left a question open, the rule below cites its entry in `docs/rules/OPEN-QUESTIONS.md` as (OQ-nn). Every entry this chapter cites was decided on 2026-09-14 (`docs/rules/DECISIONS-2026-09-14.md`): OQ-01 to OQ-58 in the first decisions and their conformance follow-up, this chapter's own entries under *Batch 2*, OQ-59 to OQ-69, OQ-72, and OQ-73, and OQ-93 and OQ-94 under *Batch 3*. Decision batch 2b revised two of them and ADR-0014's reference builds: horses are rated like ODM Gear at every Funding, a full issue also replaces worn ODM Gear and worn horses, and the reference builds carry no Talent dice on the dodge, Fly, Break Attention, Ride, or Read. Decision batch 3 revised OQ-59 again, so the interim issue also replaces a worn horse (OQ-93), and closed ADR-0014's Talent sentence: no roll a target measures carries Talent dice except the Nape strike, the Body Part strike, Break Free, and Treat Injury (OQ-94). The text states the decided rule. Design notes give the reasons and the simulation figures.
+Where the ADRs left a question open, the rule below cites its entry in `docs/rules/OPEN-QUESTIONS.md` as (OQ-nn). Every entry this chapter cites was decided on 2026-09-14 (`docs/rules/DECISIONS-2026-09-14.md`): OQ-01 to OQ-58 in the first decisions and their conformance follow-up, this chapter's own entries under *Batch 2*, OQ-59 to OQ-69, OQ-72, and OQ-73, and OQ-93 and OQ-94 under *Batch 3*. Decision batch 2b revised two of them and ADR-0014's reference builds: horses are rated like ODM Gear at every Funding, a full issue also replaces worn ODM Gear and worn horses, and the reference builds carry no Talent dice on the dodge, Fly, Break Attention, Ride, or Read. Decision batch 3 revised OQ-59 again, so the interim issue also replaces a worn horse (OQ-93), and closed ADR-0014's Talent sentence: no roll a target measures carries Talent dice except the Nape strike, the Body Part strike, Break Free, and Treat Injury (OQ-94). The text states the decided rule. Decision batch 9 (items 9-2, 9-5, 9-11, and 9-16, 2026-09-16) made the GM's rulings part of the rules (ADR-0024): a fall, a lost item, or a unit named as a called roll's stakes, found supplies, objects under Circumstances, and Circumstances on Field Repair and none on the Gas Roll or the fall roll. Design notes give the reasons and the simulation figures.
 
-**No rulings.** The GM never decides whether gear wears, whether a soldier falls or how far, what an object counts as, what Standard Issue holds or when it is received, or whether a unit of Squad Supply is spent. Every one of those comes from a rule and a table row.
+**Rulings.** The GM rules on gear and supply only before the dice are rolled, and only in these ways. A called roll's stakes may name a fall, low or high as the GM names, or low if none (section 4.6; 9-30), one carried item lost, or 1 unit of one kind of Squad Supply spent (section 4.10; decision batch 9, 9-5). A successful called search of a place may find Squad Supply, at most 1 unit per success of one kind the place could hold, and a place yields Squad Supply to one called search only (section 4.10; 9-5 and 9-29). An object that is not a gear item may count toward the Circumstances the GM names for a roll (section 4.1; 9-16), and the GM names the Circumstances of a Field Repair roll as of any attribute roll (section 4.8; 9-2). The GM may add a charter-compliant item to the Requisition list (Chapter 7, section 7.3; 9-16). No ruling gives a gear item: one comes only by Standard Issue, a Requisition, or a rule that moves an item between soldiers, and a called roll's success never names one (Chapter 1, section 1.1, item 2; 9-31). The GM applies the rest as written: wear, which only a Pushed Gear Die showing 1 causes; Gear Dice, which only a rated gear item gives; what an object counts as for carrying; the Gas Roll; the fall procedure, its bands in a Titan Engagement, and its tables; Standard Issue, what it holds and when it is received; and every other spend and restock of Squad Supply. Every other rule the GM applies as written is on the list in Chapter 1, section 1.1, item 6.
 
 ---
 
 ## 4.1 Gear items and Gear Dice
 
-`data/gear/items.yaml` lists every gear item: ODM Gear, gas canisters, Blade Sets, horses, medical kits, tool kits, flintlock pistols, muskets, and prosthetic arms and legs. No other object is a gear item. Any other object a player describes, such as a rope, adds no Gear Dice and counts as no item. It has a mechanical effect only where another rule names it: a thrown cloak, for example, is one of the decoys ADR-0010 gives Break Attention, and Chapter 5 resolves it (section 5.6, `data/engagement/attention.yaml`, `break_attention`, `decoys`; `other_objects`).
+`data/gear/items.yaml` lists every gear item: ODM Gear, gas canisters, Blade Sets, horses, medical kits, tool kits, flintlock pistols, muskets, and prosthetic arms and legs. No other object is a gear item. Any other object a player describes, such as a rope, adds no Gear Dice and counts as no item. It has a mechanical effect only where a rule names it: a thrown cloak, for example, is one of the decoys ADR-0010 gives Break Attention, and Chapter 5 resolves it (section 5.6, `data/engagement/attention.yaml`, `break_attention`, `decoys`; `other_objects`). Chapter 1's Circumstances cover every other use: an object used well on a roll may count toward the step the GM names (section 1.4a), so a rope and a grapnel might make a climb Easy. On a called roll made with an attribute alone, a gear item that helps counts the same way and gives no Gear Dice (Chapter 2, section 2.9; decision batch 9, 9-24). It never gives Gear Dice, which come only from a rated item that a Push can wear (ADR-0004; decision batch 9, 9-16).
 
 ### Ratings
 
@@ -51,7 +51,7 @@ Where the ADRs left a question open, the rule below cites its entry in `docs/rul
 
 ### Wear
 
-- When a Pushed roll is final, each Gear Die showing 1 wears the item that supplied it by 1 point (Chapter 1, section 1.5; OQ-01). A roll that was not Pushed never wears anything.
+- When a Pushed roll is final, each Gear Die showing 1 wears the item that supplied it by 1 point (Chapter 1, section 1.5; OQ-01). A roll that was not Pushed never wears anything. No ruling wears an item: a called roll's stakes may lose a carried item, never a point of wear (decision batch 9, 9-5).
 - A rule Talent that ignores wear, such as Well-Kept Rig, Blade Discipline, or Sure Seat, removes points before they apply.
 - Each point left lowers the current rating by 1, never below 0. The one exception is a Blade Set, which is ruined by any wear instead (section 4.4).
 
@@ -178,7 +178,7 @@ The Gas Roll is the fixed roll `gas-roll` (Chapter 2). Follow `gas_roll`:
 4. **Read.** Count the dice showing 1. The dice are not added, and a 6 does nothing.
 5. **Effect.** Lower the Gas Rating by 1 for each 1, to a minimum of 0.
 
-The extra gas a Push costs is the third die of that round's one Gas Roll, never a second roll. A Gas Roll is not an attribute roll: it has no attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice, it cannot be Pushed, Helped, or Covered, and it never causes a Stress Response (Chapter 1, section 1.3). A Squadmate never Pushes, so its Gas Roll is always two dice.
+The extra gas a Push costs is the third die of that round's one Gas Roll, never a second roll. A Gas Roll is not an attribute roll: it has no attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice, it takes no Circumstances (Chapter 1, section 1.4a; decision batch 9, 9-2), it cannot be Pushed, Helped, or Covered, and it never causes a Stress Response (Chapter 1, section 1.3). A Squadmate never Pushes, so its Gas Roll is always two dice.
 
 **A Gas Roll a Fear Roll result calls for.** A Chapter 3 Fear Roll row can call for a Gas Roll at once (`data/harm/effect-types.yaml`, `gas-roll`; decision batch 7, 7-8). It is two dice on the canister fitted to the soldier's ODM Gear, read and applied as above, and nothing happens if no canister is fitted or its Gas Rating is 0. It is not the round's Gas Roll and is not ODM use, so the soldier still makes the round's own Gas Roll if they used ODM Gear, with the dice that roll would have.
 
@@ -319,7 +319,7 @@ A soldier falls only when a row of `triggers` happens:
 - **Down while mounted:** a fall from a horse, once that harm has been resolved.
 - **Lame while mounted:** their horse becomes lame, a fall from a horse, once the roll that wore it is finished.
 - **Carried:** the comrade carrying them falls for any reason, including a fall for becoming Down while airborne or mounted, becomes Grabbed while airborne, or dies while airborne or mounted. They fall from the carrier's band, at the same moment.
-- **Named by a rule:** another rule, such as a Chapter 5 rule (section 5.2) or the Chase rules, names a fall and its band, or low if it names none.
+- **Named by a rule or a ruling:** another rule, such as a Chapter 5 rule (section 5.2) or the Chase rules, names a fall and its band, or low if it names none; or a called roll's stakes name a fall and the soldier fails the roll, low or high as the GM names from the fall's height, never extreme, in a Titan Engagement as well as outside one, and the Height steps never raise it (*Height*, step 1), or low if the GM names none (Chapter 1, section 1.1; decision batch 9, 9-5, 9-30, and 9-38). In a Titan Engagement it lands as any fall does (*After the fall*; decision batch 9, 9-44). The GM names that band with the stakes, before the dice are rolled. The GM states the soldier's current Health with those stakes (Chapter 1, section 1.1, item 2; decision batch 9, 9-35).
 
 A Grab's hold ends the airborne and mounted states before its crush, so a soldier the crush makes Down meets neither Down trigger (Chapter 5, section 5.9; decision batch 5, OQ-124). Running dry, landing through a move, and being set down are never falls. **A fall never causes another fall** for the same soldier (`never_a_second_fall`).
 
@@ -327,12 +327,13 @@ A Grab's hold ends the airborne and mounted states before its crush, so a soldie
 
 Find the fall's band (`height`):
 
-1. In a Titan Engagement, find the **fall's reference Titan**: the Focus Titan relative to which the soldier held the closest Position when they fell, in the order On Body, Blind Spot, In Reach, Distant. On a tie it is the Titan whose card, Grab, or effect caused the fall, and otherwise the living Focus Titan with the earliest label. The later steps, and where the fall lands, use that Titan (decision batch 5, OQ-123).
-2. A fall from a horse is **low**, and no later step changes it.
-3. Otherwise, use the Position the soldier held relative to the fall's reference Titan when they fell. Distant or In Reach is **low**. On Body or Blind Spot is **high**.
-4. For a fall that is not from a horse, raise the band one step, to at most **extreme**, if the Titan Engagement's Anchor Rating is Giant Forest, or if the fall's reference Titan is of the Large Size Class. Both together still raise it one step.
+1. **A band already named.** A fall a ruling names takes the band the GM named with the stakes, low or high and never extreme, or low if the GM named none, in a Titan Engagement as well as outside one. A fall another rule names takes the band that rule names. No later step changes a band this step gives. A rule that makes a soldier fall and names no band, such as a knock loose (Chapter 5, section 5.4), letting go (section 5.2), or a release from a lift (section 5.9), takes the band the steps below give (decision batch 9, 9-38).
+2. In a Titan Engagement, find the **fall's reference Titan**: the Focus Titan relative to which the soldier held the closest Position when they fell, in the order On Body, Blind Spot, In Reach, Distant. On a tie it is the Titan whose card, Grab, or effect caused the fall, and otherwise the living Focus Titan with the earliest label. The later steps, and where the fall lands, use that Titan (decision batch 5, OQ-123).
+3. A fall from a horse is **low**, and no later step changes it.
+4. Otherwise, use the Position the soldier held relative to the fall's reference Titan when they fell. Distant or In Reach is **low**. On Body or Blind Spot is **high**.
+5. For a fall that is not from a horse, raise the band one step, to at most **extreme**, if the Titan Engagement's Anchor Rating is Giant Forest, or if the fall's reference Titan is of the Large Size Class. Both together still raise it one step.
 
-Outside a Titan Engagement, the rule that makes the soldier fall names the band, and a fall is low if it names none.
+Outside a Titan Engagement there is no reference Titan and no Position to read, so a fall takes the band step 1 gives, and is low if neither a rule nor the GM names one.
 
 ### The fall
 
@@ -344,7 +345,7 @@ Follow `procedure`:
 4. If the row's damage is 0, the fall does no harm.
 5. Otherwise the soldier takes that damage, following Chapter 3's damage procedure (section 3.1). A Critical Injury it gives has a rolled Injury Location and Injury Type Crush, as every fall's does (`injury_type`; decision batch 7, 7-5).
 
-Because step 2 comes before the damage, a soldier whom the fall's own damage makes Down is no longer airborne or mounted, so the Down triggers above do not start a second fall.
+Because step 2 comes before the damage, a soldier whom the fall's own damage makes Down is no longer airborne or mounted, so the Down triggers above do not start a second fall. The fall's D6 is a table roll, not an attribute roll, so it takes no Circumstances (`damage_table`; decision batch 9, 9-2).
 
 <!-- BEGIN RENDERED: fall-bands from data/gear/falls.yaml -->
 | Band | Adds to the D6 |
@@ -481,6 +482,7 @@ Field Repair is the Wits action `field-repair` (Chapter 2). It uses a tool kit f
 
 - **Target:** the soldier names one item before rolling: ODM Gear, a tool kit, or a flintlock pistol or musket (`target`; decision batch 8, 8-12). A Blade Set, a horse, or a medical kit cannot be repaired. The tool kit that supplies the roll's Gear Dice cannot be the item it repairs. A tool kit at current rating 0 supplies no Gear Dice, so it can be repaired with another tool kit or with Wits alone (`kit_at_zero`).
 - **Needs:** 1 success.
+- **Circumstances:** as any attribute roll (`circumstances`; Chapter 1, section 1.4a; decision batch 9, 9-2). A repair made in the dark or in a downpour might be Hard, and it is Standard if the GM names no step. No step changes the 1 success it needs. In a Titan Engagement, Standard is the default, and the GM names another step only for something no rule already prices (Chapter 5).
 - **On a success:** the item's current rating rises by 1 for each success, to at most its rating. ODM Gear raised above 0 is no longer Jammed.
 - **On a failure:** nothing happens.
 
@@ -605,8 +607,8 @@ Squad Supply is the shared pool the Squad draws on in the field. `data/gear/squa
   - **Rations:** a Leg spends rations by its Leg roll and its Pace, a Night Camp spends 1, and a hazard row may spend or lose rations (Chapter 7, section 7.1). With none left, the Leg or the camp still happens, at the cost Chapter 7 gives.
   - **Flares:** a rule that names a flare spends 1. Chapter 5 states which decoys for Break Attention use one (section 5.6, `data/engagement/attention.yaml`, `decoys`), and Chapter 7 adds the Signal Relay's flare, a hazard row's flare (section 7.1), and a flare fired at a person in a Skirmish, a Shoot roll with no Gear Dice that deals Burn damage (section 7.4; decision batch 8, 8-7).
   - **Medical supplies:** the uses below.
-  - **Shot:** Reload spends 1 unit to load one flintlock pistol or musket (section 4.1; Chapter 7, section 7.4). No other rule spends shot.
-- A use needs a unit of its kind, and cannot be made with none left, except where Chapter 7 says what a Leg or a Night Camp with no rations costs. A unit is spent only by a rule that names its kind, and added only by a restock (*Stock*, below) or a Requisition (Chapter 7, section 7.3). The GM never spends, adds, or removes units.
+  - **Shot:** Reload spends 1 unit to load one flintlock pistol or musket (section 4.1; Chapter 7, section 7.4). No other rule spends shot, though a failed called roll's stakes may name 1 unit of it (below).
+- A use needs a unit of its kind, and cannot be made with none left, except where Chapter 7 says what a Leg or a Night Camp with no rations costs. A unit is spent only by a rule that names its kind, or by a failed called roll whose stakes named 1 unit of one kind (Chapter 1, section 1.1, item 2). A unit is added only by a restock (*Stock*, below), a Requisition (Chapter 7, section 7.3), or a successful called search, a Spot or a Survive, of a place the GM names with the stakes, on which the GM may add at most 1 unit per success of one kind of Squad Supply that place could plausibly hold. A place yields Squad Supply to one called search only: once a called search of it is rolled, whatever its result, no later roll finds Squad Supply there, and the other soldiers present search it by Helping that roll (`spending`; decision batch 9, 9-5 and 9-29). A place is one building, wagon, cache, or the like the Squad can search in one go, named by the GM with the stakes. A Waypoint scene yields Squad Supply to at most two called searches, whatever the number of places the GM names in it; no later search in that scene finds Squad Supply, whatever its result (`spending`; decision batch 9, 9-41). No called search is made in a Titan Engagement or a Skirmish; a place at hand is searched once the fight has ended, under these caps (`spending`; decision batch 9, 9-45). The GM spends, adds, or removes units in no other way.
 - The Squad sheet records each kind's units (section 4.12).
 
 ### Stock
@@ -637,6 +639,8 @@ Follow `medical_uses`:
 > **Design note (OQ-67):** The Phase 1 kinds, the stock by Funding, both medical uses, and restocking at any point in a window are this chapter's rules. Shot stayed out of Phase 1 because no rule read or changed it, so it would have been later content on a live sheet; it joined as one row when the Skirmish rules added the firearms that spend it. Both medical uses are outside Titan Engagements and aftermath rolls, so Chapter 3's in-fight and aftermath treatment figures (OQ-57) do not move.
 
 > **Design note (decision batch 7, 7-14, 7-17; OQ-141, OQ-143):** Rations gain the stock by Funding that the Expedition rules set, and shot the stock the Skirmish rules set. No target of ADR-0014 reads rations or shot, so neither needs a simulator run (ADR-0016, item 7). Rations are a column of the stock table beside the other kinds (decision batch 8, 8-12).
+
+> **Design note (decision batch 9, 9-5 and 9-16):** Scarcity is what keeps rations biting on an Expedition and gear from climbing past the reference builds, so a ruling may spend a unit as a failure's cost or find one on a good search, never more than 1 unit a success, and from one search a place (9-29). Wear stays the Push's price (ADR-0004), and an object outside the item list tilts a roll through Circumstances rather than Gear Dice, so no ruling makes a new gear item, and Standard Issue stays the reference kit ADR-0014 measures.
 
 ## 4.11 When a soldier dies or retires
 
@@ -684,7 +688,7 @@ Items carried, the carrying limit, Overloaded, Jammed, and lame are derived from
 
 ### Acts in this chapter
 
-ADR-0003 item 12 requires every consequential act in a chapter to have a tracked value and a Catalog entry. The acts this chapter lets a soldier choose, all in `data/character/action-catalog.yaml`, are:
+ADR-0024, limit 12, keeps a tracked value and a Catalog entry for every act a chapter lets a soldier choose, as an index for Talents, the Foundry system, and the in-fight effect menu. The acts this chapter lets a soldier choose, all in `data/character/action-catalog.yaml`, are:
 
 - Changing a canister: `change-canister`, which changes `gas-restore`.
 - Repairing gear: `field-repair`, which changes `gear-restore`.

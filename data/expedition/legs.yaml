@@ -9,8 +9,8 @@ id: legs
 name: Expeditions
 chapter: 07-playtest-rules
 status: playtest
-adrs: [ADR-0003, ADR-0009, ADR-0010, ADR-0014, ADR-0016]
-decided: [OQ-141]
+adrs: [ADR-0009, ADR-0010, ADR-0014, ADR-0016, ADR-0024]
+decided: [OQ-141, OQ-175]
 
 # ------------------------------------------------------------------ the Expedition
 expedition:
@@ -36,7 +36,8 @@ expedition:
   gear_back: >-
     Canisters, Blade Sets, and Squad Supply come back only through a full Standard Issue: before the
     Expedition and at a Depot (data/expedition/route.yaml, depot). What a Titan Engagement uses up
-    stays used up until then.
+    stays used up until then, except the Squad Supply a successful called search finds, as
+    data/gear/squad-supply.yaml (spending) caps it.
   # decision batch 8, 8-27 (OQ-152, item e)
   mounted: >-
     On a Leg, every soldier who is not Down and whose own horse is not lame is mounted. At a Night Camp
@@ -75,15 +76,50 @@ expedition:
 # ------------------------------------------------------------------ the day
 day:
   steps:
-    - Ride the day's first Leg, then its second (leg_steps).
-    - If a Leg is left on the route after the second, and pace orders a Hard Ride, ride that Leg as the day's third.
+    - Ride the day's first Leg, then its second (leg_steps). After each, the GM may frame a Waypoint scene (waypoint_scene).
+    - >-
+      If a Leg is left on the route after the second, and pace orders a Hard Ride, ride that Leg as the
+      day's third. After it, the GM may frame a Waypoint scene (waypoint_scene).
     - Make the Night Camp (night_camp).
   # decision batch 8, 8-27 (OQ-152, item b); 8-37 for the retreat at night
   counted_legs: >-
     Every Leg ridden counts toward the day's Legs, including a Leg ridden again after a retreat
-    (leg_steps, titan-engagement), and a Leg ridden again as the next day's first after a retreat at a
-    Night Camp (night_camp, retreat).
+    (leg_steps, titan-engagement), or from a Titan Engagement a Waypoint scene began (waypoint_scene,
+    retreat), in the day's next Leg slot or as the next day's first, and a Leg ridden again as the next
+    day's first after a retreat at a Night Camp (night_camp, retreat).
   night: Legs are never ridden at night (ADR-0009).
+  # decision batch 9, 9-15 (ADR-0009, as amended; OQ-141). Playtest rule: Phase 2 replaces it.
+  waypoint_scene:
+    when: >-
+      After a Leg ends at a Waypoint that is not the gate (leg_steps, waypoint), before the next Leg or the
+      Night Camp, the GM may frame a scene there, such as searching an abandoned town, finding survivors,
+      or crossing a flooded ford.
+    runs_on: >-
+      Called rolls, each with its Circumstances and its stakes named before the roll (Chapter 1, section
+      1.1). A successful called search may add Squad Supply only as data/gear/squad-supply.yaml (spending)
+      allows.
+    may_begin: >-
+      A Skirmish (data/skirmish/skirmish.yaml, starting) or a Titan Engagement (Chapter 5, section 5.1), by
+      the fiction, as scene framing starts one.
+    # decision batch 9, 9-23 (OQ-175) and 9-33: ADR-0009's fall back, applied to a fight a scene begins
+    retreat: >-
+      If a Titan Engagement begun in a Waypoint scene becomes a retreat before it ends (Chapter 5, section
+      5.10), the scene ends and the Squad falls back as from one a hazard row of the Leg that reached this
+      Waypoint began: to the Waypoint that Leg started from, riding that Leg again from step 1 with a new
+      Leg roll and a new hazard (leg_steps, titan-engagement). Step 7 applies again when the Squad reaches
+      this Waypoint, a Depot's Standard Issue included (leg_steps, waypoint; data/gear/standard-issue.yaml).
+      The Leg ridden again takes the day's next Leg slot (day, steps): after the day's first Leg it is the
+      second, at Steady; after the second it is the third only if Command orders a Hard Ride that day, and it
+      is then a Hard Ride. If no slot remains, the Squad falls back to the Waypoint that Leg started from and
+      makes the Night Camp there (night_camp), and the next day's first Leg rides that Leg again at Steady
+      (decision batch 9, 9-33).
+    harm: >-
+      Harm a called roll's stakes inflict in the scene opens the outside-harm care window
+      (data/harm/treat-injury.yaml, care_windows, outside-harm), with every soldier on the Expedition in its
+      scope.
+    never: >-
+      A Waypoint scene rides no Leg: it makes no Leg roll or camp roll, reads no Leg Hazard or Night table,
+      spends no ration unless a called roll's stakes name one, and never stands in place of a hazard roll.
 
 pace:
   - id: steady
@@ -206,6 +242,18 @@ rations:
 
 # ------------------------------------------------------------------ the night camp
 night_camp:
+  # decision batch 9, 9-40 (review round 2, Astra M1)
+  at_waypoint: >-
+    The Night Camp is made at the Waypoint the Squad is at when it begins: the Waypoint the day's last Leg
+    reached (leg_steps, waypoint), or, after a Waypoint-scene retreat that left no Leg slot, the Waypoint
+    that Leg started from (day, waypoint_scene, retreat). A Titan Engagement the Night table begins takes
+    its Anchor Rating from the kind of that Waypoint (data/expedition/hazards.yaml, night, anchor_rating;
+    data/expedition/route.yaml, waypoint_kinds). The night hazard still reads the Distance Band of the
+    day's last Leg ridden (data/expedition/hazards.yaml, night, modifiers, distance_band). A camp at the
+    gate the Expedition left, which is not a route Waypoint and has no kind, gives a Titan Engagement the
+    Night table begins an Anchor Rating rolled on the setup table, as a gate does (data/expedition/route.yaml,
+    kind_rules, gate; data/engagement/engagement-setup.yaml, anchor_rating), and the Expedition goes on:
+    only the route's last Waypoint ends it (decision batch 9, 9-45).
   steps:
     - id: camp-roll
       text: Make the camp roll (rolls, camp-roll).
@@ -235,6 +283,11 @@ night_camp:
     that day's Legs (day, counted_legs). Falling back is not riding a Leg: it makes no Leg roll, spends
     nothing, and reads no Leg hazard, so no Leg is ridden at night (ADR-0009, as amended for 8-37). Only a retreat moves the
     camp; a Titan Engagement the Night table begins that ends any other way leaves the camp where it was.
+    When the camp is already at the Waypoint the day's last Leg started from (at_waypoint), the Squad falls
+    back no further: it breaks off where it is, the Night Camp goes on at its day-passes step with no new
+    camp roll, ration, or night hazard, and the night counts as the one Night Camp already counted. The Leg
+    queued for the next morning (day, waypoint_scene, retreat) is unchanged and is ridden as that day's
+    first, at Steady (decision batch 9, 9-40).
   camp_outcome:
     tracked_value: camp-outcome   # data/character/action-catalog.yaml
     success: The camp can give Camp Relief.

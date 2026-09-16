@@ -9,7 +9,7 @@ The game may add gear, Titans, and Talents that the show never depicts, because 
 3. **Invented items enter play only through Requisition or a Discovery.** Standard Issue holds only what the show issues.
 4. **Titans die only at the Nape** (ADR-0007), for every item and every Titan. New gear may Break Body Parts, create Openings, change Attention, or spend a Titan's card. Cannon wound; blades kill.
 5. **Shifters stay Shifters.** Hardening, intelligence, and targeting riders from the air are Shifter traits (ADR-0002, ADR-0013). An Abnormal may be strange; it may not be smart. The Sprinting Abnormal's rewrite is the precedent.
-6. **Every row has a rule that reads it** (ADR-0003 items 9 and 12, ADR-0012). An item names the Catalog entry it rates or the tracked value it changes; a Titan entry uses the closed effect list and the closed ladder tests, or a Chapter 5 decision adds to those lists first. No flavor-only rows on a live sheet.
+6. **Every row has a rule that reads it** (ADR-0024 limits 9 and 12, ADR-0012). An item names the Catalog entry it rates or the tracked value it changes; a Titan entry uses the closed effect list and the closed ladder tests, or a Chapter 5 decision adds to those lists first. No flavor-only rows on a live sheet.
 7. **Titan-fight content is measured before it ships** (ADR-0014). Any item or Titan that a target, band, or bar reads runs the simulator and is judged on its readings. Expedition, Requisition, and Downtime content needs no rerun.
 8. **Access is Funding and Scarcity, not coin.** Standard Issue by Funding, Requisition against Scarcity (Standard, Limited, Rare). No price list. Branch variants are the same items at a different rating or with one named quirk, never new mechanics.
 9. **Small tables, reviewed like chapters.** Each new category is 5 to 8 rows and each new Titan is one section, through the same draft, review, fix cycle. Growth by batches, not by a catalogue.
@@ -39,3 +39,7 @@ A Talent that names only a Leg, camp, Requisition, or Skirmish roll carries no d
 - A charter that leaves a door for a later Marley module: deferred by the owner ("no Marley for now"); the era lock is written without the door, and a later decision may open one.
 - Coin prices, as Coriolis: The Great Dark uses: rejected, because Funding and Scarcity are the glossary's acquisition terms and a price list would fight them.
 - Talent guardrails as a Chapter 2 design note only: rejected, because future drafters need one test to cite.
+
+## Amended
+
+After decision batch 9 (2026-09-16, GM judgment; ADR-0024, 9-13 and 9-16): items 6 and 7 gate published data. A table's own item, Titan, or Foe kind is played as unmeasured and marked so: a GM may place a charter-compliant item on the Requisition list at a Scarcity the era rules allow (an item that rates a measured roll at least Limited), may build a Foe kind on the Foe row fields with Attack Dice and Guard no higher than the Military Police trooper's 7 and 4, and, in Phase 2, may build an Abnormal in the Chapter 5 format with the closed lists. None of these ships in the first playtest. Talent guardrail 10: no Talent changes, ignores, or lowers a Circumstances step; a Talent that helps against bad conditions adds dice, because a step is worth 20% of failure at every pool and a Talent that erased one would outrank every other.

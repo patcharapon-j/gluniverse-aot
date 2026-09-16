@@ -5,7 +5,7 @@
 id: health
 name: Health and Harm
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0005, ADR-0017, ADR-0019]
+adrs: [ADR-0005, ADR-0017, ADR-0019, ADR-0024]
 decided: [OQ-39, OQ-40, OQ-137, OQ-138, OQ-146]
 
 health:
@@ -24,8 +24,10 @@ health:
   changes_after_creation: false   # attributes never rise (ADR-0011), so Health never changes
 
 # Every harm a rule inflicts on a soldier is one of these kinds. A rule that harms a soldier names
-# the kind and its parameters. Nothing else harms a soldier, and the GM never picks a kind, an
-# amount, or an Injury Location.
+# the kind and its parameters. Nothing else harms a soldier. gm: a ruling names harm only as a called
+# roll's stakes, as damage of 1 to 3 (damage, by_ruling) or a fall (data/gear/falls.yaml, triggers,
+# rule-named); the GM never picks a kind, an amount, or an Injury Location for harm any other rule
+# names (ADR-0024, limit 17; decision batch 9, 9-5 and 9-11).
 harm_kinds:
   - id: damage
     name: Damage
@@ -48,7 +50,23 @@ harm_kinds:
       Rules that harm a soldier by something other than a Titan attack: a fall (Chapter 4), steam at a
       kill or a Regeneration fill (data/engagement/titan-harm.yaml, steam), a Heave against a corpse
       (data/engagement/titan-harm.yaml, falling_titan, corpse_heat), and a Foe's weapon (Chapter 7)
-      (decision batch 8, 8-7).
+      (decision batch 8, 8-7); and a ruling, as a called roll's stakes, 1 to 3, typed (by_ruling;
+      decision batch 9, 9-5).
+    by_ruling:
+      when: >-
+        A called roll fails whose stakes, named before the dice were rolled, named this damage (Chapter 1,
+        section 1.1, item 2; ADR-0005, as amended).
+      amount: {min: 1, max: 3}
+      injury_type: >-
+        The Injury Type of its source: crush for a blow or a hard knock, cut for an edge, pierce for a
+        point, burn for fire (data/harm/critical-injuries.yaml, types).
+      injury_location: rolled   # a ruling never names one
+      fixed: The damage named does not change once the dice are rolled (ADR-0024, limit 14).
+      stated_with: the soldier's current Health, said aloud with the stakes (decision batch 9, 9-35; OQ-177)
+      never: >-
+        4 damage or more, which is a musket's and is rolled (Chapter 7, section 7.4); a Critical Injury,
+        death, a Death Roll, a Scar, or Grief dealt directly; an Injury Location, a row, or a time limit
+        named; a care window opened or closed (ADR-0024, limit 17).
     rules: [03-harm-and-mind, 04-gear]
     decided: [OQ-39]
 

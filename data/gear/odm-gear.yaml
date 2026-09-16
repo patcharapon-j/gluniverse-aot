@@ -5,7 +5,7 @@
 id: odm-gear
 name: ODM Gear and Gas
 chapter: 04-gear
-adrs: [ADR-0004, ADR-0009, ADR-0014, ADR-0015, ADR-0019]
+adrs: [ADR-0004, ADR-0009, ADR-0014, ADR-0015, ADR-0019, ADR-0024]
 decided: [OQ-01, OQ-12, OQ-23, OQ-60, OQ-61]
 
 item: odm-gear   # data/gear/items.yaml
@@ -127,8 +127,9 @@ gas_roll:
     second Gas Roll.
   reading: Count the dice showing 1. The dice are not added, and a 6 does nothing.
   effect: Lower the soldier's Gas Rating by 1 for each die showing 1, to a minimum of 0.
+  circumstances: never   # not an attribute roll (data/core/circumstances.yaml, never; decision batch 9, 9-2)
   not_an_attribute_roll: >-
-    No attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed,
+    No attribute, Talent dice, Bonus Dice, Gear Dice, Stress Dice, or Circumstances. It cannot be Pushed,
     Helped, or Covered, and never causes a Stress Response (Chapter 1, section 1.3).
   talents: Light Trigger (data/character/talents.yaml) can make a three-die Gas Roll two dice.
 

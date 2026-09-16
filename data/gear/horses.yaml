@@ -5,7 +5,7 @@
 id: horses
 name: Horses
 chapter: 04-gear
-adrs: [ADR-0003, ADR-0009, ADR-0015, ADR-0019]
+adrs: [ADR-0009, ADR-0015, ADR-0019, ADR-0024]
 decided: [OQ-25, OQ-28, OQ-35, OQ-59, OQ-61, OQ-141]
 
 item: horse   # data/gear/items.yaml

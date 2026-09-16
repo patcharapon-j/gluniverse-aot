@@ -4,7 +4,7 @@
 id: squad-tactics
 name: Squad Tactics
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0010]
+adrs: [ADR-0010, ADR-0024]
 decided: [OQ-89, OQ-99]
 
 rules:
@@ -27,7 +27,9 @@ rules:
   squadmates: >-
     Where declared_by names a Squadmate's player, or a choice is made for a Squadmate, the
     directing rules decide (data/character/squadmates.yaml, wing, directing).
-  gm: The GM never uses a Squad Tactic and never decides whether a condition is met beyond its text.
+  gm: >-
+    none (ADR-0024; decision batch 9, 9-11): the GM never uses a Squad Tactic and never decides
+    whether a condition is met beyond its text.
   tuning: The reference rows are measured without Squad Tactics; every tactic alone and in pairs is reported beside them (data/engagement/tuning.yaml, prepared_squad_kill, squad_tactics).
 
 tactics:

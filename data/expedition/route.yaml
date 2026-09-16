@@ -7,8 +7,8 @@ id: route
 name: Expedition Route
 chapter: 07-playtest-rules
 status: playtest
-adrs: [ADR-0003, ADR-0009, ADR-0010]
-decided: [OQ-141]
+adrs: [ADR-0009, ADR-0010, ADR-0024]
+decided: [OQ-141, OQ-179]
 
 route:
   set_when: >-
@@ -16,10 +16,35 @@ route:
     Brief or a Brief that names no route, the interim route (interim_route). Nothing changes it
     afterwards.
   mission_brief_fields:
-    waypoints: In order. Each has a kind (waypoint_kinds) and is a depot or not. The last is a gate.
-    legs: One Leg leads to each Waypoint. Each has a Distance Band (distance_bands) and a Formation Post (data/expedition/legs.yaml, formation_posts).
-    hard_ride_days: The days, counted from the Expedition's first, on which Command orders a Hard Ride (data/expedition/legs.yaml, pace). It may be empty.
+    waypoints: >-
+      In order. Each has a kind (waypoint_kinds) and is a depot or not. The last is a gate. At most one
+      is a depot, and the gate never is (bounds).
+    legs: >-
+      One Leg leads to each Waypoint. Each has a Distance Band (distance_bands) and a Formation Post
+      (data/expedition/legs.yaml, formation_posts). Between 4 and 6, with no Leg deeper than the interim
+      route gives its place (bounds).
+    hard_ride_days: >-
+      The days, counted from the Expedition's first, on which Command orders a Hard Ride
+      (data/expedition/legs.yaml, pace). It may be empty. At most one a day, as the day's third Leg
+      (data/expedition/legs.yaml, day).
     abnormal: The Abnormal the Abnormal and Abnormal at night rows name, when not the Sprinting Abnormal (data/expedition/hazards.yaml).
+  # decision batch 9, 9-37 (OQ-179): the interim route's envelope; Phase 2 may widen it (OQ-141)
+  bounds:
+    legs: 4 to 6, the interim route's D3+3 (interim_route, legs).
+    distance_bands: >-
+      No Leg deeper than the interim route gives its place (interim_route, distance-bands): the first and
+      last Legs near; the second and second-to-last near or far; every Leg between them near, far, or deep.
+    depots: At most one Waypoint, never the gate.
+    posts_and_pace: >-
+      Command's to name; a Hard Ride at most once a day, as the day's third Leg (data/expedition/legs.yaml,
+      day). The route sets each Leg's Distance Band, Formation Post, and Pace, which the hazard roll reads
+      as written (data/expedition/hazards.yaml, leg_hazards, modifiers); once the Expedition begins, no
+      ruling changes them.
+    outside_the_bounds: >-
+      Not a Brief's route in the first playtest; the GM writes within them or rolls the interim route.
+    playtest_log: >-
+      Every route a Brief set is logged with its Legs, each Leg's Distance Band and Post, the Hard Ride
+      days, and its Depots, and an interim route is logged as rolled (ADR-0014, as amended; OQ-167).
 
 distance_bands:
   - {id: near, name: Near}

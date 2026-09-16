@@ -31,7 +31,7 @@ Every open question this chapter raised is decided in `docs/rules/DECISIONS-2026
 - **Targets per table:** every standard table replaced the reference table in the Chapter 5 model at the reference start, and the Jam test and the move-up shares were run for each (section 6.6). The lone Nape strike and the Grab cells were also re-run at each stat block's own values, the lone fight at each Titan's Tempo, Nape Depth, and table, and ADR-0014's helper, decoy-screen, and Squad Tactic rows for every table (decision batch 3b). Decision batch 3c re-ran the lone fight with a spare canister and Field Repair. After decision batch 3e every full-fight row and the Abnormal's bar were re-run under Chapter 5's rules as that batch left them: a flag lasts until the end of the Titan's next card that resolves a behavior, so a card that resolves nothing (each card of a decoy's hold, a card that comes up while the Titan holds a Grabbed soldier, and a card with no one holding its Attention) leaves every flag standing; and the nearest rung is met by the candidates at the closest Position, even when it is the highest rung met. The standard rows moved within sampling, and the Sprinting Abnormal's ladder names the current-holder test, so it is still the Titan its figures measure (section 6.5). After decision batch 4 every figure was re-run again, under that batch's tie-break and current-holder test and with the Sprinting Abnormal's kill entries at a fixed need of 2. The standard rows moved within sampling; the Abnormal's rows moved, and its bar was read in both Squad sheet orders (section 6.6). After decision batch 4b the fight, bar, solo, Grab, and lone figures were re-run with the Sprinting Abnormal's top two rungs swapped. Every committed row repeated its figures exactly except the Abnormal's Draw Attention row, since no one in any other row holds the loudest flag. The loud-rider and four-striker rows were added, and the bar reads a row past its tolerance on one seed again on a second seed (section 6.6). After decision batch 5 the fight, bar, solo, Grab, and lone figures were re-run under the retreat clock, and the loud-rider rows were removed, since Draw Attention needs a Position other than Distant (section 6.6). Those figures were measured with each entry's fixed need of dodge successes, before Attack Dice. The final full simulator rerun re-measured each under Attack Dice as a check, and every target and bar limit was Met (section 6.6; decision batch 8, 8-14 and 8-31; OQ-145).
 - **Abnormals:** reported under the same probes and not tuned, against a stated bar (section 6.6).
 
-**No rulings.** The GM never picks which Titan appears, which entry a Titan resolves, or against whom. The rule that begins a Titan Engagement, the setup table, the Behavior Table, and Chapter 5's procedures decide all of it (ADR-0003, item 8).
+**Rulings.** Which Titan appears, and which Background Titans come with it, is the GM's framing when the GM names them before a Titan Engagement starts; otherwise the rule that begins it and the setup table decide (Chapter 5, section 5.1; decision batch 9, 9-15). The GM may also name Circumstances on the soldiers' rolls against these Titans, as Chapter 5's Rulings paragraph allows. The GM applies the rest of this chapter as written: which entry a Titan resolves and against whom, which the Behavior Table and Chapter 5's procedures decide; every number in a stat block, standard or Abnormal, and its Attack Dice, which take no Circumstances; and the hiding of an Abnormal's values, which only a Read reveals (ADR-0024, limits 8 and 16). What the GM applies as written outside this chapter is the list in Chapter 1, section 1.1, item 6.
 
 ---
 
@@ -39,11 +39,13 @@ Every open question this chapter raised is decided in `docs/rules/DECISIONS-2026
 
 ### Which Titan appears
 
+The GM may name the Focus Titan and any Background Titans as framing: any Titan in this chapter, standard or Abnormal. A Titan the GM names is never rolled, and no `medium_abnormal` roll is made for it (Chapter 5, section 5.1; decision batch 9, 9-15). Otherwise:
+
 `index.yaml` (`standard_titans`) names the **standard Titan** of each Size Class. Whenever Chapter 5's interim setup table gives a Size Class for a Focus Titan or a Background Titan, that Titan is the standard Titan of the class, with one exception:
 - **The Abnormal roll.** When the Focus Titan's Size Class roll gives Medium, roll D6 on `medium_abnormal` (`data/engagement/engagement-setup.yaml`; Chapter 5, section 5.1). On a 6 the Focus Titan is the Sprinting Abnormal instead.
 - **Background Titans** that the setup table gives are always the standard Titan of their class, and never roll on `medium_abnormal`. A rule that begins a Titan Engagement may still name an Abnormal as a Background Titan (Chapter 5, section 5.10).
 
-An **Abnormal** also appears when the rule that begins a Titan Engagement names it (`abnormals`, `enters_play`). When an Abnormal starts a Titan Engagement as a Focus Titan, or becomes one, every soldier holding a Position makes the `abnormal` Fear Roll (Chapter 3).
+An **Abnormal** also appears when the rule that begins a Titan Engagement names it, or when the GM names it as framing (`abnormals`, `enters_play`). When an Abnormal starts a Titan Engagement as a Focus Titan, or becomes one, every soldier holding a Position makes the `abnormal` Fear Roll (Chapter 3).
 
 The setup table's Abnormal roll makes the Sprinting Abnormal the Focus Titan of 1 Titan Engagement in 12 that the table sets up (decision batch 4, OQ-104). Section 6.6 reports what that adds per Titan Engagement.
 
@@ -904,12 +906,12 @@ This chapter adds no ODM use and changes no gas rule, so Chapter 4's gas figures
 ## 6.7 Who uses these rules
 
 - **Titans** act only from the stat blocks, Behavior Tables, and Attention Ladders in `data/titans/`, and from Chapter 5's procedures (ADR-0001). They never build dice pools.
-- **The GM** rolls each hidden Next Behavior on the Titan's table, keeps the tracker, and reveals what a Read or a telegraph reveals, and decides nothing else.
-- **Player characters and Squadmates** act against these Titans with Chapter 5's acts only.
+- **The GM** rolls each hidden Next Behavior on the Titan's table, keeps the tracker, and reveals what a Read or a telegraph reveals, and rules only as Chapter 5's Rulings paragraph allows: which Titan appears, as framing; Circumstances on the soldiers' rolls; and the model entry of an improvised act.
+- **Player characters and Squadmates** act against these Titans with Chapter 5's acts only, an improvised act under its model entry included (Chapter 5, section 5.4).
 
 ### Acts in this chapter
 
-ADR-0003 item 12 requires every consequential act to have a tracked value and a Catalog entry. Chapter 6 adds no act, Catalog entry, tracked value, clock, or counter. Every entry uses Chapter 5's effect types, targets, and procedures, and every soldier act against these Titans is in Chapter 5's list (section 5.14).
+ADR-0024, limit 12, keeps the tracked values as an index of what soldiers change by acting, and every rule that creates a clock, counter, or obstacle adds its value with the entries that change it. Chapter 6 adds no act, Catalog entry, tracked value, clock, or counter. Every entry uses Chapter 5's effect types, targets, and procedures, and every soldier act against these Titans is in Chapter 5's list (section 5.14).
 
 ### Rows and changes in earlier chapters
 

@@ -6,13 +6,19 @@
 id: field-repair
 name: Field Repair
 chapter: 04-gear
-adrs: [ADR-0003]
+adrs: [ADR-0024]
 decided: [OQ-66]
 
 entry: field-repair
 attribute: wits
 gear: tool-kit   # without one that counts as had, Wits alone (gear_requirement); Make Do keeps Talent dice
 needs: 1
+# Decision batch 9, 9-2: an attribute roll, so it takes Circumstances (data/core/circumstances.yaml).
+circumstances: >-
+  As any attribute roll: the one step the GM names with the roll, Standard if none, such as Hard for a
+  repair made in the dark or in a downpour. No step changes needs. In a Titan Engagement Standard is the
+  default, and another step is named only for something no rule already prices
+  (data/core/circumstances.yaml, in_titan_engagement).
 
 target:
   # decision batch 8, 8-12: a firearm at 0 cannot be fired until Field Repair or Maintain Gear restores it

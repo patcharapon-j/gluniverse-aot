@@ -5,7 +5,7 @@
 id: stress-responses
 name: Stress Responses
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0004, ADR-0008]
+adrs: [ADR-0004, ADR-0008, ADR-0024]
 decided: [OQ-47, OQ-48, OQ-139]
 
 # ------------------------------------------------------------------ the roll
@@ -21,6 +21,7 @@ roll:
     The soldier's current Resolve: the formula in data/character/attributes.yaml, including
     Scars and Grief. Iron Nerve counts it as 1 higher for this roll.
   attribute_roll: false   # no pool, no Push, no Help, no Stress Dice
+  circumstances: never   # not an attribute roll (data/core/circumstances.yaml, never; decision batch 9, 9-2)
   exceptions: >-
     A roll whose own rule names another resolution for its Stress Response, such as the
     Graduation Exam (data/character/graduation-exam.yaml, stress_responses), still has the

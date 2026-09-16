@@ -6,7 +6,7 @@
 id: titan-harm
 name: Harming Titans
 chapter: 05-titan-engagement
-adrs: [ADR-0003, ADR-0005, ADR-0007, ADR-0010, ADR-0014, ADR-0017, ADR-0019]
+adrs: [ADR-0005, ADR-0007, ADR-0010, ADR-0014, ADR-0017, ADR-0019, ADR-0024]
 decided: [OQ-82, OQ-83, OQ-84, OQ-138, OQ-146, OQ-151]
 
 # ------------------------------------------------------------------ Body Parts
@@ -101,6 +101,14 @@ nape_strikes:
   flag: The strike sets the hooked-by-strike flag, whatever its result (data/engagement/attention.yaml, flags).
   no_carry_over: >-
     A Nape strike's successes never count toward a later Nape strike except as Openings (ADR-0007).
+  # decision batch 9, 9-39 (review round 2, Opus M2)
+  modelled: >-
+    An improvised act whose model entry is this one (data/character/action-catalog.yaml,
+    uncatalogued_actions, in_a_fight) is resolved as a strike that falls short, whatever its
+    successes: each success creates 1 Opening, Relentless adds 1 more where its trigger is met, at
+    least 1 success (falls_short; data/character/talents.yaml, relentless), and it sets the flag,
+    whatever its result (flag). Successes that reach the Nape Depth create their Openings and nothing else: the
+    act never kills (kill), never lowers Nape Depth, and no_carry_over applies to it.
 
 # ------------------------------------------------------------------ Openings
 openings:
@@ -145,7 +153,7 @@ regeneration:
       rolls on the steam table (steam, triggers, regeneration-fill; decision batch 8, 8-7). If that
       Body Part was a Broken leg and the Titan now has no Broken leg, it stands (grounded, ends).
     - Empty the clock.
-  gm_choices: none
+  gm_choices: none (ADR-0024, limit 8)   # the GM never decides when a Titan regenerates or which Body Part heals
 
 # ------------------------------------------------------------------ a Titan's death
 # Decision batch 8, 8-7, 8-9, and 8-18 (OQ-138, OQ-146, OQ-151): the steam and the fall come after the relief
@@ -214,8 +222,8 @@ steam:
       - {results: {min: null, max: 3}, damage: 0}
       - {results: {min: 4, max: 5}, damage: 1}
       - {results: {min: 6, max: null}, damage: 2}
-  fear_roll: none   # no Fear Roll trigger is added; the list stays closed (ADR-0003, item 1)
-  gm_choices: none
+  fear_roll: none   # no Fear Roll trigger is added; inside a Titan Engagement the list stays closed (ADR-0024, limit 1)
+  gm_choices: none (ADR-0024, limit 8)   # a fixed table roll: no Circumstances, and the GM never picks who is on the body
   decided: [OQ-138]
 
 # ------------------------------------------------------------------ the falling Titan (decision batch 8, 8-9, 8-17, 8-18)
@@ -305,7 +313,7 @@ falling_titan:
       The soldier cannot move or be moved: their move changes nothing, and no rule changes their
       Position relative to the pinning body while they are Pinned. Lift Comrade never takes them
       (data/gear/carrying.yaml, lifting_a_comrade; decision batch 8, 8-18).
-    # Chapter 1's hook (section 1.9; ADR-0003, item 13) is the only route by which a state forbids Help,
+    # Chapter 1's hook (section 1.9; ADR-0024, limit 13) is the only route by which a state forbids Help,
     # Covering, or Reactions. 8-9 names Reactions, and its closed list leaves Cover out for a limb pin and
     # every action out for a body pin, so each row names what its list removes through the hook.
     forbids: [cover, reaction]
@@ -404,6 +412,6 @@ falling_titan:
     Injury stays, as every Critical Injury does.
   corpse: data/engagement/positions.yaml (corpse)
   ending: data/engagement/engagement-flow.yaml (ending, no-focus-titan)
-  fear_roll: none   # no Fear Roll trigger is added; the list stays closed (ADR-0003, item 1)
-  gm_choices: none   # the GM never picks who is in the path, a location, a pinning Body Part, or when heat falls
+  fear_roll: none   # no Fear Roll trigger is added; inside a Titan Engagement the list stays closed (ADR-0024, limit 1)
+  gm_choices: none (ADR-0024, limit 8)   # the GM never picks who is in the path, a location, a pinning Body Part, or when heat falls
   decided: [OQ-146, OQ-151]

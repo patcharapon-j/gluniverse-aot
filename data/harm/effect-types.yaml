@@ -6,7 +6,7 @@
 id: effect-types
 name: Effect Types
 chapter: 03-harm-and-mind
-adrs: [ADR-0003, ADR-0004, ADR-0010, ADR-0019]
+adrs: [ADR-0004, ADR-0010, ADR-0019, ADR-0024]
 decided: [OQ-46, OQ-139, OQ-146, OQ-151]
 
 # Outside a Titan Engagement there are no turns, rounds, or Reactions (Chapter 1, section 1.9).
@@ -142,15 +142,16 @@ effect_types:
 
   # Decision batch 7, 7-8 (OQ-139), with the readings of decision batch 8, 8-13: the six effect types a Fear
   # Roll row may add. An effect that acts on a Titan acts on the event's Titan (data/mind/fear-rolls.yaml,
-  # event_titan), so no effect leaves the Titan, the item, or the step to the GM.
+  # event_titan), so no effect leaves the Titan, the item, or the step to the GM. Only a gm-horror event's Titan may
+  # be one the GM names, and outside a Titan Engagement no effect acts on it (decision batch 9, 9-6).
   - id: draw-attention
     name: The loudest flag
     reading: >-
       If the soldier holds a Position other than distant relative to the event's Titan
       (data/mind/fear-rolls.yaml, event_titan), they hold the loudest flag for that Titan, the flag
       Draw Attention sets (data/engagement/attention.yaml, flags, loudest). It lasts until the end of
-      that Titan's next card that resolves a behavior, like every flag (flag_duration; ADR-0003,
-      item 2). Otherwise it does nothing: a scream from beyond a Titan's reach does not turn it
+      that Titan's next card that resolves a behavior, like every flag (flag_duration; ADR-0024,
+      limit 2). Otherwise it does nothing: a scream from beyond a Titan's reach does not turn it
       (decision batch 5, OQ-113).
     lasts: As every flag lasts (data/engagement/attention.yaml, flag_duration).
     outside_titan_engagement: no effect
@@ -274,7 +275,7 @@ effect_types:
 
   # Decision batch 7, 7-6 (OQ-137): the drafter's choice for the lost-limb grades. A new effect type, rather
   # than widening Chapter 1's forbids hook, which names only Pushing, Help, Covering, and Reactions
-  # (ADR-0003, item 13). data/harm/critical-injuries.yaml (lost_limb_riders, forbids_entries) uses it.
+  # (ADR-0024, limit 13). data/harm/critical-injuries.yaml (lost_limb_riders, forbids_entries) uses it.
   - id: forbids-entries
     name: Entries the soldier cannot take
     parameters:

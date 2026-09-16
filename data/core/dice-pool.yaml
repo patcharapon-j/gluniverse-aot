@@ -1,10 +1,10 @@
-# Dice pool components for attribute rolls.
-# Source of truth under ADR-0012. docs/rules/01-core-rules.md (sections 1.2, 1.3, and 1.5)
+# Dice pool components for attribute rolls, the called roll, and the rolls with exceptions.
+# Source of truth under ADR-0012. docs/rules/01-core-rules.md (sections 1.1, 1.2, 1.3, and 1.5)
 # references this file and does not repeat its rows. Edit this file, not the chapter.
 id: dice-pool
 name: Dice Pool Components
 chapter: 01-core-rules
-adrs: [ADR-0004, ADR-0006, ADR-0008]
+adrs: [ADR-0004, ADR-0006, ADR-0008, ADR-0024]
 
 # How each kind of die behaves. Faces are the die results 1 to 6.
 # push_re_rolls_faces: faces a Push picks up and rolls again.
@@ -37,7 +37,7 @@ components:
   - id: attribute
     name: Attribute
     die_type: base
-    dice: the rating of the attribute the roll's Action Catalog entry names, or the attribute a rule names when it calls for the attribute alone (data/character/action-catalog.yaml)
+    dice: the rating of the attribute the roll's Action Catalog entry names, or the attribute a rule names when it calls for the attribute alone, or the attribute the GM names for a called roll made on an attribute alone (data/character/action-catalog.yaml; called_roll below)
     count:
       from: attribute_rating
       sign: 1
@@ -59,9 +59,9 @@ components:
     min: 0
     max: 3
     per_roll: at most one Talent that adds dice; Talents that bend a rule stack
-    uncatalogued_action: 0 dice when the soldier rolls the attribute alone (ADR-0003 item 9)
+    uncatalogued_action: 0 dice when the soldier rolls the attribute alone (ADR-0024, limit 9)
     rules: [02-character-creation]
-    adrs: [ADR-0003, ADR-0006]
+    adrs: [ADR-0024, ADR-0006]
     decided: [OQ-11]
   - id: bonus
     name: Bonus Dice
@@ -79,20 +79,24 @@ components:
   - id: penalty
     name: Dice penalty
     die_type: base
-    dice: minus the dice a named rule removes
+    dice: minus the dice a named rule removes, or the dice a minus step of Circumstances removes (data/core/circumstances.yaml)
     count:
       from: named_penalties
       sign: -1
+    sources:
+      - a named rule, such as a result on a Chapter 3 table
+      - a minus step of Circumstances (Hard, Harsh, or Desperate), named by the GM with the stakes (data/core/circumstances.yaml)
     min_base_dice_after: 1
     never_removes: [gear, stress]
     applied_after: bonus
-    per_roll: every penalty whose rule applies to the roll
+    per_roll: every penalty whose rule applies to the roll, and at most one step of Circumstances; they add up
     rules: [01-core-rules, 03-harm-and-mind]
+    adrs: [ADR-0024]
     decided: [OQ-07]
   - id: gear
     name: Gear Dice
     die_type: gear
-    dice: the current Gear Dice rating of one gear item the roll's Action Catalog entry allows, or of the gear item the calling rule names when a rule calls for the attribute alone; none when the entry's gear_requirement gives attribute_alone (data/character/action-catalog.yaml)
+    dice: the current Gear Dice rating of one gear item the roll's Action Catalog entry allows, or of the gear item the calling rule names when a rule calls for the attribute alone; none when the entry's gear_requirement gives attribute_alone (data/character/action-catalog.yaml), and none on a called roll made on an attribute alone, where a gear item or other object that helps counts toward the Circumstances and gives no Gear Dice (decision batch 9, 9-16 and 9-24)
     count:
       from: gear_item_current_rating
       sign: 1
@@ -116,6 +120,137 @@ components:
     adrs: [ADR-0004, ADR-0008]
     decided: [OQ-03, OQ-04]
 
+# The called roll (Chapter 1, section 1.1; decision batch 9, 9-1, 9-5, 9-10, 9-12; ADR-0024, limits
+# 9, 14, 15, and 17): a roll the GM calls for an act no rule covers. A ruling needs no row (ADR-0012,
+# as amended); this block records what the GM names before every called roll and what stands after it.
+called_roll:
+  called_by: the GM
+  when: >-
+    A soldier attempts something no rule covers, its outcome is in doubt, and failure would cost
+    something. The GM calls rolls sparingly, for a moment with something at stake.
+  together: >-        # decision batch 9, 9-34, item 1, restored in full by 9-41, item 2
+    An act whose one outcome succeeds or fails for several soldiers at once is one called roll, made
+    by one soldier the players choose (Chapter 2's roll-off if they disagree), with Help from the
+    others (help); a stake of Stress, damage, or a fall falls on the soldier who rolled; a lost item
+    is one of the roller's, a lost unit is the Squad's, and time or position falls on the situation;
+    and an act each soldier makes for themselves is that soldier's own roll.
+  in_a_fight: >-      # decision batch 9, 9-36 (OQ-179)
+    A called roll can be made in a Titan Engagement or a Skirmish, only for an act that no entry of
+    kind action the soldier could take in that fight could model
+    (data/character/action-catalog.yaml, uncatalogued_actions, in_a_fight) and that would change
+    nothing the fight tracks: no value in tracked_values, no Position, Engaged or Apart, Attention,
+    Opening, card, clock, or Foe value. The model entry is tried first. It spends the soldier's
+    action, is made on the soldier's turn, and never gives an effect an entry has. Help on it is the
+    fight's Help, each helper spending their action, and the GM names no cost for it (help). It is
+    tried again on a later turn, spending that turn's action and nothing else (retries). A soldier
+    facing an attack dodges or Blocks; no called roll stands in for a Reaction
+    (data/core/circumstances.yaml, reactions; decision batch 9, 9-25, 9-36, and 9-45).
+  no_roll:
+    happens: >-
+      Failure would change nothing, or the soldier has the time, the tools, and the training to do
+      it unpressed.
+    cannot_be_done: The GM says so before anyone rolls.
+  named_first:        # by the GM, before the pool is built, in this order
+    - id: entry
+      names: >-
+        The Action Catalog entry closest to the act, from the entries marked rolled when_called
+        (data/character/action-catalog.yaml), or an attribute alone if none fits (Chapter 2,
+        section 2.9). A called roll made on an attribute alone names no gear item, so it has no
+        Gear Dice.
+    - id: circumstances
+      names: >-
+        One step of data/core/circumstances.yaml, or Standard if the GM names none.
+    - id: stakes
+      names: >-
+        What failure costs, from failure_menu, and, where it is not obvious, what success gives.
+  player_may: change their approach, or withdraw, before the dice are rolled
+  needs: 1
+  push_allowed: true
+  cover_allowed: true
+  help: >-
+    Up to 3 comrades who are present and able to help concretely, as the GM rules. Help spends
+    nothing unless the GM names, before the dice, a cost of time or position for it (failure_menu,
+    time-or-position), which falls when the comrade declares Help, whatever the result, and is not
+    the roll's stakes (decision batch 9, 9-28). A comrade who could Help may Cover. In a Titan
+    Engagement or a Skirmish, Help on a called roll is the fight's Help
+    (data/core/bonus-dice-sources.yaml, help; data/skirmish/skirmish.yaml, rolls, called-roll), each
+    helper spending their action, and the GM names no cost for it (decision batch 9, 9-36).
+  stands: >-
+    Once the dice are rolled, the entry, the Circumstances, and the stakes never change, and the GM
+    never overrides, re-rolls, or ignores a die or a table result. The roll changes only through a
+    Push or through a rule that names the change.
+  roll_a_rule_calls_for: >-
+    A roll a rule calls for takes only its Circumstances from the GM. Its entry, its needs, its Help,
+    and what its failure does are its rule's.
+  failure: >-
+    A failed called roll costs what the GM staked, from failure_menu and no other. Either it does not
+    happen; or it happens at one cost; or it does not happen and the one cost falls anyway. One cost
+    per failed roll. A failure should move the story on, not halt it.
+  failure_menu:
+    - id: it-does-not-happen
+      cost: >-
+        Nothing beyond the failure. The default, and always available.
+    - id: stress
+      cost: >-
+        1 Stress (data/core/stress-changes.yaml, gains, ruling).
+    - id: fall
+      cost: >-
+        A fall by Chapter 4's procedure (data/gear/falls.yaml, triggers, rule-named), low or high as
+        the GM names from the height, or low if the GM names none; never extreme (decision batch 9,
+        9-30). Chapter 4's Height steps never raise it, inside a Titan Engagement as outside one
+        (data/gear/falls.yaml, triggers, rule-named; decision batch 9, 9-36). In a fight it is a
+        fall in full, landing as data/engagement/positions.yaml (falls_land) gives; that change of
+        Position is the fall rule's, not the ruling's (decision batch 9, 9-44).
+    - id: damage
+      cost: >-
+        Damage of 1 to 3, of a named Injury Type (data/harm/health.yaml, harm_kinds, damage), such as
+        Crush for a blow, Cut for an edge, Pierce for a point, or Burn for fire. Never 4 or more.
+    - id: lost-item-or-unit
+      cost: >-
+        One carried item lost, or 1 unit of one kind of Squad Supply spent. Never wear, which is the
+        Push's price.
+    - id: time-or-position
+      cost: >-
+        A change in the situation, described, that the next roll must reckon with, such as the window
+        closing, the patrol arriving, the door barred, the Squad noticed, or a Skirmish or a Titan
+        Engagement beginning by the fiction. In a fight, a change outside what the fight tracks:
+        never a Position, a card, a turn, a move, an action beyond the one the act spent, Attention,
+        an Opening, or a clock (decision batch 9, 9-36).
+  harm_stakes: When the stakes name damage or a fall, the GM states the soldier's current Health with them (decision batch 9, 9-35; OQ-177).
+  failure_never:
+    - a Critical Injury dealt directly, or an Injury Location, a row, or a time limit
+    - a Death Roll, a Scar, or Grief
+    - a Fear Roll          # the gm-horror trigger is its own row (data/mind/fear-rolls.yaml)
+    - Stress relief, a Health box, healing time, or a care window opened or closed
+    - a Titan's roll, a Foe's roll, or a table result
+  # decision batch 9, 9-31
+  success_gives: >-
+    The act itself, information, a better position that the next roll reckons with, an object that is
+    not a gear item (it counts only toward Circumstances, data/gear/items.yaml, other_objects), or
+    Squad Supply found as data/gear/squad-supply.yaml (spending) caps it. In a fight, never a
+    Position, which only a move changes, nothing the fight tracks, and no found Squad Supply, since
+    a called search is made outside a fight (data/gear/squad-supply.yaml, spending; decision batch
+    9, 9-36 and 9-45).
+  success_never: [a gear item, Stress relief, a Health box or healing, a Commendation, a Research Point, a Faction Standing change]
+  retries:
+    in_titan_engagement_or_skirmish: >-
+      A soldier can attempt an action again on a later turn, a called roll included, spending that
+      turn's action and nothing else (decision batch 9, 9-36).
+    outside: >-
+      A rule that says a roll is never tried again is final. Otherwise a soldier tries the same thing
+      again only when something has changed: a new approach, a better tool, another soldier, or time
+      spent, at a cost of time or position the GM names before the new roll (failure_menu,
+      time-or-position), which falls when the soldier tries again, whatever the result, and is not
+      the new roll's stakes (decision batch 9, 9-28). Each soldier gets one attempt at a given
+      obstacle per changed situation.
+  secret: >-
+    Never. The passive roll (roll_exceptions, passive-roll) is the only soldier's roll made out of
+    sight; the Next Behavior is the Titan's one hidden roll (Chapter 5).
+  applied_as_written: Chapter 1, section 1.1, item 6
+  rules: [01-core-rules, 02-character-creation]
+  adrs: [ADR-0024]
+  decided: [OQ-27, OQ-35, OQ-168, OQ-179]
+
 # Attribute rolls that leave out pool components or forbid parts of the core procedure.
 # A roll not listed here uses every component above. A roll leaves out a component only if
 # its own rule names it and it has a row here; a later chapter whose rule does so adds the
@@ -133,6 +268,7 @@ roll_exceptions:
     bonus_sources_excluded: [help]
     push_allowed: false
     talent_dice_allowed: true    # a Talent that names the Death Roll's Catalog entry
+    circumstances: never         # data/core/circumstances.yaml, never
     rules: [03-harm-and-mind]
     decided: [OQ-03, OQ-11]
   - roll: performance-roll
@@ -142,5 +278,30 @@ roll_exceptions:
     bonus_sources_excluded: [help]
     push_allowed: false
     talent_dice_allowed: false
+    circumstances: never         # data/core/circumstances.yaml, never
     rules: [02-character-creation]
     decided: [OQ-21]
+  - roll: passive-roll
+    name: Passive roll
+    entries: [spot, size-up]     # data/character/action-catalog.yaml
+    attribute: the attribute of the entry the GM rolls for
+    context: outside a Titan Engagement and a Skirmish
+    when: >-
+      The GM rolls for a soldier, out of sight, to notice something the soldier does not know is there
+      (Chapter 1, section 1.1, item 5; decision batch 9, 9-10). A soldier who says they are looking
+      rolls Spot in the open as a called roll instead.
+    secret: true
+    called_roll: false
+    stakes: none                 # failing it means only that the soldier does not notice (decision batch 9, 9-32)
+    components_excluded: []      # attribute, the Talent that names the entry, Gear Dice if the entry allows, and Stress Dice
+    bonus_sources_excluded: [help, opening, grounded-titan, read-from-distant, call-it, medical-supplies, ambush]   # every source in data/core/bonus-dice-sources.yaml but circumstances, whose plus step adds its dice (decision batch 9, 9-21 and 9-32); a later source row is added here
+    circumstances: named by the GM, to themselves
+    help_allowed: false
+    cover_allowed: false
+    push_allowed: false
+    talent_dice_allowed: true
+    stress_response: none        # a Stress Die showing 1 does nothing; its 6 is still a success
+    result: The soldier learns the result only through what they notice.
+    rules: [01-core-rules]
+    adrs: [ADR-0024]
+    decided: [OQ-173]

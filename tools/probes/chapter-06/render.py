@@ -41,7 +41,7 @@ def injury_type_name(tid):
 
 
 def effect_text(eff):
-    """Every harming effect shows its Injury Type (ADR-0003 item 11, as amended in decision batch 7, 7-5): a
+    """Every harming effect shows its Injury Type (ADR-0024, limit 11, as amended in decision batch 7, 7-5): a
     critical-injury effect its own, a Grab its crush's (grab.yaml), and a knock-loose its fall's (falls.yaml)."""
     typ = eff["type"]
     if typ == "stress":

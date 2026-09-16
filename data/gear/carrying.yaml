@@ -5,7 +5,7 @@
 id: carrying
 name: Carrying
 chapter: 04-gear
-adrs: [ADR-0003, ADR-0011]
+adrs: [ADR-0011, ADR-0024]
 decided: [OQ-23, OQ-35, OQ-60, OQ-61, OQ-64, OQ-65, OQ-68, OQ-143, OQ-146, OQ-147]
 
 limit:

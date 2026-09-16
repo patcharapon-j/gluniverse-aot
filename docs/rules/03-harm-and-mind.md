@@ -34,9 +34,9 @@ This chapter mentions them only where it has to.
 
 This chapter adds no rows to Chapter 1's or Chapter 2's files. Stress gained or lost from its tables uses Chapter 1's named-gain and named-reduction rows in `data/core/stress-changes.yaml`. Its penalties use Chapter 1's penalty step (section 1.3, step 5).
 
-**No rulings.** The GM never decides whether harm happens, its kind, its amount, its Injury Location, a row, or how long an effect lasts. Every harm comes from a rule that names it, and every result comes from a table row.
+**Rulings.** The GM rules on harm and mind only before the dice are rolled, in three places. A called roll's stakes may name harm to the soldier who fails it: damage of 1 to 3 of the Injury Type of its source, or a fall (section 3.1, *Harm a ruling names*; decision batch 9, 9-5). A Treat Injury roll takes the Circumstances the GM names, as any attribute roll does (section 3.5; 9-2). Outside a Titan Engagement, the GM may call a Fear Roll through the `gm-horror` trigger (section 3.12; 9-6). The GM applies the rest as written: the parameters of every kind of harm another rule names, the Injury Location roll, the row a total finds and its type rider, every table in this chapter, Down, the Death Roll and its time limits, Treat Injury's uses and care windows, healing time, and Stress relief. No ruling inflicts a Critical Injury or death directly, or picks an Injury Location, a row, or a time limit. Every other rule the GM applies as written is on the list in Chapter 1, section 1.1, item 6.
 
-Where the ADRs left a question open, the rule below cites its entry in `docs/rules/OPEN-QUESTIONS.md` as (OQ-nn). Every entry this chapter cites was decided on 2026-09-14 (`docs/rules/DECISIONS-2026-09-14.md`), including the owner's decision that Health is a row of boxes (ADR-0005, as amended), and the text states the decided rule. OQ-58 was decided the same day, under *Conformance follow-up* in that file, and OQ-70 and OQ-71 under *Batch 2*. Decision batch 7 (items 7-4 to 7-7, 2026-09-15) decided OQ-137: sides on the Injury Location, Injury Types, the Bite rider, the lost-limb grades, and medical Retirement (ADR-0017). Items 7-8 and 7-9 decided OQ-139: the Fear Roll table re-cut on Attack on Titan rows that hold the old profile, and fiction-first names for the Stress Responses. Decision batch 8 (items 8-7 to 8-11 and 8-15 to 8-25) decided OQ-138, OQ-146, OQ-147, OQ-150, OQ-151, and OQ-156 to OQ-161: Burn's sources and rider, the falling Titan and Pinned, prosthetics, lost-limb stacking, the Cut and Pierce riders, and the readings their drafting raised. Design notes give the reasons.
+Where the ADRs left a question open, the rule below cites its entry in `docs/rules/OPEN-QUESTIONS.md` as (OQ-nn). Every entry this chapter cites was decided on 2026-09-14 (`docs/rules/DECISIONS-2026-09-14.md`), including the owner's decision that Health is a row of boxes (ADR-0005, as amended), and the text states the decided rule. OQ-58 was decided the same day, under *Conformance follow-up* in that file, and OQ-70 and OQ-71 under *Batch 2*. Decision batch 7 (items 7-4 to 7-7, 2026-09-15) decided OQ-137: sides on the Injury Location, Injury Types, the Bite rider, the lost-limb grades, and medical Retirement (ADR-0017). Items 7-8 and 7-9 decided OQ-139: the Fear Roll table re-cut on Attack on Titan rows that hold the old profile, and fiction-first names for the Stress Responses. Decision batch 8 (items 8-7 to 8-11 and 8-15 to 8-25) decided OQ-138, OQ-146, OQ-147, OQ-150, OQ-151, and OQ-156 to OQ-161: Burn's sources and rider, the falling Titan and Pinned, prosthetics, lost-limb stacking, the Cut and Pierce riders, and the readings their drafting raised. Decision batch 9 (items 9-2, 9-5, 9-6, and 9-11, 2026-09-16) made the GM's rulings part of the rules (ADR-0024): harm named as a called roll's stakes, Circumstances on Treat Injury and none on the Death Roll, and the `gm-horror` Fear Roll trigger. Design notes give the reasons.
 
 ---
 
@@ -57,9 +57,20 @@ Where the ADRs left a question open, the rule below cites its entry in `docs/rul
 
 `harm_kinds` in `data/harm/health.yaml` lists every kind of harm a rule can inflict. A rule that harms a soldier names one kind and its parameters:
 
-- **Damage** adds an amount to Health lost, marking that many boxes. It is named by rules for harm that is not a Titan attack: a fall (Chapter 4), steam at a Titan's death or Regeneration fill, a Heave against a corpse (Chapter 5, section 5.7), and a Foe's weapon (Chapter 7). The rule also names its Injury Type (section 3.2), which a Critical Injury the damage inflicts records.
+- **Damage** adds an amount to Health lost, marking that many boxes. It is named by rules for harm that is not a Titan attack: a fall (Chapter 4), steam at a Titan's death or Regeneration fill, a Heave against a corpse (Chapter 5, section 5.7), a Foe's weapon (Chapter 7), and a ruling, as a called roll's stakes (*Harm a ruling names*, below). The rule also names its Injury Type (section 3.2), which a Critical Injury the damage inflicts records.
 - **Critical Injury** gives the soldier a Critical Injury at an Injury Location, with the Injury Type its rule names (section 3.2). While untreated it crosses off one Health box. It never adds to Health lost.
 - **Death** kills the soldier (section 3.4). It is named by rules such as the Grab's devour step (Chapter 5, section 5.9), and never by a Behavior Table entry.
+
+### Harm a ruling names
+
+When the GM calls a roll (Chapter 1, section 1.1), the stakes named before the dice may say that failure harms the soldier who rolled. They may name one of two harms, and no other (`harm_kinds`, `damage`, `by_ruling`; decision batch 9, 9-5; ADR-0005, as amended):
+
+- **Damage of 1 to 3,** of the Injury Type of its source: Crush for a blow or a hard knock, Cut for an edge, Pierce for a point, and Burn for fire. It follows *Losing Health* below, so it reaches a Critical Injury only at 0 current Health, as all harm that is not a Titan attack does, and that Critical Injury's Injury Location is rolled.
+- **A fall,** by Chapter 4's procedure, low or high as the GM names for its height, never extreme, or low if the GM names none (Chapter 4, section 4.6; decision batch 9, 9-30).
+
+The harm is named with the stakes and does not change once the dice are rolled. The GM states the soldier's current Health with it, so the table knows before the dice whether a failure can put the soldier Down with a Critical Injury (decision batch 9, 9-35). It is never 4 damage or more: 4 is a musket's damage, and a musket is rolled (Chapter 7, section 7.4). No ruling inflicts a Critical Injury, death, a Death Roll, a Scar, or Grief directly, names an Injury Location, a row, or a time limit, or opens or closes a care window. Harm a ruling causes outside a Titan Engagement and a Skirmish holds a care window only as any other event's harm does (section 3.5).
+
+> **Design note (decision batch 9, 9-5; OQ-167):** Rulings may cost a soldier, and only rules heal one, so the closed tables, Down, the Death Roll, and healing time stay as written, and the bell curve ADR-0017 rests on is untouched. Damage stops at 3 because a ruling that takes a Health 4 Rookie to 0 and rolls a Critical Injury would do the musket's work without its roll. The playtest tags every harm a ruling caused, so the retune reads rules deaths and ruling deaths apart.
 
 ### Losing Health
 
@@ -107,7 +118,7 @@ A Critical Injury is a lasting injury tied to an Injury Location and an Injury T
 
 ### Injury Types
 
-Every rule that inflicts a Critical Injury names its **Injury Type**, and every rule that deals damage names the type a Critical Injury the damage inflicts records (`types`, `type_rules`). The GM never picks a type.
+Every rule that inflicts a Critical Injury names its **Injury Type**, and every rule that deals damage names the type a Critical Injury the damage inflicts records (`types`, `type_rules`). The GM never picks a type: damage a ruling names takes the type of its source (section 3.1, *Harm a ruling names*).
 
 <!-- BEGIN RENDERED: injury-types from data/harm/critical-injuries.yaml -->
 | Injury Type | Named by |
@@ -383,7 +394,7 @@ A lethal Critical Injury has one of three time limits, listed fastest first. "Sl
 A Death Roll is made each time a lethal Critical Injury's time limit runs out. It is an attribute roll for the Catalog entry `death-roll`:
 
 - **Pool:** Strength, plus the dice of one Talent that names `death-roll` (such as Hard to Kill), minus the Critical Injury's `death_roll_penalty`.
-- **Left out:** no Stress Dice, no Help, and no Push (`roll_exceptions` in `data/core/dice-pool.yaml`; Chapter 1, OQ-03). The entry allows no gear, and no Bonus Dice source applies to it.
+- **Left out:** no Stress Dice, no Help, no Push, and no Circumstances (`roll_exceptions` in `data/core/dice-pool.yaml`; Chapter 1, OQ-03 and section 1.4a; decision batch 9, 9-2). The entry allows no gear, and no Bonus Dice source applies to it.
 - **Needs:** 1 success.
 - **One roll per Critical Injury.** If several lethal Critical Injuries run out at the same moment, the soldier's player chooses the order. The first failed roll kills the soldier, and no more are made.
 - A Death Roll is not an action and spends nothing.
@@ -422,6 +433,8 @@ The treater declares one use and one patient before rolling. It needs 1 success.
 Treat and revive are separate uses, and the players choose which one a roll makes. When damage brought a soldier to 0 and the Critical Injury it gave crossed off a box marked by damage (section 3.1), one success on a revive raises current Health to 1 and ends Down, unless a Down row holds them.
 
 On a failure nothing happens.
+
+**Circumstances.** Treat Injury takes the Circumstances the GM names, as any attribute roll does (`circumstances` in `data/harm/treat-injury.yaml`; Chapter 1, section 1.4a; decision batch 9, 9-2). Field surgery in driving rain or by a guttering lantern might be Hard; if the GM names no step, it is Standard. A minus step adds up with the self-treatment penalty and a Pierce's penalty, and no step changes the 1 success the roll needs. In a Titan Engagement, Standard is the default, and the GM names another step only for something no rule already prices (Chapter 5).
 
 **Type riders on treatment** (`type_riders` in `data/harm/treat-injury.yaml`; decision batch 8, 8-8 and 8-15):
 
@@ -646,7 +659,7 @@ Rally is the Empathy action `rally` (Chapter 2). `rally` in `data/mind/stress-re
 
 ### Triggers
 
-A Fear Roll is made only when an event on the closed list of `triggers` happens (ADR-0003, item 1). The dice never cause one (ADR-0004). A later chapter that creates a new trigger adds a row to the file. The Phase 1 triggers are:
+A Fear Roll is made only when an event on the closed list of `triggers` happens (`triggers_closed`; ADR-0024, limit 1). The dice never cause one (ADR-0004), and no ruling calls one except through the `gm-horror` row below. A later chapter that creates a new trigger adds a row to the file. The Phase 1 triggers are:
 
 - **`first-titan-engagement`:** the soldier's first Titan Engagement. The sheet's `faced_a_titan` is set when the soldier first holds a Position in one, even if they make no Fear Roll, for example because they are Down.
 - **`abnormal`:** an Abnormal is a Focus Titan when a Titan Engagement starts, or becomes one during it.
@@ -654,6 +667,7 @@ A Fear Roll is made only when an event on the closed list of `triggers` happens 
 - **`comrade-grabbed`:** a comrade becomes Grabbed.
 - **`comrade-dies`:** a comrade dies.
 - **`first-human-kill`:** the soldier kills a person for the first time, in a Skirmish (Chapter 7, section 7.4). The sheet records that they have killed a person, and the trigger never applies to them again (decision batch 7, 7-17).
+- **`gm-horror`:** outside a Titan Engagement, an event the GM judges at least as horrifying as a listed trigger, such as a village found devoured, a comrade's body found days after, or a Titan seen from the Wall tearing through a breach (decision batch 9, 9-6).
 
 Each row states who rolls:
 
@@ -662,8 +676,16 @@ Each row states who rolls:
 - `comrade-grabbed`: every witness, as Chapter 5 defines a witness in a Titan Engagement (section 5.9, `data/engagement/engagement-flow.yaml`, `witnesses`), never the Grabbed soldier.
 - `comrade-dies`: every witness, as Chapter 5 defines one. A witness who is Grabbed still rolls. In a Skirmish, every other soldier taking part who is alive rolls (Chapter 7, section 7.4).
 - `first-human-kill`: only that soldier, when the kill resolves.
+- `gm-horror`: the witnesses the GM names, each a soldier who witnesses the event.
 
-Each row also marks whether its event can arise outside a Titan Engagement (`can_arise_outside_titan_engagement`), such as a comrade Grabbed in a Chase. Outside a Titan Engagement, such an event causes Fear Rolls only if the rule that creates the situation states who rolls.
+Each row also marks whether its event can arise outside a Titan Engagement (`can_arise_outside_titan_engagement`), such as a comrade Grabbed in a Chase. Outside a Titan Engagement, such an event causes Fear Rolls only if the rule that creates the situation states who rolls; for `gm-horror`, the GM names them.
+
+**The GM's trigger** (`gm-horror`; decision batch 9, 9-6). It is the one row the GM reads, and the GM calls it rarely:
+
+- **Weight.** The event is at least as horrifying as a listed trigger. An event a listed trigger covers, such as a comrade's death, uses that trigger's row and never `gm-horror` as well. It is never called for an outcome a called roll's stakes named, since a stake is never a Fear Roll (Chapter 1, section 1.1, item 2); a listed trigger that outcome later meets still applies (decision batch 9, 9-34).
+- **Never inside a Titan Engagement.** There the listed triggers alone govern, and no ruling calls a Fear Roll.
+- **The roll is every Fear Roll's.** The table, *Limits* (one Fear Roll per soldier per event, none for a Down soldier, one snapshot), and the Drive shrug-off apply as to any trigger.
+- **Advice, not a rule:** at most one `gm-horror` roll in a scene, and none for a horror the soldiers have already rolled for that day (OQ-169).
 
 ### Limits
 
@@ -715,19 +737,22 @@ Each row's name and *What happens* line are fiction. Only its Effects and Forbid
 | 9 or more | Nothing Left | You open your hands and let the blades fall. Everyone near you sees it in your face. | next 2 turns spent; no Reactions; drop the Blade Set in the handles; comrades within 1 Position step gain 1 Stress; gain a Scar | Reactions |
 <!-- END RENDERED: fear-rolls -->
 
-**The event's Titan.** An effect that acts on a Titan acts on the event's Titan (`event_titan`), so the GM never picks one:
+**The event's Titan.** An effect that acts on a Titan acts on the event's Titan (`event_titan`), which each trigger names:
 
 - `abnormal`: the Abnormal.
 - `second-focus-titan`: the Titan that entered.
 - `comrade-grabbed`: the Focus Titan that holds the comrade.
 - `comrade-dies`: the Focus Titan whose card or Grab killed the comrade.
 - `first-titan-engagement`, and a death no Focus Titan's card or Grab caused, such as a Death Roll: the nearest Focus Titan. That is the living one the rolling soldier holds the closest Position to, in the order On Body, Blind Spot, In Reach, Distant, and on a tie the one with the earliest label.
+- `gm-horror`: none, or the nearest Titan in sight if the GM names one. The event is outside a Titan Engagement, so each effect does what section 3.9 gives for outside one.
 
 If the event's Titan has died when the result applies, the nearest Focus Titan takes its place. If none is alive, those effects do nothing.
 
 **What counts as the result.** A Fear Roll's result is every effect of its row: any Stress gain, to the soldier or to comrades nearby, spent action or turn, ban on Reactions, flag, forced step, forced strike, dropped Blade Set, Gas Roll, and Scar. When a soldier's Drive shrugs off the result (Chapter 2, section 2.5), none of those effects happen, including the Stress to comrades. The Fear Roll still counts as made.
 
-> **Design note (OQ-49):** Six triggers, one Fear Roll per soldier per event, no Fear Roll for a Down soldier, and Fear Rolls outside a Titan Engagement only where the creating rule names who rolls keep the list closed (ADR-0003, item 1). A soldier's first Titan Engagement sets `faced_a_titan` whether or not they roll. Chapter 5 defines who witnesses a comrade being Grabbed or dying (section 5.9).
+> **Design note (OQ-49):** Six listed triggers, one Fear Roll per soldier per event, no Fear Roll for a Down soldier, and Fear Rolls outside a Titan Engagement only where the creating rule names who rolls keep the list closed (ADR-0024, limit 1). A soldier's first Titan Engagement sets `faced_a_titan` whether or not they roll. Chapter 5 defines who witnesses a comrade being Grabbed or dying (section 5.9).
+
+> **Design note (decision batch 9, 9-6; OQ-169):** The owner let the GM call a Fear Roll for a horror the list does not name and left how often to the GM, so the once-per-scene limit is advice. What stays closed is the trigger's weight, the listed triggers alone in every Titan Engagement, where the Grab cells and the deaths bands read Fear results, and the Drive shrug-off, so no measured Fear figure moves and the table is unchanged. Rows of 7 or more give Scars, and five Scars retire a soldier, so the playtest counts every `gm-horror` roll and the Scars it gave.
 
 **Acceptance test (OQ-50, OQ-95).** ADR-0014, as amended, reads "comrades close" as one comrade in reach with the reference build and starting state. Its "a Grab kills about 1 time in 3 with comrades close" counts as met only if the Grab and rescue rules pass all six cells of this band, with Rookie witnesses at Resolve 3 before Grief:
 
@@ -834,7 +859,7 @@ A soldier with five Scars must retire, and a soldier who has lost both arms or b
 
 Phase 1 changes Stress in the field only through these rows in `data/core/stress-changes.yaml`:
 
-- **Gains:** a Push, Covering, and any table result or Talent that names a gain. In this chapter those are some Critical Injury, Stress Response, Fear Roll, and Scar rows.
+- **Gains:** a Push, Covering, any table result or Talent that names a gain, and 1 Stress for a failed called roll whose stakes named Stress (`ruling`; Chapter 1, section 1.6; decision batch 9, 9-5). In this chapter the rows that name a gain are some Critical Injury, Stress Response, Fear Roll, and Scar rows.
 - **Losses:** the end of a Titan Engagement and a Nape kill, 1 each (ADR-0008; Chapter 1, section 1.6). Chapter 7 adds the Camp Relief at a night camp and the end of a Skirmish, 1 each, and Recover, Visit Haven, and the Squadmate relief in Downtime, 2 each (sections 7.1, 7.2, and 7.4).
 - **Minimum:** Stress never drops below the soldier's number of Scars, and rises to a new minimum at once.
 
@@ -902,7 +927,7 @@ Chapter 5 states how a soldier leaves a Titan Engagement and what their move and
 
 > **Design note (OQ-55):** This chapter lists its fields in its own file. Chapter 2's sheet list (`record_on_sheet`) and stat block (`stat_block.fields`) each end with a row that includes `data/harm/sheet-fields.yaml`, and promotion keeps every field in it. Health boxes add no stored field: boxes crossed off are the untreated entries in `critical_injuries`.
 
-**Every act in this chapter has a tracked value and a Catalog entry** (ADR-0003, item 12; OQ-71), both in `data/character/action-catalog.yaml`.
+**Every act in this chapter has a tracked value and a Catalog entry** (ADR-0024, limit 12; OQ-71), both in `data/character/action-catalog.yaml`.
 
 - Treating a Critical Injury, reviving a Down soldier, and ending Down are `treat-injury`, which changes `critical-injury-treat`, `health-restore`, and `down-end`.
 - Clearing a Stress Response is `rally`, which changes `stress-response-clear`.

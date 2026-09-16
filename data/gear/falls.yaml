@@ -4,7 +4,7 @@
 id: falls
 name: Falls
 chapter: 04-gear
-adrs: [ADR-0003, ADR-0005, ADR-0017]
+adrs: [ADR-0005, ADR-0017, ADR-0024]
 decided: [OQ-39, OQ-62, OQ-137]
 
 harm_kind: damage   # data/harm/health.yaml (harm_kinds, damage); a fall is never a Titan attack
@@ -33,8 +33,14 @@ triggers:
     timing: At the same moment as the carrier's fall, Grab, or death.
     height: The carrier's band, found by height as if the carrier fell; a carrier who was mounted gives a fall from a horse.
   - id: rule-named
-    trigger: Another rule names a fall, such as a Chapter 5 rule or the Chase rules (not yet written).
-    height: The band that rule names, or low if it names none.
+    trigger: >-
+      Another rule names a fall, such as a Chapter 5 rule or the Chase rules (not yet written), or a
+      ruling does, as the stakes of a called roll the soldier fails (Chapter 1, section 1.1, item 2;
+      decision batch 9, 9-5).
+    height: >-
+      The band that rule names; or, for a ruling, low or high as the GM names from the fall's height
+      with the stakes before the roll, never extreme, in a Titan Engagement as well as outside one,
+      and height.steps never raises it; low if none is named (decision batch 9, 9-30 and 9-38).
 not_a_fall: >-
   Running dry does not make a soldier fall (data/gear/odm-gear.yaml, running_dry). Neither does
   landing through a move, nor being set down by a carrier.
@@ -48,6 +54,15 @@ never_a_second_fall: >-
 # ------------------------------------------------------------------ height
 height:
   steps:
+    # decision batch 9, 9-38 (review round 2, Opus C1): a band already named stops the procedure here.
+    - >-
+      A fall whose band a ruling names takes that band, low or high and never extreme, or low if the
+      GM named none, in a Titan Engagement as well as outside one (triggers, rule-named); a fall whose
+      band another rule names takes that band. No later step changes a band this step gives. A rule
+      that names a fall and no band, such as a knock loose (data/engagement/titan-format.yaml,
+      effect_types, knock-loose), letting go (data/engagement/positions.yaml, moves, letting_go), or a
+      release from a lift (data/engagement/grab.yaml, release, lifted), takes the band the steps below
+      give (decision batch 9, 9-38).
     - >-
       In a Titan Engagement, find the fall's reference Titan: the Focus Titan relative to which the
       soldier held the closest Position when they fell, in the order On Body, Blind Spot, In Reach,
@@ -57,7 +72,9 @@ height:
     - A fall from a horse is low, and no later step changes it.
     - Otherwise use the Position the soldier held relative to the reference Titan when they fell. Distant or In Reach is low. On Body or Blind Spot is high.
     - For a fall that is not from a horse, raise the band one step, to at most extreme, if the Titan Engagement's Anchor Rating is Giant Forest, or if the reference Titan is of the Large Size Class. Both together still raise it one step.
-  outside_titan_engagement: The rule that makes the soldier fall names the band. If it names none, the fall is low.
+  outside_titan_engagement: >-
+    Outside a Titan Engagement there is no reference Titan and no Position to read: the fall takes the
+    band the first step of steps gives, and is low if neither a rule nor the GM names one.
   bands:
     - id: low
       adds: 0
@@ -69,6 +86,7 @@ height:
 # ------------------------------------------------------------------ damage
 damage_table:
   roll: D6 plus the band's adds   # a table roll, not an attribute roll: no pool, no Push, no Help (Chapter 1, section 1.3)
+  circumstances: never   # a table roll (data/core/circumstances.yaml, never; decision batch 9, 9-2)
   row_fields:
     results: "min and max of the total; min null covers every total up to max, max null every total from min up"
     damage: the damage the fall inflicts
@@ -101,4 +119,14 @@ after_the_fall:
   gear: A fall changes no gear rating, Gas Rating, or item.
   not_a_behavior: A fall is not a Titan attack or a behavior, so no Reaction answers it.
   not_fear: A fall is not a Fear Roll trigger (data/mind/fear-rolls.yaml).
-  gm: The GM never decides whether a soldier falls, the band, or the damage.
+  gm: >-
+    A ruling may name a fall only as a called roll's stakes, with the band the GM names before the roll,
+    low or high and never extreme, low if none, in a Titan Engagement as well as outside one
+    (triggers, rule-named; decision batch 9, 9-5, 9-11, and 9-38).
+    In a Titan Engagement it lands as position gives, a change of Position the fall rule makes
+    (decision batch 9, 9-44).
+    The GM never decides whether any
+    other trigger makes a soldier fall, never changes a band that height or a rule names, and never
+    changes the row the roll finds or its damage (ADR-0024, limits 14 and 17).
+    The GM states the soldier's current Health with the stakes that name the fall
+    (data/harm/health.yaml, harm_kinds, damage, by_ruling, stated_with; decision batch 9, 9-35).

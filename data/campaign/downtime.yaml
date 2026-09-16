@@ -8,7 +8,7 @@ id: downtime
 name: Downtime
 chapter: 07-playtest-rules
 status: playtest
-adrs: [ADR-0003, ADR-0008, ADR-0011, ADR-0016]
+adrs: [ADR-0008, ADR-0011, ADR-0016, ADR-0024]
 decided: [OQ-52, OQ-141, OQ-142, OQ-147, OQ-153]
 
 downtime:
@@ -137,6 +137,7 @@ rolls:
     name: Infirmary roll
     who: Rolled for the patient; no soldier rolls it, and a Down patient gets it too.
     entry: none (4 base dice, not an attribute roll; no Talent, Gear, Stress, or Bonus Dice)
+    circumstances: never   # not an attribute roll (data/core/circumstances.yaml, never; decision batch 9, 9-2 and 9-41)
     needs: "1"
     help: Never.
     push: Never.
