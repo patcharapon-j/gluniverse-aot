@@ -1119,6 +1119,50 @@ export function scarsTable(): CoreTableData {
   };
 }
 
+/** What a Scar changes, as a filter chip: one kind per row, from the row's first effect. */
+const SCAR_KINDS: Record<string, { slug: string; name: string; order: number }> = {
+  penalty: { slug: 'penalty', name: 'A penalty', order: 1 },
+  'stress-gain': { slug: 'stress', name: 'Stress', order: 2 },
+  'fear-roll-total': { slug: 'fear', name: 'A worse Fear Roll', order: 3 },
+  other: { slug: 'other', name: 'Its own words', order: 4 },
+};
+
+export interface ScarEntry {
+  slug: string;
+  name: string;
+  roll: string;
+  trigger: string;
+  effect: string;
+  kind: { slug: string; name: string; order: number };
+  squadmateRerolls: boolean;
+  search: string;
+}
+
+/** Every Scar as a Compendium card, in the table's order. */
+export function scarEntries(): ScarEntry[] {
+  const T = 'Scars';
+  return scarsDoc.table.rows.map((row) => {
+    const w = wording(SCAR_WORDING, row.id, T);
+    const first = row.effects[0];
+    if (!first) throw new Error(`${T}: the Scar "${row.id}" carries no effect.`);
+    return {
+      slug: row.id,
+      name: row.name,
+      roll: scarLabel(row.results),
+      trigger: w.trigger,
+      effect: w.effect,
+      kind: wording(SCAR_KINDS, first.type, T),
+      squadmateRerolls: row.squadmate_rerolls === true,
+      search: [row.name, w.trigger, w.effect].join(' '),
+    };
+  });
+}
+
+/** The D66 the Scar table is rolled on, as the table names it. */
+export function scarRoll(): string {
+  return scarsDoc.table.roll;
+}
+
 /** How many Scars retire a soldier. */
 export function scarMaximum(): number {
   return scarsDoc.gaining.maximum;

@@ -9,6 +9,7 @@ import { ENGAGEMENT_TABLES, type EngagementTableId } from '~/lib/engagement-tabl
 import { EXPEDITION_TABLES, type ExpeditionTableId } from '~/lib/expedition-tables';
 import { GEAR_TABLES, type GearTableId } from '~/lib/gear-tables';
 import { HARM_TABLES, type HarmTableId } from '~/lib/harm-tables';
+import { SKIRMISH_TABLES, type SkirmishTableId } from '~/lib/skirmish-tables';
 import {
   bonusDiceSources,
   circumstancesLadder,
@@ -22,7 +23,7 @@ import {
 } from '~/lib/core-tables';
 
 interface Props {
-  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId | HarmTableId | GearTableId | ExpeditionTableId;
+  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId | HarmTableId | GearTableId | ExpeditionTableId | SkirmishTableId;
 }
 const { table } = Astro.props;
 
@@ -37,6 +38,7 @@ const builders: Record<Props['table'], () => CoreTableData> = {
   ...GEAR_TABLES,
   ...HARM_TABLES,
   ...EXPEDITION_TABLES,
+  ...SKIRMISH_TABLES,
 };
 const data = builders[table]();
 const hasSee = data.see !== false;

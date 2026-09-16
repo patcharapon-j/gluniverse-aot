@@ -1,0 +1,119 @@
+---
+/**
+ * The Grapple, drawn as the states a hold passes through: taking hold, what each
+ * side can do while it lasts, and how it ends. The states come from the Skirmish
+ * table (lib/skirmish-tables), so a change there redraws the card.
+ */
+import { Icon } from 'astro-icon/components';
+import { grappleStates } from '~/lib/skirmish-tables';
+
+interface Props {
+  fig: string;
+}
+const { fig } = Astro.props;
+const states = grappleStates();
+if (states.length < 3) throw new Error('GrappleStates: a hold has a start, a middle, and an end.');
+---
+<figure class="drawing wide grapplefig" aria-labelledby="fig-grapple-caption">
+  <p class="lead">
+    A Grapple trades damage for control. It deals none, and while it lasts neither of you is doing anything else.
+  </p>
+
+  <ol class="states">
+    {states.map((state) => (
+      <li class:list={['state', `state--${state.kind}`]}>
+        <span class="pip" aria-hidden="true"><Icon name={state.icon} /></span>
+        <h4>{state.label}</h4>
+        <p>{state.text}</p>
+        {state.note && <p class="aside">{state.note}</p>}
+      </li>
+    ))}
+  </ol>
+
+  <figcaption class="titleblock" id="fig-grapple-caption"><span>{fig}</span><span>The Grapple, Held, and Release</span></figcaption>
+</figure>
+
+<style>
+  .grapplefig .lead {
+    margin: 0 0 18px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .states {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+  }
+  .state {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 2px 16px;
+    padding: 10px 0 12px 0;
+  }
+  .state::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    top: 0;
+    bottom: 0;
+    border-left: 1.5px solid var(--ink);
+  }
+  .state:first-child::before {
+    top: 24px;
+  }
+  .state:last-child::before {
+    bottom: auto;
+    height: 24px;
+  }
+  .pip {
+    position: relative;
+    z-index: 1;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    align-self: start;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 0 0 0 3px var(--paper);
+  }
+  .pip :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .state--end .pip {
+    border-width: 2px;
+    border-color: var(--seal);
+  }
+  .state h4,
+  .state p {
+    grid-column: 2;
+  }
+  .state h4 {
+    font-family: var(--f-type);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 9px;
+  }
+  .state--end h4 {
+    color: var(--seal);
+  }
+  .state p {
+    margin-top: 3px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .state .aside {
+    padding-left: 12px;
+    border-left: 2px solid var(--rule);
+    color: var(--ink-2);
+    font-size: var(--fs-sm);
+  }
+</style>

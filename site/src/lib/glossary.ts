@@ -309,6 +309,62 @@ const RAW: { term: string; definition: string; aliases?: string[] }[] = [
   { term: 'Scarcity', definition: 'How hard an item is to come by: Standard, Limited, or Rare. It sets the successes a Requisition roll needs, and Funding decides which Scarcity Command will consider.' },
   { term: 'Ledger', definition: "Command's patience within one Downtime. It starts at 0, rises by 1 with each Requisition granted, and adds itself to what the next roll needs." },
   { term: 'Squad Action', aliases: ['Squad Actions'], definition: 'The one action the Squad takes together each Downtime, chosen by the players.' },
+  {
+    term: 'Engaged',
+    definition: "Within arm's reach of a Foe in a Skirmish, held separately for each Foe. Fight attacks need it, and only a move changes it.",
+  },
+  {
+    term: 'Apart',
+    definition: "Not within arm's reach of a Foe in a Skirmish, held separately for each Foe. Everyone starts Apart from every Foe unless the start says otherwise.",
+  },
+  {
+    term: 'Ambush',
+    definition:
+      'The opening advantage in a Skirmish. The side that has it takes round 1 first, adds dice against anyone who has not yet acted, and cannot be answered by them.',
+  },
+  {
+    term: 'Guard',
+    definition:
+      "A Foe's cancelling roll, rolled in the open against every attack on it. Each success cancels one of the attack's, and it is never Pushed and spends nothing.",
+  },
+  { term: 'Grit', definition: 'How many of a Foe group must be out of the Skirmish before it breaks, at the latest. A Size Up is how you learn the number.' },
+  {
+    term: 'Grapple',
+    aliases: ['Grapples'],
+    definition: 'A Fight roll declared as one before you roll, with no Gear Dice, that deals no damage. If it lands, the Foe is Held by you.',
+  },
+  {
+    term: 'Held',
+    definition: 'Caught in a hold. A Held Foe cannot move and attacks only its holder, and a holder cannot move, Shoot, or Reload while the hold lasts.',
+  },
+  { term: 'Release', definition: 'Letting go of a Foe you hold. No roll, and it spends nothing, at any point of your turn.' },
+  { term: 'Break Free', definition: "The action that ends a hold on you: 2 successes against a person, or a Titan's grip in a Grab." },
+  {
+    term: 'Block',
+    aliases: ['Blocks', 'Blocked'],
+    definition: 'The Strength Reaction that answers a Fight attack, with a Blade Set for Gear Dice. Titans cannot be blocked, so it belongs to Skirmishes.',
+  },
+  {
+    term: 'Dodge',
+    aliases: ['Dodges', 'dodging'],
+    definition: "The Agility Reaction that answers a Titan's card, a Fight attack, or a shot, with Gear Dice from ODM Gear or from the horse while you are mounted.",
+  },
+  {
+    term: 'Parley',
+    aliases: ['Parleys'],
+    definition: 'The Persuade roll that asks a whole Foe group to stand down, let you pass, answer, or surrender. A success ends the Skirmish.',
+  },
+  { term: 'Parley value', definition: 'The base successes a Parley against a Foe group needs. A failed threat raises it by 1 for the rest of the Skirmish.' },
+  {
+    term: 'Size Up',
+    definition:
+      'The Instinct roll that reads a Foe group: its Grit, how many more must fall before it breaks, and what each of its Foes is about to do. Once per group, for the whole Squad.',
+  },
+  { term: 'Watch', definition: 'The successes a Sneak roll needs to take the Ambush from a Foe group.' },
+  {
+    term: 'Out of the Skirmish',
+    definition: 'What a Foe at 0 Health is: dead from Cut, Pierce, or Burn, or out cold from Crush. It takes no further part and is never a target again.',
+  },
 ];
 
 const slugify = (s: string) =>

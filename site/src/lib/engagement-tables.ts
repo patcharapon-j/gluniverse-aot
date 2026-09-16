@@ -749,6 +749,51 @@ export function squadTacticIcons(): { slug: string; name: string; icon: string }
   return doc.tactics.map((t) => ({ slug: t.id, name: t.name, icon: wording(TACTIC_WORDING, t.id, 'Squad Tactics').icon }));
 }
 
+/** What each Squad Tactic is for, as a filter chip. */
+const TACTIC_KINDS: Record<string, { slug: string; name: string; order: number }> = {
+  'hook-and-cut': { slug: 'attack', name: 'Setting up a cut', order: 1 },
+  'hamstring-line': { slug: 'attack', name: 'Setting up a cut', order: 1 },
+  'clear-the-hand': { slug: 'rescue', name: 'Getting a comrade out', order: 2 },
+  'fall-back': { slug: 'ground', name: 'Getting off the body', order: 3 },
+};
+
+export interface SquadTacticEntry {
+  slug: string;
+  name: string;
+  icon: string;
+  condition: string;
+  declared: string;
+  effect: string;
+  kind: { slug: string; name: string; order: number };
+  search: string;
+}
+
+/** Every Squad Tactic as a Compendium card, in the table's order. */
+export function squadTacticEntries(): SquadTacticEntry[] {
+  const doc = parse(squadTacticsText) as { tactics: RawTactic[] };
+  return doc.tactics.map((t) => {
+    const w = wording(TACTIC_WORDING, t.id, 'Squad Tactics');
+    return {
+      slug: t.id,
+      name: t.name,
+      icon: w.icon,
+      condition: w.condition,
+      declared: w.declared,
+      effect: w.effect,
+      kind: wording(TACTIC_KINDS, t.id, 'Squad Tactics'),
+      search: [t.name, w.condition, w.effect].join(' '),
+    };
+  });
+}
+
+/** How many Squad Tactics a Squad holds. */
+export function squadTacticsHeld(): number {
+  const doc = parse(squadTacticsText) as { rules: { held: string } };
+  const found = /holds (\d+) Squad Tactics/.exec(doc.rules.held);
+  if (!found) throw new Error('Squad Tactics: how many a Squad holds is no longer stated.');
+  return Number(found[1]);
+}
+
 export function squadTacticsTable(): CoreTableData {
   const doc = parse(squadTacticsText) as { rules: { held: string }; tactics: RawTactic[] };
   const T = 'Squad Tactics';

@@ -15,8 +15,8 @@ export const COMPENDIUM_SECTIONS: CompendiumSection[] = [
   { slug: 'specialties', title: 'Specialties', tab: 'Specialties', summary: 'The nine Specialties, each with its key attribute and its list of Talents.', filed: true },
   { slug: 'origins', title: 'Origins & Lifepath', tab: 'Origins', summary: 'Where your soldier comes from, why they enlisted, and the three Training Years before Graduation.', filed: true },
   { slug: 'gear', title: 'Gear', tab: 'Gear', summary: 'ODM Gear, Blade Sets, horses, and the kit a squad carries beyond the Walls.', filed: true },
-  { slug: 'squad-tactics', title: 'Squad Tactics', tab: 'Tactics', summary: 'Drilled manoeuvres that let soldiers set up the cut for each other.', filed: false },
-  { slug: 'scars', title: 'Scars', tab: 'Scars', summary: 'The lasting marks fear leaves on a soldier, and what each one changes.', filed: false },
+  { slug: 'squad-tactics', title: 'Squad Tactics', tab: 'Tactics', summary: 'Drilled manoeuvres that let soldiers set up the cut for each other.', filed: true },
+  { slug: 'scars', title: 'Scars', tab: 'Scars', summary: 'The lasting marks fear leaves on a soldier, and what each one changes.', filed: true },
   { slug: 'titans', title: 'Titans', tab: 'Titans', summary: 'Titans as your squad sees them: size, Tempo, Body Parts, and the Behavior Table.', filed: true },
 ];
 
