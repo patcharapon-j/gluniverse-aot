@@ -83,10 +83,10 @@ penalty_step: >-
   It is applied after the Bonus Dice cap, removes base dice only, adds up with every other penalty
   the soldier carries, never takes the base dice below 1, and never removes Gear Dice or Stress Dice.
 applies_to: >-
-  Every attribute roll a soldier or a Squadmate makes, except the rolls under never: a called roll,
-  an action from the Action Catalog, a Reaction, and every roll a rule calls for, such as the Leg
-  roll, the camp roll, a Requisition roll, a Sneak, a Parley, Treat Injury, Field Repair, Fly, Leap
-  Clear, a Nape strike, and a dodge.
+  Every attribute roll a soldier or a Squadmate makes: a called roll, an action from the Action
+  Catalog, a Reaction, and every roll a rule calls for, such as the Leg roll, the camp roll, a
+  Requisition roll, a Sneak, a Parley, Treat Injury, Field Repair, Fly, Leap Clear, a Nape strike,
+  and a dodge. The rolls listed under never are the only exceptions.
 group_roll: A roll made for a group takes one step, on its roller's pool.
 passive_roll: >-
   The GM names the step to themselves (data/core/dice-pool.yaml, roll_exceptions, passive-roll).
