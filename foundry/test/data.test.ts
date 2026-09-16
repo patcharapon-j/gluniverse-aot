@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DataShapeError, fileReader, loadTables, type Reader } from '../tools/data/load.ts';
-import { buildConfig } from '../tools/config-data.ts';
+import { buildTestConfig } from './wording-fixture.ts';
 
 /** A reader that edits one file's text before it is parsed. */
 const altered = (path: string, edit: (text: string) => string): Reader => (p) => (p === path ? edit(fileReader(p)) : fileReader(p));
@@ -19,7 +19,7 @@ describe('the live data/', () => {
   });
 
   it('builds the system config with the whole Action Catalog', () => {
-    const c = buildConfig(t);
+    const c = buildTestConfig(t);
     expect(c.actionCatalog).toHaveLength(t.actionCatalog.entries.length);
     expect(c.actionCatalog.find((e) => e.id === 'nape-strike')).toMatchObject({ attribute: 'strength', gear: ['blade-set'], requiresGear: true, withoutGear: 'not_possible' });
     expect(c.actionCatalog.find((e) => e.id === 'nape-strike')!.talents).toContain('clean-cut');

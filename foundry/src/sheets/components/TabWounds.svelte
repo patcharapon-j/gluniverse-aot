@@ -23,6 +23,10 @@
   const ENDS = ['titan-engagement-end', 'day', 'rule'];
   const FEAR = ['forced-move', 'forced-action'];
   const scarRows = W.scars as { id: string; name: string }[];
+  /** The rows whose harm is permanent, labelled as the injury pack names them. */
+  const permanentRows = Object.entries(W.injuryRows as Record<string, { location: string; range: string; name: string; hasPermanent: boolean }>)
+    .filter(([, r]) => r.hasPermanent)
+    .map(([id, r]) => ({ id, label: t('WOF.Card.Injury.entryName', { location: t(`WOF.InjuryLocation.${r.location}`), range: r.range, name: r.name }) }));
   const lastingRows = (W.stressResponses as { id: string; name: string; lasting: boolean }[]).filter((r) => r.lasting);
 
   let listEl: HTMLElement | undefined = $state();
@@ -325,7 +329,11 @@
       <div class="rowlist">
         {#each s.healed_permanent_injuries as h, i (i)}
           <div class="row">
-            <input type="text" value={h.row} placeholder={t('WOF.Sheet.wounds.rowId')} aria-label={t('WOF.Actor.Base.FIELDS.healed_permanent_injuries.element.row.label')} disabled={ro} onchange={(e) => setListEntry(actor, 'healed_permanent_injuries', i, { row: e.currentTarget.value })} />
+            <select value={h.row} aria-label={t('WOF.Actor.Base.FIELDS.healed_permanent_injuries.element.row.label')} disabled={ro} onchange={(e) => setListEntry(actor, 'healed_permanent_injuries', i, { row: e.currentTarget.value })}>
+              <option value="">{t('WOF.Sheet.wounds.pickRow')}</option>
+              {#each permanentRows as r (r.id)}<option value={r.id}>{r.label}</option>{/each}
+              {#if h.row && !permanentRows.some((r) => r.id === h.row)}<option value={h.row}>{t('WOF.Sheet.wounds.otherRow')}</option>{/if}
+            </select>
             <select value={h.side ?? ''} aria-label={t('WOF.Actor.Base.FIELDS.healed_permanent_injuries.element.side.label')} disabled={ro} onchange={(e) => setListEntry(actor, 'healed_permanent_injuries', i, { side: e.currentTarget.value || null })}>
               <option value="">—</option>
               <option value="left">{t('WOF.Side.left')}</option>

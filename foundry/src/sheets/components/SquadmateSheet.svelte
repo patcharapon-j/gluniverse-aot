@@ -82,6 +82,8 @@
     if (s.pinned.active) out.push({ cls: 'grave', text: t('WOF.Actor.Base.FIELDS.pinned.label') });
     return out;
   });
+  /** A template is named for its Specialty; the sheet shows that name, never the table's id. */
+  const templateName = (id: string) => (CONFIG.WOF.specialties as { id: string; name: string }[]).find((x) => x.id === id)?.name ?? id;
 </script>
 
 <div class="wof-sheet compact" bind:this={paper} data-gore={viewer.gore} data-motion={motionMode()} style="--wof-loop: {MOTION.loop}ms">
@@ -94,7 +96,7 @@
       <div class="kicker">
         <img class="ic s16" src={view.specialty?.icon ?? icon('brand-emblem')} alt="" />
         {t('WOF.Squad.kicker')}
-        <span class="serial">{s.template ? t('WOF.Squad.template', { id: s.template }) : ''}</span>
+        <span class="serial">{s.template ? t('WOF.Squad.template', { id: templateName(s.template) }) : ''}</span>
       </div>
       <input class="name" type="text" value={view.name} aria-label={t('WOF.Squad.name')} disabled={ro} onchange={(e) => actor.update({ name: e.currentTarget.value.trim() || view.name })} />
       <div class="meta">

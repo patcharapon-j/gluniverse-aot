@@ -11,7 +11,7 @@
     { "type": "cover", "url": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp" }
   ],
   "esmodules": ["wings-of-freedom.mjs"],
-  "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }, { "src": "styles/chat.css" }],
+  "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }, { "src": "styles/chat.css" }, { "src": "styles/entry.css" }],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
   "documentTypes": {
     "Actor": {
@@ -36,10 +36,11 @@
     { "name": "critical-injuries", "label": "Critical Injuries", "path": "packs/critical-injuries", "type": "Item", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
     { "name": "titans", "label": "Titans", "path": "packs/titans", "type": "Actor", "system": "wings-of-freedom", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } },
     { "name": "squadmates", "label": "Squadmates", "path": "packs/squadmates", "type": "Actor", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "foes", "label": "Foes", "path": "packs/foes", "type": "Actor", "system": "wings-of-freedom", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } }
+    { "name": "foes", "label": "Foes", "path": "packs/foes", "type": "Actor", "system": "wings-of-freedom", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } },
+    { "name": "titan-field-notes", "label": "Titan Field Notes", "path": "packs/titan-field-notes", "type": "JournalEntry", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } }
   ],
   "packFolders": [
-    { "name": "Soldiers", "sorting": "m", "packs": ["talents", "specialties", "origins", "gear", "critical-injuries", "squadmates"] },
+    { "name": "Soldiers", "sorting": "m", "packs": ["talents", "specialties", "origins", "gear", "critical-injuries", "squadmates", "titan-field-notes"] },
     { "name": "Threats", "sorting": "m", "packs": ["titans", "foes"] }
   ],
   "grid": { "distance": 1, "units": "m" }

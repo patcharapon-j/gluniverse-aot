@@ -106,9 +106,12 @@
                   type="button"
                   class="roll {r.attribute ? `s-${r.attribute}` : ''}"
                   disabled={!!r.blockedReason}
-                  use:tooltip={r.pool.conditionalPenalties.length || r.pool.conditionalTalents.length
-                    ? [...r.pool.conditionalTalents.map((c) => `${c.name} +${c.dice}: ${c.condition}`), ...r.pool.conditionalPenalties.map((c) => `${c.source} −${c.dice}: ${c.condition}`)].join('; ')
-                    : r.why}
+                  use:tooltip={[
+                    r.summary,
+                    r.pool.conditionalPenalties.length || r.pool.conditionalTalents.length
+                      ? [...r.pool.conditionalTalents.map((c) => `${c.name} +${c.dice}: ${c.condition}`), ...r.pool.conditionalPenalties.map((c) => `${c.source} −${c.dice}: ${c.condition}`)].join('; ')
+                      : r.summary ? '' : r.why,
+                  ].filter(Boolean).join(' ')}
                   onclick={(e) => roll(r, e.currentTarget)}
                 >
                   <span class="tile"><img src={r.icon} alt="" /></span>

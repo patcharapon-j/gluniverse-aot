@@ -4,7 +4,6 @@
  */
 import { SYSTEM_ID } from '../config.ts';
 import { responseRow, tableTotal, type ApplyCategory, type Op } from '../rules/roll.ts';
-import { effectLines } from '../sheets/soldier-view.ts';
 import type { ActorPool } from './actor-pool.ts';
 import { ops } from './apply.ts';
 import { FLAG, plainSummary, successesOf, type ActionCard, type Card, type ResponseRoll } from './card.ts';
@@ -71,7 +70,7 @@ export async function rollResponse(ap: ActorPool, stress: number, opts: { show?:
   const d6 = roll.total as number;
   const bonus = holds(ap, 'iron-nerve') ? 1 : 0;
   const total = tableTotal(d6, stress, ap.resolve, bonus);
-  const rows = CONFIG.WOF.stressResponses as { id: string; name: string; min: number | null; max: number | null; lasting: boolean; text: string; effects: any[] }[];
+  const rows = CONFIG.WOF.stressResponses as { id: string; name: string; min: number | null; max: number | null; lasting: boolean; text: string; effects: any[]; effectText: string[] }[];
   const row = responseRow(rows, total, ap.heldResponses);
   const response: ResponseRoll = {
     d6,
@@ -84,7 +83,7 @@ export async function rollResponse(ap: ActorPool, stress: number, opts: { show?:
     lasting: row.lasting,
     text: row.text,
     effects: row.effects.map((e) => ({ type: e.type, amount: e.amount, dice: e.dice })),
-    lines: effectLines(row.effects),
+    lines: row.effectText,
     rerolled: false,
   };
   const out: Op[] = [];

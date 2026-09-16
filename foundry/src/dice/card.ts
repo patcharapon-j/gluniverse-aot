@@ -238,7 +238,7 @@ function responseLine(t: T, r: ResponseRoll | null, v: CardViewer): string {
   const again = v.gallows && !r.rerolled ? `<button class="mini" type="button" data-wof-act="gallows">${esc(t('WOF.Roll.gallows'))}</button>` : '';
   return `<div class="sresp" data-tooltip="${esc(title)}"><img src="${icon('roll-stress')}" alt="${esc(t('WOF.Roll.response'))}"><strong>${esc(r.name)}</strong>${
     r.lasting ? `<span class="tag warn">${esc(t('WOF.Roll.lasting'))}</span>` : ''
-  }<span class="fx">${esc(r.lines.join('; ') || r.text)}</span>${again}</div>`;
+  }<span class="fx">${esc(r.lines.join(' ') || r.text)}</span>${again}</div>`;
 }
 
 export function successesOf(c: ActionCard): number {
@@ -331,7 +331,7 @@ function tableCard(t: T, c: TableCard, v: CardViewer): string {
   const title = c.table === 'fear' ? t('WOF.Roll.fear.title') : t('WOF.Roll.response');
   const math = `<span class="flag">${esc(t('WOF.Roll.tableMath', { stress: r.stress, resolve: r.resolve + r.bonus }))}</span>`;
   const iconName = c.table === 'fear' ? 'harm-fear' : 'roll-stress';
-  const lines = r.lines.length ? `<p class="eff-line">${esc(r.lines.join('; '))}</p>` : '';
+  const lines = r.lines.length ? `<p class="eff-line">${esc(r.lines.join(' '))}</p>` : '';
   const trigger = c.trigger ? `<p class="stakes"><b>${esc(t('WOF.Roll.fear.trigger'))}</b>${esc(c.trigger)}</p>` : '';
   const shrug = c.shrugged ? `<p class="stakes"><b>${esc(t('WOF.Roll.fear.drive'))}</b>${esc(t('WOF.Roll.fear.shrugged'))}</p>` : '';
   const buttons = [

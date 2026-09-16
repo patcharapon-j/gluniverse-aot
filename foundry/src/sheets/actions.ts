@@ -97,14 +97,15 @@ export interface ProseMirrorParam {
   enriched: string;
   editable: boolean;
   documentUUID: string;
-  height?: number;
+  /** Pixels; null lets the editor grow with its content. */
+  height?: number | null;
   onsave: (html: string) => unknown;
 }
 
 /** Foundry's own rich text editor (prose-mirror element), saved on its change event. */
 export const proseMirror: Action<HTMLElement, ProseMirrorParam> = (node, p) => {
   const El = foundry.applications.elements.HTMLProseMirrorElement;
-  const editor = El.create({ name: p.name, value: p.value, enriched: p.enriched, toggled: true, documentUUID: p.documentUUID, height: p.height ?? 220 });
+  const editor = El.create({ name: p.name, value: p.value, enriched: p.enriched, toggled: true, documentUUID: p.documentUUID, height: p.height === null ? undefined : (p.height ?? 220) });
   let save = p.onsave;
   const onChange = (e: Event) => {
     e.stopPropagation();

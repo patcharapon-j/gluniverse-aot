@@ -149,6 +149,10 @@
 .wof-sheet.roll-dialog .rd-h strong { font: 700 var(--t-lg)/1.1 var(--fd); }
 .wof-sheet.roll-dialog .rd-h .cnt { display: flex; flex-direction: column; align-items: center; }
 .wof-sheet.roll-dialog .rd-h .cnt b { font: 900 var(--t-2xl)/1 var(--fd); }
+.wof-sheet.roll-dialog .rd-rule { margin: var(--s1) 0 0; font: var(--t-sm)/1.45 var(--fb); color: var(--ink2); }
+.wof-sheet.roll-dialog .rd-rule summary { cursor: pointer; font: var(--t-xs)/1.4 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+.wof-sheet.roll-dialog .rd-rule p, .wof-sheet.roll-dialog .rd-rule ul { margin: var(--s1) 0 0; }
+.wof-sheet.roll-dialog .rd-rule ul { padding-left: var(--s4); }
 .wof-sheet.roll-dialog .rd-h .cnt small { font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
 .wof-sheet.roll-dialog .rd-pool { min-height: 16px; }
 .wof-sheet.roll-dialog .rd-grid { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--s2) var(--s3); align-items: center; }

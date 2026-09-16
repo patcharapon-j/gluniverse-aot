@@ -1,0 +1,19 @@
+# Player wording for the token statuses the website glossary does not define (the rest use the
+# glossary's own definition, site/src/lib/glossary.ts). Keyed by the status id the system uses.
+# New text written for the system: keep it faithful to its source, and when the build warns that a
+# source changed, check the sentence against it and record the sha the warning prints.
+#
+#   from.path    the data file the sentence was written from
+#   from.entry   the entry inside it (a dot path; list[id] picks a list item by id)
+#   from.sha     the entry's hash when the sentence was written
+statuses:
+  untreated-injury:
+    text: >-
+      You hold a Critical Injury no one has treated yet. While it stays untreated it crosses off one of
+      your Health boxes.
+    from: { path: data/harm/health.yaml, entry: "harm_kinds[critical-injury].health_box", sha: 67b7c1b15111 }
+  carrying:
+    text: >-
+      You carry a comrade. They hold your Position and count as 5 items for you, plus every item they
+      carry. You carry at most one comrade.
+    from: { path: data/gear/carrying.yaml, entry: carrying_a_comrade, sha: f93f5ee2329e }

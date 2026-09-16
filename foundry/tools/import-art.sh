@@ -35,6 +35,10 @@ lossy -resize 0 512 "$SL/originals/plate-soldier-slayer.png" -o "$OUT/portraits/
 for f in "$B1"/foe-*.webp; do cp "$f" "$OUT/plates/plate-$(basename "$f")"; done
 lossy -resize 0 512 "$SL/originals/plate-foe-bandit.png" -o "$OUT/plates/plate-foe-bandit.webp"
 
+# Website icons the site keeps at 1024 px and the system shows at 128 (2f: an Origin's icon).
+SITE="$HERE/../site/src/assets/icons"
+for n in gear-rations; do lossy -resize 128 128 "$SITE/$n.webp" -o "$OUT/icons/$n.webp"; done
+
 # Setup background.
 cp "$B1/setup-sortie-dawn.webp" "$OUT/plates/setup-sortie-dawn.webp"
 

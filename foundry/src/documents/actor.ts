@@ -16,8 +16,10 @@ const SHOWN = new WeakMap<object, Map<string, any>>();
 export function registerStatusEffects(): void {
   const dead = CONFIG.statusEffects.find?.((s: any) => s.id === 'dead');
   CONFIG.statusEffects.length = 0;
+  // The rule a status stands for, as the website glossary (or foundry/wording) words it.
+  const text = CONFIG.WOF.statusText as Record<string, string>;
   STATUSES.forEach((s, order) =>
-    CONFIG.statusEffects.push({ id: s.id, name: `${STATUS_PREFIX}.${s.id}`, img: iconPath(s.icon), order, hud: { actorTypes: s.types } }),
+    CONFIG.statusEffects.push({ id: s.id, name: `${STATUS_PREFIX}.${s.id}`, description: text[s.id] ?? '', img: iconPath(s.icon), order, hud: { actorTypes: s.types } }),
   );
   if (dead) CONFIG.statusEffects.push({ ...dead, order: STATUSES.length });
 }
@@ -54,7 +56,7 @@ export function defineActorDocument() {
         if (!status) return null;
         const ActiveEffect = foundry.utils.getDocumentClass?.('ActiveEffect') ?? CONFIG.ActiveEffect.documentClass;
         effect = new ActiveEffect(
-          { name: game.i18n.localize(status.name), img: status.img, statuses: [id], showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS, flags: { [SYSTEM_ID]: { bound: true } } },
+          { name: game.i18n.localize(status.name), description: status.description ?? '', img: status.img, statuses: [id], showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS, flags: { [SYSTEM_ID]: { bound: true } } },
           { parent: this },
         );
         cache.set(id, effect);
@@ -105,8 +107,11 @@ export function defineTokenHUD() {
         c.isActive = true;
         c.cssClass = ['active', c.isOverlay ? 'overlay' : null].filter(Boolean).join(' ');
       }
+      const text = CONFIG.WOF.statusText as Record<string, string>;
       for (const c of Object.values(choices) as any[]) {
         const kind = this.actor ? statusBinding(this.actor.type, c.id).kind : 'manual';
+        const rule = text[c.id];
+        if (rule) c.title = `${c.title}: ${rule}`;
         if (kind === 'derived') c.title = `${c.title} (${game.i18n.localize('WOF.Status.derivedHint')})`;
       }
       return choices;

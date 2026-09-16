@@ -2,8 +2,9 @@
  * The plain view the item slips render (core-plan 2c): one per Item type, with the names the ids in
  * its fields point at, so the slip never shows a bare id.
  */
+import { originIcon } from '../art.ts';
 import { healingDaysTotal, type TypeRider } from '../rules/harm.ts';
-import { effectLines, entryNames, icon } from './soldier-view.ts';
+import { entryNames, icon, injuryLines } from './soldier-view.ts';
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
@@ -88,7 +89,7 @@ export function itemIcon(item: any): string {
     case 'specialty':
       return icon(`specialty-${item.system.specialty_id || 'slayer'}`);
     case 'origin':
-      return icon('brand-emblem');
+      return originIcon(item.system.origin_id);
     case 'gear':
       return icon(GEAR_ICONS[item.system.item_id] ?? 'gear-odm');
     default:
@@ -148,12 +149,12 @@ export function buildItemView(item: any, opts: { editable: boolean; enriched: st
         names: (W.injuryTypes as { id: string }[]).map((x) => ({ type: x.id, name: rd.names[x.id] })),
         sided: (W.sidedLocations as string[]).includes(s.location),
         range: rangeLabel(rd.results),
-        effects: effectLines(rd.effects),
-        permanent: effectLines(rd.permanent_effects),
+        effects: injuryLines(s.row, 'whileHeld', rd.effects),
+        permanent: injuryLines(s.row, 'permanent', rd.permanent_effects),
         healingTotal: Math.max(healingDaysTotal(s.row, rd, s.injury_type, s.type_riders), s.healing_days_left),
         locationLabel: t(`WOF.InjuryLocation.${s.location}`),
         shownName: rd.names[s.injury_type] || item.name,
-        riders: (s.type_riders as TypeRider[]).map(riderLine),
+        riders: (W.injuryRows as Record<string, { riders: string[] }>)[s.row]?.riders ?? (s.type_riders as TypeRider[]).map(riderLine),
       };
       break;
     }

@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { previewPool, type PoolInputs } from '../src/rules/pool.ts';
 import { changeCanister, gainedInjuryState, healingDaysTotal, healthLostAfterClick, stressAfterClick } from '../src/rules/harm.ts';
 import { loadTables } from '../tools/data/load.ts';
-import { buildConfig } from '../tools/config-data.ts';
+import { buildTestConfig } from './wording-fixture.ts';
 
 const tables = loadTables();
-const config = buildConfig(tables);
+const config = buildTestConfig(tables);
 const entry = (id: string) => config.actionCatalog.find((e) => e.id === id)!;
 const attrs = { strength: 4, agility: 4, wits: 3, perception: 3, instinct: 2, empathy: 2 };
 const cleanCut = { id: 'clean-cut', name: 'Clean Cut', type: 'dice' as const, level: 2, names: ['nape-strike'], condition: {} };

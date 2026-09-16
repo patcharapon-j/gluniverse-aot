@@ -91,6 +91,8 @@ export interface RollView {
   why: string;
   blockedReason: string | null;
   icon: string;
+  /** What the entry does, the website's first sentence, for the row's tooltip. */
+  summary: string;
 }
 
 export interface MindRowView {
@@ -179,6 +181,15 @@ export function effectLines(effects: readonly (MindEffect | Record<string, any>)
         return e.text ?? String(e.type);
     }
   });
+}
+
+/**
+ * A Critical Injury row's lines as the website words them (CONFIG.WOF.injuryRows); a row the tables do
+ * not hold (a homebrew item) falls back to the sheet's short wording of its effects.
+ */
+export function injuryLines(rowId: string, which: 'whileHeld' | 'permanent', effects: readonly Record<string, any>[]): string[] {
+  const row = (CONFIG.WOF.injuryRows as Record<string, { whileHeld: string[]; permanent: string[] }>)[rowId];
+  return row ? row[which] : effectLines(effects);
 }
 
 function rangeLabel(r: { min: number | null; max: number | null }): string {
@@ -295,8 +306,8 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
       down: rd.down === 'until_treated',
       range: rangeLabel(rd.results),
       penaltyDice,
-      effects: effectLines(rd.effects),
-      permanent: effectLines(rd.permanent_effects),
+      effects: injuryLines(s.row, 'whileHeld', rd.effects),
+      permanent: injuryLines(s.row, 'permanent', rd.permanent_effects),
       severity: severityOf({ lethal: rd.lethal, instant_death: rd.instant_death, down: rd.down, healing_days: rd.healing_days, penaltyDice }),
     };
   });
@@ -341,12 +352,13 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
       why,
       blockedReason,
       icon: actionIcon(e.id),
+      summary: e.text?.does?.[0] ?? '',
     });
   }
 
   const scars: MindRowView[] = (source.scars as { row: string }[]).map((s, index) => {
     const row = scarRows.get(s.row);
-    return { index, row: s.row, name: row?.name ?? s.row, text: row?.trigger ?? '', effects: effectLines(row?.effects ?? []), known: !!row };
+    return { index, row: s.row, name: row?.name ?? s.row, text: row?.trigger ?? '', effects: row?.effectText ?? [], known: !!row };
   });
   const responses = (source.lasting_stress_responses as { row: string; ends: string; ends_note: string }[]).map((r, index) => {
     const row = responseRows.get(r.row);
@@ -355,7 +367,7 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
       row: r.row,
       name: row?.name ?? r.row,
       text: row?.text ?? '',
-      effects: effectLines(row?.effects ?? []),
+      effects: row?.effectText ?? [],
       known: !!row,
       ends: r.ends,
       endsNote: r.ends_note,

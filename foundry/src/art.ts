@@ -59,6 +59,20 @@ export const GEAR_ICONS: Record<string, string> = {
 export const gearIcon = (itemId: string) => iconPath(GEAR_ICONS[itemId] ?? 'gear-odm');
 
 /**
+ * An Origin's icon from the website set where one fits its row (2f); the Corps emblem otherwise.
+ * Shiganshina keeps the emblem on purpose: its row is about watching the Survey Corps ride out.
+ */
+export const ORIGIN_ICONS: Record<string, string> = {
+  'wall-maria-refugee': 'gear-rations',
+  'hunting-village': 'specialty-hunter',
+  'garrison-family': 'gear-firearm',
+  'minor-noble': 'seal-wax',
+  'doctors-household': 'gear-medical-kit',
+  'horse-ranch': 'gear-horse',
+};
+export const originIcon = (originId: string | null | undefined) => iconPath((originId && ORIGIN_ICONS[originId]) || 'brand-emblem');
+
+/**
  * The token status effects (asset-inventory.md, batch-1 inventory): Down and Grabbed from the style
  * lock, eleven from batch 1. How each is bound to the actor's data is `statusBinding` in
  * src/rules/statuses.ts.

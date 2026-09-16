@@ -46,6 +46,13 @@
   let slipEl: HTMLElement | undefined = $state();
   let typesEl: HTMLElement | undefined = $state();
 
+  /**
+   * The rich entry leads a reference slip; an injury a soldier holds keeps its type and state first.
+   * The numbered sections after it move down by one.
+   */
+  const descFirst = $derived(!(view.type === 'critical-injury' && view.embedded));
+  const o = $derived(descFirst ? 1 : 0);
+
   const commaList = (v: string) => v.split(',').map((x) => x.trim()).filter(Boolean);
 
   /** Choosing another gear item takes that row's fixed fields (data/gear/items.yaml) and keeps the state. */
@@ -100,6 +107,15 @@
   }
 </script>
 
+{#snippet entry(n: number)}
+  <div class="block notes" class:entry-first={descFirst}>
+    <Sec {n} title={t(view.htmlField === 'summary' ? 'WOF.Item.Specialty.FIELDS.summary.label' : 'WOF.Item.Talent.FIELDS.description.label')} />
+    {#key view.html}
+      <div use:proseMirror={{ name: `system.${view.htmlField}`, value: view.html, enriched: view.enriched, editable: view.editable, documentUUID: view.uuid, height: descFirst ? null : 160, onsave: (html) => set(`system.${view.htmlField}`, html) }}></div>
+    {/key}
+  </div>
+{/snippet}
+
 <div class="wof-sheet compact slip-sheet slip-{view.type}" data-motion={motionMode()} bind:this={slipEl}>
   <header class="slip-h">
     <img class="slip-img" src={view.img} alt="" data-edit="img" data-action={view.editable ? 'editImage' : undefined} use:tooltip={view.editable ? t('WOF.ItemSheet.imageEdit') : null} />
@@ -116,9 +132,10 @@
   </header>
 
   <div class="body">
+    {#if descFirst}{@render entry(1)}{/if}
     {#if view.type === 'talent'}
       <div class="block">
-        <Sec n="1" title={t('WOF.ItemSheet.rule')} />
+        <Sec n={1 + o} title={t('WOF.ItemSheet.rule')} />
         <div class="grid-form">
           <span class="lbl">{t('WOF.Item.Talent.FIELDS.type.label')}</span>
           <select value={s.type} disabled={ro} onchange={(e) => set('system.type', e.currentTarget.value)}>
@@ -153,7 +170,7 @@
       </div>
     {:else if view.type === 'specialty'}
       <div class="block">
-        <Sec n="1" title={t('WOF.ItemSheet.rule')} />
+        <Sec n={1 + o} title={t('WOF.ItemSheet.rule')} />
         <div class="grid-form">
           <span class="lbl">{t('WOF.Item.Specialty.FIELDS.key_attribute.label')}</span>
           <select value={s.key_attribute} disabled={ro} onchange={(e) => set('system.key_attribute', e.currentTarget.value)}>
@@ -161,15 +178,17 @@
           </select>
           <span class="lbl">{t('WOF.Item.Specialty.FIELDS.talents.label')}</span>
           <Chips items={view.talents} options={talentOptions} label={t('WOF.Item.Specialty.FIELDS.talents.label')} disabled={ro} onchange={(ids) => set('system.talents', ids)} />
-          <span class="lbl">{t('WOF.Item.Specialty.FIELDS.squadmate_template.label')}</span>
-          <input type="text" value={s.squadmate_template} disabled={ro} onchange={(e) => set('system.squadmate_template', e.currentTarget.value.trim())} />
-          <span class="lbl">{t('WOF.Item.Specialty.FIELDS.specialty_id.label')}</span>
-          <input type="text" value={s.specialty_id} disabled={ro} onchange={(e) => set('system.specialty_id', e.currentTarget.value.trim())} />
+          {#if game.user?.isGM && view.editable}
+            <span class="lbl">{t('WOF.Item.Specialty.FIELDS.squadmate_template.label')}</span>
+            <input type="text" value={s.squadmate_template} onchange={(e) => set('system.squadmate_template', e.currentTarget.value.trim())} />
+            <span class="lbl">{t('WOF.Item.Specialty.FIELDS.specialty_id.label')}</span>
+            <input type="text" value={s.specialty_id} onchange={(e) => set('system.specialty_id', e.currentTarget.value.trim())} />
+          {/if}
         </div>
       </div>
     {:else if view.type === 'origin'}
       <div class="block">
-        <Sec n="1" title={t('WOF.ItemSheet.rule')} />
+        <Sec n={1 + o} title={t('WOF.ItemSheet.rule')} />
         <div class="grid-form">
           <span class="lbl">{t('WOF.Item.Origin.FIELDS.results.label')}</span>
           <input type="text" value={s.results.join(', ')} disabled={ro} onchange={(e) => set('system.results', commaList(e.currentTarget.value).map(Number).filter((n) => n >= 11 && n <= 66))} />
@@ -189,7 +208,7 @@
       </div>
     {:else if view.type === 'gear'}
       <div class="block">
-        <Sec n="1" title={t('WOF.ItemSheet.article')} hint={t(`WOF.GearSubtype.${s.subtype}`)} />
+        <Sec n={1 + o} title={t('WOF.ItemSheet.article')} hint={t(`WOF.GearSubtype.${s.subtype}`)} />
         <div class="grid-form">
           <span class="lbl">{t('WOF.Item.Gear.FIELDS.item_id.label')}</span>
           <select value={s.item_id} disabled={ro} onchange={(e) => setGearItem(e.currentTarget.value)}>
@@ -206,7 +225,7 @@
         </div>
       </div>
       <div class="block">
-        <Sec n="2" title={t('WOF.ItemSheet.state')} />
+        <Sec n={2 + o} title={t('WOF.ItemSheet.state')} />
         {#if s.rated}
           <div class="grid-form">
             <span class="lbl">{t('WOF.Item.Gear.FIELDS.rating.label')}</span>
@@ -259,7 +278,7 @@
     {:else if view.type === 'critical-injury' && view.injury}
       {@const inj = view.injury}
       <div class="block">
-        <Sec n="1" title={t('WOF.Item.CriticalInjury.FIELDS.injury_type.label')} hint={t('WOF.ItemSheet.typeHint')} />
+        <Sec n={1 + o} title={t('WOF.Item.CriticalInjury.FIELDS.injury_type.label')} hint={t('WOF.ItemSheet.typeHint')} />
         <div class="typepick" role="group" aria-label={t('WOF.Item.CriticalInjury.FIELDS.injury_type.label')} bind:this={typesEl}>
           {#each inj.names as n (n.type)}
             <button type="button" aria-pressed={s.injury_type === n.type} disabled={ro} onclick={() => setInjuryType(n.type as InjuryType)}>
@@ -272,7 +291,7 @@
       </div>
       <div class="two even">
         <div class="block">
-          <Sec n="2" title={t('WOF.ItemSheet.held')} />
+          <Sec n={2 + o} title={t('WOF.ItemSheet.held')} />
           <div class="grid-form">
             {#if inj.sided}
               <span class="lbl">{t('WOF.Item.CriticalInjury.FIELDS.side.label')}</span>
@@ -301,7 +320,7 @@
           </span>
         </div>
         <div class="block">
-          <Sec n="3" title={t('WOF.ItemSheet.row')} hint={inj.range} />
+          <Sec n={3 + o} title={t('WOF.ItemSheet.row')} hint={inj.range} />
           <ul class="facts-list">
             {#if s.row_data.instant_death}<li class="red-text">{t('WOF.Card.Injury.instantDeath')}</li>{/if}
             {#if s.row_data.down === 'until_treated'}<li class="red-text">{t('WOF.Card.Injury.down')}</li>{/if}
@@ -316,11 +335,6 @@
       </div>
     {/if}
 
-    <div class="block notes">
-      <Sec n={view.type === 'critical-injury' ? 4 : view.type === 'gear' ? 3 : 2} title={t(view.htmlField === 'summary' ? 'WOF.Item.Specialty.FIELDS.summary.label' : 'WOF.Item.Talent.FIELDS.description.label')} />
-      {#key view.html}
-        <div use:proseMirror={{ name: `system.${view.htmlField}`, value: view.html, enriched: view.enriched, editable: view.editable, documentUUID: view.uuid, height: 160, onsave: (html) => set(`system.${view.htmlField}`, html) }}></div>
-      {/key}
-    </div>
+    {#if !descFirst}{@render entry(view.type === 'critical-injury' ? 4 : view.type === 'gear' ? 3 : 2)}{/if}
   </div>
 </div>

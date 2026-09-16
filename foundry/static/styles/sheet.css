@@ -486,6 +486,10 @@
 .wof-sheet .notes { margin-top: var(--s3); }
 .wof-sheet .notes prose-mirror { display: block; min-height: 160px; background: var(--paper-hi); border: 1px solid var(--ink2); padding: var(--s2); font: var(--t-base)/1.5 var(--fb); color: var(--ink); }
 .wof-sheet .notes prose-mirror .editor-content { min-height: 140px; }
+.wof-sheet .notes.entry-first { margin: 0 0 var(--s3); }
+.wof-sheet .notes.entry-first prose-mirror { min-height: 0; padding: var(--s2) var(--s3); }
+.wof-sheet .notes.entry-first prose-mirror { overflow: visible; }
+.wof-sheet .notes.entry-first prose-mirror .editor-content { position: static; min-height: 0; height: auto; overflow: visible; }
 
 /* ── Narrow ─────────────────────────────────────────────────────────── */
 @container wofsheet (max-width: 760px) {

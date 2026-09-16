@@ -15,6 +15,8 @@
   const v = sheetState.view;
 
   const initial = buildRollPool(v.inputs, null);
+  /** What the entry does, as the website words it (CONFIG.WOF, built from the site's Actions). */
+  const rule = (CONFIG.WOF.actionCatalogById[v.inputs.entry.id]?.text ?? null) as { does: string[]; requires: string[] } | null;
   let attribute = $state(v.inputs.attribute ?? (v.inputs.entry.attribute as RollChoice['attribute']));
   let talent = $state(initial.talent?.id ?? 'none');
   let gear = $state(initial.gear?.id ?? 'none');
@@ -77,6 +79,14 @@
     </div>
     <span class="cnt"><b>{pool.total}</b><small>{t('WOF.Sheet.rolls.dice')}</small></span>
   </header>
+
+  {#if rule?.does.length}
+    <details class="rd-rule">
+      <summary>{t('WOF.Roll.dialog.rule')}</summary>
+      {#each rule.does as line, i (i)}<p>{line}</p>{/each}
+      {#if rule.requires.length}<ul>{#each rule.requires as line, i (i)}<li>{line}</li>{/each}</ul>{/if}
+    </details>
+  {/if}
 
   <div class="rd-pool"><PoolDots {pool} size="big" /></div>
 

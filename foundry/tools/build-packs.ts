@@ -7,8 +7,10 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { compilePack } from '@foundryvtt/foundryvtt-cli';
+import { loadFoundryWording, warnStale } from './data/foundry-wording.ts';
 import { FOUNDRY_ROOT, loadTables } from './data/load.ts';
-import { buildPackDocs, PACKS, type Lang } from './pack-docs.ts';
+import { loadSiteWording } from './data/site-wording.ts';
+import { buildPackDocs, PACKS, sweepLangText, sweepPackText, type Lang } from './pack-docs.ts';
 
 const SRC = join(FOUNDRY_ROOT, 'build', 'packs-src');
 const OUT = join(FOUNDRY_ROOT, 'dist', 'packs');
@@ -21,7 +23,14 @@ for (const pack of PACKS) {
   if (!declared || declared.type !== pack.type) throw new Error(`static/system.json does not declare the ${pack.type} pack "${pack.name}".`);
 }
 
-const docs = buildPackDocs(loadTables(), lang, { systemVersion: system.version });
+const tables = loadTables();
+const foundryWording = loadFoundryWording();
+warnStale(foundryWording);
+const docs = buildPackDocs(tables, lang, await loadSiteWording(), foundryWording, { systemVersion: system.version });
+// The website's text guard over every string a pack shows: a failure stops the build.
+const checked = sweepPackText(docs, tables);
+const langChecked = sweepLangText(lang);
+console.log(`text guard: passed ${checked} pack strings and ${langChecked} lang strings`);
 
 rmSync(SRC, { recursive: true, force: true });
 rmSync(OUT, { recursive: true, force: true });

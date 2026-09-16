@@ -27,10 +27,9 @@ import {
   wearPoints,
   type Op,
 } from '../src/rules/roll.ts';
-import { loadTables } from '../tools/data/load.ts';
-import { buildConfig } from '../tools/config-data.ts';
+import { buildTestConfig } from './wording-fixture.ts';
 
-const config = buildConfig(loadTables());
+const config = buildTestConfig();
 const entry = (id: string) => config.actionCatalog.find((e) => e.id === id)!;
 const step = (id: string) => config.circumstances.find((c) => c.id === id)!;
 const attrs = { strength: 4, agility: 3, wits: 3, perception: 3, instinct: 2, empathy: 2 };

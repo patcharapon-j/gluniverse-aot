@@ -1,0 +1,39 @@
+# The website's Titan specimen wording, ported for the Titan field notes journal: the page keeps it
+# in an Astro component (site/src/components/TitanSpecimen.astro), which the build cannot import.
+# Keep each sentence as the website words it. When the build warns that the component changed,
+# copy the new wording and record the component's new sha (`git hash-object <path>`).
+figures:
+  tempo:
+    text: How many times it acts each round.
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  napeDepth:
+    text: Successes a single Nape strike needs to kill it.
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  regeneration:
+    text: Rounds before its wounds close.
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+readWords:
+  toughness:
+    text: the Toughness of a Body Part
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  napeDepth:
+    text: its Nape Depth
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  regeneration:
+    text: how fast it regenerates
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  attentionLadder:
+    text: what draws its attention
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+readNote:
+  text: "An Abnormal keeps some things to itself. A Read can tell your squad {list}."
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+unknown:
+  text: Unknown until a Read
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+toughnessByRead:
+  text: Toughness learned by a Read
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+fallback:
+  text: When a rolled behavior cannot happen and has nothing to fall back on, it does this instead.
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }

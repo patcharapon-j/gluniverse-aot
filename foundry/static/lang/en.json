@@ -118,7 +118,8 @@
       "squadmates": "Squadmates",
       "foes": "Foes",
       "folderSoldiers": "Soldiers",
-      "folderThreats": "Threats"
+      "folderThreats": "Threats",
+      "titanFieldNotes": "Titan Field Notes"
     },
     "Actor": {
       "Base": {
@@ -874,10 +875,62 @@
         "fight": "Fight weapon",
         "shoot": "Shoot weapon",
         "none": "None"
+      },
+      "Entry": {
+        "diceTalent": "Dice Talent",
+        "ruleTalent": "Rule Talent",
+        "levels": "Levels",
+        "levelDie": "Level {n}: {n} base die",
+        "levelDice": "Level {n}: {n} base dice",
+        "oneLevel": "One level only.",
+        "actions": "Actions it names",
+        "diceTalents": "Dice Talents",
+        "ruleTalents": "Rule Talents",
+        "issue": "Standard Issue",
+        "attributes": "+1 to each",
+        "talentChoice": "Talent at level 1, choose one",
+        "or": "or",
+        "havenChoice": "Haven, choose one",
+        "canonTie": "Canon Tie, optional",
+        "rating": "Rating",
+        "carriedAs": "Counts as",
+        "injuryTable": "{location} Critical Injuries, 2D6",
+        "down": "Down",
+        "lethal": "Lethal",
+        "deathRollPenalty": "Death Roll penalty",
+        "whileHeld": "While you hold it",
+        "healing": "Healing",
+        "permanent": "Permanent",
+        "repeat": "Gained before at that side",
+        "riders": "What an Injury Type changes",
+        "squadmateRules": "What changes for a Squadmate",
+        "weapons": "Weapons",
+        "foeValues": "Values the Squad learns by fighting",
+        "specimen": "Specimen report · Size: {size} · {height}",
+        "specimenReport": "Specimen report",
+        "tempo": "Tempo",
+        "napeDepth": "Nape Depth",
+        "regeneration": "Regeneration",
+        "bodyParts": "Body Parts",
+        "bodyPartsToughness": "Body Parts and Toughness",
+        "toughnessEach": "Toughness {n} each",
+        "toughness": "Toughness {n}",
+        "attackDiceByTier": "Attack Dice by tier",
+        "behaviorTable": "Behavior Table",
+        "behaviorRoll": "Roll a d6 when it acts.",
+        "d6": "d6",
+        "behavior": "Behavior",
+        "tier": "Tier",
+        "attackDice": "Attack Dice",
+        "whatHappens": "What happens",
+        "none": "None",
+        "otherwise": "Otherwise",
+        "attackDiceN": "{n} Attack Dice.",
+        "plate": "Plate"
       }
     },
     "Error": {
-      "dataShape": "Wings of Freedom: {what} does not match the system data. Rebuild the system."
+      "dataShape": "Wings of Freedom: {what} is out of date. Rebuild the system."
     },
     "Settings": {
       "motion": {
@@ -1214,9 +1267,10 @@
         "field": "Field record",
         "fieldHint": "Harm and mind fields the rules track",
         "noFear": "None pending.",
-        "rowId": "Row id",
         "body": "Body",
-        "addRally": "Add a comrade"
+        "addRally": "Add a comrade",
+        "pickRow": "Choose the Critical Injury",
+        "otherRow": "A Critical Injury the tables do not list"
       },
       "ends": {
         "titan-engagement-end": "Ends with the Titan Engagement",
@@ -1576,7 +1630,8 @@
         "against": "Against {name}: {severity} to cancel.",
         "deathNote": "No Stress Dice, no Help, no Push, no Circumstances.",
         "secondPush": "{name}: this roll can be Pushed twice.",
-        "bonus": "Bonus Dice"
+        "bonus": "Bonus Dice",
+        "rule": "What it does"
       },
       "stakeMenu": {
         "it-does-not-happen": "It does not happen",
@@ -1595,15 +1650,7 @@
         "drive": "Drive",
         "shrug": "Shrug off (Drive)",
         "shrugged": "Shrugged off: no effect",
-        "triggers": {
-          "first-titan-engagement": "First Titan Engagement",
-          "abnormal": "An Abnormal",
-          "second-focus-titan": "A second Focus Titan",
-          "comrade-grabbed": "A comrade Grabbed",
-          "comrade-dies": "A comrade dies",
-          "first-human-kill": "First kill of a person",
-          "gm-horror": "A horror (GM)"
-        }
+        "forbids": "Forbids: {what}."
       },
       "gas": {
         "title": "Gas Roll",

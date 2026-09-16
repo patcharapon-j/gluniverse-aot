@@ -5,7 +5,6 @@
  */
 import { SYSTEM_ID } from '../config.ts';
 import { gasAfter, gasRollDice, tableRow, tableTotal, type Op } from '../rules/roll.ts';
-import { effectLines } from '../sheets/soldier-view.ts';
 import { actorPool, entryBlock, type ActorPool } from './actor-pool.ts';
 import { applyNew, ops } from './apply.ts';
 import type { GasCard, ResponseRoll, TableCard } from './card.ts';
@@ -41,9 +40,9 @@ export async function rollFear(actor: any): Promise<any> {
   const ap = actorPool(actor);
   if (blocked(ap, 'fear-roll')) return null;
   const W = CONFIG.WOF;
-  const triggers = W.fearTriggers as { id: string; event: string }[];
+  const triggers = W.fearTriggers as { id: string; name: string; event: string }[];
   const steady = readyTalent(ap, 'steady-heart');
-  const options = triggers.map((x) => `<option value="${x.id}">${esc(t(`WOF.Roll.fear.triggers.${x.id}`))}</option>`).join('');
+  const options = triggers.map((x) => `<option value="${x.id}" title="${esc(x.event)}">${esc(x.name)}</option>`).join('');
   const result = await foundry.applications.api.DialogV2.input({
     window: { title: t('WOF.Roll.fear.title') },
     classes: ['wof-pick'],
@@ -60,7 +59,7 @@ ${steady ? `<p class="hint">${esc(t('WOF.Roll.fear.steady', { name: steady.name 
   const d6 = roll.total as number;
   const bonus = steadyUsed ? 1 : 0;
   const total = tableTotal(d6, ap.stress, ap.resolve, bonus);
-  const row = tableRow(W.fearRows as { id: string; name: string; min: number | null; max: number | null; text: string; effects: any[] }[], total);
+  const row = tableRow(W.fearRows as { id: string; name: string; min: number | null; max: number | null; text: string; effects: any[]; effectText: string[]; forbidsText: string[] }[], total);
   const response: ResponseRoll = {
     d6,
     stress: ap.stress,
@@ -72,7 +71,7 @@ ${steady ? `<p class="hint">${esc(t('WOF.Roll.fear.steady', { name: steady.name 
     lasting: false,
     text: row.text,
     effects: row.effects,
-    lines: effectLines(row.effects),
+    lines: [...row.effectText, ...row.forbidsText.map((f) => t('WOF.Roll.fear.forbids', { what: f }))],
     rerolled: false,
   };
   const fresh = fearOps(actor, row);
@@ -89,7 +88,7 @@ ${steady ? `<p class="hint">${esc(t('WOF.Roll.fear.steady', { name: steady.name 
     img: actor.img,
     time: clock(),
     ops: await applyNew(fresh),
-    trigger: t(`WOF.Roll.fear.triggers.${trigger}`),
+    trigger: triggers.find((x) => x.id === trigger)?.name ?? trigger,
     response,
     shrugged: false,
     gasRoll: row.effects.some((e) => e.type === 'gas-roll'),
