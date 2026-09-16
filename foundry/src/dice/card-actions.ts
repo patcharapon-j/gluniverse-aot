@@ -9,6 +9,7 @@ import { actorPool } from './actor-pool.ts';
 import { applyNew, cardAction, dropOps, ops } from './apply.ts';
 import type { ActionCard, AttackCard, CallCard, TableCard } from './card.ts';
 import { cardOf, ownSoldiers, pickSoldier, readyTalent, rollResponse, saveCard, stakesOps, t, usedTalentOp } from './post.ts';
+import { setCovering } from './proxy.ts';
 import { recordReaction } from './reactions.ts';
 import { rollAction } from './roll-action.ts';
 import { PUSHED_ODM_FLAG, rollGas } from './tables.ts';
@@ -82,7 +83,7 @@ export function push(message: any) {
     card.pool.stress = pushed.dice.stress.length;
 
     // The outcome is worked out again from the pushed dice.
-    card.ops = await dropOps(card.ops, (o) => !!o.outcome);
+    card.ops = await dropOps(card.ops, (o) => !!o.outcome, message.id);
     const rolls = [...message.rolls, roll];
 
     // A Stress Die 1 after the Push: one Stress Response, with the Stress after the Push.
@@ -116,8 +117,8 @@ export function push(message: any) {
       if (gear.itemId === 'odm-gear') fresh.push(ops.set('gas', actor, null, PUSHED_ODM_FLAG, !!foundry.utils.getProperty(actor, PUSHED_ODM_FLAG), true, t('WOF.Roll.op.pushedOdm', { n: CONFIG.WOF.gas.rollDicePushed })));
     }
 
-    const applied = await applyNew(fresh);
-    const outcome = await applyNew(stakesOps(card, actor));
+    const applied = await applyNew(fresh, message.id);
+    const outcome = await applyNew(stakesOps(card, actor), message.id);
     card.ops = [...card.ops, ...applied, ...outcome];
     await saveCard(message, card, rolls);
     if (card.attack) await recordReaction(card.attack.message, card, message.id);
@@ -130,11 +131,15 @@ export function cover(message: any) {
     // A Squadmate never Covers (data/character/squadmates.yaml); Down forbids it (data/harm/down.yaml).
     const mine = ownSoldiers([card.actor], true).filter((a) => !(a.system.down || a.system.derived?.down_by_rule));
     if (card.cover && (mine.some((a) => a.uuid === card.cover!.actor) || message.isOwner)) {
+      const was = await foundry.utils.fromUuid(card.cover.actor);
       card.cover = null;
+      if (was?.isOwner) await setCovering(was, message.id, false);
     } else {
       const who = await pickSoldier(mine, t('WOF.Roll.cover'));
       if (!who) return;
       card.cover = { actor: who.uuid, name: who.name };
+      // The comrade's own record that they agreed, which the GM checks before moving their Stress.
+      await setCovering(who, message.id, true);
     }
     await saveCard(message, card);
   });
@@ -143,7 +148,7 @@ export function cover(message: any) {
 export function opsAction(message: any, action: 'undo' | 'redo' | 'apply') {
   return once(message, async () => {
     const card = structuredClone(cardOf(message))!;
-    card.ops = await cardAction(card.ops, action);
+    card.ops = await cardAction(card.ops, action, message.id);
     await saveCard(message, card);
   });
 }
@@ -157,12 +162,12 @@ export function gallows(message: any) {
     if (!actor?.isOwner) return;
     const ap = actorPool(actor);
     if (!readyTalent(ap, 'gallows-humour')) return;
-    card.ops = await dropOps(card.ops, (o) => !!o.response);
+    card.ops = await dropOps(card.ops, (o) => !!o.response, message.id);
     // The held list no longer has the first result, so the table is read as it stood before it.
     const again = await rollResponse(actorPool(actor), card.response.stress, { show: true });
     const used = usedTalentOp(ap, 'gallows-humour', 'stressResponse');
     card.response = { ...again.response, rerolled: true };
-    card.ops = [...card.ops, ...(await applyNew([...again.ops, ...(used ? [used] : [])]))];
+    card.ops = [...card.ops, ...(await applyNew([...again.ops, ...(used ? [used] : [])], message.id))];
     await saveCard(message, card, [...message.rolls, again.roll]);
   });
 }
@@ -173,10 +178,10 @@ export function shrug(message: any) {
     const card = structuredClone(cardOf(message)) as TableCard;
     const actor = await actorOf(card);
     if (!actor?.isOwner || actor.type !== 'soldier' || actor.system.drive_used_this_session) return;
-    const undone = await cardAction(card.ops, 'undo');
+    const undone = await cardAction(card.ops, 'undo', message.id);
     card.ops = [
       ...undone.filter((o) => o.state !== 'pending'),
-      ...(await applyNew([ops.set('fear', actor, null, 'system.drive_used_this_session', false, true, t('WOF.Roll.op.drive'))])),
+      ...(await applyNew([ops.set('fear', actor, null, 'system.drive_used_this_session', false, true, t('WOF.Roll.op.drive'))], message.id)),
     ];
     card.shrugged = true;
     await saveCard(message, card);

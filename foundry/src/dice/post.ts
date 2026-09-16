@@ -7,7 +7,7 @@ import { responseRow, tableTotal, type ApplyCategory, type Op } from '../rules/r
 import type { ActorPool } from './actor-pool.ts';
 import { ops } from './apply.ts';
 import { FLAG, plainSummary, successesOf, type ActionCard, type Card, type ResponseRoll } from './card.ts';
-import { updateDoc } from './proxy.ts';
+import { writeCard } from './proxy.ts';
 import { showDice } from './terms.ts';
 
 export const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
@@ -49,9 +49,7 @@ export async function postCard(actor: any, card: Card, rolls: any[], mode?: stri
 
 /** Writes the card back to its message (through the GM when the user did not post it). */
 export async function saveCard(message: any, card: Card, rolls?: any[]): Promise<boolean> {
-  const data: Record<string, unknown> = { [`flags.${SYSTEM_ID}.${FLAG}`]: card, content: `<p class="wof-summary">${foundry.utils.escapeHTML(plainSummary(card))}</p>` };
-  if (rolls) data.rolls = rolls.map((r) => (typeof r === 'string' ? r : JSON.stringify(r)));
-  return updateDoc(message, data);
+  return writeCard(message, card, rolls?.map((r) => (typeof r === 'string' ? r : JSON.stringify(r))));
 }
 
 /** The lasting Stress Response's end, as the sheet records it (data/harm/sheet-fields.yaml). */

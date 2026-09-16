@@ -8,44 +8,48 @@ import { createItemOn, deleteItemOf, updateDoc } from './proxy.ts';
 
 const get = (doc: any, path: string) => foundry.utils.getProperty(doc._source ?? doc, path);
 
-/** Applies (dir 1) or undoes (dir -1) one op. Returns false when the target is gone or the change was refused. */
-export async function runOp(op: Op, dir: 1 | -1): Promise<boolean> {
+/**
+ * Applies (dir 1) or undoes (dir -1) one op. Returns false when the target is gone or the change was
+ * refused. `message` is the card's message id, which the GM checks a proxied change against.
+ */
+export async function runOp(op: Op, dir: 1 | -1, message?: string): Promise<boolean> {
   const actor = await foundry.utils.fromUuid(op.actor);
   if (!actor) return false;
+  const ctx = message ? { message, op, dir } : undefined;
   switch (op.t) {
     case 'num': {
       const doc = op.item ? actor.items.get(op.item) : actor;
       if (!doc) return false;
       const current = Number(get(doc, op.path) ?? 0);
-      return updateDoc(doc, { [op.path]: numValue(op, current, dir) });
+      return updateDoc(doc, { [op.path]: numValue(op, current, dir) }, ctx);
     }
     case 'set': {
       const doc = op.item ? actor.items.get(op.item) : actor;
       if (!doc) return false;
-      return updateDoc(doc, { [op.path]: dir === 1 ? op.to : op.from });
+      return updateDoc(doc, { [op.path]: dir === 1 ? op.to : op.from }, ctx);
     }
     case 'add': {
       const list = (get(actor, op.path) ?? []) as unknown[];
-      return updateDoc(actor, { [op.path]: listValue(op, list, dir) });
+      return updateDoc(actor, { [op.path]: listValue(op, list, dir) }, ctx);
     }
     case 'delete': {
       if (dir === 1) {
         const item = actor.items.get(op.item);
-        return item ? deleteItemOf(item) : true;
+        return item ? deleteItemOf(item, ctx) : true;
       }
       if (actor.items.get(op.item)) return true;
-      return createItemOn(actor, op.data);
+      return createItemOn(actor, op.data, ctx);
     }
   }
 }
 
 /** Gives new ops their first state from the GM's auto-apply settings and applies the ones that are on. */
-export async function applyNew(ops: Op[]): Promise<Op[]> {
+export async function applyNew(ops: Op[], message?: string): Promise<Op[]> {
   const enabled = autoApply();
   const out: Op[] = [];
   for (const op of ops) {
     const state = initialState(op.cat, enabled);
-    if (state === 'done' && !(await runOp(op, 1))) {
+    if (state === 'done' && !(await runOp(op, 1, message))) {
       out.push({ ...op, state: 'pending' });
       continue;
     }
@@ -55,18 +59,18 @@ export async function applyNew(ops: Op[]): Promise<Op[]> {
 }
 
 /** Undo, Redo, or Apply on a card: returns the ops with their new states. */
-export async function cardAction(ops: Op[], action: 'undo' | 'redo' | 'apply'): Promise<Op[]> {
+export async function cardAction(ops: Op[], action: 'undo' | 'redo' | 'apply', message?: string): Promise<Op[]> {
   const next = ops.map((o) => ({ ...o }));
   for (const { index, dir } of nextStates(ops, action)) {
-    if (await runOp(next[index], dir)) next[index].state = dir === 1 ? 'done' : 'undone';
+    if (await runOp(next[index], dir, message)) next[index].state = dir === 1 ? 'done' : 'undone';
   }
   return next;
 }
 
 /** Reverts the ops a Push or a second D6 replaces and drops them from the card. */
-export async function dropOps(ops: Op[], which: (op: Op) => boolean): Promise<Op[]> {
+export async function dropOps(ops: Op[], which: (op: Op) => boolean, message?: string): Promise<Op[]> {
   for (const op of [...ops].reverse()) {
-    if (which(op) && op.state === 'done') await runOp(op, -1);
+    if (which(op) && op.state === 'done') await runOp(op, -1, message);
   }
   return ops.filter((o) => !which(o));
 }
