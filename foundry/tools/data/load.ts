@@ -49,6 +49,10 @@ export const FILES = {
   origins: ['data/character/origins.yaml', S.originsFile],
   squadmates: ['data/character/squadmates.yaml', S.squadmatesFile],
   lifepath: ['data/character/lifepath.yaml', S.lifepathFile],
+  enlistment: ['data/character/enlistment.yaml', S.enlistmentFile],
+  trainingYears: ['data/character/training-years.yaml', S.trainingYearsFile],
+  classRank: ['data/character/class-rank.yaml', S.classRankFile],
+  graduationExam: ['data/character/graduation-exam.yaml', S.graduationExamFile],
   harmSheetFields: ['data/harm/sheet-fields.yaml', S.harmSheetFieldsFile],
   gearSheetFields: ['data/gear/sheet-fields.yaml', S.gearSheetFieldsFile],
   gearItems: ['data/gear/items.yaml', S.gearItemsFile],
@@ -118,6 +122,26 @@ function crossCheck(t: Tables): void {
   for (const x of t.specialties.general.talents) if (!talents.has(x)) fail(FILES.specialties[0], `the general list names the missing Talent "${x}"`);
   for (const o of t.origins.rows) {
     for (const x of o.talent_choice) if (!talents.has(x)) fail(FILES.origins[0], `"${o.id}" offers the missing Talent "${x}"`);
+  }
+  for (const y of t.trainingYears.years) {
+    for (const x of y.curriculum) if (!talents.has(x)) fail(FILES.trainingYears[0], `${y.id} lists the missing curriculum Talent "${x}"`);
+    for (const e of y.events) for (const x of e.talent_choice) if (!talents.has(x)) fail(FILES.trainingYears[0], `the event "${e.name}" offers the missing Talent "${x}"`);
+  }
+  for (const r of t.enlistment.rows) for (const a of r.drive.acts ?? []) if (a !== 'push' && !actions.has(a)) fail(FILES.enlistment[0], `the Drive "${r.drive.id}" names the act "${a}", which is not an Action Catalog entry`);
+  for (const tr of t.graduationExam.trials) {
+    const exam = new Set(t.graduationExam.conditions.exam_issue.map((i) => i.item));
+    for (const c of [...(tr.entry ? [{ entry: tr.entry, gear_item: tr.gear_item ?? null }] : []), ...(tr.entry_choice ?? [])]) {
+      if (!actions.has(c.entry)) fail(FILES.graduationExam[0], `the Trial "${tr.id}" names the missing entry "${c.entry}"`);
+      if (c.gear_item && !exam.has(c.gear_item)) fail(FILES.graduationExam[0], `the Trial "${tr.id}" names "${c.gear_item}", which is not exam issue`);
+    }
+  }
+  for (const [file, table] of [[FILES.origins[0], t.origins.rows], [FILES.enlistment[0], t.enlistment.rows], ...t.trainingYears.years.map((y) => [FILES.trainingYears[0], y.events] as const)] as const) {
+    const seen = new Set<number>();
+    for (const row of table as readonly { results: number[] }[]) for (const n of row.results) {
+      if (seen.has(n)) fail(file, `the D66 result ${n} is on two rows`);
+      seen.add(n);
+    }
+    for (const tens of [1, 2, 3, 4, 5, 6]) for (const units of [1, 2, 3, 4, 5, 6]) if (!seen.has(tens * 10 + units)) fail(file, `no row covers the D66 result ${tens * 10 + units}`);
   }
   for (const m of t.squadmates.templates) {
     if (!specialties.has(m.specialty)) fail(FILES.squadmates[0], `template "${m.id}" has a missing Specialty`);

@@ -9,6 +9,9 @@ import type { SiteWording } from './data/site-wording.ts';
 import { checkPlayerText, hyphenatedIds } from './data/wording.ts';
 import { CARRIED_COMRADE_ITEMS, CARRYING_LIMIT_BONUS, MAX_GRIEF_COUNTED } from '../src/rules/derived.ts';
 import { entryNeeds, ROLL_TALENTS } from '../src/rules/roll.ts';
+import type { LpTables, Procedure } from '../src/rules/lifepath.ts';
+import { docId } from './data/ids.ts';
+import { wordingTexts } from './data/lifepath-wording.ts';
 
 export function gearSubtype(itemId: string): 'odm' | 'blade-set' | 'firearm' | 'horse' | 'kit' | 'prosthetic' | null {
   switch (itemId) {
@@ -117,6 +120,132 @@ function statusText(site: SiteWording, fw: FoundryWording): Record<string, strin
     out[id] = text;
   }
   return out;
+}
+
+/** Merit bands as the rules read them. */
+const bands = (rows: { successes_min: number; successes_max: number | null; merit: number }[]) => rows.map((r) => ({ min: r.successes_min, max: r.successes_max, value: r.merit }));
+
+/** The tables the Lifepath wizard reads (src/rules/lifepath.ts), with the website's wording. */
+export function lifepathTables(t: Tables, site: SiteWording): LpTables {
+  const range = /from (\d{3}) to (\d{3})/.exec(t.lifepath.steps[0].does)!;
+  const siteYears = byId(site.years, 'Training Year');
+  const issueRow = t.standardIssue.by_funding.find((r) => r.funding === t.standardIssue.funding.until_funding_rules);
+  if (!issueRow) throw new Error('data/gear/standard-issue.yaml has no row for the Funding in force.');
+  const examDice = new Map(t.graduationExam.conditions.exam_issue.map((i) => [i.item, i.gear_dice]));
+  const entryAttr = (id: string) => {
+    const e = t.actionCatalog.entries.find((x) => x.id === id);
+    if (!e || !e.attribute || e.attribute === 'from_performance_attributes') throw new Error(`The Exam entry "${id}" has no attribute.`);
+    return e.attribute;
+  };
+  const trials = t.graduationExam.order.map((id) => {
+    const tr = t.graduationExam.trials.find((x) => x.id === id);
+    if (!tr) throw new Error(`data/character/graduation-exam.yaml orders the missing Trial "${id}".`);
+    const choices = (tr.entry ? [{ entry: tr.entry, gear_item: tr.gear_item ?? null }] : (tr.entry_choice ?? [])).map((c) => ({ entry: c.entry, gear: c.gear_item, dice: c.gear_item ? (examDice.get(c.gear_item) ?? 0) : 0 }));
+    const merit = bands(tr.merit);
+    const paying = merit.filter((b) => b.value > 0).map((b) => b.min ?? 0);
+    return { id: tr.id, name: tr.name, description: tr.description, choices, needs: tr.needs ?? Math.min(...paying), push: tr.push, help: tr.help !== 'none', merit };
+  });
+  const entryAttributes = Object.fromEntries(trials.flatMap((x) => x.choices.map((c) => [c.entry, entryAttr(c.entry)])));
+  const templates = new Map(t.squadmates.templates.map((m) => [m.id, m.attributes]));
+  const choiceProcedures = (option: string): Procedure[] => ['lifepath', ...(option.includes('template-build') ? ['template-build' as const] : []), ...(option.includes('free-build') ? ['free-build' as const] : [])];
+  const built = t.attributes.creation.built;
+  return {
+    campaignYears: { min: Number(range[1]), max: Number(range[2]) },
+    campaignChoices: t.lifepath.campaign_choice.options.map((o) => ({ id: o, procedures: choiceProcedures(o) })),
+    origins: t.origins.rows.map((o) => {
+      const w = site.origins[o.id];
+      if (!w) throw new Error(`The website has no Origin "${o.id}".`);
+      return {
+        id: o.id,
+        results: o.results,
+        name: o.name,
+        description: w.description,
+        attributes: o.attributes,
+        talents: o.talent_choice,
+        havens: w.havens,
+        canonTie: w.canonTie,
+        yearMin: o.condition?.campaign_year_min ?? null,
+        condition: site.originConditions[o.id] ?? null,
+      };
+    }),
+    enlistment: t.enlistment.rows.map((r) => {
+      const w = site.enlistment[r.id];
+      if (!w) throw new Error(`The website has no Why You Enlisted row "${r.id}".`);
+      return { id: r.id, results: r.results, reason: w.reason, attribute: r.attribute, drive: { id: r.drive.id, name: r.drive.name, trigger: w.trigger, namedComrade: r.drive.needs_named_comrade } };
+    }),
+    years: t.trainingYears.years.map((y) => {
+      const w = siteYears(y.id);
+      if (w.events.length !== y.events.length) throw new Error(`The website words a different set of ${y.id} events.`);
+      return {
+        id: y.id,
+        title: w.title,
+        subtitle: w.subtitle,
+        performance: y.performance_attributes,
+        curriculum: y.curriculum,
+        events: y.events.map((e, i) => ({ results: e.results, name: w.events[i].name, description: w.events[i].description, attribute: e.attribute, talents: e.talent_choice, merit: e.merit_change })),
+      };
+    }),
+    performanceMerit: bands(t.trainingYears.performance_roll.merit_from_successes),
+    classRank: t.classRank.rows.map((r) => ({ min: r.merit_min, max: r.merit_max, rank: r.class_rank, top10: r.top_10 })),
+    exam: { trials, responseCost: 1 },
+    talents: t.talents.talents.map((x) => ({ id: x.id, name: x.name, type: x.type, maxLevel: x.max_level ?? 1, names: x.names, conditional: Object.keys(x.condition ?? {}), specialties: x.specialties })),
+    specialties: t.specialties.specialties.map((sp) => {
+      const tmpl = templates.get(sp.squadmate_template);
+      if (!tmpl) throw new Error(`The Specialty "${sp.id}" has no Squadmate template.`);
+      return { id: sp.id, name: sp.name, key: sp.key_attribute, talents: sp.talents, summary: site.specialties[sp.id]?.summary ?? sp.summary, template: { ...tmpl } };
+    }),
+    general: t.specialties.general.talents,
+    dormant: t.actionCatalog.entries.filter((e) => e.dormant || e.reserved).map((e) => e.id),
+    entryAttributes,
+    rules: {
+      start: t.attributes.creation.starting_rating,
+      cap: t.attributes.creation.cap_before_graduation,
+      keyMin: t.attributes.creation.graduation.key_attribute_minimum,
+      keyMax: t.attributes.scale.max_key_attribute,
+      top10Bonus: t.attributes.creation.graduation.top_10_key_attribute_bonus,
+      talentCap: t.trainingYears.talent_cap.max_level_at_creation,
+      built: {
+        total: built.total_points,
+        min: built.min,
+        max: built.max,
+        key: built.key_attribute,
+        maxAt4: built.max_attributes_at_4,
+        shapes: built.free_build.shapes.map((x) => ({ id: x.id, ratings: x.ratings })),
+        talentMax: t.lifepath.built_steps.talent_levels.max_level,
+        maxAtTwo: t.lifepath.built_steps.talent_levels.max_talents_at_level_2,
+        anyLevels: t.lifepath.built_steps.talent_levels.sources[2].levels,
+      },
+    },
+    issue: {
+      funding: issueRow.funding,
+      odm: issueRow.odm_gear_rating,
+      spares: issueRow.spare_canisters,
+      blades: issueRow.blade_sets,
+      horse: issueRow.horse_rating,
+      bladeRating: t.standardIssue.every_row.blade_set_rating,
+      fullGas: t.odmGear.gas.full_gas_rating,
+      bySpecialty: t.standardIssue.by_specialty.rows.map((r) => ({ specialty: r.specialty, item: r.item, rating: r.rating })),
+    },
+  };
+}
+
+function byId<T extends { id: string }>(rows: T[], what: string) {
+  return (id: string): T => {
+    const row = rows.find((r) => r.id === id);
+    if (!row) throw new Error(`The website has no ${what} "${id}".`);
+    return row;
+  };
+}
+
+/** The compendium document ids the wizard takes Items from (tools/pack-docs.ts uses the same keys). */
+export function packIds(t: Tables) {
+  const ids = <T extends { id: string }>(pack: string, rows: T[]) => Object.fromEntries(rows.map((r) => [r.id, docId(pack, r.id)]));
+  return {
+    talents: ids('talents', t.talents.talents),
+    specialties: ids('specialties', t.specialties.specialties),
+    origins: ids('origins', t.origins.rows),
+    gear: ids('gear', t.gearItems.items.filter((g) => gearSubtype(g.id) !== null)),
+  };
 }
 
 export function buildConfig(t: Tables, site: SiteWording, fw: FoundryWording) {
@@ -273,6 +402,9 @@ export function buildConfig(t: Tables, site: SiteWording, fw: FoundryWording) {
     weapons: t.skirmish.weapons.rows.map((w) => ({ id: w.id, name: w.name, usedWith: w.used_with, injuryType: w.injury_type, damage: w.damage, target: w.target })),
     talentNames: Object.fromEntries(t.talents.talents.map((x) => [x.id, x.name])),
     statusText: statusText(site, fw),
+    lifepath: lifepathTables(t, site),
+    lifepathPage: { sections: site.lifepathPage.sections, boxes: site.lifepathPage.boxes, flows: site.lifepathPage.flows },
+    packIds: packIds(t),
   };
 }
 
@@ -295,6 +427,13 @@ export function sweepConfigText(config: WofConfig, t: Tables): number {
   for (const r of config.deathRoll.outcomes) check('A Death Roll outcome', r.text);
   for (const r of Object.values(config.injuryRows)) [r.name, ...r.whileHeld, ...r.permanent, ...r.riders].forEach((x) => check(`The ${r.location} Critical Injury ${r.range}`, x));
   for (const [id, x] of Object.entries(config.statusText)) check(`The status "${id}"`, x);
+  const lp = config.lifepath;
+  for (const o of lp.origins) [o.description, ...o.havens, o.canonTie?.link, o.condition].forEach((x) => check(`The Origin "${o.name}"`, x));
+  for (const r of lp.enlistment) [r.reason, r.drive.trigger].forEach((x) => check(`The Drive "${r.drive.name}"`, x));
+  for (const y of lp.years) [y.title, y.subtitle, ...y.events.flatMap((e) => [e.name, e.description])].forEach((x) => check(`The Training Year "${y.title}"`, x));
+  for (const tr of lp.exam.trials) [tr.name, tr.description, ...tr.choices.map((c) => c.gear)].forEach((x) => check(`The Trial "${tr.name}"`, x));
+  for (const sp of lp.specialties) check(`The Specialty "${sp.name}"`, sp.summary);
+  for (const [where, x] of wordingTexts(config.lifepathPage)) check(where, x);
   return n;
 }
 

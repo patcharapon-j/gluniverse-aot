@@ -51,11 +51,10 @@
         <dd>
           <input
             type="number"
-            min="0"
             value={s.merit ?? ''}
             placeholder="—"
             disabled={ro}
-            onchange={(e) => setField(actor, 'system.merit', e.currentTarget.value === '' ? null : Math.max(0, Math.round(Number(e.currentTarget.value))))}
+            onchange={(e) => setField(actor, 'system.merit', e.currentTarget.value === '' ? null : Math.round(Number(e.currentTarget.value)))}
           />
         </dd>
         <dt>{t('WOF.Sheet.record.declined')}</dt>

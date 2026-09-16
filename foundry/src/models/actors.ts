@@ -124,7 +124,8 @@ export function defineActorModels() {
         drive: k.str(),
         drive_named_comrade: k.str(),
         drive_used_this_session: k.bool(),
-        merit: k.nullableInt({ min: 0 }),
+        // A Merit total can be 0 or less (data/character/class-rank.yaml, merit_min null).
+        merit: k.nullableInt(),
         class_rank: k.nullableInt({ min: 1 }),
         declined_military_police: k.bool(),
         rank: k.choice(RANKS, 'private'),

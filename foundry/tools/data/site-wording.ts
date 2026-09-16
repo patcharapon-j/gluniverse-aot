@@ -14,6 +14,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { runnerImport, type InlineConfig } from 'vite';
 import { FOUNDRY_ROOT, REPO_ROOT } from './load.ts';
+import { loadLifepathWording, type LifepathWording } from './lifepath-wording.ts';
 
 const SITE = resolve(REPO_ROOT, 'site');
 
@@ -30,6 +31,7 @@ export const SITE_SOURCES = [
   'site/src/content/compendium/talent-text.yaml',
   'site/src/content/compendium/action-text.yaml',
   'site/src/content/compendium/gear-text.yaml',
+  'site/src/content/rules/making-your-soldier.mdx',
 ] as const;
 
 type Cell = string | { options: string[] } | { lines: string[] } | { text: string; note: string };
@@ -184,6 +186,12 @@ export interface SiteWording {
   /** What changes for a Squadmate: each rule that does not apply or carries a note. */
   squadmateRules: { rule: string; applies: string; note: string | null }[];
   glossary: SiteGlossaryEntry[];
+  /** Why You Enlisted rows by id: the reason and the Drive's trigger as the website words them. */
+  enlistment: Record<string, { reason: string; trigger: string }>;
+  /** Training Years in order: the title, the subtitle, and each event's name and description. */
+  years: { id: string; title: string; subtitle: string; events: { name: string; description: string }[] }[];
+  /** The Lifepath step text from Making Your Soldier. */
+  lifepathPage: LifepathWording;
 }
 
 const cellText = (c: Cell): string => {
@@ -288,7 +296,12 @@ async function readSiteWording(): Promise<SiteWording> {
 
   const originTable = (character.originTable as () => CoreTable)();
   const originConditions: Record<string, string> = {};
-  const origins = (lifepath.lifepathTables() as { origins: SiteOrigin[] }).origins;
+  const lifepathSite = lifepath.lifepathTables() as {
+    origins: SiteOrigin[];
+    enlistment: { id: string; reason: string; drive: { trigger: string } }[];
+    years: { id: string; title: string; subtitle: string; events: { name: string; description: string }[] }[];
+  };
+  const origins = lifepathSite.origins;
   originTable.groups[0].rows.forEach(({ cells }, i) => {
     const o = origins[i];
     const note = typeof cells[1] === 'object' && 'note' in cells[1] ? cells[1].note : '';
@@ -323,6 +336,9 @@ async function readSiteWording(): Promise<SiteWording> {
     foes: Object.fromEntries((foeMod.foeRecords() as SiteFoe[]).map((f) => [f.id, f])),
     squadmateRules,
     glossary: glossaryMod.GLOSSARY as SiteGlossaryEntry[],
+    enlistment: Object.fromEntries(lifepathSite.enlistment.map((r) => [r.id, { reason: r.reason, trigger: r.drive.trigger }])),
+    years: lifepathSite.years.map((y) => ({ id: y.id, title: y.title, subtitle: y.subtitle, events: y.events.map((e) => ({ name: e.name, description: e.description })) })),
+    lifepathPage: loadLifepathWording(),
   };
 }
 

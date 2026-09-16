@@ -53,6 +53,36 @@ export const attributesFile = z.looseObject({
     z.looseObject({ id: z.literal('stress'), at_creation: z.literal(0) }),
     z.looseObject({ id: z.literal('carrying-limit'), formula: z.literal('strength + 4') }),
   ]),
+  // How the Lifepath and the builds set ratings (src/rules/lifepath.ts implements each literal).
+  creation: z.looseObject({
+    starting_rating: z.literal(2),
+    lifepath_points: z.tuple([
+      z.looseObject({ source: z.literal('origin'), points: z.literal(2) }),
+      z.looseObject({ source: z.literal('why-you-enlisted'), points: z.literal(1) }),
+      z.looseObject({ source: z.literal('training-year-event'), points: z.literal(3) }),
+    ]),
+    cap_before_graduation: z.literal(5),
+    overflow: z.string().regex(/above 5 is added instead to another attribute\s+rated below 5, chosen by the player/),
+    graduation: z.looseObject({
+      key_attribute_minimum: z.literal(4),
+      key_attribute_swap: z.string().regex(/swap the key\s+attribute's rating with the highest rating among the other five/),
+      key_attribute_floor: z.string().regex(/raise it to 4[\s\S]*lowers by 1 another attribute rated 3 or more/),
+      total_unchanged: z.literal(true),
+      top_10_key_attribute_bonus: z.literal(1),
+      order: z.tuple([z.literal('key_attribute_swap'), z.literal('key_attribute_floor'), z.literal('top_10_key_attribute_bonus')]),
+    }),
+    free_points: z.literal(0),
+    built: z.looseObject({
+      total_points: z.literal(18),
+      min: z.literal(2),
+      max: z.literal(4),
+      key_attribute: z.literal(4),
+      max_attributes_at_4: z.literal(2),
+      free_build: z.looseObject({
+        shapes: z.array(z.strictObject({ id, ratings: z.array(z.number().int().min(2).max(4)).length(6) })).min(1),
+      }),
+    }),
+  }),
 });
 
 // ---------------------------------------------------------------- character/action-catalog.yaml
@@ -77,6 +107,9 @@ export const actionEntry = z.strictObject({
   help_outside_titan_engagement: text.optional(),
   notes: text.optional(),
   option_of: text.optional(),   // an entry id or a prose description of the procedure
+  // No entry carries these today (Chapter 7 calls for every entry); the Lifepath's Talent fallback reads them.
+  dormant: z.boolean().optional(),
+  reserved: z.boolean().optional(),
   ...meta,
 });
 
@@ -165,6 +198,108 @@ export const originsFile = z.looseObject({
   rows: z.array(originRow).min(1),
 });
 
+// ---------------------------------------------------------------- character/enlistment.yaml
+
+export const enlistmentRow = z.strictObject({
+  id,
+  results: z.array(z.number().int().min(11).max(66)).min(1),
+  reason: text,
+  attribute: attributeId,
+  drive: z.strictObject({
+    id,
+    name: text,
+    trigger: text,
+    test: z.enum(['own_state', 'most_recent_turn', 'since_most_recent_turn_start']),
+    acts: z.array(id).optional(),
+    target: z.enum(['any', 'named_comrade', 'grabbed_or_down_comrade']),
+    notes: text.optional(),
+    needs_named_comrade: z.boolean(),
+  }),
+});
+
+export const enlistmentFile = z.looseObject({
+  id: z.literal('why-you-enlisted'),
+  roll: z.literal('D66'),
+  use: z.looseObject({ drive: z.string().regex(/or instead the Drive of any other row/) }),
+  rows: z.array(enlistmentRow).min(1),
+});
+
+// ---------------------------------------------------------------- character/training-years.yaml
+
+export const trainingEvent = z.strictObject({
+  results: z.array(z.number().int().min(11).max(66)).min(1),
+  name: text,
+  description: text,
+  attribute: attributeId,
+  talent_choice: z.array(id).length(2),
+  merit_change: z.number().int(),
+});
+
+const meritBand = z.strictObject({ successes_min: z.number().int().min(0), successes_max: z.number().int().nullable(), merit: z.number().int() });
+
+export const trainingYearsFile = z.looseObject({
+  id: z.literal('training-years'),
+  event_roll: z.literal('D66'),
+  talent_cap: z.looseObject({ max_level_at_creation: z.literal(2), if_both_capped: text, if_only_dormant_can_gain: text }),
+  performance_roll: z.looseObject({
+    attribute: z.string().startsWith('the higher of'),
+    push_allowed: z.literal(false),
+    help_allowed: z.literal(false),
+    merit_from_successes: z.array(meritBand).min(1),
+    replaced_by_graduation_exam: z.literal('year-3'),
+  }),
+  years: z
+    .array(
+      z.strictObject({
+        id: z.enum(['year-1', 'year-2', 'year-3']),
+        name: text,
+        performance_attributes: z.array(attributeId).length(2),
+        curriculum: z.array(id).min(1),
+        events: z.array(trainingEvent).min(1),
+      }),
+    )
+    .length(3),
+});
+
+// ---------------------------------------------------------------- character/class-rank.yaml
+
+export const classRankFile = z.looseObject({
+  id: z.literal('class-rank'),
+  rows: z.array(z.strictObject({ merit_min: z.number().int().nullable(), merit_max: z.number().int().nullable(), class_rank: z.number().int().min(1), top_10: z.boolean() })).min(1),
+  top_10: z.looseObject({ key_attribute_bonus: z.literal(1) }),
+});
+
+// ---------------------------------------------------------------- character/graduation-exam.yaml
+
+const examTrial = z.strictObject({
+  id,
+  name: text,
+  description: text,
+  entry: id.optional(),
+  gear_item: text.optional(),
+  entry_choice: z.array(z.strictObject({ entry: id, gear_item: text.nullable() })).optional(),
+  needs: z.number().int().min(1).optional(),
+  push: z.boolean(),
+  help: text,
+  cover: text.optional(),
+  rolled_state: z.looseObject({ id, forbids: z.array(id) }).optional(),
+  merit: z.array(meritBand).min(1),
+  squad_bonus: z.literal('none').optional(),
+});
+
+export const graduationExamFile = z.looseObject({
+  id: z.literal('graduation-exam'),
+  use: z.looseObject({ replaces: z.string().startsWith('the year-3 performance roll') }),
+  conditions: z.looseObject({
+    circumstances: z.literal('never'),
+    exam_issue: z.array(z.strictObject({ item: text, counts_as: id, gear_dice: z.number().int().min(1) })).min(1),
+    stress: z.string().regex(/starts the Exam at Stress 0/),
+    stress_responses: z.string().regex(/costs the Cadet 1 Merit/),
+  }),
+  order: z.array(id).length(3),
+  trials: z.array(examTrial).length(3),
+});
+
 // ---------------------------------------------------------------- character/squadmates.yaml
 
 export const squadmateTemplate = z.strictObject({
@@ -214,8 +349,47 @@ export const RECORD_ON_SHEET = [
   'gear',
 ] as const;
 
+const LIFEPATH_STEPS = ['campaign-year', 'origin', 'why-you-enlisted', 'training-year-1', 'training-year-2', 'training-year-3', 'graduation', 'finish', 'join-the-squad'] as const;
+const BUILT_STEPS = ['campaign-year', 'specialty', 'attributes', 'origin', 'drive', 'training-years', 'talents', 'no-merit', 'finish', 'join-the-squad'] as const;
+export const CAMPAIGN_CHOICES = ['lifepath only', 'lifepath and template-build', 'lifepath and free-build', 'lifepath, template-build, and free-build'] as const;
+
 export const lifepathFile = z.looseObject({
   id: z.literal('lifepath'),
+  procedures: z.tuple([
+    z.looseObject({ id: z.literal('lifepath'), allowed: z.literal('always') }),
+    z.looseObject({ id: z.literal('template-build'), allowed: z.literal('when campaign_choice allows it') }),
+    z.looseObject({ id: z.literal('free-build'), allowed: z.literal('when campaign_choice allows it') }),
+  ]),
+  campaign_choice: z.looseObject({ options: z.tuple(CAMPAIGN_CHOICES.map((c) => z.literal(c)) as unknown as [z.ZodLiteral<string>]) }),
+  talent_levels_at_creation: z.strictObject({
+    total: z.literal(5),
+    sources: z.tuple([
+      z.strictObject({ source: z.literal('origin'), levels: z.literal(1) }),
+      z.strictObject({ source: z.literal('training-year-event'), levels: z.literal(3) }),
+      z.strictObject({ source: z.literal('specialty'), levels: z.literal(1) }),
+    ]),
+  }),
+  // The step order the wizard follows, and the Campaign Year range the first step states.
+  steps: z
+    .array(z.looseObject({ id: z.enum(LIFEPATH_STEPS), order: z.number().int(), does: text }))
+    .refine((rows) => rows.map((r) => r.id).join() === LIFEPATH_STEPS.join(), 'the Lifepath steps changed; update src/rules/lifepath.ts and the wizard')
+    .refine((rows) => /from (\d{3}) to (\d{3})/.test(rows[0].does), 'the campaign-year step no longer states the Campaign Year range'),
+  built_steps: z.looseObject({
+    applies_to: z.tuple([z.literal('template-build'), z.literal('free-build')]),
+    talent_levels: z.looseObject({
+      total: z.literal(5),
+      sources: z.tuple([
+        z.strictObject({ source: z.literal('origin'), levels: z.literal(1) }),
+        z.strictObject({ source: z.literal('specialty'), levels: z.literal(1) }),
+        z.strictObject({ source: z.literal('any-talent'), levels: z.literal(3) }),
+      ]),
+      max_level: z.literal(2),
+      max_talents_at_level_2: z.literal(1),
+    }),
+    steps: z
+      .array(z.looseObject({ id: z.enum(BUILT_STEPS), order: z.number().int() }))
+      .refine((rows) => rows.map((r) => r.id).join() === BUILT_STEPS.join(), 'the built steps changed; update src/rules/lifepath.ts and the wizard'),
+  }),
   record_on_sheet: z.tuple([
     ...RECORD_ON_SHEET.map((f) => z.literal(f)),
     z.strictObject({ include: z.literal('data/harm/sheet-fields.yaml') }),
