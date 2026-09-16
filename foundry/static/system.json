@@ -11,7 +11,7 @@
     { "type": "cover", "url": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp" }
   ],
   "esmodules": ["wings-of-freedom.mjs"],
-  "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }, { "src": "styles/chat.css" }, { "src": "styles/entry.css" }],
+  "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }, { "src": "styles/chat.css" }, { "src": "styles/entry.css" }, { "src": "styles/lifepath.css" }],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
   "documentTypes": {
     "Actor": {

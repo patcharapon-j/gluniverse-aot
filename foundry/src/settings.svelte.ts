@@ -6,6 +6,7 @@ import { SYSTEM_ID } from './config.ts';
 import type { GoreLevel, MotionMode } from './motion/tokens.ts';
 import { APPLY_CATEGORIES, type ApplyCategory } from './rules/roll.ts';
 import { registerSettingsMenu } from './settings-menu.ts';
+import { registerCampaignSettings } from './lifepath/campaign.ts';
 
 export const viewer = $state({ motion: 'full' as MotionMode, gore: 'standard' as GoreLevel, reducedByOS: false });
 
@@ -21,6 +22,7 @@ export function motionMode(): MotionMode {
  * (settings-menu.ts), not listed one by one in Configure Settings.
  */
 export function registerWorldSettings(): void {
+  registerCampaignSettings();
   for (const cat of APPLY_CATEGORIES) {
     game.settings.register(SYSTEM_ID, `autoApply.${cat}`, {
       name: `WOF.Settings.autoApply.${cat}.name`,

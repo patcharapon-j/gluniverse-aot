@@ -286,7 +286,7 @@ describe('the tables and wording the wizard reads', () => {
   it('turns the page markup into plain words, and fails when a section is gone', () => {
     expect(inline('Record a <GlossaryTerm term="Haven" />, as <a href="/x/">the Lifepath</a> does.')).toBe('Record a Haven, as the Lifepath does.');
     expect(blocks('1. **One.** First\n2. Two\n   - sub a\n   more\n\nA paragraph\nwraps.\n- bullet')).toEqual([
-      { kind: 'ol', items: [{ text: '**One.** First', sub: [] }, { text: 'Two', sub: ['sub a', 'more'] }] },
+      { kind: 'ol', start: 1, items: [{ text: '**One.** First', sub: [] }, { text: 'Two', sub: ['sub a', 'more'] }] },
       { kind: 'p', items: [{ text: 'A paragraph wraps.', sub: [] }] },
       { kind: 'ul', items: [{ text: 'bullet', sub: [] }] },
     ]);

@@ -79,6 +79,8 @@ export interface TrialState {
   fresh: number;
   /** A Stress Die showed 1 on this roll (the Exam's own resolution: 1 Merit). */
   response: boolean;
+  /** The chat message of this Trial's roll, which a Push updates. */
+  message: string;
 }
 export interface LifepathState {
   v: 1;
@@ -100,7 +102,7 @@ export interface LifepathState {
 }
 
 const emptyYear = (): YearState => ({ roll: null, talent: null, overflow: null, perfAttr: null, perf: null });
-const emptyTrial = (): TrialState => ({ order: [], entry: null, helped: false, hunterEye: false, coverStress: 0, dice: null, covers: [], fresh: -1, response: false });
+const emptyTrial = (): TrialState => ({ order: [], entry: null, helped: false, hunterEye: false, coverStress: 0, dice: null, covers: [], fresh: -1, response: false, message: '' });
 
 /** A fresh state; every key is always present so a flag merge never keeps a stale one. */
 export function emptyState(): LifepathState {
@@ -639,9 +641,13 @@ export function setChoice(state: LifepathState, key: string, value: unknown, t: 
   target[parts[parts.length - 1]] = value;
   if (key === 'procedure' && value !== state.procedure) {
     s.confirmed = s.confirmed.filter((c) => c === 'campaign');
+    // A built soldier recorded no Exam vote; the Lifepath asks for one again.
+    if (value === 'lifepath') s.exam = null;
   }
+  // A new Free Build shape starts an empty placement.
+  if (key === 'built.shape' && value !== state.built.shape) s.built.placement = emptyState().built.placement;
   const step = stepOf(key);
-  if (step && step !== 'campaign') s.step = step;
+  if (step && step !== 'campaign' && railFor(s).includes(step)) s.step = step;
   return replay(s, t, opts).state;
 }
 

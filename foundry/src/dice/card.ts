@@ -120,7 +120,31 @@ export interface CallCard extends CardBase {
   rolled: string | null;
 }
 
-export type Card = ActionCard | TableCard | GasCard | AttackCard | CallCard;
+/** A Lifepath roll (the wizard): a D66, a performance roll, an Exam order roll, or a Trial. */
+export interface LifepathCard extends CardBase {
+  kind: 'lifepath';
+  /** The step's title, as the header shows it. */
+  title: string;
+  glyph: string;
+  /** A D66: tens, then units. */
+  d66: [number, number] | null;
+  /** Plain D6s (the Exam order). */
+  plain: number[];
+  /** Pool dice by kind (a performance roll or a Trial). */
+  dice: DiceFaces | null;
+  fresh: number;
+  pushes: number;
+  big: string;
+  label: string;
+  text: string;
+  lines: string[];
+  /** Short header flags (Pushed, Covered). */
+  flags: string[];
+  /** The roll's result is struck (an Origin rolled again). */
+  struck: boolean;
+}
+
+export type Card = ActionCard | TableCard | GasCard | AttackCard | CallCard | LifepathCard;
 
 /** What the viewer may do on this card, decided by the chat code from permissions. */
 export interface CardViewer {
@@ -403,9 +427,30 @@ function callCard(t: T, c: CallCard, v: CardViewer): string {
 </div>`;
 }
 
+function lifepathCard(t: T, c: LifepathCard, v: CardViewer): string {
+  const flags = c.flags.map((f) => `<span class="flag">${esc(f)}</span>`).join('');
+  const rows: string[] = [];
+  if (c.d66) rows.push(drow('d66', 'die-base', t('WOF.Lifepath.card.d66'), c.d66.map((f) => dieIcon(t, 'base', f, { plain: true })).join('<span class="d66-sep" aria-hidden="true"></span>')));
+  if (c.plain.length) rows.push(drow('d6', 'die-base', 'D6', c.plain.map((f) => dieIcon(t, 'base', f, { plain: true })).join('')));
+  if (c.dice) {
+    if (c.dice.base.length) rows.push(drow('base', 'die-base', t('WOF.Roll.die.baseDice'), c.dice.base.map((f) => dieIcon(t, 'base', f)).join('')));
+    if (c.dice.gear.length) rows.push(drow('gear', 'die-gear', t('WOF.Roll.die.gearDice'), c.dice.gear.map((f) => dieIcon(t, 'gear', f, { locked: f === 1 && c.pushes > 0 })).join('')));
+    if (c.dice.stress.length) rows.push(drow('stress', 'die-stress', t('WOF.Roll.die.stressDice'), c.dice.stress.map((f, i) => dieIcon(t, 'stress', f, { fresh: i === c.fresh })).join('')));
+  }
+  const lines = c.lines.map((l) => `<p class="eff-line">${esc(l)}</p>`).join('');
+  return `${header(t, { img: c.img, name: c.title, time: c.time, who: c.actorName, glyph: c.glyph }, flags, v.isGM)}
+<div class="rc-b">
+  <div class="dice">${rows.join('')}</div>
+  <div class="result${c.struck ? ' struck' : ''}"><span class="big">${esc(c.big)}</span><span class="rt"><b>${esc(c.label)}</b>${esc(c.text)}</span></div>
+  ${lines}
+</div>`;
+}
+
 export function renderCard(t: T, c: Card, v: CardViewer, deathRows: { id: string; min: number | null; max: number | null }[] = []): string {
   const body =
-    c.kind === 'action'
+    c.kind === 'lifepath'
+      ? lifepathCard(t, c, v)
+      : c.kind === 'action'
       ? actionCard(t, c, v, deathRows)
       : c.kind === 'table'
         ? tableCard(t, c, v)
@@ -430,5 +475,7 @@ export function plainSummary(c: Card): string {
       return `${c.actorName}: ${c.name}, ${c.severity}`;
     case 'call':
       return `${c.actorName}: ${c.label}`;
+    case 'lifepath':
+      return `${c.actorName}: ${c.title}, ${c.big} ${c.text}`;
   }
 }

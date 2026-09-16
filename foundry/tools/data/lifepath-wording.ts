@@ -20,6 +20,8 @@ export interface WordItem {
 export interface WordBlock {
   kind: 'ol' | 'ul' | 'p';
   items: WordItem[];
+  /** The number of an ordered list's first item. */
+  start?: number;
 }
 export interface FlowStep {
   title: string;
@@ -76,7 +78,7 @@ export function blocks(md: string): WordBlock[] {
       const kind = ol ? 'ol' : 'ul';
       const item = { text: inline((ol ? ol[2] : ul![1]) ?? ''), sub: [] };
       if (last()?.kind === kind) last().items.push(item);
-      else out.push({ kind, items: [item] });
+      else out.push(ol ? { kind, items: [item], start: Number(ol[1]) } : { kind, items: [item] });
     } else if (nested && /^\s/.test(line) && last() && last().kind !== 'p' && !para.length) {
       last().items[last().items.length - 1].sub.push(inline(nested[1]));
     } else {

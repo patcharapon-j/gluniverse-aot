@@ -7,6 +7,7 @@
   import type { SheetState } from '../sheet-state.svelte.ts';
   import type { SoldierView } from '../soldier-view.ts';
   import Header from './Header.svelte';
+  import LifepathBanner from './LifepathBanner.svelte';
   import TabKit from './TabKit.svelte';
   import TabRecord from './TabRecord.svelte';
   import TabSoldier from './TabSoldier.svelte';
@@ -42,6 +43,7 @@
   <i class="eyelet e1"></i><i class="eyelet e2"></i><i class="eyelet e3"></i>
   <Header {view} />
   <Vitals {view} />
+  {#if view.lifepath}<LifepathBanner offer={view.lifepath} {sheet} />{/if}
 
   <Tabs tabs={TABS} {sheetState} {sheet} onselect={select} label={t('WOF.Sheet.tab.label')} />
 

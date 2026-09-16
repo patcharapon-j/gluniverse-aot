@@ -47,6 +47,23 @@ export function defineSettingsMenu() {
       const motion = game.settings.get(SYSTEM_ID, 'motion') as string;
       const gore = game.settings.get(SYSTEM_ID, 'gore') as string;
       const os = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? `<p class="note warn">${esc(t('WOF.Settings.motion.osReduced'))}</p>` : '';
+      const lp = CONFIG.WOF.lifepath as { campaignChoices: { id: string }[]; campaignYears: { min: number; max: number } };
+      const choice = game.settings.get(SYSTEM_ID, 'campaignChoice') as string;
+      const year = Number(game.settings.get(SYSTEM_ID, 'campaignYear'));
+      const years = Array.from({ length: lp.campaignYears.max - lp.campaignYears.min + 1 }, (_, i) => lp.campaignYears.min + i);
+      const campaign = isGM
+        ? `<fieldset class="pgroup gm">
+  <legend>${esc(t('WOF.Settings.menu.campaign'))}<span class="gm-tag">${esc(t('WOF.Settings.menu.gmOnly'))}</span></legend>
+  <label class="pfield"><span>${esc(t('WOF.Settings.campaignChoice.name'))}</span><select name="campaignChoice">${lp.campaignChoices
+    .map((c, i) => `<option value="${esc(c.id)}" ${c.id === choice ? 'selected' : ''}>${esc(t(`WOF.Settings.campaignChoice.option${i}`))}</option>`)
+    .join('')}</select></label>
+  <p class="note">${esc(t('WOF.Settings.campaignChoice.menuHint'))}</p>
+  <label class="pfield"><span>${esc(t('WOF.Settings.campaignYear.name'))}</span><select name="campaignYear"><option value="0">${esc(t('WOF.Settings.campaignYear.unset'))}</option>${years
+    .map((y) => `<option value="${y}" ${y === year ? 'selected' : ''}>${y}</option>`)
+    .join('')}</select></label>
+  <p class="note">${esc(t('WOF.Settings.campaignYear.menuHint'))}</p>
+</fieldset>`
+        : '';
       const apply = isGM
         ? `<fieldset class="pgroup gm">
   <legend>${esc(t('WOF.Settings.menu.autoApply'))}<span class="gm-tag">${esc(t('WOF.Settings.menu.gmOnly'))}</span></legend>
@@ -66,6 +83,7 @@ export function defineSettingsMenu() {
   <p class="note">${esc(t('WOF.Settings.menu.intro'))}</p>
   ${choiceGroup('motion', MOTION, motion)}${os}
   ${choiceGroup('gore', GORE, gore)}
+  ${campaign}
   ${apply}
   <footer class="pf"><button type="submit" class="pbtn"><i class="fa-solid fa-stamp" inert></i>${esc(t('WOF.Settings.menu.save'))}</button></footer>
 </div>`;
@@ -82,6 +100,9 @@ export function defineSettingsMenu() {
         if (typeof data[key] === 'string' && data[key] !== game.settings.get(SYSTEM_ID, key)) writes.push(game.settings.set(SYSTEM_ID, key, data[key]));
       }
       if (game.user.isGM) {
+        if (typeof data.campaignChoice === 'string' && data.campaignChoice !== game.settings.get(SYSTEM_ID, 'campaignChoice')) writes.push(game.settings.set(SYSTEM_ID, 'campaignChoice', data.campaignChoice));
+        const year = Number(data.campaignYear);
+        if (Number.isInteger(year) && year !== Number(game.settings.get(SYSTEM_ID, 'campaignYear'))) writes.push(game.settings.set(SYSTEM_ID, 'campaignYear', year));
         for (const c of APPLY_CATEGORIES) {
           const on = !!(data[`autoApply.${c}`] ?? foundry.utils.getProperty(data, `autoApply.${c}`));
           if (on !== (game.settings.get(SYSTEM_ID, `autoApply.${c}`) !== false)) writes.push(game.settings.set(SYSTEM_ID, `autoApply.${c}`, on));

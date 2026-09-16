@@ -994,7 +994,23 @@
         "autoApply": "Roll consequences apply themselves",
         "autoApplyHint": "A category switched off still lists its changes on the roll card, with an Apply button.",
         "gmOnly": "GM",
-        "save": "Save preferences"
+        "save": "Save preferences",
+        "campaign": "Character creation"
+      },
+      "campaignChoice": {
+        "name": "Procedures the campaign allows",
+        "hint": "Set once at session zero, before the campaign's first soldier is created. The Lifepath is always allowed.",
+        "option0": "The Lifepath only",
+        "option1": "The Lifepath and the Template Build",
+        "option2": "The Lifepath and the Free Build",
+        "option3": "The Lifepath, the Template Build, and the Free Build",
+        "menuHint": "The GM's choice for the whole campaign. It never changes once soldiers are made with it."
+      },
+      "campaignYear": {
+        "name": "Campaign Year",
+        "hint": "The year the campaign has reached, from 845 to 850. Origin conditions are tested against it.",
+        "unset": "Not recorded yet",
+        "menuHint": "Recorded before the first Lifepath, by the players or here. It changes only when a rule names a change."
       }
     },
     "Sheet": {
@@ -1719,6 +1735,309 @@
         "dg": "Wings of Freedom: Gear Dice (gunmetal)",
         "ds": "Wings of Freedom: Stress Dice (wax red)",
         "dt": "Wings of Freedom: Titan Dice (flesh)"
+      }
+    },
+    "Lifepath": {
+      "window": "Lifepath: {name}",
+      "kicker": "Training Corps · Personnel file",
+      "lede": {
+        "none": "Choose how this soldier is made, then work down the file one step at a time.",
+        "lifepath": "Roll your Cadet from Origin to Graduation. Every roll goes to the chat.",
+        "template-build": "Build your soldier on a Specialty's template, choosing the rest.",
+        "free-build": "Build your soldier from a Free Build shape, choosing the rest."
+      },
+      "rail": "Lifepath steps",
+      "step": {
+        "campaign": "Campaign",
+        "origin": "Origin",
+        "enlist": "Why You Enlisted",
+        "year-1": "First Year",
+        "year-2": "Second Year",
+        "year-3": "Third Year",
+        "exam": "Graduation Exam",
+        "graduation": "Graduation",
+        "specialty": "Specialty",
+        "attributes": "Attributes",
+        "drive": "Drive",
+        "stories": "Training Years",
+        "talents": "Talents",
+        "merit": "Merit",
+        "finish": "Finish",
+        "squad": "Join the Squad"
+      },
+      "status": {
+        "done": "Filed. You can still look it over.",
+        "ready": "Ready to file.",
+        "todo": "Make every roll and choice on this page.",
+        "blocked": "Finish the steps before this one.",
+        "filed": "This soldier is filed.",
+        "review": "Filed. A roll after this step fixed its choices."
+      },
+      "back": "Back",
+      "next": "Next",
+      "confirm": "File this step",
+      "filedStamp": "Filed",
+      "filedShort": "Filed",
+      "chosen": "Chosen",
+      "fixed": "Fixed",
+      "locked": "A later roll used this choice, so it can no longer change.",
+      "none": "None",
+      "rolled": "Rolled. The result stands.",
+      "rollD66": "Roll D66",
+      "range": "{a} to {b}",
+      "plusOne": "+1 {a}",
+      "meritChip": "Merit {merit}",
+      "successes": "successes",
+      "notOwner": "Only the soldier's owner can fill in the Lifepath.",
+      "error": "The Lifepath step failed: {message}",
+      "talentType": {
+        "dice": "Dice Talent",
+        "rule": "Rule Talent"
+      },
+      "procedure": {
+        "lifepath": {
+          "title": "Lifepath",
+          "sub": "Roll Origin, Why You Enlisted, and three Training Years, then graduate. The only way to a key attribute of 5 or 6 or a Top 10 Class Rank."
+        },
+        "template-build": {
+          "title": "Template Build",
+          "sub": "Take your Specialty's template ratings and choose your Origin, Drive, and Talents."
+        },
+        "free-build": {
+          "title": "Free Build",
+          "sub": "Place one of the two 18-point shapes with a 4 on your key attribute, and choose the rest."
+        },
+        "none": "No procedure yet",
+        "notAllowed": "The GM has not allowed this procedure for the campaign.",
+        "onlyLifepath": "This campaign allows the Lifepath only. The GM sets the procedures in the Wings of Freedom preferences."
+      },
+      "campaign": {
+        "hint": "Before the Lifepath",
+        "procedure": "How is this soldier made?",
+        "year": "Campaign Year",
+        "yearFixed": "Recorded for the campaign.",
+        "yearOpen": "The first soldier records it for the whole campaign.",
+        "yearLocked": "The Origin roll used it, so it stays.",
+        "exam": "Did the players vote to run the Graduation Exam?"
+      },
+      "exam": {
+        "run": "Run the Exam",
+        "runSub": "Three Trials replace the Third Year's performance roll.",
+        "skip": "No Exam",
+        "skipSub": "The Third Year ends with its performance roll.",
+        "hint": "Three Trials, in order",
+        "trialsRules": "The three Trials, with Help and Cover",
+        "company": "Who takes the Exam?",
+        "alone": "Alone",
+        "aloneSub": "A replacement character, or the only Cadet: no order rolls, no Help, no Cover.",
+        "group": "With other Cadets",
+        "groupSub": "Every Cadet rolls for the order before each Trial; the table settles who Helps and Covers.",
+        "trialN": "Trial {n}",
+        "rollOrder": "Roll for the order",
+        "orderNote": "Roll again on a tie. Cadets roll this Trial from the highest result down.",
+        "orderFirst": "Roll a D6 for the order before this Trial.",
+        "entry": "Your roll, needing {needs}",
+        "noGear": "No exam issue",
+        "hunterEye": "Use Perception for the Read (Hunter's Eye)",
+        "helped": "Helped by the Cadet who rolls after you",
+        "coverStress": "Stress from Covering before your roll",
+        "poolAria": "{base} base dice, {gear} Gear Dice, {stress} Stress Dice",
+        "poolWhy": "{attr} {a}, {talent}, {gear}",
+        "noTalent": "no Talent",
+        "roll": "Roll the Trial",
+        "ofNeeds": "of {needs} needed",
+        "response": "A Stress Die shows 1: a Stress Response. It costs 1 Merit on this Trial, and the roll cannot be Pushed.",
+        "push": "Push",
+        "pushCovered": "Push, Covered",
+        "pushedStress": "Pushed: 1 more Stress for the rest of the Exam.",
+        "pushedCovered": "Pushed and Covered: the Covering Cadet takes the Stress.",
+        "noPushHere": "This Trial forbids a Push.",
+        "block": {
+          "not-allowed": "This Trial forbids a Push.",
+          "down": "You cannot Push now.",
+          "stress-one": "A Stress Die shows 1: no Push.",
+          "already-pushed": "Already Pushed.",
+          "nothing": "Every die shows a success: nothing to Push."
+        },
+        "total": "Exam Merit {merit}. Merit total {total}."
+      },
+      "origin": {
+        "hint": "D66",
+        "hintBuilt": "Chosen, not rolled",
+        "rollAgain": "Roll again",
+        "rollNote": "Every attribute starts at 2.",
+        "again": "Roll again.",
+        "choose": "Choose an Origin",
+        "talent": "Talent, level 1",
+        "haven": "Haven",
+        "canonTie": "Canon Tie",
+        "noPoints": "A built soldier's Origin adds no attribute points."
+      },
+      "enlist": {
+        "hint": "D66",
+        "hintBuilt": "Any row's Drive",
+        "rollNote": "The point always comes from the rolled row.",
+        "fixedPoint": "Choosing another row's Drive never moves this point.",
+        "drive": "Drive",
+        "rolledBadge": "Rolled",
+        "comradeBadge": "Named comrade",
+        "comradeNote": "This Drive names a comrade when the Squad forms."
+      },
+      "overflow": {
+        "label": "Where the point goes",
+        "text": "{a} is already {cap}. The point goes to another attribute rated below {cap}, your choice:",
+        "done": "The point went to {a}."
+      },
+      "year": {
+        "limits": "Attribute cap and Talent cap",
+        "capBox": "Attribute cap",
+        "talentBox": "Talent cap",
+        "rollEvent": "Roll the event",
+        "rollNote": "Roll D66 on the {year} events.",
+        "talent": "Talent, +1 level",
+        "curriculumBadge": "Curriculum",
+        "capped": "Cannot gain a level now.",
+        "bothCapped": "Neither of the event's Talents can gain a level: take 1 level in a Talent on this year's curriculum.",
+        "dormant": "The only Talent here that can gain a level names only entries no rule calls for: take it, or a Talent on this year's curriculum.",
+        "performance": "Performance roll",
+        "tie": "Both are equal: pick one.",
+        "dice": "{n} dice",
+        "rollPerformance": "Roll {n} dice",
+        "noPush": "No Push, no Help.",
+        "choicesFirst": "Choose the Talent (and where any extra point goes) first.",
+        "examReplaces": "The Graduation Exam replaces this roll",
+        "meritTotal": "Merit total after this year: {merit}"
+      },
+      "grad": {
+        "hint": "Five steps, in order",
+        "meritTotal": "Merit total",
+        "ofClass": "of a class of 200",
+        "top10": "Top 10",
+        "declined": "Offered the Military Police, and declined it.",
+        "declinedShort": "Declined the MP",
+        "specialty": "Specialty",
+        "keyAttr": "Key: {a}",
+        "swapFloor": "Swap and floor",
+        "noSwap": "{a} already holds your highest rating: nothing swaps.",
+        "swapTie": "Several attributes share your highest rating. Pick the one that swaps with {a}:",
+        "swapped": "{a} swaps its rating with {b}.",
+        "floor": "{a} is below 4: it rises to 4, and for each point added you lower another attribute rated 3 or more. Still to lower: {left}.",
+        "lower": "Lower {a}",
+        "floorUndo": "Undo",
+        "top10Line": "Top 10: {a} rises to {v}.",
+        "talent": "{name} Talent, +1 level"
+      },
+      "finish": {
+        "hint": "Record, receive, and name",
+        "health": "Health {n}",
+        "resolve": "Resolve",
+        "stress": "Stress",
+        "stressLine": "0, minimum 0",
+        "issue": "Standard Issue at Funding {funding}",
+        "rating": "Rating {n}",
+        "blades": "{n} × {name}",
+        "inHandles": "one in the handles",
+        "canisters": "Spare canisters: {n}",
+        "fitted": "fitted canister full ({n})",
+        "declineSpares": "Decline spare canisters",
+        "declineBlades": "Decline Blade Sets",
+        "declineItem": "Decline the Specialty item",
+        "issued": "Standard Issue received.",
+        "name": "Name the soldier",
+        "namePlaceholder": "Name",
+        "replaces": "Filing replaces what the sheet already holds: {names}.",
+        "replaceTitle": "Replace what the sheet holds?",
+        "replaceHint": "Filing the Lifepath replaces these on the soldier:",
+        "sign": "Sign and file the soldier",
+        "signNote": "Writes the soldier to the sheet in one go.",
+        "done": "{name} is filed.",
+        "missing": "The {pack} compendium has no entry for {key}."
+      },
+      "squad": {
+        "hint": "Once every player character is finished",
+        "comrade": "Named comrade",
+        "notYet": "Sign the file first.",
+        "later": "Name one later, at the table",
+        "nobody": "No other soldier or Squadmate is in this world yet. Name one when the Squad forms.",
+        "noComrade": "{name} needs no named comrade.",
+        "squadmates": "Starting Squadmates",
+        "pack": "Squadmate templates are in the Squadmates compendium.",
+        "close": "Close the file"
+      },
+      "specialty": {
+        "hint": "Not rolled, never changes"
+      },
+      "attributes": {
+        "hintFree": "Place a shape",
+        "hintTemplate": "The template's ratings",
+        "shape": "Shape",
+        "shapeSub": {
+          "one-four": "One attribute at 4",
+          "two-fours": "Two attributes at 4"
+        },
+        "ratings": "Ratings",
+        "left": "Still to place: {values}.",
+        "keyFour": "Put a 4 on {a}, your key attribute.",
+        "placed": "Every rating is placed."
+      },
+      "stories": {
+        "hint": "For the story only",
+        "none": "No event named"
+      },
+      "talents": {
+        "hint": "Five levels in all",
+        "limits": "Talent limits",
+        "fromList": "One level from the {name} list",
+        "cannot": "Cannot gain a level within the limits.",
+        "any": "Any Talents: {n} of {of}",
+        "add": "Choose a Talent",
+        "listFirst": "Choose the Specialty's Talent first",
+        "addBtn": "Add a level",
+        "remove": "Remove"
+      },
+      "merit": {
+        "hint": "None for a built soldier",
+        "note": "Not Top 10: no Military Police offer and no key attribute bonus."
+      },
+      "file": {
+        "title": "Personnel file",
+        "key": "Key",
+        "total": "Total",
+        "talents": "Talents, {n} levels",
+        "level": "{name}, level {level}",
+        "noTalents": "No Talents yet."
+      },
+      "card": {
+        "d66": "D66",
+        "tens": "Tens",
+        "units": "Units",
+        "rollAgain": "Rolled again",
+        "plusTwo": "+1 {a} and {b}",
+        "plusOne": "+1 {a}",
+        "drive": "Drive rolled: {name}",
+        "eventLine": "+1 {a}, Merit {merit}",
+        "performance": "{year}: performance roll",
+        "merit": "Merit {merit}",
+        "pool": "{a}, {n} dice",
+        "order": "{trial}: order",
+        "orderLabel": "Order roll",
+        "orderText": "Highest rolls first",
+        "needs": "{entry}, needs {needs}",
+        "talent": "{name} {n}",
+        "covered": "Covered"
+      },
+      "banner": {
+        "emptyTitle": "This file is empty",
+        "emptyText": "Make this soldier with the Lifepath wizard, or drop an Origin, a Specialty, and Talents from the compendia.",
+        "resumeTitle": "The Lifepath is not finished",
+        "resumeText": "Pick up where you left off, at step {step}.",
+        "stamp": "New recruit",
+        "open": "Open the Lifepath",
+        "resume": "Resume the Lifepath"
+      },
+      "reset": {
+        "title": "Clear the Lifepath",
+        "hint": "Clears this soldier's Lifepath progress and rolls. The sheet itself is not changed."
       }
     }
   }

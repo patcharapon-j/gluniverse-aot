@@ -10,6 +10,7 @@ import { actorPool, entryBlock, poolInputs } from '../dice/actor-pool.ts';
 import { previewPool, type PoolPreview } from '../rules/pool.ts';
 import type { MindEffect } from '../../tools/config-data.ts';
 import { severityOf, type Severity } from './figure.ts';
+import { lifepathOffer } from '../lifepath/wizard.ts';
 
 export const icon = iconPath;
 
@@ -129,6 +130,8 @@ export interface SoldierView {
   fullGas: number;
   bonusCap: number;
   notesHTML: string;
+  /** The Lifepath wizard the sheet offers: open on an empty file, resume an unfinished one. */
+  lifepath: ReturnType<typeof lifepathOffer>;
 }
 
 const specialtyIcon = (id: string) => icon(`specialty-${id}`);
@@ -407,5 +410,6 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     fullGas: W.gas.full,
     bonusCap: W.bonusDiceCap,
     notesHTML: opts.notesHTML,
+    lifepath: opts.editable ? lifepathOffer(actor) : null,
   };
 }

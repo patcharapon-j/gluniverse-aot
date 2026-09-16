@@ -5,6 +5,7 @@
  * 2d: the four die kinds, the roll dialog, roll cards with Push, Cover, auto-apply, and Undo.
  * 2e: Dice So Nice presets, the three.js gas and blade widgets, the preferences menu, token status
  * effects bound to the model, and default art.
+ * 3: the Lifepath wizard.
  */
 import { buildSystemConfig, SYSTEM_ID } from './config.ts';
 import { callRoll } from './dice/call.ts';
@@ -22,6 +23,7 @@ import { defineActorModels } from './models/actors.ts';
 import { defineItemModels } from './models/items.ts';
 import { loadSettings, registerSettings } from './settings.svelte.ts';
 import { registerPortraits, registerSheets, registerTokenDefaults } from './sheets/register.ts';
+import { defineWizard, openLifepath } from './lifepath/wizard-app.ts';
 
 Hooks.once('init', () => {
   CONFIG.WOF = buildSystemConfig();
@@ -48,7 +50,8 @@ Hooks.once('init', () => {
   registerSheets();
   registerTokenDefaults();
   registerPortraits();
-  game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse, widgetStats };
+  defineWizard();
+  game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse, widgetStats, openLifepath };
   console.log(`${SYSTEM_ID} | initialised: ${CONFIG.WOF.actionCatalog.length} Action Catalog entries`);
 });
 
