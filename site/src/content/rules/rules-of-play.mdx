@@ -8,9 +8,9 @@ sources:
   - path: docs/rules/01-core-rules.md
     sha: "2495d67ea59ed62935146757841a8c95a2e16808"
   - path: data/core/dice-pool.yaml
-    sha: "c1a7328fd13f695fb882c427ee2f365176b77cf2"
+    sha: "6469a403a81cf26738be5251ec88670160059d3f"
   - path: data/core/circumstances.yaml
-    sha: "51d693cbe075bf7d6efca005b557ead81740e6c7"
+    sha: "c052e05ec93aa886814301884f43e8605565e75a"
   - path: data/core/stress-changes.yaml
     sha: "80c428f9122a1a8d20a10eaa5b855a75b0bc2a13"
   - path: data/core/bonus-dice-sources.yaml
@@ -36,6 +36,7 @@ import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
 import TryRollButton from '~/components/TryRollButton.astro';
 import platePlay from '~/assets/plates/plate-rules-of-play.webp';
+import { exceptionText } from '~/lib/core-tables';
 
 <FieldQuote cite="Instructor's saying, Training Corps">Count your sixes, not your chances. The dice have already decided.</FieldQuote>
 
@@ -276,10 +277,11 @@ The GM applies all of these as written:
 
 <Subsection title="Passive rolls" id="passive-rolls">
 
-A **passive roll** is the one roll of yours the GM makes out of sight: a Spot or a Size Up made for you against something you do not know is there, outside a Titan Engagement and a Skirmish.
+{exceptionText('passive-roll')}
+
+A passive roll is made outside a Titan Engagement and a Skirmish.
 
 - The GM builds your pool as it stands: your attribute, the Talent that names the entry, Gear Dice if the entry allows them, and Stress Dice, with the Circumstances the GM names to themselves. A plus step adds its dice, and no other Bonus Dice source applies.
-- It cannot be Helped, Covered, or Pushed, and a Stress Die showing 1 on it does nothing, since you do not know you rolled.
 - You learn the result only through what you notice.
 - It is not a called roll. It has no stakes, and failing it means only that you did not notice.
 

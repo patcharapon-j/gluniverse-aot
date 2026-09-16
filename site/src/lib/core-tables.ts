@@ -79,6 +79,8 @@ interface RawException {
   bonus_sources_excluded: string[];
   push_allowed: boolean;
   talent_dice_allowed: boolean;
+  /** Player wording written in the source table, where a row has one. */
+  player_text?: string;
 }
 interface RawFailure {
   id: string;
@@ -97,6 +99,17 @@ export interface PoolStep {
   name: string;
   /** How many dice the step adds or removes, in words. */
   count: string;
+}
+
+/**
+ * The player wording a roll exception carries in the source table, so a rule
+ * written for players lives in one place instead of two.
+ */
+export function exceptionText(roll: string): string {
+  const row = dicePool.roll_exceptions.find((r) => r.roll === roll);
+  if (!row) throw new Error(`Roll exceptions: no row named "${roll}".`);
+  if (!row.player_text) throw new Error(`Roll exceptions: "${roll}" has no player wording.`);
+  return row.player_text.trim();
 }
 
 /** The pool components in build order, with their limits in words. */

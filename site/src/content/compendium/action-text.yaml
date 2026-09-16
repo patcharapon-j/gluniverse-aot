@@ -45,7 +45,7 @@ sources:
   - path: data/campaign/downtime.yaml
     sha: "d5e2091e7d41e0f0eefdad38f71f584c856dfce3"
   - path: data/core/dice-pool.yaml
-    sha: "c1a7328fd13f695fb882c427ee2f365176b77cf2"
+    sha: "6469a403a81cf26738be5251ec88670160059d3f"
 
 actions:
   # ---------------------------------------------------------------- Titan Engagement actions
