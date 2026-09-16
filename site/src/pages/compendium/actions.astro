@@ -53,6 +53,10 @@ const groups: FilterGroup[] = [
           <dd>An attribute roll made when a rule calls for it. Not an action, and it spends no turn of its own.</dd>
         </div>
         <div>
+          <dt class="lbl">Called roll</dt>
+          <dd>One of the nine entries a called roll is made for: rolled when a rule calls for it, and when the GM calls a roll for an act it fits.</dd>
+        </div>
+        <div>
           <dt class="lbl">Option</dt>
           <dd>A use of another entry, a turn, or a step. Not an action and not a roll, and it spends nothing unless it says so.</dd>
         </div>
@@ -65,7 +69,7 @@ const groups: FilterGroup[] = [
           <dd>The items that can give the roll Gear Dice. An item worn down to 0 counts as not had.</dd>
         </div>
       </dl>
-      <p class="see">Every soldier can attempt every entry, whatever their Specialty. How rolls, Help, and Reactions work: <a href="/guide/rules-of-play/">The Rules of Play</a>.</p>
+      <p class="see">Every soldier can attempt every entry, whatever their Specialty. How rolls, Help, and Reactions work: <a href="/guide/rules-of-play/">The Rules of Play</a>. What the GM calls a roll for, and how an act the Catalog does not name is resolved: <a href="/guide/making-your-soldier/#called-rolls">Making Your Soldier</a>.</p>
       <div class="cards cards--wide">
         {actions.map((action) => <ActionCard action={action} chapters={chapters} />)}
       </div>

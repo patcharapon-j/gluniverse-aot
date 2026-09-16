@@ -22,7 +22,13 @@ Tables are rendered from `data/character/*`; names, numbers, kinds, attributes, 
 
 ## Actions page key
 
-- Kinds: action, reaction, roll, option, fixed roll, as the Catalog's kind comments state. AC 13-24
+- Kinds: action, reaction, roll, option, fixed roll, as the Catalog's kind comments state. A roll is also made when the GM calls one, for an entry marked `when_called`. AC 13-24
+- Called roll key and card tag: the nine entries whose `rolled` is `when_called` (spot, size-up, survive, persuade, endure, sneak, recall, ride, fly), rolled when a rule calls for it and when the GM calls a roll for an act the entry fits. The tag is built in `shared-data.ts` from `rolled`, which also fails the build on a value with no wording. AC 28-31
+- Each called roll needs 1 success; Help on it is as the GM rules outside a Skirmish, and the Skirmish's Help in one, each helper spending their action; Help spends nothing unless the GM names a cost of time or position, which falls when Help is declared. AC rows of the nine entries (`needs`, `help_outside_titan_engagement`)
+- Fly on a called roll: outside a Titan Engagement only; needs 1; in a Skirmish it takes its Gear Dice, makes no Gas Roll, no soldier airborne, and no Engaged or Apart. AC fly row
+- Ride on a called roll takes the entry's Gear Dice; a called Persuade the GM rules is a threat rolls Strength. AC ride and persuade rows
+- Passive roll: a Spot or Size Up the GM makes out of sight, outside a Titan Engagement and a Skirmish, not a called roll; saying you are looking gets a called roll instead. AC spot and size-up `notes`; `data/core/dice-pool.yaml` `roll_exceptions` passive-roll
+- Rolls that take no Circumstances: Death Roll and performance roll (`data/core/dice-pool.yaml` `roll_exceptions`), and every roll that is not an attribute roll, so the Fear Roll, the Stress Response roll, and the Gas Roll (`data/core/circumstances.yaml` `never`; `data/mind/fear-rolls.yaml` `roll`; `data/gear/odm-gear.yaml` `gas_roll`)
 - Gear Dice come from the listed items; an item worn to 0 counts as not had. AC 29-30, 50-52
 - Every soldier can attempt every entry. S 22-24
 

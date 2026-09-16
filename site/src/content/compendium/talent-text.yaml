@@ -8,19 +8,19 @@
 # record the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/talents.yaml
-    sha: "4ffa78a0b7267e765c5e8916c518b7e7aec707a3"
+    sha: "f0098aff13c59294571cb504ecc0dbabf24903f1"
   - path: data/character/action-catalog.yaml
-    sha: "bcc0ef9e91cd6b59f714b9ed846f04274eb66dd0"
+    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
   - path: data/engagement/read.yaml
-    sha: "3761bb2fed4dc692ee21f6a70be44e6919f721da"
+    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/grab.yaml
-    sha: "605d4d2b976ae65ab8a74a53a7d4c4b0d48b0460"
+    sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
   - path: data/gear/falls.yaml
-    sha: "cd0d55bf115626522ba53042f77165b14c14f952"
+    sha: "7508711ebe1cb5f4afd6468ffeef8b443d5e5420"
   - path: data/harm/death-rolls.yaml
-    sha: "75d863c202b34f3f415b854a3887fe9e08aa38b9"
+    sha: "66dd2a154f48e9036242cd6c26de2ef46c4ee9a6"
   - path: data/mind/fear-rolls.yaml
-    sha: "879110091392580419654aa5a878e7d8b29d0f15"
+    sha: "6b6e4d5d77bf9c68bdd2ef02fd9c4229d0e1dd99"
 
 talents:
   # ---------------------------------------------------------------- Slayer

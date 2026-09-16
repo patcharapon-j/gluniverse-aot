@@ -64,6 +64,8 @@ const actions = defineCollection({
     kind: named,
     attribute: named.nullable(),
     rollLabel: z.string(),
+    /** True for the entries a called roll is made for: rolled when a rule or the GM calls for it. */
+    calledRoll: z.boolean(),
     gear: z.string(),
     requires: z.array(z.string()),
     needs: z.string().nullable(),

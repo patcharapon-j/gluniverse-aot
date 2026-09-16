@@ -270,6 +270,9 @@ export function talentsLoader(): Loader {
 
 // ---------------------------------------------------------------- Actions
 
+/** When an entry is rolled. `when_called` marks the entries a called roll is made for. */
+const ROLLED = new Set(['when_taken', 'when_a_rule_calls', 'when_called', 'never']);
+
 const KINDS: Record<string, Named & { verb: string }> = {
   action: { slug: 'action', name: 'Action', order: 0, verb: 'taken' },
   reaction: { slug: 'reaction', name: 'Reaction', order: 1, verb: 'made' },
@@ -309,6 +312,7 @@ export function actionsLoader(): Loader {
 
           const kind = KINDS[a.kind];
           if (!kind) throw new Error(`The Action "${a.name}" has a kind with no player wording.`);
+          if (!ROLLED.has(a.rolled)) throw new Error(`The Action "${a.name}" says when it is rolled in a way with no player wording.`);
 
           let attribute: Named | null = null;
           let rollLabel: string;
@@ -345,6 +349,7 @@ export function actionsLoader(): Loader {
             kind: { slug: kind.slug, name: kind.name, order: kind.order },
             attribute,
             rollLabel,
+            calledRoll: a.rolled === 'when_called',
             gear,
             requires: (w.requires ?? []).map((r) => text('requirements', r)),
             needs: w.needs ? text('needs', w.needs) : null,

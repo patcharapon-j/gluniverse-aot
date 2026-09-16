@@ -23,7 +23,9 @@ const pages = a.pages.map((ref) => {
   return { href: `/guide/${slug}/#${anchor}`, label: `${title}: ${label}` };
 });
 
-const search = [a.name, a.kind.name, a.rollLabel, ...a.does, ...a.diceTalents.map((t) => t.name), ...a.ruleTalents.map((t) => t.name)].join(' ').toLowerCase();
+const search = [a.name, a.kind.name, a.rollLabel, a.calledRoll ? 'called roll' : '', ...a.does, ...a.diceTalents.map((t) => t.name), ...a.ruleTalents.map((t) => t.name)]
+  .join(' ')
+  .toLowerCase();
 
 // Glossary pop-ups on the first use of each term on this card, in reading order.
 const gloss = glossifier();
@@ -46,6 +48,7 @@ const help = gloss(a.help);
     <div class="tags">
       <span class="lbl">{a.kind.name}</span>
       <span class="lbl">{a.rollLabel}</span>
+      {a.calledRoll && <span class="lbl">Called roll</span>}
     </div>
   </div>
   <h2 id={action.id}>{a.name}</h2>

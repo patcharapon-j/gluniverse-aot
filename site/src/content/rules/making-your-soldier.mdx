@@ -6,29 +6,29 @@ order: 2
 tab: Soldier
 sources:
   - path: docs/rules/02-character-creation.md
-    sha: "d869d2eb0cbc0628c517384f04b092a0ca6a065b"
+    sha: "9aa0ac97df37e98c1d8f6a3f8764453f77372a1b"
   - path: data/character/attributes.yaml
     sha: "a096bb9f1ef8eb9690180527a6d22807d2db3b04"
   - path: data/character/lifepath.yaml
-    sha: "fa5393b72bea67da145d04a1847df33edb7f2f92"
+    sha: "63a82b62122bb2fd75ebe2f37dcd713fa32f245f"
   - path: data/character/origins.yaml
     sha: "f1f3a49f24267123a072716e2e46395d959dcc1e"
   - path: data/character/enlistment.yaml
-    sha: "7e3d6d0c7d3ec102d9189859f0287cdb399dfe19"
+    sha: "44ada152c4942980c41db24e4cf9855e0e962cec"
   - path: data/character/training-years.yaml
-    sha: "9b46a083d620a7bee3a1b82c25abf2d267264def"
+    sha: "680d7e61d8b18d7a3dc2ef9f67d28ae35ece1a88"
   - path: data/character/class-rank.yaml
-    sha: "151e2d5cb6175da796a5de7cfc46aff2e4e4de27"
+    sha: "15dc3a919762ba599ae0a60cf15df8f34ea9c900"
   - path: data/character/graduation-exam.yaml
-    sha: "8163a84a63b8e2ff91e6e402e4e02e8d7aca3d67"
+    sha: "7086980b7e6f8a14d19b4bce12a6c509f7427679"
   - path: data/character/specialties.yaml
     sha: "5fd57d24224cc8be5d5535e46c3cdd16a9a75d00"
   - path: data/character/squadmates.yaml
-    sha: "f156fc1019d233fe6d94572608eea9a085d228f0"
+    sha: "9b6eaa396654a45d25a36eaa453b398c264d4559"
   - path: data/character/talents.yaml
-    sha: "4ffa78a0b7267e765c5e8916c518b7e7aec707a3"
+    sha: "f0098aff13c59294571cb504ecc0dbabf24903f1"
   - path: data/character/action-catalog.yaml
-    sha: "bcc0ef9e91cd6b59f714b9ed846f04274eb66dd0"
+    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
 ---
 
 import BoxPair from '~/components/BoxPair.astro';
@@ -58,7 +58,7 @@ import plateSoldier from '~/assets/plates/plate-making-your-soldier.webp';
   { id: 'the-graduation-exam', title: 'The Graduation Exam', note: 'Three Trials for Merit' },
   { id: 'drives', title: 'Drives', note: 'Shrugging off fear' },
   { id: 'specialties-and-talents', title: 'Specialties and Talents', note: 'Key attribute, levels, triggers' },
-  { id: 'actions', title: 'Actions', note: 'The Catalog, gear, improvising' },
+  { id: 'actions', title: 'Actions', note: 'The Catalog, gear, called rolls' },
   { id: 'squadmates', title: 'Squadmates', note: 'Templates, Wings, promotion' },
   { id: 'building-without-the-lifepath', title: 'Building Without the Lifepath', note: 'Template Build and Free Build' },
 ]} />
@@ -351,6 +351,7 @@ The Graduation Exam is an optional prologue the table plays out: three <Glossary
 
 - **Not a Titan Engagement.** There are no rounds, turns, Positions, Attention, or Titans, no Gas Rolls, and no counting of Blade Sets. An entry's requirements that need a Titan, a Position, Attention, a Grabbed or Down soldier, a patient, a comrade with a Stress Response, or a worn or Jammed item do not apply. The listed exam issue item always meets the entry's gear requirement.
 - **Pools.** Every Trial roll is an attribute roll with the full pool: attribute, one dice Talent that names the entry, Bonus Dice only from Help in the squad field exercise, Gear Dice from the exam issue item listed for the entry, and Stress Dice. Rule Talents that name the entry apply. Only the squad field exercise can be Pushed; the other two Trials forbid a Push by their own rule.
+- **No Circumstances.** No Trial roll takes a step of <a href="/guide/rules-of-play/">Circumstances</a>. The Exam is creation, played before the campaign begins.
 - **Stress.** Every Cadet starts the Exam at Stress 0. Stress gained stays through later Trials and adds Stress Dice to those rolls. When the Exam ends, every Cadet's Stress returns to 0.
 - **Stress Responses.** A Stress Response during the Exam still happens, and the roll cannot be Pushed after it. It is not resolved on the Wounds & Fear table: instead it costs the Cadet 1 Merit on the Trial whose roll caused it, which can make that Trial's Merit negative. Nothing else happens.
 - **Roll order.** Before each Trial, every Cadet taking the Exam rolls a D6, and they roll that Trial from the highest result down. Cadets tied on a result roll again among themselves. The players never choose the order.
@@ -420,6 +421,8 @@ Every trigger is met by something you did, or by where you put yourself.
 
 **Acts** are Action Catalog entries, plus Push, which means Pushing a roll. Covering is the Cover entry.
 
+A <a href="#called-rolls">called roll</a> counts as your own act of the entry the GM named for it, and an improvised act in a fight as your own act of its model entry. A called roll the GM names an attribute for, with no entry, is no act. The turn tests keep their timing, so a called roll meets one only where turns are counted: in a Titan Engagement, or in a Skirmish.
+
 **Whom an act counts on.**
 
 - Unless its row says otherwise, an act counts whoever it was used on.
@@ -482,7 +485,8 @@ A Specialty grants nothing beyond these, apart from the kit Standard Issue gives
 - A condition may name a moment of an Expedition procedure, such as Route Finder's "on the Leg roll, as Lead". A roll made anywhere else never meets it.
 - **A roll uses at most one dice Talent.** If more than one qualifies, you pick.
 - A dice Talent names only actions, Reactions, and rolls: the entries that are attribute rolls.
-- A Talent that does not name the roll's entry adds no dice, however close the action seems. <a href="#outside-the-catalog">Actions outside the Catalog</a> decides which entry an unusual action is.
+- A Talent that does not name the roll's entry adds no dice, however close the action seems. <a href="#outside-the-catalog">Actions outside the Catalog</a> decides which entry an unusual action is; on a called roll or an improvised act the GM names the entry, and the Talents that name it follow.
+- No Talent changes, ignores, or lowers a step of <a href="/guide/rules-of-play/">Circumstances</a>. A Talent that helps you against bad conditions adds dice instead.
 
 </RuleBox>
 <RuleBox title="Rule Talents" icon="ph:scroll">
@@ -506,7 +510,7 @@ A Specialty grants nothing beyond these, apart from the kit Standard Issue gives
 
 <SectionHead id="actions" eyebrow="Section 6">Actions</SectionHead>
 
-<FieldQuote cite="Survey Corps manual">If it is not in the manual, it changes nothing. Describe it anyway.</FieldQuote>
+<FieldQuote cite="Survey Corps manual">The manual names what we trained you to do. What it does not name, you will still have to do.</FieldQuote>
 
 The <GlossaryTerm term="Action Catalog" /> is the complete list of named actions and rolls a soldier can make, and the list Talents name. Every attribute roll is made for one Catalog entry.
 
@@ -516,11 +520,11 @@ The <GlossaryTerm term="Action Catalog" /> is the complete list of named actions
 
 - **Action:** taken as your action in a Titan Engagement or a <GlossaryTerm term="Skirmish" />.
 - **Reaction:** made when a Titan or a <GlossaryTerm term="Foe" /> acts against you, outside your own turn. It spends a turn, and it is not an action.
-- **Roll:** an attribute roll made when a rule calls for it. Not an action, and it spends no turn of its own.
+- **Roll:** an attribute roll made when a rule calls for it, and, for the nine entries a <a href="#called-rolls">called roll</a> is made for, when the GM calls one. Not an action, and it spends no turn of its own.
 - **Option:** a use of another entry or rule, such as spending a Read's successes. Not an action and not a roll. It spends nothing of its own unless its entry or its calling rule says so.
 - **Fixed roll:** a roll that is not an attribute roll: the Fear Roll, the Stress Response roll, and the Gas Roll. It never gains Talent dice, and only rule Talents can name it.
 
-Each entry also states whether it is rolled (every time it is taken, only when a rule calls for it, or never), its attribute, the gear items that can supply Gear Dice (you pick one if several qualify), whether it needs gear, where it is used, its requirements and the successes it needs, what it changes, and the Help it allows outside a Titan Engagement. The chapter that owns an entry gives its procedure and full effect. Help and Draw Attention are actions that are never rolled, and Cover and Call It are options: they are in the Catalog so that rule Talents can name them.
+Each entry also states whether it is rolled (every time it is taken, when a rule calls for it, when a rule or the GM calls for it, or never), its attribute, the gear items that can supply Gear Dice (you pick one if several qualify), whether it needs gear, where it is used, its requirements and the successes it needs, what it changes, and the Help it allows outside a Titan Engagement, including the Help a called roll allows. The chapter that owns an entry gives its procedure and full effect. Help and Draw Attention are actions that are never rolled, and Cover and Call It are options: they are in the Catalog so that rule Talents can name them.
 
 </Subsection>
 
@@ -555,7 +559,7 @@ Entries other chapters own are defined here only as far as a Talent needs to nam
 - **Break Free:** Strength, with a Blade Set if you have one. Also taken while Held in a Skirmish.
 - **Heave:** Strength, with no gear, lifting a Titan's body off a Pinned comrade.
 - **Draw Attention:** not rolled.
-- **Fly:** an Agility roll with ODM Gear that a rule calls for. Not an action.
+- **Fly:** an Agility roll with ODM Gear that a rule calls for, or that the GM calls for outside a Titan Engagement. Not an action.
 - **Leap Clear:** an Agility roll with ODM Gear, or the horse while you are mounted, that a falling Titan calls for. Not an action and not a Reaction, and it spends nothing.
 - **Dodge:** Agility, with ODM Gear, or the horse while you are mounted. A Pushed dodge made with the horse wears the horse, not ODM Gear, with its Gear Dice showing 1, and does not by itself make the Gas Roll three dice.
 
@@ -570,6 +574,7 @@ Entries other chapters own are defined here only as far as a Talent needs to nam
 - **Release:** an option, not rolled, that lets go of a Foe you hold with a Grapple, spending neither your move nor your action.
 - **Ride:** an Agility roll with a horse, not an action: the Leg roll on a Hard Ride.
 - **Spot, Survive, and Endure** on Legs and at the Night Camp; **Persuade, Recall, and Size Up** for Requisition and in a Skirmish; **Sneak** for the ambush.
+- Those seven, with Fly and Ride, are the nine entries a <a href="#called-rolls">called roll</a> is made for.
 
 </RuleBox>
 </BoxPair>
@@ -580,14 +585,16 @@ Entries other chapters own are defined here only as far as a Talent needs to nam
 
 <Subsection title="Actions outside the Catalog" note="Five steps, in order" id="outside-the-catalog">
 
-You can describe an action that has no Catalog entry. It can change only one of the values the rules name, and these steps decide how.
+You can describe an action that has no Catalog entry. Outside a Titan Engagement and a Skirmish, these steps are the order to follow for an action meant to change one of the values the rules name. In a fight they are not used: <a href="#in-a-fight">Improvising in a fight</a> takes their place.
+
+The values are an index of what soldiers change by acting, not a gate on what you can try. An action the steps do not resolve is one <a href="#called-rolls">the GM rules on</a>.
 
 <StepFlow id="fig-outside-catalog" fig="Fig. 3" title="Actions outside the Catalog" steps={[
   {
     title: "Name the change.",
     icon: "ph:list-checks",
     text: "Name the one value the action is meant to change. What you describe never limits which value you name: the value alone decides which entries can be used.",
-    exit: { kind: "stop", label: "None", text: "If it is meant to change none of them, it needs no roll and has no effect on play." },
+    exit: { kind: "stop", label: "None", text: "If it is meant to change none of them, the GM rules on the action. Stop here." },
   },
   {
     title: "Moves.",
@@ -611,14 +618,52 @@ You can describe an action that has no Catalog entry. It can change only one of 
     title: "No match.",
     icon: "ph:scroll",
     text: "If no listed entry can be used and the value's own rule names an attribute roll, make that roll with the attribute alone.",
-    exit: { kind: "stop", label: "Otherwise", text: "The action cannot change that value. It needs no roll and has no effect on play." },
+    exit: { kind: "stop", label: "Otherwise", text: "The steps cannot change that value, and the GM rules on the action." },
   },
 ]} />
 
 <MarginNote>Each entry's list of what it changes is the list of values: <a href="/compendium/actions/">Compendium, Actions</a>.</MarginNote>
 
 - **Values a rule creates.** A rule that creates a clock, counter, or obstacle soldiers can change by acting either names the entries that change it, or names the attribute roll that changes it. That roll uses the attribute alone, with no Talent dice and Gear Dice only from an item the rule names.
-- **No rulings.** The GM does not decide whether an action is possible, which entry it uses, or what it changes. The steps decide. Anything a soldier does that changes no value is described freely and has no effect on play.
+
+</Subsection>
+
+<MarginNote>The Circumstances ladder, the stakes a failure can cost, and when the GM calls for a roll: <a href="/guide/rules-of-play/">The Rules of Play</a>.</MarginNote>
+
+<Subsection title="Called rolls" note="When the steps do not resolve an action" id="called-rolls">
+
+An action meant to change none of the values, or one the No match step leaves unresolved, is the GM's to rule on. The ruling comes before anyone rolls, never after.
+
+Outside a Titan Engagement and a Skirmish, the GM says that the action happens with no roll, that it cannot be done, or that it is a **called roll**. Before the pool is built, the GM names three things:
+
+1. **The entry:** the Catalog entry closest to what you described, from the nine a called roll is made for, Spot, Size Up, Survive, Persuade, Endure, Sneak, Recall, Ride, and Fly, or an attribute alone when none of them fits.
+2. **The Circumstances:** one step of the ladder in <a href="/guide/rules-of-play/">The Rules of Play</a>, Standard when the GM names none.
+3. **The stakes:** what a failure costs, and, where it is not obvious, what success gives.
+
+**A called roll needs 1 success.** It is made for the named entry for every purpose that follows: that entry's attribute and gear items, the gear rule above, and every Talent that names it. You can Push it, a comrade can Cover the Push, and Help on it is as the GM rules. Once the dice are rolled, the entry, the Circumstances, and the stakes do not change, and the result stands.
+
+**Called on an attribute alone.** A called roll the GM names an attribute for is that attribute with no Talent dice and no Gear Dice. A gear item, or any other object that helps you, counts toward the Circumstances instead, and a Push on that roll wears nothing. A called roll named for Fly or Ride does take that entry's Gear Dice.
+
+</Subsection>
+
+<Subsection title="Improvising in a fight" id="in-a-fight">
+
+In a Titan Engagement or a Skirmish the steps above are not used. Your action is Help, a Catalog entry you name and take as it is written, or an **improvised act**: an act you describe that is not an entry taken as written, even when a value it would change matches an entry. Which of the three it is, is part of the GM's ruling, made before the pool is built.
+
+**With a model entry.** When an Action you could take in that fight has an effect your act imitates, the GM names that entry as the act's **model entry**, and the ruling stands. A model entry is always an Action you could take there: never a Reaction, a roll, a fixed roll, or an option such as Call It or Cover. The improvised act:
+
+- spends your action;
+- is made as the model entry is made: rolled only if that entry is rolled, with its attribute, gear items, Talents, and successes needed, and with Circumstances as any roll takes them;
+- meets every requirement and restriction of the model entry. A soldier holding a Titan's Attention still cannot strike its Nape, a Feint keeps its Position rule, and a Foe's Guard still rolls;
+- on a success gives only the model entry's effect, at that entry's size.
+
+It never kills a Titan, never changes a Titan's Nape Depth, a Body Part's Toughness, its Attack Dice, or a card, never cancels or delays a card, never creates more Openings than the model entry could, and never gives an effect no entry has. Only a Nape strike taken as its entry is written kills a Titan. An act modelled on the Nape strike is resolved as a Nape strike that falls short, whatever its successes: each success creates 1 Opening, and making it counts as hooking into the Titan.
+
+A supply wagon cut loose to roll past a Titan is Break Attention, with Break Attention's needs. A lantern swung from a rooftop is Draw Attention, and never from Distant. A chimney dropped on a Titan's leg is a Body Part strike whose successes count toward that leg's Toughness. A rope thrown to a comrade is Help or Lift Comrade. An object that is not a gear item, hurled at a person, is a Shoot at damage 1 and Crush, with no Gear Dice. A dive behind a chimney stack is a move if it changes your Position, and otherwise changes nothing and needs no roll: it is never modelled on the dodge, and it gives no Circumstances to a later dodge.
+
+**With no model entry.** When no Action you could take there imitates the act, and it would change nothing the fight tracks, it is a called roll, named and made as above. It spends your action, Help on it is the fight's Help, and it never gives an effect an entry has. If the act would change nothing at all, describe it: it needs no roll. If the GM judges that it cannot be done, the GM says so before anyone rolls.
+
+**What the GM rules, and what the GM applies as written.** The GM rules whether an action the steps do not resolve happens, cannot be done, or is a called roll; a called roll's entry or attribute, its Circumstances, and its stakes; and, in a fight, whether what you described is an entry taken as written, an improvised act with its model entry, or a called roll. The GM applies as written the steps above, the entry you pick at the Match step, the gear rule, the rule that a Talent adds dice only to a roll made for an entry it names, and the successes every roll needs, which no ruling raises or lowers.
 
 </Subsection>
 
@@ -628,8 +673,22 @@ You can describe an action that has no Catalog entry. It can change only one of 
 
 <TryRollButton pool={{ base: 3 }} label="Try Jonas's Treat Injury" />
 
-- **A shout.** Jonas shouts so a comrade can avoid a Titan's hand. If his player names adding dice to a comrade's Reaction, the only entry that changes it is Call It, which spends a Read's successes. With no Read to spend, it cannot be used, and the shout has no effect. If his player names adding a die to a comrade's roll instead, the entry is Help, with Help's requirements and what it spends.
-- **A prayer.** Jonas prays to steady himself. The only entry that lowers a soldier's own Stress is Downtime Action, taken only in Downtime, so beyond the Walls the prayer has no effect.
+- **A shout.** In a Titan Engagement, Jonas shouts so a comrade can avoid a Titan's hand. No entry is a shout, so it is an improvised act, and the GM names its model entry before the pool is built. Call It, which adds dice to a comrade's dodge from a Read, is an option and never a model entry, so the GM names Help: the shout spends Jonas's action, needs Help's Position, is not rolled, and adds 1 die to the comrade's dodge.
+- **A prayer.** Jonas prays to steady himself in the field. The only entry that lowers a soldier's own Stress is Downtime Action, taken only in Downtime, so the No match step finds nothing. The GM rules that the prayer happens, with no roll and no effect on play: Stress relief comes only from a written trigger, and no ruling adds one.
+
+</FieldReport>
+
+<FieldReport id="example-called-roll" title="A roll the GM calls for">
+
+During an evacuation, Private Ilse Brandt braces a collapsing beam so that the civilians behind her can get clear. No value the rules name covers holding up a beam, so the GM rules on it. The outcome is in doubt and a failure would cost something, so the GM calls a roll.
+
+- **The entry.** Endure is hardship borne over hours, not a moment's lift, so none of the nine fits: the GM names Strength alone. No Talent dice and no Gear Dice.
+- **The Circumstances.** Hard, because the beam is already sagging: a 1-die penalty.
+- **The stakes.** If the roll fails, the beam comes down and Ilse takes 2 Crush damage. The GM states her current Health with it.
+
+Her Strength is 4, so she rolls 3 base dice after the penalty, plus her Stress Dice. The roll needs 1 success. She may Push it, a comrade may Cover the Push, and a comrade at the beam may Help as the GM rules.
+
+<TryRollButton pool={{ base: 3 }} label="Try Ilse's called roll" />
 
 </FieldReport>
 
@@ -661,8 +720,8 @@ Two more soldiers mean two more turns a round and more Help on every strike, so 
 <Subsection title="Actions" id="squadmate-actions">
 
 - A Squadmate can take every Action Catalog entry a player character can take as an action, including Help, and every option of those entries, such as Call It. It must meet each entry's requirements, as a player character must. Its Specialty never limits what it can attempt.
-- It uses the steps for <a href="#outside-the-catalog">actions outside the Catalog</a> exactly as a player character does.
-- Its only Reaction is the dodge, and it makes any roll a rule calls for, such as Fly, Ride, or the Death Roll.
+- It uses the steps for <a href="#outside-the-catalog">actions outside the Catalog</a> exactly as a player character does, and an act of its the steps do not resolve is ruled on the same way.
+- Its only Reaction is the dodge, and it makes any roll a rule or the GM calls for, such as Fly, Ride, or the Death Roll.
 - It never Pushes and never Covers.
 - Its own Reaction spends its own turn. On a Wing, that is the turn it takes right after its player character's turn.
 
@@ -676,7 +735,7 @@ Two more soldiers mean two more turns a round and more Help on every strike, so 
 - It acts right after that player character's turn, as a turn of one move and one action. It still acts then if that character's turn has no move and no action because a Reaction or a result spent it in advance.
 - Fighting Titans sets when Squadmates are assigned to Wings and what a Squadmate on no Wing does.
 
-**Directing a Squadmate.** Any player can propose what a Squadmate does. If players disagree about one on a Wing, the player whose character's Wing it is decides. If they disagree about one on no Wing, each proposed choice is rolled for once, with a D6 rolled by one player who proposed it; the highest roll decides, and choices tied for highest roll again. The GM never directs a Squadmate.
+**Directing a Squadmate.** Any player can propose what a Squadmate does. If players disagree about one on a Wing, the player whose character's Wing it is decides. If they disagree about one on no Wing, each proposed choice is rolled for once, with a D6 rolled by one player who proposed it; the highest roll decides, and choices tied for highest roll again. The GM never directs a Squadmate, though the GM may give one a voice.
 
 </Subsection>
 

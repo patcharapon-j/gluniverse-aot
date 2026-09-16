@@ -15,37 +15,37 @@
 # the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/action-catalog.yaml
-    sha: "bcc0ef9e91cd6b59f714b9ed846f04274eb66dd0"
+    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
   - path: data/engagement/attention.yaml
-    sha: "9ed08a916b8c351477da6b1023199301f5766c91"
+    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
   - path: data/engagement/read.yaml
-    sha: "3761bb2fed4dc692ee21f6a70be44e6919f721da"
+    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/round.yaml
-    sha: "51a800aa6443492edb8299c7673776adf9960b38"
+    sha: "e03cf49bfa0f41b2b3b50c3fa5f107d490f6d1e0"
   - path: data/engagement/squad-tactics.yaml
-    sha: "162283e461be8c8a85b889407787f4b637a4bf70"
+    sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
   - path: data/engagement/titan-harm.yaml
-    sha: "d193b13c3ca15e7340c9452575a2543112c72dfb"
+    sha: "1ceaf068ccaa41d90e42df94483dba0334200786"
   - path: data/engagement/grab.yaml
-    sha: "605d4d2b976ae65ab8a74a53a7d4c4b0d48b0460"
+    sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
   - path: data/gear/carrying.yaml
-    sha: "14a4b6e4aed4d4a8d462fda79364344bf8500a5f"
+    sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
   - path: data/gear/horses.yaml
-    sha: "1090ddfef592cbc5fb4d2149fba27951585e8f1a"
+    sha: "879202de4b48ec13bf78e1e56a8bc461fdf6d72d"
   - path: data/gear/odm-gear.yaml
-    sha: "a70bb21d04891f0931eb3b6f9c522f39c922db53"
+    sha: "79daa17608d56b70fc4d1835336f10cb552d7246"
   - path: data/gear/blade-sets.yaml
     sha: "e62aaab8e850513bbce923e7a8b7a66a9d1f5e2e"
   - path: data/gear/squad-supply.yaml
-    sha: "c1637e1d58312dd36e6f53731cd87cf262228100"
+    sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/gear/field-repair.yaml
-    sha: "b643a64494b3e2f244c2fdbfda15e325415524ca"
+    sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
   - path: data/harm/treat-injury.yaml
-    sha: "d56a55ded59f84007dbffba917b69ea1c0c1af7a"
+    sha: "28603f6905aaa187b8239f2df6b3c4756bef8dda"
   - path: data/campaign/downtime.yaml
-    sha: "a06b0860490bd76565001c1d9e50263019b490d0"
+    sha: "d5e2091e7d41e0f0eefdad38f71f584c856dfce3"
   - path: data/core/dice-pool.yaml
-    sha: "65a83cd9bb8ab0754819890ea32483ef53166260"
+    sha: "c1a7328fd13f695fb882c427ee2f365176b77cf2"
 
 actions:
   # ---------------------------------------------------------------- Titan Engagement actions
@@ -239,6 +239,7 @@ actions:
     does:
       - Add 1 die to a comrade's roll. Up to 3 comrades can Help one roll, and each die counts toward the Bonus Dice cap of 4.
       - In a Titan Engagement it spends your action, and you must be at the roller's Position or one step away. Outside a Titan Engagement, you can Help only where the rule that calls for the roll allows it.
+      - On a roll the GM calls for, you can Help if you are present and able to help with the act, as the GM rules. It spends nothing unless the GM names a cost of time or position for it before the dice, which falls when you declare the Help, whatever the roll gives. In a Skirmish that Help is the Skirmish's, spending your action.
     pages: [rules-of-play#help]
 
   cover:
@@ -353,9 +354,15 @@ actions:
   fly:
     requires:
       - Called by a rule, such as a Position change that needs a roll. Not an action.
+      - Outside a Titan Engagement, also made when the GM calls a roll for an act this entry fits, such as reaching a rooftop.
+    needs: In a Titan Engagement, set by the rule that calls for the roll. Outside one, 1.
     does:
-      - Rolled only when a rule calls for it. That rule says what the roll needs and what it does.
-    help: The rule that calls for the roll says who can Help.
+      - Rolled when a rule calls for it. That rule says what the roll needs and what it does.
+      - "On a called roll it gives what the GM staked before the dice. In a Skirmish it is the one Fly roll there is: it takes its Gear Dice, makes no Gas Roll, never makes you airborne, and leaves you neither Engaged nor Apart."
+    help: >-
+      The rule that calls for the roll says who can Help. On a called roll, up to three comrades who are present
+      and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or position
+      when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
     pages: [gear-and-odm, fighting-titans]
 
   leap-clear:
@@ -372,10 +379,16 @@ actions:
     requires:
       - Called by the Leg roll on a Hard Ride, whatever your Formation Post.
       - The horse counts as not had while you are not mounted on it.
-    needs: 1 on a Leg roll.
+      - Also made when the GM calls a roll for an act this entry fits, such as riding down a street a Titan is crossing.
+    needs: 1 on a Leg roll, and 1 on a called roll.
     does:
       - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted.
-    help: On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at most once per Leg.
+      - On a called roll it gives what the GM staked before the dice, and it takes this entry's Gear Dice.
+    help: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
+      most once per Leg. On a called roll, up to three comrades who are present and able to help may Help, as the
+      GM rules, spending nothing unless the GM names a cost of time or position when the Help is declared. In a
+      Skirmish that Help is the Skirmish's, each helper spending their action.
     pages: [expeditions-and-downtime]
 
   death-roll:
@@ -383,21 +396,21 @@ actions:
       - Called by Wounds & Fear.
     needs: "1"
     does:
-      - Takes no Stress Dice, so it never causes a Stress Response. It cannot be Helped or Pushed. Talent dice still count.
+      - Takes no Stress Dice, so it never causes a Stress Response. It cannot be Helped or Pushed, and takes no step of Circumstances. Talent dice still count.
     pages: [wounds-and-fear, rules-of-play]
 
   fear-roll:
     requires:
       - Called only by the Fear Roll triggers in Wounds & Fear, such as a comrade becoming Grabbed or dying.
     does:
-      - Not an attribute roll. No Talent adds dice to it; only Rule Talents change it.
+      - Not an attribute roll. No Talent adds dice to it, and it takes no step of Circumstances; only Rule Talents change it.
     pages: [wounds-and-fear]
 
   stress-response-roll:
     requires:
       - Called when a Stress Die shows 1.
     does:
-      - Not an attribute roll. No Talent adds dice to it; only Rule Talents change it. Its table is in Wounds & Fear.
+      - Not an attribute roll. No Talent adds dice to it, and it takes no step of Circumstances; only Rule Talents change it. Its table is in Wounds & Fear.
     pages: [wounds-and-fear, rules-of-play]
 
   gas-roll:
@@ -405,40 +418,57 @@ actions:
       - Called at the end of each round for every soldier who used ODM Gear in it, once however many times they used it.
     does:
       - Roll 2 dice, or 3 if you made a Pushed roll with ODM Gear this round. Each die showing 1 lowers your Gas Rating by 1, to a minimum of 0. The dice are not added, and a 6 does nothing.
-      - Not an attribute roll. It cannot be Pushed, Helped, or Covered, and never causes a Stress Response.
+      - Not an attribute roll. It cannot be Pushed, Helped, or Covered, takes no step of Circumstances, and never causes a Stress Response.
     pages: [gear-and-odm]
 
   # ---------------------------------------------------------------- Expeditions, Downtime, and Skirmishes
   spot:
     requires:
       - Called by the Leg roll at the Vanguard, Signal Relay, and Rear Guard Formation Posts on a Steady Leg.
-    needs: 1 on a Leg roll.
+      - Also made when the GM calls a roll for an act this entry fits, such as searching a ruined house or watching a road.
+    needs: 1 on a Leg roll, and 1 on a called roll.
     does:
       - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted.
-    help: On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at most once per Leg.
+      - On a called roll it gives what the GM staked before the dice.
+      - A passive roll is a Spot the GM makes out of sight, for something you do not know is there, outside a Titan Engagement and a Skirmish. It is not a called roll, and failing it means only that you do not notice. Say that you are looking and the GM calls a roll in the open instead.
+    help: >-
+      On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
+      most once per Leg. On a called roll, up to three comrades who are present and able to help may Help, as the
+      GM rules, spending nothing unless the GM names a cost of time or position when the Help is declared. In a
+      Skirmish that Help is the Skirmish's, each helper spending their action.
     pages: [expeditions-and-downtime]
 
   size-up:
     requires:
       - Called once per Downtime, before any Requisition roll, to lower the Ledger.
       - In a Skirmish, called once per Foe group, on your action, to learn about that group.
-    needs: "1"
+      - Also made when the GM calls a roll for an act this entry fits, such as reading a stranger at a gate.
+    needs: 1, and 1 on a called roll.
     does:
       - Judging what a person intends. Watching a Titan is a Read, not Size Up.
       - In Downtime it lowers the Ledger for the Squad. In a Skirmish it reveals the Foe group's Grit, how many more of it must fall before it breaks, and what each of its Foes does on its next card.
-    help: Never Helped and never tried again.
+      - On a called roll it gives what the GM staked before the dice. A passive roll is a Size Up the GM makes out of sight, for something you do not know is there, outside a Titan Engagement and a Skirmish. It is not a called roll, and failing it means only that you do not notice.
+    help: >-
+      On a Requisition roll and in a Skirmish, never Helped and never tried again. On a called roll, up to three
+      comrades who are present and able to help may Help, as the GM rules, spending nothing unless the GM names a
+      cost of time or position when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper
+      spending their action.
     pages: [expeditions-and-downtime, skirmishes]
 
   survive:
     requires:
       - Called by the Leg roll at the Flank Scout and Supply Wagon Formation Posts on a Steady Leg, and by the camp roll at a Night Camp.
-    needs: "1"
+      - Also made when the GM calls a roll for an act this entry fits, such as finding water or shelter in a ruin.
+    needs: 1, and 1 on a called roll.
     does:
       - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted. On the camp roll, it settles whether the Night Camp gives Camp Relief and how its night hazard roll is adjusted.
+      - On a called roll it gives what the GM staked before the dice.
     help: >-
       On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
       most once per Leg. On the camp roll, up to three comrades on the Expedition who are not Down may Help,
-      spending nothing.
+      spending nothing. On a called roll, up to three comrades who are present and able to help may Help, as the
+      GM rules, spending nothing unless the GM names a cost of time or position when the Help is declared. In a
+      Skirmish that Help is the Skirmish's, each helper spending their action.
     pages: [expeditions-and-downtime]
 
   persuade:
@@ -446,46 +476,64 @@ actions:
       - Called by a Requisition roll, made with Persuade or Recall, chosen before rolling.
       - Called by a Parley in a Skirmish, once per Skirmish, on your action.
       - Called by a Parley outside a Skirmish, made before a Foe group with no Skirmish under way, and never again by the same soldier with that group.
-    needs: Set by the Requisition and Skirmish rules.
+      - Also made when the GM calls a roll for an act this entry fits, such as talking down anyone who is not a Foe group.
+    needs: Set by the Requisition and Skirmish rules, and 1 on a called roll.
     does:
       - On a Requisition roll it can have Command grant the Requisition. On a Parley it can make a Foe group yield.
-      - A Parley made as a threat rolls Strength in place of Empathy. It is still Persuade, so a Talent that names Persuade still adds its dice.
+      - A Parley made as a threat rolls Strength in place of Empathy, and so does a called Persuade the GM rules is a threat. Either is still Persuade, so a Talent that names Persuade still adds its dice.
+      - On a called roll it gives what the GM staked before the dice.
     help: >-
       On a Requisition roll, up to three comrades in the Squad who are not Down may Help. A player character who
       Helps spends their own Requisition this Downtime, and a Squadmate may Help once per Downtime. On a Parley in
       a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether
-      Engaged or Apart. A Parley outside a Skirmish is never Helped.
+      Engaged or Apart. A Parley outside a Skirmish is never Helped. On a called roll, up to three comrades who are
+      present and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or
+      position when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
     pages: [expeditions-and-downtime, skirmishes]
 
   endure:
     requires:
       - Called by the Leg roll at the Center Formation Post on a Steady Leg, and by the Straggler row of the Leg Hazard table for its victim.
-    needs: "1"
+      - "Also made when the GM calls a roll for an act this entry fits: hardship borne over hours, not a moment's effort."
+    needs: 1, and 1 on a called roll.
     does:
       - On a Leg roll, it settles what the Leg costs in rations and how its hazard roll is adjusted. On the Straggler row, it lets the victim escape the harm the row names.
+      - On a called roll it gives what the GM staked before the dice.
     help: >-
       On a Leg roll, up to three comrades on the Expedition who are not Down may Help, spending nothing, each at
-      most once per Leg. The Straggler row's roll is never Helped.
+      most once per Leg. The Straggler row's roll is never Helped. On a called roll, up to three comrades who are
+      present and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or
+      position when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
     pages: [expeditions-and-downtime]
 
   sneak:
     requires:
       - Called before a Skirmish's first round when the Squad approaches a Foe group unseen. One soldier rolls it for the ambush.
-    needs: The Foe group's Watch.
+      - Also made when the GM calls a roll for an act this entry fits, such as slipping past a watch post.
+    needs: The Foe group's Watch for the ambush, and 1 on a called roll.
     does:
       - A success gives the Squad the ambush against that Foe group.
-    help: Never Helped and never tried again.
+      - On a called roll it gives what the GM staked before the dice.
+    help: >-
+      For the ambush, never Helped and never tried again. On a called roll, up to three comrades who are present
+      and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or position
+      when the Help is declared. In a Skirmish that Help is the Skirmish's, each helper spending their action.
     pages: [skirmishes]
 
   recall:
     requires:
       - Called by a Requisition roll, made with Persuade or Recall, chosen before rolling.
-    needs: Set by the Requisition rules.
+      - Also made when the GM calls a roll for an act this entry fits, such as remembering what a report said about a district.
+    needs: Set by the Requisition rules, and 1 on a called roll.
     does:
       - It can have Command grant the Requisition.
+      - On a called roll it gives what the GM staked before the dice.
     help: >-
       On a Requisition roll, up to three comrades in the Squad who are not Down may Help. A player character who
-      Helps spends their own Requisition this Downtime, and a Squadmate may Help once per Downtime.
+      Helps spends their own Requisition this Downtime, and a Squadmate may Help once per Downtime. On a called
+      roll, up to three comrades who are present and able to help may Help, as the GM rules, spending nothing
+      unless the GM names a cost of time or position when the Help is declared. In a Skirmish that Help is the
+      Skirmish's, each helper spending their action.
     pages: [expeditions-and-downtime]
 
   downtime-action:
@@ -511,6 +559,6 @@ actions:
     requires:
       - Called once in each Training Year, after that year's event.
     does:
-      - Roll attribute dice only, with no Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed or Helped. Its successes earn Merit.
+      - Roll attribute dice only, with no Talent dice, Bonus Dice, Gear Dice, or Stress Dice, and no step of Circumstances. It cannot be Pushed or Helped. Its successes earn Merit.
       - If the players run the Graduation Exam, the Exam replaces the third year's performance roll.
     pages: [making-your-soldier]
