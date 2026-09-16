@@ -51,7 +51,7 @@
   <WordText blocks={view.page.sections.origin} />
   <div class="lp-rollbar">
     <button type="button" class="mini red" disabled={!canRoll} onclick={() => act.rollOrigin()}>
-      <img src={iconPath('die-base')} alt="" />{t(r.origin?.rollAgain ? 'WOF.Lifepath.origin.rollAgain' : 'WOF.Lifepath.rollD66')}
+      <i class="fa-solid fa-dice" inert></i>{t(r.origin?.rollAgain ? 'WOF.Lifepath.origin.rollAgain' : 'WOF.Lifepath.rollD66')}
     </button>
     <span class="note">{row ? t('WOF.Lifepath.rolled') : t('WOF.Lifepath.origin.rollNote')}</span>
   </div>
@@ -67,13 +67,13 @@
 
 {#if row}
   <article class="slip" use:slideIn>
-    <header class="slip-h">
+    <div class="slip-h">
       <img class="ic s32" src={originIcon(row.id)} alt="" />
       <div>
         <h4>{row.name}</h4>
         <p class="slip-d">{row.description}</p>
       </div>
-    </header>
+    </div>
     {#if built}
       <p class="note">{t('WOF.Lifepath.origin.noPoints')}</p>
     {:else}

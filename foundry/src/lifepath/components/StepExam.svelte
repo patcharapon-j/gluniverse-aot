@@ -43,18 +43,18 @@
   {@const ts = s.trials[k]}
   {#if opened[k]}
     <article class="slip trial" use:slideIn>
-      <header class="slip-h">
+      <div class="slip-h">
         <img class="ic s32" src={d.choice ? entryIcon(d.choice.entry) : iconPath('action-squad-action')} alt="" />
         <div>
           <h4><span class="lbl">{t('WOF.Lifepath.exam.trialN', { n: k + 1 })}</span> {d.trial.name}</h4>
           <p class="slip-d">{d.trial.description}</p>
         </div>
         {#if ts.dice}<span class="stamp trial-stamp" class:ok={(d.merit ?? 0) > 0}>{t('WOF.Lifepath.meritChip', { merit: signed(d.merit ?? 0) })}</span>{/if}
-      </header>
+      </div>
 
       {#if !s.alone}
         <div class="lp-rollbar">
-          <button type="button" class="mini" disabled={ro || !!ts.dice} onclick={() => act.rollOrder(k)}><img src={iconPath('die-base')} alt="" />{t('WOF.Lifepath.exam.rollOrder')}</button>
+          <button type="button" class="mini" disabled={ro || !!ts.dice} onclick={() => act.rollOrder(k)}><i class="fa-solid fa-dice" inert></i>{t('WOF.Lifepath.exam.rollOrder')}</button>
           {#if ts.order.length}
             <span class="dset" use:tumble>{#each ts.order as f, j (j)}{@html die('base', f, { plain: true })}{/each}</span>
             <span class="note">{t('WOF.Lifepath.exam.orderNote')}</span>
@@ -100,7 +100,7 @@
               {#if d.pool.stress}<span class="grp">{#each Array.from({ length: d.pool.stress }) as _, j (j)}<i class="ds"></i>{/each}</span>{/if}
             </span>
             <span class="note pool-why">{t('WOF.Lifepath.exam.poolWhy', { attr: attrName(d.pool.attribute), a: d.pool.attributeDice, talent: d.pool.talent ? `${d.pool.talent.name} ${d.pool.talent.dice}` : t('WOF.Lifepath.exam.noTalent'), gear: d.choice.gear ?? t('WOF.Lifepath.exam.noGear') })}</span>
-            <button type="button" class="mini red" disabled={ro || !!ts.dice || (!s.alone && !ts.order.length)} onclick={() => act.rollTrial(k)}><img src={iconPath('die-base')} alt="" />{t('WOF.Lifepath.exam.roll')}</button>
+            <button type="button" class="mini red" disabled={ro || !!ts.dice || (!s.alone && !ts.order.length)} onclick={() => act.rollTrial(k)}><i class="fa-solid fa-dice" inert></i>{t('WOF.Lifepath.exam.roll')}</button>
           </div>
         {/if}
       {/if}

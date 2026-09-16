@@ -504,7 +504,8 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
         if (complete.attributes) a = Object.fromEntries(ATTRIBUTE_ORDER.map((k) => [k, s.built.placement[k] as number])) as Attributes;
         complete.attributes = complete.attributes && builtAttributesValid(t, a, specialty.key);
       }
-      attrs.attributes = a;
+      // Unplaced ratings are not a soldier yet: the file shows the placement instead.
+      if (complete.attributes) attrs.attributes = a;
       levels.attributes = lv;
       if (!complete.attributes) broken = true;
     }

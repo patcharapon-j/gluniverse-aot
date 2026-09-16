@@ -44,7 +44,7 @@
     </div>
     <div class="rank-card">
       <span class="lbl">{t('WOF.Actor.Soldier.FIELDS.class_rank.label')}</span>
-      <span class="big">{t('WOF.Sheet.ordinal', { n: g.rank.rank })}</span>
+      <span class="big">{g.rank.rank}</span>
       <span class="note">{t('WOF.Lifepath.grad.ofClass')}</span>
     </div>
     {#if g.rank.top10}

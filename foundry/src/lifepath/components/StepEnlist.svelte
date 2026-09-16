@@ -1,6 +1,5 @@
 <script lang="ts">
   /** Step 2: Why You Enlisted, rolled on the Lifepath; a build's Drive step chooses a Drive only. */
-  import { iconPath } from '../../art.ts';
   import Sec from '../../sheets/components/Sec.svelte';
   import { t } from '../../sheets/context.ts';
   import type { WizardView } from '../wizard-app.ts';
@@ -39,7 +38,7 @@
 {:else}
   <WordText blocks={view.page.sections['why-you-enlisted']} />
   <div class="lp-rollbar">
-    <button type="button" class="mini red" disabled={ro || !!s.enlist.roll} onclick={() => act.rollEnlist()}><img src={iconPath('die-base')} alt="" />{t('WOF.Lifepath.rollD66')}</button>
+    <button type="button" class="mini red" disabled={ro || !!s.enlist.roll} onclick={() => act.rollEnlist()}><i class="fa-solid fa-dice" inert></i>{t('WOF.Lifepath.rollD66')}</button>
     <span class="note">{s.enlist.roll ? t('WOF.Lifepath.rolled') : t('WOF.Lifepath.enlist.rollNote')}</span>
   </div>
   {#if row && e}

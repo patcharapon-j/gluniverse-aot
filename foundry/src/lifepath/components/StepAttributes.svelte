@@ -21,14 +21,18 @@
   const shapes = $derived(tables.rules.built.shapes.map((x) => ({ id: x.id, title: x.ratings.join(', '), sub: t(`WOF.Lifepath.attributes.shapeSub.${x.id}`) })));
   const attrs = $derived(r.attrs.attributes ?? null);
 
-  /** The ratings an attribute can take: what is left of the shape, plus its own. */
-  function choices(a: string): number[] {
-    const own = s.built.placement[a as keyof typeof s.built.placement];
-    const list = own === null ? [...left] : [...left, own];
-    return [...new Set(list)].sort((x, y) => y - x);
-  }
+  /** Every rating of the shape; one already used elsewhere swaps with this attribute's. */
+  const ratings = $derived([...new Set(tables.rules.built.shapes.find((x) => x.id === s.built.shape)?.ratings ?? [])].sort((x, y) => y - x));
   function place(a: string, value: string) {
-    view.act.choose(`built.placement.${a}`, value === '' ? null : Number(value));
+    const v = value === '' ? null : Number(value);
+    const next = { ...s.built.placement } as Record<string, number | null>;
+    const own = next[a];
+    if (v !== null && !left.includes(v)) {
+      const other = ATTRS.find((b) => b !== a && next[b] === v);
+      if (other) next[other] = own;
+    }
+    next[a] = v;
+    view.act.choose('built.placement', next);
   }
 </script>
 
@@ -52,7 +56,7 @@
         {#if free}
           <select class="lp-select small" value={s.built.placement[a] === null ? '' : String(s.built.placement[a])} disabled={ro || !s.built.shape} aria-label={attrName(a)} onchange={(e) => place(a, e.currentTarget.value)}>
             <option value="">–</option>
-            {#each choices(a) as v (v)}<option value={String(v)}>{v}</option>{/each}
+            {#each ratings as v (v)}<option value={String(v)}>{v}</option>{/each}
           </select>
         {:else}
           <b class="swap-v">{attrs?.[a] ?? '–'}</b>

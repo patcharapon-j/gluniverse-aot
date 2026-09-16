@@ -15,11 +15,12 @@
 .wof-sheet.lp .lp-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 1px; background: var(--ink); }
 .wof-sheet.lp .lp-ident { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .wof-sheet.lp .lp-name { margin: 0; font: 900 var(--t-2xl)/1.1 var(--fd); letter-spacing: -.01em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wof-sheet .lf-total + .facts, .wof-sheet .lf-attrs + .facts { margin-top: var(--s3); }
 .wof-sheet.lp .lp-lede { margin: 0; font: italic var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
 .wof-sheet.lp .crest img { width: 52px; height: 52px; transform: rotate(-8deg); mix-blend-mode: multiply; }
 
 .wof-sheet.lp .lp-grid {
-  flex: 1; min-height: 0; display: grid; grid-template-columns: 164px minmax(0, 1fr) 224px; gap: 0;
+  flex: 1; min-height: 0; display: grid; grid-template-columns: 184px minmax(0, 1fr) 224px; gap: 0;
   margin: var(--s3) var(--gr) 0 calc(var(--gl) - 12px);
 }
 
@@ -45,9 +46,9 @@
 .wof-sheet .lp-tab[aria-current=step] .n { color: var(--red); opacity: 1; }
 .wof-sheet .lp-tab .tab-stamp {
   position: absolute; right: 4px; top: 50%; transform: translateY(-50%) rotate(-12deg);
-  font-size: var(--t-xs); padding: 0 3px; border-width: 1.5px; opacity: .8; pointer-events: none;
+  font-size: var(--t-xs); letter-spacing: 0; padding: 0 2px; border-width: 1.5px; opacity: .8; pointer-events: none;
 }
-.wof-sheet .lp-tab.done .tl { padding-right: 40px; }
+.wof-sheet .lp-tab.done .tl { padding-right: 38px; }
 
 /* ── The page ───────────────────────────────────────────────────────── */
 .wof-sheet .lp-main { position: relative; min-width: 0; min-height: 0; overflow-y: auto; padding: var(--s1) var(--s4) var(--s4); scrollbar-width: thin; scrollbar-color: rgba(79, 70, 61, .4) transparent; }
@@ -93,6 +94,7 @@
 .wof-sheet .pk-sub { font: var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
 .wof-sheet .pk-meta { font: var(--t-xs)/1.3 var(--fl); letter-spacing: .04em; color: var(--ink3); }
 .wof-sheet .pk-note { font: italic var(--t-xs)/1.3 var(--fb); color: var(--red); }
+.wof-sheet .pick.on .pk-body { padding-right: 64px; }
 .wof-sheet .pk-stamp { position: absolute; right: 6px; top: 6px; transform: rotate(-8deg); padding: 0 4px; font-size: var(--t-xs); border-width: 1.5px; }
 
 /* Rolls */
@@ -108,6 +110,12 @@
 .wof-sheet .d66-n { font: 900 var(--t-xl)/1 var(--fd); color: var(--ink); min-width: 32px; }
 .wof-sheet .d66-row { font: 600 var(--t-base)/1.3 var(--fb); }
 .wof-sheet .dset { display: inline-flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.wof-sheet .d66 .dset { flex: 0 0 auto; flex-wrap: nowrap; }
+.wof-sheet .lp-bands { border-collapse: collapse; margin: var(--s1) 0 var(--s2); background: none; border: 0; width: auto; }
+.wof-sheet .lp-bands tr { background: none !important; }
+.wof-sheet .lp-bands th, .wof-sheet .lp-bands td { padding: 2px var(--s2); border: 1px solid var(--rule); font: var(--t-xs)/1.3 var(--fl); letter-spacing: .06em; text-align: center; }
+.wof-sheet .lp-bands th { text-transform: uppercase; color: var(--ink3); font-weight: 400; text-align: left; }
+.wof-sheet .lp-bands td { font: 700 var(--t-sm)/1.3 var(--fd); color: var(--ink); }
 .wof-sheet .die { width: 22px; height: 22px; display: block; position: relative; flex: 0 0 22px; }
 .wof-sheet .die svg { width: 22px; height: 22px; display: block; overflow: visible; }
 .wof-sheet .die.hit::after { content: ""; position: absolute; inset: -3px; border: 2px solid var(--brass); border-radius: 3px; box-shadow: 0 0 0 1px rgba(110, 83, 37, .4); }
@@ -181,6 +189,7 @@
 .wof-sheet .swap-cell.key { box-shadow: 2px 2px 0 var(--ink); }
 .wof-sheet .swap-cell.moved { background: rgba(176, 132, 47, .14); }
 .wof-sheet .swap-cell .ic { mix-blend-mode: multiply; }
+.wof-sheet .swap-cell .lbl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wof-sheet .swap-v { display: inline-flex; align-items: center; gap: var(--s1); font: 900 var(--t-lg)/1 var(--fd); }
 .wof-sheet .swap-v i { font-size: var(--t-xs); color: var(--ink3); }
 .wof-sheet .swap-v .to { color: var(--red); }
@@ -194,7 +203,8 @@
 .wof-sheet .issue li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 0 var(--s2); align-items: center; padding: 2px 0; border-bottom: 1px dotted var(--rule); font: var(--t-sm)/1.3 var(--fb); }
 .wof-sheet .issue li .note { grid-column: 2; }
 .wof-sheet .issue img { grid-row: span 2; mix-blend-mode: multiply; }
-.wof-sheet .decl { gap: var(--s2) var(--s3); }
+.wof-sheet .decl { gap: var(--s2) var(--s3); grid-template-columns: minmax(0, 1fr) auto; }
+.wof-sheet .decl > .lbl { white-space: normal; }
 .wof-sheet .sign { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s2); padding: var(--s3); border: 1px dashed var(--ink3); }
 .wof-sheet .lp-name-field { display: flex; flex-direction: column; gap: 2px; width: 100%; }
 .wof-sheet .lp-name-field input.name { border-bottom: 1px solid var(--ink2); background: rgba(244, 236, 216, .7); padding: 2px var(--s1); }
@@ -282,4 +292,4 @@
 
 /* ── Preferences: the campaign's character creation (GM) ────────────── */
 .wof-prefs .pfield { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); font: var(--t-sm)/1.3 var(--fb); color: var(--ink); }
-.wof-prefs .pfield select { width: auto; max-width: 60%; font: var(--t-sm)/1.2 var(--fb); }
+.wof-prefs .pfield select { width: auto; max-width: 60%; height: 26px; padding: 0 var(--s1); font: var(--t-sm)/1.2 var(--fb); color: var(--ink); background: var(--paper-hi); border: 1px solid var(--ink2); border-radius: 0; box-shadow: 1px 1px 0 var(--ink); }

@@ -48,7 +48,7 @@
 </script>
 
 <Sec {n} title={t('WOF.Lifepath.step.finish')} hint={t('WOF.Lifepath.finish.hint')} />
-<WordText blocks={finishing.slice(0, 2)} />
+<WordText blocks={s.procedure === 'lifepath' ? finishing.slice(1, 2) : finishing.slice(0, 2)} />
 
 {#if f}
   <div class="lp-block finish-grid">
@@ -60,8 +60,8 @@
         <dt>{t('WOF.Lifepath.finish.stress')}</dt><dd>{t('WOF.Lifepath.finish.stressLine')}</dd>
         <dt>{t('WOF.Actor.Soldier.FIELDS.rank.label')}</dt><dd>{t('WOF.Rank.private')}</dd>
         <dt>{t('WOF.Actor.Soldier.FIELDS.merit.label')}</dt><dd>{f.merit ?? t('WOF.Lifepath.none')}</dd>
-        <dt>{t('WOF.Actor.Soldier.FIELDS.class_rank.label')}</dt><dd>{f.classRank ? t('WOF.Sheet.ordinal', { n: f.classRank }) : t('WOF.Lifepath.none')}</dd>
-        {#if f.declined}<dt>{t('WOF.Sheet.record.declined')}</dt><dd><span class="stamp">{t('WOF.Lifepath.grad.declinedShort')}</span></dd>{/if}
+        <dt>{t('WOF.Actor.Soldier.FIELDS.class_rank.label')}</dt><dd>{f.classRank ?? t('WOF.Lifepath.none')}</dd>
+        {#if f.declined}<dt>{t('WOF.Lifepath.grad.top10')}</dt><dd><span class="stamp">{t('WOF.Lifepath.grad.declinedShort')}</span></dd>{/if}
       </dl>
     </div>
     <div class="box">

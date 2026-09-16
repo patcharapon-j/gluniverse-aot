@@ -56,7 +56,7 @@
 </details>
 
 <div class="lp-rollbar">
-  <button type="button" class="mini red" disabled={ro || !!ys.roll} onclick={() => act.rollEvent(i)}><img src={iconPath('die-base')} alt="" />{t('WOF.Lifepath.year.rollEvent')}</button>
+  <button type="button" class="mini red" disabled={ro || !!ys.roll} onclick={() => act.rollEvent(i)}><i class="fa-solid fa-dice" inert></i>{t('WOF.Lifepath.year.rollEvent')}</button>
   <span class="note">{ys.roll ? t('WOF.Lifepath.rolled') : t('WOF.Lifepath.year.rollNote', { year: year.title })}</span>
 </div>
 
@@ -67,13 +67,13 @@
     <span class="d66-row">{d.event.name}</span>
   </div>
   <article class="slip" use:slideIn>
-    <header class="slip-h">
+    <div class="slip-h">
       <img class="ic s32" src={iconPath('action-performance-roll')} alt="" />
       <div>
         <h4>{d.event.name}</h4>
         <p class="slip-d">{d.event.description}</p>
       </div>
-    </header>
+    </div>
     <div class="chips-row">
       <span class="attr-chip s-{d.event.attribute}"><img src={attrIcon(d.event.attribute)} alt="" />{t('WOF.Lifepath.plusOne', { a: attrName(d.event.attribute) })}</span>
       <span class="merit-chip" class:neg={d.event.merit < 0}>{t('WOF.Lifepath.meritChip', { merit: signed(d.event.merit) })}</span>
@@ -93,6 +93,12 @@
       <p class="stamp info">{t('WOF.Lifepath.year.examReplaces')}</p>
     {:else}
       <WordText blocks={perfBlocks.slice(0, 2)} compact />
+      <table class="lp-bands" aria-label={t('WOF.Lifepath.year.bands')}>
+        <tbody>
+          <tr><th>{t('WOF.Lifepath.successes')}</th>{#each tables.performanceMerit as b, k (k)}<td>{b.max === null ? t('WOF.Lifepath.orMore', { n: b.min }) : b.min}</td>{/each}</tr>
+          <tr><th>{t('WOF.Actor.Soldier.FIELDS.merit.label')}</th>{#each tables.performanceMerit as b, k (k)}<td>{b.value}</td>{/each}</tr>
+        </tbody>
+      </table>
       <div class="perf-row">
         {#each perfAttrs as a (a)}
           {@const value = r.attrs[`year-${i + 1}` as 'year-1']?.[a] ?? 0}
@@ -106,7 +112,7 @@
       {#if d.perf}
         <div class="lp-rollbar">
           <span class="dots" role="img" aria-label={t('WOF.Lifepath.year.dice', { n: d.perf.dice })}><span class="grp">{#each Array.from({ length: d.perf.dice }) as _, k (k)}<i class="da"></i>{/each}</span></span>
-          <button type="button" class="mini red" disabled={ro || !perfReady} onclick={() => act.rollPerformance(i)}><img src={iconPath('die-base')} alt="" />{t('WOF.Lifepath.year.rollPerformance', { n: d.perf.dice })}</button>
+          <button type="button" class="mini red" disabled={ro || !perfReady} onclick={() => act.rollPerformance(i)}><i class="fa-solid fa-dice" inert></i>{t('WOF.Lifepath.year.rollPerformance', { n: d.perf.dice })}</button>
           <span class="note">{t('WOF.Lifepath.year.noPush')}</span>
         </div>
       {:else}

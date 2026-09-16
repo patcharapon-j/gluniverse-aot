@@ -1771,7 +1771,9 @@
         "todo": "Make every roll and choice on this page.",
         "blocked": "Finish the steps before this one.",
         "filed": "This soldier is filed.",
-        "review": "Filed. A roll after this step fixed its choices."
+        "review": "Filed. A roll after this step fixed its choices.",
+        "sign": "Ready to sign and file.",
+        "name": "Name the soldier to file it."
       },
       "back": "Back",
       "next": "Next",
@@ -1906,7 +1908,8 @@
         "noPush": "No Push, no Help.",
         "choicesFirst": "Choose the Talent (and where any extra point goes) first.",
         "examReplaces": "The Graduation Exam replaces this roll",
-        "meritTotal": "Merit total after this year: {merit}"
+        "meritTotal": "Merit total after this year: {merit}",
+        "bands": "Merit by successes"
       },
       "grad": {
         "hint": "Five steps, in order",
@@ -2038,7 +2041,8 @@
       "reset": {
         "title": "Clear the Lifepath",
         "hint": "Clears this soldier's Lifepath progress and rolls. The sheet itself is not changed."
-      }
+      },
+      "orMore": "{n} or more"
     }
   }
 }

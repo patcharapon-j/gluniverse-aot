@@ -74,6 +74,7 @@
 
   const statusText = $derived.by(() => {
     if (s.finished && step !== 'squad') return t('WOF.Lifepath.status.filed');
+    if (step === 'finish') return t(r.final ? (r.final.name ? 'WOF.Lifepath.status.sign' : 'WOF.Lifepath.status.name') : 'WOF.Lifepath.status.todo');
     if (r.locks.size && ['campaign', 'origin', 'enlist', 'year-1', 'year-2', 'year-3', 'exam'].includes(step) && status === 'done') return t('WOF.Lifepath.status.review');
     return t(`WOF.Lifepath.status.${status}`);
   });
@@ -96,7 +97,7 @@
 
   <div class="lp-grid">
     <StepRail {view} />
-    <section class="lp-main" bind:this={main} aria-labelledby="{sheet.id}-step-title">
+    <section class="lp-main" bind:this={main} aria-label={t(`WOF.Lifepath.step.${step}`)}>
       <div class="lp-page" data-step={step}>
         {#if step === 'campaign'}<StepCampaign {view} {n} />
         {:else if step === 'origin'}<StepOrigin {view} {n} />
@@ -124,7 +125,7 @@
     <button type="button" class="mini" disabled={ro || step === r.rail[0] || stamping} onclick={() => view.act.back()}>
       <i class="fa-solid fa-arrow-left" inert></i>{t('WOF.Lifepath.back')}
     </button>
-    <span class="lp-status" class:ok={status === 'ready' || status === 'done'} aria-live="polite">{statusText}</span>
+    <span class="lp-status" class:ok={status === 'ready' || status === 'done' || (step === 'finish' && !!r.final?.name)} aria-live="polite">{statusText}</span>
     {#if step === 'squad'}
       <button type="button" class="mini red" disabled={ro || !s.finished || stamping} onclick={async () => { await view.act.closeFile(); sheet.close(); }}>
         <i class="fa-solid fa-folder-closed" inert></i>{t('WOF.Lifepath.squad.close')}
