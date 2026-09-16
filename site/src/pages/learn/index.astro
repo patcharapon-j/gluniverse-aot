@@ -1,7 +1,69 @@
 ---
+/**
+ * Learn to Play: the guided path for a reader who has never played. Every rule it states
+ * is the simple case, taken from the finished chapters and linked back to the chapter that
+ * owns it. Nothing here is a rule of its own, and no table is retyped.
+ * The rules it states, with their sources: site/design/claims/learn-to-play.md.
+ */
 import { Icon } from 'astro-icon/components';
+import '~/styles/rules.css';
 import OpenerLayout from '~/layouts/OpenerLayout.astro';
+import DiceKey from '~/components/DiceKey.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import FieldReport from '~/components/FieldReport.astro';
+import GlossaryTerm from '~/components/GlossaryTerm.astro';
+import GrabCountdown from '~/components/GrabCountdown.astro';
+import IconKey from '~/components/IconKey.astro';
+import InkVignette from '~/components/InkVignette.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import PoolRows from '~/components/PoolRows.astro';
+import PositionsMap from '~/components/PositionsMap.astro';
+import PushSteps from '~/components/PushSteps.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Subsection from '~/components/Subsection.astro';
+import TryRollButton from '~/components/TryRollButton.astro';
 import plate from '~/assets/plates/plate-learn-to-play.webp';
+
+const path = [
+  { href: '#your-first-roll', title: 'Your first roll', summary: 'Build a pool, roll it, count the sixes.', meta: 'Step 1' },
+  { href: '#pushing-your-luck', title: 'Pushing your luck', summary: 'A second chance, bought with Stress.', meta: 'Step 2' },
+  { href: '#your-soldier', title: 'Your soldier in one minute', summary: 'Attributes, a Specialty, Talents, and kit.', meta: 'Step 3' },
+  { href: '#your-first-titan', title: 'Your first Titan', summary: 'One fight, played through from the first move.', meta: 'Step 4' },
+  { href: '#where-to-go-next', title: 'Where to go next', summary: 'The chapters, the Compendium, and the Dice Tray.', meta: 'Step 5' },
+];
+
+const next = [
+  {
+    href: '/guide/',
+    icon: 'ph:book-open-text',
+    title: "The Player's Guide",
+    summary: 'Every rule a soldier needs, in seven chapters. Start with The Rules of Play, then Making Your Soldier.',
+  },
+  {
+    href: '/compendium/',
+    icon: 'ph:cards',
+    title: 'The Compendium',
+    summary: 'Every Specialty, Talent, action, Titan, and piece of kit, filed for the table.',
+  },
+  {
+    href: '/reference/dice-tray/',
+    icon: 'ph:dice-five',
+    title: 'The Dice Tray',
+    summary: 'Roll a pool and Push it on the page. Every "Try this roll" button on this site opens it.',
+  },
+  {
+    href: '/reference/quick-reference/',
+    icon: 'ph:list-checks',
+    title: 'The Quick Reference',
+    summary: 'The dice, the Push, and the numbers you reach for mid-fight, on one sheet. The Glossary sits beside it.',
+  },
+  {
+    href: '/gm/',
+    icon: 'ph:compass-rose',
+    title: "The GM's Guide",
+    summary: 'For whoever runs it: framing a fight, running Titans, and building an Expedition.',
+  },
+];
 ---
 <OpenerLayout
   title="Learn to Play"
@@ -20,14 +82,225 @@ import plate from '~/assets/plates/plate-learn-to-play.webp';
   }}
   stamp="Read first"
 >
+  <FieldQuote cite="Survey Corps manual, issued to every recruit">
+    You will be taught three things: how to fly, how to cut, and how to come back. Only the third is ever in doubt.
+  </FieldQuote>
+
+  <p><b>Wings of Freedom</b> is a tabletop roleplaying game about the Survey Corps. One player is the GM, who plays the world and everything in it. Everyone else plays a soldier. Together your soldiers are a <GlossaryTerm term="Squad" />, which aims for six: the player characters, and <GlossaryTerm term="Squadmate">Squadmates</GlossaryTerm> to make up the number.</p>
+
+  <p>A session is talk, then dice. The GM says what is in front of you, you say what your soldier does, and when the outcome is in doubt you roll. Fights are short and lethal. Only one cut kills a Titan, the one at the back of its neck, and you reach it only from behind, so somebody has to be the one it is looking at.</p>
+
+  <p><b>What you need.</b> A GM and a few players. Ordinary six-sided dice, in three colours so base dice, Gear Dice, and Stress Dice stay apart. A sheet and a pencil each. Every table in the game is on this site, and the <a href="/reference/dice-tray/">Dice Tray</a> rolls for you if your dice are in another room.</p>
+
+  <p class="lbl learn-path-label">The path</p>
   <ul class="contents">
-    <li>
-      <a href="/guide/rules-of-play/#pushing-your-luck">
-        <span class="cnum" aria-hidden="true">1</span>
-        <span class="ctitle">Pushing Your Luck</span>
-        <span class="csum">A roll that falls short does not have to be the end. Learn how a Push trades Stress for a second chance.</span>
-        <span class="cmeta lbl">The Rules of Play <Icon name="ph:arrow-right" class="arrow" aria-hidden="true" /></span>
-      </a>
-    </li>
+    {path.map((item) => (
+      <li>
+        <a href={item.href}>
+          <span class="cnum" aria-hidden="true"><Icon name="ph:arrow-down" class="arrow" /></span>
+          <span class="ctitle">{item.title}</span>
+          <span class="csum">{item.summary}</span>
+          <span class="cmeta lbl">{item.meta}</span>
+        </a>
+      </li>
+    ))}
   </ul>
+
+  <section slot="after" class="sheet sheet--light rules" aria-labelledby="your-first-roll">
+    <div class="runhead lbl"><span>Part I · Learn to Play</span><span>A walkthrough in five steps</span></div>
+    <div class="rules-body">
+
+      <SectionHead id="your-first-roll" eyebrow="Step 1">Your First Roll</SectionHead>
+
+      <p>Every roll is the same move: build a pool of six-sided dice, roll it, count the sixes. <b>Every 6 is a success,</b> whatever kind of die shows it. Nothing else counts, and dice are never added up.</p>
+
+      <p>Your pool is your attribute, plus one <GlossaryTerm term="Talent" /> that names what you are doing, plus any <GlossaryTerm term="Bonus Dice" />, plus <GlossaryTerm term="Gear Dice" /> from one item, plus one <GlossaryTerm term="Stress Dice">Stress Die</GlossaryTerm> for each point of <GlossaryTerm term="Stress" /> you carry, less any penalties. Most rolls need <b>1 success</b>. The few that need more take their number from something real in the world, such as how deep a Titan's <GlossaryTerm term="Nape" /> lies.</p>
+
+      <DiceKey />
+
+      <MarginNote>The seven steps of a pool, and the Circumstances the GM names first: <a href="/guide/rules-of-play/#building-the-pool">The Rules of Play</a>.</MarginNote>
+
+      <FieldReport id="example-toma-repair" title="Toma mends a harness">
+
+        <p>A buckle on Private Ruger's harness has torn. Private Toma Weiss, an <a href="/compendium/specialties/">Engineer</a>, sits down in the supply cart to <a href="/compendium/actions/">Field Repair</a> it. The entry names Wits, lets a tool kit add Gear Dice, and needs 1 success.</p>
+
+        <ul>
+          <li>Wits 4: 4 base dice.</li>
+          <li>No Talent of his names Field Repair, so no Talent dice.</li>
+          <li>His tool kit is rated 2: 2 Gear Dice.</li>
+          <li>His Stress is 0: no Stress Dice.</li>
+          <li>The GM names no step of <GlossaryTerm term="Circumstances" />, so the roll is Standard.</li>
+        </ul>
+
+        <PoolRows rows={[{ label: 'The roll', pool: 'base:4,6,2,3|gear:5,1', successes: 1 }]} />
+
+        <p>One 6 out of six dice. The repair needs 1 success, so the buckle holds. That is a whole roll.</p>
+
+        <TryRollButton pool={{ base: 4, gear: 2 }} label="Try Toma's roll" />
+
+      </FieldReport>
+
+      <SectionHead id="pushing-your-luck" eyebrow="Step 2">Pushing Your Luck</SectionHead>
+
+      <p>A roll that falls short need not be the end of it. A <GlossaryTerm term="Push" /> trades Stress, and sometimes wear on your gear, for a second chance at successes. You can Push a failed roll, and a successful one you wanted more from.</p>
+
+      <PushSteps fig="Fig. 1" />
+
+      <p><b>You cannot Push</b> when any Stress Die on the roll showed a 1, when the roll's own rule forbids it, or when you have already Pushed it: once is the limit, unless a Talent allows more. A comrade can <GlossaryTerm term="Cover" /> your Push instead, taking the point of Stress in your place.</p>
+
+      <FieldReport id="example-toma-push" title="Toma Pushes, and pays for it">
+
+        <p>Later that day, with tracks in the mud a mile back, Toma carries 1 Stress. Same repair, same tool kit: 4 base dice, 2 Gear Dice, 1 Stress Die.</p>
+
+        <PoolRows rows={[
+          { label: 'First roll', pool: 'base:5,3,2,4|gear:1,4|stress:2', successes: 0 },
+          { label: 'After the Push', pool: 'base:6,2,5,3|gear:1l,4l|stress:5,3n', successes: 1 },
+        ]} />
+
+        <p>No 6 anywhere, and no Stress Die showing a 1, so he may Push. He gains 1 Stress, adds a new Stress Die, and rolls again every base die and Stress Die not showing a 6. Gear Dice are never rolled again, so his keep their faces.</p>
+
+        <p>One 6 this time. The harness is mended, Toma's Stress is now 2, and because he Pushed, the Gear Die showing a 1 wears his tool kit down by a point.</p>
+
+        <TryRollButton pool={{ base: 4, gear: 2, stress: 1 }} label="Try Toma's Push" />
+
+      </FieldReport>
+
+      <MarginNote stamp="Read twice">Stress carries over between fights, Expeditions, and sessions, and drops only through the triggers on the Stress table: <a href="/guide/rules-of-play/#stress">The Rules of Play</a>.</MarginNote>
+
+      <p><b>What Stress buys and costs.</b> Each point of Stress is another die in every pool you build, scoring on a 6 like any other. It is also another chance of a 1, and a Stress Die showing 1 sets off a <GlossaryTerm term="Stress Response" />: your nerve gives out for a moment. A roll causes at most one, however many 1s fall.</p>
+
+      <InkVignette caption="A soldier counts her red dice into her palm while the gate crew works the winches." label="A soldier counting dice in her hand before a gate opens" art="learn-stress" />
+
+      <SectionHead id="your-soldier" eyebrow="Step 3">Your Soldier in One Minute</SectionHead>
+
+      <p>You need not build a soldier to read the rest of this page, but it helps to know the shape of one.</p>
+
+      <IconKey title="The six attributes" items={[
+        { icon: 'attr-strength', label: 'Strength' },
+        { icon: 'attr-agility', label: 'Agility' },
+        { icon: 'attr-wits', label: 'Wits' },
+        { icon: 'attr-perception', label: 'Perception' },
+        { icon: 'attr-instinct', label: 'Instinct' },
+        { icon: 'attr-empathy', label: 'Empathy' },
+      ]} />
+
+      <Subsection title="What is on the sheet" id="the-sheet">
+
+        <ul>
+          <li><b>Attributes,</b> rated 2 to 5 and never raised after creation. Only your Specialty's key attribute can be rated 6. The one a roll names is where its base dice come from.</li>
+          <li><b><GlossaryTerm term="Health" /> and <GlossaryTerm term="Resolve" />,</b> worked out from those attributes. Health is what you lose before you are <GlossaryTerm term="Down" />; Resolve counts against a Stress Response or a <GlossaryTerm term="Fear Roll" /> result.</li>
+          <li><b>A <GlossaryTerm term="Specialty" />:</b> Slayer, Medic, Engineer, Flier, and five more. It sets your key attribute and gives you a Talent to start. It grants no permission: every soldier may attempt every action, and one without the Talent still rolls their full attribute.</li>
+          <li><b>Talents,</b> five levels of them at creation. A dice Talent adds base dice equal to its level, but only to the actions it names. A rule Talent bends one rule whenever its trigger happens.</li>
+          <li><b>Gear,</b> issued to you: <GlossaryTerm term="ODM Gear" />, a <GlossaryTerm term="Blade Set" />, gas, and a horse. A rated item's current rating is its Gear Dice, and wears down with hard use.</li>
+          <li><b>An Origin, a <GlossaryTerm term="Haven" />, and a <GlossaryTerm term="Drive" />:</b> where you are from, what you go back to, and what keeps you going out.</li>
+        </ul>
+
+      </Subsection>
+
+      <MarginNote>Roll a <GlossaryTerm term="Lifepath" /> or build your soldier step by step: <a href="/guide/making-your-soldier/">Making Your Soldier</a>. Every Specialty and Talent in full: <a href="/compendium/specialties/">Compendium, Specialties</a> and <a href="/compendium/talents/">Talents</a>.</MarginNote>
+
+      <p>The fastest way in is the Lifepath: roll where your soldier grew up, why they enlisted, and what the Training Corps made of them, and the sheet fills itself in.</p>
+
+      <SectionHead id="your-first-titan" eyebrow="Step 4">Your First Titan</SectionHead>
+
+      <FieldQuote cite="A Squad Leader, to a new recruit">While it is watching you, you are not cutting. That is the trade. Make it worth something.</FieldQuote>
+
+      <p>A <GlossaryTerm term="Titan Engagement" /> runs in rounds. Each round you take one turn, made of one <b>move</b> and one <b>action</b>. Your move changes where you stand relative to one Titan by one step; your action is what you do there.</p>
+
+      <PositionsMap fig="Fig. 2" rating="urban" />
+
+      <p>Three things decide the fight.</p>
+
+      <Subsection title="Attention" id="attention">
+        <p>A Titan's <GlossaryTerm term="Attention" /> is held by one soldier, by a decoy, or by nothing, and everyone can see who holds it. When its card comes up it reads its <GlossaryTerm term="Attention Ladder" /> and turns to whoever meets the highest rung anyone meets. <b>The soldier holding a Titan's Attention cannot strike its Nape.</b> That one line is the whole of squad tactics: somebody stands where it will look, somebody else goes round the back.</p>
+      </Subsection>
+
+      <Subsection title="The Nape strike" id="the-nape-strike">
+        <p>A <GlossaryTerm term="Nape strike" /> is a Strength roll taking its Gear Dice from your Blade Set. You must be at its <GlossaryTerm term="Position">Blind Spot</GlossaryTerm>, not holding its Attention, not <GlossaryTerm term="Grabbed" />, and on working ODM Gear unless the Titan is already down. Reach its <GlossaryTerm term="Nape Depth" /> in successes and it dies. Fall short and each success becomes an <GlossaryTerm term="Opening" /> instead, which a comrade spends as a Bonus Die. Never you: your own Openings wait on its body for somebody else.</p>
+      </Subsection>
+
+      <Subsection title="When it swings at you" id="when-it-swings">
+        <p>A Titan's attack rolls <GlossaryTerm term="Titan Dice" /> in the open, and they succeed on a <b>5 or 6</b>. Those successes are its <GlossaryTerm term="Severity" />, announced to every target. You may answer with a dodge, an Agility roll with your ODM Gear, and each dodge success cancels one of the attack's. What is left is its <GlossaryTerm term="Net Successes" />, and on 1 or more the attack lands. A dodge spends a whole turn, both your move and your action, so a soldier under a Titan's eye runs out of time.</p>
+      </Subsection>
+
+      <MarginNote>Titans never Push and never react. Everything a Titan does is one roll, made where you can see it, and it stands.</MarginNote>
+
+      <FieldReport id="example-first-fight" title="One fight, from the first move" eyebrow="Example of play">
+
+        <p>A Medium Titan stands in a ruined street inside Wall Rose. Chimney stacks and rubble make this <b>Urban</b> ground, so ODM lines reach almost anywhere. Everyone starts at Distant. Its <GlossaryTerm term="Nape Depth" /> is 4.</p>
+
+        <p><b>Round 1.</b> Private Anselm Ruger's card comes up first. He goes down the street on foot from Distant to In Reach.</p>
+
+        <p>The Titan's card comes next. Nobody is hooked into its body, so the highest rung anyone meets is the nearest person In Reach, and only Anselm is there. It turns to him. Its behavior is its Grab: 9 Attack Dice.</p>
+
+        <PoolRows rows={[
+          { label: "The Titan's attack", pool: 'titan:5,2,6,3,6,1,4,2,3', successes: 3 },
+          { label: "Anselm's dodge", pool: 'base:6,3,2|gear:6,4|stress:5', successes: 2 },
+        ]} />
+
+        <p>Severity 3. Anselm dodges with Agility 3, ODM Gear rated 2, and 1 Stress: 3 base dice, 2 Gear Dice, 1 Stress Die. Two successes cancel two, and the one left over is enough. The hand closes on him.</p>
+
+        <TryRollButton pool={{ base: 3, gear: 2, stress: 1 }} label="Try Anselm's dodge" />
+
+        <p>Private Nadja Holm's card is last. She fires her anchors and swings from Distant clear round to Blind Spot, the long move this ground allows.</p>
+
+      </FieldReport>
+
+      <p><b>What a Grab means.</b> Anselm is held in its fist. He takes a crushing <GlossaryTerm term="Critical Injury" /> to the torso, which cannot kill him. He holds On Body, and cannot <GlossaryTerm term="Help" />, Cover, or dodge. His move changes nothing, his only action is Break Free, and he can still Push. Everyone who saw it makes a Fear Roll. Then a clock starts, counted in his own turns.</p>
+
+      <GrabCountdown fig="Fig. 3" />
+
+      <MarginNote>Prying a comrade loose, cutting the arm that holds them, and the Clear the Hand Squad Tactic: <a href="/guide/fighting-titans/#the-grab">Fighting Titans</a>.</MarginNote>
+
+      <FieldReport id="example-first-fight-end" title="Two rounds to get him out" eyebrow="Example of play">
+
+        <p>Anselm's dodge spent a whole turn, so his next turn is already spent when it comes. That is the first turn the Grab counts: at the end of it he is lifted, and at the end of the one after, it devours him. The Squad has two rounds.</p>
+
+        <p><b>Round 2.</b> While the Titan holds a living soldier, its card resolves nothing at all: no ladder, no behavior, no attack. That silence is the Squad's whole chance.</p>
+
+        <p>Nadja holds Blind Spot and does not hold its Attention, because Anselm does, so she can strike. Strength 4, her Talent Clean Cut at level 1, a Blade Set rated 2, and 1 Stress make 5 base dice, 2 Gear Dice, and 1 Stress Die, against a Nape Depth of 4.</p>
+
+        <PoolRows rows={[{ label: "Nadja's strike", pool: 'base:6,3,5,2,6|gear:6,4|stress:1x', successes: 3 }]} />
+
+        <p>Three successes, one short, and her Stress Die came up 1, so she cannot Push and she takes a Stress Response. Her three successes become 3 Openings, made by her, which she can never spend herself. Toma makes the same long swing from the far roof, and the Fly roll it needs, and settles beside her.</p>
+
+        <p><b>Round 3.</b> Toma's card comes up before Anselm's. He spends all 3 of Nadja's Openings as Bonus Dice, under the cap of 4. Strength 3 and 3 Bonus Dice make 6 base dice, with 1 Gear Die from his Blade Set and 2 Stress Dice.</p>
+
+        <PoolRows rows={[{ label: "Toma's cut", pool: 'base:6,2,6,4,3,6|gear:6|stress:4,2', successes: 4 }]} />
+
+        <TryRollButton pool={{ base: 6, gear: 1, stress: 2 }} label="Try Toma's cut" />
+
+        <p>Four successes: the Nape Depth exactly. The Titan dies, the hand opens, and Anselm comes out of it. Everyone still holding a Position sheds Stress for the kill.</p>
+
+        <p>A dying Titan is not safe ground: steam scalds everyone at its Nape, and the body comes down on whoever is still on it. <a href="/guide/fighting-titans/#killing-it">Fighting Titans</a> has that order, and all this fight left out: decoys, Body Parts, Squad Tactics, the retreat.</p>
+
+      </FieldReport>
+
+      <SectionHead id="where-to-go-next" eyebrow="Step 5">Where to Go Next</SectionHead>
+
+      <p>That is the game: a pool of dice, a choice about Stress, and a Titan that cannot see behind itself. The rest is detail, and it is all here.</p>
+
+      <ul class="contents">
+        {next.map((item) => (
+          <li>
+            <a href={item.href}>
+              <span class="cnum" aria-hidden="true"><Icon name={item.icon} class="arrow" /></span>
+              <span class="ctitle">{item.title}</span>
+              <span class="csum">{item.summary}</span>
+              <span class="cmeta lbl">Open</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+    </div>
+  </section>
 </OpenerLayout>
+
+<style>
+  .learn-path-label {
+    margin-top: clamp(26px, 3.5vw, 40px);
+    margin-bottom: 10px;
+    color: var(--ink-2);
+  }
+</style>

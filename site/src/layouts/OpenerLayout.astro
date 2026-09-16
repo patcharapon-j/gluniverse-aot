@@ -44,4 +44,6 @@ const { title, description, section, tabs, tabsLabel, runhead, eyebrow, lede, pl
     </div>
     <div class="opener-body"><slot /></div>
   </section>
+  <!-- An opener that teaches rather than only lists puts its walkthrough in its own sheet below. -->
+  <slot name="after" />
 </BaseLayout>
