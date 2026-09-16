@@ -1,6 +1,6 @@
 /**
  * The Wings of Freedom emblem as canvas paths, drawn from the same feather and
- * wing geometry as the `#wing` and `#seal` symbols in SvgDefs.astro. Used for the
+ * wing geometry as the `#wing` symbol in SvgDefs.astro. Used for the
  * hero's pressed seal and the emblem faces of the Dice Tray's dice.
  */
 const FEATHER = 'M0 0C12-7 34-18 52-16 38-8 19-1 0 5Z';

@@ -522,6 +522,8 @@ p {
 .seal {
   position: absolute;
   width: clamp(92px, 11vw, 132px);
+  /* The seal is an image with width and height attributes, so drop its intrinsic height. */
+  height: auto;
   aspect-ratio: 1;
   right: -14px;
   top: -30px;

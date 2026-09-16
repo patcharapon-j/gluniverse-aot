@@ -1,5 +1,5 @@
 ---
-/** Shared SVG symbols: the Wings emblem, the wax seal, paper clips, and placeholder game icons. */
+/** Shared SVG symbols: the Wings emblem, paper clips, and placeholder game icons. */
 ---
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
@@ -11,68 +11,6 @@
       <use href="#feather" transform="rotate(-11) scale(.96)" />
       <use href="#feather" transform="rotate(6) scale(.74)" />
     </g>
-    <!--
-      The wax seal. Wax is poured, not printed: the blob's edge runs where it ran,
-      the light comes from the upper left, and the emblem sits in a basin the stamp
-      pressed, so its cut edge is lit on one side and dark on the other.
-    -->
-    <radialGradient id="wax-body" cx="34%" cy="28%" r="76%">
-      <stop offset="0" stop-color="#A63A2C" />
-      <stop offset=".34" stop-color="#8A2A20" />
-      <stop offset=".74" stop-color="#6B1E17" />
-      <stop offset="1" stop-color="#3F0F0C" />
-    </radialGradient>
-    <radialGradient id="wax-basin" cx="40%" cy="72%" r="70%">
-      <stop offset="0" stop-color="#7C241B" />
-      <stop offset=".6" stop-color="#5E1913" />
-      <stop offset="1" stop-color="#3B0E0B" />
-    </radialGradient>
-    <filter id="wax-run" x="-25%" y="-25%" width="150%" height="150%">
-      <feTurbulence type="fractalNoise" baseFrequency=".035 .05" numOctaves="3" seed="7" result="n" />
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
-    </filter>
-    <filter id="wax-grain" x="-10%" y="-10%" width="120%" height="120%">
-      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" seed="3" result="g" />
-      <feColorMatrix in="g" type="matrix" values="0 0 0 0 .18 0 0 0 0 .05 0 0 0 0 .04 0 0 0 .45 0" />
-    </filter>
-    <filter id="wax-soft" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="3.2" />
-    </filter>
-    <clipPath id="wax-clip">
-      <path d="M54 0Q48 26 33 33Q20 45 0 52Q-18 44-32 32Q-46 20-53 0Q-47-20-34-34Q-20-46 0-51Q20-45 33-33Q48-20 54 0Z" />
-    </clipPath>
-    <symbol id="seal" viewBox="-62 -62 124 124">
-      <g filter="url(#wax-run)">
-        <path d="M54 0Q48 26 33 33Q20 45 0 52Q-18 44-32 32Q-46 20-53 0Q-47-20-34-34Q-20-46 0-51Q20-45 33-33Q48-20 54 0Z" fill="url(#wax-body)" />
-        <path d="M54 0Q48 26 33 33Q20 45 0 52Q-18 44-32 32Q-46 20-53 0Q-47-20-34-34Q-20-46 0-51Q20-45 33-33Q48-20 54 0Z" fill="none" stroke="#3E0E0B" stroke-opacity=".55" stroke-width="1.6" />
-      </g>
-      <g clip-path="url(#wax-clip)">
-        <rect x="-62" y="-62" width="124" height="124" filter="url(#wax-grain)" opacity=".5" />
-        <path d="M-52-6A52 52 0 0 1 8-51" fill="none" stroke="#E9A08E" stroke-opacity=".5" stroke-width="5" stroke-linecap="round" filter="url(#wax-soft)" />
-        <path d="M-14 50A52 52 0 0 0 51 10" fill="none" stroke="#320B09" stroke-opacity=".5" stroke-width="6" stroke-linecap="round" filter="url(#wax-soft)" />
-      </g>
-      <circle r="41" fill="url(#wax-basin)" />
-      <circle r="41" fill="none" stroke="#3E0E0B" stroke-opacity=".7" stroke-width="2.4" />
-      <path d="M-29-29A41 41 0 0 1 29-29" fill="none" stroke="#2F0A08" stroke-opacity=".55" stroke-width="3.4" stroke-linecap="round" filter="url(#wax-soft)" />
-      <path d="M-27 31A41 41 0 0 0 27 31" fill="none" stroke="#D98876" stroke-opacity=".45" stroke-width="3" stroke-linecap="round" filter="url(#wax-soft)" />
-      <circle r="36.5" fill="none" stroke="#2F0A08" stroke-opacity=".3" stroke-width=".8" />
-      <circle r="34.5" fill="none" stroke="#C9776A" stroke-opacity=".18" stroke-width=".7" />
-      <!-- The emblem is pressed INTO the wax: its upper left wall lies in shadow, its lower right wall catches the light. -->
-      <g transform="translate(0 14) scale(.78)" stroke-linejoin="round">
-        <g transform="translate(-1.2 -1.6)" fill="#2C0806" stroke="#2C0806" stroke-width="2.2" fill-opacity=".85" stroke-opacity=".85">
-          <g transform="translate(-6 0) scale(-1 1)"><use href="#wing" /></g>
-          <g transform="translate(6 0)"><use href="#wing" /></g>
-        </g>
-        <g transform="translate(1.4 1.8)" fill="#DB9382" stroke="#DB9382" stroke-width="2.2" fill-opacity=".4" stroke-opacity=".4">
-          <g transform="translate(-6 0) scale(-1 1)"><use href="#wing" /></g>
-          <g transform="translate(6 0)"><use href="#wing" /></g>
-        </g>
-        <g stroke-width="2.2">
-          <g transform="translate(-6 0) scale(-1 1)" fill="#6A1D15" stroke="#6A1D15"><use href="#wing" /></g>
-          <g transform="translate(6 0)" fill="#4A1009" stroke="#4A1009"><use href="#wing" /></g>
-        </g>
-      </g>
-    </symbol>
     <symbol id="brandmark" viewBox="-40 -40 80 80">
       <circle r="37" fill="#22322A" stroke="#E4DCC5" stroke-width="2" />
       <g transform="translate(0 8) scale(.62)">

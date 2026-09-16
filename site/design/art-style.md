@@ -260,6 +260,36 @@ Built from `CONTEXT.md` and `data/` (attributes, specialties, talents, items and
 
 If an icon comes back on white, convert white to alpha (colour-to-alpha against `#FFFFFF`) and save it as a 1024 px transparent PNG. Proof every icon at 32 px on paper, on white, and as a black silhouette before approval.
 
+## The wax seal
+
+One asset, `site/src/assets/icons/seal-wax.webp`, drawn on every plate that carries `seal` (the Home opener and the opener layout). It is the one deliberate exception to the flat ink rules above: a seal is a material object mounted on the page, not a printed mark, so it is rendered as real wax with light and depth. It therefore does not take the style-lock plates as `-i` references, because the anime rendering pulls it back toward line art. Everything else still holds: it uses the palette, the folder layout, and the naming rules.
+
+### Style block: wax seal
+
+```text
+STYLE (wax seal): a rich, product-quality rendering of one blob of real poured sealing wax, seen straight on from directly above, flat to the camera, filling the frame. Real sealing-wax material: a softly glossy waxy surface with fine wax grain, a few tiny air pockets and pinholes, and a gentle specular sheen rather than a plastic or glass shine. Colour: deep oxblood to crimson and nothing else. The body sits around #8B2A21, the deepest crevices and the shaded walls around #5E1A13, and the lit upper-left rim brightens toward #A63A2C. One soft light source from the upper left: the raised rim is lit along its upper left, throws a short shadow across the wax toward the lower right, and the pressed basin catches a soft gradient from lit upper left to dark lower right.
+```
+
+### Subject
+
+```text
+SUBJECT: one generously poured seal of wax about 94 percent of the canvas wide, centred, as if it had just been stamped onto a letter. It is not a neat circle: the pour spread a little more to the lower right, so the blob is faintly oval and clearly hand-made. Its outer edge is a thick molten rim that swells and thins the whole way round, with two long thin wax runs trailing outward at the lower right, a thicker lobe at the left, and one or two small teardrops of wax that broke away and set just past the rim. Inside that rim the wax is pressed down into a deep basin by a heavy metal stamp, leaving a broad raised ring where the stamp's edge bit in and a faint concentric pressure ridge just inside it. Pressed into the floor of the basin, crisp, sharply defined and exactly centred, is the Survey Corps Wings of Freedom emblem: two large stylised wings mirrored left and right and overlapping at the centre, each wing built from five long tapered feathers fanning outward and upward from the shared centre point, the feathers clean, bold and clearly separated. The emblem is debossed into the wax, so each feather's upper-left cut wall lies in shadow and its lower-right wall catches the light. The emblem must read clearly and unmistakably even when the whole seal is shown only 120 pixels across, so keep the feathers few, thick and well separated, with no hairlines and no tiny gaps.
+```
+
+### Exclusions: wax seal
+
+```text
+EXCLUSIONS: transparent background with true alpha, nothing behind the seal at all: no paper, no envelope, no desk, no table, no fabric, no ribbon, no cord, no drop shadow, no cast shadow, no glow, no reflection, no vignette, no background colour. If transparency is impossible, put the seal on a plain flat pure white #FFFFFF background with nothing else on it. No text, no letters, no numbers, no signature, no watermark, no border, no frame, no ring of beads or rope around the emblem, no second seal, no hand, no stamp tool, no candle. Nothing in the frame but the single wax seal. Not a flat vector icon, not a cartoon, not a line drawing, not a 3D plastic render.
+```
+
+### Rules
+
+- The page adds the rotation and the drop shadow (`.seal` in `base.css`), so the asset carries neither. A baked shadow doubles up and breaks when the seal overhangs the plate's edge.
+- The emblem, not the wax, is what fails first. Proof every candidate at 120 px, rotated 12 degrees, on paper tone `#E4DCC5`. A shallow deboss with thin grooves flattens into a leaf or a fern at that size; the wings must still split visibly down the middle.
+- Keep the alpha bounding box centred in the canvas, since the page positions the square box, not the visible blob. Clamp alpha at or above 250 to fully opaque before encoding: the generator returns a body at 253 and the near-transparent pixels fringe on paper.
+- Generated seals come back browner than the palette. Measure the mean colour over the opaque pixels and lift the RGB until it lands near `#8B2A21`; the picked seal needed a 1.15 multiplier.
+- Three candidates were made. The picked one had the boldest wing split at 120 px; a shallow-deboss candidate and a candidate whose wings left a hollow V both read as foliage and are kept in `site/art-src/seal/rejected/`.
+
 ## Sizes
 
 | Asset | Aspect | Generated size | Web copy |
@@ -269,6 +299,7 @@ If an icon comes back on white, convert white to alpha (colour-to-alpha against 
 | Titan or soldier portrait | 4:5 | about 1024x1280 | WebP, 1600 px long edge, quality 82 |
 | Ink-wash vignette | 1:1 | 1024x1024 | WebP, quality 82 |
 | Game icon | 1:1 | 1024x1024, transparent | WebP with alpha, quality 82, alpha quality 100 |
+| Wax seal | 1:1 | 1024x1024, transparent | WebP with alpha, 768 px, quality 82, alpha quality 100 |
 
 WebP copies are made with `cwebp -q 82 -alpha_q 100 -m 6`, adding `-resize` when the long edge is over 1600 px. Crop to the target ratio before encoding if the model returns a near miss.
 
@@ -278,6 +309,7 @@ Names describe meaning, never appearance, in lowercase kebab case.
 
 - Colour plates: `plate-<subject>-<detail>.png`, for example `plate-hero-sortie.png`, `plate-titan-medium.png`, `plate-soldier-recruit.png`.
 - Ink-wash vignettes: `vignette-ink-<subject>.png`, for example `vignette-ink-odm-canister.png`.
+- Wax seal: `seal-wax.png`, one file.
 - Icons: `<family>-<meaning>.png`. Families are `die`, `roll`, `tier`, `gear`, `talent`, `attr`, `harm`, `size`, `position`, `tactic`, `specialty`. Examples: `die-stress.png`, `roll-push.png`, `tier-kill.png`, `gear-odm.png`.
 - Retries keep the name and add `-v2`, `-v3` in `originals/` until one is picked. The picked file takes the plain name.
 
@@ -287,4 +319,5 @@ Names describe meaning, never appearance, in lowercase kebab case.
 - `site/art-src/<batch>/icons/`: keyed transparent icon PNGs (gitignored).
 - `site/art-src/<batch>/web/`: WebP copies, the files that get committed once the owner approves the batch contact sheet.
 - Approved copies are committed under `site/src/assets/`: plates and vignettes in `plates/`, icons in `icons/`. Both go through `astro:assets`, which serves each page a copy at the size it is drawn. Nothing shown on a page belongs in `site/public/`, which Astro copies verbatim: a 1024 px icon is about 100 KB, and the Glossary alone shows twenty of them.
+- `site/art-src/seal/`: the wax seal's 1024 px original, with its unpicked candidates in `rejected/` (gitignored).
 - `site/art-src/<batch>/contact-sheet*.png`: review sheets for the owner.
