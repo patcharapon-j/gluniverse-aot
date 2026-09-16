@@ -1,10 +1,11 @@
 ---
 /**
- * A rules table, rendered from the shared tables through lib/core-tables and lib/character-tables.
- * Rows stack into labelled cards on narrow screens.
+ * A rules table, rendered from the shared tables through lib/core-tables, lib/character-tables,
+ * and lib/engagement-tables. Rows stack into labelled cards on narrow screens.
  */
 import { getCollection } from 'astro:content';
 import { CHARACTER_TABLES, type CharacterTableId } from '~/lib/character-tables';
+import { ENGAGEMENT_TABLES, type EngagementTableId } from '~/lib/engagement-tables';
 import {
   bonusDiceSources,
   circumstancesLadder,
@@ -18,7 +19,7 @@ import {
 } from '~/lib/core-tables';
 
 interface Props {
-  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId;
+  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId;
 }
 const { table } = Astro.props;
 
@@ -29,6 +30,7 @@ const builders: Record<Props['table'], () => CoreTableData> = {
   circumstances: circumstancesLadder,
   'called-roll-costs': failureMenu,
   ...CHARACTER_TABLES,
+  ...ENGAGEMENT_TABLES,
 };
 const data = builders[table]();
 const hasSee = data.see !== false;

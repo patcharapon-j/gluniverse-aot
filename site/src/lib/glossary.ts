@@ -119,6 +119,118 @@ const RAW: { term: string; definition: string; aliases?: string[] }[] = [
     definition:
       'What the GM names before a called roll: what failure costs, from a closed menu, and, where it is not obvious, what success gives. Once the dice are rolled they cannot change.',
   },
+  {
+    term: 'Focus Titan',
+    aliases: ['Focus Titans'],
+    definition:
+      'A Titan in the fight that is tracked in full, with Body Parts, Attention, a Behavior Table, and its own Positions. At most two are ever in play at once.',
+  },
+  {
+    term: 'Background Titan',
+    aliases: ['Background Titans'],
+    definition:
+      'A Titan run as a closing clock rather than a Focus Titan. When its clock fills it enters as a Focus Titan, or, if two are already alive, the fight becomes a retreat.',
+  },
+  {
+    term: 'Initiative card',
+    aliases: ['initiative cards'],
+    definition:
+      'One of the twenty numbered cards dealt face up each round. They come up lowest first, and each Focus Titan gets as many as its Tempo.',
+  },
+  {
+    term: 'Attention',
+    definition:
+      "The one soldier or decoy a Focus Titan is fixed on. Its Behavior Table acts against whoever holds it, and the soldier holding it cannot strike that Titan's Nape.",
+  },
+  {
+    term: 'Attention Ladder',
+    aliases: ['Attention Ladders'],
+    definition: 'The ranked list a Focus Titan reads each time it acts. The highest rung anyone meets decides who it comes for.',
+  },
+  {
+    term: 'Next Behavior',
+    definition:
+      'The Behavior Table result a Focus Titan will act on next, rolled in advance and hidden until its card comes up, a telegraph shows it, or a Read reveals it.',
+  },
+  { term: 'Thrash', definition: 'What a Titan does when no other entry can happen. Every Behavior Table has one, and it is never rolled.' },
+  {
+    term: 'Draw Attention',
+    definition:
+      'An unrolled action that makes you the loudest thing on a Titan’s ladder until the end of its next card that resolves a behavior. Never taken from Distant.',
+  },
+  {
+    term: 'Break Attention',
+    definition:
+      "An action that shifts a Titan's Attention onto a decoy for as many of its next cards as its Tempo. Easiest for the soldier holding its Attention, harder for each decoy it has fallen for since it last acted.",
+  },
+  {
+    term: 'Decoy',
+    aliases: ['Decoys'],
+    definition:
+      'What a Break Attention puts in front of a Titan: a flare, a riderless horse, a thrown cloak, or your own Feint. Each of the Titan’s cards it holds resolves nothing.',
+  },
+  {
+    term: 'Feint',
+    aliases: ['Feints'],
+    definition: 'A decoy that is your own pass across a Titan’s face, from In Reach or On Body. It spends nothing and needs 1 success more.',
+  },
+  {
+    term: 'Nape strike',
+    aliases: ['Nape strikes'],
+    definition:
+      'The Strength roll from Blind Spot that is the only thing that kills a Titan. Reach its Nape Depth and it dies; fall short and every success becomes an Opening.',
+  },
+  {
+    term: 'Body Part strike',
+    aliases: ['Body Part strikes'],
+    definition: "A Strength roll against a Titan's eyes, arm, or leg. Successes count toward the part's Toughness and move it toward Broken.",
+  },
+  {
+    term: 'Body Part State',
+    aliases: ['Body Part States'],
+    definition: 'Intact, Wounded, or Broken. A Broken part rules out every behavior that uses it until Regeneration brings it back.',
+  },
+  {
+    term: 'Grounded',
+    definition:
+      'What a Titan is while one of its legs is Broken. Nape strikes against it gain 2 Bonus Dice and need no working ODM Gear, and the close Positions can be reached on foot.',
+  },
+  {
+    term: 'Steam',
+    definition:
+      "The scalding vapour of a Titan's body. It burns soldiers On Body or at Blind Spot when it dies, and soldiers On Body when Regeneration brings a Body Part back.",
+  },
+  {
+    term: 'Leap Clear',
+    definition: "The Agility roll to get out from under a Titan's body as it comes down. It needs 1 success, is not a Reaction, and spends nothing.",
+  },
+  {
+    term: 'Pinned',
+    definition:
+      "Held under a Titan's body. You cannot move or be moved, and only a Heave, cutting the pinning Body Part, or a living Titan standing frees you.",
+  },
+  {
+    term: 'Heave',
+    definition:
+      "The Strength action that lifts a Titan's body off the soldiers it pins. Each success adds 1 to the body's heave count, and the count clears only when a living Titan stands.",
+  },
+  {
+    term: 'Corpse',
+    aliases: ['Corpses'],
+    definition:
+      "A dead Focus Titan's body, which stays on the field for the rest of the fight. It keeps its Positions, holds no Attention, and plays no cards.",
+  },
+  {
+    term: 'Squad Tactic',
+    aliases: ['Squad Tactics'],
+    definition:
+      'A tactic the Squad owns rather than any one soldier. Each one your Squad holds can be used once per Titan Engagement, when its condition is met.',
+  },
+  {
+    term: 'Witness',
+    aliases: ['Witnesses'],
+    definition: 'Every soldier other than the victim who is alive and holds a Position once a comrade is Grabbed or dies. Each makes a Fear Roll.',
+  },
 ];
 
 const slugify = (s: string) =>

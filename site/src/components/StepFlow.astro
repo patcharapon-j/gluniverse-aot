@@ -1,8 +1,9 @@
 ---
 /**
- * A drafted procedure: five numbered stations, each with an optional exit note.
+ * A drafted procedure: numbered stations, each with an optional exit note.
  * Shares the Push diagram's drawing styles (rules.css) but runs as rows, with the
- * exit note beside each step, so steps with longer text stay readable.
+ * exit note beside each step, so steps with longer text stay readable. Because it
+ * runs as rows, a procedure of any length lays out; one step is not a procedure.
  */
 import { Icon } from 'astro-icon/components';
 import { facesHtml } from '~/lib/dice';
@@ -22,7 +23,7 @@ interface Props {
   steps: Step[];
 }
 const { id, fig, title, steps } = Astro.props;
-if (steps.length !== 5) throw new Error(`StepFlow "${title}": the drawing lays out exactly five steps.`);
+if (steps.length < 2) throw new Error(`StepFlow "${title}": the drawing lays out a procedure of two steps or more.`);
 ---
 <figure class="drawing wide" aria-labelledby={`${id}-caption`}>
   <ol class="flow flow--rows">

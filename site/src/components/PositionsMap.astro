@@ -1,0 +1,199 @@
+---
+/**
+ * The four Positions and the moves that join them. The Positions, the step rows, and
+ * which kinds of move can make each come from the Position tables (lib/engagement-tables),
+ * so a new Position or a changed step row redraws the map.
+ */
+import IconSlot from './IconSlot.astro';
+import { positionsMap } from '~/lib/engagement-tables';
+
+interface Props {
+  fig: string;
+  /** The Anchor Rating the map is drawn for. */
+  rating: string;
+}
+const { fig, rating } = Astro.props;
+const map = positionsMap();
+const drawn = map.ratings.find((r) => r.id === rating);
+if (!drawn) throw new Error(`PositionsMap: there is no Anchor Rating "${rating}".`);
+
+/** Left to right, the way a soldier closes on a Titan. */
+const LANE = ['distant', 'in-reach', 'on-body', 'blind-spot'];
+const lane = LANE.map((id) => {
+  const p = map.positions.find((x) => x.id === id);
+  if (!p) throw new Error(`PositionsMap: the map lays out a Position "${id}" the tables do not have.`);
+  return p;
+});
+if (lane.length !== map.positions.length) throw new Error('PositionsMap: the tables hold a Position the map does not lay out.');
+
+const index = new Map(lane.map((p, i) => [p.id, i]));
+/** Steps between neighbours run along the lane; the rest arc over it. */
+const steps = drawn.steps.map((s) => {
+  const a = index.get(s.from)!;
+  const b = index.get(s.to)!;
+  return { ...s, from: Math.min(a, b), to: Math.max(a, b), span: Math.abs(a - b) };
+});
+const along = steps.filter((s) => s.span === 1).sort((x, y) => x.from - y.from);
+const arcs = steps.filter((s) => s.span > 1).sort((x, y) => x.from - y.from);
+---
+<figure class="drawing wide posmap" aria-labelledby="fig-positions-caption">
+  <p class="lead">Every soldier holds one of these relative to each Focus Titan. A move changes it by one step, and only a move you make changes it yourself.</p>
+
+  <ol class="lane">
+    {lane.map((p, i) => (
+      <li class="stop">
+        <IconSlot name={p.icon} size="lg" />
+        <span class="name">{p.name}</span>
+        {along[i] && (
+          <span class="link" aria-hidden="true">
+            <span class="kinds">{along[i].kinds.join(" · ")}</span>
+          </span>
+        )}
+      </li>
+    ))}
+  </ol>
+
+  <p class="sr">
+    At {drawn.name}, the steps along the line are: {along.map((s) => `${lane[s.from].name} to ${lane[s.to].name}, by ${s.kinds.join(' or ')}`).join('; ')}.
+    {arcs.length > 0 && ` Steps that skip a Position: ${arcs.map((s) => `${lane[s.from].name} to ${lane[s.to].name}, by ${s.kinds.join(' or ')}${s.fly ? `, ${s.fly}` : ''}`).join('; ')}.`}
+  </p>
+
+  {arcs.length > 0 && (
+    <ul class="arcs">
+      {arcs.map((s) => (
+        <li>
+          <b>{lane[s.from].name} to {lane[s.to].name}</b>
+          <span class="kinds">{s.kinds.join(' · ')}</span>
+          {s.fly && <span class="fly">{s.fly}</span>}
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <p class="foot">
+    Drawn at <b>{drawn.name}</b>. Every Anchor Rating has its own step rows, in the table below. A Titan grounded by a Broken leg lets every step joining In Reach, On Body, and Blind Spot be made on foot, and none mounted.
+  </p>
+
+  <figcaption class="titleblock" id="fig-positions-caption"><span>{fig}</span><span>Positions and the moves between them</span></figcaption>
+</figure>
+
+<style>
+  .posmap .lead {
+    margin: 0 0 18px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .lane {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+  }
+  .stop {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 0 6px;
+    text-align: center;
+  }
+  .name {
+    font-family: var(--f-type);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .link {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    right: -50%;
+    display: grid;
+    justify-items: center;
+    pointer-events: none;
+  }
+  .link::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 30px;
+    right: 30px;
+    border-top: 1.5px solid var(--ink);
+  }
+  .link .kinds {
+    margin-top: 6px;
+    padding: 0 4px;
+    background: var(--paper);
+  }
+  .kinds {
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .arcs {
+    list-style: none;
+    margin: 22px 0 0;
+    padding: 12px 0 0;
+    border-top: 1px dashed var(--rule);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 10px 20px;
+  }
+  .arcs li {
+    display: grid;
+    gap: 2px;
+  }
+  .arcs b {
+    font-family: var(--f-serif);
+    font-size: 1rem;
+  }
+  .arcs b::before {
+    content: "→ ";
+    color: var(--seal);
+  }
+  .fly {
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+    color: var(--ink-3);
+  }
+  .foot {
+    margin: 18px 0 26px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+
+  @media (max-width: 620px) {
+    .lane {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 4px;
+    }
+    .stop {
+      grid-template-columns: 52px minmax(0, 1fr);
+      justify-items: start;
+      text-align: left;
+      align-items: center;
+      gap: 0 12px;
+      padding: 8px 0;
+    }
+    .link {
+      position: static;
+      grid-column: 2;
+      justify-items: start;
+    }
+    .link::before {
+      display: none;
+    }
+    .link .kinds {
+      margin-top: 0;
+      padding: 0 0 0 14px;
+      border-left: 1.5px solid var(--ink);
+    }
+  }
+</style>
