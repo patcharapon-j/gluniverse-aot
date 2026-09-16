@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components';
 import OpenerLayout from '~/layouts/OpenerLayout.astro';
 import { REFERENCE_TABS } from '~/lib/nav';
+import plate from '~/assets/plates/plate-reference.webp';
 
 const items = [
   { href: '/reference/glossary/', icon: 'ph:book-open', title: 'Glossary', summary: 'Every game term in the manual, defined in a sentence or two.' },
@@ -18,7 +19,14 @@ const items = [
   runhead={['Part IV · Reference', 'At the table']}
   eyebrow="Part IV"
   lede="What you reach for at the table, without turning back through the chapters."
-  plate={{ number: 'Plate V', caption: 'A field desk by lamplight, the night before riding out.', label: 'A field desk with a map, dice, and a lamp inside a Survey Corps barracks', art: 'reference-opener' }}
+  plate={{
+    number: 'Plate V',
+    caption: 'Standard Issue, laid out for inspection.',
+    label: 'A soldier’s kit laid out on a green blanket: folded cloak, harness straps, gas canister, canteen, three blades, ODM handles, rations, compass, and flare pistol',
+    art: 'reference-opener',
+    image: plate,
+    maxWidth: 560,
+  }}
   stamp="Keep handy"
 >
   <ul class="contents">

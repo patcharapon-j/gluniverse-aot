@@ -115,6 +115,22 @@
   width: 22px;
   height: 22px;
 }
+/*
+ * The die kind's stamp icon. The icons are ink on transparent, so on the tray's
+ * dark cloth each one sits on its own scrap of paper to stay readable.
+ */
+.dtray-stamp {
+  display: inline-grid;
+  place-items: center;
+  padding: 2px;
+  background: var(--paper-hi);
+  border: 1px solid rgba(41, 36, 29, 0.55);
+  flex-shrink: 0;
+}
+.dtray-stamp .icon-slot {
+  width: 20px;
+  height: 20px;
+}
 .dtray small {
   font-family: var(--f-type);
   font-size: 0.75rem;

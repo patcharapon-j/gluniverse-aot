@@ -10,3 +10,16 @@ sources:
   - path: docs/rules/06-standard-titans.md
     sha: "5d27cbc07b3509957da3bcab0ecda8ab1d1145ed"
 ---
+
+import Plate from '~/components/Plate.astro';
+import plate from '~/assets/plates/plate-fighting-titans.webp';
+
+<Plate
+  number="Plate X"
+  caption="The cut comes from above and behind."
+  label="A soldier swinging in on ODM lines with a drawn blade toward the nape of a Titan seen from behind, among giant forest trees"
+  art="guide-fighting-titans"
+  image={plate}
+  crop="21 / 9"
+  maxWidth={900}
+/>

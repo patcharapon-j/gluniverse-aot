@@ -4,6 +4,7 @@ import { Icon } from 'astro-icon/components';
 import OpenerLayout from '~/layouts/OpenerLayout.astro';
 import { COMPENDIUM_SECTIONS, COMPENDIUM_TABS } from '~/lib/compendium';
 import { lifepathTables } from '~/lib/lifepath-tables';
+import plate from '~/assets/plates/plate-compendium.webp';
 
 const counts: Record<string, number> = {
   talents: (await getCollection('talents')).length,
@@ -22,7 +23,14 @@ const counts: Record<string, number> = {
   runhead={['Part III · Compendium', 'Index of entries']}
   eyebrow="Part III"
   lede="Every Talent, Titan, and piece of kit, filed and cross-referenced."
-  plate={{ number: 'Plate IV', caption: 'The quartermaster’s ledger, open on the stores counter.', label: 'An open ledger of Survey Corps stores beside ODM Gear and blades', art: 'compendium-opener' }}
+  plate={{
+    number: 'Plate IV',
+    caption: 'The archivist’s desk, with the specimen sketches pinned above it.',
+    label: 'A desk holding a bound ledger, a quill and inkwell, a magnifying glass, an ODM blade and a pistol, below pinned anatomical sketches of Titan heads and a hand',
+    art: 'compendium-opener',
+    image: plate,
+    maxWidth: 560,
+  }}
   stamp="Filed"
 >
   <ul class="contents">

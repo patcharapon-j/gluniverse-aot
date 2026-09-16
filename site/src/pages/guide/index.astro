@@ -3,6 +3,7 @@ import OpenerLayout from '~/layouts/OpenerLayout.astro';
 import EarlyRulesBadge from '~/components/EarlyRulesBadge.astro';
 import { chapterTabs, guideChapters } from '~/lib/chapters';
 import { numeral } from '~/lib/nav';
+import plate from '~/assets/plates/plate-soldier-recruit.webp';
 
 const chapters = await guideChapters();
 const tabs = chapterTabs(chapters, '/guide/');
@@ -16,7 +17,14 @@ const tabs = chapterTabs(chapters, '/guide/');
   runhead={["Part II · Player's Guide", 'Contents']}
   eyebrow="Part II"
   lede="Every rule a soldier needs, from the first roll to the last ride home."
-  plate={{ number: 'Plate III', caption: 'A squad forms up at the gate before an Expedition.', label: 'A Survey Corps squad mounted and waiting at the gate of the Wall', art: 'guide-opener' }}
+  plate={{
+    number: 'Plate III',
+    caption: 'A recruit on the Wall, the morning she is posted.',
+    label: 'A young Survey Corps soldier in harness and green cloak standing on top of the Wall at sunrise, the town below her',
+    art: 'guide-opener',
+    image: plate,
+    maxWidth: 460,
+  }}
   stamp="Field copy"
 >
   <ol class="contents">

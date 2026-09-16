@@ -9,3 +9,16 @@ sources:
   - path: docs/rules/07-playtest-rules.md
     sha: "874cedf8ee5fdbf0bca43aaf1a346c2b33928d7b"
 ---
+
+import Plate from '~/components/Plate.astro';
+import plate from '~/assets/plates/plate-skirmishes.webp';
+
+<Plate
+  number="Plate XII"
+  caption="Blades out in a back street, and not a Titan in sight."
+  label="Three Survey Corps soldiers with drawn blades fighting hooded attackers in a lamplit cobbled street at night, a musket firing behind them"
+  art="guide-skirmishes"
+  image={plate}
+  crop="21 / 9"
+  maxWidth={900}
+/>

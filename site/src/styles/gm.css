@@ -5,6 +5,12 @@ body.is-gm {
   box-shadow: inset 0 5px 0 var(--seal);
 }
 
+/* The Commander's opener plate, mounted under the briefing. */
+.gm-plate {
+  max-width: 720px;
+  margin: 0 auto clamp(26px, 4vw, 44px);
+}
+
 /* ---------- manila folder tabs ---------- */
 .is-gm .tabs a {
   background-color: var(--manila);

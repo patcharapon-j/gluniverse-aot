@@ -8,3 +8,26 @@ sources:
   - path: docs/rules/04-gear.md
     sha: "9ff960c459703ef59d44f849818efc863de1fa4b"
 ---
+
+import InkVignette from '~/components/InkVignette.astro';
+import Plate from '~/components/Plate.astro';
+import plate from '~/assets/plates/plate-gear-and-odm.webp';
+import canister from '~/assets/plates/vignette-ink-odm-canister.webp';
+
+<Plate
+  number="Plate IX"
+  caption="An engineer strips a gas unit down on the bench."
+  label="Hands working a wrench on a stripped-down ODM Gear mechanism by lamplight, with spare blades and anchors laid out on the workbench"
+  art="guide-gear-and-odm"
+  image={plate}
+  crop="21 / 9"
+  maxWidth={900}
+/>
+
+<InkVignette
+  caption="Check your gas before you check your blades."
+  label="A soldier's hands checking the gas canister seated in the ODM Gear at their hip"
+  art="guide-gear-and-odm-canister"
+  image={canister}
+  width="260px"
+/>

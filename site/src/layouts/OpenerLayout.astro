@@ -3,6 +3,7 @@
 import '~/styles/opener.css';
 import BaseLayout from './BaseLayout.astro';
 import Plate from '~/components/Plate.astro';
+import type { ImageMetadata } from 'astro';
 import type { IndexTab, SectionKey } from '~/lib/nav';
 
 interface Props {
@@ -14,7 +15,8 @@ interface Props {
   runhead: [string, string];
   eyebrow: string;
   lede: string;
-  plate: { number: string; caption: string; label: string; art: string };
+  /** The opener's plate. Without `image` the frame keeps its placeholder. */
+  plate: { number: string; caption: string; label: string; art: string; image?: ImageMetadata; crop?: string; maxWidth?: number };
   stamp?: string;
 }
 const { title, description, section, tabs, tabsLabel, runhead, eyebrow, lede, plate, stamp } = Astro.props;
@@ -29,7 +31,16 @@ const { title, description, section, tabs, tabsLabel, runhead, eyebrow, lede, pl
         <p class="lede">{lede}</p>
         {stamp && <span class="stamp stamp--dbl opener-stamp" aria-hidden="true">{stamp}</span>}
       </div>
-      <Plate number={plate.number} caption={plate.caption} label={plate.label} art={plate.art} seal />
+      <Plate
+        number={plate.number}
+        caption={plate.caption}
+        label={plate.label}
+        art={plate.art}
+        image={plate.image}
+        crop={plate.crop}
+        maxWidth={plate.maxWidth}
+        seal
+      />
     </div>
     <div class="opener-body"><slot /></div>
   </section>

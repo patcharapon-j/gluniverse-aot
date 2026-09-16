@@ -351,6 +351,17 @@
   height: 44px;
   flex-shrink: 0;
 }
+/* The stamp icon for the die kind sits between the die face and the name. */
+.spec > :first-child .icon-slot {
+  width: 30px;
+  height: 30px;
+  margin-left: -4px;
+}
+.spec > :first-child .icon-slot img,
+.spec > :first-child .icon-slot svg {
+  width: 100%;
+  height: 100%;
+}
 .spec h4 {
   font-family: var(--f-serif);
   font-weight: 700;

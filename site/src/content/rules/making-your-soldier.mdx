@@ -46,10 +46,11 @@ import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
 import TryRollButton from '~/components/TryRollButton.astro';
+import plateSoldier from '~/assets/plates/plate-making-your-soldier.webp';
 
 <FieldQuote cite="Instructor's saying, Training Corps">Three years to make a soldier. One afternoon beyond the Walls to find out whether we did.</FieldQuote>
 
-<Plate number="Plate VII" caption="Cadets hang in balance harnesses across a training ground at first light while an instructor walks the line." label="Cadets holding steady in balance harnesses on a training ground" art="guide-making-your-soldier-opener" ratio="21 / 9" />
+<Plate number="Plate VII" caption="The class stands at attention on Graduation morning." label="A long line of cadets in harness and green cloaks standing at attention in a walled parade ground at sunrise, an officer on a platform" art="guide-making-your-soldier-opener" image={plateSoldier} crop="21 / 9" maxWidth={900} />
 
 <ChapterContents items={[
   { id: 'what-a-soldier-is', title: 'What a Soldier Is', note: 'The sheet, attributes, derived values' },

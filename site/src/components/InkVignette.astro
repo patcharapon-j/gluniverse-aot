@@ -1,14 +1,35 @@
 ---
-/** A small ink-wash scene inside a rules page. Placeholder wash until the art pass names it. */
+/**
+ * A small ink-wash scene inside a rules page. Pass the approved drawing as
+ * `image`; a slot whose drawing is not made yet keeps its placeholder wash.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   caption: string;
   label: string;
   art: string;
   width?: string;
+  /** The approved ink-wash drawing. Without it the slot keeps its placeholder. */
+  image?: ImageMetadata;
 }
-const { caption, label, art, width = '240px' } = Astro.props;
+const { caption, label, art, width = '240px', image } = Astro.props;
 ---
 <figure class="vignette" data-art-slot={art}>
-  <div class="vignette-art" role="img" aria-label={label} style={`width:${width};aspect-ratio:4 / 3`}></div>
+  {image ? (
+    <Image
+      class="vignette-art vignette-art--photo"
+      src={image}
+      alt={label}
+      widths={[240, 480, 720].filter((w) => w <= image.width)}
+      sizes={`(max-width: 560px) 70vw, ${width}`}
+      loading="lazy"
+      decoding="async"
+      style={`width:${width}`}
+    />
+  ) : (
+    <div class="vignette-art" role="img" aria-label={label} style={`width:${width};aspect-ratio:4 / 3`}></div>
+  )}
   <figcaption>{caption}</figcaption>
 </figure>

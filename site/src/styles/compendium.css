@@ -239,6 +239,31 @@
   width: 100%;
   height: auto;
 }
+/* The specimen's portrait, cropped to a tall plate above the scale drawing. */
+.spec-portrait {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 16px;
+  /* height:auto lets aspect-ratio crop the plate; the img's own height attribute would win. */
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 1px solid var(--ink);
+  box-shadow: 0 1px 0 var(--paper-shade);
+}
+.spec-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.part .icon-slot {
+  margin-right: -2px;
+}
+.tchip .icon-slot {
+  margin-right: 2px;
+  vertical-align: -5px;
+}
 .legend {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -621,34 +646,7 @@
 }
 
 /* ---------- Character options: Talents, Actions, Specialties, Lifepath ---------- */
-.icon-slot {
-  display: inline-grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  color: var(--ink-2);
-}
-.icon-slot--sm {
-  width: 20px;
-  height: 20px;
-}
-.icon-slot--lg {
-  width: 52px;
-  height: 52px;
-}
-.icon-slot svg,
-.icon-slot img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.icon-slot-frame {
-  fill: var(--paper-hi);
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-dasharray: 3 2.4;
-}
+/* Icon slots are styled in base.css: the same icons appear outside the Compendium. */
 .card h2,
 .card h3,
 .ledger h3,

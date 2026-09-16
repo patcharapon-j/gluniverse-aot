@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 import OpenerLayout from '~/layouts/OpenerLayout.astro';
+import plate from '~/assets/plates/plate-learn-to-play.webp';
 ---
 <OpenerLayout
   title="Learn to Play"
@@ -9,7 +10,14 @@ import OpenerLayout from '~/layouts/OpenerLayout.astro';
   runhead={['Part I · Learn to Play', 'Before your first Expedition']}
   eyebrow="Part I"
   lede="Your first roll, your first Push, your first Titan."
-  plate={{ number: 'Plate II', caption: 'Cadets at drill on the practice frames.', label: 'Cadets of the Training Corps practicing on ODM Gear frames', art: 'learn-opener' }}
+  plate={{
+    number: 'Plate II',
+    caption: 'Cadets at drill on the practice frames.',
+    label: 'Cadets flying on ODM Gear between wooden practice towers while an instructor watches from the ground',
+    art: 'learn-opener',
+    image: plate,
+    maxWidth: 560,
+  }}
   stamp="Read first"
 >
   <ul class="contents">

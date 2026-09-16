@@ -1,10 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import TitanDiagram from './TitanDiagram.astro';
+import IconSlot from './IconSlot.astro';
 import Redacted from './Redacted.astro';
 import GlossText from './GlossText.astro';
 import { glossifier } from '~/lib/glossify';
+import plateSmall from '~/assets/plates/plate-titan-small.webp';
+import plateMedium from '~/assets/plates/plate-titan-medium.webp';
+import plateLarge from '~/assets/plates/plate-titan-large.webp';
+import plateAbnormal from '~/assets/plates/plate-titan-sprinting-abnormal.webp';
 
 type Titan = CollectionEntry<'titans'>['data'];
 type HiddenField = Titan['hidden'][number];
@@ -17,6 +24,28 @@ interface Props {
 }
 const { titan: t, id, mode = 'squad' } = Astro.props;
 const isHidden = (field: HiddenField) => t.hidden.includes(field);
+
+/** The specimen's portrait, by Size Class, with one plate for every Abnormal. */
+const PORTRAITS: Record<string, { image: ImageMetadata; alt: string }> = {
+  small: { image: plateSmall, alt: 'A Small Titan reaching over a low stone wall in an overgrown ruined village' },
+  medium: { image: plateMedium, alt: 'A gaunt Medium Titan hunched among giant forest trees, one long arm reaching down toward the viewer' },
+  large: { image: plateLarge, alt: 'A Large Titan tearing a tree loose above a pine forest, mounted soldiers looking up from below' },
+  abnormal: { image: plateAbnormal, alt: 'An Abnormal Titan sprinting on all fours across open grass toward a rider, its mouth wide open' },
+};
+const portrait = PORTRAITS[t.abnormal ? 'abnormal' : t.sizeClass.slug];
+const sizeIcon = t.abnormal ? 'titan-abnormal' : `titan-${t.sizeClass.slug}`;
+
+/** Body Part icons by the part's kind. The Nape's icon is not drawn yet. */
+function partIcon(name: string): string | null {
+  const n = name.toLowerCase();
+  if (n.includes('eye')) return 'body-eyes';
+  if (n.includes('arm')) return 'body-arm';
+  if (n.includes('leg')) return 'body-leg';
+  if (n.includes('nape')) return 'body-nape';
+  return null;
+}
+/** Only the three tiers that have a stamp icon; a tier without one shows no slot. */
+const TIER_ICONS = new Set(['control', 'kill', 'terrorize']);
 
 const figs = [
   { label: 'Tempo', value: t.tempo, note: 'How many times it acts each round.', field: null, seal: false },
@@ -62,13 +91,25 @@ const tableId = `${id}-behaviors`;
   <div class="spec-head">
     <div>
       <p class="lbl">Specimen report · Size: {t.sizeClass.name} · {t.sizeClass.height}</p>
-      <h2 id={`${id}-name`}>{t.name}</h2>
+      {/* The size icon is decorative: the Size Class is written in the line above. */}
+      <h2 id={`${id}-name`}><IconSlot name={sizeIcon} /><span>{t.name}</span></h2>
     </div>
     <span class="stamp stamp--dbl" aria-hidden="true">{t.abnormal ? 'Abnormal' : 'Specimen'}</span>
   </div>
 
   <div class="spec-body">
     <div class="specplate">
+      {portrait && (
+        <Image
+          class="spec-portrait"
+          src={portrait.image}
+          alt={portrait.alt}
+          widths={[320, 640]}
+          sizes="(max-width: 1080px) 60vw, 320px"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
       <TitanDiagram name={t.name} height={t.sizeClass.height} />
     </div>
 
@@ -101,6 +142,7 @@ const tableId = `${id}-behaviors`;
         <ul class="parts">
           {t.bodyParts.map((part) => (
             <li class="part">
+              {partIcon(part.name) && <IconSlot name={partIcon(part.name)!} size="sm" />}
               {part.name}
               {part.toughness === null ? (
                 <span class="pips pips--unknown" aria-hidden="true"><span></span><span></span></span>
@@ -121,7 +163,13 @@ const tableId = `${id}-behaviors`;
         <dl class="tiers">
           {t.tiers.map((tier) => (
             <div class="tier">
-              <dt><span class:list={['tchip', `t-${tier.slug}`]}><span class="tdia" aria-hidden="true"></span>{tier.name}</span></dt>
+              <dt>
+                <span class:list={['tchip', `t-${tier.slug}`]}>
+                  <span class="tdia" aria-hidden="true"></span>
+                  {TIER_ICONS.has(tier.slug) && <IconSlot name={`tier-${tier.slug}`} size="sm" />}
+                  {tier.name}
+                </span>
+              </dt>
               <dd class="sq" aria-hidden="true">{Array.from({ length: Math.max(...tier.dice) }, () => <span></span>)}</dd>
               <dd class="tval num">{tier.dice.join(' or ')}</dd>
             </div>
@@ -162,7 +210,13 @@ const tableId = `${id}-behaviors`;
             <tr role="row">
               <td class="d6 num" role="cell">{b.roll}</td>
               <th scope="row" role="rowheader">{b.name}</th>
-              <td class="btier" role="cell"><span class:list={['tchip', `t-${b.tier.slug}`]}><span class="tdia" aria-hidden="true"></span>{b.tier.name}</span></td>
+              <td class="btier" role="cell">
+                <span class:list={['tchip', `t-${b.tier.slug}`]}>
+                  <span class="tdia" aria-hidden="true"></span>
+                  {TIER_ICONS.has(b.tier.slug) && <IconSlot name={`tier-${b.tier.slug}`} size="sm" />}
+                  {b.tier.name}
+                </span>
+              </td>
               <td class="ad num" role="cell" data-label="Attack Dice">{b.attackDice ?? 'None'}</td>
               <td class="beff" role="cell"><GlossText parts={b.parts} /><span class="q">{b.text}</span></td>
             </tr>

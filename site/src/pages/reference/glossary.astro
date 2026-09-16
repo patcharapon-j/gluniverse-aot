@@ -1,7 +1,37 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import IconSlot from '~/components/IconSlot.astro';
 import { GLOSSARY } from '~/lib/glossary';
 import { REFERENCE_TABS } from '~/lib/nav';
+
+/**
+ * A stamp icon for the terms that have one, by glossary slug. Decorative: the
+ * term and its definition carry the meaning. Terms whose icon would be
+ * ambiguous (a Specialty, a Size Class) are left without one.
+ */
+const ICONS: Record<string, string> = {
+  abnormal: 'titan-abnormal',
+  'base-dice': 'die-base',
+  'blade-set': 'gear-blades',
+  'critical-injury': 'harm-critical-injury',
+  'death-roll': 'harm-death-roll',
+  down: 'harm-down',
+  'fear-roll': 'harm-fear',
+  'gas-roll': 'gear-gas-canister',
+  'gear-dice': 'die-gear',
+  health: 'harm-health',
+  nape: 'body-nape',
+  'odm-gear': 'gear-odm',
+  push: 'roll-push',
+  scar: 'harm-scar',
+  stress: 'roll-stress',
+  'stress-dice': 'die-stress',
+  talent: 'talent-dice',
+  'titan-dice': 'die-titan-attack',
+};
+
+/** The four Positions, shown together on the one entry that explains them. */
+const POSITIONS = ['pos-distant', 'pos-in-reach', 'pos-on-body', 'pos-blind-spot'];
 ---
 <BaseLayout title="Glossary" description="Every game term in Wings of Freedom, defined." section="reference" tabs={REFERENCE_TABS} tabsLabel="Reference sections">
   <section class="sheet sheet--light" aria-labelledby="page-title">
@@ -13,8 +43,13 @@ import { REFERENCE_TABS } from '~/lib/nav';
     <dl class="glossary">
       {GLOSSARY.map((entry) => (
         <div class="gl-row" id={entry.slug}>
-          <dt>{entry.term}</dt>
-          <dd>{entry.definition}</dd>
+          <dt>{ICONS[entry.slug] && <IconSlot name={ICONS[entry.slug]} size="sm" />}{entry.term}</dt>
+          <dd>
+            {entry.definition}
+            {entry.slug === 'position' && (
+              <span class="gl-icons" aria-hidden="true">{POSITIONS.map((name) => <IconSlot name={name} size="sm" />)}</span>
+            )}
+          </dd>
         </div>
       ))}
     </dl>
@@ -41,6 +76,9 @@ import { REFERENCE_TABS } from '~/lib/nav';
     box-shadow: -10px 0 0 rgba(207, 195, 165, 0.45), 10px 0 0 rgba(207, 195, 165, 0.45);
   }
   dt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-weight: 700;
     font-size: 1.125rem;
     line-height: 1.25;
@@ -49,5 +87,11 @@ import { REFERENCE_TABS } from '~/lib/nav';
     margin: 4px 0 0;
     max-width: 60ch;
     color: var(--ink-3);
+  }
+  .gl-icons {
+    display: inline-flex;
+    gap: 6px;
+    margin-left: 8px;
+    vertical-align: -5px;
   }
 </style>

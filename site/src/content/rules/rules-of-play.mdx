@@ -33,10 +33,11 @@ import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
 import TryRollButton from '~/components/TryRollButton.astro';
+import platePlay from '~/assets/plates/plate-rules-of-play.webp';
 
 <FieldQuote cite="Instructor's saying, Training Corps">Count your sixes, not your chances. The dice have already decided.</FieldQuote>
 
-<Plate number="Plate VI" caption="A squad counts dice by lamplight at a mess table before dawn, ODM Gear hung on pegs behind them." label="Soldiers rolling dice at a mess table before an Expedition" art="guide-rules-of-play-opener" ratio="21 / 9" />
+<Plate number="Plate VI" caption="The squad reads the map by lamplight, the night before the ride." label="Five soldiers leaning over a map covered in markers at a lamplit table in a night camp" art="guide-rules-of-play-opener" image={platePlay} crop="21 / 9" maxWidth={900} />
 
 <ChapterContents items={[
   { id: 'dice-and-successes', title: 'Dice and Successes', note: 'The dice, the pool, counting sixes' },

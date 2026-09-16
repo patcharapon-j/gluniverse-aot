@@ -1,10 +1,12 @@
 ---
+import IconSlot from './IconSlot.astro';
 import { facesHtml } from '~/lib/dice';
 
 const KINDS = [
   {
     cls: 'spec--base',
     dice: 'base:6',
+    icon: 'die-base',
     name: 'Base dice',
     rows: [
       ['From', 'Your attribute, Talent, and Bonus Dice.'],
@@ -16,6 +18,7 @@ const KINDS = [
   {
     cls: 'spec--gear',
     dice: 'gear:6',
+    icon: 'die-gear',
     name: 'Gear Dice',
     rows: [
       ['From', 'Your equipment.'],
@@ -27,6 +30,7 @@ const KINDS = [
   {
     cls: 'spec--stress',
     dice: 'stress:6',
+    icon: 'die-stress',
     name: 'Stress Dice',
     rows: [
       ['From', 'One for each point of Stress you carry.'],
@@ -38,6 +42,7 @@ const KINDS = [
   {
     cls: 'spec--titan',
     dice: 'titan:5',
+    icon: 'die-titan-attack',
     name: 'Titan Dice',
     rows: [
       ['From', "The GM, for a Titan's attack."],
@@ -53,6 +58,7 @@ const KINDS = [
     <li class:list={['spec', kind.cls]}>
       <div>
         <span aria-hidden="true" set:html={facesHtml(kind.dice)}></span>
+        <IconSlot name={kind.icon} />
         <h4>{kind.name}</h4>
       </div>
       {kind.rows.map(([label, value]) => (

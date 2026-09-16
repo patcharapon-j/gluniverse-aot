@@ -286,4 +286,5 @@ Names describe meaning, never appearance, in lowercase kebab case.
 - `site/art-src/<batch>/originals/`: generated PNGs as Codex saved them (gitignored).
 - `site/art-src/<batch>/icons/`: keyed transparent icon PNGs (gitignored).
 - `site/art-src/<batch>/web/`: WebP copies, the files that get committed once the owner approves the batch contact sheet.
+- Approved copies are committed under `site/src/assets/`: plates and vignettes in `plates/`, icons in `icons/`. Both go through `astro:assets`, which serves each page a copy at the size it is drawn. Nothing shown on a page belongs in `site/public/`, which Astro copies verbatim: a 1024 px icon is about 100 KB, and the Glossary alone shows twenty of them.
 - `site/art-src/<batch>/contact-sheet*.png`: review sheets for the owner.

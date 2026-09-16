@@ -1,9 +1,11 @@
 ---
 import GmLayout from '~/layouts/GmLayout.astro';
 import EarlyRulesBadge from '~/components/EarlyRulesBadge.astro';
+import Plate from '~/components/Plate.astro';
 import RestrictedBand from '~/components/RestrictedBand.astro';
 import { gmChapters, gmTabs } from '~/lib/chapters';
 import { numeral } from '~/lib/nav';
+import plate from '~/assets/plates/plate-gm-guide.webp';
 
 const chapters = await gmChapters();
 const tabs = await gmTabs();
@@ -17,6 +19,16 @@ const tabs = await gmTabs();
       <h1 class="h1" id="page-title">GM's Guide</h1>
       <p class="lede carbon">The same manual, with the pages the squad never sees. Run the Titans honestly, keep the dice in the open, and let the table decide who comes home.</p>
     </header>
+    <div class="gm-plate">
+      <Plate
+        number="Plate XIII"
+        caption="The Commander over the map table, the night before the order goes out."
+        label="A commander leaning on a large lit map table covered in markers, in a candlelit hall hung with Wings of Freedom banners"
+        art="gm-opener"
+        image={plate}
+        maxWidth={720}
+      />
+    </div>
     <ul class="folders">
       {chapters.map((chapter, i) => (
         <li class="folder">
