@@ -1,0 +1,29 @@
+---
+/**
+ * One Titan's full record on a GM page: the specimen report the Dossiers page shows, with a
+ * bar over every value a Read reveals (ADR-0023). Named by the Titan's dossier id.
+ */
+import '~/styles/compendium.css';
+import { getEntry } from 'astro:content';
+import TitanSpecimen from './TitanSpecimen.astro';
+
+interface Props {
+  /** The Titan's dossier id, such as "small-titan" or "sprinting-abnormal". */
+  titan: string;
+  /** The id the heading anchors to, so a page's contents can link to it. */
+  id?: string;
+}
+const { titan, id = titan } = Astro.props;
+
+const entry = await getEntry('titanDossiers', titan);
+if (!entry) throw new Error(`TitanDossier: there is no Titan "${titan}".`);
+---
+<div class="wide dossier-block">
+  <TitanSpecimen titan={entry.data} id={id} mode="gm" />
+</div>
+
+<style>
+  .dossier-block {
+    margin-top: clamp(30px, 4vw, 48px);
+  }
+</style>

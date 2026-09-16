@@ -1,0 +1,199 @@
+---
+/**
+ * A table on the Commander's copy, rendered from the shared tables through lib/gm-tables.
+ * Same drawing as the rules tables, without the "See" column: a GM page points at a page in
+ * its own prose. Rows stack into labelled cards on narrow screens.
+ */
+import type { Cell } from '~/lib/core-tables';
+import { behaviorRequirements, gmTracker, interimSetup } from '~/lib/gm-tables';
+
+interface Props {
+  table: 'interim-setup' | 'gm-tracker' | 'behavior-requirements';
+  /** The Titan's dossier id, for a table that is about one Titan. */
+  titan?: string;
+}
+const { table, titan } = Astro.props;
+
+if (table === 'behavior-requirements' && !titan) throw new Error('GmTable: a Behavior Table needs the Titan it belongs to.');
+const data = table === 'behavior-requirements' ? behaviorRequirements(titan!) : { 'interim-setup': interimSetup, 'gm-tracker': gmTracker }[table]();
+for (const group of data.groups) {
+  for (const row of group.rows) {
+    if (row.cells.length !== data.columns.length) throw new Error(`GmTable: a "${data.caption}" row has the wrong number of cells.`);
+  }
+}
+
+const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell === 'object' && 'options' in cell;
+---
+<div class:list={['gmtable wide', data.roll && 'gmtable--roll']}>
+  <table>
+    <caption>
+      <span class="lbl">Table</span>
+      <b>{data.caption}</b>
+      {data.note && <span class="note">{data.note}</span>}
+    </caption>
+    <thead>
+      <tr>{data.columns.map((column) => <th scope="col">{column}</th>)}</tr>
+    </thead>
+    {data.groups.map((group) => (
+      <tbody>
+        {group.heading && (
+          <tr class="group">
+            <th scope="rowgroup" colspan={data.columns.length}>{group.heading}</th>
+          </tr>
+        )}
+        {group.rows.map((row) => (
+          <tr>
+            {row.cells.map((cell, i) => {
+              const Tag = i === 0 ? 'th' : 'td';
+              return (
+                <Tag scope={i === 0 ? 'row' : undefined} data-label={data.columns[i]}>
+                  {typeof cell === 'string' ? (
+                    cell
+                  ) : isOptions(cell) ? (
+                    cell.options.map((option) => <span class="opt">{option}</span>)
+                  ) : (
+                    <>{cell.text}<span class="cnote">{cell.note}</span></>
+                  )}
+                </Tag>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    ))}
+  </table>
+</div>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-bottom: 2px solid var(--ink);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding-bottom: 10px;
+  }
+  caption .lbl {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 1px 6px;
+    border: 1px solid var(--ink-2);
+    color: var(--ink-2);
+    font-size: var(--fs-2xs);
+  }
+  caption b {
+    font-family: var(--f-type);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  caption .note {
+    display: block;
+    margin-top: 6px;
+    font-style: italic;
+    font-size: var(--fs-sm);
+    color: var(--ink-2);
+  }
+  thead th {
+    padding: 8px 10px;
+    text-align: left;
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  tbody th,
+  tbody td {
+    padding: 9px 10px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+  }
+  tbody th[scope="row"] {
+    font-weight: 600;
+  }
+  .gmtable--roll tbody th[scope="row"] {
+    white-space: nowrap;
+    font-family: var(--f-type);
+    font-variant-numeric: tabular-nums;
+  }
+  .opt {
+    display: block;
+  }
+  .cnote {
+    display: block;
+    margin-top: 2px;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .group th {
+    padding: 6px 10px;
+    font-family: var(--f-type);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--corps);
+    background: rgba(207, 195, 165, 0.35);
+    border-top: 1px solid var(--ink);
+  }
+
+  @media (max-width: 760px) {
+    table,
+    caption,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    tbody tr {
+      padding: 10px 0;
+      border-top: 1px solid rgba(156, 144, 120, 0.6);
+    }
+    tbody tr.group {
+      padding: 0;
+      border-top: 0;
+    }
+    tbody th,
+    tbody td {
+      padding: 2px 0;
+      border-top: 0;
+    }
+    .gmtable--roll tbody th[scope="row"] {
+      white-space: normal;
+    }
+    .group th {
+      margin-top: 10px;
+      padding: 6px 8px;
+      border-top: 1px solid var(--ink);
+    }
+    tbody td::before {
+      content: attr(data-label);
+      display: block;
+      margin-top: 6px;
+      font-family: var(--f-type);
+      font-size: var(--fs-2xs);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+    }
+  }
+</style>

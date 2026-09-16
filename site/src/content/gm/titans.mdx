@@ -1,0 +1,186 @@
+---
+title: Titans
+summary: The three standard Titans and the Sprinting Abnormal, in full, with every value a Read reveals under a bar.
+section: gm
+order: 2
+tab: Titans
+sources:
+  - path: docs/rules/06-standard-titans.md
+    sha: "7648f7b102a054d9615d9982bd53f169d2605139"
+  - path: docs/rules/05-titan-engagement.md
+    sha: "08b7bf455d7d385faedf5a8dd7116eb25b062336"
+  - path: data/titans/index.yaml
+    sha: "c64683a5b889e6cf9fb38cbc30c21bcba54c6952"
+  - path: data/titans/standard-small.yaml
+    sha: "236a4bdd97435bdf511f4b56914efcbd5f708e6f"
+  - path: data/titans/standard-medium.yaml
+    sha: "eca681ebf4f1039abddd064b7a7846411a149a6e"
+  - path: data/titans/standard-large.yaml
+    sha: "9fcfb493e21e973cfab9ac4d8e34eb03e441869f"
+  - path: data/titans/sprinting-abnormal.yaml
+    sha: "ae63f4fb9819f241f9f365487c3b267849df05cd"
+  - path: data/engagement/size-classes.yaml
+    sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
+  - path: data/engagement/attention.yaml
+    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
+  - path: data/engagement/read.yaml
+    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
+  - path: data/engagement/engagement-setup.yaml
+    sha: "b84e5d55db3cec0b3c771fe616a9c9c356be6121"
+---
+
+import AbnormalLadder from '~/components/AbnormalLadder.astro';
+import ChapterContents from '~/components/ChapterContents.astro';
+import CommanderNote from '~/components/CommanderNote.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import GmTable from '~/components/GmTable.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Subsection from '~/components/Subsection.astro';
+import TitanDossier from '~/components/TitanDossier.astro';
+import { abnormalShare } from '~/lib/gm-tables';
+
+<FieldQuote cite="Survey Corps manual, on identification">There is no such thing as an ordinary one. There is only one you have seen before.</FieldQuote>
+
+Four Titans, each a record you can run a whole fight from. A standard Titan's numbers are public: read them aloud if a player asks. An Abnormal's are under bars, and only a Read lifts one at the table.
+
+<ChapterContents items={[
+  { id: 'which-titan-appears', title: 'Which Titan Appears', note: 'Your framing, the table, the Abnormal roll' },
+  { id: 'reading-a-dossier', title: 'Reading a Dossier', note: 'What is public, what is under a bar' },
+  { id: 'small-titan', title: 'The Small Titan', note: 'Twice a round, low and fast' },
+  { id: 'medium-titan', title: 'The Medium Titan', note: 'The one everything else is measured against' },
+  { id: 'large-titan', title: 'The Large Titan', note: 'Slow, and it drags' },
+  { id: 'sprinting-abnormal', title: 'The Sprinting Abnormal', note: 'Its table, its hidden values, its ladder' },
+]} />
+
+<SectionHead id="which-titan-appears" eyebrow="Section 1">Which Titan Appears</SectionHead>
+
+You may name the Focus Titan and any Background Titans as framing, before any setup roll: any Titan on this page, standard or Abnormal. A Titan you name is never rolled.
+
+Otherwise the rule that begins the fight names it, or the setup table on <a href="/gm/running-a-titan-fight/">Running a Titan Fight</a> gives a Size Class, and the Titan is the standard Titan of that class. One exception: when the Focus Titan's Size Class roll gives Medium, roll again, and on a 6 the Focus Titan is the Sprinting Abnormal instead. That is {abnormalShare()} the table sets up.
+
+A Background Titan the table gives is always the standard Titan of its class and never rolls for an Abnormal. A rule that begins a fight may still name an Abnormal as a Background Titan.
+
+When an Abnormal starts a fight as a Focus Titan, or becomes one, every soldier holding a Position makes the Abnormal Fear Roll.
+
+<SectionHead id="reading-a-dossier" eyebrow="Section 2">Reading a Dossier</SectionHead>
+
+Each record below gives the Titan's Size Class, its **Tempo** (cards a round), its **Nape Depth** (successes one Nape strike needs), its **Regeneration clock** in segments, its **Heave rating** (the heave count that frees everyone its body pins), its Body Parts in order with their Toughness, and the Attention Ladder it uses. The order of the Body Parts is not decoration: it breaks Regeneration ties and decides which arm Grabs.
+
+Under each record sits the Behavior Table, and under that the columns you run a card from: the targets, the Positions the Attention holder must hold, the Body Parts the entry needs unbroken, and what the entry falls back to when the holder stands somewhere it cannot reach.
+
+<RuleBox title="Bars, and what lifts them" icon="ph:eye-slash">
+
+A standard Titan hides only its Next Behavior. Everything else about it is public.
+
+An Abnormal hides four things until a Read reveals each, one success at a time: **the Toughness of a Body Part**, **its Nape Depth**, **the length of its Regeneration clock**, and **its Attention Ladder**. Those sit under bars on this page. Hover or focus a bar to look under it, and press it to keep it lifted.
+
+Until a Read reveals the clock's length, show the squad its filled segments alone. Its public counts and state changes will tell them its Toughness over time, which is how a Squad with no Reader learns the hard way. Its Behavior Table is not hidden: it is public from the start.
+
+</RuleBox>
+
+<MarginNote>Every Read fact, with what each one needs, is on <a href="/guide/fighting-titans/">Fighting Titans</a>. The squad chooses the facts; you reveal them to the whole table at once.</MarginNote>
+
+<Subsection title="Thrash, and why you will resolve it so often" id="thrash">
+
+Every table has a Thrash, and Thrash is the entry each of these Titans resolves most. Almost all of it comes from an Attention holder standing where the rolled entry cannot reach, most often a Nape striker who fell short and hangs at Blind Spot. A Titan with a blade at its Nape mostly thrashes, and each table's Thrash is written for that Titan's body.
+
+That is the fallback rule doing its work, not a fault in the tables. Read the Thrash line as written: it is the Titan failing to get at the soldier who is hurting it.
+
+</Subsection>
+
+<SectionHead id="small-titan" eyebrow="Section 3">The Small Titan</SectionHead>
+
+Three to five metres, and it acts twice a round. It crouches, crawls, and ducks its head as often as it walks, so its bite and its hands come low: it clutches at legs and bites them. Each success on a strike advances a part one state, and its parts are Toughness 1, so two successes break one.
+
+<TitanDossier titan="small-titan" id="small-titan-dossier" />
+
+<GmTable table="behavior-requirements" titan="small-titan" />
+
+- **Lurch Closer and Bite need no Body Part,** so a Small Titan with both legs Broken still lurches head first and bites.
+- **Clutch at the Legs and Grab each need an arm.** With both arms Broken, those results move up to Scrabble and Gape, and a Squad that has taken its hands has taken its Grab.
+- **It is a quick fight that still costs.** Two cards a round means twice the chances to be hit, so it deals more Critical Injuries and more Grabs than the Medium Titan does, out of smaller pools.
+
+<SectionHead id="medium-titan" eyebrow="Section 4">The Medium Titan</SectionHead>
+
+Six to ten metres, one card a round. This is the Titan every other fight is measured against, and the one to reach for when you want the fight these rules were built around.
+
+<TitanDossier titan="medium-titan" id="medium-titan-dossier" />
+
+<GmTable table="behavior-requirements" titan="medium-titan" />
+
+- **Fixed Grin uses its eyes.** A blinded Titan cannot fix its stare, so with Broken eyes that result moves up to Snap Short, and the table loses its telegraph. Blinding it takes away the Squad's own warning.
+- **Snap Short and Shake Off need no Body Part.** Its jaws and its shoulders still work with both arms Broken.
+- **Its Bite is fixed at the torso.** A torso Critical Injury reads worse for each torso Critical Injury the soldier already carries that counts toward worsening, and a Grab's crush is one of them. A soldier who has survived a Grab or two can die outright to a Bite, with no Death Roll, and so can one whose dodge leaves it several Net Successes.
+- **Grab sits at 6 and Bite at 5,** so both arms Broken move the Grab's share up to Fixed Grin rather than doubling the Bite.
+
+<SectionHead id="large-titan" eyebrow="Section 5">The Large Titan</SectionHead>
+
+Eleven to fifteen metres, one card a round, and deeper in every direction: thicker arms, a longer Regeneration clock, and the heaviest pools in Phase 1. It kills in about the same round as the Medium Titan, but far more fights against it end with nobody dead and nothing dead either.
+
+<TitanDossier titan="large-titan" id="large-titan-dossier" />
+
+<GmTable table="behavior-requirements" titan="large-titan" />
+
+- **Its mouth is far above the ground.** Bite needs a soldier On Body, and against one In Reach it becomes Crush, which pins them under its bulk instead.
+- **Heavy Tread needs both legs,** and shakes everyone at the holder's Position. One Broken leg grounds it, and a grounded Titan does not walk, so that result moves up to Crush. Cutting one leg changes what it can do to a whole Position at once.
+- **Crush and Shrug Off need no Body Part.** Its bulk comes down and its back scrapes along whatever stands near it, whatever is Broken.
+- **Crush harms the holder alone,** and its leg Critical Injury cannot be lethal, as no control entry's can.
+
+<CommanderNote title="Before you frame a Large Titan">
+
+The Large Titan is the hardest standard fight in Phase 1, and hardest of all on a Squad with no Talents worth the name. Against soldiers built from a template it drags: a kill in round four, one fight in five ending with no kill at all, and roughly twice the Critical Injuries a Medium Titan deals. Frame it knowing that, and give the Squad a reason to be somewhere else.
+
+</CommanderNote>
+
+<SectionHead id="sprinting-abnormal" eyebrow="Section 6">The Sprinting Abnormal</SectionHead>
+
+<FieldQuote cite="Sighting report, outer formation">It did not stop for the flank. It did not stop for anything.</FieldQuote>
+
+A Medium Abnormal that runs. At the table the squad sees what any Focus Titan shows: it is Medium, it draws two cards a round, its Heave rating is 3, and its Body Parts' counts and states and its clock's filled segments are on your tracker. Its Behavior Table is public too.
+
+<TitanDossier titan="sprinting-abnormal" id="sprinting-abnormal-dossier" />
+
+<GmTable table="behavior-requirements" titan="sprinting-abnormal" />
+
+- **It runs through people.** Run Past and Trample work on a holder at Distant or In Reach, so a rider at Distant is not out of its path. Distant is out of a standing Titan's reach, not out of a running one's way. Trample's leg Critical Injury cannot be lethal, and a rider who goes Down from it falls.
+- **Its hands and jaws need you close.** Grab and Headlong Lunge need In Reach or On Body, and the Lunge falls back to Pitch Headlong. Both roll the Medium Titan's control pool rather than its kill pool: it snatches and lunges at full stride, and a soldier leaps clear of a Titan that cannot stop.
+- **Cut one leg.** Run Past, Trample, and Headlong Lunge each need both legs. One Broken leg drops it to the ground: it can no longer run past, trample, or lunge, and Nape strikes against it gain the grounded dice.
+- **Clinging to it is risky,** but not as risky as it looks. Pitch Headlong knocks loose a holder who is On Body or at Blind Spot, and its slow roll is the smallest pool on its table.
+- **No entry on any of these tables affects a horse.** Titans go for people.
+
+<Subsection title="Its hidden values" id="abnormal-hidden-values">
+
+Four things are under bars on its record above: the Toughness of each Body Part, its Nape Depth, the length of its Regeneration clock, and the ladder below. Each comes out of a Read, one success at a time, and stays revealed for the rest of the fight.
+
+</Subsection>
+
+<AbnormalLadder titan="sprinting-abnormal" />
+
+<Subsection title="What its ladder means at the table" id="abnormal-ladder-at-the-table">
+
+- **A blade at its Nape or a soldier On Body turns it first,** as on every ladder. A striker who falls short draws its next behavior, whoever else is shouting.
+- **Then noise,** but only while nobody is hooked into it, and only from a soldier who is not at Distant, since that is the only place Draw Attention can be taken from.
+- **Then whoever it is already running down.** Its holder keeps it while they are On Body, In Reach, or at Blind Spot, Down or not, until a Nape strike, a soldier On Body, or noise turns it. A holder who gets away to Distant is no longer its quarry, so a rider who rides clear has led it off.
+- **Only then whoever is nearest.** It has no rung for soldiers in its reach and none for soldiers who have just hurt it, so the cutters at its legs draw it only when it is running nobody down and they are the nearest.
+- **A fight against it begins with nothing holding its Attention.** Everyone starts at Distant with no cards dealt, no rung picks one of them out, and no card can break the tie, so its first card turns it to whoever has come closest, or to the lowest card when nobody has moved.
+
+</Subsection>
+
+<CommanderNote title="Running an Abnormal honestly">
+
+Its ladder is the thing a Read is worth most against, because knowing it gives a player something to do: stop being its quarry by cutting its Nape, putting someone On Body, making noise, or riding clear to Distant. Reveal a rung the moment a Read buys it, in full, and then run it exactly as written. An Abnormal that plays by a ladder nobody can learn is just an unfair Titan.
+
+</CommanderNote>
+
+<Subsection title="Any other Abnormal" id="other-abnormals">
+
+An Abnormal is a Titan whose behavior breaks the standard pattern and that runs from its own Behavior Table. Every rule of a Focus Titan applies to it, with these differences:
+
+- **Its record lists every value in full,** and the values may differ from its Size Class: Tempo 1 to 2, Nape Depth 3 to 4, Regeneration 2 to 4, Toughness 1 to 3, and Attack Dice 3 to 12.
+- **It may use its own Attention Ladder,** built from the closed list of rungs, beginning with hooked into its body and ending with nearest, as every ladder does. A Grab and a decoy override it exactly as they override the standard ladder.
+- **Its Toughness, Nape Depth, Regeneration clock, and ladder are Read facts.** Its Behavior Table is not.
+- **It causes the Abnormal Fear Roll** when it starts a fight as a Focus Titan or becomes one.
+
+</Subsection>

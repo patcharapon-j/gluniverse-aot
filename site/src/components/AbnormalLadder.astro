@@ -1,0 +1,66 @@
+---
+/**
+ * An Abnormal's own Attention Ladder, highest rung first, under bars: the whole ladder is one
+ * of the things only a Read tells the squad (ADR-0023).
+ */
+import Redacted from './Redacted.astro';
+import { abnormalLadder } from '~/lib/gm-tables';
+
+interface Props {
+  /** The Titan whose ladder this is, by its dossier id. */
+  titan: string;
+}
+const { titan } = Astro.props;
+const ladder = abnormalLadder(titan);
+---
+<div class="ladder wide">
+  <p class="lbl ladder-head">{ladder.name} · highest rung first · revealed only by a Read</p>
+  <ol class="ladder-rungs">
+    {ladder.rungs.map((rung) => (
+      <li>
+        <b><Redacted value={rung.name} label={`the rung ${rung.name}`} /></b>
+        <span><Redacted value={rung.text} label={`what ${rung.name} means`} /></span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .ladder {
+    margin-top: clamp(24px, 3vw, 36px);
+    border: 1.5px solid var(--ink);
+    background: var(--paper-hi);
+  }
+  .ladder-head {
+    margin: 0;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--ink);
+    background: rgba(207, 195, 165, 0.35);
+    color: var(--corps);
+  }
+  .ladder-rungs {
+    margin: 0;
+    padding: 10px 14px 14px 32px;
+    list-style: decimal;
+  }
+  .ladder-rungs li {
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .ladder-rungs li:first-child {
+    margin-top: 0;
+  }
+  .ladder-rungs b {
+    display: block;
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .ladder-rungs span {
+    display: block;
+    margin-top: 3px;
+    font-size: var(--fs-sm);
+  }
+</style>
