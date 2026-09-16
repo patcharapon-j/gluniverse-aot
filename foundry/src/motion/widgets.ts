@@ -143,18 +143,24 @@ function disposeShared(): void {
 }
 
 function schedule(w: Widget<WidgetKind>): void {
+  // A late tween callback of an unmounted widget must not bring the renderer back.
+  if (w.destroyed) return;
   dirty.add(w);
   if (!frame) frame = requestAnimationFrame(flush);
 }
 
 function flush(): void {
   frame = 0;
+  if (!widgets.size) {
+    dirty.clear();
+    return;
+  }
   const s = ensureShared();
   if (!s) return;
   const list = [...dirty];
   dirty.clear();
   for (const w of list) {
-    if (!w.canvas.isConnected) continue;
+    if (w.destroyed || !w.canvas.isConnected) continue;
     w.paint(s);
     if (w.animating) dirty.add(w);
   }
@@ -361,6 +367,9 @@ class Widget<K extends WidgetKind> {
   /** Gas band that flashes; blades: the handles were emptied by a ruin (stubs shown until a swap). */
   flashBand = -1;
   ruined = false;
+  destroyed = false;
+  /** The running tweens, cancelled when the widget unmounts. */
+  #tweens = new Set<{ cancel(): unknown }>();
   #onFail: () => void;
 
   constructor(
@@ -409,12 +418,14 @@ class Widget<K extends WidgetKind> {
     for (const k of keys) target[k] = props[k];
     this.running += 1;
     const duration = mode === 'reduced' ? Math.min(opts.duration ?? MOTION.weighty, MOTION.reducedMax) : (opts.duration ?? MOTION.weighty);
-    animate(this.anim as never, {
+    let tween: { cancel(): unknown } | undefined;
+    tween = animate(this.anim as never, {
       ...target,
       duration,
       delay: mode === 'reduced' ? 0 : (opts.delay ?? 0),
       ease: mode === 'reduced' ? 'linear' : (opts.ease ?? MOTION.ease),
       onComplete: () => {
+        if (tween) this.#tweens.delete(tween);
         this.running = Math.max(0, this.running - 1);
         if (!this.running) {
           this.anim = { ...REST };
@@ -423,6 +434,7 @@ class Widget<K extends WidgetKind> {
         schedule(this);
       },
     } as never);
+    this.#tweens.add(tween);
   }
 
   #gasChange(prev: GasState, next: GasState): void {
@@ -504,6 +516,10 @@ class Widget<K extends WidgetKind> {
   }
 
   destroy(): void {
+    this.destroyed = true;
+    for (const tween of this.#tweens) tween.cancel();
+    this.#tweens.clear();
+    this.running = 0;
     dirty.delete(this);
     widgets.delete(this as Widget<WidgetKind>);
     if (!widgets.size) disposeShared();
