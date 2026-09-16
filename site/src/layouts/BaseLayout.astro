@@ -25,7 +25,8 @@ import type { IndexTab, SectionKey } from '~/lib/nav';
 interface Props {
   title: string;
   description: string;
-  section: SectionKey;
+  /** The masthead entry to mark as current. "none" belongs to a page that sits in no section, such as 404. */
+  section: SectionKey | 'none';
   tabs?: IndexTab[];
   tabsLabel?: string;
   /** Pages without this are left out of search. The GM's Guide is never indexed. */
@@ -50,7 +51,7 @@ const fullTitle = section === 'home' ? title : `${title} · Wings of Freedom`;
   <body class={bodyClass}>
     <a class="skip" href="#main">Skip to content</a>
     <SvgDefs />
-    <SiteHeader current={section} />
+    <SiteHeader current={section === 'none' ? undefined : section} />
     <div class:list={['manual', tabs.length > 0 && 'manual--tabs']}>
       {tabs.length > 0 && <IndexTabs tabs={tabs} label={tabsLabel} />}
       <main class="sheets" id="main" data-pagefind-body={indexed ? '' : undefined}>

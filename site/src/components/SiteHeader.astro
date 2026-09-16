@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon/components';
 import { MAIN_NAV, withSlash, type SectionKey } from '~/lib/nav';
 
 interface Props {
-  current: SectionKey;
+  current?: SectionKey;
 }
 const { current } = Astro.props;
 const path = withSlash(Astro.url.pathname);
