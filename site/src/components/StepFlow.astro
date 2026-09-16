@@ -6,6 +6,7 @@
  * runs as rows, a procedure of any length lays out; one step is not a procedure.
  */
 import { Icon } from 'astro-icon/components';
+import IconSlot from './IconSlot.astro';
 import { facesHtml } from '~/lib/dice';
 
 interface Step {
@@ -24,6 +25,9 @@ interface Props {
 }
 const { id, fig, title, steps } = Astro.props;
 if (steps.length < 2) throw new Error(`StepFlow "${title}": the drawing lays out a procedure of two steps or more.`);
+
+/** An icon name with no colon is a slot in the site's icon set; one with a colon is a line icon. */
+const isSlot = (name: string) => !name.includes(':');
 ---
 <figure class="drawing wide" aria-labelledby={`${id}-caption`}>
   <ol class="flow flow--rows">
@@ -33,7 +37,11 @@ if (steps.length < 2) throw new Error(`StepFlow "${title}": the drawing lays out
         <h4>{step.title}</h4>
         {(step.dice || step.icon) && (
           <div class="mini" aria-hidden="true">
-            {step.icon ? <Icon name={step.icon} /> : <Fragment set:html={facesHtml(step.dice!)} />}
+            {step.icon ? (
+              isSlot(step.icon) ? <IconSlot name={step.icon} size="sm" /> : <Icon name={step.icon} />
+            ) : (
+              <Fragment set:html={facesHtml(step.dice!)} />
+            )}
           </div>
         )}
         <p>{step.text}</p>

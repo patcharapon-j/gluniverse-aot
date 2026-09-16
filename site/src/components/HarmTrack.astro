@@ -1,0 +1,133 @@
+---
+/**
+ * The path a wound takes: damage marking Health boxes, the Critical Injury at 0, Down,
+ * and the Death Roll a lethal Critical Injury forces. The Death Roll's attribute and what
+ * it needs, and what Down forbids, come from the harm tables (lib/harm-tables), so a change
+ * there redraws the track.
+ */
+import IconSlot from './IconSlot.astro';
+import { Icon } from 'astro-icon/components';
+import { harmTrack } from '~/lib/harm-tables';
+
+interface Props {
+  fig: string;
+}
+const { fig } = Astro.props;
+const { marks, forbids } = harmTrack();
+---
+<figure class="drawing wide harmfig" aria-labelledby="fig-harm-caption">
+  <p class="lead">
+    Health is a row of boxes. <b>Damage marks them</b> and <b>a Critical Injury crosses one off</b>, and at 0 you are Down.
+    Only a lethal Critical Injury reaches the last station.
+  </p>
+
+  <ol class="track">
+    {marks.map((mark) => (
+      <li class:list={['mark', `mark--${mark.kind}`]}>
+        <span class="pip" aria-hidden="true">
+          {mark.slot ? <IconSlot name={mark.slot} size="sm" /> : mark.icon ? <Icon name={mark.icon} /> : null}
+        </span>
+        <h4>{mark.label}</h4>
+        <p>{mark.text}</p>
+        {mark.note && <p class="aside">{mark.note}</p>}
+      </li>
+    ))}
+  </ol>
+
+  <p class="foot">While you are Down you cannot {forbids.join(', ').toLowerCase()}, take an action, or make any attribute roll but the Death Roll.</p>
+
+  <figcaption class="titleblock" id="fig-harm-caption"><span>{fig}</span><span>From a wound to a Death Roll</span></figcaption>
+</figure>
+
+<style>
+  .harmfig .lead {
+    margin: 0 0 18px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .mark {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 2px 16px;
+    padding: 10px 0 12px 0;
+  }
+  .mark::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    top: 0;
+    bottom: 0;
+    border-left: 1.5px solid var(--ink);
+  }
+  .mark:first-child::before {
+    top: 24px;
+  }
+  .mark:last-child::before {
+    bottom: auto;
+    height: 24px;
+  }
+  .pip {
+    position: relative;
+    z-index: 1;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    align-self: start;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 0 0 0 3px var(--paper);
+  }
+  .pip :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .mark--down .pip,
+  .mark--death .pip {
+    border-width: 2px;
+    border-color: var(--seal);
+  }
+  .mark h4,
+  .mark p {
+    grid-column: 2;
+  }
+  .mark h4 {
+    font-family: var(--f-type);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 9px;
+  }
+  .mark--down h4,
+  .mark--death h4 {
+    color: var(--seal);
+  }
+  .mark p {
+    margin-top: 3px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .mark .aside {
+    padding-left: 12px;
+    border-left: 2px solid var(--rule);
+    color: var(--ink-2);
+    font-size: var(--fs-sm);
+  }
+  .foot {
+    margin: 14px 0 26px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+</style>

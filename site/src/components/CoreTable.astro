@@ -6,6 +6,8 @@
 import { getCollection } from 'astro:content';
 import { CHARACTER_TABLES, type CharacterTableId } from '~/lib/character-tables';
 import { ENGAGEMENT_TABLES, type EngagementTableId } from '~/lib/engagement-tables';
+import { GEAR_TABLES, type GearTableId } from '~/lib/gear-tables';
+import { HARM_TABLES, type HarmTableId } from '~/lib/harm-tables';
 import {
   bonusDiceSources,
   circumstancesLadder,
@@ -19,7 +21,7 @@ import {
 } from '~/lib/core-tables';
 
 interface Props {
-  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId;
+  table: 'stress-changes' | 'bonus-dice' | 'roll-exceptions' | 'circumstances' | 'called-roll-costs' | CharacterTableId | EngagementTableId | HarmTableId | GearTableId;
 }
 const { table } = Astro.props;
 
@@ -31,6 +33,8 @@ const builders: Record<Props['table'], () => CoreTableData> = {
   'called-roll-costs': failureMenu,
   ...CHARACTER_TABLES,
   ...ENGAGEMENT_TABLES,
+  ...GEAR_TABLES,
+  ...HARM_TABLES,
 };
 const data = builders[table]();
 const hasSee = data.see !== false;
@@ -56,6 +60,7 @@ for (const group of data.groups) {
 }
 
 const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell === 'object' && 'options' in cell;
+const isLines = (cell: Cell): cell is { lines: string[] } => typeof cell === 'object' && 'lines' in cell;
 ---
 <div class:list={['coretable wide', data.roll && 'coretable--roll']}>
   <table>
@@ -84,6 +89,8 @@ const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell ===
                     cell
                   ) : isOptions(cell) ? (
                     cell.options.map((option) => <span class="opt">{option}</span>)
+                  ) : isLines(cell) ? (
+                    cell.lines.map((line) => <span class="line">{line}</span>)
                   ) : (
                     <>{cell.text}<span class="cnote">{cell.note}</span></>
                   )}
@@ -165,8 +172,12 @@ const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell ===
     font-family: var(--f-type);
     font-variant-numeric: tabular-nums;
   }
-  .opt {
+  .opt,
+  .line {
     display: block;
+  }
+  .line + .line {
+    margin-top: 2px;
   }
   .opt + .opt::before {
     content: "or ";

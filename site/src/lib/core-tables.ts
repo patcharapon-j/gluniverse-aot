@@ -13,8 +13,11 @@ import circumstancesText from '../../../data/core/circumstances.yaml?raw';
 /** A Player's Guide chapter slug ("fighting-titans") or an anchor on the same page ("#help"). */
 export type SeeRef = string;
 
-/** A cell: plain text, a choice between options ("A or B"), or text with a smaller note under it. */
-export type Cell = string | { options: string[] } | { text: string; note: string };
+/**
+ * A cell: plain text, a choice between options ("A or B"), a list of lines each on its own
+ * row, or text with a smaller note under it.
+ */
+export type Cell = string | { options: string[] } | { lines: string[] } | { text: string; note: string };
 
 export interface TableRow {
   cells: Cell[];

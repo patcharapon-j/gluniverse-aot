@@ -231,6 +231,71 @@ const RAW: { term: string; definition: string; aliases?: string[] }[] = [
     aliases: ['Witnesses'],
     definition: 'Every soldier other than the victim who is alive and holds a Position once a comrade is Grabbed or dies. Each makes a Fear Roll.',
   },
+  {
+    term: 'Titan attack',
+    aliases: ['Titan attacks'],
+    definition:
+      'The harm a Behavior Table entry inflicts when a Titan’s card resolves it against you. It is always a Critical Injury, never damage, whatever your Health.',
+  },
+  {
+    term: 'Damage',
+    definition:
+      'The kind of harm that marks Health boxes: a fall, steam, a weapon, or a called roll you failed. At 0 current Health it gives a Critical Injury instead.',
+  },
+  {
+    term: 'Current Health',
+    definition: 'Your Health, minus the boxes untreated Critical Injuries have crossed off, minus the Health you have lost to damage. It never goes below 0.',
+  },
+  {
+    term: 'Injury Type',
+    aliases: ['Injury Types'],
+    definition: 'What made the wound: Crush, Bite, Burn, Cut, or Pierce. It picks the wound’s name and applies its table’s rider, if there is one.',
+  },
+  {
+    term: 'Injury Location',
+    aliases: ['Injury Locations'],
+    definition: 'Where a Critical Injury lands: an arm, a leg, the torso, or the head. An arm or a leg is held at its side, left or right.',
+  },
+  {
+    term: 'Worsening',
+    definition: 'The 2 added to a Critical Injury roll for each one that already counts at that same Injury Location and side. The same place hurt twice reads worse.',
+  },
+  {
+    term: 'Treat Injury',
+    definition: 'The Wits action that treats one Critical Injury or revives a Down comrade. It takes Gear Dice from a medical kit, and needs 1 success.',
+  },
+  {
+    term: 'Care window',
+    aliases: ['care windows'],
+    definition:
+      'The only moment Treat Injury is rolled away from a fight. Each has a scope of soldiers, and each of them may make one roll and Help one other.',
+  },
+  {
+    term: 'Aftermath roll',
+    aliases: ['aftermath rolls'],
+    definition: 'The one chance at treatment a dying soldier gets when a fight ends, before the Death Rolls. One per patient, one per treater, no Help.',
+  },
+  {
+    term: 'Stabilized',
+    definition: 'What a lethal Critical Injury becomes once treatment or a good Death Roll settles it. It is no longer lethal and never rolls again.',
+  },
+  {
+    term: 'Prosthetic',
+    aliases: ['Prosthetics'],
+    definition: 'A fitted arm or leg that lowers a lost-limb grade one step. It gives no dice, is never a weapon, and waits until the loss has healed.',
+  },
+  { term: 'Airborne', definition: "In the air on your own ODM Gear. An ODM move puts you there; a move that is not an ODM move, a fall, a Grab, or the end of the fight takes you out of it." },
+  { term: 'Current rating', aliases: ['current ratings'], definition: 'How much of a gear item\u2019s rating is left, from 0 up to that rating. It is the item\u2019s Gear Dice, and wear is what lowers it.' },
+  { term: 'Field Repair', definition: 'The Wits action that mends ODM Gear, a tool kit, or a firearm. It needs 1 success, and each success raises the current rating by 1.' },
+  { term: 'Funding', definition: "What the Survey Corps can afford, from 1 to 6. It sets Standard Issue and the Squad's stock of Squad Supply. Until the Funding rules are written it is 3." },
+  { term: 'Gas Rating', definition: 'The gas left in the canister fitted to your ODM Gear, from 0 to 3. Each 1 on a Gas Roll costs you a point of it.' },
+  { term: 'Gear item', aliases: ['gear items'], definition: 'One of the things on the gear list: ODM Gear, gas canisters, Blade Sets, horses, medical and tool kits, firearms, and prosthetics. No other object is one, and no other object adds Gear Dice.' },
+  { term: 'Kept item', aliases: ['kept items'], definition: 'An item a Requisition gave you. Standard Issue never takes it away unless you hand it in.' },
+  { term: 'Lame', definition: 'A horse worn down to 0. It cannot be mounted, adds no Gear Dice, and drops any rider, who falls from a horse.' },
+  { term: 'Mounted', definition: 'Riding your own horse. A mounted soldier is never airborne, and an ODM move dismounts them before it moves them.' },
+  { term: 'ODM move', aliases: ['ODM moves'], definition: 'A move you make on your own ODM Gear. It needs a harness that is not Jammed and gas above 0, and it is what makes you airborne.' },
+  { term: 'Running dry', aliases: ['run dry', 'runs dry', 'ran dry'], definition: 'Reaching Gas Rating 0. Your ODM Gear counts as not had until you have gas again, but running dry never drops you.' },
+  { term: 'Squad Supply', definition: 'The rations, flares, medical supplies, and shot the Squad holds together. No soldier carries it, and it counts as no item.' },
 ];
 
 const slugify = (s: string) =>
