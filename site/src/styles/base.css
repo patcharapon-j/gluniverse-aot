@@ -107,17 +107,39 @@ p {
   text-decoration: none;
   flex-shrink: 0;
 }
-.brand svg {
+.brand-emblem {
   width: 34px;
   height: 34px;
+  flex-shrink: 0;
 }
 .brand b {
+  display: block;
+  position: relative;
   font-family: var(--f-stencil);
   font-weight: 800;
   font-size: 1.375rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   line-height: 1;
+}
+.brand-wordmark {
+  display: block;
+  width: 160px;
+  height: auto;
+}
+/*
+ * The drawn wordmark carries no text, so the real words sit under it: laid over the image,
+ * invisible, and still read by assistive tech. If the image fails the masthead script
+ * removes it, the text becomes the only child, and the typographic wordmark takes over.
+ */
+.brand b > .brand-text {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+}
+.brand b > .brand-text:only-child {
+  position: static;
+  color: inherit;
 }
 .brand small {
   display: block;
@@ -946,12 +968,15 @@ p {
   .brand {
     gap: 8px;
   }
-  .brand svg {
+  .brand-emblem {
     width: 30px;
     height: 30px;
   }
   .brand b {
     font-size: 1.1875rem;
+  }
+  .brand-wordmark {
+    width: 138px;
   }
   .has-menu .navmenu {
     padding-inline: 10px;

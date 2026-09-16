@@ -102,6 +102,99 @@ EXCLUSIONS: no text, no letters, no numbers, no gauges with numerals, no logos, 
 
 Drop "no faces" when the vignette needs a figure, and add the canon character line from the colour plate exclusions instead.
 
+## Brand marks
+
+The emblem, the wordmark, the favicon, and the social preview. Generated the same way as the icons, but they are the product's identity, so they are locked once picked: change one only with the owner's approval. Sources are in `site/art-src/brand/`, prompts in `site/art-src/brand/prompts/`.
+
+The brand marks obey two grounds, not one. The masthead sits on the dark cloth band (`--cloth`, `#16211B`); pages and the social card sit on paper (`#E4DCC5`). A mark that only works on paper disappears in the masthead, which is what happened to the first emblem and to the ink wordmark. Proof every brand mark on paper, on cloth, and on white before picking it.
+
+### Style block: brand emblem
+
+```text
+STYLE (locked, brand emblem): a printed heraldic emblem for the cover of an issued military field manual, struck like a rubber stamp or a woodcut: ink on paper. Not a glossy modern logo, not an app icon, not a 3D render, not chrome or metal, not a gradient, not a mascot. Flat front-on view: no perspective, no gloss, no bevel, no drop shadow, no glow, no halo. Bold, chunky, confident shapes with slightly rough, broken stamp edges and a faint ink speckle inside the solid areas, as if pressed unevenly onto dry paper. Every shape is a flat solid fill of one of exactly four inks and no others: iron-gall brown-black #29241D, parchment #E4DCC5, deep Survey Corps green #2F4B3C, and wax-seal red #8B2A21 used only as one small sparing accent. No other colour, no tints, no shading. Square 1024x1024 canvas, transparent background with true alpha, the mark centred with about 8 percent empty margin on each side.
+
+READABILITY: this mark must survive being shrunk to 32 pixels and must still look right at 512 pixels. One large simple silhouette. Big solid shapes, no hairlines, no tiny counters, no feather-tip filigree, generous gaps between shapes. If a detail would close up at 32 px, leave it out.
+```
+
+### Subject: the emblem
+
+A heater shield (flat top edge, straight sides curving to a point at the bottom) with a solid deep Survey Corps green field, a pair of stylised wings crossing at the centre and sweeping out and up to left and right, and one small wax-seal red diamond at the crossing point. Both wings are filled parchment, and the front wing is told from the one behind it by a bold ink gap where they overlap. Around the ink border runs a parchment keyline about half its thickness: the keyline is what keeps the shield from dissolving into the cloth masthead, so it must be unbroken and even in width. In the picked emblem the wings sweep past the shield edges and carry the keyline along their own outer edge, so shield and wings ring as one silhouette.
+
+What the rejected candidates taught:
+
+- Bare crossed wings with no container (no shield, no disc) turn to mush at 32 px and vanish on cloth. The shield carries the silhouette.
+- One wing green and one wing ink was the first reading of "one lighter, one darker". At small sizes the ink wing merges into the ink border and the mark reads as half a wing. Both wings parchment, split by an ink gap, is what survives.
+- Five or six feather blades per wing close up at 32 px. Three or four fat blunt blades with wide gaps of field between them do not.
+- Without the parchment keyline the shield loses its right edge on the cloth masthead.
+
+### Exclusions: brand emblem
+
+```text
+EXCLUSIONS: no text, no letters, no numerals, no captions, no wordmark, no watermark, no signature, no background, no paper texture behind the mark, no vignette, no shadow, no additional ornament, no laurel wreath, no banner ribbon, no stars, no skulls, no swords, no eagles or realistic birds, no feathers drawn realistically, no canon characters, no recognisable real-world military or national insignia.
+```
+
+### The wordmark
+
+"WINGS OF FREEDOM" is drawn art, not type, but it keeps the site's stencil voice.
+
+```text
+STYLE (locked, brand wordmark): drawn stencil lettering stamped in ink on dry paper, the kind pressed through a cut brass stencil plate onto an issued military manual cover or a supply crate. Condensed, tall, heavy, geometric capitals with flat squared terminals and no serifs, in the manner of a stencil display face: each letter is broken by one or two small stencil bridges, narrow gaps that interrupt a stroke, and those bridges are clean and deliberate, never random speckle holes. Letterforms are upright, of even weight, evenly spaced, and sit on one exact shared baseline with one exact shared cap height; the whole line is flat and level, not arched, not curved, not in perspective, not italic.
+
+INK AND WEAR: one ink only, iron-gall brown-black #29241D, flat solid fill, no other colour, no gradient, no shading, no gloss, no bevel, no drop shadow, no glow, no outline. Slightly worn: the stamped edges are a little rough and broken and there is a faint ink speckle inside the solid strokes, as if the plate pressed unevenly. The wear must stay subtle: never break a letter into unreadable pieces, never eat a whole stroke, never bleed two letters together.
+
+BACKGROUND: transparent with true alpha. Nothing behind the lettering: no paper texture, no plate, no card, no rectangle, no border, no frame, no vignette, no shadow.
+```
+
+Generated lettering is unreliable, so spell the words out for the model:
+
+```text
+TEXT, the only content of the image, and it must be spelled exactly right: WINGS OF FREEDOM
+
+Spelled out character by character in order: W, I, N, G, S, space, O, F, space, F, R, E, E, D, O, M. That is three words and fourteen letters. The first word is five letters, W-I-N-G-S. The second word is two letters, O-F. The third word is seven letters, F-R-E-E-D-O-M, and it contains a double E in the middle. Every letter is a capital. Do not add a letter, drop a letter, duplicate a letter, mirror a letter, or change the order. Check the spelling before you finish.
+
+EXCLUSIONS: no other text of any kind anywhere in the image: no tagline, no subtitle, no motto, no serial number, no year, no unit number, no signature, no watermark, no emblem, no wings, no crest, no shield, no logo, no decorative rules or lines, no underline, no stars, no ornament, no illustration. Lettering only, nothing else.
+```
+
+Rules for the wordmark:
+
+- **Never ship a misspelled wordmark.** Composite each candidate onto paper first, because ink on a transparent canvas reads as black on black in most viewers, then blow it up and read every letter. Reject a malformed, doubled, missing, or extra letter. Up to four attempts per lockup; if none comes back clean, keep the typographic wordmark in place and say so.
+- The horizontal one-line lockup with a smaller OF is the picked one: it fits the masthead without changing its layout. A stacked two-line lockup was generated and rejected, its first line cramped with W, I, and N almost colliding.
+- The wordmark's wear lives in the **alpha** channel and its colour is one flat ink, so it can be reprinted in another ink losslessly: replace RGB, keep alpha. That is how the parchment version for the cloth masthead is made. Never redraw the letters to change their colour.
+- Where a wordmark image is used, the real words stay in the DOM: the image is decorative (empty `alt`) and `.brand-text` sits under it, invisible but read by assistive tech, and a script drops the image if it never loads so the typographic wordmark takes over. See `SiteHeader.astro` and `.brand b > .brand-text` in `base.css`.
+
+### The social preview
+
+`site/public/og.jpg`, 1200x630. **Generate the artwork only, never the lettering.** The generated backdrop is a blank aged parchment sheet on green cloth with no mark on it at all; the emblem and the type are composed over it afterwards, which is the only way the card's emblem is guaranteed to be the same drawing as the masthead's.
+
+Compose with `site/art-src/brand/og-compose.html`, which loads the site's own self-hosted fonts, and capture it:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu \
+  --hide-scrollbars --window-size=1200,630 --screenshot=og.png file://<absolute path>/og-compose.html
+```
+
+The compose page lays a copy of the paper back over everything at `mix-blend-mode: multiply` and low opacity, so the emblem and the type pick up the paper's fibre instead of looking pasted on.
+
+Image generation tops out at 1536 px wide, so a 3:2 canvas is cropped to the central letterbox band. Tell the prompt so: "everything that matters must sit inside the central horizontal band of the canvas, between 22 percent and 78 percent of the canvas height".
+
+The card is **JPEG, not PNG**. A 1200x630 photographic card cannot be a PNG under 300 KB without visible damage: quantising to 96 colours still lands near 335 KB and bands the paper. JPEG at quality 88 with no chroma subsampling, which keeps the stencil edges crisp, is about 215 KB.
+
+### Brand file names
+
+Brand marks use the `brand` family. Names say which ink, because the cloth masthead and the paper card need different ones.
+
+| File | What it is |
+| --- | --- |
+| `src/assets/icons/brand-emblem.webp` | The emblem, 512 px square, transparent. The masthead and any future large use. |
+| `src/assets/brand/brand-wordmark.webp` | The wordmark in iron-gall ink, for paper grounds. Builds `og.jpg`. Kept out of `assets/icons/`, whose contents `IconSlot.astro` globs eagerly and ships whole. |
+| `src/assets/icons/brand-wordmark-light.webp` | The same wordmark in parchment ink. The masthead, on cloth. |
+| `public/favicon.ico` | The simplified emblem at 16, 32, and 48 px. |
+| `public/favicon-32.png`, `public/favicon-192.png` | The same mark as PNG. |
+| `public/apple-touch-icon.png` | 180 px, flattened onto paper, since iOS composites transparency onto black. |
+| `public/og.jpg` | The social preview, 1200x630. |
+
+The favicon is the emblem **simplified**: the same shield, wings, red diamond, and parchment keyline, but with the wings held inside the shield and fewer, fatter feather blades. Proof it at 16 and 32 px on paper, on cloth, on white, and on mid grey before picking.
+
 ## Game icons
 
 Stamp icons, generated with the Codex `board-game-icon-assets` skill. Shown at 32 to 128 px and proofed at 32 px.
@@ -320,4 +413,5 @@ Names describe meaning, never appearance, in lowercase kebab case.
 - `site/art-src/<batch>/web/`: WebP copies, the files that get committed once the owner approves the batch contact sheet.
 - Approved copies are committed under `site/src/assets/`: plates and vignettes in `plates/`, icons in `icons/`. Both go through `astro:assets`, which serves each page a copy at the size it is drawn. Nothing shown on a page belongs in `site/public/`, which Astro copies verbatim: a 1024 px icon is about 100 KB, and the Glossary alone shows twenty of them.
 - `site/art-src/seal/`: the wax seal's 1024 px original, with its unpicked candidates in `rejected/` (gitignored).
+- `site/art-src/brand/`: the brand batch. `prompts/` holds every prompt as it was sent, `originals/` the picked generations, `rejected/` the ones that lost, `web/` the processed masters, and `og-compose.html` the page the social card is captured from (all gitignored).
 - `site/art-src/<batch>/contact-sheet*.png`: review sheets for the owner.

@@ -1,6 +1,10 @@
 ---
+import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import { MAIN_NAV, withSlash, type SectionKey } from '~/lib/nav';
+import emblem from '~/assets/icons/brand-emblem.webp';
+// The masthead sits on the dark cloth band, so it prints the wordmark in parchment ink.
+import wordmark from '~/assets/icons/brand-wordmark-light.webp';
 
 interface Props {
   current?: SectionKey;
@@ -11,8 +15,19 @@ const state = (href: string, key: SectionKey) => (withSlash(href) === path ? 'pa
 ---
 <header class="masthead" data-masthead>
   <a class="brand" href="/" aria-label="Wings of Freedom, home">
-    <svg aria-hidden="true"><use href="#brandmark" /></svg>
-    <span><b>Wings of Freedom</b><small>The Survey Corps roleplaying game</small></span>
+    <Image class="brand-emblem" src={emblem} alt="" width={68} height={68} loading="eager" decoding="async" />
+    <span>
+      {/*
+        The wordmark is drawn art, so it carries no text of its own. `.brand-text` holds the
+        real words underneath it, invisible but read by assistive tech, and the script below
+        brings it back as type if the image never loads.
+      */}
+      <b>
+        <Image class="brand-wordmark" src={wordmark} alt="" width={320} loading="eager" decoding="async" data-brand-wordmark />
+        <span class="brand-text">Wings of Freedom</span>
+      </b>
+      <small>The Survey Corps roleplaying game</small>
+    </span>
   </a>
   <nav class="mainnav" aria-label="Main">
     <button class="navmenu" type="button" aria-expanded="false" aria-controls="mainnav-list" data-nav-toggle hidden>
@@ -42,6 +57,18 @@ const state = (href: string, key: SectionKey) => (withSlash(href) === path ? 'pa
   // Set the folded layout before first paint, so the masthead never reflows when the module below runs.
   document.querySelector('[data-masthead]')?.classList.add('has-menu');
   document.querySelector('[data-nav-toggle]')?.removeAttribute('hidden');
+
+  // If the drawn wordmark never loads, drop it: `.brand-text:only-child` then shows the
+  // typographic wordmark in the site's stencil face instead of an empty gap.
+  (function () {
+    var mark = document.querySelector('[data-brand-wordmark]');
+    if (!mark) return;
+    var drop = function () {
+      mark.remove();
+    };
+    if (mark.complete && mark.naturalWidth === 0) drop();
+    else mark.addEventListener('error', drop, { once: true });
+  })();
 </script>
 
 <script>
