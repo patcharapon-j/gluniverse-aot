@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // Resync check (ADR-0020). Every rules and GM page records the chapters and tables it was
 // written from, with each file's git blob sha at the time it was last synced. So does every
-// Compendium wording file (src/content/compendium/*.yaml, under `sources`). This compares
-// those shas with the files as they are now and prints a "needs resync" list.
+// Compendium wording file (src/content/compendium/*.yaml, under `sources`), and so does every
+// page that is an Astro page rather than a content entry, through a `<page>.sources.yaml`
+// sidecar beside it under src/pages (Learn to Play is one). This compares those shas with the
+// files as they are now and prints a "needs resync" list.
 // It only warns: it never fails the build. A Compendium row with no wording fails the build
 // separately, in the loaders.
 
@@ -16,6 +18,7 @@ const siteDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = resolve(siteDir, '..');
 const contentDir = join(siteDir, 'src', 'content');
 const wordingDir = join(contentDir, 'compendium');
+const pagesDir = join(siteDir, 'src', 'pages');
 
 async function* walk(dir, pattern) {
   let entries = [];
@@ -52,10 +55,23 @@ async function main() {
   const files = [];
   for await (const file of walk(contentDir, /\.mdx?$/)) files.push({ file, read: (text) => frontmatter(text) });
   for await (const file of walk(wordingDir, /\.ya?ml$/)) files.push({ file, read: (text) => parse(text) ?? {} });
+  // A page with no frontmatter of its own records its sources in a sidecar beside it.
+  for await (const file of walk(pagesDir, /\.sources\.ya?ml$/)) {
+    files.push({ file, read: (text) => parse(text) ?? {}, page: file.replace(/\.sources\.ya?ml$/, '.astro') });
+  }
 
-  for (const { file, read } of files) {
+  for (const { file, read, page: pageFile } of files) {
     pages += 1;
-    const page = relative(siteDir, file);
+    const page = relative(siteDir, pageFile ?? file);
+    // A sidecar left behind by a renamed or deleted page would go on passing silently.
+    if (pageFile) {
+      try {
+        await access(pageFile);
+      } catch {
+        stale.push({ page, source: relative(siteDir, file), reason: 'records sources for a page that no longer exists' });
+        continue;
+      }
+    }
     let data;
     try {
       data = read(await readFile(file, 'utf8'));
