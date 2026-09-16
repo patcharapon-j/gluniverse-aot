@@ -225,6 +225,20 @@ const isLines = (cell: Cell): cell is { lines: string[] } => typeof cell === 'ob
     white-space: nowrap;
   }
 
+  /* Above the stacking breakpoint a table with more columns than the page
+     column can hold scrolls inside its own box instead of pushing the whole
+     page sideways. The script below makes it a tab stop only while it really
+     does scroll, so a table that fits is never one. */
+  @media (min-width: 761px) {
+    .coretable {
+      overflow-x: auto;
+    }
+    .coretable:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: -3px;
+    }
+  }
+
   @media (max-width: 760px) {
     table,
     caption,
@@ -277,3 +291,29 @@ const isLines = (cell: Cell): cell is { lines: string[] } => typeof cell === 'ob
     }
   }
 </style>
+
+<script>
+  /**
+   * A scroll container has to be reachable from the keyboard, but only while it
+   * actually scrolls. Below the stacking breakpoint the table is a list of
+   * cards and scrolls at no width, so the tab stop is taken away again.
+   */
+  function markScrollingTables() {
+    for (const box of document.querySelectorAll<HTMLElement>('.coretable')) {
+      const scrolls = box.scrollWidth > box.clientWidth + 1;
+      if (scrolls) {
+        box.setAttribute('tabindex', '0');
+        box.setAttribute('role', 'group');
+        const caption = box.querySelector('caption b')?.textContent?.trim();
+        box.setAttribute('aria-label', caption ? `${caption} table, scrolls sideways` : 'Table, scrolls sideways');
+      } else {
+        box.removeAttribute('tabindex');
+        box.removeAttribute('role');
+        box.removeAttribute('aria-label');
+      }
+    }
+  }
+
+  markScrollingTables();
+  addEventListener('resize', markScrollingTables, { passive: true });
+</script>
