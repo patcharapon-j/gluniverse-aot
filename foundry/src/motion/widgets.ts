@@ -9,8 +9,8 @@
  * frames only while its short settle animation lasts. The renderer and every GPU resource are
  * disposed when the last widget unmounts.
  *
- * Motion Full animates; Reduced keeps a short colour flash; Off, or a client without WebGL, shows the
- * static SVG stand-ins the Svelte component draws instead.
+ * Motion Full animates; Reduced keeps a short colour flash and the blades' fade; Off, or a client
+ * without WebGL, shows the static SVG stand-ins the Svelte component draws instead.
  */
 import { animate } from 'animejs/animation';
 import {
@@ -501,11 +501,13 @@ class Widget<K extends WidgetKind> {
     const st = this.state as BladeState;
     const a = this.anim;
     const falling = a.fall > 0 && a.fall < 1;
+    // Reduced motion: the blades only fade; `fall` moves and turns them at Full alone.
+    const drop = motionMode() === 'full' ? a.fall : 0;
     b.held.forEach((g, i) => {
       const rest = g.userData.rest;
       g.visible = st.inHandles || falling;
-      g.position.set(rest.x + (1 + i) * a.fall + 4 * a.slide, rest.y - 2.4 * a.fall - 2.4 * a.slide, rest.z);
-      g.rotation.set(0, 0, -(0.7 + i * 0.3) * a.fall);
+      g.position.set(rest.x + (1 + i) * drop + 4 * a.slide, rest.y - 2.4 * drop - 2.4 * a.slide, rest.z);
+      g.rotation.set(0, 0, -(0.7 + i * 0.3) * drop);
       setOpacity(g, st.inHandles ? 1 : 1 - a.fall);
     });
     b.stubs.visible = !st.inHandles && this.ruined && !falling;

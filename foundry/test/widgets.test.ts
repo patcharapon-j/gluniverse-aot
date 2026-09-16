@@ -1,6 +1,6 @@
 /**
- * The vitals widgets' lifecycle (milestone 2 review, M1), with three.js, anime.js and the settings
- * stubbed: no WebGL in Node.
+ * The vitals widgets' lifecycle and Reduced motion (milestone 2 review, M1 and M2), with three.js,
+ * anime.js and the settings stubbed: no WebGL in Node.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -189,5 +189,34 @@ describe('vitals widgets: closing a sheet mid-animation (M1)', () => {
     for (const f of queued) f();
     expect(h.renderers).toHaveLength(1);
     expect(widgetStats.live).toBe(0);
+  });
+});
+
+describe('vitals widgets: Reduced motion (M2)', () => {
+  const heldBlades = () => h.groups.filter((g) => g.userData.rest?.x === -3.5);
+
+  function midFall(mode: 'full' | 'reduced') {
+    h.motion.mode = mode;
+    const w = mountWidget('blades', canvas(), { inHandles: true, carried: 0 }, () => {})!;
+    runFrames();
+    w.update({ inHandles: false, carried: 0 });
+    const fall = h.tweens.find((t) => 'fall' in t.params)!;
+    expect(fall).toBeDefined();
+    fall.target.fall = 0.5;
+    runFrames();
+    const blades = heldBlades().map((g) => ({ moved: g.position.x !== g.userData.rest.x || g.position.y !== g.userData.rest.y, turned: g.rotation.z !== 0, opacity: (g.children[0] as any).material.opacity }));
+    w.destroy();
+    return blades;
+  }
+
+  it('at Reduced the blades only fade', () => {
+    const blades = midFall('reduced');
+    expect(blades).toHaveLength(2);
+    for (const b of blades) expect(b).toEqual({ moved: false, turned: false, opacity: 0.5 });
+  });
+
+  it('at Full the blades fall and turn as they fade', () => {
+    const blades = midFall('full');
+    for (const b of blades) expect(b).toEqual({ moved: true, turned: true, opacity: 0.5 });
   });
 });
