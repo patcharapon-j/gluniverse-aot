@@ -1,0 +1,882 @@
+{
+  "TYPES": {
+    "Actor": {
+      "soldier": "Soldier",
+      "squadmate": "Squadmate",
+      "titan": "Titan",
+      "foe": "Foe"
+    },
+    "Item": {
+      "talent": "Talent",
+      "specialty": "Specialty",
+      "origin": "Origin",
+      "gear": "Gear",
+      "critical-injury": "Critical Injury"
+    }
+  },
+  "WOF": {
+    "SystemTitle": "Wings of Freedom",
+    "Attribute": {
+      "strength": "Strength",
+      "agility": "Agility",
+      "wits": "Wits",
+      "perception": "Perception",
+      "instinct": "Instinct",
+      "empathy": "Empathy"
+    },
+    "InjuryType": {
+      "crush": "Crush",
+      "bite": "Bite",
+      "burn": "Burn",
+      "cut": "Cut",
+      "pierce": "Pierce"
+    },
+    "InjuryLocation": {
+      "arm": "Arm",
+      "leg": "Leg",
+      "torso": "Torso",
+      "head": "Head"
+    },
+    "Side": {
+      "left": "Left",
+      "right": "Right"
+    },
+    "SizeClass": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "Rank": {
+      "private": "Private",
+      "squad-leader": "Squad Leader",
+      "section-commander": "Section Commander"
+    },
+    "Position": {
+      "distant": "Distant",
+      "in-reach": "In Reach",
+      "on-body": "On Body",
+      "blind-spot": "Blind Spot"
+    },
+    "GearSubtype": {
+      "odm": "ODM Gear",
+      "blade-set": "Blade Set",
+      "firearm": "Firearm",
+      "horse": "Horse",
+      "kit": "Kit",
+      "prosthetic": "Prosthetic"
+    },
+    "BodyPartState": {
+      "intact": "Intact",
+      "wounded": "Wounded",
+      "broken": "Broken"
+    },
+    "TimeLimit": {
+      "turn": "Turn",
+      "engagement": "Engagement",
+      "day": "Day"
+    },
+    "TalentType": {
+      "dice": "Dice Talent",
+      "rule": "Rule Talent"
+    },
+    "TalentLimit": {
+      "none": "No limit",
+      "once_per_titan_engagement": "Once per Titan Engagement",
+      "once_per_leg": "Once per Leg",
+      "once_per_night_camp": "Once per Night Camp",
+      "once_per_skirmish": "Once per Skirmish",
+      "once_per_downtime": "Once per Downtime"
+    },
+    "Tier": {
+      "terrorize": "Terrorize",
+      "control": "Control",
+      "kill": "Kill",
+      "thrash": "Thrash"
+    },
+    "Ladder": {
+      "standard": "Standard Attention Ladder"
+    },
+    "Derived": {
+      "health": "Health",
+      "resolve": "Resolve",
+      "minimum_stress": "Minimum Stress",
+      "current_health": "Current Health",
+      "carrying_limit": "Carrying limit",
+      "items_carried": "Items carried",
+      "overloaded": "Overloaded",
+      "jammed": "Jammed",
+      "lame": "Lame"
+    },
+    "Pack": {
+      "talents": "Talents",
+      "specialties": "Specialties",
+      "origins": "Origins",
+      "gear": "Gear",
+      "criticalInjuries": "Critical Injuries",
+      "titans": "Titans",
+      "squadmates": "Squadmates",
+      "foes": "Foes",
+      "folderSoldiers": "Soldiers",
+      "folderThreats": "Threats"
+    },
+    "Actor": {
+      "Base": {
+        "FIELDS": {
+          "attributes": {
+            "label": "Attributes",
+            "strength": {
+              "label": "Strength"
+            },
+            "agility": {
+              "label": "Agility"
+            },
+            "wits": {
+              "label": "Wits"
+            },
+            "perception": {
+              "label": "Perception"
+            },
+            "instinct": {
+              "label": "Instinct"
+            },
+            "empathy": {
+              "label": "Empathy"
+            }
+          },
+          "health_lost": {
+            "label": "Health lost",
+            "hint": "Health lost to damage. Boxes an untreated Critical Injury crosses off are not counted here."
+          },
+          "down": {
+            "label": "Down"
+          },
+          "stress": {
+            "label": "Stress"
+          },
+          "grief": {
+            "label": "Grief",
+            "hint": "Each point lowers Resolve by 1, up to 3 held."
+          },
+          "scars": {
+            "label": "Scars",
+            "element": {
+              "row": {
+                "label": "Scar"
+              }
+            }
+          },
+          "healed_permanent_injuries": {
+            "label": "Healed permanent injuries",
+            "element": {
+              "row": {
+                "label": "Injury"
+              },
+              "side": {
+                "label": "Side"
+              }
+            }
+          },
+          "lasting_stress_responses": {
+            "label": "Lasting Stress Responses",
+            "element": {
+              "row": {
+                "label": "Stress Response"
+              },
+              "ends": {
+                "label": "Ends"
+              },
+              "ends_note": {
+                "label": "Ends when"
+              }
+            }
+          },
+          "rallied_outside_titan_engagement_by": {
+            "label": "Rallied outside a Titan Engagement by"
+          },
+          "next_roll_penalty": {
+            "label": "Next roll penalty",
+            "hint": "Dice removed from the next attribute roll."
+          },
+          "pending_fear_results": {
+            "label": "Pending Fear Roll results",
+            "element": {
+              "effect": {
+                "label": "Effect"
+              },
+              "toward": {
+                "label": "Toward"
+              },
+              "titan": {
+                "label": "Titan"
+              }
+            }
+          },
+          "dropped_blade_sets": {
+            "label": "Dropped Blade Sets"
+          },
+          "pinned": {
+            "label": "Pinned",
+            "active": {
+              "label": "Pinned"
+            },
+            "body": {
+              "label": "Under body"
+            },
+            "corpse": {
+              "label": "Corpse"
+            },
+            "limb": {
+              "label": "Pinned limb"
+            },
+            "side": {
+              "label": "Side"
+            },
+            "by_part": {
+              "label": "Pinning Body Part"
+            }
+          },
+          "faced_a_titan": {
+            "label": "Has faced a Titan"
+          },
+          "killed_a_person": {
+            "label": "Has killed a person"
+          },
+          "stabilized_injuries_scarred": {
+            "label": "Survived injuries already scarred"
+          },
+          "retiring": {
+            "label": "Retiring"
+          },
+          "gas_rating": {
+            "label": "Gas Rating",
+            "hint": "The gas left in the canister fitted to your ODM Gear."
+          },
+          "spare_canisters": {
+            "label": "Spare canisters"
+          },
+          "left_at": {
+            "label": "Items left at",
+            "position": {
+              "label": "Position"
+            },
+            "titan": {
+              "label": "Focus Titan"
+            },
+            "items": {
+              "label": "Items"
+            }
+          },
+          "positions": {
+            "label": "Positions",
+            "left": {
+              "label": "Left the Titan Engagement"
+            },
+            "entries": {
+              "label": "Positions",
+              "element": {
+                "titan": {
+                  "label": "Focus Titan"
+                },
+                "position": {
+                  "label": "Position"
+                }
+              }
+            }
+          },
+          "airborne": {
+            "label": "Airborne"
+          },
+          "carrying": {
+            "label": "Carrying"
+          },
+          "carried_by": {
+            "label": "Carried by"
+          },
+          "notes": {
+            "label": "Notes"
+          }
+        }
+      },
+      "Soldier": {
+        "FIELDS": {
+          "haven": {
+            "label": "Haven"
+          },
+          "canon_tie": {
+            "label": "Canon Tie"
+          },
+          "drive": {
+            "label": "Drive"
+          },
+          "drive_named_comrade": {
+            "label": "Named comrade"
+          },
+          "drive_used_this_session": {
+            "label": "Drive used this session"
+          },
+          "merit": {
+            "label": "Merit"
+          },
+          "class_rank": {
+            "label": "Class Rank"
+          },
+          "declined_military_police": {
+            "label": "Declined the Military Police"
+          },
+          "rank": {
+            "label": "Rank"
+          },
+          "xp": {
+            "label": "XP"
+          }
+        }
+      },
+      "Squadmate": {
+        "FIELDS": {
+          "template": {
+            "label": "Template"
+          },
+          "wing": {
+            "label": "Wing"
+          }
+        }
+      },
+      "Titan": {
+        "FIELDS": {
+          "size_class": {
+            "label": "Size Class"
+          },
+          "abnormal": {
+            "label": "Abnormal"
+          },
+          "tempo": {
+            "label": "Tempo"
+          },
+          "nape_depth": {
+            "label": "Nape Depth"
+          },
+          "regeneration_clock": {
+            "label": "Regeneration clock"
+          },
+          "heave": {
+            "label": "Heave"
+          },
+          "body_parts": {
+            "label": "Body Parts",
+            "element": {
+              "id": {
+                "label": "Body Part"
+              },
+              "kind": {
+                "label": "Kind"
+              },
+              "toughness": {
+                "label": "Toughness"
+              },
+              "state": {
+                "label": "State"
+              },
+              "progress": {
+                "label": "Successes toward the next state"
+              }
+            }
+          },
+          "attention_ladder": {
+            "label": "Attention Ladder"
+          },
+          "behavior_table": {
+            "label": "Behavior Table",
+            "entries": {
+              "label": "Entries",
+              "element": {
+                "id": {
+                  "label": "Id"
+                },
+                "name": {
+                  "label": "Name"
+                },
+                "results": {
+                  "label": "Results"
+                },
+                "tier": {
+                  "label": "Tier"
+                },
+                "targets": {
+                  "label": "Targets"
+                },
+                "position_requirement": {
+                  "label": "Position requirement"
+                },
+                "body_parts_used": {
+                  "label": "Body Parts used"
+                },
+                "attack_dice": {
+                  "label": "Attack Dice"
+                },
+                "effects": {
+                  "label": "Effects"
+                },
+                "fallback": {
+                  "label": "Fallback"
+                },
+                "text": {
+                  "label": "Text"
+                }
+              }
+            }
+          },
+          "regeneration": {
+            "label": "Regeneration filled"
+          },
+          "openings": {
+            "label": "Openings"
+          },
+          "next_behavior": {
+            "label": "Next Behavior",
+            "entry": {
+              "label": "Entry"
+            },
+            "revealed": {
+              "label": "Revealed"
+            }
+          },
+          "attention_holder": {
+            "label": "Attention held by"
+          },
+          "focus_titan_label": {
+            "label": "Focus Titan label"
+          },
+          "hidden_until_read": {
+            "label": "Hidden until Read",
+            "toughness": {
+              "label": "Toughness revealed"
+            },
+            "nape_depth": {
+              "label": "Nape Depth revealed"
+            },
+            "regeneration_clock": {
+              "label": "Regeneration clock revealed"
+            },
+            "attention_ladder": {
+              "label": "Attention Ladder revealed"
+            }
+          },
+          "corpse": {
+            "label": "Corpse"
+          },
+          "notes": {
+            "label": "Notes"
+          }
+        }
+      },
+      "Foe": {
+        "FIELDS": {
+          "kind": {
+            "label": "Foe kind"
+          },
+          "who": {
+            "label": "Who"
+          },
+          "attack_dice": {
+            "label": "Attack Dice"
+          },
+          "guard_dice": {
+            "label": "Guard"
+          },
+          "health": {
+            "label": "Health"
+          },
+          "grit": {
+            "label": "Grit"
+          },
+          "parley": {
+            "label": "Parley"
+          },
+          "watch": {
+            "label": "Watch"
+          },
+          "group_size": {
+            "label": "Group size"
+          },
+          "fight_weapon": {
+            "label": "Fight weapon",
+            "fixed": {
+              "label": "Weapon"
+            },
+            "roll": {
+              "label": "Roll"
+            },
+            "rows": {
+              "label": "Weapon rows",
+              "element": {
+                "results": {
+                  "label": "Results"
+                },
+                "weapon": {
+                  "label": "Weapon"
+                }
+              }
+            },
+            "at_night": {
+              "label": "At night",
+              "replaces": {
+                "label": "Replaces"
+              },
+              "with": {
+                "label": "With"
+              }
+            }
+          },
+          "shoot_weapon": {
+            "label": "Shoot weapon"
+          },
+          "health_lost": {
+            "label": "Health lost"
+          },
+          "held": {
+            "label": "Held"
+          },
+          "out": {
+            "label": "Out of the Skirmish"
+          },
+          "weapon": {
+            "label": "Fight weapon this Skirmish"
+          },
+          "firearm_loaded": {
+            "label": "Firearm loaded"
+          },
+          "notes": {
+            "label": "Notes"
+          }
+        }
+      }
+    },
+    "Item": {
+      "Talent": {
+        "FIELDS": {
+          "talent_id": {
+            "label": "Talent id"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "type": {
+            "label": "Type"
+          },
+          "max_level": {
+            "label": "Maximum level"
+          },
+          "names": {
+            "label": "Action Catalog entries"
+          },
+          "condition": {
+            "label": "Conditions"
+          },
+          "trigger": {
+            "label": "Trigger"
+          },
+          "effect": {
+            "label": "Effect"
+          },
+          "limit": {
+            "label": "Limit"
+          },
+          "specialties": {
+            "label": "Specialties"
+          },
+          "level": {
+            "label": "Level"
+          },
+          "used": {
+            "label": "Used",
+            "hint": "Recorded beside the Talent while its once-per use is spent."
+          }
+        }
+      },
+      "Specialty": {
+        "FIELDS": {
+          "specialty_id": {
+            "label": "Specialty id"
+          },
+          "key_attribute": {
+            "label": "Key attribute"
+          },
+          "summary": {
+            "label": "Summary"
+          },
+          "talents": {
+            "label": "Talent list"
+          },
+          "squadmate_template": {
+            "label": "Squadmate template"
+          }
+        }
+      },
+      "Origin": {
+        "FIELDS": {
+          "origin_id": {
+            "label": "Origin id"
+          },
+          "results": {
+            "label": "D66 results"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "attributes": {
+            "label": "Attributes"
+          },
+          "talent_choice": {
+            "label": "Talent choice"
+          },
+          "haven_choice": {
+            "label": "Haven choice"
+          },
+          "canon_tie": {
+            "label": "Canon Tie",
+            "character": {
+              "label": "Character"
+            },
+            "link": {
+              "label": "Link"
+            }
+          },
+          "condition": {
+            "label": "Condition",
+            "campaign_year_min": {
+              "label": "Campaign Year at least"
+            }
+          }
+        }
+      },
+      "Gear": {
+        "FIELDS": {
+          "item_id": {
+            "label": "Item"
+          },
+          "subtype": {
+            "label": "Subtype"
+          },
+          "rated": {
+            "label": "Rated"
+          },
+          "gear_dice_for": {
+            "label": "Gives Gear Dice to"
+          },
+          "items_counted": {
+            "label": "Counts as items"
+          },
+          "passable": {
+            "label": "Can be passed"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "rating": {
+            "label": "Rating"
+          },
+          "current": {
+            "label": "Current rating"
+          },
+          "kept": {
+            "label": "Kept item"
+          },
+          "in_handles": {
+            "label": "In the handles"
+          },
+          "loaded": {
+            "label": "Loaded"
+          },
+          "mounted": {
+            "label": "Mounted"
+          },
+          "position": {
+            "label": "Horse Position",
+            "position": {
+              "label": "Position"
+            },
+            "titan": {
+              "label": "Focus Titan"
+            },
+            "left": {
+              "label": "Left as a decoy"
+            }
+          },
+          "side": {
+            "label": "Fitted side"
+          }
+        }
+      },
+      "CriticalInjury": {
+        "FIELDS": {
+          "row": {
+            "label": "Row"
+          },
+          "location": {
+            "label": "Injury Location"
+          },
+          "row_data": {
+            "label": "Row",
+            "names": {
+              "label": "Names",
+              "crush": {
+                "label": "Crush"
+              },
+              "bite": {
+                "label": "Bite"
+              },
+              "burn": {
+                "label": "Burn"
+              },
+              "cut": {
+                "label": "Cut"
+              },
+              "pierce": {
+                "label": "Pierce"
+              }
+            },
+            "results": {
+              "label": "2D6 results",
+              "min": {
+                "label": "From"
+              },
+              "max": {
+                "label": "To"
+              }
+            },
+            "down": {
+              "label": "Down"
+            },
+            "lethal": {
+              "label": "Lethal"
+            },
+            "time_limit": {
+              "label": "Time limit"
+            },
+            "death_roll_penalty": {
+              "label": "Death Roll penalty"
+            },
+            "instant_death": {
+              "label": "Instant death"
+            },
+            "effects": {
+              "label": "Effects"
+            },
+            "permanent_effects": {
+              "label": "Permanent effects"
+            },
+            "healing_days": {
+              "label": "Healing days"
+            },
+            "repeat_row": {
+              "label": "Repeat row"
+            }
+          },
+          "type_riders": {
+            "label": "Injury Type riders",
+            "element": {
+              "injury_type": {
+                "label": "Injury Type"
+              },
+              "rider": {
+                "label": "Rider"
+              }
+            }
+          },
+          "description": {
+            "label": "Description"
+          },
+          "side": {
+            "label": "Side"
+          },
+          "injury_type": {
+            "label": "Injury Type"
+          },
+          "treated": {
+            "label": "Treated"
+          },
+          "time_limit": {
+            "label": "Time limit"
+          },
+          "healing_days_left": {
+            "label": "Healing days left"
+          },
+          "halved": {
+            "label": "Healing halved"
+          }
+        }
+      }
+    },
+    "Card": {
+      "Talent": {
+        "levelPerDie": "Add 1 base die per level to your {target}.",
+        "oneDie": "Add 1 base die to your {target}.",
+        "rolls": "{entries} rolls",
+        "rollsWhen": "{entries} rolls {condition}",
+        "trigger": "Trigger",
+        "effect": "Effect",
+        "limit": "Limit",
+        "entries": "Action Catalog entries",
+        "specialties": "Specialties",
+        "general": "General"
+      },
+      "Gear": {
+        "notHad": "Counts as not had",
+        "atZero": "At 0",
+        "wear": "Wear",
+        "restore": "Restored by",
+        "carried": "Carried",
+        "gearDice": "Gives Gear Dice to",
+        "notes": "Notes"
+      },
+      "Origin": {
+        "attributes": "Attributes",
+        "talents": "Talent choice",
+        "havens": "Haven choice",
+        "canonTie": "Canon Tie",
+        "condition": "Only from Campaign Year {year}",
+        "roll": "D66"
+      },
+      "Specialty": {
+        "key": "Key attribute",
+        "talents": "Talent list",
+        "issue": "Standard Issue also gives you a {item} with a rating of {rating}."
+      },
+      "Injury": {
+        "names": "By Injury Type",
+        "effects": "While held",
+        "permanent": "Permanent",
+        "healing": "Heals in {days} days",
+        "lethal": "Lethal, time limit: {limit}",
+        "down": "Down until treated",
+        "instantDeath": "Instant death",
+        "penalty": "{dice}-die penalty on {entries}",
+        "stressGain": "Gain {amount} Stress",
+        "entryName": "{location} {range}: {name}",
+        "range": "{min} to {max}",
+        "rangeUpTo": "{max} or less",
+        "rangeFrom": "{min} or more"
+      },
+      "Titan": {
+        "entry": "{roll}: {name}",
+        "attackDice": "{dice} Attack Dice",
+        "thrash": "Thrash (fallback)"
+      },
+      "Foe": {
+        "attackDice": "Attack Dice",
+        "guard": "Guard",
+        "health": "Health",
+        "grit": "Grit",
+        "parley": "Parley",
+        "watch": "Watch",
+        "group": "Group of {n}",
+        "fight": "Fight weapon",
+        "shoot": "Shoot weapon",
+        "none": "None"
+      }
+    },
+    "Error": {
+      "dataShape": "Wings of Freedom: {what} does not match the system data. Rebuild the system."
+    }
+  }
+}

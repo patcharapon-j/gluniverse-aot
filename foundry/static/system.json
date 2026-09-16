@@ -1,0 +1,41 @@
+{
+  "id": "wings-of-freedom",
+  "title": "Wings of Freedom",
+  "description": "Attack on Titan on the Year Zero Engine, set on Paradis in the walls era (845 to 850).",
+  "version": "0.1.0",
+  "compatibility": { "minimum": "14", "verified": "14" },
+  "authors": [{ "name": "Patcharapon Joksamut" }],
+  "esmodules": ["wings-of-freedom.mjs"],
+  "styles": [{ "src": "styles/fonts.css" }],
+  "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
+  "documentTypes": {
+    "Actor": {
+      "soldier": { "htmlFields": ["notes"] },
+      "squadmate": { "htmlFields": ["notes"] },
+      "titan": { "htmlFields": ["notes"] },
+      "foe": { "htmlFields": ["notes"] }
+    },
+    "Item": {
+      "talent": { "htmlFields": ["description"] },
+      "specialty": { "htmlFields": ["summary"] },
+      "origin": { "htmlFields": ["description"] },
+      "gear": { "htmlFields": ["description"] },
+      "critical-injury": { "htmlFields": ["description"] }
+    }
+  },
+  "packs": [
+    { "name": "talents", "label": "Talents", "path": "packs/talents", "type": "Item", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "specialties", "label": "Specialties", "path": "packs/specialties", "type": "Item", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "origins", "label": "Origins", "path": "packs/origins", "type": "Item", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "gear", "label": "Gear", "path": "packs/gear", "type": "Item", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "critical-injuries", "label": "Critical Injuries", "path": "packs/critical-injuries", "type": "Item", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "titans", "label": "Titans", "path": "packs/titans", "type": "Actor", "system": "wings-of-freedom", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } },
+    { "name": "squadmates", "label": "Squadmates", "path": "packs/squadmates", "type": "Actor", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "foes", "label": "Foes", "path": "packs/foes", "type": "Actor", "system": "wings-of-freedom", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } }
+  ],
+  "packFolders": [
+    { "name": "Soldiers", "sorting": "m", "packs": ["talents", "specialties", "origins", "gear", "critical-injuries", "squadmates"] },
+    { "name": "Threats", "sorting": "m", "packs": ["titans", "foes"] }
+  ],
+  "grid": { "distance": 1, "units": "m" }
+}

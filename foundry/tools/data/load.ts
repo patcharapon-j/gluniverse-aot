@@ -1,0 +1,152 @@
+/**
+ * Reads and validates the shared tables in data/ and the site's player wording (ADR-0012,
+ * ADR-0020, ADR-0025). Every file goes through its schema; any failure throws with the file and
+ * the path of the bad value, so the build stops instead of shipping a stale or broken table.
+ */
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+import { parse } from 'yaml';
+import type { z } from 'zod';
+import * as S from './schemas.ts';
+
+export const FOUNDRY_ROOT = fileURLToPath(new URL('../../', import.meta.url));
+export const REPO_ROOT = resolve(FOUNDRY_ROOT, '..');
+
+export class DataShapeError extends Error {
+  constructor(file: string, issues: string[]) {
+    super(`${file} does not match the shape the Foundry system reads:\n  ${issues.join('\n  ')}\nUpdate foundry/tools/data/schemas.ts and the code that reads it.`);
+    this.name = 'DataShapeError';
+  }
+}
+
+export type Reader = (repoPath: string) => string;
+export const fileReader: Reader = (repoPath) => readFileSync(resolve(REPO_ROOT, repoPath), 'utf8');
+
+function parseWith<T extends z.ZodType>(read: Reader, repoPath: string, schema: T): z.infer<T> {
+  let raw: unknown;
+  try {
+    raw = parse(read(repoPath));
+  } catch (err) {
+    throw new DataShapeError(repoPath, [`cannot be read as YAML: ${(err as Error).message}`]);
+  }
+  const result = schema.safeParse(raw);
+  if (!result.success) {
+    throw new DataShapeError(
+      repoPath,
+      result.error.issues.map((i) => `${i.path.length ? i.path.join('.') : '(root)'}: ${i.message}`),
+    );
+  }
+  return result.data;
+}
+
+/** Every file the system reads, by key. */
+export const FILES = {
+  attributes: ['data/character/attributes.yaml', S.attributesFile],
+  actionCatalog: ['data/character/action-catalog.yaml', S.actionCatalogFile],
+  talents: ['data/character/talents.yaml', S.talentsFile],
+  specialties: ['data/character/specialties.yaml', S.specialtiesFile],
+  origins: ['data/character/origins.yaml', S.originsFile],
+  squadmates: ['data/character/squadmates.yaml', S.squadmatesFile],
+  lifepath: ['data/character/lifepath.yaml', S.lifepathFile],
+  harmSheetFields: ['data/harm/sheet-fields.yaml', S.harmSheetFieldsFile],
+  gearSheetFields: ['data/gear/sheet-fields.yaml', S.gearSheetFieldsFile],
+  gearItems: ['data/gear/items.yaml', S.gearItemsFile],
+  carrying: ['data/gear/carrying.yaml', S.carryingFile],
+  odmGear: ['data/gear/odm-gear.yaml', S.odmGearFile],
+  standardIssue: ['data/gear/standard-issue.yaml', S.standardIssueFile],
+  criticalInjuries: ['data/harm/critical-injuries.yaml', S.criticalInjuriesFile],
+  down: ['data/harm/down.yaml', S.downFile],
+  titanFormat: ['data/engagement/titan-format.yaml', S.titanFormatFile],
+  sizeClasses: ['data/engagement/size-classes.yaml', S.sizeClassesFile],
+  titanIndex: ['data/titans/index.yaml', S.titanIndexFile],
+  foes: ['data/skirmish/foes.yaml', S.foesFile],
+  dicePool: ['data/core/dice-pool.yaml', S.dicePoolFile],
+  circumstances: ['data/core/circumstances.yaml', S.circumstancesFile],
+  bonusDice: ['data/core/bonus-dice-sources.yaml', S.bonusDiceSourcesFile],
+  talentWording: ['site/src/content/compendium/talent-text.yaml', S.talentWordingFile],
+  gearWording: ['site/src/content/compendium/gear-text.yaml', S.gearWordingFile],
+  actionWording: ['site/src/content/compendium/action-text.yaml', S.actionWordingFile],
+} as const;
+
+type Files = typeof FILES;
+export type Tables = { [K in keyof Files]: z.infer<Files[K][1]> } & {
+  titans: z.infer<typeof S.titanFile>[];
+};
+
+function fail(file: string, message: string): never {
+  throw new DataShapeError(file, [message]);
+}
+
+/** Checks the references between tables that no single schema can see. */
+function crossCheck(t: Tables): void {
+  const actions = new Set(t.actionCatalog.entries.map((e) => e.id));
+  const talents = new Set(t.talents.talents.map((x) => x.id));
+  const specialties = new Set(t.specialties.specialties.map((x) => x.id));
+  const templates = new Set(t.squadmates.templates.map((x) => x.id));
+  const gear = new Set(t.gearItems.items.map((x) => x.id));
+
+  const unique = (file: string, ids: string[]) => {
+    const seen = new Set<string>();
+    for (const i of ids) {
+      if (seen.has(i)) fail(file, `the id "${i}" appears twice`);
+      seen.add(i);
+    }
+  };
+  unique(FILES.talents[0], t.talents.talents.map((x) => x.id));
+  unique(FILES.actionCatalog[0], t.actionCatalog.entries.map((e) => e.id));
+
+  for (const e of t.actionCatalog.entries) {
+    for (const g of e.gear ?? []) if (!gear.has(g as never)) fail(FILES.actionCatalog[0], `"${e.id}" names gear "${g}", which data/gear/items.yaml does not list`);
+    if (e.option_of && /^[a-z-]+$/.test(e.option_of) && !actions.has(e.option_of)) fail(FILES.actionCatalog[0], `"${e.id}" is an option of a missing entry`);
+  }
+  for (const x of t.talents.talents) {
+    for (const n of x.names) if (!actions.has(n)) fail(FILES.talents[0], `"${x.id}" names "${n}", which is not an Action Catalog entry`);
+    for (const s of x.specialties) if (!specialties.has(s)) fail(FILES.talents[0], `"${x.id}" lists the missing Specialty "${s}"`);
+  }
+  for (const s of t.specialties.specialties) {
+    for (const x of s.talents) if (!talents.has(x)) fail(FILES.specialties[0], `"${s.id}" lists the missing Talent "${x}"`);
+    if (!templates.has(s.squadmate_template)) fail(FILES.specialties[0], `"${s.id}" names a missing Squadmate template`);
+  }
+  for (const x of t.specialties.general.talents) if (!talents.has(x)) fail(FILES.specialties[0], `the general list names the missing Talent "${x}"`);
+  for (const o of t.origins.rows) {
+    for (const x of o.talent_choice) if (!talents.has(x)) fail(FILES.origins[0], `"${o.id}" offers the missing Talent "${x}"`);
+  }
+  for (const m of t.squadmates.templates) {
+    if (!specialties.has(m.specialty)) fail(FILES.squadmates[0], `template "${m.id}" has a missing Specialty`);
+    if (!talents.has(m.talent.id)) fail(FILES.squadmates[0], `template "${m.id}" has the missing Talent "${m.talent.id}"`);
+  }
+  for (const id of Object.keys(t.talentWording.talents)) if (!talents.has(id)) fail(FILES.talentWording[0], `has wording for "${id}", which is not a Talent`);
+  for (const id of Object.keys(t.gearWording.items)) if (!gear.has(id as never)) fail(FILES.gearWording[0], `has wording for "${id}", which is not a gear item`);
+  for (const x of t.talents.talents) {
+    if (x.type === 'rule' && !(t.talentWording.talents[x.id]?.trigger && t.talentWording.talents[x.id]?.effect)) {
+      fail(FILES.talentWording[0], `the Rule Talent "${x.id}" has no player wording`);
+    }
+  }
+  const ladders = new Set(['standard', ...t.titanIndex.ladders.map((l) => l.id)]);
+  for (const titan of t.titans) {
+    if (!ladders.has(titan.attention_ladder)) fail(`data/titans/${titan.id}.yaml`, `names the missing Attention Ladder "${titan.attention_ladder}"`);
+    if (!titan.abnormal) {
+      const size = t.sizeClasses.classes.find((c) => c.id === titan.size_class)!;
+      for (const key of ['tempo', 'nape_depth', 'regeneration_clock', 'heave'] as const) {
+        if (titan[key] !== size[key]) fail(`data/titans/${titan.id}.yaml`, `${key} differs from its Size Class row`);
+      }
+    }
+  }
+}
+
+/** Loads every table. Pass a reader to test against altered file contents. */
+export function loadTables(read: Reader = fileReader): Tables {
+  const out = {} as Record<string, unknown>;
+  for (const [key, [path, schema]] of Object.entries(FILES)) out[key] = parseWith(read, path, schema as z.ZodType);
+  const index = out.titanIndex as z.infer<typeof S.titanIndexFile>;
+  const titanIds = [...Object.values(index.standard_titans), ...index.abnormals.map((a) => a.id)];
+  out.titans = titanIds.map((id) => {
+    const titan = parseWith(read, `data/titans/${id}.yaml`, S.titanFile);
+    if (titan.id !== id) fail(`data/titans/${id}.yaml`, `its id is "${titan.id}"`);
+    return titan;
+  });
+  const tables = out as Tables;
+  crossCheck(tables);
+  return tables;
+}
