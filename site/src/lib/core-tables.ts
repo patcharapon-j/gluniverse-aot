@@ -172,7 +172,7 @@ const FAILURE_WORDING: Record<string, { name: string; text: string }> = {
   stress: { name: '1 Stress', text: 'You gain 1 Stress: once for the roll, however many times you Pushed it, and never on a success.' },
   fall: {
     name: 'A fall',
-    text: "A low or a high fall, as the GM names from the height, and never an extreme one. In a fight it is a fall in full, and where it drops you is the fall rule's to say, not the ruling's.",
+    text: "A low or a high fall, as the GM names from the height, or low if the GM names none, and never an extreme one. In a fight it is a fall in full, and where it drops you is the fall rule's to say, not the ruling's.",
   },
   damage: {
     name: 'Damage',
