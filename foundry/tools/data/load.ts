@@ -69,6 +69,8 @@ export const FILES = {
   bonusDice: ['data/core/bonus-dice-sources.yaml', S.bonusDiceSourcesFile],
   scars: ['data/mind/scars.yaml', S.scarsFile],
   stressResponses: ['data/mind/stress-responses.yaml', S.stressResponsesFile],
+  fearRolls: ['data/mind/fear-rolls.yaml', S.fearRollsFile],
+  deathRolls: ['data/harm/death-rolls.yaml', S.deathRollsFile],
   talentWording: ['site/src/content/compendium/talent-text.yaml', S.talentWordingFile],
   gearWording: ['site/src/content/compendium/gear-text.yaml', S.gearWordingFile],
   actionWording: ['site/src/content/compendium/action-text.yaml', S.actionWordingFile],

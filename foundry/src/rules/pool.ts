@@ -27,6 +27,8 @@ export interface PoolTalent {
 }
 
 export interface PoolGear {
+  /** The embedded item's id, when the pool is built from an actor. */
+  id?: string;
   itemId: string;
   name: string;
   /** The item's current Gear Dice: 0 when worn down, and 0 for a state that counts as not had. */
@@ -54,6 +56,16 @@ export interface PoolInputs {
   penaltyFloor?: number;
   /** Components this entry leaves out (data/core/dice-pool.yaml, roll_exceptions). */
   excluded?: readonly PoolComponent[];
+  /** Roll dialog choices. An attribute a rule Talent allows in place of the entry's (Hunter's Eye). */
+  attribute?: AttributeId;
+  /** The dice Talent used, by Talent id, or 'none'; a conditional Talent counts when chosen (its condition met). */
+  talentChoice?: string;
+  /** The gear item used, by embedded id or item id, or 'none'. */
+  gearChoice?: string;
+  /** Conditional penalties the roller marks as applying, by source. */
+  conditionsMet?: readonly string[];
+  /** Talent dice still count on an attribute-alone roll (Make Do). */
+  talentWhenAlone?: boolean;
 }
 
 export interface PoolPreview {
@@ -72,7 +84,7 @@ export interface PoolPreview {
   /** Base dice each penalty die removed, taken from Bonus Dice first, then Talent dice, then the attribute. */
   removed: { bonus: number; talent: number; attribute: number };
   base: number;
-  gear: { itemId: string; name: string; dice: number } | null;
+  gear: { id?: string; itemId: string; name: string; dice: number } | null;
   stress: number;
   total: number;
 }
@@ -98,12 +110,14 @@ export function previewPool(i: PoolInputs): PoolPreview {
     stress: 0,
     total: 0,
   };
-  const attrId = i.entry.attribute;
+  const attrId = i.attribute ?? i.entry.attribute;
   if (!attrId || !ATTRIBUTES.includes(attrId)) return empty;
 
   // Gear: the best item the entry allows that is had (current rating above 0).
   const usable = i.gear.filter((g) => i.entry.gear.includes(g.itemId) && g.dice > 0).sort((a, b) => b.dice - a.dice);
   const hasGear = usable.length > 0;
+  const chosen =
+    i.gearChoice === undefined ? usable[0] : i.gearChoice === 'none' ? undefined : usable.find((g) => g.id === i.gearChoice || g.itemId === i.gearChoice);
   let attributeAlone = false;
   if (i.entry.requiresGear && !hasGear) {
     if (i.entry.withoutGear === 'not_possible') return { ...empty, blocked: 'no-gear' };
@@ -115,10 +129,15 @@ export function previewPool(i: PoolInputs): PoolPreview {
   // Talent: at most one dice Talent counts; the highest level whose condition does not apply.
   let talent: PoolPreview['talent'] = null;
   const conditionalTalents: PoolPreview['conditionalTalents'] = [];
-  if (!attributeAlone && !excluded.has('talent')) {
+  if ((!attributeAlone || i.talentWhenAlone) && !excluded.has('talent')) {
     for (const t of i.talents) {
       if (t.type !== 'dice' || t.level <= 0 || !t.names.includes(i.entry.id)) continue;
       const condition = t.condition[i.entry.id];
+      if (i.talentChoice !== undefined) {
+        if (t.id === i.talentChoice) talent = { id: t.id, name: t.name, dice: t.level };
+        if (condition) conditionalTalents.push({ id: t.id, name: t.name, dice: t.level, condition });
+        continue;
+      }
       if (condition) conditionalTalents.push({ id: t.id, name: t.name, dice: t.level, condition });
       else if (!talent || t.level > talent.dice) talent = { id: t.id, name: t.name, dice: t.level };
     }
@@ -131,7 +150,7 @@ export function previewPool(i: PoolInputs): PoolPreview {
   for (const p of i.penalties) {
     if (p.dice <= 0) continue;
     if (p.entries !== 'all' && !p.entries.includes(i.entry.id)) continue;
-    if (p.conditional) conditionalPenalties.push({ source: p.source, dice: p.dice, condition: p.conditional });
+    if (p.conditional && !i.conditionsMet?.includes(p.source)) conditionalPenalties.push({ source: p.source, dice: p.dice, condition: p.conditional });
     else penalties.push({ source: p.source, dice: p.dice });
   }
 
@@ -148,7 +167,7 @@ export function previewPool(i: PoolInputs): PoolPreview {
   const removed = { bonus: take(bonus), talent: take(talentDice), attribute: 0 };
   removed.attribute = take(attribute.dice);
 
-  const gear = !attributeAlone && hasGear && !excluded.has('gear') ? { itemId: usable[0].itemId, name: usable[0].name, dice: usable[0].dice } : null;
+  const gear = !attributeAlone && chosen && !excluded.has('gear') ? { id: chosen.id, itemId: chosen.itemId, name: chosen.name, dice: chosen.dice } : null;
   const stress = excluded.has('stress') ? 0 : Math.max(0, i.stress);
 
   return {

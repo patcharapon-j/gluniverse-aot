@@ -5,6 +5,7 @@
  */
 import type { Tables } from './data/load.ts';
 import { CARRIED_COMRADE_ITEMS, CARRYING_LIMIT_BONUS, MAX_GRIEF_COUNTED } from '../src/rules/derived.ts';
+import { entryNeeds, ROLL_TALENTS } from '../src/rules/roll.ts';
 
 export function gearSubtype(itemId: string): 'odm' | 'blade-set' | 'firearm' | 'horse' | 'kit' | 'prosthetic' | null {
   switch (itemId) {
@@ -40,6 +41,21 @@ function checkConstants(t: Tables): void {
   if (CARRYING_LIMIT_BONUS !== 4) throw new Error('src/rules/derived.ts: the carrying limit is strength + 4 (data/gear/carrying.yaml).');
   if (MAX_GRIEF_COUNTED !== 3) throw new Error('src/rules/derived.ts: at most 3 points of Grief count (data/character/attributes.yaml).');
   for (const item of t.gearItems.items) gearSubtype(item.id);
+  // Wear (src/rules/roll.ts, wearOutcome): a Blade Set is ruined by any point; every other rated item loses 1 per point.
+  for (const item of t.gearItems.items) {
+    if (!item.rated) continue;
+    const ruins = item.id === 'blade-set';
+    const ok = ruins ? /ruins/.test(item.wear ?? '') : /lowers the current rating by 1/.test(item.wear ?? '');
+    if (!ok) throw new Error(`data/gear/items.yaml: the wear of "${item.id}" changed ("${item.wear}"). Update src/rules/roll.ts (wearOutcome).`);
+  }
+  // Rule Talents the roll code applies by id (src/rules/roll.ts, ROLL_TALENTS).
+  for (const [id, names] of Object.entries(ROLL_TALENTS)) {
+    const row = t.talents.talents.find((x) => x.id === id);
+    if (!row || row.type !== 'rule' || names.some((n) => !row.names.includes(n))) {
+      throw new Error(`data/character/talents.yaml: the Talent "${id}" no longer names ${names.join(', ')}. Update src/rules/roll.ts (ROLL_TALENTS) and the roll code.`);
+    }
+  }
+  if (t.odmGear.gas_roll.dice.standard > t.odmGear.gas_roll.dice.maximum) throw new Error('data/gear/odm-gear.yaml: the standard Gas Roll exceeds the maximum.');
 }
 
 export interface MindEffect {
@@ -80,6 +96,7 @@ export function buildConfig(t: Tables) {
       withoutGear: e.without_gear ?? null,
       context: e.context,
       needs: e.needs ?? null,
+      needsCount: entryNeeds(e.needs ?? null),
       optionOf: e.option_of && /^[a-z-]+$/.test(e.option_of) ? e.option_of : null,
       changes: e.changes,
       talents: t.talents.talents.filter((x) => x.names.includes(e.id)).map((x) => x.id),
@@ -106,7 +123,25 @@ export function buildConfig(t: Tables) {
     standardIssue: { funding, row: t.standardIssue.by_funding.find((r) => r.funding === funding) ?? null },
     dieTypes: t.dicePool.die_types.map((d) => ({ id: d.id, name: d.name, successFaces: d.success_faces, pushReRolls: d.push_re_rolls_faces })),
     penaltyFloor: Number((t.dicePool.components.find((c) => c.id === 'penalty') as { min_base_dice_after?: unknown } | undefined)?.min_base_dice_after ?? 1),
-    rollExceptions: t.dicePool.roll_exceptions.map((r) => ({ roll: r.roll, entries: r.entries ?? [r.roll], excluded: r.components_excluded, pushAllowed: r.push_allowed })),
+    rollExceptions: t.dicePool.roll_exceptions.map((r) => ({
+      roll: r.roll,
+      entries: r.entries ?? [r.roll],
+      excluded: r.components_excluded,
+      pushAllowed: r.push_allowed,
+      coverAllowed: r.cover_allowed ?? r.push_allowed,
+      circumstances: r.circumstances !== 'never',
+      secret: r.secret ?? false,
+      stressResponse: r.stress_response !== 'none',
+    })),
+    calledRoll: { needs: t.dicePool.called_roll.needs, failureMenu: t.dicePool.called_roll.failure_menu.map((f) => ({ id: f.id, cost: f.cost })) },
+    downForbids: [...t.down.forbids],
+    fearTriggers: t.fearRolls.triggers.map((x) => ({ id: x.id, event: x.event })),
+    fearRows: t.fearRolls.table.rows.map((r) => ({ id: r.id, name: r.name, min: r.results.min, max: r.results.max, text: r.text, effects: r.effects, forbids: r.forbids ?? [] })),
+    deathRoll: {
+      attribute: t.deathRolls.death_roll.attribute,
+      needs: t.deathRolls.death_roll.needs,
+      outcomes: t.deathRolls.outcomes.map((o) => ({ id: o.id, min: o.successes.min, max: o.successes.max, result: o.result })),
+    },
     titanDice: { successFaces: [...t.titanFormat.titan_dice.success_faces] },
     circumstances: t.circumstances.steps,
     bonusDiceCap: t.bonusDice.cap_per_roll,
@@ -131,6 +166,8 @@ export function buildConfig(t: Tables) {
       id: r.id,
       name: r.name,
       lasting: r.duration === 'lasting',
+      min: r.results.min,
+      max: r.results.max,
       text: r.text,
       effects: mindEffects(r.effects),
     })),

@@ -894,6 +894,28 @@
         "low": "Low",
         "standard": "Standard",
         "graphic": "Graphic"
+      },
+      "autoApply": {
+        "stress": {
+          "name": "Auto-apply: Stress",
+          "hint": "Roll cards change Stress themselves: a Push, a Cover, a Stress Response, a Fear result, and a failed called roll staked on Stress. Off: the card lists the change with an Apply button."
+        },
+        "wear": {
+          "name": "Auto-apply: gear wear",
+          "hint": "A Pushed roll’s Gear Dice showing 1 wear the gear item (a Blade Set is ruined), with any wear-ignoring Talent used. Off: the card lists the wear with an Apply button."
+        },
+        "stressResponse": {
+          "name": "Auto-apply: Stress Responses",
+          "hint": "A lasting Stress Response rolled on a card is recorded on the soldier. Off: the card lists it with an Apply button."
+        },
+        "gas": {
+          "name": "Auto-apply: Gas Rating",
+          "hint": "A Gas Roll lowers the Gas Rating, and a Pushed ODM Gear roll marks the round’s Gas Roll as three dice. Off: the card lists the change with an Apply button."
+        },
+        "fear": {
+          "name": "Auto-apply: Fear results and penalties",
+          "hint": "A Fear result’s next-roll penalty and forced move or strike are recorded, a used next-roll penalty is cleared, and a Drive shrug-off is marked. Off: the card lists them with an Apply button."
+        }
       }
     },
     "Sheet": {
@@ -1036,7 +1058,6 @@
         "noGearDice": "No Gear Dice",
         "attributeAlone": "Attribute alone (no gear)",
         "bonus": "Bonus",
-        "stub": "{actor}: {name}. Rolling arrives in the next build.",
         "fixed": {
           "fear-roll": "D6 + Stress {stress} − Resolve {resolve}",
           "stress-response-roll": "D6 + Stress {stress} − Resolve {resolve}",
@@ -1058,7 +1079,18 @@
         "pushStress": "+{amount} Stress on every Push",
         "loseSuccesses": "Lose {amount} success",
         "spendNextTurn": "Lose your next turn",
-        "zeroSuccesses": "No successes"
+        "zeroSuccesses": "No successes",
+        "spendNextTurns": "Lose your next {turns} turns",
+        "nextRollPenalty": "−{dice} die on your next roll",
+        "spendNextAction": "Lose your next action",
+        "gasRoll": "Make a Gas Roll",
+        "noReactions": "No Reactions until your next turn ends",
+        "drawAttention": "You draw the Titan’s Attention",
+        "forcedMove": "Move toward {toward} on your next turn",
+        "forcedAction": "Strike the nearest Titan on your next turn",
+        "gainScar": "Gain a Scar",
+        "dropBladeSet": "Drop the Blade Set in your handles",
+        "stressGainNearby": "+{amount} Stress to each comrade within one Position step"
       },
       "drop": {
         "hint": "Drop one from the compendium",
@@ -1406,6 +1438,186 @@
       "spent": "Spent",
       "worn-out": "Worn out",
       "none": "No change"
+    },
+    "Roll": {
+      "die": {
+        "base": "Base die",
+        "gear": "Gear Die",
+        "stress": "Stress Die",
+        "titan": "Titan Die",
+        "baseDice": "Base dice",
+        "gearDice": "Gear Dice",
+        "stressDice": "Stress Dice",
+        "titanDice": "Titan Dice"
+      },
+      "aria": {
+        "face": "showing {face}",
+        "success": "success",
+        "stressOne": "Stress Response",
+        "locked": "locked, wears the gear",
+        "fresh": "added by the Push"
+      },
+      "push": "Push",
+      "pushed": "Pushed",
+      "pushedTwice": "Pushed twice",
+      "pushNote": "+1 Stress, +1 Stress Die",
+      "cover": "Cover",
+      "coveredBy": "Covered: {name}",
+      "coverNote": "{name} takes the Stress",
+      "undo": "Undo",
+      "redo": "Redo",
+      "apply": "Apply",
+      "applied": "Applied",
+      "notApplied": "Not applied",
+      "stakes": "Stakes",
+      "circumstances": "Circumstances",
+      "needs": "Needs",
+      "injury": "Injury",
+      "talent": "Talent",
+      "called": "Called",
+      "passive": "Passive",
+      "lasting": "Lasting",
+      "response": "Stress Response",
+      "responseMath": "D6 {d6} + Stress {stress} − Resolve {resolve} = {total}",
+      "tableMath": "D6 + {stress} − {resolve}",
+      "gallows": "Roll again",
+      "success": "Success",
+      "fails": "Fails",
+      "ofNeeds": "of {needs}",
+      "successesLabel": "successes",
+      "vsSeverity": "vs {severity}",
+      "attackLands": "{name} lands, {net} net",
+      "attackMisses": "{name} misses",
+      "death": {
+        "dies": "The soldier dies",
+        "holds-on": "Holds on: the limit stays",
+        "fights-back": "Fights back: the limit slows a step"
+      },
+      "notOwner": "You do not own this soldier.",
+      "noGM": "No GM is connected to make this change.",
+      "gmFailed": "The GM’s client could not make this change.",
+      "actionFailed": "The card could not be updated. See the console.",
+      "noSoldier": "You own no soldier who can do this.",
+      "pickSoldier": "Soldier",
+      "choose": "Choose",
+      "block": {
+        "down": "Down: no rolls but the Death Roll",
+        "downFear": "Down: no Fear Roll",
+        "noOdm": "Needs ODM Gear",
+        "jammed": "ODM Gear is Jammed",
+        "dry": "Gas Rating 0: running dry",
+        "push": {
+          "not-allowed": "This roll is never Pushed",
+          "down": "Down: no Push",
+          "stress-one": "A Stress Die shows 1: no Push",
+          "already-pushed": "Already Pushed",
+          "nothing": "Every die shows 6"
+        }
+      },
+      "op": {
+        "push": "+{n} Stress (Push) and 1 new Stress Die",
+        "cover": "{name} +1 Stress (Cover)",
+        "stress": "+{n} Stress ({why})",
+        "stakes": "+1 Stress (the stakes)",
+        "lasting": "{name} held",
+        "wear": "{name} wear {n}{state}",
+        "ruined": "{name} ruined, handles empty",
+        "wearIgnored": "{name} ignores 1 wear",
+        "talentUsed": "{name} used",
+        "gas": "Gas Rating {from} to {to}",
+        "pushedOdm": "Gas Roll this round: {n} dice",
+        "pushedOdmCleared": "ODM Push mark cleared",
+        "penalty": "−{n} die on the next roll",
+        "penaltyUsed": "Next-roll penalty {n} used",
+        "forcedMove": "Forced move pending",
+        "forcedAction": "Forced strike pending",
+        "drive": "Drive used this session"
+      },
+      "dialog": {
+        "title": "Roll: {name}",
+        "attribute": "Attribute",
+        "talent": "Talent",
+        "gear": "Gear",
+        "noGear": "No gear item",
+        "if": "(only {condition})",
+        "bonusHint": "Help, Openings, and other listed sources",
+        "capped": "The Bonus Dice cap leaves {n} of this step’s dice.",
+        "calledRoll": "A called roll with stakes",
+        "stakesDetail": "Details (optional)",
+        "passiveHint": "Rolled out of sight: no Push, no Stress Response",
+        "blocked": "This entry cannot be rolled without its gear.",
+        "roll": "Roll",
+        "against": "Against {name}: {severity} to cancel.",
+        "deathNote": "No Stress Dice, no Help, no Push, no Circumstances.",
+        "secondPush": "{name}: this roll can be Pushed twice.",
+        "bonus": "Bonus Dice"
+      },
+      "stakeMenu": {
+        "it-does-not-happen": "It does not happen",
+        "stress": "1 Stress",
+        "fall": "A fall",
+        "damage": "Damage",
+        "lost-item-or-unit": "An item or a unit of Squad Supply lost",
+        "time-or-position": "Time or position"
+      },
+      "fear": {
+        "title": "Fear Roll",
+        "label": "Fear",
+        "trigger": "Trigger",
+        "hint": "D6 + Stress {stress} − Resolve {resolve}. Everyone who rolls for one event rolls from the moment it was resolved.",
+        "steady": "{name}: Resolve counts 1 higher for a comrade Grabbed or killed.",
+        "drive": "Drive",
+        "shrug": "Shrug off (Drive)",
+        "shrugged": "Shrugged off: no effect",
+        "triggers": {
+          "first-titan-engagement": "First Titan Engagement",
+          "abnormal": "An Abnormal",
+          "second-focus-titan": "A second Focus Titan",
+          "comrade-grabbed": "A comrade Grabbed",
+          "comrade-dies": "A comrade dies",
+          "first-human-kill": "First kill of a person",
+          "gm-horror": "A horror (GM)"
+        }
+      },
+      "gas": {
+        "title": "Gas Roll",
+        "dice": "{n} dice",
+        "hint": "Gas Rating {gas}. Each die showing 1 lowers it by 1.",
+        "pushed": "A Pushed roll on ODM Gear this round ({n} dice)",
+        "useLight": "Use {name} (two dice)",
+        "lightTrigger": "Light Trigger: two dice",
+        "lostLabel": "gas lost",
+        "rating": "Gas Rating {from} to {to}"
+      },
+      "attack": {
+        "roll": "Roll attack",
+        "rollTip": "Roll this entry’s Attack Dice in the open (Titan Dice: 5 and 6 succeed). Target the soldiers first.",
+        "noDice": "This entry has no Attack Dice.",
+        "vs": "vs {names}",
+        "severity": "Severity",
+        "landsOn": "lands on 1+ net",
+        "whiff": "Whiffs against everyone",
+        "effects": "Lands: {effects}",
+        "dodge": "Dodge",
+        "dodged": "{name} dodged {n}",
+        "landsNet": "lands, {net} net",
+        "misses": "misses",
+        "rider": "(+{n} to the Critical Injury roll)"
+      },
+      "call": {
+        "button": "Call a roll",
+        "tip": "Name the entry, the Circumstances, and the stakes, and post the call for the player to roll.",
+        "title": "Call a roll: {name}",
+        "hint": "A called roll needs 1 success. Once rolled, the entry, the Circumstances, and the stakes stand.",
+        "entry": "Entry",
+        "entries": "Called-roll entries",
+        "attributes": "Attribute alone",
+        "attributeAlone": "{attribute} alone",
+        "post": "Post the call",
+        "for": "For",
+        "roll": "Roll it",
+        "rolled": "Rolled."
+      }
     }
   }
 }

@@ -6,6 +6,7 @@
    */
   import { tick } from 'svelte';
   import { stagger } from 'animejs/utils';
+  import { rollTitanAttack } from '../../dice/reactions.ts';
   import { flash, fx, jolt, pulse, reveal } from '../../motion/fx.ts';
   import { MOTION } from '../../motion/tokens.ts';
   import { motionMode, viewer } from '../../settings.svelte.ts';
@@ -23,6 +24,7 @@
   import Tabs from './Tabs.svelte';
 
   let { sheetState, sheet }: { sheetState: SheetState<TitanView>; sheet: any } = $props();
+  const isGM = !!game.user?.isGM;
   // svelte-ignore state_referenced_locally
   setSheetContext({ sheet, actor: sheet.document, state: sheetState, uid: `wof-${sheet.id}` });
   // svelte-ignore state_referenced_locally
@@ -282,6 +284,9 @@
                   {#if e.tierIcon}<img class="ic s16" src={e.tierIcon} alt="" />{/if}
                   {e.tierLabel}
                   {#if e.attackDice}<Dots size="sm" groups={[{ cls: 'dtn', n: e.attackDice }]} label={t('WOF.Card.Titan.attackDice', { dice: e.attackDice })} />{/if}
+                  {#if e.attackDice && isGM}
+                    <button class="mini" type="button" use:tooltip={t('WOF.Roll.attack.rollTip')} onclick={() => rollTitanAttack(actor, e.id)}><img src={icon('die-titan-attack')} alt="" />{t('WOF.Roll.attack.roll')}</button>
+                  {/if}
                 </span>
               </li>
             {/each}
@@ -445,6 +450,9 @@
                 {#if view.full}
                   {#if rollNote}<p class="note rail-note">{rollNote}</p>{/if}
                   <div class="rail-acts">
+                    {#if isGM && view.next.entry?.attackDice}
+                      <button class="mini red" type="button" use:tooltip={t('WOF.Roll.attack.rollTip')} onclick={() => rollTitanAttack(actor, view.next.entryId)}>{t('WOF.Roll.attack.roll')}</button>
+                    {/if}
                     <button class="mini" type="button" disabled={!view.next.entryId} onclick={togglePeek}>{t(peek ? 'WOF.TitanSheet.next.reseal' : 'WOF.TitanSheet.next.peek')}</button>
                     {#if !ro}
                       <button class="mini" type="button" use:tooltip={t('WOF.TitanSheet.next.rollTip')} onclick={onRoll}>{t('WOF.TitanSheet.next.roll')}</button>

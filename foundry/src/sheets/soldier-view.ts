@@ -6,7 +6,8 @@
 import { SYSTEM_ID } from '../config.ts';
 import type { SoldierDerived } from '../rules/derived.ts';
 import { healingDaysTotal, type InjuryType, type TypeRider } from '../rules/harm.ts';
-import { previewPool, type PoolComponent, type PoolPenalty, type PoolPreview } from '../rules/pool.ts';
+import { actorPool, entryBlock, poolInputs } from '../dice/actor-pool.ts';
+import { previewPool, type PoolPreview } from '../rules/pool.ts';
 import type { MindEffect } from '../../tools/config-data.ts';
 import { severityOf, type Severity } from './figure.ts';
 
@@ -176,9 +177,29 @@ export function effectLines(effects: readonly (MindEffect | Record<string, any>)
       case 'lose-successes':
         return t('WOF.Sheet.effect.loseSuccesses', { amount: e.amount ?? 1 });
       case 'spend-next-turn':
-        return t('WOF.Sheet.effect.spendNextTurn');
+        return (e.turns ?? 1) > 1 ? t('WOF.Sheet.effect.spendNextTurns', { turns: e.turns }) : t('WOF.Sheet.effect.spendNextTurn');
       case 'zero-successes':
         return t('WOF.Sheet.effect.zeroSuccesses');
+      case 'next-roll-penalty':
+        return t('WOF.Sheet.effect.nextRollPenalty', { dice: e.dice ?? 1 });
+      case 'spend-next-action':
+        return t('WOF.Sheet.effect.spendNextAction');
+      case 'gas-roll':
+        return t('WOF.Sheet.effect.gasRoll');
+      case 'no-reactions':
+        return t('WOF.Sheet.effect.noReactions');
+      case 'draw-attention':
+        return t('WOF.Sheet.effect.drawAttention');
+      case 'forced-move':
+        return t('WOF.Sheet.effect.forcedMove', { toward: t(`WOF.Position.${e.toward ?? 'distant'}`) });
+      case 'forced-action':
+        return t('WOF.Sheet.effect.forcedAction');
+      case 'gain-scar':
+        return t('WOF.Sheet.effect.gainScar');
+      case 'drop-blade-set':
+        return t('WOF.Sheet.effect.dropBladeSet');
+      case 'stress-gain-nearby':
+        return t('WOF.Sheet.effect.stressGainNearby', { amount: e.amount ?? 1 });
       default:
         return e.text ?? String(e.type);
     }
@@ -305,51 +326,9 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     };
   });
 
-  // Penalties the quick rolls read: held Critical Injuries, Scars, lasting Stress Responses, the next-roll penalty.
   const scarRows = new Map<string, any>(W.scars.map((r: any) => [r.id, r]));
   const responseRows = new Map<string, any>(W.stressResponses.map((r: any) => [r.id, r]));
-  const penalties: PoolPenalty[] = [];
-  for (const inj of injuryItems) {
-    for (const e of inj.system.row_data.effects as any[]) {
-      if (e.type === 'penalty') penalties.push({ source: inj.system.shown_name || inj.name, dice: e.dice, entries: e.entries });
-    }
-  }
-  for (const sc of source.scars as { row: string }[]) {
-    const row = scarRows.get(sc.row);
-    for (const e of (row?.effects ?? []) as MindEffect[]) {
-      if (e.type === 'penalty') penalties.push({ source: row.name, dice: e.dice ?? 0, entries: e.entries ?? [], conditional: e.appliesTo });
-    }
-  }
-  for (const r of source.lasting_stress_responses as { row: string }[]) {
-    const row = responseRows.get(r.row);
-    for (const e of (row?.effects ?? []) as MindEffect[]) {
-      if (e.type === 'penalty') penalties.push({ source: row.name, dice: e.dice ?? 0, entries: e.entries ?? [] });
-    }
-  }
-  if (source.next_roll_penalty > 0) penalties.push({ source: t('WOF.Actor.Base.FIELDS.next_roll_penalty.label'), dice: source.next_roll_penalty, entries: 'all' });
-
-  const poolTalents = talentItems.map((i) => ({
-    id: i.system.talent_id,
-    name: i.name,
-    type: i.system.type,
-    level: i.system.effective_level,
-    names: i.system.names,
-    condition: i.system.condition,
-  }));
-  const poolGear = gearItems
-    .filter((i) => i.system.subtype !== 'blade-set' || i.system.in_handles)
-    .map((i) => {
-      // data/gear/items.yaml counts_as_not_had: ODM Gear with no gas; a horse the soldier is not mounted on
-      // (the preview reads the mounted case; break-attention's dismounted Position case is judged at the roll).
-      const notHad = (i.system.subtype === 'odm' && source.gas_rating <= 0) || (i.system.subtype === 'horse' && !i.system.mounted);
-      return { itemId: i.system.item_id, name: i.name, dice: notHad ? 0 : i.system.gear_dice };
-    });
-
-  const exceptions = new Map<string, PoolComponent[]>();
-  for (const r of W.rollExceptions as { entries: string[]; excluded: PoolComponent[]; roll: string }[]) {
-    if (r.roll === 'passive-roll') continue; // a GM's secret roll; the open roll uses every component
-    for (const e of r.entries) exceptions.set(e, r.excluded);
-  }
+  const ap = actorPool(actor);
 
   const attrName = (id: string | null) => (id ? t(`WOF.Attribute.${id}`) : '');
   const rolls: RollView[] = [];
@@ -358,24 +337,14 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     const rolled = e.rolled !== 'never' && e.kind !== 'option';
     if (!rolled || e.context === 'lifepath') continue;
     if (!fixed && !W.attributes.some((a: any) => a.id === e.attribute)) continue;
-    const pool = previewPool({
-      entry: e,
-      attributes: source.attributes,
-      talents: poolTalents,
-      gear: poolGear,
-      penalties,
-      stress: derived.stress_effective,
-      bonus: opts.bonus,
-      bonusCap: W.bonusDiceCap,
-      penaltyFloor: W.penaltyFloor,
-      excluded: exceptions.get(e.id),
-    });
-    let blockedReason: string | null = null;
-    if (pool.blocked === 'no-gear') blockedReason = t('WOF.Sheet.roll.noGear', { gear: e.gear.map((g: string) => W.gearItems.find((x: any) => x.id === g)?.name ?? g).join(', ') });
-    const why = fixed
-      ? t(`WOF.Sheet.roll.fixed.${e.id}`, { stress: derived.stress_effective, resolve: derived.resolve })
-      : blockedReason ??
-        [
+    const pool = previewPool(poolInputs(ap, e, { bonus: opts.bonus }));
+    let blockedReason = entryBlock(ap, e);
+    if (!blockedReason && pool.blocked === 'no-gear') blockedReason = t('WOF.Sheet.roll.noGear', { gear: e.gear.map((g: string) => W.gearItems.find((x: any) => x.id === g)?.name ?? g).join(', ') });
+    const why =
+      blockedReason ??
+      (fixed
+        ? t(`WOF.Sheet.roll.fixed.${e.id}`, { stress: derived.stress_effective, resolve: derived.resolve })
+        : [
           `${attrName(e.attribute)} ${pool.attribute?.dice ?? 0}`,
           pool.talent && `${pool.talent.name} +${pool.talent.dice}`,
           pool.bonus && `${t('WOF.Sheet.roll.bonus')} +${pool.bonus}`,
@@ -384,7 +353,7 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
           pool.stress ? `${t('WOF.Derived.stress')} ${pool.stress}` : null,
         ]
           .filter(Boolean)
-          .join(' · ');
+          .join(' · '));
     rolls.push({
       id: e.id,
       name: e.name,

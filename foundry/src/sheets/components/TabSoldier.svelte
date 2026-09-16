@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fx } from '../../motion/fx.ts';
   import { MOTION } from '../../motion/tokens.ts';
+  import { callRoll } from '../../dice/call.ts';
   import { rollAction } from '../../dice/roll-action.ts';
   import { contextMenu, dragItem, tooltip } from '../actions.ts';
   import { sheetContext, t } from '../context.ts';
@@ -32,9 +33,14 @@
     fx(rollsEl?.querySelectorAll('.dots i.db') ?? null, { scale: [1.6, 1], duration: MOTION.base, ease: MOTION.settle });
   }
 
-  function roll(r: RollView, el: HTMLElement) {
+  async function roll(r: RollView, el: HTMLElement) {
     fx(el, { scale: [0.96, 1], duration: MOTION.base, ease: MOTION.settle });
-    rollAction(actor, r.id, { bonus: ss.bonus });
+    const message = await rollAction(actor, r.id, { bonus: ss.bonus });
+    // Bonus Dice are declared for one roll (data/core/bonus-dice-sources.yaml, declare).
+    if (message && ss.bonus) {
+      ss.bonus = 0;
+      sheet.render();
+    }
   }
 
   const talentMenu = (id: string, used: boolean, hasLimit: boolean) => () => [
@@ -72,7 +78,13 @@
     </div>
 
     <div class="block" bind:this={rollsEl}>
-      <Sec n="2" title={t('WOF.Sheet.soldier.rolls')} hint={t('WOF.Sheet.soldier.rollsHint')} />
+      <Sec n="2" title={t('WOF.Sheet.soldier.rolls')} hint={t('WOF.Sheet.soldier.rollsHint')}>
+        {#snippet actions()}
+          {#if view.isGM}
+            <button class="mini" type="button" use:tooltip={t('WOF.Roll.call.tip')} onclick={() => callRoll(actor)}>{t('WOF.Roll.call.button')}</button>
+          {/if}
+        {/snippet}
+      </Sec>
       <div class="bonusbar">
         <span class="lbl">{t('WOF.Sheet.rolls.bonus')}</span>
         <span class="pick" role="group" aria-label={t('WOF.Sheet.rolls.bonus')}>

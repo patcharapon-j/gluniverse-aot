@@ -429,6 +429,20 @@ export const criticalInjuriesFile = z.looseObject({
 export const downFile = z.looseObject({
   id: z.literal('down'),
   conditions: z.tuple([z.looseObject({ id: z.literal('zero-health') }), z.looseObject({ id: z.literal('down-row') })]),
+  // Chapter 1, section 1.9 hook; the roll code blocks exactly these (src/dice/requirements.ts).
+  forbids: z.array(z.enum(['push', 'help', 'cover', 'reaction'])),
+});
+
+// ---------------------------------------------------------------- harm/death-rolls.yaml
+
+const successRange = z.strictObject({ min: z.number().int().nullable(), max: z.number().int().nullable() });
+
+export const deathRollsFile = z.looseObject({
+  id: z.literal('death-rolls'),
+  death_roll: z.looseObject({ entry: z.literal('death-roll'), attribute: attributeId, needs: z.number().int().min(1) }),
+  outcomes: z
+    .array(z.looseObject({ id: z.enum(['dies', 'holds-on', 'fights-back']), successes: successRange, result: text }))
+    .length(3),
 });
 
 // ---------------------------------------------------------------- titans
@@ -570,8 +584,19 @@ export const dicePoolFile = z.looseObject({
       entries: z.array(id).optional(),
       components_excluded: z.array(z.enum(['attribute', 'talent', 'bonus', 'gear', 'stress'])),
       push_allowed: z.boolean(),
+      circumstances: z.string().optional(),
+      secret: z.boolean().optional(),
+      cover_allowed: z.boolean().optional(),
+      help_allowed: z.boolean().optional(),
+      stress_response: z.literal('none').optional(),
     }),
   ),
+  called_roll: z.looseObject({
+    needs: z.number().int().min(1),
+    push_allowed: z.literal(true),
+    cover_allowed: z.literal(true),
+    failure_menu: z.array(z.looseObject({ id, cost: text })).min(1),
+  }),
 });
 
 export const circumstancesFile = z.looseObject({
@@ -629,6 +654,53 @@ export const stressResponsesFile = z.looseObject({
           duration: z.enum(['instant', 'lasting']),
           text,
           effects: z.array(mindEffect),
+        }),
+      )
+      .min(1),
+  }),
+});
+
+// ---------------------------------------------------------------- mind/fear-rolls.yaml
+
+/** The Fear Roll effect types the roll card applies or prints; a new type fails the build. */
+export const FEAR_EFFECT_TYPES = [
+  'stress-gain',
+  'next-roll-penalty',
+  'spend-next-action',
+  'gas-roll',
+  'spend-next-turn',
+  'no-reactions',
+  'draw-attention',
+  'forced-move',
+  'gain-scar',
+  'forced-action',
+  'drop-blade-set',
+  'stress-gain-nearby',
+] as const;
+
+export const fearRollsFile = z.looseObject({
+  id: z.literal('fear-rolls'),
+  triggers: z.array(z.looseObject({ id, event: text })).min(1),
+  roll: z.looseObject({ entry: z.literal('fear-roll'), total: z.literal('D6 + Stress - Resolve') }),
+  table: z.looseObject({
+    roll: z.literal('D6 + Stress - Resolve'),
+    rows: z
+      .array(
+        z.strictObject({
+          id,
+          name: text,
+          results: successRange,
+          text,
+          effects: z.array(
+            z.strictObject({
+              type: z.enum(FEAR_EFFECT_TYPES),
+              amount: z.number().int().optional(),
+              dice: z.number().int().optional(),
+              turns: z.number().int().optional(),
+              toward: id.optional(),
+            }),
+          ),
+          forbids: z.array(z.enum(['push', 'help', 'cover', 'reaction'])).optional(),
         }),
       )
       .min(1),
