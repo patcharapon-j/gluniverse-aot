@@ -1,6 +1,6 @@
 ---
 title: Running Expeditions
-summary: Set the route, roll what waits on each Leg and each night, and run Downtime, Requisition, and Skirmishes.
+summary: Write the Brief, run the day, and roll the two tables that decide what the country does to the Squad.
 section: gm
 order: 4
 tab: Expeditions
@@ -8,4 +8,230 @@ earlyRules: true
 sources:
   - path: docs/rules/07-playtest-rules.md
     sha: "eb3f7f425ff1a23978e3206975e782843f77a359"
+  - path: data/expedition/legs.yaml
+    sha: "b5596ef522ed1d226a82b1c6775e5ce2398bb0a1"
+  - path: data/expedition/hazards.yaml
+    sha: "500a5afca65f81d07482528e9c71a0705dba4089"
+  - path: data/expedition/route.yaml
+    sha: "47a1cbcd5f8e38c3a6613c09b3132f61f905cd86"
+  - path: data/engagement/anchor-ratings.yaml
+    sha: "58c764314a0d63fe5a03040dcfa63df615829585"
 ---
+
+import ChapterContents from '~/components/ChapterContents.astro';
+import CommanderNote from '~/components/CommanderNote.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import FieldReport from '~/components/FieldReport.astro';
+import GmTable from '~/components/GmTable.astro';
+import InkVignette from '~/components/InkVignette.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Subsection from '~/components/Subsection.astro';
+import { hardRideOn, interimRouteSteps, stragglerInjury } from '~/lib/gm-expedition-tables';
+
+export const interim = interimRouteSteps();
+export const straggler = stragglerInjury();
+
+<FieldQuote cite="Standing order to Squad Leaders">The country does not know you are coming. That is the only mercy in it.</FieldQuote>
+
+An Expedition is a chain of Legs between Waypoints, and the Squad always reaches the next one. What it costs to get there is the route you wrote, the rolls the players make, and two tables you read out exactly as they come up.
+
+<ChapterContents items={[
+  { id: 'writing-the-brief', title: 'Writing the Brief', note: 'The route, its bounds, and the interim route' },
+  { id: 'running-the-day', title: 'Running the Day', note: 'Two Legs, a Hard Ride, and what you rule' },
+  { id: 'the-leg-hazard', title: 'The Leg Hazard Table', note: 'The roll, the rows, the Straggler' },
+  { id: 'waypoint-scenes', title: 'Waypoint Scenes', note: 'The danger you author yourself' },
+  { id: 'the-night-camp', title: 'The Night Camp', note: 'The camp roll, the Night table, the fallback' },
+]} />
+
+<SectionHead id="writing-the-brief" eyebrow="Section 1">Writing the Brief</SectionHead>
+
+<FieldQuote cite="Survey Corps manual, on orders">A route is written once. After that it is only ridden.</FieldQuote>
+
+You write the Mission Brief as Command, before the Expedition begins. Its route names:
+
+1. **the Waypoints in order,** each with its kind and whether it is a Depot, the last being a gate of the Walls;
+2. **for the Leg that leads to each Waypoint,** its Distance Band and its Formation Post;
+3. **the days a Hard Ride is ordered,** counted from the Expedition's first;
+4. **the Abnormal** the two Abnormal rows name, when it is not the Sprinting Abnormal.
+
+The route is set once and nothing changes it afterwards. It gives each Leg its Distance Band, its Formation Post, and its Pace, and the hazard roll reads all three as written: once the Squad rides out, no ruling of yours moves any of them.
+
+<RuleBox title="The bounds of a route" icon="ph:map-trifold">
+
+- **4 to 6 Legs,** and so 4 to 6 Waypoints.
+- **No Leg deeper than its place allows.** The first and last Legs are Near. The second and second-to-last are Near or Far. Every Leg between them is Near, Far, or Deep.
+- **At most one Depot,** and the gate is never one.
+- **Formation Posts and Hard Ride days are yours to name,** a Hard Ride at most once a day and only as the day's third Leg.
+
+A route outside these bounds is not a route in these rules. Write inside them, or roll the interim route below.
+
+</RuleBox>
+
+<GmTable table="waypoint-kinds" />
+
+- **A Depot** is a Waypoint you marked as one. It keeps its kind. When the Squad arrives, every soldier receives a full Standard Issue together and Squad Supply is restocked.
+- **The gate** is the route's last Waypoint. Reaching it ends the Expedition at the end of that Leg, with no further Leg and no Night Camp, and Downtime begins.
+
+<MarginNote>The Waypoint kinds are the strongest thing you write. A forest Waypoint and an open plain are the same Leg on the hazard table and two different Titan fights, because the kind sets the Anchor Rating.</MarginNote>
+
+<Subsection title="The interim route" id="the-interim-route">
+
+When the Squad rides with no Brief, or with a Brief that names no route, roll one:
+
+<ol>
+  {interim.map((step) => <li><b>{step.title}.</b> {step.text}</li>)}
+</ol>
+
+</Subsection>
+
+<GmTable table="formation-post-roll" />
+
+<CommanderNote title="What a route is worth">
+
+An interim route climbs to Deep in the middle and comes back, and every Leg after the first night carries the camps already made. That shape is what the hazard table was built for. A Brief that runs Deep early, or that sends a Squad six Legs out with no Depot, is a harder Expedition than the tables ship for, and the bounds are what keep it from becoming a different game. Write the hard route when you mean to, and know that you have written one. A Hard Ride on the interim route comes up on a {hardRideOn()}, which is as often as Command should be pushing them.
+
+</CommanderNote>
+
+<SectionHead id="running-the-day" eyebrow="Section 2">Running the Day</SectionHead>
+
+A day holds two Legs and a Night Camp, and Legs are never ridden at night.
+
+1. **Ride the first Leg, then the second.** After each, you may frame a Waypoint scene.
+2. **A Hard Ride,** if a Leg is left on the route after the second and Command orders one: on a day the Brief lists, or, on an interim route, when the D6 you roll after the second Leg shows a {hardRideOn()}. A day's first or second Leg is never a Hard Ride. After it, you may frame a Waypoint scene.
+3. **Make the Night Camp.**
+
+Every Leg ridden counts toward the day's Legs, including a Leg ridden again after a retreat, whatever the retreat came out of.
+
+<Subsection title="Your side of a Leg" id="your-side-of-a-leg">
+
+The Squad's side of a Leg is on <a href="/guide/expeditions-and-downtime/#riding-a-leg">Expeditions &amp; Downtime</a>, and the players run it. Yours is short:
+
+- **The Leg roll is theirs.** They choose the Lead and who Helps. Name the step, and let it fall. It is never tried again.
+- **They always arrive.** A success spends 1 ration and takes 1 off the hazard for each success beyond the first. A failure spends 2 and adds 1. A Hard Ride doubles the rations.
+- **With nobody who can make the roll, it fails,** with no Help and no Push: every living soldier Down, or, on a Hard Ride, nobody who is not Down mounted on their own horse. The Squad still reaches the Waypoint, the Down ride in the wagon, and nothing else changes. A hazard row that names the Lead does nothing when there is no Lead.
+- **Then the hazard,** which is the whole of your work on a Leg.
+- **A fight a row begins** takes its Anchor Rating from the kind of the Waypoint this Leg leads to, and whatever else the row names. Everything left unnamed comes from the setup table. Every living soldier on the Expedition takes part, mounted or not as they rode.
+- **If that fight becomes a retreat,** the Squad falls back to the Waypoint this Leg started from and rides this Leg again from the beginning, with a new Leg roll and a new hazard.
+
+</Subsection>
+
+<RuleBox title="Circumstances, and what you may stake" icon="ph:cloud-rain">
+
+The step you name reaches the Leg roll, the camp roll, the Straggler's Endure roll, and every called roll in a Waypoint scene. It never reaches a table roll.
+
+- **The hazard roll and the night hazard roll take no step at all.** They are table rolls: no pool, no Push, no Help, and never rolled again.
+- **A roll a row's own text calls for takes the step in force when the hazard was rolled.** That is Standard unless you named one before then for a lasting condition of the Leg that touches it: a day of driving rain, a country under ice. No step is named or changed for it afterwards, and none for the danger the row itself describes. The Straggler's Endure roll is the one that comes up.
+- **A fight a row begins takes its Circumstances as any fight does,** including a step you name for a condition that starts during it.
+- **Stakes belong to called rolls,** which live in Waypoint scenes. A Leg roll, a camp roll, and a hazard row all carry their own costs, written in the table, and you add nothing to them.
+
+</RuleBox>
+
+<SectionHead id="the-leg-hazard" eyebrow="Section 3">The Leg Hazard Table</SectionHead>
+
+<FieldQuote cite="A Squad Leader's notebook, recovered">Roll it where they can see it. They will believe the quiet ones after that.</FieldQuote>
+
+<GmTable table="leg-hazard-modifiers" />
+
+<GmTable table="leg-hazards" />
+
+<MarginNote stamp="Read twice">The hazard climbs with the distance and with every night already spent outside. A Squad four days out at Deep is rolling against a total no Formation Post can bring back down, and that is the country, not a ruling.</MarginNote>
+
+<RuleBox variant="stop" title="Read the row as it came up" icon="ph:prohibit">
+
+Both tables are rolled in the open, for the Squad, by nobody in particular. You describe what comes up and never soften it, swap it, or reach past it for something better. You choose nothing on either table: where a row lets the players choose, they choose, and settle it among themselves if they disagree.
+
+A danger you author belongs in a Waypoint scene, never in place of a hazard roll.
+
+</RuleBox>
+
+<Subsection title="The Straggler" id="the-straggler">
+
+The row that takes a soldier picks them at random, and the pick is a roll, not a choice.
+
+1. **Which kind.** Roll the table below. Only living soldiers on the Expedition who are not Down count. If none of that kind counts, use the other kind. If neither has one, the row is resolved as Titan on the formation instead.
+2. **Which soldier.** Number the soldiers of that kind 1 upward in Squad sheet order, roll D6, and roll again on any result above the count. Every one of them is equally likely, and the sheet's order chooses nothing.
+3. **The Endure roll.** The victim rolls Endure and needs 1 success. It cannot be Helped or Covered, it can be Pushed, and it is never tried again.
+4. **On a failure,** a {straggler.type} Critical Injury at a rolled Injury Location, which {straggler.lethal ? 'can be lethal' : 'is never lethal'}. It is a Titan's harm and not a card: no Attack Dice are rolled, no Reaction answers it, and the Critical Injury roll adds nothing for Net Successes. It counts as gained as the row's fight begins, so no separate care window is held for it and its time limit runs as one gained in that fight.
+5. **Then the fight,** with the victim In Reach and every other soldier at Distant.
+
+</Subsection>
+
+<GmTable table="straggler-victim" />
+
+<Subsection title="Hunger" id="hunger">
+
+When a Leg or a Night Camp must spend rations and Squad Supply holds fewer than it must spend, the Squad spends every ration it holds and every soldier on the Expedition gains 1 Stress, with no roll. Holding short of the spend counts as holding none. A Night Camp that meets hunger gives no Camp Relief, however the camp roll went.
+
+</Subsection>
+
+<InkVignette caption="The formation strung out at dusk, and one rider too far back." label="A line of mounted soldiers riding through tall grass at dusk, one rider trailing far behind" art="gm-running-expeditions-straggler" />
+
+<SectionHead id="waypoint-scenes" eyebrow="Section 4">Waypoint Scenes</SectionHead>
+
+After a Leg ends at a Waypoint that is not the gate, and before the next Leg or the Night Camp, you may frame a scene there: searching an abandoned town, finding survivors, crossing a flooded ford. This is where the danger you author goes.
+
+- **It runs on called rolls,** each with its Circumstances and its stakes named before the dice. A successful called search adds Squad Supply only within the caps on <a href="/guide/gear-and-odm/">Gear &amp; ODM</a>, and one scene yields Squad Supply to at most two called searches.
+- **A Skirmish or a Titan Engagement may begin in it** by the fiction, as your framing starts one anywhere.
+- **Harm a stake inflicts** opens the care window held after harm outside a fight, with every soldier on the Expedition in its scope.
+- **It rides no Leg.** No Leg roll, no camp roll, neither hazard table, and no ration unless a stake names one. It never stands in place of a hazard roll.
+
+<Subsection title="A retreat in a Waypoint scene" id="retreat-in-a-scene">
+
+If a Titan Engagement you began in a scene becomes a retreat before it ends, the scene ends and the Squad falls back as though a hazard row of the Leg that reached this Waypoint had begun the fight: to the Waypoint that Leg started from, riding that Leg again from the beginning, with a new Leg roll and a new hazard. When they reach this Waypoint again, its arrival happens again, a Depot's Standard Issue included.
+
+The Leg ridden again takes the day's next Leg slot. After the day's first Leg it is the second, at Steady. After the second it is the third only if Command orders a Hard Ride that day, and it is then a Hard Ride. **If no slot is left,** the Squad falls back and makes the Night Camp at the Waypoint that Leg started from, which is then the camp's Waypoint, and the next day's first Leg rides that Leg again at Steady.
+
+</Subsection>
+
+<SectionHead id="the-night-camp" eyebrow="Section 5">The Night Camp</SectionHead>
+
+<FieldQuote cite="Survey Corps manual, on camps">Titans do not walk at night. Say that to them slowly, and watch them count the exceptions.</FieldQuote>
+
+After the day's Legs, in order:
+
+1. **The camp roll.** One soldier on the Expedition who is not Down, chosen by the players, rolls Survive for 1 success. Up to 3 comrades who are not Down may Help, spending nothing. It can be Pushed and Covered, and it is never tried again. With nobody who can make it, it fails, with no Help and no Push.
+2. **Rations.** Spend 1. A Squad that holds none meets hunger.
+3. **Camp Relief.** If the camp roll succeeded and the camp did not meet hunger, every soldier on the Expedition loses 1 Stress.
+4. **The night hazard.** Roll it and read the row.
+5. **A day passes:** a care window with every soldier on the Expedition in its scope, in which Field Repair is rolled; the Death Rolls of day limits; the Health lost to damage comes back; a day of healing.
+
+<GmTable table="night-hazards" />
+
+<Subsection title="Where the camp stands" id="where-the-camp-stands">
+
+The camp is made at the Waypoint the Squad is at when it begins: the one the day's last Leg reached, or, after a Waypoint-scene retreat that left no Leg slot, the one that Leg started from.
+
+- **A fight the Night table begins takes its Anchor Rating from that Waypoint's kind.** A camp at the gate the Expedition rode out of has no kind to give, so that Anchor Rating is rolled on the setup table, and the Expedition goes on: only the route's last Waypoint ends it.
+- **The Distance Band the roll adds is still the day's last ridden Leg's,** whatever a retreat did to where they are standing.
+
+</Subsection>
+
+<Subsection title="A retreat at night" id="a-retreat-at-night">
+
+If a Titan Engagement the Night table began becomes a retreat before it ends, the Squad falls back overnight to the Waypoint the day's last Leg started from, and the Night Camp goes on there at its last step, with no new camp roll, no new ration, and no new night hazard. It still counts as a Night Camp made on this Expedition. Falling back is not riding a Leg: it makes no Leg roll, spends nothing, and reads no Leg hazard, so no Leg is ridden in the dark. The next day's first Leg rides that Leg again from the beginning, with a new Leg roll and a new hazard, and counts toward that day's Legs.
+
+A fight the Night table begins that ends any other way leaves the camp where it was. If the camp already stands at the Waypoint the day's last Leg started from, the Squad falls back no further: it breaks off where it is, the camp goes on at its last step, the night counts as the one already counted, and a Leg queued for the morning is ridden as that day's first, at Steady.
+
+</Subsection>
+
+<FieldReport id="example-night-at-far" title="A night at Far">
+
+The Squad has ridden its second Leg of the second day, to a forest Waypoint at Far. Four soldiers are on the Expedition, and Squad Supply holds 4 rations.
+
+**The camp roll.** The players send Private Oskar Wendt, who rolls Survive on Instinct 3 with Stress 2, Private Mila Brandt Helping. No die shows a 6. Oskar Pushes, Mila Covers, and the Push shows no 6 either. The camp roll fails.
+
+**Rations.** They spend 1 and hold 3. The camp does not meet hunger, but a failed camp roll gives no Camp Relief.
+
+**The night hazard.** The D6 shows 5. Far adds 1, the failed camp roll adds 1, and 7 is Prowlers. At Far that is a Skirmish: three Bandits, with the Ambush, carrying firebrands.
+
+The rest of that night is a fight against people, and it is run from <a href="/gm/foes-and-skirmishes/">Foes and Skirmishes</a>. When it ends, the camp picks up at its last step and the day passes.
+
+</FieldReport>
+
+<CommanderNote title="What the tables will do to a campaign">
+
+Most Legs cost a ration and a little Stress. The fights come from the deep Legs late in a long ride, and they come without warning, which is the point of rolling in the open. Do not pre-empt a bad total by moving a Waypoint, and do not save a Squad from the Straggler by picking a different victim. The Expedition is the one part of this game where nobody, you included, decides what is out there.
+
+</CommanderNote>

@@ -4,25 +4,32 @@
  * Same drawing as the rules tables, without the "See" column: a GM page points at a page in
  * its own prose. Rows stack into labelled cards on narrow screens.
  */
-import type { Cell } from '~/lib/core-tables';
+import Redacted from './Redacted.astro';
 import { behaviorRequirements, gmTracker, interimSetup } from '~/lib/gm-tables';
+import { GM_EXPEDITION_TABLES, type GmCell, type GmExpeditionTableId, type GmTableData, type RedactedCell } from '~/lib/gm-expedition-tables';
+import { GM_FOE_TABLES, type GmFoeTableId } from '~/lib/gm-foe-tables';
 
 interface Props {
-  table: 'interim-setup' | 'gm-tracker' | 'behavior-requirements';
+  table: 'interim-setup' | 'gm-tracker' | 'behavior-requirements' | GmExpeditionTableId | GmFoeTableId;
   /** The Titan's dossier id, for a table that is about one Titan. */
   titan?: string;
 }
 const { table, titan } = Astro.props;
 
+const builders = { 'interim-setup': interimSetup, 'gm-tracker': gmTracker, ...GM_EXPEDITION_TABLES, ...GM_FOE_TABLES };
+
 if (table === 'behavior-requirements' && !titan) throw new Error('GmTable: a Behavior Table needs the Titan it belongs to.');
-const data = table === 'behavior-requirements' ? behaviorRequirements(titan!) : { 'interim-setup': interimSetup, 'gm-tracker': gmTracker }[table]();
+const data: GmTableData = table === 'behavior-requirements' ? behaviorRequirements(titan!) : builders[table]();
 for (const group of data.groups) {
   for (const row of group.rows) {
     if (row.cells.length !== data.columns.length) throw new Error(`GmTable: a "${data.caption}" row has the wrong number of cells.`);
   }
 }
 
-const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell === 'object' && 'options' in cell;
+const isOptions = (cell: GmCell): cell is { options: string[] } => typeof cell === 'object' && 'options' in cell;
+const isLines = (cell: GmCell): cell is { lines: string[] } => typeof cell === 'object' && 'lines' in cell;
+/** A cell the squad should not read over your shoulder: it sits under a bar until you lift it. */
+const isRedacted = (cell: GmCell): cell is RedactedCell => typeof cell === 'object' && 'redact' in cell;
 ---
 <div class:list={['gmtable wide', data.roll && 'gmtable--roll']}>
   <table>
@@ -51,6 +58,10 @@ const isOptions = (cell: Cell): cell is { options: string[] } => typeof cell ===
                     cell
                   ) : isOptions(cell) ? (
                     cell.options.map((option) => <span class="opt">{option}</span>)
+                  ) : isLines(cell) ? (
+                    cell.lines.map((line) => <span class="opt">{line}</span>)
+                  ) : isRedacted(cell) ? (
+                    <Redacted value={cell.redact} label={cell.label} />
                   ) : (
                     <>{cell.text}<span class="cnote">{cell.note}</span></>
                   )}
