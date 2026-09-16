@@ -75,6 +75,8 @@ export function defineActorModels() {
   class SoldierBase extends TypeDataModel {
     declare derived: SoldierDerived;
     declare gear: ReturnType<typeof gearViews>;
+    /** The token bar: current Health of Health (display only; the sheet edits Health lost). */
+    declare health_bar: { value: number; max: number };
 
     static defineSchema() {
       return {
@@ -90,6 +92,7 @@ export function defineActorModels() {
       const strongBack = [...(actor?.items ?? [])].some((i: any) => i.type === 'talent' && i.system.talent_id === 'strong-back' && i.system.level > 0);
       this.gear = gearViews(actor);
       this.derived = deriveSoldier(soldierInputs(this, actor, strongBack));
+      this.health_bar = { value: this.derived.current_health, max: this.derived.health };
     }
 
     /** Health, Resolve, and minimum Stress under the record_on_sheet names. */
@@ -199,7 +202,11 @@ export function defineActorModels() {
         // Play state (milestone 4 drives it; milestone 2 edits it by hand)
         regeneration: k.nonNeg(),
         openings: k.nonNeg(),
+        // The public heave count of the body (titan-harm.yaml, falling_titan, heave, count)
+        heave_count: k.nonNeg(),
         next_behavior: new f.SchemaField({ entry: k.str(), revealed: k.bool() }),
+        // behavior-procedure.yaml, next_behavior.previous_behavior: the next roll skips it
+        previous_behavior: k.str(),
         attention_holder: k.str(),
         focus_titan_label: k.str(),
         hidden_until_read: new f.SchemaField({
@@ -226,6 +233,7 @@ export function defineActorModels() {
   class FoeModel extends TypeDataModel {
     static LOCALIZATION_PREFIXES = ['WOF.Actor.Foe'];
     declare current_health: number;
+    declare health_bar: { value: number; max: number };
 
     static defineSchema() {
       return {
@@ -257,6 +265,7 @@ export function defineActorModels() {
 
     prepareDerivedData() {
       this.current_health = foeCurrentHealth((this as any).health, (this as any).health_lost);
+      this.health_bar = { value: this.current_health, max: (this as any).health };
     }
   }
 

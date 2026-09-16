@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Action } from 'svelte/action';
+  import { proseMirror } from '../actions.ts';
   import { sheetContext, t } from '../context.ts';
   import { setField } from '../soldier-ops.ts';
   import type { SoldierView } from '../soldier-view.ts';
@@ -23,24 +23,6 @@
     { text: t('WOF.Actor.Base.FIELDS.retiring.label'), on: s.retiring },
   ]);
 
-  /** Foundry's own rich text editor, saved on its change event. */
-  const proseMirror: Action<HTMLElement, { value: string; enriched: string; editable: boolean }> = (node, p) => {
-    const El = foundry.applications.elements.HTMLProseMirrorElement;
-    const editor = El.create({ name: 'system.notes', value: p.value, enriched: p.enriched, toggled: true, documentUUID: view.uuid, height: 220 });
-    const onChange = (e: Event) => {
-      e.stopPropagation();
-      setField(actor, 'system.notes', editor.value);
-    };
-    editor.addEventListener('change', onChange);
-    node.append(editor);
-    if (!p.editable) editor.disabled = true;
-    return {
-      destroy() {
-        editor.removeEventListener('change', onChange);
-        editor.remove();
-      },
-    };
-  };
 </script>
 
 <div class="block">
@@ -110,6 +92,6 @@
 <div class="block notes">
   <Sec n="2" title={t('WOF.Actor.Base.FIELDS.notes.label')} hint={t('WOF.Sheet.record.notesHint')} />
   {#key s.notes}
-    <div use:proseMirror={{ value: s.notes, enriched: view.notesHTML, editable: view.editable }}></div>
+    <div use:proseMirror={{ name: 'system.notes', value: s.notes, enriched: view.notesHTML, editable: view.editable, documentUUID: view.uuid, onsave: (html) => setField(actor, 'system.notes', html) }}></div>
   {/key}
 </div>

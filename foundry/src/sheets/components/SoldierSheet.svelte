@@ -10,6 +10,7 @@
   import TabKit from './TabKit.svelte';
   import TabRecord from './TabRecord.svelte';
   import TabSoldier from './TabSoldier.svelte';
+  import Tabs from './Tabs.svelte';
   import TabWounds from './TabWounds.svelte';
   import Vitals from './Vitals.svelte';
 
@@ -20,10 +21,10 @@
 
   const view = $derived(sheetState.view);
   const TABS = [
-    { id: 'soldier', n: '01', label: 'WOF.Sheet.tab.soldier' },
-    { id: 'kit', n: '02', label: 'WOF.Sheet.tab.kit' },
-    { id: 'wounds', n: '03', label: 'WOF.Sheet.tab.wounds' },
-    { id: 'record', n: '04', label: 'WOF.Sheet.tab.record' },
+    { id: 'soldier', label: 'WOF.Sheet.tab.soldier' },
+    { id: 'kit', label: 'WOF.Sheet.tab.kit' },
+    { id: 'wounds', label: 'WOF.Sheet.tab.wounds' },
+    { id: 'record', label: 'WOF.Sheet.tab.record' },
   ];
 
   let body: HTMLElement | undefined = $state();
@@ -35,15 +36,6 @@
     body?.scrollTo({ top: 0 });
     reveal(body?.firstElementChild);
   }
-
-  function onTabKey(event: KeyboardEvent, index: number) {
-    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
-    if (!step) return;
-    event.preventDefault();
-    const next = TABS[(index + step + TABS.length) % TABS.length];
-    select(next.id);
-    (event.currentTarget as HTMLElement).parentElement?.querySelector<HTMLElement>(`[data-tab="${next.id}"]`)?.focus();
-  }
 </script>
 
 <div class="wof-sheet" data-gore={viewer.gore} data-motion={motionMode()} style="--wof-loop: {MOTION.loop}ms">
@@ -51,21 +43,7 @@
   <Header {view} />
   <Vitals {view} />
 
-  <div class="tabs" role="tablist" aria-label={t('WOF.Sheet.tab.label')}>
-    {#each TABS as tab, i (tab.id)}
-      <button
-        type="button"
-        role="tab"
-        id="{sheet.id}-tab-{tab.id}"
-        data-tab={tab.id}
-        aria-selected={sheetState.tab === tab.id}
-        aria-controls="{sheet.id}-panel"
-        tabindex={sheetState.tab === tab.id ? 0 : -1}
-        onclick={() => select(tab.id)}
-        onkeydown={(e) => onTabKey(e, i)}
-      ><span class="n">{tab.n}</span><span class="tl">{t(tab.label)}</span></button>
-    {/each}
-  </div>
+  <Tabs tabs={TABS} {sheetState} {sheet} onselect={select} label={t('WOF.Sheet.tab.label')} />
 
   <div class="body" bind:this={body} id="{sheet.id}-panel" role="tabpanel" aria-labelledby="{sheet.id}-tab-{sheetState.tab}">
     {#if sheetState.tab === 'soldier'}

@@ -135,7 +135,14 @@ export function buildConfig(t: Tables) {
       effects: mindEffects(r.effects),
     })),
     maxGrief: MAX_GRIEF_COUNTED,
-    attentionLadders: [{ id: 'standard', name: null as string | null }, ...t.titanIndex.ladders.map((l) => ({ id: l.id, name: l.name }))],
+    attentionLadders: [
+      { id: 'standard', name: null as string | null, rungs: [...t.attention.ladders[0].rungs] },
+      ...t.titanIndex.ladders.map((l) => ({ id: l.id, name: l.name as string | null, rungs: [...l.rungs] })),
+    ],
+    attentionTests: t.attention.tests.map((x) => x.id),
+    bodyPartKinds: t.titanHarm.body_part_kinds.map((k) => ({ id: k.id, strikeFrom: [...k.strike_from] })),
+    weapons: t.skirmish.weapons.rows.map((w) => ({ id: w.id, name: w.name, usedWith: w.used_with, injuryType: w.injury_type, damage: w.damage, target: w.target })),
+    talentNames: Object.fromEntries(t.talents.talents.map((x) => [x.id, x.name])),
   };
 }
 

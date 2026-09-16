@@ -61,6 +61,9 @@ export const FILES = {
   sizeClasses: ['data/engagement/size-classes.yaml', S.sizeClassesFile],
   titanIndex: ['data/titans/index.yaml', S.titanIndexFile],
   foes: ['data/skirmish/foes.yaml', S.foesFile],
+  attention: ['data/engagement/attention.yaml', S.attentionFile],
+  titanHarm: ['data/engagement/titan-harm.yaml', S.titanHarmFile],
+  skirmish: ['data/skirmish/skirmish.yaml', S.skirmishFile],
   dicePool: ['data/core/dice-pool.yaml', S.dicePoolFile],
   circumstances: ['data/core/circumstances.yaml', S.circumstancesFile],
   bonusDice: ['data/core/bonus-dice-sources.yaml', S.bonusDiceSourcesFile],
@@ -134,6 +137,15 @@ function crossCheck(t: Tables): void {
     }
   }
   const ladders = new Set(['standard', ...t.titanIndex.ladders.map((l) => l.id)]);
+  const tests = new Set(t.attention.tests.map((x) => x.id));
+  for (const l of [...t.attention.ladders, ...t.titanIndex.ladders]) {
+    for (const r of l.rungs) if (!tests.has(r)) fail(FILES.titanIndex[0], `the ladder "${l.id}" uses the missing test "${r}"`);
+  }
+  const weapons = new Set(t.skirmish.weapons.rows.map((w) => w.id));
+  for (const f of t.foes.foes) {
+    const fw = typeof f.fight_weapon === 'string' ? [f.fight_weapon] : [...f.fight_weapon.rows.map((r) => r.weapon), ...(f.fight_weapon.at_night ? [f.fight_weapon.at_night.with] : [])];
+    for (const w of [...fw, ...(f.shoot_weapon ? [f.shoot_weapon] : [])]) if (!weapons.has(w)) fail(FILES.foes[0], `"${f.id}" names the missing weapon "${w}"`);
+  }
   for (const titan of t.titans) {
     if (!ladders.has(titan.attention_ladder)) fail(`data/titans/${titan.id}.yaml`, `names the missing Attention Ladder "${titan.attention_ladder}"`);
     if (!titan.abnormal) {

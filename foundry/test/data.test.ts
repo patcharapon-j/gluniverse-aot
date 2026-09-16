@@ -26,6 +26,8 @@ describe('the live data/', () => {
     expect(c.gas.full).toBe(t.odmGear.gas.full_gas_rating);
     expect(c.circumstances.map((s) => s.dice)).toEqual([3, 2, 1, 0, -1, -2, -3]);
     expect(c.titanDice.successFaces).toEqual([5, 6]);
+    expect(c.attentionLadders[0].rungs).toEqual(['hooked-into-its-body', 'nearest-person-in-reach', 'just-hurt-it', 'loudest-or-brightest', 'nearest']);
+    expect(c.weapons.find((w) => w.id === 'sabre')).toBeTruthy();
   });
 });
 
@@ -83,6 +85,20 @@ describe('a changed shape fails loudly', () => {
     expectShapeError(
       altered('data/gear/items.yaml', (s) => s.replace('  - id: musket\n', '  - id: rifle\n')),
       /items\.yaml/,
+    );
+  });
+
+  it('a changed Regeneration step', () => {
+    expectShapeError(
+      altered('data/engagement/titan-harm.yaml', (s) => s.replace('    - Erase every Opening on the Titan.\n', '    - Erase half the Openings on the Titan.\n')),
+      /titan-harm\.yaml[\s\S]*Regeneration steps changed/,
+    );
+  });
+
+  it('a Foe that names a missing weapon', () => {
+    expectShapeError(
+      altered('data/skirmish/foes.yaml', (s) => s.replace('fight_weapon: sabre', 'fight_weapon: halberd')),
+      /missing weapon "halberd"/,
     );
   });
 

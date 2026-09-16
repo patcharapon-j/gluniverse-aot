@@ -89,3 +89,37 @@ export const tooltip: Action<HTMLElement, string | { text: string; direction?: '
     },
   };
 };
+
+export interface ProseMirrorParam {
+  /** The field path, such as system.notes. */
+  name: string;
+  value: string;
+  enriched: string;
+  editable: boolean;
+  documentUUID: string;
+  height?: number;
+  onsave: (html: string) => unknown;
+}
+
+/** Foundry's own rich text editor (prose-mirror element), saved on its change event. */
+export const proseMirror: Action<HTMLElement, ProseMirrorParam> = (node, p) => {
+  const El = foundry.applications.elements.HTMLProseMirrorElement;
+  const editor = El.create({ name: p.name, value: p.value, enriched: p.enriched, toggled: true, documentUUID: p.documentUUID, height: p.height ?? 220 });
+  let save = p.onsave;
+  const onChange = (e: Event) => {
+    e.stopPropagation();
+    save(editor.value);
+  };
+  editor.addEventListener('change', onChange);
+  node.append(editor);
+  if (!p.editable) editor.disabled = true;
+  return {
+    update(next) {
+      save = next.onsave;
+    },
+    destroy() {
+      editor.removeEventListener('change', onChange);
+      editor.remove();
+    },
+  };
+};

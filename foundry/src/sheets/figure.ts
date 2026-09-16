@@ -171,7 +171,7 @@ const escapeAttr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;
 const drop = (x: number, y: number, i: number) =>
   `<g transform="translate(${x} ${y})"><path class="drop" style="animation-delay:${((i * 0.73) % 2.2).toFixed(2)}s" d="M0 0q-1.8 2.8 0 4.6 1.8-1.8 0-4.6z"/></g>`;
 
-function defs(u: string): string {
+function defs(u: string, art: Art = HUMAN): string {
   const hatch = (s: string, c: string, g: number) =>
     `<pattern id="${u}-h-${s}" width="${g}" height="${g}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="${g}" height="${g}" fill="${c}" fill-opacity=".16"/><line x1="0" y1="0" x2="0" y2="${g}" stroke="${c}" stroke-width="1.5" stroke-opacity=".9"/></pattern>`;
   return (
@@ -183,7 +183,7 @@ function defs(u: string): string {
     hatch('major', '#8e2323', 5) +
     hatch('crippling', '#241f1b', 4) +
     `<filter id="${u}-ink" x="-4%" y="-4%" width="108%" height="108%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.1" xChannelSelector="R" yChannelSelector="G"/></filter>` +
-    ORDER.map((k) => `<clipPath id="${u}-clip-${k}">${shape([...HUMAN[k].upper, ...(HUMAN[k].lower ?? [])])}</clipPath>`).join('')
+    ORDER.map((k) => `<clipPath id="${u}-clip-${k}">${shape([...art[k].upper, ...(art[k].lower ?? [])])}</clipPath>`).join('')
   );
 }
 
@@ -261,4 +261,146 @@ export function severityOf(row: { lethal: boolean; instant_death?: boolean; down
   if (row.lethal || row.instant_death) return 'crippling';
   if (row.down || row.healing_days >= 14 || row.penaltyDice >= 2) return 'major';
   return 'minor';
+}
+
+// ------------------------------------------------------------------ the Titan
+
+const TITAN: Art = {
+  head: {
+    upper: [
+      ['tskin', 'M93 68h14l2 12H91z'],
+      ['tskin', 'M100 6c-17 0-29 13-29 33 0 17 11 31 29 31s29-14 29-31c0-20-12-33-29-33z'],
+      ['tskin', 'M71 34c-4-1-6 2-6 6s3 8 6 8zM129 34c4-1 6 2 6 6s-3 8-6 8z'],
+      ['mouth', 'M80 48c6 10 34 10 40 0-3 12-37 12-40 0z'],
+      ['teeth', 'M84 51v4M88 53v4M92 54v4M96 55v4M100 55v4M104 55v4M108 54v4M112 53v4M116 51v4'],
+      ['eye', 'M84 33a6 5 0 1 0 12 0a6 5 0 1 0-12 0zM104 33a6 5 0 1 0 12 0a6 5 0 1 0-12 0z'],
+      ['pupil', 'M89 33.5a1.6 1.6 0 1 0 2 0zM109 33.5a1.6 1.6 0 1 0 2 0z'],
+      ['tline', 'M100 38v7M79 22q8-6 16-3M121 22q-8-6-16-3'],
+    ],
+  },
+  chest: {
+    upper: [
+      ['tskin', 'M72 84c8-6 20-8 28-8s20 2 28 8l-2 30c-2 20-6 36-6 52l2 26c-8 6-16 8-22 8s-14-2-22-8l2-26c0-16-4-32-6-52z'],
+      ['muscle', 'M76 88l-6 22M82 86l-4 26M124 88l6 22M118 86l4 26'],
+      ['tline', 'M82 104q18 6 36 0M80 117q20 7 40 0M82 130q18 6 36 0M100 140v34M90 184q10 3 20 0'],
+    ],
+  },
+  rightArm: {
+    cut: [51, 176, 6],
+    upper: [['tskin', 'M72 86c-10 6-16 18-18 34l-8 56 10 2 10-54 10-24z'], ['muscle', 'M62 100l-6 30']],
+    lower: [['tskin', 'M46 176l-6 70 10 2 6-70z'], ['tskin', 'M40 246c-4 8-5 18-2 24 3 4 9 4 12 0 3-6 3-16 0-24z'], ['muscle', 'M48 190l-4 40']],
+  },
+  leftArm: {
+    cut: [149, 176, 6],
+    upper: [['tskin', 'M128 86c10 6 16 18 18 34l8 56-10 2-10-54-10-24z'], ['muscle', 'M138 100l6 30']],
+    lower: [['tskin', 'M154 176l6 70-10 2-6-70z'], ['tskin', 'M160 246c4 8 5 18 2 24-3 4-9 4-12 0-3-6-3-16 0-24z'], ['muscle', 'M152 190l4 40']],
+  },
+  rightLeg: {
+    cut: [85, 290, 11],
+    upper: [['tskin', 'M78 208l-4 82h22l4-80z'], ['muscle', 'M84 222l-2 50']],
+    lower: [['tskin', 'M74 290l-2 74c-1 10 2 16 10 16h8c6 0 8-6 7-12l-1-78z'], ['tline', 'M80 300q6 3 12 0']],
+  },
+  leftLeg: {
+    cut: [115, 290, 11],
+    upper: [['tskin', 'M122 208l4 82h-22l-4-80z'], ['muscle', 'M116 222l2 50']],
+    lower: [['tskin', 'M126 290l2 74c1 10-2 16-10 16h-8c-6 0-8-6-7-12l1-78z'], ['tline', 'M120 300q-6 3-12 0']],
+  },
+};
+
+const TSPOTS: Partial<Record<Region, [number, number][]>> = {
+  rightArm: [[60, 120], [46, 210]],
+  leftArm: [[140, 120], [154, 210]],
+  rightLeg: [[86, 245], [84, 330]],
+  leftLeg: [[114, 245], [116, 330]],
+};
+
+export type TitanPartState = 'intact' | 'wounded' | 'broken';
+
+export interface FigurePart {
+  /** The Body Part's index in the stat block. */
+  index: number;
+  kind: 'eyes' | 'arm' | 'leg';
+  /** Which side the part is drawn on; null for the eyes. */
+  side: 'left' | 'right' | null;
+  state: TitanPartState;
+}
+
+/** Where a Titan Body Part is drawn: by kind, and by the side its id names (left first otherwise). */
+export function titanRegions(parts: readonly { id: string; kind: 'eyes' | 'arm' | 'leg' }[]): ('left' | 'right' | null)[] {
+  const seen: Record<string, number> = {};
+  return parts.map((p) => {
+    if (p.kind === 'eyes') return null;
+    if (/(^|-)left(-|$)/.test(p.id)) return 'left';
+    if (/(^|-)right(-|$)/.test(p.id)) return 'right';
+    const n = (seen[p.kind] = (seen[p.kind] ?? 0) + 1);
+    return n === 1 ? 'left' : 'right';
+  });
+}
+
+const steam = (x: number, y: number, heavy: boolean, n = 2) =>
+  Array.from({ length: n }, (_, i) => `<path class="steam${heavy ? ' heavy' : ''}" d="M${x - 4 + i * 5} ${y - 6}c-5-6 4-10-1-${heavy ? 20 : 14}"/>`).join('');
+
+/** The point on the figure a part's steam rises from. */
+export function titanPartSpot(part: Pick<FigurePart, 'kind' | 'side'>): [number, number] {
+  if (part.kind === 'eyes') return [100, 30];
+  const k = `${part.side ?? 'left'}${part.kind === 'arm' ? 'Arm' : 'Leg'}` as Region;
+  const c = TITAN[k].cut!;
+  return [c[0], c[1]];
+}
+
+/**
+ * The inked Titan (ADR-0027; preview-v2-1-personnel-file.html): each Body Part intact, wounded (a cut
+ * that steams), or broken (an arm hangs, a leg is severed and lies beside it, the eyes are put out;
+ * heavy steam). The Gore setting picks the visceral or the clinical layer. Regions carry
+ * data-part (the stat block index) for clicks.
+ */
+export function titanFigure(parts: readonly FigurePart[], uid: string, ariaLabel: string, napeLabel: string): string {
+  const u = uid;
+  let base = '';
+  let vis = '';
+  let clin = '';
+  for (const k of ORDER) {
+    const a = TITAN[k];
+    const part = parts.find((p) => (k === 'head' ? p.kind === 'eyes' : `${p.side}${p.kind === 'arm' ? 'Arm' : 'Leg'}` === k)) ?? null;
+    const st = part?.state ?? 'intact';
+    const arm = /Arm/.test(k);
+    const leg = /Leg/.test(k);
+    const side = k.startsWith('left') ? 1 : -1;
+    let lower = '';
+    if (a.lower) {
+      if (st === 'broken' && arm) {
+        const [cx, cy] = a.cut!;
+        lower = `<g class="hang" style="transform:rotate(${side * -24}deg);transform-origin:${cx}px ${cy}px">${paths(a.lower)}</g>`;
+      } else if (st === 'broken' && leg) lower = `<g class="lost">${paths(a.lower)}</g>`;
+      else lower = `<g>${paths(a.lower)}</g>`;
+    }
+    const attr = part ? ` data-part="${part.index}"` : '';
+    base += `<g class="rg${part ? ' part' : ''}"${attr} data-region="${k}"><g>${paths(a.upper)}</g>${lower}</g>`;
+    if (!part || st === 'intact') continue;
+    const hs: Severity = st === 'wounded' ? 'major' : 'crippling';
+    if (k === 'head') {
+      clin += `<g class="hatch h-${hs}" fill="url(#${u}-h-${hs})"><path d="M80 26h40v14H80z"/></g><g class="glyph h-${hs}" transform="translate(100 20)">${GLYPH.cutting}</g>`;
+      vis +=
+        st === 'wounded'
+          ? `<g class="wound"><path class="gash" d="M79 29Q100 24 121 36L120 39Q100 29 80 33z"/><path class="gash-in" d="M84 30Q100 27 116 35L116 36Q100 30 84 32z"/><path class="tblood" d="M92 33q1 6 0 10"/></g>${steam(100, 30, false)}`
+          : `<g class="wound"><ellipse class="socket" cx="90" cy="33" rx="7" ry="6"/><ellipse class="socket" cx="110" cy="33" rx="7" ry="6"/><path class="tblood" d="M87 38q1 10-1 20M92 38q0 8 1 14M108 38q1 9-1 18M113 38q0 10 1 16"/><g class="g-only"><circle class="blood" cx="84" cy="60" r="1.4"/><circle class="blood" cx="115" cy="57" r="1.1"/></g></g>${steam(90, 30, true)}${steam(110, 30, true)}`;
+      continue;
+    }
+    const [cx, cy, cw] = a.cut!;
+    const [x, y] = TSPOTS[k]![st === 'wounded' ? 0 : 1];
+    clin += `<g class="hatch h-${hs}" fill="url(#${u}-h-${hs})">${shape(a.upper)}${st === 'wounded' || arm ? shape(a.lower!) : ''}</g><g class="glyph h-${hs}" transform="translate(${cx} ${cy})">${GLYPH.cutting}</g>`;
+    if (st === 'wounded') {
+      vis += `<g class="wound" transform="translate(${x} ${y}) rotate(${side * 20}) scale(.8)">${ART.cutting.major(u, true)}</g>${steam(x, y, false)}`;
+    } else if (arm) {
+      vis += `<g class="wound"><ellipse class="flesh" cx="${cx}" cy="${cy}" rx="${cw + 1}" ry="3.2"/><path class="torn" d="M${cx - cw} ${cy - 2}l2 3 2-3 2 3 2-3 2 3"/><path class="bone" d="M${cx - 1.5} ${cy - 3}h3v6h-3z"/><path class="tblood" d="M${cx + side * -4} ${cy + 4}q2 14-1 26"/></g>${steam(cx, cy, true, 3)}`;
+    } else {
+      const lie = `<g class="lying" transform="translate(0 86) rotate(${side * -90} ${cx} ${cy})">${paths(a.lower!)}<ellipse class="flesh" cx="${cx}" cy="${cy + 1}" rx="${cw}" ry="3.6"/></g>`;
+      vis += `${lie}<g class="wound"><ellipse class="flesh" cx="${cx}" cy="${cy + 1}" rx="${cw}" ry="4"/><circle class="bone" cx="${cx}" cy="${cy + 1}" r="3.2"/><path class="torn" d="M${cx - cw} ${cy - 1}l3 2.4 3-2.4 3 2.4 3-2.4 3 2.4 3-2.4"/><path class="tblood" d="M${cx - 3} ${cy + 4}q1 20-1 40"/><ellipse class="steam-bed" cx="${cx}" cy="${cy - 4}" rx="${cw + 4}" ry="5"/></g>${steam(cx, cy, true, 3)}`;
+    }
+  }
+  const nape = `<g class="nape"><title>${escapeAttr(napeLabel)}</title><circle cx="100" cy="76" r="6.5"/><path d="M92 76h-5M108 76h5M100 69v-4"/></g>`;
+  return (
+    `<svg class="fig titan" viewBox="-30 0 260 400" role="img" aria-label="${escapeAttr(ariaLabel)}">` +
+    `<defs>${defs(u, TITAN)}</defs><g filter="url(#${u}-ink)">${base}</g>${nape}<g class="fig-clinical">${clin}</g><g class="fig-visceral">${vis}</g><g class="puffs"></g></svg>`
+  );
 }

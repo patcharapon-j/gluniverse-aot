@@ -674,3 +674,47 @@ export const actionWordingFile = z.looseObject({
 });
 
 export { effect };
+
+// ---------------------------------------------------------------- engagement/attention.yaml
+
+export const attentionFile = z.looseObject({
+  id: z.literal('attention'),
+  tests: z.array(z.looseObject({ id, meaning: text, down_can_meet: z.boolean() })).min(1),
+  ladders: z.array(z.looseObject({ id: z.literal('standard'), name: text, rungs: z.array(id).min(1) })).length(1),
+});
+
+// ---------------------------------------------------------------- engagement/titan-harm.yaml
+// The sheet applies these steps in code (src/rules/titan.ts); a changed list fails the build.
+
+export const titanHarmFile = z.looseObject({
+  id: z.literal('titan-harm'),
+  body_part_kinds: z.array(z.looseObject({ id: z.enum(['eyes', 'arm', 'leg']), strike_from: z.array(id), when_broken: text })).length(3),
+  states: z.looseObject({ order: z.tuple([z.literal('intact'), z.literal('wounded'), z.literal('broken')]) }),
+  regeneration: z.looseObject({
+    when_full: z
+      .array(text)
+      .length(5)
+      .refine(
+        (s) => /Erase every Opening/.test(s[0]) && /count to 0/.test(s[1]) && /most damaged Body Part/.test(s[2]) && /steam table/.test(s[3]) && /Empty the clock/.test(s[4]),
+        'the Regeneration steps changed; update src/rules/titan.ts (regenerate)',
+      ),
+  }),
+});
+
+// ---------------------------------------------------------------- skirmish/skirmish.yaml (weapons)
+
+export const skirmishFile = z.looseObject({
+  id: z.literal('skirmish'),
+  weapons: z.looseObject({
+    rows: z.array(
+      z.looseObject({
+        id,
+        name: text,
+        used_with: z.enum(['fight', 'shoot']),
+        injury_type: injuryType,
+        damage: z.number().int().min(0),
+        target: z.enum(['engaged', 'apart', 'either']),
+      }),
+    ),
+  }),
+});

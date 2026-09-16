@@ -898,7 +898,11 @@
     },
     "Sheet": {
       "label": {
-        "soldier": "Soldier personnel file"
+        "soldier": "Soldier personnel file",
+        "squadmate": "Squadmate stat block",
+        "titan": "Titan observation record",
+        "foe": "Foe record",
+        "item": "Item slip"
       },
       "none": "None",
       "choose": "Choose",
@@ -1062,7 +1066,7 @@
         "talentMax": "{name} is already at its highest level.",
         "talentUp": "{name} raised to level {level}.",
         "onlyOne": "This soldier already has {name}.",
-        "notHere": "A {type} does not go on a Soldier sheet.",
+        "notHere": "{type} items do not go on a {sheet} sheet.",
         "talents": "Drop Talents here. Dropping a held Talent raises its level.",
         "specialty": "Drop a Specialty",
         "origin": "Drop an Origin",
@@ -1176,6 +1180,232 @@
         "xpAria": "{n} XP",
         "notesHint": "Click the pen to write"
       }
+    },
+    "BodyPart": {
+      "eyes": "Eyes",
+      "left-arm": "Left Arm",
+      "right-arm": "Right Arm",
+      "left-leg": "Left Leg",
+      "right-leg": "Right Leg"
+    },
+    "BodyPartKind": {
+      "eyes": "Eyes",
+      "arm": "Arm",
+      "leg": "Leg",
+      "broken": {
+        "eyes": "Broken: flare and thrown-cloak decoys fail against it.",
+        "arm": "Broken: it cannot Grab, and a soldier it holds is freed.",
+        "leg": "Broken: the Titan is grounded."
+      }
+    },
+    "Rung": {
+      "hooked-into-its-body": "Hooked into its body",
+      "nearest-person-in-reach": "Nearest person In Reach",
+      "just-hurt-it": "Just hurt it",
+      "loudest-or-brightest": "Loudest or brightest",
+      "nearest": "Nearest",
+      "current-holder": "Its current quarry, not at Distant",
+      "mounted": "Mounted",
+      "airborne": "Airborne",
+      "carrying-a-comrade": "Carrying a comrade",
+      "most-harmed": "Most untreated Critical Injuries",
+      "down": "Down"
+    },
+    "Targets": {
+      "holder": "The Attention holder",
+      "holder-and-position": "The holder and everyone at their Position"
+    },
+    "TitanEffect": {
+      "stress": "+{amount} Stress.",
+      "injury": "A {type} Critical Injury, {location}.",
+      "injuryNotLethal": "A {type} Critical Injury, {location}, never lethal.",
+      "rolledLocation": "rolled location",
+      "knockLoose": "Knocks loose: an airborne soldier, or one On Body or at Blind Spot, falls.",
+      "grab": "Grab.",
+      "telegraph": "Telegraphs: its next behavior is revealed."
+    },
+    "Squad": {
+      "kicker": "Squadmate stat block",
+      "template": "Template: {id}",
+      "name": "Squadmate name",
+      "noWing": "No Wing",
+      "onWing": "On {name}’s Wing",
+      "untreated": "{n} untreated",
+      "tab": {
+        "label": "Squadmate file",
+        "stat": "Stat block"
+      },
+      "attributesHint": "Set by the template; they never change",
+      "talentHint": "One template Talent",
+      "dropTalent": "Drop a Talent to replace the template Talent.",
+      "mind": "Mind",
+      "footLeft": "Wings of Freedom, Squad roster"
+    },
+    "FoeSheet": {
+      "kicker": "Foe record",
+      "name": "Foe name",
+      "statBlock": "Stat block",
+      "statHint": "Rolled in the open, never Pushed",
+      "attackNote": "base dice, each 6 a success",
+      "guardNote": "base dice against each attack",
+      "gritNote": "out before the group breaks",
+      "watchNote": "successes a Sneak needs",
+      "parleyNote": "base successes a Parley needs",
+      "healthHint": "Out of the Skirmish at 0",
+      "inFight": "In the Skirmish",
+      "atZero": "At 0 Health",
+      "zeroNote": "At 0 Health it leaves the Skirmish; the GM rules whether it is dead or out cold.",
+      "weapons": "Weapons",
+      "weaponLine": "{damage} damage, {type}, {target}",
+      "target": {
+        "engaged": "Engaged only",
+        "apart": "Apart only",
+        "either": "Engaged or Apart"
+      },
+      "atNight": "At night, {with} replaces {replaces}.",
+      "rollWeapon": "Roll D6",
+      "rolledWeapon": "Rolled {d6}: {name}.",
+      "reloadNote": "Empty after it Shoots; a Reload spends its turn.",
+      "footLeft": "Wings of Freedom, Skirmish record",
+      "footRight": "Garrison intelligence"
+    },
+    "TitanSheet": {
+      "kicker": "Titan observation record",
+      "name": "Titan name",
+      "plate": "Plate {size}",
+      "plateAlt": "Colour plate of {name}",
+      "focus": "Focus Titan {label}",
+      "sizeLine": "{size}, {height}",
+      "kind": "Kind",
+      "standard": "Standard",
+      "abnormal": "Abnormal",
+      "nape": "The nape",
+      "napeNote": "successes in one strike kill it",
+      "hidden": "Hidden until a Read",
+      "hiddenTip": "An Abnormal’s value stays hidden until a Read reveals it.",
+      "limited": "The observation record is sealed.",
+      "grounded": "Grounded",
+      "standing": "Standing",
+      "openingsTag": "Openings {n}",
+      "heldBy": "Held by {name}",
+      "tab": {
+        "label": "Titan file",
+        "engagement": "Engagement",
+        "behavior": "Behavior Table",
+        "record": "Record"
+      },
+      "profile": "Profile",
+      "profileHint": "From the {size} row",
+      "tempoNote": "cards per round",
+      "heaveCount": "Heave count",
+      "regen": {
+        "aria": "Regeneration clock, {filled} of {total} filled. Activate to fill a segment.",
+        "hiddenAria": "Regeneration clock, {filled} filled, length hidden",
+        "note": "Click to fill a segment. It fills 1 at each round’s end.",
+        "notePlayer": "It fills 1 segment at each round’s end.",
+        "back": "Step back",
+        "done": "Regenerated: {erased} Openings erased, every count cleared, {healed}.",
+        "healed": "{part} {from} to {to}",
+        "noHeal": "no Body Part to heal",
+        "steam": "Soldiers On Body roll on the steam table.",
+        "stands": "It stands again: every soldier it pins is freed."
+      },
+      "partsHint": "Click the figure or a part: intact, wounded, broken",
+      "partsHintPlayer": "State and count are public",
+      "figCaption": "Fig. T, front",
+      "figureAria": "Titan body diagram: {list}",
+      "partAria": "{part}, {state}. Activate to change the state.",
+      "woundedNote": "Wounded: no effect of its own.",
+      "toughNote": "Toughness {n}: successes to worsen it.",
+      "toughHidden": "Toughness hidden until a Read.",
+      "countAria": "{part}: {count} of {toughness} successes",
+      "setCount": "Set {part} to {n} successes",
+      "countOnly": "Count {n}",
+      "strike": "+1 success",
+      "strikeTip": "One Body Part strike success: at its Toughness the part worsens.",
+      "strikeBrokenTip": "The part is Broken: each further success is an Opening.",
+      "openingsHint": "1 Bonus Die each, never for its maker",
+      "addOpening": "Add an Opening",
+      "removeOpening": "Remove an Opening",
+      "noOpenings": "No Openings.",
+      "attention": "Attention",
+      "ladderHidden": "Its Attention Ladder is hidden until a Read.",
+      "holder": {
+        "nothing": "Nothing",
+        "decoy": "A decoy"
+      },
+      "next": {
+        "seal": "Wax seal: the Next Behavior is face down",
+        "none": "No Next Behavior rolled yet.",
+        "sealedNote": "Rolled face down. A Read, a telegraph, or its card reveals it.",
+        "revealedNote": "Revealed to every soldier.",
+        "peek": "Break seal (GM only)",
+        "reseal": "Seal again",
+        "roll": "Roll hidden",
+        "rollTip": "Rolls D6 on the Behavior Table, moving past the previous behavior and entries its Broken parts rule out. Nothing is posted to chat.",
+        "rolled": "Rolled {d6}: {name}.",
+        "reveal": "Reveal to players",
+        "set": "Next Behavior",
+        "short": "Next"
+      },
+      "previous": {
+        "label": "Previous behavior",
+        "short": "Previous",
+        "line": "Previous behavior: {name}"
+      },
+      "entryLine": "D6 {results}, {tier}, {targets}",
+      "behaviorHint": "D6, rolled hidden",
+      "cannot": "Parts Broken",
+      "anyPosition": "Any Position",
+      "legendTitanDie": "Titan Die, a success on 5 or 6",
+      "record": {
+        "status": "Status",
+        "read": "Revealed by a Read",
+        "readHint": "An Abnormal’s hidden values",
+        "sightings": "Sightings",
+        "sightingsHint": "Where it was seen, who engaged it, how it died"
+      },
+      "footLeft": "Wings of Freedom, observation record",
+      "footRight": "Research division",
+      "heaveNote": "heave count to free the pinned"
+    },
+    "ItemSheet": {
+      "name": "Name",
+      "imageEdit": "Change the image",
+      "heldBy": "Held by {name}",
+      "compendiumSlip": "Reference slip",
+      "rule": "Rule",
+      "article": "Article",
+      "state": "State",
+      "held": "As held",
+      "row": "Table row",
+      "yes": "Yes",
+      "no": "No",
+      "addTo": "Add to {label}",
+      "removeNamed": "Remove {name}",
+      "bladeCount": "(0 while in the handles)",
+      "medicalKit": "A Medical Kit gives its Gear Dice to Treat Injury.",
+      "toolKit": "A Tool Kit gives its Gear Dice to Field Repair.",
+      "odmNote": "At 0 the ODM Gear is jammed.",
+      "typeHint": "The rule that inflicts it names the type",
+      "injuryLine": "{name}: {location}, 2D6 {range}",
+      "noHealing": "No healing days.",
+      "deathPenalty": "Death Rolls −{n}",
+      "rider": {
+        "timeLimit": "time limit {limit}",
+        "healing": "healing days ×{n}",
+        "noHealUntreated": "does not heal untreated",
+        "treat": "changes Treat Injury",
+        "other": "a rule rider"
+      },
+      "lineList": "One per line"
+    },
+    "GearState": {
+      "jammed": "Jammed",
+      "lame": "Lame",
+      "spent": "Spent",
+      "worn-out": "Worn out",
+      "none": "No change"
     }
   }
 }

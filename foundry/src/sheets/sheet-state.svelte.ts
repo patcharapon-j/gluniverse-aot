@@ -1,9 +1,9 @@
 /** The reactive holder a mounted sheet reads; the ApplicationV2 shell replaces `view` on each render. */
 export class SheetState<V> {
   view = $state.raw<V>() as V;
-  tab = $state('soldier');
+  tab = $state('');
   bonus = $state(0);
-  constructor(view: V, tab = 'soldier') {
+  constructor(view: V, tab = '') {
     this.view = view;
     this.tab = tab;
   }

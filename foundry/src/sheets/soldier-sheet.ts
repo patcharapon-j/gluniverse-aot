@@ -1,21 +1,91 @@
 /**
- * The Soldier sheet (ADR-0027, core-plan 2b): an ActorSheetV2 whose content is one Svelte 5 tree.
- * _replaceHTML mounts it once and afterwards only swaps the view it reads; _onClose unmounts it.
- * Drops, the portrait picker, and window controls stay Foundry's.
+ * The Soldier sheet (ADR-0027, core-plan 2b) and the compact Squadmate sheet (2c): ActorSheetV2
+ * shells around one Svelte tree each (svelte-sheet.ts). Drops, the portrait picker, and window
+ * controls stay Foundry's; both sheets share the drop rules below.
  */
-import { mount, unmount } from 'svelte';
-import { SYSTEM_ID } from '../config.ts';
 import SoldierSheetRoot from './components/SoldierSheet.svelte';
-import { SheetState } from './sheet-state.svelte.ts';
-import { buildSoldierView, type SoldierView } from './soldier-view.ts';
+import SquadmateSheetRoot from './components/SquadmateSheet.svelte';
+import { enrich, named, SvelteSheetMixin } from './svelte-sheet.ts';
+import { buildSoldierView } from './soldier-view.ts';
 import { chooseInjury, injuryData } from './soldier-ops.ts';
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
-export function defineSoldierSheet() {
-  const ActorSheetV2 = foundry.applications.sheets.ActorSheetV2;
+/**
+ * Drop rules for a soldier or a Squadmate: Origin and Specialty replace; a held Talent levels up (a
+ * Squadmate's one template Talent is replaced instead: data/character/squadmates.yaml); a Critical
+ * Injury row asks for its type and side; one ODM Gear and one horse; a Blade Set fills empty handles.
+ */
+async function dropOnSoldier(sheet: any, item: any, squadmate: boolean) {
+  const actor = sheet.document;
+  if (!actor.isOwner || !sheet.isEditable) return null;
+  const Item = foundry.documents.Item.implementation;
+  const data = item.toObject();
+  delete data._id;
+  data.flags ??= {};
+  if (item.inCompendium) {
+    data._stats ??= {};
+    data._stats.compendiumSource = item.uuid;
+  }
+  const replace = async (type: string) => {
+    const old = actor.items.filter((i: any) => i.type === type).map((i: any) => i.id);
+    if (old.length) await actor.deleteEmbeddedDocuments('Item', old);
+    const created = await Item.create(data, { parent: actor });
+    ui.notifications.info(t('WOF.Sheet.drop.set', { name: item.name, what: t(`TYPES.Item.${type}`) }));
+    return created;
+  };
 
-  class SoldierSheet extends ActorSheetV2 {
+  switch (item.type) {
+    case 'origin':
+      if (squadmate) break; // data/character/squadmates.yaml, not_recorded
+      return replace('origin');
+    case 'specialty':
+      return replace('specialty');
+    case 'talent': {
+      data.system.used = false;
+      if (squadmate) {
+        data.system.level = 1;
+        return replace('talent');
+      }
+      const held = actor.items.find((i: any) => i.type === 'talent' && i.system.talent_id === item.system.talent_id);
+      if (held) {
+        if (held.system.level >= held.system.max_level) {
+          ui.notifications.warn(t('WOF.Sheet.drop.talentMax', { name: held.name }));
+          return null;
+        }
+        await held.update({ 'system.level': held.system.level + 1 });
+        ui.notifications.info(t('WOF.Sheet.drop.talentUp', { name: held.name, level: held.system.level }));
+        return held;
+      }
+      data.system.level = 1;
+      return Item.create(data, { parent: actor });
+    }
+    case 'critical-injury': {
+      const choice = await chooseInjury(item);
+      if (!choice) return null;
+      return Item.create({ ...injuryData(item, choice), _stats: data._stats }, { parent: actor });
+    }
+    case 'gear': {
+      const sub = item.system.subtype;
+      if ((sub === 'odm' || sub === 'horse') && actor.items.some((i: any) => i.type === 'gear' && i.system.subtype === sub)) {
+        ui.notifications.warn(t('WOF.Sheet.drop.onlyOne', { name: item.name }));
+        return null;
+      }
+      if (sub === 'blade-set') {
+        const handlesFull = actor.items.some((i: any) => i.type === 'gear' && i.system.subtype === 'blade-set' && i.system.in_handles);
+        data.system.in_handles = !handlesFull;
+      }
+      return Item.create(data, { parent: actor });
+    }
+  }
+  ui.notifications.warn(t('WOF.Sheet.drop.notHere', { type: t(`TYPES.Item.${item.type}`), sheet: t(`TYPES.Actor.${actor.type}`) }));
+  return null;
+}
+
+export function defineSoldierSheet() {
+  const Base = SvelteSheetMixin(foundry.applications.sheets.ActorSheetV2);
+
+  class SoldierSheet extends Base {
     static DEFAULT_OPTIONS = {
       classes: ['wof', 'wof-app', 'wof-soldier-sheet'],
       position: { width: 860, height: 760 },
@@ -23,128 +93,59 @@ export function defineSoldierSheet() {
       form: { submitOnChange: false, closeOnSubmit: false },
     };
 
-    #component: Record<string, any> | null = null;
-    #state: SheetState<SoldierView> | null = null;
-    /** The tab and the next roll's Bonus Dice outlive a re-mount while the sheet object lives. */
-    #tab = 'soldier';
-
-    get title() {
-      return this.document.name;
+    get svelteRoot() {
+      return SoldierSheetRoot;
     }
 
-    /** The mounted component's state, for tests in the browser console. */
-    get svelteState() {
-      return this.#state;
+    get initialTab() {
+      return 'soldier';
     }
 
-    async _prepareContext(options: any) {
-      const context = await super._prepareContext(options);
+    async buildView() {
       const actor = this.document;
-      const TextEditor = foundry.applications.ux.TextEditor.implementation;
-      const notesHTML = await TextEditor.enrichHTML(actor.system.notes ?? '', { relativeTo: actor, secrets: actor.isOwner, rollData: {} });
-      context.view = buildSoldierView(actor, { editable: this.isEditable, notesHTML, bonus: this.#state?.bonus ?? 0 });
-      return context;
-    }
-
-    async _renderHTML(context: any) {
-      return context.view as SoldierView;
-    }
-
-    _replaceHTML(view: SoldierView, content: HTMLElement) {
-      if (this.#component && this.#state) {
-        this.#state.view = view;
-        return;
-      }
-      content.classList.add('wof-content');
-      this.#state = new SheetState(view, this.#tab);
-      this.#component = mount(SoldierSheetRoot, { target: content, props: { sheetState: this.#state, sheet: this } });
-    }
-
-    _onClose(options: any) {
-      super._onClose(options);
-      if (this.#state) this.#tab = this.#state.tab;
-      if (this.#component) unmount(this.#component);
-      this.#component = null;
-      this.#state = null;
-    }
-
-    /** Re-runs _prepareContext so a Bonus Dice change shows in every pool without a document update. */
-    refreshView() {
-      return this.render();
+      const notesHTML = await enrich(actor, actor.system.notes);
+      return buildSoldierView(actor, { editable: this.isEditable, notesHTML, bonus: this.svelteState?.bonus ?? 0 });
     }
 
     async _onDropItem(event: DragEvent, item: any) {
-      const actor = this.document;
-      if (!actor.isOwner || !this.isEditable) return null;
-      if (item.parent?.uuid === actor.uuid) return super._onDropItem(event, item);
-      const Item = foundry.documents.Item.implementation;
-      const data = item.toObject();
-      delete data._id;
-      data.flags ??= {};
-      if (item.inCompendium) {
-        data._stats ??= {};
-        data._stats.compendiumSource = item.uuid;
-      }
-
-      switch (item.type) {
-        case 'origin':
-        case 'specialty': {
-          const old = actor.items.filter((i: any) => i.type === item.type).map((i: any) => i.id);
-          if (old.length) await actor.deleteEmbeddedDocuments('Item', old);
-          const created = await Item.create(data, { parent: actor });
-          ui.notifications.info(t('WOF.Sheet.drop.set', { name: item.name, what: t(`TYPES.Item.${item.type}`) }));
-          return created;
-        }
-        case 'talent': {
-          const held = actor.items.find((i: any) => i.type === 'talent' && i.system.talent_id === item.system.talent_id);
-          if (held) {
-            if (held.system.level >= held.system.max_level) {
-              ui.notifications.warn(t('WOF.Sheet.drop.talentMax', { name: held.name }));
-              return null;
-            }
-            await held.update({ 'system.level': held.system.level + 1 });
-            ui.notifications.info(t('WOF.Sheet.drop.talentUp', { name: held.name, level: held.system.level }));
-            return held;
-          }
-          data.system.level = 1;
-          data.system.used = false;
-          return Item.create(data, { parent: actor });
-        }
-        case 'critical-injury': {
-          const choice = await chooseInjury(item);
-          if (!choice) return null;
-          return Item.create({ ...injuryData(item, choice), _stats: data._stats }, { parent: actor });
-        }
-        case 'gear': {
-          const sub = item.system.subtype;
-          if ((sub === 'odm' || sub === 'horse') && actor.items.some((i: any) => i.type === 'gear' && i.system.subtype === sub)) {
-            ui.notifications.warn(t('WOF.Sheet.drop.onlyOne', { name: item.name }));
-            return null;
-          }
-          if (sub === 'blade-set') {
-            const handlesFull = actor.items.some((i: any) => i.type === 'gear' && i.system.subtype === 'blade-set' && i.system.in_handles);
-            data.system.in_handles = !handlesFull;
-          }
-          return Item.create(data, { parent: actor });
-        }
-        default:
-          ui.notifications.warn(t('WOF.Sheet.drop.notHere', { type: t(`TYPES.Item.${item.type}`) }));
-          return null;
-      }
+      if (item.parent?.uuid === this.document.uuid) return super._onDropItem(event, item);
+      return dropOnSoldier(this, item, false);
     }
   }
 
-  // The sheet id Foundry stores is scope + class name; keep it stable under minification.
-  Object.defineProperty(SoldierSheet, 'name', { value: 'SoldierSheet' });
-  return SoldierSheet;
+  return named(SoldierSheet, 'SoldierSheet');
 }
 
-export function registerSheets() {
-  const SoldierSheet = defineSoldierSheet();
-  foundry.documents.collections.Actors.registerSheet(SYSTEM_ID, SoldierSheet, {
-    types: ['soldier'],
-    makeDefault: true,
-    label: 'WOF.Sheet.label.soldier',
-    themes: null,
-  });
+export function defineSquadmateSheet() {
+  const Base = SvelteSheetMixin(foundry.applications.sheets.ActorSheetV2);
+
+  class SquadmateSheet extends Base {
+    static DEFAULT_OPTIONS = {
+      classes: ['wof', 'wof-app', 'wof-compact', 'wof-squadmate-sheet'],
+      position: { width: 600, height: 720 },
+      window: { resizable: true },
+      form: { submitOnChange: false, closeOnSubmit: false },
+    };
+
+    get svelteRoot() {
+      return SquadmateSheetRoot;
+    }
+
+    get initialTab() {
+      return 'stat';
+    }
+
+    async buildView() {
+      const actor = this.document;
+      const notesHTML = await enrich(actor, actor.system.notes);
+      return buildSoldierView(actor, { editable: this.isEditable, notesHTML, bonus: 0 });
+    }
+
+    async _onDropItem(event: DragEvent, item: any) {
+      if (item.parent?.uuid === this.document.uuid) return super._onDropItem(event, item);
+      return dropOnSoldier(this, item, true);
+    }
+  }
+
+  return named(SquadmateSheet, 'SquadmateSheet');
 }

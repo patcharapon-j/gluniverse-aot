@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { FOUNDRY_ROOT, loadTables } from '../tools/data/load.ts';
@@ -73,6 +73,19 @@ describe('pack documents', () => {
     expect(medium.system).toMatchObject({ size_class: 'medium', tempo: 1, nape_depth: 4, regeneration_clock: 3, heave: 3 });
     expect(medium.system.body_parts.map((b: any) => b.state)).toEqual(['intact', 'intact', 'intact', 'intact', 'intact']);
     expect(medium.system.behavior_table.entries.find((e: any) => e.id === 'bite').attack_dice).toBe(9);
+  });
+
+  it('gives each Actor type its prototype Token defaults and each Titan its plate', () => {
+    for (const d of docs.titans) {
+      expect(d.img).toMatch(/assets\/plates\/plate-titan-(small|medium|large|sprinting-abnormal)\.webp$/);
+      expect(existsSync(join(FOUNDRY_ROOT, 'static', d.img.replace('systems/wings-of-freedom/', '')))).toBe(true);
+      expect(d.prototypeToken).toMatchObject({ actorLink: false, disposition: -1, displayBars: 0, bar1: { attribute: null } });
+    }
+    const large = docs.titans.find((d) => d.system.size_class === 'large')!;
+    expect(large.prototypeToken).toMatchObject({ width: 4, height: 4 });
+    for (const d of [...docs.foes, ...docs.squadmates]) expect(d.prototypeToken.bar1).toEqual({ attribute: 'health_bar' });
+    expect(docs.squadmates[0].prototypeToken).toMatchObject({ actorLink: true, disposition: 1 });
+    expect(docs.foes[0].prototypeToken).toMatchObject({ actorLink: false, disposition: -1 });
   });
 
   it('records the row riders on each Critical Injury', () => {

@@ -8,6 +8,7 @@ import type { Tables } from './data/load.ts';
 import { docId } from './data/ids.ts';
 import { checkPlayerText, escapeHtml, format, hyphenatedIds } from './data/wording.ts';
 import { gearSubtype } from './config-data.ts';
+import { prototypeTokenDefaults, type ActorType } from '../src/token-defaults.ts';
 
 export const SYSTEM_ID = 'wings-of-freedom';
 export const CORE_VERSION = '14.365';
@@ -94,7 +95,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
     const _id = docId('embedded', actorId, key);
     return { ...doc, _id, _key: `!actors.items!${actorId}.${_id}`, folder: undefined };
   };
-  const actor = (pack: PackName, key: string, name: string, type: string, img: string, system: Doc, sort: number, disposition: number, items: (id: string) => Doc[] = () => []): Doc => {
+  const actor = (pack: PackName, key: string, name: string, type: ActorType, img: string, system: Doc, sort: number, items: (id: string) => Doc[] = () => []): Doc => {
     const _id = docId(pack, key);
     return {
       _id,
@@ -112,7 +113,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
       sort,
       ownership: { default: 0 },
       flags: { [SYSTEM_ID]: { sourceId: key } },
-      prototypeToken: { name, actorLink: false, disposition, texture: { src: img } },
+      prototypeToken: { name, ...prototypeTokenDefaults(type, { sizeClass: system.size_class }), texture: { src: type === 'titan' ? `systems/${SYSTEM_ID}/assets/icons/titan-${system.abnormal ? 'abnormal' : system.size_class}.webp` : img } },
       _stats: stats(opts.systemVersion),
     };
   };
@@ -334,9 +335,12 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
   }
 
   // ------------------------------------------------------------ Titans
+  // The website's colour plate for each playable Titan (site/src/assets/plates, downscaled).
+  const titanPlate = (x: { id: string; size_class: string }) =>
+    `systems/${SYSTEM_ID}/assets/plates/plate-titan-${x.id.startsWith('standard-') ? x.size_class : x.id}.webp`;
   const hiddenForAbnormal = { toughness: false, nape_depth: false, regeneration_clock: false, attention_ladder: false };
   const titans = t.titans.map((x, i) =>
-    actor('titans', x.id, x.name, 'titan', ICON.titan, {
+    actor('titans', x.id, x.name, 'titan', titanPlate(x), {
       size_class: x.size_class,
       abnormal: x.abnormal,
       tempo: x.tempo,
@@ -354,13 +358,15 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
       },
       regeneration: 0,
       openings: 0,
+      heave_count: 0,
       next_behavior: { entry: '', revealed: false },
+      previous_behavior: '',
       attention_holder: '',
       focus_titan_label: '',
       hidden_until_read: hiddenForAbnormal,
       corpse: false,
       notes: '',
-    }, i * 100, -1),
+    }, i * 100),
   );
 
   // ------------------------------------------------------------ Squadmates (with their template Talent, Specialty, and Standard Issue)
@@ -384,7 +390,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
       template: m.id,
       wing: '',
       notes: '',
-    }, i * 100, 1, (actorId) => [
+    }, i * 100, (actorId) => [
       embed(actorId, talentDoc(talent, m.talent.level, 0), `talent:${talent.id}`),
       embed(actorId, specialtyDoc(specialty, 100), `specialty:${specialty.id}`),
       embed(actorId, gearDoc(gearRow('odm-gear'), 200, { rating: issue.odm_gear_rating, current: issue.odm_gear_rating }), 'odm'),
@@ -418,7 +424,7 @@ export function buildPackDocs(t: Tables, lang: Lang, opts: BuildOptions): Record
       weapon: weapon.fixed,
       firearm_loaded: true,
       notes: '',
-    }, i * 100, -1);
+    }, i * 100);
   });
 
   return { talents, specialties, origins, gear, 'critical-injuries': injuries, titans, squadmates, foes };

@@ -199,7 +199,10 @@ function gearStatus(g: any, subtype: string): { label: string; bad: boolean } {
   if (subtype === 'blade-set') return { label: s.in_handles ? t('WOF.Sheet.status.inHandles') : t('WOF.Sheet.status.carried'), bad: false };
   if (subtype === 'firearm') return { label: s.loaded ? t('WOF.Sheet.status.loaded') : t('WOF.Sheet.status.empty'), bad: !s.loaded };
   if (subtype === 'prosthetic') return { label: s.side ? t(`WOF.Side.${s.side}`) : t('WOF.Sheet.status.fitted'), bad: false };
-  if (s.rated && s.current <= 0) return { label: t('WOF.Sheet.status.spent'), bad: true };
+  if (s.rated && s.current <= 0) {
+    const state = (CONFIG.WOF.gearItems as { id: string; atZero: string | null }[]).find((x) => x.id === s.item_id)?.atZero;
+    return { label: t(state && state !== 'none' ? `WOF.GearState.${state}` : 'WOF.Sheet.status.spent'), bad: true };
+  }
   return { label: t('WOF.Sheet.status.carried'), bad: false };
 }
 
