@@ -86,25 +86,21 @@ const SECTIONS = [
       </Subsection>
 
       <Subsection title="Finishing a roll" note="Four steps, in order" id="finishing">
-        <div class="qr-prose">
-          <ol>
-            <li><b>Count every 6.</b> A roll needs <b>1 success</b> unless its rule names another number, such as a Nape Depth or a Parley value. The GM never raises or lowers what a roll needs.</li>
-            <li><b>Resolve any Stress Response,</b> at your Stress after the Push, before the roll takes effect.</li>
-            <li><b>Apply the effect,</b> or, on a failed called roll, the one cost that was staked.</li>
-            <li><b>Apply wear</b> from Gear Dice showing 1, if the roll was Pushed.</li>
-          </ol>
-          <p><b>Each success is used once.</b> The one exception is a Reaction, whose successes cancel against several attacks from the same Titan or Foe in one round.</p>
-        </div>
+        <ol>
+          <li><b>Count every 6.</b> A roll needs <b>1 success</b> unless its rule names another number, such as a Nape Depth or a Parley value. The GM never raises or lowers what a roll needs.</li>
+          <li><b>Resolve any Stress Response,</b> at your Stress after the Push, before the roll takes effect.</li>
+          <li><b>Apply the effect,</b> or, on a failed called roll, the one cost that was staked.</li>
+          <li><b>Apply wear</b> from Gear Dice showing 1, if the roll was Pushed.</li>
+        </ol>
+        <p><b>Each success is used once.</b> The one exception is a Reaction, whose successes cancel against several attacks from the same Titan or Foe in one round.</p>
       </Subsection>
 
       <CoreTable table="roll-exceptions" />
 
       <Subsection title="Called rolls" id="called-rolls">
-        <div class="qr-prose">
-          <p>The GM calls a roll when you try something no rule covers, its outcome is in doubt, and failure would cost something. Before the dice: the Catalog entry or the attribute, the Circumstances, and the stakes. It needs 1 success, and it can be Helped, Covered, and Pushed. Once the dice fall, none of that changes.</p>
-          <p>In a fight a called roll is the last resort. An act you describe is first a Catalog entry taken as written, then an improvised act with a model entry, and a called roll only for an act that would change nothing the fight tracks. It spends your action and never stands in for a Reaction.</p>
-          <p id="passive-rolls"><b>A passive roll</b> is a Spot or Size Up the GM makes for you out of sight, outside a fight, against something you do not know is there. It has no stakes, cannot be Helped or Pushed, and you learn its result only through what you notice.</p>
-        </div>
+        <p>The GM calls a roll when you try something no rule covers, its outcome is in doubt, and failure would cost something. Before the dice: the Catalog entry or the attribute, the Circumstances, and the stakes. It needs 1 success, and it can be Helped, Covered, and Pushed. Once the dice fall, none of that changes.</p>
+        <p>In a fight a called roll is the last resort. An act you describe is first a Catalog entry taken as written, then an improvised act with a model entry, and a called roll only for an act that would change nothing the fight tracks. It spends your action and never stands in for a Reaction.</p>
+        <p id="passive-rolls"><b>A passive roll</b> is a Spot or Size Up the GM makes for you out of sight, outside a fight, against something you do not know is there. It has no stakes, cannot be Helped or Pushed, and you learn its result only through what you notice.</p>
       </Subsection>
 
       <CoreTable table="called-roll-costs" />
@@ -144,10 +140,8 @@ const SECTIONS = [
       </BoxPair>
 
       <Subsection title="Covering" id="covering">
-        <div class="qr-prose">
-          <p>A player character who is not Down, is not the one Pushing, and is at the same Position or one step away may take the Push's Stress instead. Declared after the Push and before any die is rolled again, one Coverer only, and the Pushing soldier may refuse.</p>
-          <p>The Coverer gains 1 Stress. The Pushing soldier gains none and adds no new Stress Die. Everything else about the Push stands: their Stress Dice are rolled again, a 1 on one is still their Stress Response, and their Gear Dice still wear their gear. Covering is not an action, and a Squadmate never Covers.</p>
-        </div>
+        <p>A player character who is not Down, is not the one Pushing, and is at the same Position or one step away may take the Push's Stress instead. Declared after the Push and before any die is rolled again, one Coverer only, and the Pushing soldier may refuse.</p>
+        <p>The Coverer gains 1 Stress. The Pushing soldier gains none and adds no new Stress Die. Everything else about the Push stands: their Stress Dice are rolled again, a 1 on one is still their Stress Response, and their Gear Dice still wear their gear. Covering is not an action, and a Squadmate never Covers.</p>
       </Subsection>
 
       <SectionHead id="stress" eyebrow="4">Stress and Fear</SectionHead>
@@ -193,16 +187,14 @@ const SECTIONS = [
       </ul>
 
       <Subsection title="Attack and Reaction" note="One procedure for every attack" id="attack-and-reaction">
-        <div class="qr-prose">
-          <ol>
-            <li><b>The attack rolls first</b> and finishes, including any Push its own rules allow. Its successes are its <b>Severity</b>, announced to every target. A Titan and a Foe never Push.</li>
-            <li><b>Each target decides,</b> knowing the Severity, and rolls their own Reaction, with Help and Bonus Dice declared first and the step fixed when the card came up. The reacting side Pushes last.</li>
-            <li><b>Each success of the Reaction cancels one of the attack's.</b> What is left is that target's <b>Net Successes</b>.</li>
-            <li><b>It lands on 1 or more,</b> and reads the Net Successes wherever its rule names them. On 0 it whiffs against that target.</li>
-            <li><b>No Reaction, nothing cancelled.</b> Every success is net against a target who does not or cannot react. An attack that scored 0 whiffs against everyone, and no Reaction is made against it.</li>
-          </ol>
-          <p><b>At most one Reaction against each Titan, and each Foe, per round.</b> Its successes cancel against every later attack that Titan or Foe makes on you that round, each separately, and cancelling never uses them up. Titans cannot be blocked, so the only Reaction against one is a dodge.</p>
-        </div>
+        <ol>
+          <li><b>The attack rolls first</b> and finishes, including any Push its own rules allow. Its successes are its <b>Severity</b>, announced to every target. A Titan and a Foe never Push.</li>
+          <li><b>Each target decides,</b> knowing the Severity, and rolls their own Reaction, with Help and Bonus Dice declared first and the step fixed when the card came up. The reacting side Pushes last.</li>
+          <li><b>Each success of the Reaction cancels one of the attack's.</b> What is left is that target's <b>Net Successes</b>.</li>
+          <li><b>It lands on 1 or more,</b> and reads the Net Successes wherever its rule names them. On 0 it whiffs against that target.</li>
+          <li><b>No Reaction, nothing cancelled.</b> Every success is net against a target who does not or cannot react. An attack that scored 0 whiffs against everyone, and no Reaction is made against it.</li>
+        </ol>
+        <p><b>At most one Reaction against each Titan, and each Foe, per round.</b> Its successes cancel against every later attack that Titan or Foe makes on you that round, each separately, and cancelling never uses them up. Titans cannot be blocked, so the only Reaction against one is a dodge.</p>
       </Subsection>
 
       <SectionHead id="positions" eyebrow="7">Positions and Moves</SectionHead>
@@ -236,15 +228,13 @@ const SECTIONS = [
       <CoreTable table="body-parts" />
 
       <Subsection title="Cutting it down" id="cutting">
-        <div class="qr-prose">
-          <ul>
-            <li><b>A Body Part strike</b> adds each success to the part's count. At the part's Toughness it moves one state toward Broken and the count returns to 0. Each success past Broken makes 1 Opening.</li>
-            <li><b>A Nape strike</b> needs Blind Spot, you not holding its Attention and not Grabbed, working ODM Gear unless the Titan is grounded, and no retreat under way. <b>Reach the Nape Depth and it dies. Fall short and each success becomes 1 Opening.</b></li>
-            <li><b>Openings</b> wait on the Titan for a comrade: you can never spend one you made yourself. Each is worth 1 Bonus Die on a Nape strike.</li>
-            <li><b>A grounded Titan</b> gives Nape strikes 2 Bonus Dice, needs no working ODM Gear, and lets the close steps be made on foot.</li>
-            <li><b>Regeneration</b> fills 1 segment at the end of each round. When it is full, in order: every Opening erased, every count back to 0, the most damaged Body Part one state toward Intact, steam on every soldier On Body if a part moved, and the clock empty.</li>
-          </ul>
-        </div>
+        <ul>
+          <li><b>A Body Part strike</b> adds each success to the part's count. At the part's Toughness it moves one state toward Broken and the count returns to 0. Each success past Broken makes 1 Opening.</li>
+          <li><b>A Nape strike</b> needs Blind Spot, you not holding its Attention and not Grabbed, working ODM Gear unless the Titan is grounded, and no retreat under way. <b>Reach the Nape Depth and it dies. Fall short and each success becomes 1 Opening.</b></li>
+          <li><b>Openings</b> wait on the Titan for a comrade: you can never spend one you made yourself. Each is worth 1 Bonus Die on a Nape strike.</li>
+          <li><b>A grounded Titan</b> gives Nape strikes 2 Bonus Dice, needs no working ODM Gear, and lets the close steps be made on foot.</li>
+          <li><b>Regeneration</b> fills 1 segment at the end of each round. When it is full, in order: every Opening erased, every count back to 0, the most damaged Body Part one state toward Intact, steam on every soldier On Body if a part moved, and the clock empty.</li>
+        </ul>
       </Subsection>
 
       <CoreTable table="steam" />
@@ -366,22 +356,5 @@ const SECTIONS = [
     grid-column: 2;
     color: var(--ink-2);
     font-size: var(--fs-sm);
-  }
-
-  /* Prose inside a Subsection, which the chapter body styles do not reach. */
-  .qr-prose > * + * {
-    margin-top: 1em;
-  }
-  .qr-prose p,
-  .qr-prose ul,
-  .qr-prose ol {
-    max-width: var(--measure);
-  }
-  .qr-prose ul,
-  .qr-prose ol {
-    padding-left: 1.2em;
-  }
-  .qr-prose li + li {
-    margin-top: 0.35em;
   }
 </style>

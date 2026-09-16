@@ -12,30 +12,30 @@
   position: relative;
   display: flow-root;
 }
-.rules-body > * + * {
+/* `--prose` is every block that lays prose out on the page column: the chapter
+   body itself and any Subsection nested in it. A Subsection is a plain wrapper,
+   so its children have to be reached by the same rules as the body's own. */
+.rules-body > * + *,
+.rules-body .subsection > * + * {
   margin-top: 1em;
 }
-.rules-body > p,
-.rules-body > ul,
-.rules-body > ol,
-.rules-body > h3,
-.rules-body > h4,
-.rules-body > blockquote:not(.opener) {
+.rules-body > :is(p, ul, ol, h3, h4, blockquote:not(.opener)),
+.rules-body .subsection > :is(p, ul, ol, h3, h4, blockquote:not(.opener)) {
   max-width: var(--measure);
 }
-.rules-body > ul,
-.rules-body > ol {
+.rules-body > :is(ul, ol),
+.rules-body .subsection > :is(ul, ol) {
   padding-left: 1.2em;
 }
 .rules-body li + li {
   margin-top: 0.35em;
 }
-.rules-body > .wide,
-.rules-body > .section-head,
-.rules-body > .subsection {
+.rules-body > :is(.wide, .section-head, .subsection),
+.rules-body .subsection > .wide {
   margin-top: clamp(30px, 4vw, 48px);
 }
-.rules-body > :first-child {
+.rules-body > :first-child,
+.rules-body .subsection > :first-child {
   margin-top: 0;
 }
 .rules-body strong {
@@ -53,7 +53,8 @@
   .rules-body {
     padding-left: calc(var(--note-w) + var(--note-gap));
   }
-  .rules-body > .marg {
+  .rules-body > .marg,
+  .rules-body .subsection > .marg {
     float: left;
     clear: left;
     width: var(--note-w);
@@ -63,12 +64,14 @@
   }
 }
 @media (max-width: 1080px) {
-  .rules-body > .marg {
+  .rules-body > .marg,
+  .rules-body .subsection > .marg {
     max-width: var(--measure);
     padding: 4px 0 4px 14px;
     border-left: 2px solid rgba(70, 86, 107, 0.4);
   }
-  .rules-body > .marg::before {
+  .rules-body > .marg::before,
+  .rules-body .subsection > .marg::before {
     display: none;
   }
 }
