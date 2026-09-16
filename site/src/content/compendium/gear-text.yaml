@@ -1,0 +1,297 @@
+# Player wording for the gear tables, keyed by each row's id in the shared gear tables.
+# The tables hold the items, the numbers, and the order; the sentences a player reads are here.
+# A row with no wording, or wording that still carries a reference, fails the build
+# (site/src/lib/gear-tables.ts). Lists must match their table's rows one for one, so a new row
+# cannot go missing from a page.
+#
+#   items        one entry per gear item: what it is, when it counts as not had, what 0 means,
+#                what brings it back, what it counts as toward your carrying limit, and the
+#                extra lines its Compendium card shows
+#   carrying     what each thing counts as toward the carrying limit
+#   passing      what can be passed and taken, and what never moves
+#   falls        the height bands and the landings
+#   supply       the four kinds of Squad Supply and what spends each
+#   issue        the steps of receiving Standard Issue
+#
+# Never change a rule's meaning. When a source below changes, check the wording against it and
+# record the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
+sources:
+  - path: data/gear/items.yaml
+    sha: "a4422fa6230a092d786f8e3d3c3fd02849a96b57"
+  - path: data/gear/odm-gear.yaml
+    sha: "79daa17608d56b70fc4d1835336f10cb552d7246"
+  - path: data/gear/blade-sets.yaml
+    sha: "e62aaab8e850513bbce923e7a8b7a66a9d1f5e2e"
+  - path: data/gear/horses.yaml
+    sha: "879202de4b48ec13bf78e1e56a8bc461fdf6d72d"
+  - path: data/gear/falls.yaml
+    sha: "7508711ebe1cb5f4afd6468ffeef8b443d5e5420"
+  - path: data/gear/carrying.yaml
+    sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
+  - path: data/gear/field-repair.yaml
+    sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
+  - path: data/gear/standard-issue.yaml
+    sha: "a00dcfbd22cef064a4fad26f7b9156291fc41be5"
+  - path: data/gear/squad-supply.yaml
+    sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
+  - path: data/character/action-catalog.yaml
+    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+
+items:
+  odm-gear:
+    what: >-
+      The gas-powered harness that carries you between anchors and up to a Titan's Nape. You wear
+      one, and it is never passed, taken, or shared out.
+    not_had:
+      - It is Jammed, worn down to 0.
+      - Your Gas Rating is 0. The training harness of the Graduation Exam has no canister, so this never applies to it.
+    at_zero: >-
+      It Jams. No Gear Dice, no ODM move, no Nape strike or close Body Part strike, and a fall if
+      you are airborne.
+    wear: Each point of wear lowers the current rating by 1.
+    restore:
+      - Field Repair, 1 point per success.
+      - A full Standard Issue replaces Jammed or worn ODM Gear. The interim issue replaces it only if its rating is below the Funding row's. You may decline the exchange and keep it as it is.
+      - The Maintain Gear Downtime Action.
+    carried: Worn, with its fitted canister, its handles, and its scabbards. It counts as no item.
+    extra:
+      - A roll takes Gear Dice from one item only, chosen before you roll.
+  gas-canister:
+    what: >-
+      The pressurised gas your harness runs on. The one fitted to your ODM Gear holds your Gas
+      Rating, and each spare you carry records its own.
+    not_had: []
+    at_zero: >-
+      A canister at Gas Rating 0 is discarded as soon as it comes off ODM Gear, so a carried spare
+      always has gas in it.
+    wear: A canister has no rating and never wears. It empties through Gas Rolls.
+    restore: []
+    carried: Your fitted canister counts as no item. Each spare counts as 1.
+    extra:
+      - Standard Issue fills every canister you hold and gives spares up to the Funding row's number.
+      - A canister owing gas is rolled for before it moves, and is discarded rather than passed if that roll empties it.
+  blade-set:
+    what: >-
+      One pair of ODM blades, and the only unit in which blades are carried, counted, passed, and
+      lost. Only the set in your handles cuts.
+    not_had:
+      - It is not the set in your handles. Swap it in first.
+    at_zero: >-
+      A Blade Set has no worn state. Any point of wear ruins it outright, and the ruined set is
+      discarded on the spot.
+    wear: Ruin takes the place of wear, so a current rating never falls and a higher rating is no safer.
+    restore: []
+    carried: The set in your handles counts as no item. Every other Blade Set counts as 1.
+    extra:
+      - Your handles hold at most one Blade Set. When a Titan Engagement begins, empty handles take one of your carried sets.
+      - The swap costs neither your move nor your action, once during each of your own turns.
+  horse:
+    what: >-
+      The mount Standard Issue gives you. You can mount only your own horse, and in a Titan
+      Engagement it holds a Position of its own once you dismount.
+    not_had:
+      - It is lame, worn down to 0.
+      - For a dodge, for Ride, and for Leap Clear, you are not mounted on it.
+      - For Break Attention, you are neither mounted on it nor at the Position it holds, compared relative to the Focus Titan recorded with that Position.
+    at_zero: >-
+      It goes lame. It cannot be mounted, gives no Gear Dice, and drops any rider, who falls from a
+      horse.
+    wear: Each point of wear lowers the current rating by 1. Sure Seat can ignore 1 point of it.
+    restore:
+      - Standard Issue, full or interim, replaces a lame or worn horse. You may decline the exchange and keep the horse as it is.
+      - The Maintain Gear Downtime Action, which also ends lameness.
+    carried: Ridden or left standing, never carried. It counts as no item.
+    extra:
+      - A Pushed roll made with the horse wears the horse, not your ODM Gear, and does not by itself make your Gas Roll three dice.
+      - Field Repair cannot mend a horse.
+  medical-kit:
+    what: A Medic's bandages, splints, and salves, issued rated 1 to the Medic Specialty alone.
+    not_had:
+      - It is spent, worn down to 0.
+    at_zero: It is spent, so Treat Injury rolls Wits alone.
+    wear: Each point of wear lowers the current rating by 1.
+    restore:
+      - Restocking in a care window, for 1 unit of medical supplies, which fills it to its rating. Each kit once per window.
+      - A full Standard Issue gives a Medic a new kit when no kit of theirs is above 0. The interim issue does not.
+      - The Maintain Gear Downtime Action.
+    carried: Each medical kit counts as 1 item.
+    extra:
+      - Field Repair cannot mend a medical kit.
+  tool-kit:
+    what: An Engineer's spanners, files, and spare parts, issued rated 1 to the Engineer Specialty alone.
+    not_had:
+      - It is worn out, worn down to 0.
+    at_zero: It is worn out, so Field Repair rolls Wits alone unless Make Do applies.
+    wear: Each point of wear lowers the current rating by 1.
+    restore:
+      - Field Repair with another tool kit, or with Wits alone. A kit at 0 gives no Gear Dice, so its owner can mend it themselves.
+      - A full Standard Issue gives an Engineer a new kit when no kit of theirs is above 0. The interim issue does not.
+      - The Maintain Gear Downtime Action.
+    carried: Each tool kit counts as 1 item.
+    extra:
+      - The tool kit that gives a Field Repair roll its Gear Dice is never the item that roll mends.
+  flintlock-pistol:
+    what: >-
+      A single-shot sidearm, carried against people rather than Titans. It comes only from a
+      Requisition, and it comes empty.
+    not_had:
+      - It is worn out, worn down to 0.
+      - It is empty.
+    at_zero: It is worn out and cannot be fired until a repair brings it back.
+    wear: Each point of wear lowers the current rating by 1.
+    restore:
+      - Field Repair, 1 point per success.
+      - The Maintain Gear Downtime Action.
+    carried: Each flintlock pistol counts as 1 item.
+    extra:
+      - Loaded or empty, and your sheet records which. Only Reload loads it, spending 1 unit of shot, and firing empties it.
+      - Outside a Skirmish and a Titan Engagement you may load it at any time, and it stays loaded until it is fired.
+      - No use in a Titan Engagement. Shoot is never taken there, and a firearm gives Gear Dice to no roll made there.
+      - Standard Issue never gives a firearm and never restores one.
+  musket:
+    what: >-
+      A long gun, slower to load and heavier to carry than the pistol. It comes only from a
+      Requisition, and it comes empty.
+    not_had:
+      - It is worn out, worn down to 0.
+      - It is empty.
+    at_zero: It is worn out and cannot be fired until a repair brings it back.
+    wear: Each point of wear lowers the current rating by 1.
+    restore:
+      - Field Repair, 1 point per success.
+      - The Maintain Gear Downtime Action.
+    carried: Each musket counts as 2 items.
+    extra:
+      - Loaded or empty, and your sheet records which. Reloading a musket in a Skirmish also spends your move.
+      - Outside a Skirmish and a Titan Engagement you may load it at any time, and it stays loaded until it is fired.
+      - No use in a Titan Engagement. Shoot is never taken there, and a firearm gives Gear Dice to no roll made there.
+      - Standard Issue never gives a firearm and never restores one.
+  prosthetic-arm:
+    what: >-
+      A hook or an iron hand on a leather socket, fitted to one arm you have lost. Workshop work of
+      the era, not a weapon.
+    not_had: []
+    at_zero: It has no rating, so it never reaches 0.
+    wear: It never wears.
+    restore: []
+    carried: Fitted to you rather than carried. It counts as no item and is never passed or taken.
+    extra:
+      - It comes only from a Requisition, one per Requisition, and it is fitted during a Downtime once the loss at that side has healed.
+      - Standard Issue never gives one and never takes one away. It leaves play with you when you die.
+  prosthetic-leg:
+    what: >-
+      A peg or a jointed wooden leg on a leather socket, fitted to one leg you have lost. Workshop
+      work of the era, not a weapon.
+    not_had: []
+    at_zero: It has no rating, so it never reaches 0.
+    wear: It never wears.
+    restore: []
+    carried: Fitted to you rather than carried. It counts as no item and is never passed or taken.
+    extra:
+      - It comes only from a Requisition, one per Requisition, and it is fitted during a Downtime once the loss at that side has healed.
+      - Standard Issue never gives one and never takes one away. It leaves play with you when you die.
+
+# What each thing counts as toward your carrying limit, keyed by the row's own words.
+carrying:
+  odm-gear-worn-with-its-fitted-canister-its-handles-and-its-scabbards: ODM Gear you wear, with its fitted canister, handles, and scabbards
+  the-blade-set-in-the-handles: The Blade Set in your handles
+  each-spare-gas-canister: Each spare gas canister
+  each-blade-set-not-in-the-handles: Each Blade Set outside your handles
+  each-medical-kit: Each medical kit
+  each-tool-kit: Each tool kit
+  each-flintlock-pistol: Each flintlock pistol
+  each-musket: Each musket
+  each-prosthetic-arm-or-prosthetic-leg: Each prosthetic fitted to you
+  a-comrade-the-soldier-carries: A comrade you carry, plus every item they carry
+  a-horse: A horse
+  squad-supply: Squad Supply
+
+passing:
+  can:
+    - item: A spare gas canister
+      note: It arrives with the Gas Rating it holds.
+    - item: Your fitted canister
+      note: >-
+        Only if it still has gas after the Gas Roll the handover calls for. You are left at Gas
+        Rating 0 with nothing fitted, and it reaches your comrade as a spare.
+    - item: A Blade Set outside your handles
+      note: It keeps its own rating. The set in your handles never moves.
+    - item: A medical kit
+      note: It keeps its rating and its current rating.
+    - item: A tool kit
+      note: It keeps its rating and its current rating.
+    - item: A flintlock pistol or a musket
+      note: Loaded or empty as it stands, and it keeps its rating and its current rating.
+  cannot:
+    item: ODM Gear, the Blade Set in your handles, a horse, and Squad Supply
+    note: >-
+      A comrade you carry is not passed either. Set them down, and a comrade at that Position
+      lifts them.
+
+falls:
+  bands:
+    low: A fall from a horse, and any other fall from Distant or In Reach.
+    high: A fall from On Body or Blind Spot.
+    extreme: Only a high fall raised one band. Nothing starts here, and no fall goes past it.
+  landings:
+    no-harm: Nothing broken
+    jarred: Jarred
+    hard-landing: Hard landing
+    heavy-landing: Heavy landing
+    shattering-landing: Shattering landing
+
+supply:
+  rations:
+    what: Food and fodder for the Squad and its horses.
+    spent_by: >-
+      A Leg spends rations by its Leg roll and its Pace, a Night Camp spends 1, and a hazard may
+      spend or lose some. With none left the Leg or the camp still happens, at the price the
+      Expedition rules set.
+  flares:
+    what: Signal rounds fired from the harness, and the Survey Corps' only voice at a distance.
+    spent_by: >-
+      Any rule that names a flare spends 1: the flare decoy for Break Attention, the Signal Relay,
+      a hazard row, and a flare fired at a person in a Skirmish.
+  medical:
+    what: Bandages, spirits, and dressings held for the whole Squad.
+    spent_by: >-
+      1 unit buys 1 Bonus Die on a Treat Injury roll in a care window, at most 1 unit a roll, and 1
+      unit fills one medical kit to its rating, once per window for each kit.
+  shot:
+    what: Powder and ball for the Squad's firearms.
+    spent_by: Reload spends 1 unit to load one flintlock pistol or musket. No other rule spends it.
+
+issue:
+  odm-gear:
+    title: ODM Gear.
+    text: >-
+      With none, or with ODM Gear that is Jammed, worn, or rated below the row, you receive a new
+      harness at the row's rating with a full current rating, and the old one leaves play. Any
+      other harness you keep as it is.
+  canisters:
+    title: Canisters.
+    text: >-
+      Every canister you hold is filled. A full one is fitted if you have none fitted, and full
+      spares are added up to the row's number. None is taken away.
+  blade-sets:
+    title: Blade Sets.
+    text: >-
+      Blade Sets are added up to the row's number, counting the one in your handles, and one is
+      fitted if your handles are empty. None is taken away.
+  horse:
+    title: Horse.
+    text: >-
+      With none, or with a horse that is lame, worn, or rated below the row, you receive one at the
+      row's rating with a full current rating, and the old one leaves play. If you were mounted on
+      it you are mounted on the new one. Any other horse you keep as it is.
+  specialty-item:
+    title: Specialty item.
+    text: >-
+      A Medic holding no medical kit above 0, and an Engineer holding no tool kit above 0, receives
+      one. Every kit of that kind they hold at 0 leaves play when they do.
+  decline:
+    title: Declining.
+    text: >-
+      You may decline any spare canister, Blade Set, or Specialty item, and in any issue you may
+      decline the exchange of Jammed or worn ODM Gear or of a lame or worn horse, keeping it as it
+      is until a rule restores it. Each choice is made at the step that would give the item.

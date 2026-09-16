@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import OpenerLayout from '~/layouts/OpenerLayout.astro';
 import { COMPENDIUM_SECTIONS, COMPENDIUM_TABS } from '~/lib/compendium';
+import { gearEntries } from '~/lib/gear-tables';
 import { lifepathTables } from '~/lib/lifepath-tables';
 import plate from '~/assets/plates/plate-compendium.webp';
 
@@ -12,6 +13,7 @@ const counts: Record<string, number> = {
   specialties: (await getCollection('specialties')).filter((s) => !s.data.general).length,
   origins: lifepathTables().origins.length,
   titans: (await getCollection('titans')).length,
+  gear: gearEntries().length,
 };
 ---
 <OpenerLayout
