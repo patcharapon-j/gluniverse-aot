@@ -73,7 +73,7 @@
       disabled={!view.editable}
       onchange={(e) => actor.update({ name: e.currentTarget.value.trim() || view.name })}
     />
-    <div class="meta">
+    <div class="meta line">
       <span use:contextMenu={itemMenu(view.specialty?.id)}>
         {t('TYPES.Item.specialty')}
         {#if view.specialty}
@@ -86,7 +86,7 @@
           <button type="button" class="link" onclick={() => openItem(actor, view.origin!.id)}>{view.origin.name}</button>
         {:else}<b class="blank" use:tooltip={t('WOF.Sheet.drop.hint')}>{t('WOF.Sheet.none')}</b>{/if}
       </span>
-      <label>
+      <label class="grow">
         {t('WOF.Actor.Soldier.FIELDS.haven.label')}
         {#if havens.length}
           <select value={s.haven} disabled={!view.editable} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)}>
@@ -97,7 +97,7 @@
           <input type="text" value={s.haven} disabled={!view.editable} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)} />
         {/if}
       </label>
-      <label>
+      <label class="grow">
         {t('WOF.Actor.Soldier.FIELDS.canon_tie.label')}
         <input type="text" value={s.canon_tie} placeholder={view.origin?.canonTie || ''} disabled={!view.editable} onchange={(e) => setField(actor, 'system.canon_tie', e.currentTarget.value)} />
       </label>
