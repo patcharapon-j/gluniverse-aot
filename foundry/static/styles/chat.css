@@ -78,6 +78,8 @@
 .wof-card .die.hit::after { content: ""; position: absolute; inset: -3px; border: 2px solid var(--brass); border-radius: 3px; box-shadow: 0 0 0 1px rgba(110, 83, 37, .4); }
 .wof-card .die.stress.hit::after, .wof-card .die.titan.hit::after { border-radius: 50%; }
 .wof-card .die.miss svg { opacity: .62; }
+/* A kind's blank face keeps its number legible. */
+.wof-card .die.miss:not(.plain) svg { opacity: .82; }
 .wof-card .die.stress.one svg, .wof-card .die.gear.one svg { opacity: 1; }
 .wof-card .die.stress.one::after { content: ""; position: absolute; inset: -3px; border: 2px dashed var(--red); border-radius: 50%; }
 .wof-card .die.locked::before { content: ""; position: absolute; right: -3px; bottom: -3px; width: 9px; height: 9px; z-index: 1; background: var(--ink); clip-path: polygon(0 40%, 20% 40%, 20% 20%, 50% 0, 80% 20%, 80% 40%, 100% 40%, 100% 100%, 0 100%); }
