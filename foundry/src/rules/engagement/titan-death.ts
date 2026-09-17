@@ -47,7 +47,8 @@ export function planTitanDeath(x: DeathInput): DeathPlan | null {
   const positions: DeathPlan['positions'] = {};
   for (const s of x.soldiers) {
     const p = { ...s.positions };
-    if (s.id === freed) delete p[label];
+    // The freed soldier's last Position relative to the body is on-body (grab.yaml, release, titan_dead).
+    if (s.id === freed) p[label] = corpsePosition('on-body')!;
     else if (p[label] !== undefined) p[label] = corpsePosition(p[label])!;
     positions[s.id] = p;
   }

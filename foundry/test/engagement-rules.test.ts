@@ -817,7 +817,7 @@ describe('a Focus Titan dies (titan-harm.yaml, titan_death)', () => {
 
   it('frees the Grabbed soldier into the steam and the fall', () => {
     expect(plan.freed).toBe('g');
-    expect(plan.positions.g.B).toBe('distant');
+    expect(plan.positions.g).toEqual({ A: 'in-reach', B: 'distant' });
     expect(plan.steam).toEqual(['a', 'b', 'g']);
     expect(plan.fall).toEqual(['a', 'b', 'g']);
     expect(planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 1, grounded: true })!.fall).toEqual([]);
