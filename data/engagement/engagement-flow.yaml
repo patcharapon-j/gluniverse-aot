@@ -19,6 +19,10 @@ starting:
         decision batch 9, 9-15). Any of these neither names comes from
         data/engagement/engagement-setup.yaml. The retreat clock
         starts empty (data/engagement/background-titans.yaml, retreat_clock).
+    - id: anchors
+      text: >-
+        The Titan Engagement's Anchors are the Anchor Rating's anchors value, and every soldier's
+        Momentum is 0 (data/engagement/anchor-ratings.yaml, anchors, momentum). Nothing is rolled.
     - id: label
       text: The Focus Titan is labelled A (data/gear/sheet-fields.yaml, focus_titan_label).
     - id: titan-values

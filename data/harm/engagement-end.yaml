@@ -66,6 +66,12 @@ positions_read: >-
   Position relative to it, and the Position records are cleared only after the last step above
   (data/engagement/positions.yaml, a_focus_titan_dies; decision batch 5, OQ-122). While a Titan's corpse lies on the field, the last Positions relative to that Titan are the Positions relative to its corpse as they stand when the Titan Engagement ends (data/engagement/positions.yaml, corpse; decision batch 8, 8-20).
 
+momentum_and_anchors: >-
+  When the Titan Engagement ends, every soldier's Momentum becomes 0 and the Titan Engagement's
+  Anchors are cleared with the Position records, after the last step above
+  (data/engagement/anchor-ratings.yaml, anchors, momentum). No step reads either. A Skirmish has
+  neither (data/skirmish/skirmish.yaml).
+
 # A Skirmish ends with the same steps (decision batch 7, 7-17; data/skirmish/skirmish.yaml, ending).
 procedures:
   titan-engagement: The steps as written.
