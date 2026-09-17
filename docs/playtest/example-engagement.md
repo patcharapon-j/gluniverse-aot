@@ -342,15 +342,19 @@ steel and he tore free with the cut half-made.
 > **3 Openings, created by Til.** He has no Relentless, so no fourth. Every Nape strike, whatever
 > its result, sets the **hooked-by-strike flag** on him.
 
-> **[TABLE]** Ilse (10): move On Body → In Reach by ODM, and **Treat Injury** on Kass is out of
-> reach of this example's scope — she instead holds her action to Help. Titan A (15): **a decoy
-> holds its Attention**, so the card resolves nothing, the hold drops to 0 cards left and
-> **ends**, the Next Behavior counts as spent and a new one is rolled, and **the ladder is
-> evaluated** — but **the flags stay**, because this card resolved no behavior.
+> **[TABLE]** Ilse (10): she stays at **On Body**, moving nothing, and keeps her action unspent
+> for a Help next round. Holding a Position without moving is **not ODM use**, even while
+> airborne, so it costs her no gas.
 >
-> Ladder: rung 1, **hooked into its body** — Til holds the hooked-by-strike flag, and nobody is
-> On Body. **Til holds Attention**, and the card does nothing else. The Titan turns to the man
-> in its Nape and has not yet acted on it.
+> Titan A (15): **a decoy holds its Attention**, so the card resolves nothing, the hold drops to
+> 0 cards left and **ends**, the Next Behavior counts as spent and a new one is rolled, and **the
+> ladder is evaluated** — but **the flags stay**, because this card resolved no behavior.
+>
+> Ladder: rung 1, **hooked into its body**, is met by **two** candidates — Til, who holds the
+> hooked-by-strike flag, and **Ilse, who is at On Body**. They tie, and the tie-break inside
+> that rung decides it: when anyone tied there holds the hooked-by-strike flag, **only they stay
+> tied**. A Nape striker who fell short draws the Titan before a soldier who is merely On Body.
+> **Til holds Attention**, and the card does nothing else.
 >
 > Nore (19): moves to In Reach, holds her action.
 >
