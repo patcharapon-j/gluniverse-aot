@@ -134,6 +134,12 @@ export function rerollCounts(d: DiceFaces): { base: number; stress: number } {
   return { base: d.base.filter((f) => f !== 6).length, stress: d.stress.filter((f) => f !== 6).length };
 }
 
+/** The dice a Push rolls, and so the only dice Dice So Nice shows for it: the non-6 base and Stress Dice, plus the new Stress Die unless Covered. */
+export function pushRollCounts(d: DiceFaces, covered: boolean): { base: number; stress: number } {
+  const r = rerollCounts(d);
+  return { base: r.base, stress: r.stress + (covered ? 0 : 1) };
+}
+
 /** Why a roll cannot be Pushed now, or null (ADR-0004 order: a Stress Die 1 forbids it). */
 export function pushBlock(s: PushState): PushBlock {
   if (!s.pushAllowed) return 'not-allowed';

@@ -10,6 +10,8 @@
  */
 import { ASSETS } from '../art.ts';
 import { SYSTEM_ID } from '../config.ts';
+import { FLAG } from './card.ts';
+import { dsnHookAnimates, SHOWN_ROLLS_FLAG } from './dsn-rules.ts';
 
 const DICE = `${ASSETS}/dice`;
 const BLANK = { label: `${DICE}/blank-label.webp`, bump: `${DICE}/blank-bump.png` };
@@ -68,6 +70,13 @@ export function presetFaces(p: KindPreset): { labels: string[]; bumpMaps: string
 }
 
 export function registerDiceSoNice(): void {
+  // Dice So Nice animates the rolls a chat message gains; a card's added dice were shown already.
+  Hooks.on('diceSoNiceMessageProcessed', (id: string, interception: { willTrigger3DRoll: boolean }) => {
+    const message = game.messages.get(id);
+    if (!message?.getFlag(SYSTEM_ID, FLAG)) return;
+    const shown = Number(message.getFlag(SYSTEM_ID, SHOWN_ROLLS_FLAG) ?? 0);
+    if (!dsnHookAnimates(message.rolls, shown)) interception.willTrigger3DRoll = false;
+  });
   Hooks.once('diceSoNiceReady', async (dice3d: any) => {
     const t = (k: string) => game.i18n.localize(k);
     dice3d.addSystem({ id: SYSTEM_ID, name: t('WOF.SystemTitle'), group: t('WOF.SystemTitle') }, 'preferred');

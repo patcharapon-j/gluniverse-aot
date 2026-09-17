@@ -4,7 +4,7 @@
  * called roll, and the Gas Roll a Fear result calls for. Each reads the card from its message,
  * changes the documents, and saves the same message again.
  */
-import { applyPush, pushBlock, pushStress, rerollCounts, responseDue, wearOutcome, wearPoints, WEAR_TALENTS, type Op } from '../rules/roll.ts';
+import { applyPush, pushBlock, pushRollCounts, pushStress, responseDue, wearOutcome, wearPoints, WEAR_TALENTS, type Op } from '../rules/roll.ts';
 import { actorPool } from './actor-pool.ts';
 import { applyNew, cardAction, dropOps, ops } from './apply.ts';
 import type { ActionCard, AttackCard, CallCard, FoeAttackCard, TableCard } from './card.ts';
@@ -100,9 +100,10 @@ async function pushCard(message: any): Promise<ActionCard | null> {
     if (used) fresh.push(used);
   }
 
-  // Roll only the dice the Push picks up, so Dice So Nice shows just those.
-  const counts = rerollCounts(card.dice);
-  const roll = await WofRoll().rollPool({ base: counts.base, stress: counts.stress + (covered ? 0 : 1) });
+  // Roll only the dice the Push picks up, so Dice So Nice shows just those. The GM's client shows
+  // them for a proxied Push too; saveCard marks the rolls as shown, so Dice So Nice's own update
+  // hook does not show them (or the whole card) a second time.
+  const roll = await WofRoll().rollPool(pushRollCounts(card.dice, covered));
   await showDice(roll, message.whisper?.length ? message.whisper : null, message.blind);
   const pushed = applyPush(card.dice, { base: roll.facesOf('base'), stress: roll.facesOf('stress') }, !covered);
   card.dice = pushed.dice;

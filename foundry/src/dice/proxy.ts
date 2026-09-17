@@ -8,6 +8,7 @@
  */
 import { SYSTEM_ID } from '../config.ts';
 import { FLAG, plainSummary, type Card } from './card.ts';
+import { SHOWN_ROLLS_FLAG } from './dsn-rules.ts';
 import { checkCardRewrite, checkCreateItem, checkDeleteItem, checkOpUpdate, checkPushRequest, recordRun, type GuardWorld, type Ledger, type OpContext } from './proxy-guard.ts';
 
 const QUERY = `${SYSTEM_ID}.proxy`;
@@ -209,7 +210,11 @@ async function viaGM(req: Request): Promise<boolean> {
 export async function writeCard(message: any, card: Card, rolls?: string[]): Promise<boolean> {
   if (message.canUserModify(game.user, 'update')) {
     const data: Record<string, unknown> = { [`flags.${SYSTEM_ID}.${FLAG}`]: card, content: summary(card) };
-    if (rolls) data.rolls = rolls;
+    if (rolls) {
+      data.rolls = rolls;
+      // The caller showed the dice it added itself (src/dice/dsn-rules.ts).
+      data[`flags.${SYSTEM_ID}.${SHOWN_ROLLS_FLAG}`] = rolls.length;
+    }
     await message.update(data);
     return true;
   }
