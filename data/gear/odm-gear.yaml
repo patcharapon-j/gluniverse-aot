@@ -6,15 +6,18 @@ id: odm-gear
 name: ODM Gear and Gas
 chapter: 04-gear
 adrs: [ADR-0004, ADR-0009, ADR-0014, ADR-0015, ADR-0019, ADR-0024]
-decided: [OQ-01, OQ-12, OQ-23, OQ-60, OQ-61]
+decided: [OQ-01, OQ-12, OQ-23, OQ-60, OQ-61, OQ-180]
 
 item: odm-gear   # data/gear/items.yaml
 rolls_it_rates: [dodge, break-attention, fly, leap-clear]   # data/character/action-catalog.yaml; leap-clear: decision batch 8, 8-9
 
 odm_moves:
   definition: >-
-    An ODM move is a move a soldier makes on their own ODM Gear. Which Position changes need an
-    ODM move at each Anchor Rating, and which can be made on foot or mounted, is in
+    An ODM move is a move a soldier makes on their own ODM Gear, and every ODM move is a Flight:
+    it is rolled for fly, its step happens whatever the roll gives, each success is 1 Momentum, and
+    no successes sets the loudest flag (data/engagement/positions.yaml, moves, flight;
+    data/engagement/anchor-ratings.yaml, momentum). Which Position changes need an ODM move at each
+    Anchor Rating, and which can be made on foot or mounted, is in
     data/engagement/anchor-ratings.yaml (move_kinds, ratings).
   needs: ODM Gear that counts as had (data/gear/items.yaml, odm-gear, counts_as_not_had).
   mounted: A mounted soldier's ODM move dismounts them first (data/gear/horses.yaml, mounted).
@@ -29,8 +32,14 @@ odm_use:
     A soldier uses ODM Gear in a round if, during that round, they make an ODM move, make a roll
     whose gear item is their ODM Gear, or take an act that a Chapter 5 rule names as ODM use
     (data/engagement/positions.yaml, moves, odm_use_named_by_this_chapter).
+  one_gas_roll: >-
+    A Flight is both an ODM move and a roll whose gear item is the soldier's ODM Gear, and a
+    soldier who used ODM Gear in a round makes one Gas Roll for that round however many times they
+    used it (gas_roll, when). A mounted charge is not ODM use (data/gear/horses.yaml, mounted,
+    charge).
   not_odm_use:
     - Holding a Position without moving, including staying airborne on the soldier's anchors.
+    - A mounted charge (data/gear/horses.yaml, mounted, charge).
     - A roll whose gear item is a Blade Set, a horse, or a kit, including every Nape strike.
     - Being carried by a comrade.
   outside_titan_engagement: >-
@@ -118,7 +127,7 @@ gas_roll:
       is discarded and is never a left item.
   dice:
     standard: 2
-    after_pushed_odm_roll: 3   # any Pushed roll this round whose gear item was the soldier's ODM Gear (Chapter 1, section 1.5; OQ-12)
+    after_pushed_odm_roll: 3   # any Pushed roll this round whose gear item was the soldier's ODM Gear, a Pushed Flight included (Chapter 1, section 1.5; OQ-12)
     maximum: 3
     pushed_dodge_with_horse: Does not by itself make the roll three dice (ADR-0019; OQ-25).
     squadmate: 2   # a Squadmate never Pushes
@@ -128,6 +137,7 @@ gas_roll:
   reading: Count the dice showing 1. The dice are not added, and a 6 does nothing.
   effect: Lower the soldier's Gas Rating by 1 for each die showing 1, to a minimum of 0.
   circumstances: never   # not an attribute roll (data/core/circumstances.yaml, never; decision batch 9, 9-2)
+  momentum: A soldier who spends Momentum on a clean line makes no Gas Roll for that round (data/engagement/anchor-ratings.yaml, momentum, spends, clean-line).
   not_an_attribute_roll: >-
     No attribute, Talent dice, Bonus Dice, Gear Dice, Stress Dice, or Circumstances. It cannot be Pushed,
     Helped, or Covered, and never causes a Stress Response (Chapter 1, section 1.3).
@@ -172,7 +182,7 @@ jam:
     - The soldier cannot make an ODM move while it is Jammed, so they make no Gas Roll for a later round. The Gas Roll for the round in which it Jammed is still made.
     - The Gas Rating does not change.
     - The soldier cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot (strikes).
-    - If the soldier is airborne, they fall once the roll that Jammed it is finished (data/gear/falls.yaml, jam-airborne).
+    - If the soldier is airborne, they fall once the roll that Jammed it is finished (data/gear/falls.yaml, jam-airborne). At the Urban rating a soldier at blind-spot is anchored to a roof and is not airborne, so a Jam does not drop them (data/engagement/anchor-ratings.yaml, ratings, urban, terrain_trait; decision batch 10, OQ-180).
   ends: >-
     When the current rating rises above 0: Field Repair (data/gear/field-repair.yaml), or
     Standard Issue replacing the Jammed ODM Gear (data/gear/standard-issue.yaml; the interim

@@ -6,7 +6,7 @@ id: engagement-setup
 name: Interim Titan Engagement Setup
 chapter: 05-titan-engagement
 adrs: [ADR-0014, ADR-0024]
-decided: [OQ-87, OQ-104, OQ-126, OQ-141, OQ-167]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10); OQ-167: framing (decision batch 9, 9-15)
+decided: [OQ-87, OQ-104, OQ-126, OQ-141, OQ-167, OQ-180]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10); OQ-167: framing (decision batch 9, 9-15)
 
 used_when: >-
   A Titan Engagement begins and the rule that begins it does not name its Anchor Rating, its Focus
@@ -31,6 +31,11 @@ steps:
       Roll D6 on background_titans. For each Background Titan it gives, roll D6 on size_class for
       its Size Class, in the order the row lists the clocks. Each is the standard Titan of its Size
       Class (data/titans/index.yaml, standard_titans); medium_abnormal is never rolled for it.
+  - id: anchors
+    text: >-
+      The Titan Engagement's Anchors are the Anchor Rating's anchors value
+      (data/engagement/anchor-ratings.yaml, ratings, anchors; anchors). Nothing is rolled: the
+      rating sets it.
   - id: retreat-clock
     text: >-
       The retreat clock has retreat_clock segments (data/engagement/background-titans.yaml,
@@ -75,5 +80,6 @@ gm_choices: >-
   A ruling, as framing: before any roll on this table, the GM may name the Anchor Rating, the Focus
   Titan (any Titan in data/titans/index.yaml), and the Background Titans with their clock lengths (none, one, or two, each on a clock of 4, 6, or 8 segments; decision batch 9, 9-34),
   where the starting rule names none of them (docs/rules/05-titan-engagement.md, section 5.1;
-  decision batch 9, 9-15). Nothing else: the retreat clock's length, a value a starting rule names,
-  everyone's Distant start, and a row once rolled stand (ADR-0024, limits 8 and 10).
+  decision batch 9, 9-15). Nothing else: the retreat clock's length, the Anchors the named rating
+  gives, a value a starting rule names, everyone's Distant start, and a row once rolled stand
+  (ADR-0024, limits 8 and 10).

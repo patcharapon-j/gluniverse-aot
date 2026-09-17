@@ -1,11 +1,12 @@
-# Anchor Ratings: which Position steps exist on a battlefield, and which kinds of move can make each.
+# Anchor Ratings: which Position steps exist on a battlefield, which kinds of move can make each,
+# how many Anchors the field holds, and what each rating's Terrain Trait does.
 # Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.2) references this
 # file and renders its tables from it (tools/render/render.py).
 id: anchor-ratings
-name: Anchor Ratings and Position Steps
+name: Anchor Ratings, Position Steps, and Anchors
 chapter: 05-titan-engagement
 adrs: [ADR-0010, ADR-0024]
-decided: [OQ-74, OQ-99]
+decided: [OQ-74, OQ-99, OQ-180, OQ-181]   # OQ-180: Flight, Momentum, and Anchors; OQ-181: the mounted charge (decision batch 10)
 
 # The four Positions (data/engagement/positions.yaml gives their meanings).
 positions: [distant, in-reach, on-body, blind-spot]
@@ -17,8 +18,8 @@ move_kinds:
     airborne stops being airborne (data/gear/odm-gear.yaml, airborne, stops_being_airborne).
   mounted: A move made by a mounted soldier on their horse (data/gear/horses.yaml, mounted).
   odm: >-
-    An ODM move (data/gear/odm-gear.yaml, odm_moves). It needs ODM Gear that counts as had, and a
-    mounted soldier is dismounted first.
+    An ODM move, which is a Flight (data/engagement/positions.yaml, moves, flight). It needs ODM
+    Gear that counts as had, and a mounted soldier is dismounted first.
 
 # How to read a step row.
 step_fields:
@@ -26,14 +27,10 @@ step_fields:
   on_foot: true if a move on foot can make the step.
   mounted: true if a mounted move can make the step.
   odm: true if an ODM move can make the step.
-  fly_roll: >-
-    Present only on a step that an ODM move makes with a Fly roll. The rule calls for a roll for
-    fly (data/character/action-catalog.yaml) with the soldier's own ODM Gear as its gear item,
-    needing the successes named. On a success the move ends at the far Position. On a failure it
-    ends at failure_ends_at. Either way the soldier is airborne after the move, since it is an
-    ODM move. The roll can be Helped, Pushed, and Covered as Chapter 1 states, and takes
-    Circumstances as any soldier's roll does (data/core/circumstances.yaml, in_titan_engagement);
-    its needs never change (ADR-0024, limit 15).
+# No step row calls for a roll of its own. Every ODM move is a Flight and is rolled
+# (data/engagement/positions.yaml, moves, flight), and a move that crosses more than one step
+# spends Momentum on Carry (momentum, spends, carry). The Fly roll needs that Sparse and Urban
+# carried before decision batch 10 are withdrawn with those two rows (history).
 
 # One Position step: two Positions joined by a step row of the Titan Engagement's Anchor Rating,
 # whatever kinds of move can make it. Help, Covering, Rally, and aftermath rolls count steps this
@@ -45,27 +42,35 @@ ratings:
     meaning: >-
       Flat ground with no anchors but the Titan itself, such as a plain. Nothing holds a soldier
       out of a standing Titan's sight with its Nape in reach, so no step reaches blind-spot until
-      the Titan is grounded (grounded_titan, open_rating).
+      the Titan is grounded (grounded_titan, open_rating). The field holds no Anchors, so no
+      soldier holds Momentum here (anchors).
+    anchors: 0
+    terrain_trait: >-
+      A mounted soldier's Break Attention gains 1 Bonus Die
+      (data/core/bonus-dice-sources.yaml, terrain-trait). The plain is the horse's.
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: false}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
 
   - id: sparse
     name: Sparse
-    meaning: A few anchors, such as scattered trees, a ruined farmstead, or a supply wagon.
+    meaning: >-
+      A few anchors, such as scattered trees, a ruined farmstead, or a supply wagon. Nothing joins
+      in-reach and blind-spot: a soldier reaches the Nape by way of on-body.
+    anchors: 1
+    terrain_trait: >-
+      The first Anchor wrecked in the Titan Engagement is not lost (anchors, wrecking). One good
+      tree survives.
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
       - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
-      - between: [in-reach, blind-spot]
-        on_foot: false
-        mounted: false
-        odm: true
-        fly_roll: {needs: 1, failure_ends_at: on-body}
 
   - id: wooded
     name: Wooded
     meaning: Ordinary woodland, the default battlefield of ADR-0014.
+    anchors: 2
+    terrain_trait: none
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
@@ -75,26 +80,110 @@ ratings:
   - id: urban
     name: Urban
     meaning: Streets and rooftops, such as a town inside or beyond the Walls.
+    anchors: 3
+    terrain_trait: >-
+      A soldier who holds blind-spot relative to a Focus Titan is anchored to a roof and is not
+      airborne, so a Jam does not drop them (data/gear/odm-gear.yaml, jam).
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: false, odm: true}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
       - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
       - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
-      - between: [distant, blind-spot]
-        on_foot: false
-        mounted: false
-        odm: true
-        fly_roll: {needs: 1, failure_ends_at: in-reach}
 
   - id: giant-forest
     name: Giant Forest
     meaning: Trees taller than any Titan. Chapter 4 raises every fall that is not from a horse one band here (data/gear/falls.yaml, height).
+    anchors: 3
+    terrain_trait: >-
+      The first step a Flight Carries costs no Momentum (momentum, spends, carry). The Corps fights
+      best here.
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
       - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
       - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
-      - {between: [distant, blind-spot], on_foot: false, mounted: false, odm: true}
+
+# ------------------------------------------------------------------ Anchors (decision batch 10, OQ-180)
+# The battlefield's own resource: what the ground offers a soldier on the wires, and what a Titan
+# takes away by going through it.
+anchors:
+  what: >-
+    A whole number held by the Titan Engagement, not by any soldier. It starts at the Anchor
+    Rating's anchors value and never rises during the Titan Engagement. It is public and is
+    tracked on the GM's tracker (data/engagement/round.yaml, gm_tracker, anchors_row).
+  set_when: >-
+    As the Titan Engagement begins, from the Anchor Rating (data/engagement/engagement-flow.yaml,
+    starting; data/engagement/engagement-setup.yaml).
+  momentum_cap: >-
+    Every soldier's Momentum cap is the number of Anchors left (momentum, cap). When Anchors fall,
+    every soldier whose Momentum is above the new cap loses the excess at once.
+  wrecking:
+    by_a_behavior: >-
+      A Behavior Table entry with the wreck effect destroys 1 Anchor
+      (data/engagement/titan-format.yaml, effect_types, wreck). Like telegraph, it applies whether
+      the behavior landed or whiffed: it is the Titan going through the place, not an attack on a
+      person.
+    by_a_falling_titan: >-
+      A Focus Titan that falls destroys 1 Anchor where it lands
+      (data/engagement/titan-harm.yaml, falling_titan).
+    never_below_zero: Anchors never fall below 0.
+    sparse_trait: >-
+      At the Sparse rating the first Anchor that would be wrecked in the Titan Engagement is not
+      lost (terrain_trait). It applies once, to the first wrecking of the Titan Engagement, whatever
+      caused it.
+  at_zero: >-
+    No soldier holds Momentum and none can be gained. Flights are still rolled and still make their
+    step, and no step row changes: a wrecked field never closes a route to the Nape, which keeps
+    ADR-0010's promise whatever the Titan has flattened.
+  gm: >-
+    none (ADR-0024): the GM never spends, wrecks, or restores an Anchor. Only a wreck effect, a
+    falling Titan, and a soldier's own spending change the count.
+
+# ------------------------------------------------------------------ Momentum (decision batch 10, OQ-180)
+momentum:
+  what: >-
+    A whole number each soldier holds, from 0 to their cap. It is public and is recorded on the
+    sheet (data/gear/sheet-fields.yaml, momentum).
+  cap: The Anchors left in the Titan Engagement (anchors, momentum_cap).
+  gained: 1 for each success on a Flight (data/engagement/positions.yaml, moves, flight), to the cap.
+  lost: >-
+    All of it, at the round-ends end step of any round in which the soldier made no ODM move
+    (data/engagement/round.yaml, end_steps, round-ends). A soldier who has left the Titan
+    Engagement, who is Down, Grabbed, carried, or Pinned, or who dies, holds no Momentum.
+  spends:
+    when: >-
+      At any point in the soldier's own turn, any amount at once, by the soldier's own choice. Carry
+      is spent as part of the move it extends, and every other spend is declared before the roll it
+      names.
+    list:
+      - id: carry
+        cost: 1
+        effect: >-
+          The move makes one more Position step, along a chain of step rows the soldier's kind of
+          move could make, relative to the same named Focus Titan. Carry may be spent more than once
+          on one move.
+        giant_forest: >-
+          At the Giant Forest rating the first step a Flight Carries costs no Momentum
+          (terrain_trait). Every later Carry on that move costs 1.
+      - id: bite
+        cost: 1
+        effect: >-
+          1 Bonus Die on a strike or a Break Attention the soldier takes this turn against the Focus
+          Titan the Flight named (data/core/bonus-dice-sources.yaml, momentum), within the cap of 4.
+      - id: brace
+        cost: 1
+        effect: >-
+          1 Bonus Die on the soldier's next dodge this round
+          (data/core/bonus-dice-sources.yaml, momentum), within the cap of 4.
+      - id: quiet
+        cost: 1
+        effect: >-
+          The soldier sets no flag this turn, the loudest flag a Flight with no successes sets
+          included (data/engagement/attention.yaml, flags). A flag already set is not cleared.
+      - id: clean-line
+        cost: 1
+        effect: The soldier makes no Gas Roll for this round (data/gear/odm-gear.yaml, gas_roll).
+  gm: none (ADR-0024). The GM never grants, spends, or removes Momentum.
 
 # A Titan grounded by a Broken leg (data/engagement/titan-harm.yaml, body_part_kinds, leg) lies on
 # the ground. While it is grounded, these extra permissions apply to Positions held relative to it,
@@ -116,8 +205,31 @@ grounded_titan:
     and they never end for it (data/engagement/positions.yaml, corpse; decision batch 8, 8-9, OQ-146).
   decided: [OQ-74, OQ-146]
 
+# ------------------------------------------------------------------ the mounted charge (decision batch 10, OQ-181)
+mounted_charge:
+  what: >-
+    A mounted move that makes the distant to in-reach step may also set the loudest flag on that
+    Focus Titan (data/engagement/attention.yaml, flags, loudest). No other move sets a flag.
+  who: A mounted soldier whose move makes that step, in either direction, and who is not Grabbed or carried.
+  spends: Nothing beyond the move itself. It is not an action and is never rolled.
+  open_double_step: >-
+    At the Open rating only, a mounted move may make the distant to in-reach step twice, in either
+    order, so a rider can come in and get out again in one move. It is one move and one charge: the
+    loudest flag is set at most once.
+  decided: [OQ-181]
+
+# ------------------------------------------------------------------ history
+history:
+  fly_roll_rows: >-
+    Before decision batch 10 two step rows called for a Fly roll of their own: Sparse in-reach to
+    blind-spot (needing 1, a failure ending at on-body) and Urban distant to blind-spot (needing 1,
+    a failure ending at in-reach). Both are withdrawn with the rows themselves, because every ODM
+    move is now rolled and a move across two steps is Carry. Giant Forest's distant to blind-spot
+    row is withdrawn with them, so no rating reaches the Nape from distant in one step
+    (decision batch 10, OQ-180).
+
 gm_choices: >-
   A ruling, as framing: the Anchor Rating, named before the Titan Engagement starts where no starting
   rule names it (data/engagement/engagement-setup.yaml, gm_choices; decision batch 9, 9-15). Nothing
-  else: the GM never picks a step, whether a move can make it, or where a move ends (ADR-0024,
-  limit 8).
+  else: the GM never picks a step, whether a move can make it, where a move ends, an Anchor, or a
+  point of Momentum (ADR-0024, limit 8).

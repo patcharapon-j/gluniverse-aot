@@ -75,6 +75,8 @@ tracked_values:
   - {id: critical-injury-treat, name: treat or stabilize a Critical Injury, rules: [03-harm-and-mind]}
   - {id: down-end, name: end the Down state, rules: [03-harm-and-mind]}
   - {id: grabbed-end, name: free a Grabbed soldier, rules: [05-titan-engagement]}
+  - {id: momentum-gain, name: gain Momentum, rules: [05-titan-engagement]}
+  - {id: anchor-wreck, name: destroy an Anchor, rules: [05-titan-engagement]}
   - {id: gear-restore, name: restore a gear item's Gear Dice rating or end a Jam, rules: [04-gear]}
   - {id: gas-restore, name: restore a Gas Rating, rules: [04-gear]}
   - {id: comrade-carry, name: "pick up and carry a Down comrade, or one the both-legs grade forbids to move", rules: [04-gear, 05-titan-engagement]}
@@ -196,9 +198,18 @@ entries:
     context: titan-engagement
     requirements: data/engagement/attention.yaml (draw_attention)
     changes: [draw-attention-set]
-    notes: Not from Distant (decision batch 5, OQ-113). Sets the loudest flag, which lasts until the end of the Titan's next card that resolves a behavior; a card that resolves nothing, under a decoy's hold, while the Titan holds a Grabbed soldier, or with no one holding its Attention, leaves it standing (ADR-0024, limit 2, as first amended in decision batch 3e; data/engagement/attention.yaml, flag_duration).
+    notes: >-
+      Not from Distant (decision batch 5, OQ-113). Sets the loudest flag, which lasts until the end
+      of the Titan's next card that resolves a behavior; a card that resolves nothing, under a
+      decoy's hold, while the Titan holds a Grabbed soldier, or with no one holding its Attention,
+      leaves it standing (ADR-0024, limit 2, as first amended in decision batch 3e;
+      data/engagement/attention.yaml, flag_duration). While a soldier holds the flag they match
+      every ladder rung any other candidate meets except hooked into its body, so the shout takes
+      the Titan off any comrade who is not hooked in or On Body (decision batch 10, OQ-182;
+      data/engagement/attention.yaml, flags, loudest, matches).
     rules: [05-titan-engagement]
     adrs: [ADR-0024]
+    decided: [OQ-113, OQ-182]
 
   - id: read
     name: Read
@@ -383,9 +394,11 @@ entries:
     context: any
     requirements: data/gear/blade-sets.yaml (swap).
     changes: [blade-set-swap]
-    notes: Spends neither the move nor the action.
+    notes: >-
+      In a Titan Engagement it spends the soldier's move and never the action (decision batch 10,
+      OQ-183; data/gear/blade-sets.yaml, swap). Outside one it spends nothing.
     rules: [04-gear]
-    decided: [OQ-63]
+    decided: [OQ-63, OQ-183]
 
   - id: shed-load
     name: Shed Load
@@ -655,7 +668,10 @@ entries:
     without_gear: not_possible
     context: any
     requirements: >-
-      Called by a Chapter 4 or Chapter 5 rule, such as a Position change that needs a roll. Also made
+      Made for every ODM move in a Titan Engagement, which is a Flight
+      (data/engagement/positions.yaml, moves, flight): the move's step happens whatever the roll
+      gives, each success is 1 Momentum, and no successes sets the loudest flag. Also called by
+      another Chapter 4 or Chapter 5 rule, such as Mid-Air Catch. Also made
       as a called roll outside a Titan Engagement, a Skirmish included, when the GM calls one for an
       act this entry fits, such as reaching a rooftop (Chapter 1, section 1.1; Chapter 2, section
       2.9). In a Skirmish it is the one Fly roll there is: it takes this entry's Gear Dice, makes no
@@ -663,9 +679,10 @@ entries:
       airborne), makes no Gas Roll, and gives no Engaged or Apart (data/skirmish/skirmish.yaml,
       actions, called_roll; decision batch 9, 9-43).
     needs: >-
-      in a Titan Engagement, set by the Chapter 4 or Chapter 5 rule that calls for it (the Anchor
-      Rating's rows); outside a Titan Engagement, 1
-    changes: []
+      a Flight needs nothing: its step happens whatever the roll gives, and each success is 1
+      Momentum (decision batch 10, OQ-180). A roll another rule calls for needs what that rule
+      states. Outside a Titan Engagement, 1
+    changes: [momentum-gain]
     help_outside_titan_engagement: >-
       Stated by the rule that calls for the roll.
       On a called roll outside a Skirmish, up to three comrades who are present and able to help

@@ -205,28 +205,35 @@ Some steps need a **Fly roll**. The move calls for a roll for `fly` with the sol
 Either way the soldier is airborne, because it was an ODM move.
 
 <!-- BEGIN RENDERED: position-steps from data/engagement/anchor-ratings.yaml -->
-| Anchor Rating | Position step (either way) | On foot | Mounted | ODM | Fly roll |
-|---|---|---|---|---|---|
-| Open | Distant to In Reach | yes | yes | no | none |
-| Open | In Reach to On Body | no | no | yes | none |
-| Sparse | Distant to In Reach | yes | yes | yes | none |
-| Sparse | In Reach to On Body | no | no | yes | none |
-| Sparse | On Body to Blind Spot | no | no | yes | none |
-| Sparse | In Reach to Blind Spot | no | no | yes | needs 1; on a failure the move ends at On Body |
-| Wooded | Distant to In Reach | yes | yes | yes | none |
-| Wooded | In Reach to On Body | no | no | yes | none |
-| Wooded | On Body to Blind Spot | no | no | yes | none |
-| Wooded | In Reach to Blind Spot | no | no | yes | none |
-| Urban | Distant to In Reach | yes | no | yes | none |
-| Urban | In Reach to On Body | no | no | yes | none |
-| Urban | On Body to Blind Spot | no | no | yes | none |
-| Urban | In Reach to Blind Spot | no | no | yes | none |
-| Urban | Distant to Blind Spot | no | no | yes | needs 1; on a failure the move ends at In Reach |
-| Giant Forest | Distant to In Reach | yes | yes | yes | none |
-| Giant Forest | In Reach to On Body | no | no | yes | none |
-| Giant Forest | On Body to Blind Spot | no | no | yes | none |
-| Giant Forest | In Reach to Blind Spot | no | no | yes | none |
-| Giant Forest | Distant to Blind Spot | no | no | yes | none |
+| Anchor Rating | Position step (either way) | On foot | Mounted | ODM |
+|---|---|---|---|---|
+| Open | Distant to In Reach | yes | yes | no |
+| Open | In Reach to On Body | no | no | yes |
+| Sparse | Distant to In Reach | yes | yes | yes |
+| Sparse | In Reach to On Body | no | no | yes |
+| Sparse | On Body to Blind Spot | no | no | yes |
+| Wooded | Distant to In Reach | yes | yes | yes |
+| Wooded | In Reach to On Body | no | no | yes |
+| Wooded | On Body to Blind Spot | no | no | yes |
+| Wooded | In Reach to Blind Spot | no | no | yes |
+| Urban | Distant to In Reach | yes | no | yes |
+| Urban | In Reach to On Body | no | no | yes |
+| Urban | On Body to Blind Spot | no | no | yes |
+| Urban | In Reach to Blind Spot | no | no | yes |
+| Giant Forest | Distant to In Reach | yes | yes | yes |
+| Giant Forest | In Reach to On Body | no | no | yes |
+| Giant Forest | On Body to Blind Spot | no | no | yes |
+| Giant Forest | In Reach to Blind Spot | no | no | yes |
+
+**Anchors and Terrain Traits**
+
+| Anchor Rating | Anchors | Terrain Trait |
+|---|---|---|
+| Open | 0 | A mounted soldier's Break Attention gains 1 Bonus Die. The plain is the horse's. |
+| Sparse | 1 | The first Anchor wrecked in the Titan Engagement is not lost. One good tree survives. |
+| Wooded | 2 | none |
+| Urban | 3 | A soldier who holds blind-spot relative to a Focus Titan is anchored to a roof and is not airborne, so a Jam does not drop them. |
+| Giant Forest | 3 | The first step a Flight Carries costs no Momentum. The Corps fights best here. |
 <!-- END RENDERED: position-steps -->
 
 > **Design note (OQ-74):** The step rows are:

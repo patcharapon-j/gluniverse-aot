@@ -143,6 +143,28 @@ sources:
     adrs: [ADR-0006]
     decided: [OQ-44, OQ-67]
 
+  - id: momentum
+    name: Momentum
+    dice: 1 per point of Momentum spent
+    condition: >-
+      In a Titan Engagement, the soldier spends Momentum on Bite or on Brace
+      (data/engagement/anchor-ratings.yaml, momentum, spends). Bite gives its dice to a strike or a
+      Break Attention the soldier takes this turn against the Focus Titan their Flight named; Brace
+      gives them to the soldier's next dodge this round. Declared with every other Bonus Dice
+      source, before the roll.
+    rules: [05-titan-engagement]
+    decided: [OQ-180]
+
+  - id: terrain-trait
+    name: Terrain Trait
+    dice: as the Anchor Rating's Terrain Trait gives
+    condition: >-
+      The Titan Engagement's Anchor Rating has a Terrain Trait that gives Bonus Dice
+      (data/engagement/anchor-ratings.yaml, ratings, terrain_trait). Only the Open rating's does:
+      a mounted soldier's Break Attention gains 1.
+    rules: [05-titan-engagement]
+    decided: [OQ-180]
+
   - id: ambush
     name: Ambush
     category: situation

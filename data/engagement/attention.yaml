@@ -92,6 +92,15 @@ flags:
       The soldier takes Draw Attention against the Titan (draw_attention), or a Fear Roll result's
       draw-attention effect names the Titan as the event's Titan (data/harm/effect-types.yaml;
       data/mind/fear-rolls.yaml, event_titan; decision batch 7, 7-8). Neither sets it from distant.
+      A Flight with no successes sets it on the Focus Titan the move named, from any Position,
+      distant included (data/engagement/positions.yaml, moves, flight, no_successes), and a mounted
+      charge sets it (data/engagement/anchor-ratings.yaml, mounted_charge). Momentum spent on Quiet
+      stops a flag this turn (data/engagement/anchor-ratings.yaml, momentum, spends, quiet).
+    matches: >-
+      While a soldier holds this flag they also count, for this Titan's ladder, as meeting every
+      rung any other candidate meets except hooked-into-its-body (evaluation, steps, loudest-matches;
+      decision batch 10, OQ-182). A shout cannot turn a Titan off a blade at its Nape or a soldier
+      On Body, which is what ADR-0010 protects, and it can match anything below that.
 
 # ------------------------------------------------------------------ tests (closed list)
 # The tests a ladder rung can use. The standard ladder uses the first five. The rest are for Abnormal
@@ -176,6 +185,13 @@ evaluation:
         Find the highest rung that at least one candidate meets. The candidates who meet it are the
         tied set. When that rung is nearest, the tied set is the candidates at the closest Position
         any candidate holds, not every candidate (tests, nearest; decision batch 3e, 3e-6).
+    - id: loudest-matches
+      text: >-
+        Add to the tied set every candidate who holds the loudest flag, unless the highest rung met
+        is hooked-into-its-body, in which case add none (flags, loudest, matches; decision batch 10,
+        OQ-182). This is the only step that adds a candidate, and it adds them whatever Position
+        they hold, so a soldier who came in loud from distant is in the set. The lower rungs then
+        narrow as they always do, and the loudest-or-brightest rung keeps them.
     - id: struck-first
       text: >-
         If the highest rung met is hooked-into-its-body and at least one soldier in the tied set
@@ -223,10 +239,13 @@ draw_attention:
   spends: the soldier's action
   effect: >-
     The soldier holds the loudest flag for that Titan until the end of its next card that resolves
-    a behavior (flag_duration). It moves Attention only when the Titan next evaluates its ladder,
-    and a card that resolves nothing, including the last card of a decoy's hold, leaves the flag
-    standing.
+    a behavior (flag_duration). While they hold it they match every rung any other candidate meets
+    except hooked-into-its-body (flags, loudest, matches), so the shout takes the Titan off any
+    comrade who is not hooked into its body or On Body, which is the room ADR-0010 leaves. It moves
+    Attention only when the Titan next evaluates its ladder, and a card that resolves nothing,
+    including the last card of a decoy's hold, leaves the flag standing.
   adrs: [ADR-0024]   # limit 2, as amended in decision batch 3e
+  decided: [OQ-113, OQ-182]
 
 # ------------------------------------------------------------------ Break Attention
 break_attention:

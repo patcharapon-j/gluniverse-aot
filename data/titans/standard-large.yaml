@@ -56,6 +56,7 @@ behavior_table:
       attack_dice: 6
       effects:
         - {type: stress, amount: 1}
+        - {type: wreck}
       fallback: thrash
       text: It walks straight at the soldier, and every step shakes the ground under everyone beside them.
 
@@ -69,6 +70,7 @@ behavior_table:
       attack_dice: 9
       effects:
         - {type: critical-injury, injury_location: leg, injury_type: crush, cannot_be_lethal: true}
+        - {type: wreck}
       fallback: thrash
       text: It slams its bulk down beside the soldier, standing or fallen, and pins the soldier's legs under it.
 
