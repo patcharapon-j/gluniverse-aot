@@ -59,9 +59,9 @@ export type WidgetKind = 'gas' | 'blades';
 type StateOf<K extends WidgetKind> = K extends 'gas' ? GasState : BladeState;
 
 /** CSS size of each widget's canvas (the locked preview's slots). */
-export const WIDGET_SIZE: Record<WidgetKind, { w: number; h: number }> = { gas: { w: 96, h: 56 }, blades: { w: 120, h: 56 } };
+export const WIDGET_SIZE: Record<WidgetKind, { w: number; h: number }> = { gas: { w: 150, h: 108 }, blades: { w: 178, h: 108 } };
 const MAX_DPR = 2;
-const BUFFER = { w: 120 * MAX_DPR, h: 56 * MAX_DPR };
+const BUFFER = { w: 178 * MAX_DPR, h: 108 * MAX_DPR };
 const MAX_SPARES = 3;
 const MAX_CARRIED = 4;
 
@@ -193,34 +193,81 @@ interface GasScene {
   cam: OrthographicCamera;
   fitted: Canister;
   spares: Canister[];
+  /** The rack the spares stand on; it is there only while a spare is. */
+  rack: Group;
 }
 
 const BAND_LIT = 0x9a2626;
 const BAND_EMPTY = 0x3c4147;
 
+/** The camera each widget looks through: a flat box as wide as the canvas, and as tall in proportion. */
+function widgetCamera(w: number, h: number, y = 0): OrthographicCamera {
+  const half = 5.6;
+  const cam = new OrthographicCamera(-half, half, (half * h) / w, (-half * h) / w, 0.1, 50);
+  cam.position.set(0, y, 10);
+  cam.lookAt(0, y, 0);
+  return cam;
+}
+
 function gasScene(env: Texture, d: Set<{ dispose(): void }>): GasScene {
   const scene = sceneBase(env);
-  const cam = new OrthographicCamera(-4.8, 4.8, 2.8, -2.8, 0.1, 50);
-  cam.position.set(0, 0.6, 10);
-  cam.lookAt(0, 0, 0);
-  const profile = [[0, -2.2], [0.62, -2.18], [0.78, -2.05], [0.8, -1.8], [0.8, 1.7], [0.72, 1.95], [0.45, 2.1], [0.2, 2.15], [0, 2.15]].map(([x, y]) => new Vector2(x, y));
-  const body = track(d, new LatheGeometry(profile, 32));
-  const valveGeo = track(d, new CylinderGeometry(0.22, 0.26, 0.5, 16));
-  const valveMat = mat(d, { color: 0xd0a85e, metalness: 1, roughness: 0.3 });
-  const make = (x: number, scale: number): Canister => {
+  const size = WIDGET_SIZE.gas;
+  const cam = widgetCamera(size.w, size.h, 0.15);
+  // The canister's silhouette: a rolled steel shell with a shoulder, a crimped base, and a neck.
+  const profile = [[0, -2.2], [0.62, -2.18], [0.78, -2.05], [0.82, -1.86], [0.8, -1.76], [0.82, -1.66], [0.82, 1.62], [0.76, 1.9], [0.5, 2.08], [0.24, 2.14], [0, 2.16]].map(([x, y]) => new Vector2(x, y));
+  const body = track(d, new LatheGeometry(profile, 40));
+  const neckGeo = track(d, new CylinderGeometry(0.2, 0.26, 0.42, 16));
+  const wheelGeo = track(d, new CylinderGeometry(0.42, 0.42, 0.11, 20));
+  const spokeGeo = track(d, new BoxGeometry(0.78, 0.13, 0.13));
+  const collarGeo = track(d, new CylinderGeometry(0.88, 0.88, 0.16, 32));
+  const brass = mat(d, { color: 0xd0a85e, metalness: 1, roughness: 0.3 });
+  const darkBrass = mat(d, { color: 0x8a6a2f, metalness: 1, roughness: 0.45 });
+
+  // A steel rack the spares stand on, so the fitted canister reads as the one in hand.
+  const rack = new Group();
+  const shelf = new Mesh(track(d, new BoxGeometry(6.2, 0.36, 2.2)), mat(d, { color: 0x4a5056, metalness: 0.7, roughness: 0.5 }));
+  shelf.position.set(2.2, -2.62, -0.2);
+  rack.add(shelf);
+  const lip = new Mesh(track(d, new BoxGeometry(6.2, 0.5, 0.24)), mat(d, { color: 0x34383c, metalness: 0.6, roughness: 0.6 }));
+  lip.position.set(2.2, -2.5, 0.95);
+  rack.add(lip);
+  scene.add(rack);
+
+  const make = (x: number, y: number, scale: number, fitted: boolean): Canister => {
     const group = new Group();
-    group.position.set(x, -0.2, 0);
+    group.position.set(x, y, 0);
     group.scale.setScalar(scale);
-    group.userData.rest = { x, y: -0.2 };
+    group.userData.rest = { x, y };
+    group.userData.role = fitted ? 'fitted' : 'spare';
     const bodyMat = mat(d, { color: 0xd7dde2, metalness: 0.95, roughness: 0.25 });
     group.add(new Mesh(body, bodyMat));
-    const valve = new Mesh(valveGeo, valveMat);
-    valve.position.y = 2.4;
-    group.add(valve);
+    for (const at of [-1.78, 1.62]) {
+      const collar = new Mesh(collarGeo, darkBrass);
+      collar.position.y = at;
+      group.add(collar);
+    }
+    const neck = new Mesh(neckGeo, brass);
+    neck.position.y = 2.34;
+    group.add(neck);
+    if (fitted) {
+      // The fitted canister wears its valve wheel, the one the soldier turns.
+      const wheel = new Mesh(wheelGeo, brass);
+      wheel.position.y = 2.62;
+      group.add(wheel);
+      const spoke = new Mesh(spokeGeo, darkBrass);
+      spoke.position.y = 2.7;
+      group.add(spoke);
+    }
     scene.add(group);
     return { group, body: bodyMat, bands: [] };
   };
-  return { scene, cam, fitted: make(-2.4, 1), spares: [0, 1, 2].slice(0, MAX_SPARES).map((i) => make(0.9 + i * 1.45, 0.6)) };
+  return {
+    scene,
+    cam,
+    rack,
+    fitted: make(-3.5, -0.1, 1.28, true),
+    spares: [0, 1, 2].slice(0, MAX_SPARES).map((i) => make(0.5 + i * 1.75, -1.62, 0.72, false)),
+  };
 }
 
 /** Rebuilds a canister's bands when the full rating changes (a band per point of Gas Rating). */
@@ -233,10 +280,10 @@ function setBands(c: Canister, full: number, d: Set<{ dispose(): void }>): void 
       d.delete(x);
     }
   }
-  const span = 3.4;
-  const h = Math.min(0.5, (span / Math.max(1, full)) * 0.55);
+  const span = 3.2;
+  const h = Math.min(0.62, (span / Math.max(1, full)) * 0.62);
   c.bands = Array.from({ length: full }, (_, i) => {
-    const geo = track(d, new CylinderGeometry(0.83, 0.83, h, 32, 1, true));
+    const geo = track(d, new CylinderGeometry(0.85, 0.85, h, 40, 1, true));
     const m = mat(d, { color: BAND_EMPTY, metalness: 0.8, roughness: 0.5 });
     const band = new Mesh(geo, m);
     band.position.y = -1.6 + (i + 0.5) * (span / Math.max(1, full));
@@ -270,40 +317,58 @@ interface BladeScene {
 
 function bladeScene(env: Texture, d: Set<{ dispose(): void }>): BladeScene {
   const scene = sceneBase(env);
-  const cam = new OrthographicCamera(-6, 6, 2.8, -2.8, 0.1, 50);
-  cam.position.set(0, 1.2, 10);
-  cam.lookAt(0, 0, 0);
+  const size = WIDGET_SIZE.blades;
+  const cam = widgetCamera(size.w, size.h, 0.2);
+  // The blade: a long tapered plate with a cutting edge, seen edge-on as the handles hold it.
   const shape = new Shape();
-  shape.moveTo(0, -0.16);
-  shape.lineTo(6, -0.16);
-  shape.lineTo(6.6, 0.16);
-  shape.lineTo(0, 0.16);
+  shape.moveTo(0, -0.2);
+  shape.lineTo(6.4, -0.2);
+  shape.lineTo(7.4, 0.06);
+  shape.lineTo(6.6, 0.2);
+  shape.lineTo(0, 0.2);
   shape.closePath();
-  const bladeGeo = track(d, new ExtrudeGeometry(shape, { depth: 0.04, bevelEnabled: false }));
+  const bladeGeo = track(d, new ExtrudeGeometry(shape, { depth: 0.05, bevelEnabled: false }));
+  // What a ruined set leaves in the handles: a snapped stump.
   const stubShape = new Shape();
-  stubShape.moveTo(0, -0.16);
-  stubShape.lineTo(1.3, -0.16);
-  stubShape.lineTo(1.0, 0.02);
-  stubShape.lineTo(1.5, 0.16);
-  stubShape.lineTo(0, 0.16);
+  stubShape.moveTo(0, -0.2);
+  stubShape.lineTo(1.4, -0.2);
+  stubShape.lineTo(1.05, 0.02);
+  stubShape.lineTo(1.6, 0.2);
+  stubShape.lineTo(0, 0.2);
   stubShape.closePath();
-  const stubGeo = track(d, new ExtrudeGeometry(stubShape, { depth: 0.04, bevelEnabled: false }));
-  const steel = (): MeshStandardMaterial => mat(d, { color: 0xe6ebef, metalness: 1, roughness: 0.22, transparent: true });
+  const stubGeo = track(d, new ExtrudeGeometry(stubShape, { depth: 0.05, bevelEnabled: false }));
+  const steel = (): MeshStandardMaterial => mat(d, { color: 0xe6ebef, metalness: 1, roughness: 0.2, transparent: true });
+  const gunmetal = mat(d, { color: 0x2a2d31, metalness: 0.65, roughness: 0.4 });
+  const iron = mat(d, { color: 0x7c848b, metalness: 0.8, roughness: 0.32 });
+  const leather = mat(d, { color: 0x4a3120, roughness: 0.85 });
 
-  const box = new Mesh(track(d, new BoxGeometry(3, 1.9, 1)), mat(d, { color: 0x7c848b, metalness: 0.75, roughness: 0.35 }));
-  box.position.set(-4.3, -1.4, 0);
+  // The scabbard box on the soldier's hip, strapped shut, with the spare sets stacked in it.
+  const box = new Mesh(track(d, new BoxGeometry(3.4, 2.5, 1.1)), iron);
+  box.position.set(-3.7, -1.5, -0.3);
   scene.add(box);
-  const strap = new Mesh(track(d, new BoxGeometry(0.4, 2.05, 1.1)), mat(d, { color: 0x4a3120, roughness: 0.8 }));
-  strap.position.copy(box.position);
-  scene.add(strap);
+  for (const x of [-4.5, -2.9]) {
+    const strap = new Mesh(track(d, new BoxGeometry(0.34, 2.72, 1.25)), leather);
+    strap.position.set(x, -1.5, -0.3);
+    scene.add(strap);
+  }
+  const rail = new Mesh(track(d, new BoxGeometry(3.6, 0.22, 1.2)), gunmetal);
+  rail.position.set(-3.7, -0.18, -0.3);
+  scene.add(rail);
+
+  // The handles: the grip, its trigger, and the hilt the blade locks into.
   const grip = new Group();
-  grip.position.set(-4.6, 1.3, 0);
-  const gunmetal = mat(d, { color: 0x2a2d31, metalness: 0.6, roughness: 0.45 });
-  grip.add(new Mesh(track(d, new BoxGeometry(2.2, 0.7, 0.5)), gunmetal));
-  const trigger = new Mesh(track(d, new BoxGeometry(0.4, 1.1, 0.4)), gunmetal);
-  trigger.position.set(-0.3, -0.8, 0);
-  trigger.rotation.z = 0.25;
+  grip.position.set(-4.5, 1.65, 0);
+  grip.add(new Mesh(track(d, new BoxGeometry(2.5, 0.86, 0.6)), gunmetal));
+  const hilt = new Mesh(track(d, new BoxGeometry(0.8, 1.16, 0.7)), iron);
+  hilt.position.set(1.15, -0.06, 0);
+  grip.add(hilt);
+  const trigger = new Mesh(track(d, new BoxGeometry(0.42, 1.2, 0.44)), gunmetal);
+  trigger.position.set(-0.45, -0.94, 0);
+  trigger.rotation.z = 0.28;
   grip.add(trigger);
+  const wrap = new Mesh(track(d, new BoxGeometry(1.1, 0.94, 0.66)), leather);
+  wrap.position.set(-0.7, 0, 0);
+  grip.add(wrap);
   scene.add(grip);
 
   const heldBlade = (y: number, z: number) => {
@@ -311,12 +376,13 @@ function bladeScene(env: Texture, d: Set<{ dispose(): void }>): BladeScene {
     g.add(new Mesh(bladeGeo, steel()));
     g.position.set(-3.5, y, z);
     g.userData.rest = g.position.clone();
+    g.userData.role = 'held';
     scene.add(g);
     return g;
   };
-  const held = [heldBlade(1.45, 0.1), heldBlade(1.1, -0.1)];
+  const held = [heldBlade(1.9, 0.12), heldBlade(1.42, -0.12)];
   const stubs = new Group();
-  for (const [y, z] of [[1.45, 0.1], [1.1, -0.1]]) {
+  for (const [y, z] of [[1.9, 0.12], [1.42, -0.12]]) {
     const m = new Mesh(stubGeo, mat(d, { color: 0x9aa1a7, metalness: 0.9, roughness: 0.5 }));
     m.position.set(-3.5, y, z);
     stubs.add(m);
@@ -326,12 +392,13 @@ function bladeScene(env: Texture, d: Set<{ dispose(): void }>): BladeScene {
     const g = new Group();
     for (const j of [0, 1]) {
       const m = new Mesh(bladeGeo, steel());
-      m.position.set(0, j * 0.22, -0.1 * j);
-      m.scale.x = 0.72;
+      m.position.set(0, j * 0.26, -0.12 * j);
+      m.scale.x = 0.78;
       g.add(m);
     }
-    g.position.set(-3.1, -2.05 + i * 0.5, 0.2);
+    g.position.set(-2.4, -2.6 + i * 0.68, 0.3);
     g.userData.rest = g.position.clone();
+    g.userData.role = 'carried';
     scene.add(g);
     return g;
   });
@@ -482,6 +549,7 @@ class Widget<K extends WidgetKind> {
     const a = this.anim;
     setBands(g.fitted, st.full, d);
     lightBands(g.fitted, st.level, a.flash, this.flashBand);
+    g.rack.visible = st.spares.length > 0;
     g.fitted.body.color.setHex(st.dull || st.level <= 0 ? 0x7a8087 : 0xd7dde2);
     g.fitted.group.rotation.set(0, a.spin, a.jolt);
     g.fitted.group.position.y = g.fitted.group.userData.rest.y + a.drop;
@@ -506,8 +574,8 @@ class Widget<K extends WidgetKind> {
     b.held.forEach((g, i) => {
       const rest = g.userData.rest;
       g.visible = st.inHandles || falling;
-      g.position.set(rest.x + (1 + i) * drop + 4 * a.slide, rest.y - 2.4 * drop - 2.4 * a.slide, rest.z);
-      g.rotation.set(0, 0, -(0.7 + i * 0.3) * drop);
+      g.position.set(rest.x + (1.2 + i) * drop + 4.6 * a.slide, rest.y - 3.2 * drop - 3.2 * a.slide, rest.z);
+      g.rotation.set(0, 0, -(0.75 + i * 0.32) * drop);
       setOpacity(g, st.inHandles ? 1 : 1 - a.fall);
     });
     b.stubs.visible = !st.inHandles && this.ruined && !falling;

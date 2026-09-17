@@ -12,6 +12,7 @@ import { checksOf, endComplete, isManual, nextCheck, stayLimitLeft, stepsOf, win
 import { foeTurn } from '../rules/engagement/skirmish.ts';
 import { drawAttentionBlock } from '../rules/engagement/attention.ts';
 import type { Position, Snapshot, SoldierState, TitanRow } from '../rules/engagement/types.ts';
+import { meetsBodyParts } from '../rules/titan.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { currentEngagement, engagementTurns } from './combat.ts';
 import { checkCategoryOf, endLock, endingState, roundCore, skirmishFoes } from './engine.ts';
@@ -116,8 +117,10 @@ export interface TitanView {
   att: string;
   rungs: { id: string; label: string; met: boolean }[];
   hint: string;
-  next: { sealed: boolean; name: string; revealed: boolean };
+  next: { sealed: boolean; name: string; revealed: boolean; entryId: string };
   prev: string;
+  /** The Behavior Table, for the GM's override of the Next Behavior; empty for a player. */
+  entries: { id: string; name: string; canHappen: boolean }[];
   parts: { id: string; short: string; icon: string; state: number; letter: string; count: number; title: string }[];
   openings: { initial: string; name: string }[];
   openingsBy: string;
@@ -585,7 +588,8 @@ function titanView(combat: any, snap: Snapshot, t: TitanRow, turns: any[], turnI
   const revealed = !!src.next_behavior?.revealed;
   const prevName = entries.find((e) => e.id === src.previous_behavior)?.name ?? tr('none');
   const hiddenTough = !!sys?.abnormal && !src.hidden_until_read?.toughness && !isGM;
-  const parts = partsOf(actor).map((p) => ({
+  const bodyParts = partsOf(actor);
+  const parts = bodyParts.map((p) => ({
     id: p.id,
     short: PART_SHORT[p.id] ?? p.id,
     icon: iconPath(`body-${p.kind}`),
@@ -617,8 +621,9 @@ function titanView(combat: any, snap: Snapshot, t: TitanRow, turns: any[], turnI
     att: t.grab ? tr('att.chipHolds', { name: short(name(t.grab.soldier)), lifted: t.grab.lifted ? `, ${tr('lifted')}` : '' }) : t.decoy ? tr('att.chipDecoy', { decoy: t.decoy.name }) : t.holder ? tr('att.chip', { name: short(name(t.holder)) }) : tr('att.chipNothing'),
     rungs,
     hint,
-    next: { sealed: !revealed && !isGM, name: entries.find((e) => e.id === nextId)?.name ?? '', revealed },
+    next: { sealed: !revealed && !isGM, name: entries.find((e) => e.id === nextId)?.name ?? '', revealed, entryId: nextId },
     prev: prevName,
+    entries: isGM ? entries.map((e) => ({ id: e.id, name: e.name, canHappen: meetsBodyParts(e, bodyParts) })) : [],
     parts,
     openings,
     openingsBy: [...new Set(by.filter(Boolean).map(name))].join(', '),

@@ -33,7 +33,7 @@ export function usedTalentOp(ap: ActorPool, id: string, cat: ApplyCategory): Op 
   return ops.set(cat, ap.actor, item, 'system.used', false, true, t('WOF.Roll.op.talentUsed', { name: x.name }));
 }
 
-export async function postCard(actor: any, card: Card, rolls: any[], mode?: string): Promise<any> {
+export async function postCard(actor: any, card: Card, rolls: any[], mode?: string, whisper?: string[]): Promise<any> {
   const Msg = foundry.utils.getDocumentClass('ChatMessage');
   const data: Record<string, any> = {
     author: game.user.id,
@@ -43,7 +43,9 @@ export async function postCard(actor: any, card: Card, rolls: any[], mode?: stri
     flags: { [SYSTEM_ID]: { [FLAG]: card } },
   };
   if (rolls.length) data.sound = CONFIG.sounds.dice;
-  Msg.applyMode(data, mode);
+  // A card written for named users only (the GM's Titan card) sets its whisper itself.
+  if (whisper) data.whisper = whisper;
+  else Msg.applyMode(data, mode);
   return Msg.create(data);
 }
 

@@ -240,6 +240,12 @@
                       <button type="button" class="wax" class:open={ti.next.revealed} disabled={!ti.canPeek} title={ti.canPeek ? t('board.peek') : t('board.sealed')} onclick={() => act('peek', { key: ti.key })}><img src="systems/wings-of-freedom/assets/icons/seal-wax.webp" alt={t('board.sealed')} /></button>
                       <span><b>{ti.next.revealed ? ti.next.name : t('board.sealed')}</b><br />{t('board.prev', { name: ti.prev })}{#if ti.grab}<br />{t('board.kept')}{/if}</span>
                     </div>
+                    {#if ti.entries.length}
+                      <select class="setnext" aria-label={t('board.setNext')} title={t('board.setNextHint')} value={ti.next.entryId} onchange={(e) => act('set-next', { key: ti.key, entry: e.currentTarget.value })}>
+                        <option value="">{t('none')}</option>
+                        {#each ti.entries as e (e.id)}<option value={e.id}>{e.name}{e.canHappen ? '' : ' ·'}</option>{/each}
+                      </select>
+                    {/if}
                   </div>
                   <div class="cell">
                     <span class="lbl">{t('board.parts')}</span>

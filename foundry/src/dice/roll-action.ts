@@ -6,7 +6,7 @@
 import type { AttributeId } from '../rules/derived.ts';
 import { buildRollPool, entryNeeds, responseDue, type Circumstance, type Op } from '../rules/roll.ts';
 import { entryIcon } from '../art.ts';
-import { actorPool, entryBlock, exceptionFor, poolInputs, type ActorPool } from './actor-pool.ts';
+import { actorPool, entryBlock, exceptionFor, isCustomEntry, poolInputs, type ActorPool } from './actor-pool.ts';
 import { applyNew, ops } from './apply.ts';
 import type { ActionCard, CallCard } from './card.ts';
 import { cardOf, clock, postCard, readyTalent, rollResponse, saveCard, stakesOps, t } from './post.ts';
@@ -54,6 +54,13 @@ function attributeOptions(ap: ActorPool, entry: any): AttributeId[] {
   return [...new Set(out)];
 }
 
+/** What a dice Talent is normally rolled for, so a custom roll's list says why each one is offered. */
+function talentFor(names: readonly string[]): string | null {
+  const cat = CONFIG.WOF.actionCatalogById as Record<string, { name: string }>;
+  const list = names.map((id) => cat[id]?.name ?? id);
+  return list.length ? t('WOF.Roll.dialog.talentFor', { entries: list.join(', ') }) : null;
+}
+
 function dialogView(ap: ActorPool, entry: any, opts: RollActionOptions, pick: EngagementPick | null = null): RollDialogView {
   const W = CONFIG.WOF;
   const isGM = !!game.user.isGM;
@@ -68,7 +75,10 @@ function dialogView(ap: ActorPool, entry: any, opts: RollActionOptions, pick: En
           .filter((i: any) => i.type === 'critical-injury' && i.system.row_data.lethal && !i.system.treated)
           .map((i: any) => ({ id: i.id as string, name: (i.system.shown_name || i.name) as string, penalty: (i.system.row_data.death_roll_penalty ?? 0) as number }))
       : [];
+  // A custom roll names no entry, so the roller brings any dice Talent and any gear that has Gear Dice.
+  const custom = isCustomEntry(entry);
   const notes: string[] = [];
+  if (custom) notes.push(t('WOF.Roll.dialog.customNote'));
   if (opts.attack) notes.push(t('WOF.Roll.dialog.against', { name: opts.attack.name, severity: opts.attack.severity }));
   if (entry.id === 'death-roll') notes.push(t('WOF.Roll.dialog.deathNote'));
   if (entry.id === 'treat-injury' && ap.ruleTalents.has('sure-hands')) notes.push(t('WOF.Roll.dialog.secondPush', { name: ap.ruleTalents.get('sure-hands')!.name }));
@@ -83,10 +93,10 @@ function dialogView(ap: ActorPool, entry: any, opts: RollActionOptions, pick: En
     talents: excluded.has('talent')
       ? []
       : ap.talents
-          .filter((x) => x.type === 'dice' && x.level > 0 && x.names.includes(entry.id))
-          .map((x) => ({ id: x.id, name: x.name, dice: x.level, condition: x.condition[entry.id] ?? null })),
-    gear: excluded.has('gear') ? [] : ap.gear.filter((g) => entry.gear.includes(g.itemId) && g.dice > 0).map((g) => ({ id: g.id!, name: g.name, dice: g.dice })),
-    gearAllowed: entry.gear.length > 0 && !excluded.has('gear'),
+          .filter((x) => x.type === 'dice' && x.level > 0 && (custom || x.names.includes(entry.id)))
+          .map((x) => ({ id: x.id, name: x.name, dice: x.level, condition: x.condition[entry.id] ?? null, hint: custom ? talentFor(x.names) : null })),
+    gear: excluded.has('gear') ? [] : ap.gear.filter((g) => (custom || entry.gear.includes(g.itemId)) && g.dice > 0).map((g) => ({ id: g.id!, name: g.name, dice: g.dice })),
+    gearAllowed: (custom || entry.gear.length > 0) && !excluded.has('gear'),
     conditionals: conditional.map((p) => ({ source: p.source, dice: p.dice, condition: p.conditional! })),
     showBonus: !excluded.has('bonus') && entry.id !== 'death-roll',
     bonus: opts.bonus ?? 0,

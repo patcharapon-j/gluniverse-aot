@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { previewPool, type PoolInputs } from '../src/rules/pool.ts';
+import { groupRollsByAttribute } from '../src/sheets/soldier-view.ts';
 import { changeCanister, gainedInjuryState, healingDaysTotal, healthCells, healthLostAfterClick, stressAfterClick } from '../src/rules/harm.ts';
 import { loadTables } from '../tools/data/load.ts';
 import { buildTestConfig } from './wording-fixture.ts';
@@ -74,6 +75,33 @@ describe('previewPool (data/core/dice-pool.yaml)', () => {
   it('has no pool for a fixed roll', () => {
     expect(previewPool(base('fear-roll')).blocked).toBe('no-attribute');
   });
+
+  it('lets a custom roll bring any Talent and any gear, but fills neither in by itself', () => {
+    const custom = {
+      id: 'attribute-strength',
+      attribute: 'strength',
+      gear: [] as string[],
+      requiresGear: false,
+      withoutGear: null,
+    };
+    const inputs = base('nape-strike', { entry: custom, anyTalent: true, anyGear: true });
+    const bare = previewPool(inputs);
+    expect(bare).toMatchObject({ blocked: null, base: 4, gear: null, total: 7 });
+    expect(bare.talent).toBeNull();
+
+    const picked = previewPool({ ...inputs, talentChoice: 'clean-cut', gearChoice: 'odm-gear' });
+    expect(picked.talent).toMatchObject({ id: 'clean-cut', dice: 2 });
+    expect(picked.gear).toMatchObject({ itemId: 'odm-gear', dice: 3 });
+    expect(picked.total).toBe(4 + 2 + 3 + 3);
+  });
+
+  it('keeps an entry naming its own Talent and gear: a custom roll only stops reading that list', () => {
+    const p = previewPool(base('nape-strike'));
+    expect(p.talent).toMatchObject({ id: 'clean-cut' });
+    expect(p.gear).toMatchObject({ itemId: 'blade-set' });
+    // Clean Cut names the Nape strike only, so a Fight never picks it up.
+    expect(previewPool(base('fight')).talent).toBeNull();
+  });
 });
 
 describe('gaining a Critical Injury (data/harm/critical-injuries.yaml)', () => {
@@ -138,5 +166,42 @@ describe('sheet clicks', () => {
     expect(stressAfterClick(2, 3, 1)).toBe(2);
     expect(stressAfterClick(0, 1, 1)).toBe(1);
     expect(stressAfterClick(0, 3, 0)).toBe(1);
+  });
+});
+
+describe('the quick rolls laid out by attribute', () => {
+  const attributes = config.attributes.map((a) => ({ id: a.id, name: a.name }));
+  const labels = { attribute: (id: string) => `A:${id}`, fixed: 'Fixed rolls', other: 'Anywhere' };
+  const row = (id: string, attribute: string | null, extra: { fixed?: boolean; context?: string } = {}) => ({
+    id,
+    attribute,
+    fixed: extra.fixed ?? false,
+    context: extra.context ?? 'any',
+  });
+
+  it('puts each entry under its own attribute, in the attributes’ order, with the fixed rolls last', () => {
+    const groups = groupRollsByAttribute(
+      [row('spot', 'perception'), row('fear-roll', null, { fixed: true }), row('nape-strike', 'strength', { context: 'titan-engagement' })],
+      attributes,
+      labels,
+    );
+    expect(groups.map((g) => g.id)).toEqual(['strength', 'perception', 'fixed']);
+    expect(groups[0].label).toBe('A:strength');
+    expect(groups.at(-1)!.rolls.map((r) => r.id)).toEqual(['fear-roll']);
+  });
+
+  it('keeps the catalog order inside a group, Titan Engagement entries first, and drops empty groups', () => {
+    const groups = groupRollsByAttribute(
+      [row('a', 'agility'), row('b', 'agility', { context: 'titan-engagement' }), row('c', 'agility'), row('d', 'agility', { context: 'titan-engagement' })],
+      attributes,
+      labels,
+    );
+    expect(groups).toHaveLength(1);
+    expect(groups[0].rolls.map((r) => r.id)).toEqual(['b', 'd', 'a', 'c']);
+  });
+
+  it('gathers a roll on no known attribute under its own heading', () => {
+    const groups = groupRollsByAttribute([row('odd', 'luck')], attributes, labels);
+    expect(groups.map((g) => [g.id, g.label])).toEqual([['other', 'Anywhere']]);
   });
 });

@@ -18,7 +18,8 @@ export interface RollDialogView {
   icon: string;
   inputs: PoolInputs;
   attributes: { id: AttributeId; label: string }[];
-  talents: { id: string; name: string; dice: number; condition: string | null }[];
+  /** `hint` says what a Talent is normally rolled for; a custom roll offers every one. */
+  talents: { id: string; name: string; dice: number; condition: string | null; hint?: string | null }[];
   gear: { id: string; name: string; dice: number }[];
   gearAllowed: boolean;
   conditionals: { source: string; dice: number; condition: string }[];

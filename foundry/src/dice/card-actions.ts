@@ -243,6 +243,20 @@ export async function answer(message: any) {
   await rollAction(actor, card.entry ?? '', { call: { message: message.id, card }, attributeAlone: card.entry ? undefined : (card.attribute as any) });
 }
 
+/** A Focus Titan's card: the GM's Roll button opens the Titan roll dialog (tracker/behavior.ts). */
+export async function behaviorRoll(message: any) {
+  if (!game.user.isGM) return;
+  const { openBehaviorRoll } = await import('../tracker/behavior.ts');
+  await openBehaviorRoll(message);
+}
+
+/** The same card's "no dice" button: the behavior resolves, announced, with nothing thrown. */
+export async function behaviorNoDice(message: any) {
+  if (!game.user.isGM) return;
+  const { resolveBehaviorWithoutDice } = await import('../tracker/behavior.ts');
+  await resolveBehaviorWithoutDice(message);
+}
+
 export async function gasFromFear(message: any) {
   const card = cardOf(message) as TableCard;
   const actor = await actorOf(card);

@@ -193,7 +193,7 @@ describe('vitals widgets: closing a sheet mid-animation (M1)', () => {
 });
 
 describe('vitals widgets: Reduced motion (M2)', () => {
-  const heldBlades = () => h.groups.filter((g) => g.userData.rest?.x === -3.5);
+  const heldBlades = () => h.groups.filter((g) => g.userData.role === 'held');
 
   function midFall(mode: 'full' | 'reduced') {
     h.motion.mode = mode;

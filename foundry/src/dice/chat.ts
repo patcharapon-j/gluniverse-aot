@@ -4,7 +4,7 @@
  * carries the name, the pool, the time, and the GM's delete.
  */
 import { actorPool } from './actor-pool.ts';
-import { answer, cover, currentPushBlock, dodge, foeReact, gasFromFear, gallows, opsAction, push, pushBlockText, shrug } from './card-actions.ts';
+import { answer, behaviorNoDice, behaviorRoll, cover, currentPushBlock, dodge, foeReact, gasFromFear, gallows, opsAction, push, pushBlockText, shrug } from './card-actions.ts';
 import { renderCard, type Card, type CardViewer } from './card.ts';
 import { armCard, CardMotion, cardSignature, playCard, whenShown } from './card-motion.ts';
 import { cardOf, ownSoldiers, readyTalent, t } from './post.ts';
@@ -55,6 +55,8 @@ const ACTIONS: Record<string, (m: any, button: HTMLButtonElement) => unknown> = 
   shrug,
   dodge,
   answer,
+  behaviorRoll,
+  behaviorNoDice,
   gas: gasFromFear,
 };
 
