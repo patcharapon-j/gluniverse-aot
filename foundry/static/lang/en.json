@@ -1279,7 +1279,8 @@
         "caption": "Fig. 1, front",
         "sides": "R · L",
         "aria": "Soldier body diagram: {list}",
-        "ariaNone": "Soldier body diagram, no Critical Injuries"
+        "ariaNone": "Soldier body diagram, no Critical Injuries",
+        "kia": "KIA"
       },
       "injury": {
         "treated": "Treated",

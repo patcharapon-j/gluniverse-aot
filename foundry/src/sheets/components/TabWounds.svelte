@@ -97,7 +97,7 @@
 
 <div class="wm">
   <figure class="figbox" bind:this={figEl}>
-    <Figure injuries={view.injuries} onpin={focusInjury} />
+    <Figure injuries={view.injuries} healed={s.healed_permanent_injuries} dead={view.dead} down={s.down} onpin={focusInjury} />
     <div class="gore">
       <span class="lbl" use:tooltip={t('WOF.Settings.gore.hint')}>{t('WOF.Settings.gore.short')}</span>
       <span class="seg" role="group" aria-label={t('WOF.Settings.gore.name')}>

@@ -114,6 +114,8 @@ export interface SoldierView {
   placeholder: boolean;
   editable: boolean;
   isGM: boolean;
+  /** The actor carries the core "dead" status. */
+  dead: boolean;
   system: any;
   derived: SoldierDerived;
   keyAttribute: string | null;
@@ -390,6 +392,7 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     placeholder: CORE_DEFAULT_IMGS.has(actor.img ?? ''),
     editable: opts.editable,
     isGM: !!game.user?.isGM,
+    dead: !!actor.statuses?.has?.('dead'),
     system: source,
     derived,
     keyAttribute,

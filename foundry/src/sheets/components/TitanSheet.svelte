@@ -58,6 +58,7 @@
       `${uid}-tf`,
       t('WOF.TitanSheet.figureAria', { list: view.parts.map((p) => `${p.label} ${stateLabel(p.state)}`).join(', ') }),
       t('WOF.TitanSheet.nape'),
+      { dead: !!view.corpse },
     ),
   );
 

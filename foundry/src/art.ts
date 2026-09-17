@@ -7,6 +7,9 @@ export const ASSETS = `${SYSTEM_PATH}/assets`;
 
 export const iconPath = (name: string) => `${ASSETS}/icons/${name}.webp`;
 
+/** The painted body studies and wound atlases of the body figures (static/assets/anatomy). */
+export const anatomyPath = (name: string) => `${ASSETS}/anatomy/${name}.webp`;
+
 /** Foundry's own placeholder images, which a system default may replace. */
 export const CORE_DEFAULT_IMGS = new Set(['icons/svg/mystery-man.svg', 'icons/svg/item-bag.svg', '', 'icons/svg/skull.svg', 'icons/svg/sword.svg']);
 
