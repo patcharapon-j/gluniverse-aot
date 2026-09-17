@@ -193,6 +193,8 @@
 .wof-sheet .vit + .vit { border-left: 1px solid var(--rule); }
 .wof-sheet .vhead { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
 .wof-sheet .vhead .lbl { display: inline-flex; align-items: center; gap: var(--s1); }
+.wof-sheet .vhead .vic { width: 16px; font-size: 14px; line-height: 1; text-align: center; color: var(--red); filter: drop-shadow(1px 1px 0 rgba(36, 31, 27, .25)); }
+.wof-sheet .vhead .vic.stress { color: var(--ink2); }
 .wof-sheet .big { font: 900 var(--t-num)/.9 var(--fd); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
 .wof-sheet .big small { font: 600 var(--t-md) var(--fd); color: var(--ink3); }
 .wof-sheet .big.red { color: var(--red); }
