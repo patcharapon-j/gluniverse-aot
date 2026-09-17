@@ -116,7 +116,7 @@
         <h3 class="sec"><span class="n">§1</span>{v.mode === 'titan' ? t('board.matrix') : t('board.engaged')}<span class="hint">{v.mode === 'titan' ? t('board.matrixHint') : t('board.engagedHint')}</span></h3>
         <div class="mxwrap">
           <table class="mx">
-            <colgroup><col style="width:44px" /><col />{#if v.mode === 'titan'}{#each v.titans as _ti (_ti.key)}<col style="width:84px" />{/each}{:else}{#each v.foes as _f (_f.id)}<col style="width:62px" />{/each}{/if}{#if v.mode === 'titan'}<col style="width:40px" />{/if}<col style="width:46px" /></colgroup>
+            <colgroup><col style="width:44px" /><col />{#if v.mode === 'titan'}{#each v.titans as _ti (_ti.key)}<col style="width:84px" />{/each}{:else}{#each v.foes as _f (_f.id)}<col style="width:62px" />{/each}{/if}{#if v.mode === 'titan'}<col style="width:40px" />{/if}<col style="width:54px" /></colgroup>
             <thead>
               <tr>
                 <th>{t('board.card')}</th><th>{t('board.soldier')}</th>
@@ -314,7 +314,7 @@
                 <button type="button" class="mini" onclick={() => act('check-skip', { index: ck.index })}>{t('act.skip')}</button>
               </span>
             {/if}
-            {#if ck.canUndo}<button type="button" class="undo" onclick={() => act('check-undo', { index: ck.index })}>{t('act.undo')}</button>{/if}
+            {#if ck.canUndo}<span class="ckacts"><button type="button" class="undo" onclick={() => act('check-undo', { index: ck.index })}>{t('act.undo')}</button></span>{/if}
             <span class="stamp dst">{ck.state === 'skipped' ? t('board.skipped') : t('board.done')}</span>
           </div>
         {/each}

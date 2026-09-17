@@ -45,7 +45,7 @@ export function drawBadges(token: any): void {
   box.visible = true;
   for (const child of box.removeChildren()) child.destroy({ children: true });
   const grid = token.scene?.grid?.size ?? (globalThis as any).canvas?.grid?.size ?? 100;
-  const h = Math.max(16, Math.round(grid * 0.2));
+  const h = Math.max(20, Math.round(grid * 0.28));
   const pad = Math.round(h * 0.15);
   let x = 0;
   const parts: any[] = [];

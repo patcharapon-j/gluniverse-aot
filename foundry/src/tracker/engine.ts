@@ -507,7 +507,7 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
   targets.sort((a, b) => (tieCard(a, snap.cards, snap.wings) ?? 99) - (tieCard(b, snap.cards, snap.wings) ?? 99));
   await rec.commit();
   const full = entryOf(actor, entry.id);
-  const lines = [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), tr('note.behavior', { name: full?.name ?? entry.id, tier: game.i18n.localize(`WOF.Tier.${entry.tier}`) })];
+  const lines = [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), entry.tier === 'thrash' ? tr('note.thrash', { name: full?.name ?? entry.id }) : tr('note.behavior', { name: full?.name ?? entry.id, tier: game.i18n.localize(`WOF.Tier.${entry.tier}`) })];
   let message: any = null;
   if (full?.attack_dice) {
     const { rollTitanAttack } = await import('../dice/reactions.ts');

@@ -2429,7 +2429,8 @@
         "loud": "{name} draws the Attention of {label}",
         "fallBack": "Fall Back: {name} holds In Reach of {label}",
         "closeIn": "{name} closes in on {foe}",
-        "breakAway": "{name} breaks away"
+        "breakAway": "{name} breaks away",
+        "thrash": "{name}: it falls back on its Thrash."
       },
       "death": {
         "relief": "Nape-kill Stress relief: {who}.",
@@ -2475,11 +2476,11 @@
         "undo": "Undo",
         "redo": "Redo",
         "apply": "Apply",
-        "spent": "{n} Openings spent.",
+        "spent": "Openings spent: {n}.",
         "kill": "{name} kills Titan {label}.",
-        "short": "{name} falls short: {n} Openings on {label}.",
+        "short": "{name} falls short. Openings left on {label}: {n}.",
         "part": "{name}: {state}, count {count}.",
-        "openings": "{n} Openings.",
+        "openings": "Openings made: {n}.",
         "grounded": "Titan {label} is grounded.",
         "decoy": "The decoy ({decoy}) holds its Attention for {n} cards (needed {need}).",
         "decoyFails": "Not enough: it needed {need}.",

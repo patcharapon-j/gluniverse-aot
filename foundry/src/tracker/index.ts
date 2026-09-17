@@ -15,6 +15,12 @@ import { rollContext } from './roll-context.ts';
 import { onRefresh, refreshTracker } from './state.svelte.ts';
 import { registerStatuses } from './statuses.ts';
 
+/** The tracker's calls for macros and tests (game.wof.tracker). */
+export async function trackerApi() {
+  const [engine, state, board, setup, results] = await Promise.all([import('./engine.ts'), import('./state.svelte.ts'), import('./board.ts'), import('./setup.ts'), import('./results.ts')]);
+  return { start: engine.startEngagement, act: state.act, openBoard: board.openBoard, openSetup: setup.openSetup, foeAct: results.foeAct, view: () => state.tracker.view, engine };
+}
+
 export function registerTracker(): void {
   const models = defineCombatModels();
   Object.assign(CONFIG.Combat.dataModels, models.combat);
@@ -43,7 +49,8 @@ export function registerTracker(): void {
   });
   const refresh = () => refreshTracker();
   for (const hook of ['updateActor', 'createItem', 'updateItem', 'deleteItem', 'createToken', 'updateToken', 'deleteToken', 'createActiveEffect', 'deleteActiveEffect', 'canvasReady', 'deleteCombat', 'createCombat', 'updateSetting']) Hooks.on(hook, refresh);
-  Hooks.once('ready', () => {
+  Hooks.once('ready', async () => {
+    game.wof.tracker = await trackerApi();
     mountHud();
     refreshTracker();
   });

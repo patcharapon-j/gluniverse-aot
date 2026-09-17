@@ -229,6 +229,8 @@ export function defineCombatDocuments() {
     }
 
     _onCreate(data: any, options: any, userId: string) {
+      // An engagement is created already at round 1, before any combatant sets up the turn state.
+      if (this.isEngagement) this.previous ??= this.current;
       super._onCreate(data, options, userId);
       if (this.isEngagement) handlers?.changed(this);
     }

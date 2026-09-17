@@ -274,7 +274,7 @@ async function attackEffects(card: AttackCard, rec: Recorder): Promise<void> {
       rec.line(tr('result.misses', { name: actor.name }));
       continue;
     }
-    rec.line(tr('result.lands', { name: actor.name, net }));
+    rec.line(tr('result.lands', { name: actor.name, n: net }));
     for (const e of entry.effects) {
       if (actor.statuses.has('dead')) break;
       await effect(combat, key, label, actor, e, net, rec);
