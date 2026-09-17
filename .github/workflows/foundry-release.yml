@@ -1,0 +1,143 @@
+name: Foundry release
+
+# Automated release of the Wings of Freedom Foundry VTT system.
+#
+# Runs on every push to main that touches foundry/ or data/ (the build reads both), and can
+# also be run by hand from the Actions tab. Each run auto-increments the patch version, stamps
+# foundry/static/system.json and foundry/package.json, builds the system, publishes a GitHub
+# release with system.json and the zipped package, tags it vX.Y.Z, and commits the version bump
+# back to main.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "foundry/**"
+      - "data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: foundry-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full repo (the build reads ../data and ../site too) and full history + tags so the
+          # version bump can find the latest release tag and push the bump commit back.
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10.10.0"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: foundry/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: foundry
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve version
+        id: vars
+        run: |
+          set -euo pipefail
+
+          # Latest released version from tags (vX.Y.Z), highest semver wins.
+          LATEST="$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | sed 's/^v//' | sort -V | tail -n 1)"
+          if [ -z "$LATEST" ]; then
+            LATEST="$(node -p "require('./foundry/static/system.json').version")"
+            echo "No release tags found; basing bump on system.json (${LATEST})."
+          else
+            echo "Latest release tag: v${LATEST}"
+          fi
+
+          IFS='.' read -r major minor patch <<< "$LATEST"
+          : "${major:=0}" "${minor:=0}" "${patch:=0}"
+          VERSION="${major}.${minor}.$((patch + 1))"
+          echo "Auto-incremented (patch): ${LATEST} -> ${VERSION}"
+
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Resolved version '${VERSION}' is not a valid X.Y.Z semver." >&2
+            exit 1
+          fi
+
+          if git rev-parse -q --verify "refs/tags/v${VERSION}" >/dev/null; then
+            echo "Tag v${VERSION} already exists." >&2
+            exit 1
+          fi
+
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}"
+          {
+            echo "version=${VERSION}"
+            echo "tag=v${VERSION}"
+            echo "manifest=${REPO_URL}/releases/latest/download/system.json"
+            echo "download=${REPO_URL}/releases/download/v${VERSION}/wings-of-freedom.zip"
+            echo "url=${REPO_URL}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Stamp manifest and package version
+        run: |
+          node - <<'EOF'
+          const fs = require("fs");
+
+          const systemPath = "foundry/static/system.json";
+          const system = JSON.parse(fs.readFileSync(systemPath, "utf8"));
+          system.version = "${{ steps.vars.outputs.version }}";
+          system.manifest = "${{ steps.vars.outputs.manifest }}";
+          system.download = "${{ steps.vars.outputs.download }}";
+          fs.writeFileSync(systemPath, JSON.stringify(system, null, 2) + "\n");
+          console.log(`Stamped ${systemPath} -> v${system.version}`);
+
+          const pkgPath = "foundry/package.json";
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+          pkg.version = "${{ steps.vars.outputs.version }}";
+          fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
+          console.log(`Stamped ${pkgPath} -> v${pkg.version}`);
+          EOF
+
+      - name: Build
+        working-directory: foundry
+        run: pnpm run build
+
+      - name: Zip system package
+        working-directory: foundry/dist
+        run: |
+          # Foundry expects system.json at the zip root; dist/ already mirrors the package layout.
+          zip -r ../../wings-of-freedom.zip . -x '*/.DS_Store'
+          echo "--- wings-of-freedom.zip contents (top level) ---"
+          unzip -l ../../wings-of-freedom.zip | head -n 40
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: Wings of Freedom ${{ steps.vars.outputs.version }}
+          generate_release_notes: true
+          files: |
+            foundry/static/system.json
+            wings-of-freedom.zip
+
+      - name: Commit version bump
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add foundry/static/system.json foundry/package.json
+          if git diff --cached --quiet; then
+            echo "Manifest already at v${{ steps.vars.outputs.version }} — nothing to commit."
+            exit 0
+          fi
+          git commit -m "chore(release): wings-of-freedom v${{ steps.vars.outputs.version }} [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
