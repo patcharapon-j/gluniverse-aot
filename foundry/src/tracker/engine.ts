@@ -9,7 +9,7 @@ import { dealBlock, dealCards, skirmishHolders, tieCard, titanHolders } from '..
 import { countTurn, release } from '../rules/engagement/grab.ts';
 import { coreOf, grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { comparisonLabel, entering, focusLabels, holdsAPosition, isClose, leaveBlock, letGoBlock, moveOptions, nextLabel, returnBlock, returning, withPosition, type MoveKind } from '../rules/engagement/positions.ts';
-import { chargeBlock, flightResult, momentumCap, momentumEnd, startingAnchors, trimToCap, wreckAnchor } from '../rules/engagement/momentum.ts';
+import { changeEffects, chargeBlock, chargeDoubleStep, flightResult, momentumCap, momentumEnd, startingAnchors, trimToCap, wreckAnchor } from '../rules/engagement/momentum.ts';
 import {
   autoChecks,
   checkCategory,
@@ -615,6 +615,15 @@ export async function movePosition(combat: any, req: MoveRequest): Promise<boole
     const { extViaGM } = await import('../dice/proxy.ts');
     await extViaGM('tracker', { act: 'let-go', combat: combat.id, soldier: s.id, titan: t.key });
     return true;
+  } else if (req.charge && req.to === s.positions[t.label] && chargeDoubleStep(snap.anchor)) {
+    // mounted_charge, open_double_step: at Open a mounted move may make the Distant to In Reach step
+    // twice, so the rider comes in and gets out again. One move and one charge: the flag is set once.
+    const why = chargeBlock(s, snap.anchor, s.positions[t.label], grabbed);
+    if (why) return warn(`move.${why}`);
+    await markMoveSpent(combat, req.actor.id);
+    await markLoud(combat, t.label, req.actor.id);
+    await postNote({ title: tr('note.moved', { name: req.actor.name }), lines: [tr('note.chargeDouble', { label: t.label })], round: combat.round });
+    return true;
   } else {
     const opt = moveOptions(s, { rating: snap.anchor, titan: t, grabbed, retreat: snap.retreat, momentum: s.momentum, forced: forcedFor(combat, snap, s, t.label) }).find((o) => o.to === req.to);
     if (!opt || opt.block) return warn(`move.${opt?.block ?? 'notOneStep'}`);
@@ -680,7 +689,8 @@ async function applyPosition(combat: any, actor: any, s: SoldierState, label: st
   // A forced step is a step of the kind the soldier's move makes, so it leaves them airborne as an
   // ODM move does, and is ODM use; it is never a Flight (positions.yaml, moves, forced_step).
   const kind: MoveKind | null = way === 'rule' ? (extra.kind ?? null) : way === 'letGo' ? null : way;
-  if (kind === 'odm') patch['system.airborne'] = true;
+  const how = changeEffects(way === 'rule' ? 'rule' : way === 'letGo' ? 'rule' : 'move', kind);
+  if (how.airborne) patch['system.airborne'] = true;
   if (kind === 'onFoot') patch['system.airborne'] = false;
   const spent = Math.max(0, extra.carry ?? 0);
   const held = extra.flight ? extra.flight.momentum : s.momentum;
@@ -690,7 +700,7 @@ async function applyPosition(combat: any, actor: any, s: SoldierState, label: st
   // A carried comrade changes Position with their carrier (carrying.yaml).
   const carried = s.carrying ? game.actors.get(s.carrying) : null;
   if (carried && isGM()) await carried.update(positionsPatch(positions));
-  if (kind === 'odm') await markOdm(combat, actor.id);
+  if (how.odmUse) await markOdm(combat, actor.id);
   if (way !== 'rule' && way !== 'letGo') await markMoveSpent(combat, actor.id);
   if (extra.flight?.loud || extra.charge) await markLoud(combat, label, actor.id);
   const wayText = way === 'rule' ? tr('move.byRule') : tr(`move.way.${way}`);
@@ -1235,7 +1245,8 @@ export async function closeEngagement(combat: any): Promise<void> {
     ui.notifications.warn(tr('ending.stepsOpen'));
     return;
   }
-  if (combat.system.mode === 'titan') for (const a of soldierActors(combat)) await a.update({ ...positionsPatch({}, false), 'system.airborne': false });
+  // Momentum is 0 outside a Titan Engagement and is cleared when one ends (sheet-fields.yaml, momentum).
+  if (combat.system.mode === 'titan') for (const a of soldierActors(combat)) await a.update({ ...positionsPatch({}, false), 'system.airborne': false, 'system.momentum': 0 });
   await postNote({ title: tr('ending.closed'), lines: [], round: combat.round });
   await writeSystem(combat, { ended: true });
   await combat.delete();

@@ -94,6 +94,7 @@
         {#if v.mode === 'titan'}
           <Clock segments={v.retreat.length} filled={v.retreat.filled} label={t('retreat')} />
           <span>{v.retreat.active ? t('retreatCalled') : t('retreatN', { n: v.retreat.filled, of: v.retreat.length })}</span>
+          {#if v.mode === 'titan'}<span title={v.anchors.trait}>{v.anchors.text}</span>{/if}
         {:else}<span>{t('skirmish')}</span>{/if}
         <button type="button" class="mini" onclick={() => act('unfold')}>{t('act.unfold')}</button>
         <button type="button" class="mini" aria-label={t('act.boardLabel')} onclick={() => act('board')}>{t('act.board')}</button>

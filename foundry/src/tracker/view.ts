@@ -8,6 +8,7 @@ import { evaluateLadder } from '../rules/engagement/attention.ts';
 import { tieCard } from '../rules/engagement/cards.ts';
 import { grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { comparisonLabel, isClose, leaveBlock, letGoBlock, moveOptions, returnBlock, stepsApart, stepRows } from '../rules/engagement/positions.ts';
+import { chargeBlock, chargeDoubleStep, momentumCap } from '../rules/engagement/momentum.ts';
 import { checksOf, endComplete, isManual, nextCheck, stayLimitLeft, stepsOf, wingsEditable, type EndEntry } from '../rules/engagement/round.ts';
 import { foeTurn } from '../rules/engagement/skirmish.ts';
 import { drawAttentionBlock } from '../rules/engagement/attention.ts';
@@ -57,7 +58,9 @@ export interface PosOption {
   label: string;
   icon: string;
   current: boolean;
-  ways: { kind: string; label: string; steps: number; carry: number; note: string | null }[];
+  /** The Open rating's double step: a mounted rider charges and ends where they started. */
+  charge: boolean;
+  ways: { kind: string; label: string; steps: number; carry: number; charge: boolean; note: string | null }[];
   block: string | null;
 }
 
@@ -92,6 +95,9 @@ export interface SoldierRow {
   cells: Cell[];
   gas: number;
   gasMax: number;
+  /** Momentum held, and the cap the Anchors left give (anchor-ratings.yaml, momentum). */
+  momentum: number;
+  momentumCap: number;
   stress: number;
   owner: boolean;
   swapBlock: string | null;
@@ -181,6 +187,8 @@ export interface TrackerView {
   checks: CheckView[];
   allStamped: boolean;
   retreat: { length: number; filled: number; active: boolean; text: string };
+  /** The Anchors left of the rating's own count, and its Terrain Trait (anchor-ratings.yaml). */
+  anchors: { left: number; full: number; text: string; trait: string };
   background: { name: string; length: number; filled: number; entered: boolean }[];
   tactics: string;
   cloaks: string;
@@ -317,6 +325,8 @@ export function buildView(): TrackerView | null {
       cells,
       gas: src.gas_rating ?? 0,
       gasMax: CONFIG.WOF.gas.full,
+      momentum: s.momentum,
+      momentumCap: momentumCap(snap.anchors),
       stress: src.derived?.stress_effective ?? src.stress ?? 0,
       owner,
       swapBlock: snap.step === 'swap' ? swapBlockText(snap, id) : null,
@@ -476,6 +486,12 @@ export function buildView(): TrackerView | null {
     checks,
     allStamped,
     retreat: { length: retreat.length, filled: retreat.filled, active: retreat.active, text: retreatText },
+    anchors: {
+      left: snap.anchors,
+      full: snap.anchor?.anchors ?? 0,
+      text: tr('anchors', { left: snap.anchors, full: snap.anchor?.anchors ?? 0 }),
+      trait: snap.anchor ? game.i18n.localize(CONFIG.WOF.labels.terrainTraits[snap.anchor.trait] ?? '') : '',
+    },
     background: (sys.background as any[]).map((b) => ({ name: b.name, length: b.length, filled: b.filled, entered: !!b.entered })),
     tactics,
     cloaks: (sys.cloaks as string[]).map((id) => nm(snap, id)).join(', ') || tr('none'),
@@ -537,11 +553,13 @@ function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, c
       label: tr(`pos.${to}`),
       icon: POS_ICON[to],
       current: to === p,
+      charge: to === p && chargeDoubleStep(snap.anchor) && !chargeBlock(s, snap.anchor, p ?? undefined, grabbedIn(snap)(s.id)),
       ways: (o?.ways ?? []).map((w) => ({
         kind: w.kind,
         label: tr(`move.way.${w.kind}`),
         steps: w.steps,
         carry: w.carry,
+        charge: w.charge,
         // A Flight is rolled either way; Carry says what the extra steps cost (momentum, spends, carry).
         note: w.carry > 0 ? tr('move.carry', { n: w.carry }) : w.steps > 1 ? tr('move.carryFree') : w.kind === 'odm' ? tr('move.flight') : w.charge ? tr('move.charge') : null,
       })),
@@ -663,6 +681,11 @@ function checkDetail(combat: any, snap: Snapshot, check: string): string {
       return sys.retreat.active ? tr('check.stopped') : (sys.background as any[]).filter((b) => !b.entered).map((b) => `${b.name} ${b.filled} ${tr('of')} ${b.length}`).join(', ') || tr('none');
     case 'retreat-clock':
       return sys.retreat.active ? tr('check.stopped') : `${sys.retreat.filled} ${tr('of')} ${sys.retreat.length}`;
+    case 'momentum': {
+      // Everyone who made no ODM move this round loses all their Momentum (round.yaml, end_steps).
+      const losing = snap.soldiers.filter((x) => x.momentum > 0 && !(sys.odmUsed as string[]).includes(x.id)).map((x) => x.name);
+      return losing.length ? tr('check.momentumDue', { who: losing.join(', ') }) : tr('check.detail.momentum');
+    }
     case 'round-ends':
       return tr('check.lost');
     case 'broken-leave':

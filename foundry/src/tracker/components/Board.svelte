@@ -32,11 +32,11 @@
     });
   }
 
-  function move(to: string, way: string, carry = 0) {
+  function move(to: string, way: string, carry = 0, charge = false) {
     if (!menu) return;
     const { row, cell } = menu;
     menu = null;
-    void act('move', { soldier: row.id, key: cell.key, to, way, carry }).then(() => {
+    void act('move', { soldier: row.id, key: cell.key, to, way, carry, charge }).then(() => {
       pulse(host?.querySelector(`[data-cell="${row.id}-${cell.key}"]`), MOTION.colors.notice);
     });
   }
@@ -97,6 +97,7 @@
         <div class="eline">
           {#if v.mode === 'titan'}
             <span>{t('line.anchor')} <b>{v.anchor}</b></span>
+            <span title={v.anchors.trait}>{t('line.anchors')} <b>{v.anchors.text}</b></span>
             <span>{t('line.round')} <b>{v.round}</b></span>
             <span>{t('line.step')} <b>{v.steps.find((s) => s.id === v.step)?.label}</b></span>
             <span>{t('retreat')} <b>{v.retreat.text}</b></span>
@@ -127,6 +128,7 @@
                 {#if v.mode === 'titan'}
                   {#each v.titans as ti (ti.key)}<th class="t{ti.colour}" title={ti.name}>{ti.label} {ti.corpse ? t('corpse') : ti.name}</th>{/each}
                   <th>{t('board.gas')}</th>
+                  <th>{t('board.momentum')}</th>
                 {:else}
                   {#each v.foes as f (f.id)}<th class="tF" title={f.name}>{t('board.foeN', { n: f.label })}</th>{/each}
                 {/if}
@@ -170,6 +172,7 @@
                       </td>
                     {/each}
                     <td><span class="pips gas" title={t('board.gasTitle', { n: r.gas, of: r.gasMax })}>{#each pips(r.gas, r.gasMax) as on, k (k)}<i class:on></i>{/each}</span>{#if r.odm}<small class="odm" title={t('board.odmUsed')}>{t('board.odmShort')}</small>{/if}</td>
+                    <td><b title={t('momentum', { n: r.momentum, cap: r.momentumCap })}>{r.momentum}<small> {t('of')} {r.momentumCap}</small></b></td>
                   {:else}
                     {#each v.foes as f (f.id)}
                       {@const e = r.engaged.includes(f.id)}
@@ -339,9 +342,12 @@
       {#each menu.cell.options as o (o.to)}
         <div class="popt" class:current={o.current}>
           <span class="pn"><img src={o.icon} alt="" />{o.label}</span>
-          {#if o.current}<em class="note">{t('board.current')}</em>
+          {#if o.current}<em class="note">{t('board.current')}</em>{#if o.charge}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, 'mounted', 0, true)}>{t('move.chargeAct')}</button>{/if}
           {:else}
-            {#each o.ways as w (w.kind)}<button type="button" role="menuitem" onclick={() => move(o.to, w.kind, w.carry)}>{w.label}{#if w.note}<small> {w.note}</small>{/if}</button>{/each}
+            {#each o.ways as w (w.kind)}
+              <button type="button" role="menuitem" onclick={() => move(o.to, w.kind, w.carry)}>{w.label}{#if w.note}<small> {w.note}</small>{/if}</button>
+              {#if w.charge}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, w.kind, w.carry, true)}>{t('move.chargeAct')}</button>{/if}
+            {/each}
             {#if o.block}<em class="note">{o.block}</em>{/if}
             {#if isGM}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, 'rule')}>{t('move.byRule')}</button>{/if}
           {/if}

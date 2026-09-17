@@ -66,12 +66,38 @@ export function ruinBladeInHandles(actor: any) {
   return set?.delete();
 }
 
-/** Fit a carried Blade Set into empty handles. */
-export function fitBladeSet(actor: any, id?: string) {
+/**
+ * Swap Blade Set (data/gear/blade-sets.yaml, swap): fit a carried Blade Set into empty handles. In a
+ * Titan Engagement it spends the soldier's move and never the action, so a soldier whose move is
+ * already spent cannot swap this turn (decision batch 10, OQ-185). Outside one it spends nothing.
+ */
+export async function fitBladeSet(actor: any, id?: string) {
   const sets = actor.items.filter((i: any) => i.type === 'gear' && i.system.subtype === 'blade-set');
-  if (sets.some((i: any) => i.system.in_handles)) return null;
-  const pick = id ? sets.find((i: any) => i.id === id) : sets[0];
-  return pick?.update({ 'system.in_handles': true });
+  const pick = id ? sets.find((i: any) => i.id === id) : sets.find((i: any) => !i.system.in_handles);
+  const { swapBladeSetBlock } = await import('../rules/engagement/positions.ts');
+  const { currentEngagement } = await import('../tracker/combat.ts');
+  const { snapshot } = await import('../tracker/snapshot.ts');
+  const combat = currentEngagement();
+  const inEngagement = !!combat && combat.system.mode === 'titan' && (combat.system.soldiers as string[]).includes(actor.id);
+  const snap = inEngagement ? snapshot(combat) : null;
+  const state = snap?.soldiers.find((x) => x.id === actor.id);
+  const why = swapBladeSetBlock(state ?? { alive: !actor.statuses?.has?.('dead'), down: !!actor.system.down } as any, {
+    inEngagement,
+    handlesFull: sets.some((i: any) => i.system.in_handles),
+    carries: !!pick,
+    moveSpent: !!snap?.movesSpent.includes(actor.id),
+    grabbed: !!snap?.titans.some((x) => x.status === 'focus' && x.grab?.soldier === actor.id),
+  });
+  if (why) {
+    ui.notifications?.warn(t(`WOF.Tracker.swapBlades.${why}`));
+    return null;
+  }
+  await pick.update({ 'system.in_handles': true });
+  if (inEngagement) {
+    const { markMoveSpent } = await import('../tracker/engine.ts');
+    await markMoveSpent(combat, actor.id);
+  }
+  return pick;
 }
 
 export function setListEntry(actor: any, field: string, index: number, patch: Record<string, unknown>) {

@@ -262,6 +262,10 @@
           "spare_canisters": {
             "label": "Spare canisters"
           },
+          "momentum": {
+            "label": "Momentum",
+            "hint": "What your last Flight was worth, spent on a longer move, a bonus die, quiet, or a clean line."
+          },
           "left_at": {
             "label": "Items left at",
             "position": {
@@ -1044,6 +1048,10 @@
         "skirmish": {
           "name": "Skirmish harm",
           "hint": "Roll Guard and apply damage to Foes and soldiers, and let broken groups leave."
+        },
+        "momentum": {
+          "name": "Momentum",
+          "hint": "Take all Momentum from every soldier who made no ODM move, at the end of each round."
         }
       }
     },
@@ -1353,6 +1361,11 @@
         "top10": "Top 10",
         "xpAria": "{n} XP",
         "notesHint": "Click the pen to write"
+      },
+      "momentum": {
+        "spend": "Spend 1 Momentum",
+        "gain": "Gain 1 Momentum",
+        "hint": "Capped by the Anchors left in the Titan Engagement."
       }
     },
     "BodyPart": {
@@ -1396,7 +1409,8 @@
       "rolledLocation": "rolled location",
       "knockLoose": "Knocks loose: an airborne soldier, or one On Body or at Blind Spot, falls.",
       "grab": "Grab.",
-      "telegraph": "Telegraphs: its next behavior is revealed."
+      "telegraph": "Telegraphs: its next behavior is revealed.",
+      "wreck": "Wrecks an anchor: the Titan Engagement loses 1, whether it landed or not."
     },
     "Squad": {
       "kicker": "Squadmate stat block",
@@ -2343,7 +2357,8 @@
         "cloaks": "Cloaks",
         "foes": "Foes",
         "ambush": "Ambush",
-        "retreatActive": "under way since round {round}, stay limit {stay}"
+        "retreatActive": "under way since round {round}, stay limit {stay}",
+        "anchors": "Anchors"
       },
       "sk": {
         "grit": "Grit {grit}, {out} out",
@@ -2404,7 +2419,14 @@
           "mounted": "Mounted",
           "odm": "ODM"
         },
-        "forced": "Retreat: the move must go toward Distant, or toward a fallen comrade while the stay limit allows."
+        "forced": "Retreat: the move must go toward Distant, or toward a fallen comrade while the stay limit allows.",
+        "carry": "Carry: spends {n} Momentum",
+        "carryFree": "Carry: free here",
+        "flight": "A Flight: rolled for Fly",
+        "charge": "A charge: it may draw its eye",
+        "noMomentum": "The soldier holds too little Momentum for the extra steps.",
+        "chargeReach": "A charge is a mounted step between Distant and In Reach.",
+        "chargeAct": "Mounted, and charge"
       },
       "block": {
         "corpse": "That body is a corpse.",
@@ -2484,8 +2506,11 @@
           "death-rolls": "Each untreated lethal injury still limited causes a Death Roll",
           "care-window": "The Squad treats its wounded",
           "grief": "Grief for the engagement's deaths",
-          "retirement-and-promotion": "Five Scars retire; left items are shared out; promotion"
-        }
+          "retirement-and-promotion": "Five Scars retire; left items are shared out; promotion",
+          "momentum": "Everyone who made no ODM move loses all their Momentum"
+        },
+        "momentum": "Momentum",
+        "momentumDue": "Losing it all: {who}"
       },
       "end": {
         "gasFor": "Gas Rolls for {who}.",
@@ -2507,7 +2532,13 @@
         "foesGone": "Every Foe is gone: the Skirmish ends.",
         "noneStanding": "No soldier stands: the Skirmish ends.",
         "mayLeave": "The players may declare that the Squad leaves.",
-        "goesOn": "The Skirmish goes on."
+        "goesOn": "The Skirmish goes on.",
+        "momentumLost": "No ODM move this round, so all Momentum is lost: {who}.",
+        "momentumNone": "Nobody loses Momentum.",
+        "momentumKept": "Kept, to a cap of {cap}: {who}.",
+        "wrecked": "An Anchor is wrecked. {n} left.",
+        "wreckIgnored": "One good tree survives: the first Anchor is not lost.",
+        "momentumTrim": "{name} is over the new cap and holds {n}."
       },
       "note": {
         "startTitle": "Titan Engagement begins",
@@ -2553,7 +2584,13 @@
         "behaviorWaits": "Its behavior is dealt to the GM, waiting to be rolled.",
         "titanBehavior": "Titan {label} acts",
         "behaviorTargets": "Against {names}.",
-        "startWho": "Taking part: {who}."
+        "startWho": "Taking part: {who}.",
+        "flightMomentum": "The Flight gives {n} Momentum, now {held}.",
+        "flightNone": "The Flight gives no Momentum.",
+        "flightLoud": "They come in loud: {label} hears them.",
+        "carry": "Carry: {n} Momentum spent on the extra steps.",
+        "charge": "A charge: {label} hears them.",
+        "chargeDouble": "A charge in and out again on the plain: {label} hears them, and they end where they began."
       },
       "death": {
         "relief": "Nape-kill Stress relief: {who}.",
@@ -2719,7 +2756,8 @@
         "menuTitle": "{name} toward {label}",
         "current": "Here now",
         "engagementEnd": "Engagement end",
-        "manual": "The table resolves this step; stamp it when done."
+        "manual": "The table resolves this step; stamp it when done.",
+        "momentum": "Mom."
       },
       "setup": {
         "titleTitan": "Begin a Titan Engagement",
@@ -2772,7 +2810,31 @@
         "grief": "Grief gained: {who}.",
         "retire": "Retiring with five Scars: {who}. A soldier who lost both arms or both legs retires too.",
         "promotion": "Share out left items and dropped Blade Sets, then promote replacements for the dead and retired."
+      },
+      "anchors": "Anchors {left} of {full}",
+      "momentum": "Momentum {n} of {cap}",
+      "swapBlades": {
+        "dead": "The soldier is dead.",
+        "down": "A Down soldier cannot fit a Blade Set.",
+        "handlesFull": "The handles already hold a Blade Set.",
+        "noBlades": "The soldier carries no Blade Set to fit.",
+        "grabbed": "A Grabbed soldier cannot fit a Blade Set.",
+        "moveSpent": "Fitting a Blade Set spends the move, and this turn’s move is gone."
       }
+    },
+    "TerrainTrait": {
+      "none": "No Terrain Trait.",
+      "mounted-break-attention": "A mounted soldier’s Break Attention gains 1 Bonus Die.",
+      "first-wreck-ignored": "The first Anchor wrecked here is not lost.",
+      "blind-spot-anchored": "A soldier at Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them.",
+      "first-carry-free": "The first step a Flight carries costs no Momentum."
+    },
+    "MomentumSpend": {
+      "carry": "Carry: one more Position step on this move.",
+      "bite": "Bite: 1 Bonus Die on a strike or Break Attention this turn, against the Titan you flew toward.",
+      "brace": "Brace: 1 Bonus Die on your next dodge this round.",
+      "quiet": "Quiet: nothing you do this turn marks you loudest.",
+      "clean-line": "Clean line: you make no Gas Roll this round."
     }
   }
 }

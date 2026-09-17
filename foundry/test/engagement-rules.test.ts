@@ -5,6 +5,23 @@ import { breakFreeNeeds, countTurn, grabLands, holdingArm, holdingArmReach, rele
 import { checkTrackerRequest, coreOf, fallBackBlock, type TrackerWorld } from '../src/rules/engagement/guard.ts';
 import { gainInjury } from '../src/rules/engagement/injury.ts';
 import {
+  carryCost,
+  changeEffects,
+  chargeBlock,
+  chargeDoubleStep,
+  flightResult,
+  jamDrops,
+  momentumCap,
+  momentumEnd,
+  MOMENTUM_SPENDS,
+  spendBlock,
+  SPEND_COST,
+  startingAnchors,
+  terrainBreakAttentionDice,
+  trimToCap,
+  wreckAnchor,
+} from '../src/rules/engagement/momentum.ts';
+import {
   comparisonLabel,
   corpsePosition,
   entering,
@@ -16,7 +33,10 @@ import {
   returnBlock,
   stepRows,
   stepsApart,
+  swapBladeSetBlock,
+  swapSpends,
   type MoveContext,
+  type SwapContext,
   withPosition,
 } from '../src/rules/engagement/positions.ts';
 import {
@@ -319,6 +339,52 @@ describe('Attention (attention.yaml, evaluation)', () => {
     const t = titan('A', { flags: { hooked: ['s'], hurt: [], loud: [] } });
     const r = evaluateLadder(input(t, [soldier('o', { positions: { A: 'on-body' } }), soldier('s', { positions: { A: 'blind-spot' } })]));
     expect(r.holder).toBe('s');
+  });
+
+  // loudest-matches (evaluation.steps; flags, loudest, matches; decision batch 10)
+  it('adds a soldier marked loudest to the tied set from Distant, and the shout takes the Titan off the one In Reach', () => {
+    const near = soldier('n', { positions: { A: 'in-reach' } });
+    const far = soldier('l', { positions: { A: 'distant' } });
+    // Without the mark the soldier In Reach holds it outright.
+    expect(evaluateLadder(input(titan('A'), [near, far], { n: 5, l: 2 }))).toMatchObject({ holder: 'n', rung: 'nearest-person-in-reach' });
+    // Marked loudest, the Distant soldier matches that rung and then takes it at loudest-or-brightest.
+    const t = titan('A', { flags: { hooked: [], hurt: [], loud: ['l'] } });
+    const r = evaluateLadder(input(t, [near, far], { n: 5, l: 2 }));
+    expect(r).toMatchObject({ rung: 'nearest-person-in-reach', tied: ['l'], holder: 'l' });
+  });
+
+  it('matches every rung another candidate meets, so a lower rung does not narrow them out first', () => {
+    const hurt = soldier('h', { positions: { A: 'in-reach' } });
+    const far = soldier('l', { positions: { A: 'distant' } });
+    // 'h' is In Reach and just hurt it: two rungs the Distant soldier matches while marked loudest.
+    expect(evaluateLadder(input(titan('A', { flags: { hooked: [], hurt: ['h'], loud: [] } }), [hurt, far], { h: 5, l: 9 })).holder).toBe('h');
+    const t = titan('A', { flags: { hooked: [], hurt: ['h'], loud: ['l'] } });
+    const r = evaluateLadder(input(t, [hurt, far], { h: 5, l: 9 }));
+    expect(r).toMatchObject({ rung: 'nearest-person-in-reach', tied: ['l'], holder: 'l' });
+  });
+
+  it('never beats hooked-into-its-body: the shout adds nobody against a blade at the Nape or a soldier On Body', () => {
+    const hooked = titan('A', { flags: { hooked: ['s'], hurt: [], loud: ['l'] } });
+    const r = evaluateLadder(input(hooked, [soldier('s', { positions: { A: 'blind-spot' } }), soldier('l', { positions: { A: 'distant' } })], { s: 9, l: 1 }));
+    expect(r).toMatchObject({ rung: 'hooked-into-its-body', holder: 's', tied: ['s'] });
+    // The same against a soldier On Body, who meets that rung by Position alone.
+    const onBody = titan('A', { flags: { hooked: [], hurt: [], loud: ['l'] } });
+    const b = evaluateLadder(input(onBody, [soldier('o', { positions: { A: 'on-body' } }), soldier('l', { positions: { A: 'distant' } })], { o: 9, l: 1 }));
+    expect(b).toMatchObject({ rung: 'hooked-into-its-body', holder: 'o', tied: ['o'] });
+  });
+
+  it('adds nobody where no candidate meets the rung, and keeps the loud soldier at loudest-or-brightest', () => {
+    // Everyone Distant: the top rung met is nearest, which the loud soldier is in anyway.
+    const t = titan('A', { flags: { hooked: [], hurt: [], loud: ['l'] } });
+    const r = evaluateLadder(input(t, [soldier('a'), soldier('l')], { a: 2, l: 9 }));
+    expect(r.rung).toBe('loudest-or-brightest');
+    expect(r).toMatchObject({ holder: 'l', tied: ['l'] });
+  });
+
+  it('adds a Down or carried soldier only where the rung lets them meet it', () => {
+    const t = titan('A', { flags: { hooked: [], hurt: [], loud: ['d'] } });
+    const r = evaluateLadder(input(t, [soldier('n', { positions: { A: 'in-reach' } }), soldier('d', { down: true, positions: { A: 'distant' } })], { n: 5, d: 1 }));
+    expect(r).toMatchObject({ rung: 'nearest-person-in-reach', tied: ['n'], holder: 'n' });
   });
 
   it('lets a Down soldier meet only nearest', () => {
@@ -742,6 +808,196 @@ describe('gaining a Critical Injury (critical-injuries.yaml, gaining)', () => {
 });
 
 // ------------------------------------------------------------------ the request guard
+
+// ------------------------------------------------------------------ Flight, Momentum, Anchors (decision batch 10)
+
+describe('Flight (positions.yaml, moves, flight)', () => {
+  const ctx = (r: AnchorRating = wooded, momentum = 0): MoveContext => ({ rating: r, titan: titan('A'), grabbed: false, retreat: false, momentum });
+
+  it('makes its step whatever the roll gives: no successes still moves, gains nothing, and comes in loud', () => {
+    const o = Object.fromEntries(moveOptions(soldier('a'), ctx()).map((x) => [x.to, x]));
+    // The step row itself never asks for successes any more: the ODM way is offered outright.
+    expect(o['in-reach'].ways.find((w) => w.kind === 'odm')).toEqual({ kind: 'odm', steps: 1, carry: 0, charge: false });
+    expect(o['in-reach'].block).toBeNull();
+    const flown = flightResult(0, 0, 2);
+    expect(flown).toEqual({ momentum: 0, gained: 0, loud: true });
+  });
+
+  it('sets the loudest flag from any Position, Distant included, and Quiet stops it', () => {
+    expect(flightResult(0, 1, 3).loud).toBe(true);
+    expect(flightResult(0, 1, 3, { quiet: true }).loud).toBe(false);
+    expect(flightResult(2, 0, 3).loud).toBe(false);
+  });
+
+  it('gives 1 Momentum a success, up to the cap the Anchors left give', () => {
+    expect(flightResult(1, 0, 3)).toEqual({ momentum: 1, gained: 1, loud: false });
+    expect(flightResult(3, 0, 3)).toEqual({ momentum: 3, gained: 3, loud: false });
+    // Wooded holds 2 Anchors, so a third success is not gained.
+    expect(flightResult(3, 0, rating('wooded').anchors)).toEqual({ momentum: 2, gained: 2, loud: false });
+    expect(flightResult(2, 2, 3)).toEqual({ momentum: 3, gained: 1, loud: false });
+    // At the Open rating nobody holds Momentum at all.
+    expect(flightResult(3, 0, rating('open').anchors)).toEqual({ momentum: 0, gained: 0, loud: false });
+  });
+
+  it('is the soldier’s own move, so a retreat move is a Flight and a Fear Roll’s forced step is not', () => {
+    expect(changeEffects('move', 'odm')).toEqual({ flight: true, odmUse: true, airborne: true, spendsTheMove: true });
+    expect(changeEffects('retreat-move', 'odm')).toEqual({ flight: true, odmUse: true, airborne: true, spendsTheMove: true });
+    // A forced step is a change a rule names: never rolled, no Momentum, no flag, still ODM use.
+    expect(changeEffects('forced-step', 'odm')).toEqual({ flight: false, odmUse: true, airborne: true, spendsTheMove: false });
+    expect(changeEffects('forced-step', 'onFoot')).toEqual({ flight: false, odmUse: false, airborne: false, spendsTheMove: false });
+    expect(changeEffects('rule', 'mounted').flight).toBe(false);
+  });
+
+  it('still offers the retreat’s forced target as an ODM way, so the retreat move is rolled', () => {
+    const s = soldier('a', { positions: { A: 'on-body' } });
+    const forced = Object.fromEntries(moveOptions(s, { ...ctx(), retreat: true, forced: ['in-reach'] }).map((x) => [x.to, x]));
+    expect(forced['in-reach'].ways.map((w) => w.kind)).toEqual(['odm']);
+    expect(forced['blind-spot'].block).toBe('forced');
+  });
+});
+
+describe('Momentum (anchor-ratings.yaml, momentum)', () => {
+  it('is capped by the Anchors left, and the excess is lost at once when Anchors fall', () => {
+    expect(momentumCap(rating('giant-forest').anchors)).toBe(3);
+    expect(momentumCap(0)).toBe(0);
+    const squad = [soldier('a', { momentum: 3 }), soldier('b', { momentum: 1 }), soldier('c', { momentum: 0 })];
+    expect(trimToCap(squad, 1)).toEqual({ a: 1 });
+    expect(trimToCap(squad, 0)).toEqual({ a: 0, b: 0 });
+    expect(trimToCap(squad, 3)).toEqual({});
+  });
+
+  it('is lost entirely at the round’s momentum step by anyone who made no ODM move', () => {
+    const squad = [soldier('a', { momentum: 2 }), soldier('b', { momentum: 2 }), soldier('c', { momentum: 0 })];
+    expect(momentumEnd(squad, ['a'])).toEqual({ b: 0 });
+    expect(momentumEnd(squad, [])).toEqual({ a: 0, b: 0 });
+    expect(momentumEnd(squad, ['a', 'b'])).toEqual({});
+    // A soldier in no state to hold it loses it even after an ODM move.
+    expect(momentumEnd([soldier('a', { momentum: 2, down: true })], ['a'])).toEqual({ a: 0 });
+    expect(momentumEnd([soldier('a', { momentum: 2 })], ['a'], () => true)).toEqual({ a: 0 });
+  });
+
+  it('spends Carry on the extra steps, free for a Flight’s first step in a Giant Forest', () => {
+    expect(carryCost(wooded, 1, true)).toBe(1);
+    expect(carryCost(wooded, 2, true)).toBe(2);
+    expect(carryCost(rating('giant-forest'), 1, true)).toBe(0);
+    expect(carryCost(rating('giant-forest'), 2, true)).toBe(1);
+    // The free step is a Flight's; a move on foot or mounted pays for every Carry.
+    expect(carryCost(rating('giant-forest'), 1, false)).toBe(1);
+  });
+
+  it('names the spends the data lists, each costing 1', () => {
+    expect(E.momentum.spends.map((x) => x.id)).toEqual([...MOMENTUM_SPENDS]);
+    expect(E.momentum.spends.every((x) => x.cost === SPEND_COST)).toBe(true);
+  });
+
+  it('takes a soldier off the round’s Gas Rolls when they buy a clean line', () => {
+    expect(gasRollsDue(['a', 'b'], () => true)).toEqual(['a', 'b']);
+    expect(gasRollsDue(['a', 'b'], () => true, ['a'])).toEqual(['b']);
+  });
+});
+
+describe('Anchors and the Terrain Traits (anchor-ratings.yaml, anchors and ratings)', () => {
+  it('starts from the Anchor Rating, one row each', () => {
+    expect(Object.fromEntries(E.ratings.map((r) => [r.id, r.anchors]))).toEqual({ open: 0, sparse: 1, wooded: 2, urban: 3, 'giant-forest': 3 });
+    expect(startingAnchors(rating('urban'))).toEqual({ anchors: 3, wrecks: 0 });
+    expect(startingAnchors(null)).toEqual({ anchors: 0, wrecks: 0 });
+  });
+
+  it('loses 1 to a wreck and never falls below 0', () => {
+    let state = startingAnchors(wooded);
+    state = wreckAnchor(state, wooded);
+    expect(state).toMatchObject({ anchors: 1, wrecks: 1, ignored: false });
+    state = wreckAnchor(state, wooded);
+    expect(state).toMatchObject({ anchors: 0, wrecks: 2 });
+    state = wreckAnchor(state, wooded);
+    expect(state).toMatchObject({ anchors: 0, wrecks: 3, ignored: false });
+  });
+
+  it('keeps the first Anchor wrecked at the Sparse rating, and only the first', () => {
+    const sparse = rating('sparse');
+    expect(sparse.trait).toBe('first-wreck-ignored');
+    let state = startingAnchors(sparse);
+    expect(state.anchors).toBe(1);
+    const first = wreckAnchor(state, sparse);
+    expect(first).toEqual({ anchors: 1, wrecks: 1, ignored: true });
+    state = first;
+    const second = wreckAnchor(state, sparse);
+    expect(second).toEqual({ anchors: 0, wrecks: 2, ignored: false });
+  });
+
+  it('gives each rating its Terrain Trait, and the traits the code applies', () => {
+    expect(Object.fromEntries(E.ratings.map((r) => [r.id, r.trait]))).toEqual({
+      open: 'mounted-break-attention',
+      sparse: 'first-wreck-ignored',
+      wooded: 'none',
+      urban: 'blind-spot-anchored',
+      'giant-forest': 'first-carry-free',
+    });
+    // Open: a mounted soldier's Break Attention gains 1 Bonus Die.
+    expect(terrainBreakAttentionDice(rating('open'), true)).toBe(1);
+    expect(terrainBreakAttentionDice(rating('open'), false)).toBe(0);
+    expect(terrainBreakAttentionDice(wooded, true)).toBe(0);
+    // Urban: a soldier at Blind Spot is not airborne, so a Jam does not drop them.
+    expect(jamDrops(rating('urban'), 'blind-spot', true)).toBe(false);
+    expect(jamDrops(rating('urban'), 'on-body', true)).toBe(true);
+    expect(jamDrops(wooded, 'blind-spot', true)).toBe(true);
+  });
+
+  it('carries the wreck effect on the Behavior Tables, whatever the tier', () => {
+    const entries = tables.titans.flatMap((x) => x.behavior_table.entries);
+    expect(entries.some((e) => e.effects.some((x) => x.type === 'wreck'))).toBe(true);
+  });
+});
+
+describe('the mounted charge (anchor-ratings.yaml, mounted_charge)', () => {
+  const rider = (extra: Partial<SoldierState> = {}) => soldier('r', { mounted: true, ...extra });
+
+  it('is open to a mounted soldier making the Distant to In Reach step, in either direction', () => {
+    expect(chargeBlock(rider(), wooded, 'distant', false)).toBeNull();
+    expect(chargeBlock(rider(), wooded, 'in-reach', false)).toBeNull();
+    expect(chargeBlock(rider(), wooded, 'on-body', false)).toBe('chargeReach');
+    expect(chargeBlock(soldier('a'), wooded, 'distant', false)).toBe('notMounted');
+    expect(chargeBlock(rider(), wooded, 'distant', true)).toBe('grabbed');
+    // Urban has no mounted row at all.
+    expect(chargeBlock(rider(), rating('urban'), 'distant', false)).toBe('notOneStep');
+  });
+
+  it('says when Momentum may be spent at all (momentum, spends, when)', () => {
+    expect(spendBlock(soldier('a', { momentum: 1 }), 'bite', false)).toBeNull();
+    expect(spendBlock(soldier('a', { momentum: 0 }), 'bite', false)).toBe('noMomentum');
+    expect(spendBlock(soldier('a', { momentum: 2, down: true }), 'quiet', false)).toBe('cannotHold');
+    expect(spendBlock(soldier('a', { momentum: 2 }), 'quiet', true)).toBe('cannotHold');
+    expect(spendBlock(soldier('a', { momentum: 2, left: true }), 'brace', false)).toBe('left');
+  });
+
+  it('may make that step twice at the Open rating only', () => {
+    expect(chargeDoubleStep(rating('open'))).toBe(true);
+    expect(chargeDoubleStep(wooded)).toBe(false);
+    expect(chargeDoubleStep(rating('giant-forest'))).toBe(false);
+  });
+});
+
+describe('Swap Blade Set (blade-sets.yaml, swap; decision batch 10)', () => {
+  const kit = (extra: Partial<SwapContext> = {}): SwapContext => ({ inEngagement: true, handlesFull: false, carries: true, moveSpent: false, grabbed: false, ...extra });
+
+  it('spends the soldier’s move in a Titan Engagement and nothing outside one', () => {
+    expect(swapSpends(true)).toBe('move');
+    expect(swapSpends(false)).toBe('nothing');
+  });
+
+  it('is refused once the move is spent in a Titan Engagement, and never outside one', () => {
+    expect(swapBladeSetBlock(soldier('a'), kit())).toBeNull();
+    expect(swapBladeSetBlock(soldier('a'), kit({ moveSpent: true }))).toBe('moveSpent');
+    expect(swapBladeSetBlock(soldier('a'), kit({ moveSpent: true, inEngagement: false }))).toBeNull();
+  });
+
+  it('still needs empty handles, a carried Blade Set, and a soldier who is not Down', () => {
+    expect(swapBladeSetBlock(soldier('a'), kit({ handlesFull: true }))).toBe('handlesFull');
+    expect(swapBladeSetBlock(soldier('a'), kit({ carries: false }))).toBe('noBlades');
+    expect(swapBladeSetBlock(soldier('a', { down: true }), kit())).toBe('down');
+    expect(swapBladeSetBlock(soldier('a', { alive: false }), kit())).toBe('dead');
+  });
+});
 
 describe('tracker requests (the GM proxy guard)', () => {
   const snap = (extra: Partial<Snapshot> = {}): Snapshot => ({

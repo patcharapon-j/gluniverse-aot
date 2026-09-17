@@ -159,3 +159,32 @@ export function chargeBlock(s: SoldierState, rating: AnchorRating | null, positi
   const row = (rating?.steps ?? []).find((r) => r.mounted && ((r.a === 'distant' && r.b === 'in-reach') || (r.a === 'in-reach' && r.b === 'distant')));
   return row ? null : 'notOneStep';
 }
+
+// ---------------------------------------------------------------- what a change of Position causes
+
+/** How a soldier's Position changed (positions.yaml, moves; background-titans.yaml, retreat, moves). */
+export type PositionChange = 'move' | 'retreat-move' | 'forced-step' | 'rule';
+
+export interface ChangeEffects {
+  /** Rolled for fly, each success 1 Momentum, no successes the loudest flag (moves, flight). */
+  flight: boolean;
+  /** ODM use, so it makes that round's Gas Roll (odm-gear.yaml, odm_use). */
+  odmUse: boolean;
+  /** The soldier is airborne after it, as after any ODM move. */
+  airborne: boolean;
+  /** It spends the soldier's move. */
+  spendsTheMove: boolean;
+}
+
+/**
+ * The split decision batch 10 item 10-5 (OQ-186) draws. A retreat narrows the soldier's own move
+ * rather than replacing it, so an ODM move under a retreat is a Flight like any other. A Fear Roll
+ * result's forced step is a change of Position a rule names, not the soldier's own move: it is never
+ * a Flight, so it is not rolled, gives no Momentum, and sets no loudest flag, whichever kind of step
+ * it is; an ODM forced step is still ODM use and still leaves the soldier airborne.
+ */
+export function changeEffects(how: PositionChange, kind: 'onFoot' | 'mounted' | 'odm' | null): ChangeEffects {
+  const own = how === 'move' || how === 'retreat-move';
+  const odm = kind === 'odm';
+  return { flight: own && odm, odmUse: odm, airborne: odm, spendsTheMove: own };
+}
