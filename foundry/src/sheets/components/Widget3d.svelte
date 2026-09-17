@@ -43,8 +43,10 @@
   onDestroy(release);
 </script>
 
+<!-- The drawing's own proportions, not its size: sheet.css scales the slot to the column it sits in
+     (the canvas keeps its fixed render buffer and is drawn down to whatever the slot is). -->
 {#if off}
-  <div class="still" data-widget={kind} aria-hidden="true" style:width="{size.w}px" style:height="{size.h}px">{@render still()}</div>
+  <div class="still" data-widget={kind} aria-hidden="true" style:--ww={size.w} style:--wh={size.h}>{@render still()}</div>
 {:else}
-  <canvas bind:this={canvas} class="w3d" data-widget={kind} aria-hidden="true" style:width="{size.w}px" style:height="{size.h}px"></canvas>
+  <canvas bind:this={canvas} class="w3d" data-widget={kind} aria-hidden="true" style:--ww={size.w} style:--wh={size.h}></canvas>
 {/if}
