@@ -8,6 +8,8 @@ import { fearPlan, type FearSoldier } from '../src/rules/engagement/fear.ts';
 import { autoChecks, closingLog, endComplete, roundBlock, TRACKER_CATEGORIES, type TrackerCategory } from '../src/rules/engagement/round.ts';
 import { checkTrackerRequest, type TrackerWorld } from '../src/rules/engagement/guard.ts';
 import { damageSoldier, fallBand, fallDamage, fallLands, referenceLabel, steamDamage, steamRollers } from '../src/rules/engagement/harm-rolls.ts';
+import { moveOptions, stepsApart } from '../src/rules/engagement/positions.ts';
+import { forcedTargets, moveKinds, retreatBinds, retreatBody, stayOpen } from '../src/rules/engagement/retreat.ts';
 import { emptyFlags, type SoldierState, type TitanRow } from '../src/rules/engagement/types.ts';
 import { engagementConfig } from '../tools/config-data.ts';
 import { loadTables } from '../tools/data/load.ts';
@@ -188,5 +190,72 @@ describe('the engagement-end steps (engagement-end.yaml)', () => {
 
   it('retires the living with five Scars once', () => {
     expect(retiring([{ id: 'a', alive: true, scars: 5, retiring: false }, { id: 'b', alive: true, scars: 5, retiring: true }, { id: 'c', alive: false, scars: 6, retiring: false }, { id: 'd', alive: true, scars: 4, retiring: false }])).toEqual(['a']);
+  });
+});
+
+describe('the retreat forced moves (background-titans.yaml, retreat, moves)', () => {
+  const wooded = E.ratings.find((r) => r.id === 'wooded')! as never as import('../src/rules/engagement/types.ts').AnchorRating;
+  const clock = { length: 2, filled: 2, active: true, began: 3 };
+  const world = (soldiers: SoldierState[], titans: TitanRow[], round = 4, grabbed: Record<string, string> = {}) => ({ soldiers, titans, rating: wooded, grabbedBy: (id: string) => grabbed[id] ?? null, clock, round });
+  const kinds = ['onFoot', 'odm'] as const;
+
+  it('binds a standing soldier who holds a Position, not a Down, Grabbed, or carried one, and not outside a retreat', () => {
+    const w = world([], [titan('A')]);
+    expect(retreatBinds(soldier('s'), w)).toBe(true);
+    expect(retreatBinds(soldier('d', { down: true }), w)).toBe(false);
+    expect(retreatBinds(soldier('c', { carriedBy: 'x' }), w)).toBe(false);
+    expect(retreatBinds(soldier('g'), world([], [titan('A')], 4, { g: 'A' }))).toBe(false);
+    expect(retreatBinds(soldier('s'), { ...w, clock: { ...clock, active: false } })).toBe(false);
+    expect(forcedTargets(soldier('s'), 'A', { ...w, clock: { ...clock, active: false } }, kinds)).toBeNull();
+  });
+
+  it('moves one step toward Distant from the earliest living Titan not held at Distant, then from the corpses', () => {
+    const s = soldier('s', { positions: { A: 'distant', B: 'blind-spot', C: 'on-body' } });
+    const titans = [titan('A'), titan('B'), titan('C', { status: 'corpse' })];
+    expect(retreatBody(s, titans)).toBe('B');
+    const w = world([s], titans);
+    expect(forcedTargets(s, 'B', w, kinds)).not.toContain('blind-spot');
+    for (const p of forcedTargets(s, 'B', w, kinds)!) expect(stepsApart(wooded.steps, p, 'distant')).toBeLessThan(stepsApart(wooded.steps, 'blind-spot', 'distant'));
+    expect(forcedTargets(s, 'C', w, kinds)).toEqual([]);
+    expect(retreatBody(soldier('t', { positions: { A: 'distant', C: 'in-reach' } }), titans)).toBe('C');
+  });
+
+  it('refuses any other step in moveOptions', () => {
+    const s = soldier('s', { positions: { A: 'in-reach' } });
+    const w = world([s], [titan('A')]);
+    const forced = forcedTargets(s, 'A', w, kinds);
+    expect(forced).toEqual(['distant']);
+    const opts = moveOptions(s, { rating: wooded, titan: titan('A'), grabbed: false, retreat: true, forced });
+    expect(opts.find((o) => o.to === 'distant')!.block).toBeNull();
+    expect(opts.find((o) => o.to === 'on-body')!.block).toBe('forced');
+  });
+
+  it('opens a step toward a Down comrade while a Focus Titan lives, and after the stay limit only while one lives', () => {
+    const s = soldier('s', { positions: { A: 'distant' } });
+    const down = soldier('d', { down: true, positions: { A: 'in-reach' } });
+    const alive = [titan('A')];
+    expect(forcedTargets(s, 'A', world([s, down], alive, 9), kinds)).toEqual(['in-reach']);
+    const dead = [titan('A', { status: 'corpse' })];
+    expect(stayOpen(down, world([s, down], dead, 5))).toBe(true);
+    expect(stayOpen(down, world([s, down], dead, 6))).toBe(false);
+    expect(forcedTargets(s, 'A', world([s, down], dead, 6), kinds)).toEqual([]);
+  });
+
+  it('limits a stay beside a comrade Pinned under a corpse in every retreat, and compares Positions relative to the pinning body', () => {
+    const s = soldier('s', { positions: { A: 'distant', B: 'distant' } });
+    const pinned = soldier('p', { pinned: { body: 'B', bodyPin: false }, positions: { A: 'distant', B: 'in-reach' } });
+    const titans = [titan('A'), titan('B', { status: 'corpse' })];
+    expect(forcedTargets(s, 'B', world([s, pinned], titans, 5), kinds)).toEqual(['in-reach']);
+    expect(forcedTargets(s, 'B', world([s, pinned], titans, 6), kinds)).toEqual([]);
+    expect(forcedTargets(s, 'A', world([s, pinned], titans, 5), kinds)).toEqual([]);
+  });
+
+  it('reads the Grabbed comrade relative to the holding Titan, and the move kinds from the soldier', () => {
+    const s = soldier('s', { positions: { A: 'distant', B: 'distant' } });
+    const held = soldier('g', { positions: { A: 'distant', B: 'on-body' } });
+    const w = world([s, held], [titan('A'), titan('B')], 4, { g: 'B' });
+    expect(forcedTargets(s, 'B', w, kinds)).toEqual(['in-reach']);
+    expect(forcedTargets(s, 'A', w, kinds)).toEqual([]);
+    expect(moveKinds(soldier('m', { mounted: true, odmHad: false }))).toEqual(['mounted']);
   });
 });

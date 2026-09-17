@@ -16,7 +16,7 @@ import { trackerApply } from '../settings.svelte.ts';
 import { currentEngagement, engagementTurns } from './combat.ts';
 import { checkCategoryOf, endLock, endingState, roundCore, skirmishFoes } from './engine.ts';
 import { tr } from './notes.ts';
-import { E, grabbedBy, partsOf, snapshot, titanActor, titanToken } from './snapshot.ts';
+import { E, forcedFor, grabbedBy, partsOf, snapshot, titanActor, titanToken } from './snapshot.ts';
 
 export const LETTER: Record<Position, string> = { distant: 'D', 'in-reach': 'I', 'on-body': 'O', 'blind-spot': 'B' };
 export const POS_ICON: Record<Position, string> = { distant: iconPath('pos-distant'), 'in-reach': iconPath('pos-in-reach'), 'on-body': iconPath('pos-on-body'), 'blind-spot': iconPath('pos-blind-spot') };
@@ -526,7 +526,7 @@ export function swapReason(a: string, b: string): string | null {
 function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, colour: string, isGM: boolean, owner: boolean): Cell {
   const p = s.positions[t.label] ?? null;
   const corpse = t.status === 'corpse';
-  const opts = snap.anchor ? moveOptions(s, { rating: snap.anchor, titan: t, grabbed: grabbedIn(snap)(s.id), retreat: snap.retreat }) : [];
+  const opts = snap.anchor ? moveOptions(s, { rating: snap.anchor, titan: t, grabbed: grabbedIn(snap)(s.id), retreat: snap.retreat, forced: forcedFor(game.combats.get(snap.combat), snap, s, t.label) }) : [];
   const options: PosOption[] = POSITIONS.map((to) => {
     const o = opts.find((x) => x.to === to);
     return {

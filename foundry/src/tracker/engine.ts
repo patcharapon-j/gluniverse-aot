@@ -45,7 +45,7 @@ import { fearRolls, trackerDeaths } from './fear.ts';
 import { rollFall, rollSteam } from './harm.ts';
 import { postNote, tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
-import { E, cardsOf, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
+import { E, cardsOf, forcedFor, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
 
 const rng = () => (CONFIG.Dice?.randomUniform ? CONFIG.Dice.randomUniform() : Math.random());
 const d6 = () => Math.floor(rng() * 6) + 1;
@@ -587,7 +587,7 @@ export async function movePosition(combat: any, req: MoveRequest): Promise<boole
     await extViaGM('tracker', { act: 'let-go', combat: combat.id, soldier: s.id, titan: t.key });
     return true;
   } else {
-    const opt = moveOptions(s, { rating: snap.anchor, titan: t, grabbed, retreat: snap.retreat }).find((o) => o.to === req.to);
+    const opt = moveOptions(s, { rating: snap.anchor, titan: t, grabbed, retreat: snap.retreat, forced: forcedFor(combat, snap, s, t.label) }).find((o) => o.to === req.to);
     if (!opt || opt.block) return warn(`move.${opt?.block ?? 'notOneStep'}`);
     const way = opt.ways.find((w) => w.kind === req.way);
     if (!way) return warn('move.kind');

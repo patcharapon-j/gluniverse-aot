@@ -2,6 +2,7 @@
  * Reads the running engagement into the plain shapes the rules take (src/rules/engagement/types.ts):
  * the Combat's system data, its card combatants, the soldiers' actors, and the Titans' token actors.
  */
+import { forcedTargets, moveKinds } from '../rules/engagement/retreat.ts';
 import type { AnchorRating, Position, Snapshot, SoldierState, TitanRow } from '../rules/engagement/types.ts';
 import type { BodyPart } from '../rules/titan.ts';
 
@@ -120,4 +121,11 @@ export function snapshot(combat: any): Snapshot {
 /** Which Focus Titan holds a soldier Grabbed (its label), or null. */
 export function grabbedBy(snap: Snapshot, id: string): string | null {
   return snap.titans.find((t) => t.status === 'focus' && t.grab?.soldier === id)?.label ?? null;
+}
+
+/** During a retreat, where a soldier's forced move may go relative to one body (retreat.ts), or null. */
+export function forcedFor(combat: any, snap: Snapshot, s: SoldierState, label: string): Position[] | null {
+  if (!snap.retreat || !snap.anchor) return null;
+  const clock = combat.system.retreat;
+  return forcedTargets(s, label, { soldiers: snap.soldiers, titans: snap.titans, rating: snap.anchor, grabbedBy: (id) => grabbedBy(snap, id), clock: { length: clock.length, filled: clock.filled, active: clock.active, began: clock.began }, round: combat.round }, moveKinds(s));
 }

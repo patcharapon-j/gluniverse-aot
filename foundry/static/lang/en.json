@@ -2308,7 +2308,8 @@
           "onFoot": "On foot",
           "mounted": "Mounted",
           "odm": "ODM"
-        }
+        },
+        "forced": "Retreat: the move must go toward Distant, or toward a fallen comrade while the stay limit allows."
       },
       "block": {
         "corpse": "That body is a corpse.",
@@ -2426,7 +2427,7 @@
         "swapLine": "{a} gave {ca} for {cb}, {b} gave {cb} for {ca}",
         "allCards": "Every card has come up",
         "roundBegins": "Round {n}",
-        "retreatForced": "Retreat: every standing soldier's move is forced toward Distant and out, or toward a fallen comrade.",
+        "retreatForced": "Retreat: every standing soldier must move, toward Distant and out, or toward a fallen comrade while the stay limit allows. Other moves are refused.",
         "titanCard": "Titan {label}, card {card}",
         "holding": "Holds {name}: no behavior, the ladder is not read, the Next Behavior is kept.",
         "decoyCard": "The decoy ({decoy}) holds its Attention: no behavior, {left} cards left. The Next Behavior is spent.",

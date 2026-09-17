@@ -80,6 +80,8 @@ export interface MoveContext {
   titan: TitanRow;
   grabbed: boolean;
   retreat: boolean;
+  /** During a retreat, the Positions the forced move may reach relative to this body (retreat.ts, forcedTargets), or null. */
+  forced?: readonly Position[] | null;
 }
 
 export interface MoveOption {
@@ -108,6 +110,7 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): MoveOption[] {
       if (from === undefined) return { to, ways: [], block: 'noPosition' };
       const row = stepBetween(rows, from, to);
       if (!row) return { to, ways: [], block: 'notOneStep' };
+      if (ctx.forced && !ctx.forced.includes(to)) return { to, ways: [], block: 'forced' };
       let ways = waysOf(row);
       if (s.down) {
         ways = from === 'in-reach' && to === 'distant' ? ways.filter((w) => w.kind === 'onFoot') : [];
