@@ -193,8 +193,6 @@
 .wof-sheet .vit + .vit { border-left: 1px solid var(--rule); }
 .wof-sheet .vhead { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
 .wof-sheet .vhead .lbl { display: inline-flex; align-items: center; gap: var(--s1); }
-.wof-sheet .vhead .vic { width: 16px; font-size: 14px; line-height: 1; text-align: center; color: var(--red); filter: drop-shadow(1px 1px 0 rgba(36, 31, 27, .25)); }
-.wof-sheet .vhead .vic.stress { color: var(--ink2); }
 /* Held Critical Injuries and Stress Responses, by name only, under their vital */
 .wof-sheet .vchips { display: flex; flex-wrap: wrap; gap: 3px; margin: 2px 0 0; padding: 0; list-style: none; width: 0; min-width: 100%; }
 .wof-sheet .vchips li { margin: 0; min-width: 0; max-width: 100%; }

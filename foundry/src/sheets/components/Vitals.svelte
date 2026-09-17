@@ -87,7 +87,7 @@
   <!-- Health -->
   <div class="vit" bind:this={hpEl}>
     <div class="vhead">
-      <span class="lbl"><i class="vic fa-solid fa-heart-pulse" aria-hidden="true"></i>{t('WOF.Derived.health')}</span>
+      <span class="lbl"><img class="ic s16" src={icon('harm-health')} alt="" />{t('WOF.Derived.health')}</span>
       <span class="down">
         <button
           type="button"
@@ -128,7 +128,7 @@
   <!-- Stress -->
   <div class="vit" bind:this={stEl}>
     <div class="vhead">
-      <span class="lbl"><i class="vic stress fa-solid fa-brain" aria-hidden="true"></i>{t('WOF.Derived.stress')}</span>
+      <span class="lbl"><img class="ic s16" src={icon('die-stress')} alt="" />{t('WOF.Derived.stress')}</span>
       <span class="note red">{t('WOF.Sheet.stress.min', { n: d.minimum_stress })}</span>
     </div>
     <div class="vrow">
