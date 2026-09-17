@@ -57,11 +57,15 @@ The most repeated image in the show is a soldier discarding spent blades. In pla
 
 A soldier would have to Push nearly every strike, and be unlucky, to reach their last set, and reaching it costs a free swap. Blades are the same shape as gas: a consumable tuned to an Expedition and spent inside a scene it cannot reach. If the owner wants the blades to bite, the lever is the swap (make it the move, or the action) rather than the ruin rate, because raising the ruin rate taxes the Push, which ADR-0004 makes the player's one lever.
 
-### 4. Health is barely touched by the primary threat (F3). Chapter 3
+### 4. WITHDRAWN: "Health is barely touched by the primary threat"
 
-Established rather than new, recorded here so the list is complete. ADR-0005: Titan attacks bypass Health, killing only through the Critical Injury tables. Round 1's own research measured it (`round-1/opposed-rolls.md`): "damage and threshold are nearly inert as lethality knobs... a Titan hit kills only through the Critical Injury tables, never through Health; damage that does not crit Downs a soldier and kills nobody."
+**This finding was wrong and is withdrawn.** It was checked again against `data/harm/health.yaml` after the owner queried it.
 
-So the largest number on the character sheet is moved almost entirely by falls. That is a deliberate consequence of ADR-0005 and not a defect, but a player looking at their sheet during a Titan Engagement is looking at a stat the Titan cannot spend.
+Health is not inert. Health is kept as a row of boxes, and an untreated Critical Injury **crosses one off** (`health`, `boxes_crossed_off`). A Critical Injury that crosses off the last box makes the soldier Down (`critical-injuries.yaml`, `down-check`). So a soldier's Health rating is exactly **how many untreated Critical Injuries they can carry before they go down**, and Critical Injuries are the only thing a Titan inflicts. Health is the buffer the whole Titan threat is spent against.
+
+What is narrowly true is much smaller and is not a defect. `titan_attacks` carries `harm_kind: critical-injury` and `never: damage`: a Titan attack never adds to **Health lost**, the damage track. So inside a Titan Engagement that one track moves only from falls, steam, corpse heat, and a ruling's staked damage. That is ADR-0005 working exactly as written, and the round 1 measurement it was confused with (`round-1/opposed-rolls.md`) was about damage *amount and threshold* as lethality knobs, not about Health as a stat.
+
+No action. The finding is left in place rather than deleted so the error is on the record.
 
 ### 5. Sparse and Wooded are the same battlefield (F1). Chapter 5
 
@@ -69,20 +73,17 @@ Enumerated: the two ratings have identical step rows except that Sparse's In Rea
 
 `tools/probes/round-2/swing.out` shows what the ratings actually do: they set how fast a striker reaches the Nape, monotonically, and nothing else. Giant Forest gives it on round 1, free, guaranteed; Wooded on round 2; Open never while the Titan stands. The environment is a speed dial with no trade-offs on it. This is the environment half of the owner's note and the reason `odm-and-environment-design.md` proposes Anchors and Terrain Traits rather than more step rows.
 
-### 6. Wits and Empathy barely touch a Titan Engagement (F4). Chapter 2
+### 6. WITHDRAWN: "Wits and Empathy barely touch a Titan Engagement"
 
-From `attributes.yaml` `used_by`, the rolls each attribute drives inside a fight:
+**This finding was overstated and is withdrawn.** It was built from `attributes.yaml` `used_by` alone, without reading what those entries do in a fight.
 
-| Attribute | Rolls in a Titan Engagement |
-|---|---|
-| Strength | Nape strike, Body Part strike, Break Free, Heave |
-| Agility | dodge, Fly, Leap Clear |
-| Perception | Break Attention |
-| Instinct | Read |
-| **Wits** | Treat Injury, Field Repair |
-| **Empathy** | Rally |
+- **Wits, Treat Injury.** `treat-injury.yaml` `in_titan_engagement` makes it an action at the patient's Position, and its `treat` use makes a named Critical Injury treated and **gives back the Health box it crossed off**. Since a Critical Injury crossing off the last box is what makes a soldier Down (finding 4), a Medic in a fight can take a comrade off the floor. That is one of the strongest actions in the chapter.
+- **Wits, Field Repair.** It clears a Jam mid-fight. The simulator measures 1.06 Field Repairs in the lone Jammed fight (`simulator-report.md`, section 8), so it is load-bearing, not decorative.
+- **Empathy, Rally.** It clears a Stress Response, which is a lasting dice penalty on the entries the soldier most needs.
 
-Two of six attributes reach the signature scene only through repair and first aid, and the tuned baseline excludes Treat Injury during the fight. A Squad's Medic and Leader are at their least interesting exactly when the game is at its most intense. Not a bug, and not cheap to fix, but it belongs on the list.
+What remains true is a statement about the **measured baseline policy**, not about the rules: `tuning.yaml` `full_fight` excludes Treat Injury during the fight, so the tuned figures do not show the Medic's fight value. That is a gap in what has been measured, not a thin attribute.
+
+No action, beyond noting that a simulator case for a Medic treating during a fight would be worth having.
 
 ### 7. Leap Clear is the only ODM roll with no Talent (F4). Chapter 5
 
@@ -104,4 +105,4 @@ Recorded so the sweep is not read as "everything is flat".
 2. **Anchors and the Swing** (`odm-and-environment-design.md`), which carries findings 5 and, with one extra row, 1.
 3. **Mounted movement** (finding 1), folded into the same rerun as 2 so the horse and the harness are retuned together.
 4. **Blade Sets** (finding 3) if the owner wants the blades to bite; it is a small lever with a large feel change.
-5. Findings 4, 6, and 7 are recorded, not recommended. They are consequences of settled ADRs (0005, 0006, 0010) and should not be reopened before the first playtest.
+5. Finding 7 is recorded, not recommended: Leap Clear having no Talent is small and can wait. Findings 4 and 6 are **withdrawn**; both were errors, and both are kept on the page with the correction rather than deleted.
