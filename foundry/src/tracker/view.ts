@@ -57,7 +57,7 @@ export interface PosOption {
   label: string;
   icon: string;
   current: boolean;
-  ways: { kind: string; label: string; fly: string | null }[];
+  ways: { kind: string; label: string; steps: number; carry: number; note: string | null }[];
   block: string | null;
 }
 
@@ -529,7 +529,7 @@ export function swapReason(a: string, b: string): string | null {
 function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, colour: string, isGM: boolean, owner: boolean): Cell {
   const p = s.positions[t.label] ?? null;
   const corpse = t.status === 'corpse';
-  const opts = snap.anchor ? moveOptions(s, { rating: snap.anchor, titan: t, grabbed: grabbedIn(snap)(s.id), retreat: snap.retreat, forced: forcedFor(game.combats.get(snap.combat), snap, s, t.label) }) : [];
+  const opts = snap.anchor ? moveOptions(s, { rating: snap.anchor, titan: t, grabbed: grabbedIn(snap)(s.id), retreat: snap.retreat, momentum: s.momentum, forced: forcedFor(game.combats.get(snap.combat), snap, s, t.label) }) : [];
   const options: PosOption[] = POSITIONS.map((to) => {
     const o = opts.find((x) => x.to === to);
     return {
@@ -537,7 +537,14 @@ function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, c
       label: tr(`pos.${to}`),
       icon: POS_ICON[to],
       current: to === p,
-      ways: (o?.ways ?? []).map((w) => ({ kind: w.kind, label: tr(`move.way.${w.kind}`), fly: w.fly ? tr('move.fly', { n: w.fly.needs, failure: tr(`pos.${w.fly.failure}`) }) : null })),
+      ways: (o?.ways ?? []).map((w) => ({
+        kind: w.kind,
+        label: tr(`move.way.${w.kind}`),
+        steps: w.steps,
+        carry: w.carry,
+        // A Flight is rolled either way; Carry says what the extra steps cost (momentum, spends, carry).
+        note: w.carry > 0 ? tr('move.carry', { n: w.carry }) : w.steps > 1 ? tr('move.carryFree') : w.kind === 'odm' ? tr('move.flight') : w.charge ? tr('move.charge') : null,
+      })),
       block: to === p ? null : o?.block ? tr(`move.${o.block}`) : null,
     };
   });

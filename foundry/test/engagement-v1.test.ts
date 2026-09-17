@@ -19,7 +19,7 @@ const tables = loadTables();
 const E = engagementConfig(tables);
 
 function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
-  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'distant' }, untreated: 0, ...extra };
+  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'distant' }, momentum: 0, untreated: 0, ...extra };
 }
 
 function titan(label: string, extra: Partial<TitanRow> = {}): TitanRow {
@@ -136,6 +136,7 @@ describe('steam and fall rolls (titan-harm.yaml, steam; falls.yaml)', () => {
       soldiers: [soldier('mine', { positions: { A: 'on-body' } }), soldier('far', { positions: { A: 'distant' } })],
       titans: [titan('A')], wings: {}, cards: {}, titanCards: {}, swapped: [], proposal: null,
       retreat: false, wingsSet: true, wingsOpen: false, reassign: [], tactics: { held: [], used: [] }, cloaks: [],
+      anchors: 2, wrecks: 0, odmUsed: [], movesSpent: [],
     } as never;
     const w = (owned: string[]): TrackerWorld => ({ userId: 'u', owns: (id) => owned.includes(id), snapshot: () => snap });
     expect(checkTrackerRequest(w(['mine']), { act: 'let-go', combat: 'c', soldier: 'mine', titan: 'tA' })).toBeNull();

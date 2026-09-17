@@ -32,11 +32,11 @@
     });
   }
 
-  function move(to: string, way: string) {
+  function move(to: string, way: string, carry = 0) {
     if (!menu) return;
     const { row, cell } = menu;
     menu = null;
-    void act('move', { soldier: row.id, key: cell.key, to, way }).then(() => {
+    void act('move', { soldier: row.id, key: cell.key, to, way, carry }).then(() => {
       pulse(host?.querySelector(`[data-cell="${row.id}-${cell.key}"]`), MOTION.colors.notice);
     });
   }
@@ -341,7 +341,7 @@
           <span class="pn"><img src={o.icon} alt="" />{o.label}</span>
           {#if o.current}<em class="note">{t('board.current')}</em>
           {:else}
-            {#each o.ways as w (w.kind)}<button type="button" role="menuitem" onclick={() => move(o.to, w.kind)}>{w.label}{#if w.fly}<small> {w.fly}</small>{/if}</button>{/each}
+            {#each o.ways as w (w.kind)}<button type="button" role="menuitem" onclick={() => move(o.to, w.kind, w.carry)}>{w.label}{#if w.note}<small> {w.note}</small>{/if}</button>{/each}
             {#if o.block}<em class="note">{o.block}</em>{/if}
             {#if isGM}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, 'rule')}>{t('move.byRule')}</button>{/if}
           {/if}

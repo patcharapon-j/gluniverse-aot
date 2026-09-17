@@ -79,7 +79,7 @@ function seeded(seed: number) {
 }
 
 function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
-  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'distant' }, untreated: 0, ...extra };
+  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'distant' }, momentum: 0, untreated: 0, ...extra };
 }
 
 function titan(label: string, extra: Partial<TitanRow> = {}): TitanRow {
@@ -324,6 +324,7 @@ describe('Attention (attention.yaml, evaluation)', () => {
     const field = (extra: Partial<Snapshot>): Snapshot => ({
       combat: 'C', mode: 'titan', step: 'play', round: 2, anchor: wooded, titans: [titan('A')], wings: {}, cards: { a: 3, b: 9, c: 1 }, titanCards: {}, swapped: [], proposal: null,
       retreat: false, wingsSet: true, wingsOpen: false, reassign: [], tactics: { held: [], used: [] }, cloaks: [],
+      anchors: 2, wrecks: 0, odmUsed: [], movesSpent: [],
       soldiers: [soldier('a', { positions: { A: 'blind-spot' } }), soldier('b', { positions: { A: 'in-reach' } }), soldier('c', { left: true, positions: {} })],
       ...extra,
     });

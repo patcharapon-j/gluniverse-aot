@@ -35,7 +35,7 @@ const foeAttack: FoeAttackCard = {
 };
 
 function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
-  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'in-reach' }, untreated: 0, ...extra };
+  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'in-reach' }, momentum: 0, untreated: 0, ...extra };
 }
 
 function titan(extra: Partial<TitanRow> = {}): TitanRow {
@@ -46,6 +46,7 @@ function snap(soldiers: SoldierState[], titans: TitanRow[] = [titan()]): Snapsho
   return {
     combat: 'C', mode: 'titan', step: 'play', round: 1, anchor: null, soldiers, titans, wings: {}, cards: {}, titanCards: {}, swapped: [], proposal: null,
     retreat: false, wingsSet: true, wingsOpen: false, reassign: [], tactics: { held: [], used: [] }, cloaks: [],
+      anchors: 2, wrecks: 0, odmUsed: [], movesSpent: [],
   };
 }
 
