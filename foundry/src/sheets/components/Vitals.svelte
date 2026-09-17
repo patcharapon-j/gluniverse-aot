@@ -3,13 +3,13 @@
   import { jolt, popIn, pulse, strike } from '../../motion/fx.ts';
   import { tooltip } from '../actions.ts';
   import { sheetContext, t } from '../context.ts';
-  import { clickHealthBox, clickStressBox, fitBladeSet, fitCanister, ruinBladeInHandles, setField, spendGas, stepStress } from '../soldier-ops.ts';
+  import { clickHealthBox, clickStressBox, fitBladeSet, fitCanister, openItem, ruinBladeInHandles, setField, spendGas, stepStress } from '../soldier-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
   import Widget3d from './Widget3d.svelte';
 
   let { view, compact = false }: { view: SoldierView; compact?: boolean } = $props();
-  const { actor } = sheetContext();
+  const { actor, state: ss } = sheetContext();
   const s = $derived(view.system);
   const d = $derived(view.derived);
   const ro = $derived(!view.editable);
@@ -30,6 +30,15 @@
 
   const gasState = $derived({ level: s.gas_rating, full: view.fullGas, spares: [...s.spare_canisters].sort((a, b) => b - a), dull: !odm || d.jammed });
   const bladeState = $derived({ inHandles: !!inHandles, carried: carried.length });
+
+  /** A held Critical Injury as a chip: where it is, its type, and what it does while held. */
+  const injuryTip = (w: SoldierView['injuries'][number]) =>
+    [
+      [w.side ? t(`WOF.Side.${w.side}`) : '', w.locationLabel, t(`WOF.InjuryType.${w.type}`)].filter(Boolean).join(' '),
+      t(w.treated ? 'WOF.Sheet.injury.treated' : 'WOF.Sheet.injury.untreated'),
+      ...w.effects,
+    ].join('. ');
+  const responseTip = (r: SoldierView['responses'][number]) => [r.text, ...r.effects, t(`WOF.Sheet.ends.${r.ends}`)].filter(Boolean).join(' ');
 
   const boxLabel = (b: string, i: number) => t(`WOF.Sheet.health.box.${b}`, { n: i + 1 });
 
@@ -103,6 +112,17 @@
         ></button>
       {/each}
     </div>
+    {#if view.injuries.length}
+      <ul class="vchips" aria-label={t('WOF.Sheet.health.injuries')}>
+        {#each view.injuries as w (w.id)}
+          <li>
+            <button type="button" class="vchip" class:treated={w.treated} use:tooltip={injuryTip(w)} onclick={() => openItem(actor, w.id)}>
+              <img src={w.img} alt="" />{w.name}
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </div>
 
   <!-- Stress -->
@@ -132,6 +152,23 @@
         ></button>
       {/each}
     </div>
+    {#if view.responses.length}
+      <ul class="vchips" aria-label={t('WOF.Sheet.stress.responses')}>
+        {#each view.responses as r (r.index)}
+          <li>
+            {#if compact}
+              <span class="vchip mind" use:tooltip={responseTip(r)}>
+                <i class="fa-solid fa-head-side-virus" aria-hidden="true"></i>{r.name}<small>{t('WOF.Sheet.stress.lasting')}</small>
+              </span>
+            {:else}
+              <button type="button" class="vchip mind" use:tooltip={responseTip(r)} onclick={() => (ss.tab = 'wounds')}>
+                <i class="fa-solid fa-head-side-virus" aria-hidden="true"></i>{r.name}<small>{t('WOF.Sheet.stress.lasting')}</small>
+              </button>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </div>
 
   <!-- Resolve -->

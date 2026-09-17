@@ -1105,6 +1105,7 @@
       "health": {
         "boxes": "Health boxes",
         "crossedTip": "Crossed off by an untreated Critical Injury. Treating it gives the box back.",
+        "injuries": "Critical Injuries",
         "box": {
           "clean": "Health box {n}, held",
           "damaged": "Health box {n}, lost to damage",
@@ -1116,7 +1117,9 @@
         "lower": "Lower Stress",
         "raise": "Raise Stress",
         "boxes": "Stress boxes, one Stress Die each",
-        "box": "Stress box {n}"
+        "box": "Stress box {n}",
+        "responses": "Stress Responses",
+        "lasting": "lasting"
       },
       "resolve": {
         "short": "{base} + Scars {scars} − Grief {grief}",
