@@ -77,7 +77,10 @@ export function roundBlock(core: RoundCore, action: RoundAction): string | null 
   const need = (step: Step) => (core.step === step ? null : 'wrongStep');
   switch (action) {
     case 'keep-wings':
-      return core.mode === 'skirmish' ? 'skirmish' : need('wings');
+      if (core.mode === 'skirmish') return 'skirmish';
+      // A Squadmate whose player character died or left is put on a Wing (or none) first: kept as it
+      // is, it would be dealt no card of its own (cards.ts, titanHolders).
+      return need('wings') ?? (core.reassign.length ? 'reassign' : null);
     case 'deal':
       return need('deal');
     case 'begin-play':

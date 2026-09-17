@@ -2097,6 +2097,7 @@
         "wrongStep": "That is not this step's action.",
         "skirmish": "A Skirmish has no Wings and no swap step.",
         "endOpen": "Stamp every round-end step first.",
+        "reassign": "Put each Squadmate whose player character died or left on a Wing, or on none, first.",
         "notPlay": "No card is in play."
       },
       "retreat": "Retreat",

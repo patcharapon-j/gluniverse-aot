@@ -508,6 +508,15 @@ describe('the round (round.yaml, round_steps and end_steps)', () => {
     expect(() => roundNext(core(), 'finish-play')).toThrow();
   });
 
+  it('keeps Wings only once every Squadmate of a dead or departed player character is assigned again', () => {
+    expect(roundBlock(core({ reassign: ['m'] }), 'keep-wings')).toBe('reassign');
+    expect(roundBlock(core(), 'keep-wings')).toBeNull();
+    // Assigning the Squadmate takes it off the list (a player character's death puts it on).
+    const died = noteWingEvent(core(), { kind: 'death', soldier: 'p' }, { m: 'p' });
+    expect(roundBlock(died, 'keep-wings')).toBe('reassign');
+    expect(roundBlock({ ...died, reassign: [] }, 'keep-wings')).toBeNull();
+  });
+
   it('runs a Skirmish as deal, play, end with its two checks and no Wings or swap', () => {
     let c = core({ mode: 'skirmish', step: 'deal' });
     expect(roundBlock(c, 'keep-wings')).toBe('skirmish');
