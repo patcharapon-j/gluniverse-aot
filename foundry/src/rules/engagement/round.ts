@@ -13,14 +13,14 @@ import type { Mode, Step } from './types.ts';
 export const TITAN_STEPS: readonly Step[] = ['wings', 'deal', 'swap', 'play', 'end'];
 export const SKIRMISH_STEPS: readonly Step[] = ['deal', 'play', 'end'];
 
-export type EndCheck = 'gas-rolls' | 'regeneration' | 'background-clocks' | 'retreat-clock' | 'round-ends' | 'broken-leave' | 'ending' | ClosingCheck;
+export type EndCheck = 'gas-rolls' | 'regeneration' | 'background-clocks' | 'retreat-clock' | 'momentum' | 'round-ends' | 'broken-leave' | 'ending' | ClosingCheck;
 
 /** The round-end checklist (end_steps; the background-clocks step's retreat clock is its own check). */
-export const TITAN_CHECKS: readonly EndCheck[] = ['gas-rolls', 'regeneration', 'background-clocks', 'retreat-clock', 'round-ends'];
+export const TITAN_CHECKS: readonly EndCheck[] = ['gas-rolls', 'regeneration', 'background-clocks', 'retreat-clock', 'momentum', 'round-ends'];
 export const SKIRMISH_CHECKS: readonly EndCheck[] = ['broken-leave', 'ending'];
 
-export type TrackerCategory = 'roundGas' | 'regeneration' | 'clocks' | 'strikes' | 'attacks' | 'skirmish';
-export const TRACKER_CATEGORIES: readonly TrackerCategory[] = ['roundGas', 'regeneration', 'clocks', 'strikes', 'attacks', 'skirmish'];
+export type TrackerCategory = 'roundGas' | 'regeneration' | 'clocks' | 'momentum' | 'strikes' | 'attacks' | 'skirmish';
+export const TRACKER_CATEGORIES: readonly TrackerCategory[] = ['roundGas', 'regeneration', 'clocks', 'momentum', 'strikes', 'attacks', 'skirmish'];
 
 /** The GM switch a check answers to; null for a check that changes nothing. */
 export function checkCategory(check: EndCheck): TrackerCategory | null {
@@ -32,6 +32,8 @@ export function checkCategory(check: EndCheck): TrackerCategory | null {
     case 'background-clocks':
     case 'retreat-clock':
       return 'clocks';
+    case 'momentum':
+      return 'momentum';
     case 'broken-leave':
       return 'skirmish';
     default:
@@ -203,9 +205,13 @@ export function noteWingEvent(core: RoundCore, event: WingEvent, wings: Record<s
 
 // ---------------------------------------------------------------- round-end plans
 
-/** gas-rolls: every soldier who used ODM Gear this round and is alive (odm-gear.yaml, gas_roll). */
-export function gasRollsDue(odmUsed: readonly string[], alive: (id: string) => boolean): string[] {
-  return [...new Set(odmUsed)].filter(alive);
+/**
+ * gas-rolls: every soldier who used ODM Gear this round and is alive (odm-gear.yaml, gas_roll). A
+ * Flight is ODM use twice over and still makes one Gas Roll for the round; Momentum spent on a clean
+ * line takes the soldier off the list (anchor-ratings.yaml, momentum, spends, clean-line).
+ */
+export function gasRollsDue(odmUsed: readonly string[], alive: (id: string) => boolean, cleanLine: readonly string[] = []): string[] {
+  return [...new Set(odmUsed)].filter((id) => alive(id) && !cleanLine.includes(id));
 }
 
 export interface RegenInput {

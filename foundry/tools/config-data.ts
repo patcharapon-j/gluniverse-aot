@@ -10,6 +10,7 @@ import { checkPlayerText, hyphenatedIds } from './data/wording.ts';
 import { CARRIED_COMRADE_ITEMS, CARRYING_LIMIT_BONUS, MAX_GRIEF_COUNTED } from '../src/rules/derived.ts';
 import { entryNeeds, ROLL_TALENTS } from '../src/rules/roll.ts';
 import type { LpTables, Procedure } from '../src/rules/lifepath.ts';
+import { terrainTrait } from '../src/rules/engagement/momentum.ts';
 import { docId } from './data/ids.ts';
 import { wordingTexts } from './data/lifepath-wording.ts';
 
@@ -273,8 +274,16 @@ export function engagementConfig(t: Tables) {
     ratings: t.anchorRatings.ratings.map((r) => ({
       id: r.id,
       name: r.name,
-      steps: r.steps.map((x) => ({ a: x.between[0], b: x.between[1], onFoot: x.on_foot, mounted: x.mounted, odm: x.odm, fly: x.fly_roll ? { needs: x.fly_roll.needs, failure: x.fly_roll.failure_ends_at } : null })),
+      anchors: r.anchors,
+      trait: terrainTrait(r.id),
+      steps: r.steps.map((x) => ({ a: x.between[0], b: x.between[1], onFoot: x.on_foot, mounted: x.mounted, odm: x.odm })),
     })),
+    // Momentum and its spends (anchor-ratings.yaml, momentum; decision batch 10, OQ-182).
+    momentum: {
+      spends: t.anchorRatings.momentum.spends.list.map((x) => ({ id: x.id, cost: x.cost })),
+      biteDice: 1,
+      braceDice: 1,
+    },
     focusLimit: t.backgroundTitans.focus_titan_limit,
     gripToughness: t.grab.grab_lands.grip_toughness,
     crush: { location: t.grab.grab_lands.crush_harm.injury_location, type: t.grab.grab_lands.crush_harm.injury_type, cannotBeLethal: t.grab.grab_lands.crush_harm.cannot_be_lethal },
@@ -283,7 +292,7 @@ export function engagementConfig(t: Tables) {
     grabForbids: [...t.grab.grabbed_state.forbids],
     breakAttention: { needs: t.attention.break_attention.needs, decoys: t.attention.break_attention.decoys.map((d) => ({ id: d.id, name: d.name })) },
     downCanMeet: Object.fromEntries(t.attention.tests.map((x) => [x.id, x.down_can_meet])),
-    bonus: { opening: source('opening'), grounded: source('grounded-titan'), ambush: source('ambush') },
+    bonus: { opening: source('opening'), grounded: source('grounded-titan'), ambush: source('ambush'), momentum: 1, terrainTrait: 1 },
     tactics: t.squadTactics.tactics.map((x) => ({ id: x.id, name: x.name })),
     setup: {
       anchor: t.engagementSetup.anchor_rating.rows.map((r) => ({ results: r.results, id: r.anchor_rating })),

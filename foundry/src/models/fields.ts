@@ -79,6 +79,8 @@ export function fieldKit() {
       left: bool(),
       entries: new f.ArrayField(new f.SchemaField({ titan: str(), position: choice(POSITIONS, 'distant') })),
     }),
+    // Momentum held, 0 to the Anchors left in the Titan Engagement (data/gear/sheet-fields.yaml, momentum).
+    momentum: nonNeg(0),
     airborne: bool(),
     carrying: str(),
     carried_by: str(),

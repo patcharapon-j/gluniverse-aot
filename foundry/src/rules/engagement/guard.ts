@@ -17,6 +17,8 @@ export type TrackerRequest =
   | { act: 'odm'; combat: string; soldier: string }
   | { act: 'left'; combat: string; soldier: string }
   | { act: 'loud'; combat: string; soldier: string; titan: string }
+  | { act: 'loud-move'; combat: string; soldier: string; titan: string }
+  | { act: 'move-spent'; combat: string; soldier: string }
   | { act: 'fall-back'; combat: string; soldier: string; titan: string }
   | { act: 'let-go'; combat: string; soldier: string; titan: string }
   | { act: 'engage'; combat: string; soldier: string; foe: string };
@@ -102,6 +104,25 @@ export function checkTrackerRequest(w: TrackerWorld, req: TrackerRequest): strin
       if (!titan) return 'no such Titan';
       const why = drawAttentionBlock(soldier, titan, grabbedIn(s)(soldier.id));
       return why ? `Draw Attention is not allowed (${why})` : null;
+    }
+    // The loudest flag a Flight with no successes or a mounted charge sets: from any Position,
+    // Distant included (attention.yaml, flags, loudest; positions.yaml, moves, flight, no_successes).
+    case 'loud-move': {
+      if (!taking(req.soldier)) return 'the soldier is not taking part';
+      if (!w.owns(req.soldier)) return 'only the soldier’s owner makes their move';
+      if (s.mode !== 'titan' || s.step !== 'play') return 'a move is made during play';
+      const soldier = s.soldiers.find((x) => x.id === req.soldier)!;
+      const titan = s.titans.find((t) => t.key === req.titan);
+      if (!titan || titan.status !== 'focus') return 'no such Focus Titan';
+      if (!soldier.alive || soldier.left) return 'the soldier is not in the fight';
+      if (soldier.positions[titan.label] === undefined) return 'the soldier holds no Position toward it';
+      return grabbedIn(s)(soldier.id) ? 'a Grabbed soldier’s move changes nothing' : null;
+    }
+    case 'move-spent': {
+      if (!taking(req.soldier)) return 'the soldier is not taking part';
+      if (!w.owns(req.soldier)) return 'only the soldier’s owner spends their move';
+      if (s.mode !== 'titan' || s.step !== 'play') return 'a move is spent during play';
+      return null;
     }
     case 'fall-back': {
       if (!taking(req.soldier)) return 'the soldier is not taking part';

@@ -227,7 +227,9 @@ const next = [
 
       <FieldReport id="example-first-fight" title="One fight, from the first move" eyebrow="Example of play">
 
-        <p>A Medium Titan stands in a ruined street inside Wall Rose. Chimney stacks and rubble make this <b>Urban</b> ground, so ODM lines reach almost anywhere. Everyone starts at Distant. Its <GlossaryTerm term="Nape Depth" /> is 4.</p>
+        <p>A Medium Titan stands in a ruined street inside Wall Rose. Chimney stacks and rubble make this <b>Urban</b> ground, which holds <b>3 Anchors</b>. Everyone starts at Distant. Its <GlossaryTerm term="Nape Depth" /> is 4.</p>
+
+        <p>Every move on the lines here is a <b>Flight</b>: roll Fly with your own harness, take the step whatever the dice give, and keep 1 <b>Momentum</b> for each success, up to the Anchors left. A point of Momentum buys one more Position step on that same move. Roll no successes at all and you come in loud, and the Titan looks your way.</p>
 
         <p><b>Round 1.</b> Private Anselm Ruger's card comes up first. He goes down the street on foot from Distant to In Reach.</p>
 
@@ -242,7 +244,7 @@ const next = [
 
         <TryRollButton pool={{ base: 3, gear: 2, stress: 1 }} label="Try Anselm's dodge" />
 
-        <p>Private Nadja Holm's card is last. She fires her anchors and swings from Distant clear round to Blind Spot, the long move this ground allows.</p>
+        <p>Private Nadja Holm's card is last. She fires her anchors and flies. Her Flight rolls 2 successes, so she banks 2 Momentum, and the step carries her from Distant to In Reach. She spends 1 of it to carry the move one step further, In Reach to Blind Spot, and lands behind it with 1 Momentum still in hand.</p>
 
       </FieldReport>
 
@@ -262,7 +264,7 @@ const next = [
 
         <PoolRows rows={[{ label: "Nadja's strike", pool: 'base:6,3,5,2,6|gear:6,4|stress:1x', successes: 3 }]} />
 
-        <p>Three successes, one short, and her Stress Die came up 1, so she cannot Push and she takes a Stress Response. Her three successes become 3 Openings, made by her, which she can never spend herself. Toma makes the same long swing from the far roof, and the Fly roll it needs, and settles beside her.</p>
+        <p>Three successes, one short, and her Stress Die came up 1, so she cannot Push and she takes a Stress Response. Her three successes become 3 Openings, made by her, which she can never spend herself. Toma flies the same line from the far roof: 1 success on his Flight, 1 Momentum, and he spends it at once to carry himself the second step and settle beside her at Blind Spot, with nothing left over.</p>
 
         <p><b>Round 3.</b> Toma's card comes up before Anselm's. He spends all 3 of Nadja's Openings as Bonus Dice, under the cap of 4. Strength 3 and 3 Bonus Dice make 6 base dice, with 1 Gear Die from his Blade Set and 2 Stress Dice.</p>
 

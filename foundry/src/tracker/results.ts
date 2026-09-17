@@ -19,7 +19,7 @@ import { injuryData } from '../sheets/soldier-ops.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { showDice, WofRoll } from '../dice/terms.ts';
 import { clock, postCard } from '../dice/post.ts';
-import { enterTitan, isActiveGM, isGM, markOdm, recordRelease, skirmishFoes, titanDies, wingEvent } from './engine.ts';
+import { enterTitan, isActiveGM, isGM, markOdm, recordRelease, skirmishFoes, titanDies, wingEvent, wreck } from './engine.ts';
 import { fearRolls, trackerDeaths } from './fear.ts';
 import { rollFall } from './harm.ts';
 import { tr } from './notes.ts';
@@ -296,6 +296,8 @@ async function strike(card: ActionCard, rec: Recorder): Promise<void> {
         const snap = snapshot(combat);
         const path = snap.soldiers.filter((s) => s.alive && !s.airborne && isClose(s.positions[label]) && grabbedBy(snap, s.id) === null).map((s) => s.name);
         rec.line(tr('result.grounded', { label }));
+        // The falling body destroys 1 Anchor where it lands (titan-harm.yaml, falling_titan).
+        wreck(combat, rec);
         if (path.length) rec.line(tr('death.fall', { who: path.join(', ') }));
       }
       return;
