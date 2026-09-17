@@ -208,21 +208,50 @@
 .wof-sheet .big.red { color: var(--red); }
 .wof-sheet .vrow { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
 .wof-sheet .boxes { display: flex; gap: var(--s1); align-items: center; flex-wrap: wrap; }
-.wof-sheet .hbox { width: 16px; height: 20px; position: relative; border: 1.5px solid var(--ink2); background: var(--paper-hi); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6); flex: 0 0 auto; }
-.wof-sheet .hbox.held { background: var(--red); border-color: var(--red-lo); }
-.wof-sheet .hbox.damaged { background: rgba(36, 31, 27, .05); }
-.wof-sheet .hbox.damaged::before { content: ""; position: absolute; left: 50%; top: 50%; width: 1.5px; height: 24px; background: var(--red); transform: translate(-50%, -50%) rotate(40deg); }
-.wof-sheet .hbox.crossed { background: rgba(36, 31, 27, .08); }
-.wof-sheet .hbox.crossed::before, .wof-sheet .hbox.crossed::after { content: ""; position: absolute; left: 50%; top: 50%; width: 1.5px; height: 24px; background: var(--ink); transform: translate(-50%, -50%) rotate(40deg); }
-.wof-sheet .hbox.crossed::after { transform: translate(-50%, -50%) rotate(-40deg); }
-.wof-sheet .hbox:hover:not(:disabled):not(.crossed) { border-color: var(--red); }
+/* Track boxes (Health, Stress): square, inked on the paper. Held and marked boxes are red stamps; a
+   box an untreated Critical Injury crosses off is barred dark with the injury's glyph. */
+.wof-sheet .track-row { --box: 20px; --status: #D6402F; gap: 5px; padding: 1px 0 3px; }
+.wof-sheet .track-row.lg { --box: 24px; gap: 6px; }
+.wof-sheet .hbox, .wof-sheet .sbox {
+  flex: 0 0 auto; position: relative; width: var(--box, 20px); height: var(--box, 20px); min-height: 0; margin: 0; padding: 0;
+  display: grid; place-items: center; line-height: 0; cursor: pointer; border-radius: 1px 2px 1px 2px;
+  border: 1.5px solid var(--ink2); outline: 1px solid rgba(36, 31, 27, .14); outline-offset: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .55), transparent 55%), var(--paper-hi);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5), inset 1px 1px 2px rgba(36, 31, 27, .14);
+  transform: rotate(var(--tilt, 0deg)); transition: border-color .12s, background-color .12s, filter .12s;
+}
+.wof-sheet .hbox:nth-child(3n+2), .wof-sheet .sbox:nth-child(3n+2) { --tilt: .6deg; }
+.wof-sheet .hbox:nth-child(3n), .wof-sheet .sbox:nth-child(3n) { --tilt: -.5deg; }
+.wof-sheet .hbox .ink, .wof-sheet .sbox .ink { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.wof-sheet .hbox .ink path, .wof-sheet .sbox .ink path { fill: none; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+/* Held Health: a red stamp, grain and a pressed edge */
+.wof-sheet .hbox.held, .wof-sheet .sbox.on { border-color: var(--red-lo); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .4), 0 1px 0 rgba(36, 31, 27, .16); }
+.wof-sheet .hbox.held::before, .wof-sheet .sbox.on::before {
+  content: ""; position: absolute; inset: 1.5px; border-radius: 1px;
+  background: radial-gradient(circle at 30% 26%, var(--red-hi), var(--red) 55%, var(--red-lo));
+  -webkit-mask-image: var(--ink-grain); mask-image: var(--ink-grain); -webkit-mask-size: 48px; mask-size: 48px;
+}
+/* Health lost: the box keeps a faded red ghost under an inked slash */
+.wof-sheet .hbox.damaged { background: linear-gradient(135deg, rgba(142, 35, 35, .1), rgba(142, 35, 35, .03)), var(--paper-hi); border-color: var(--ink3); }
+.wof-sheet .hbox.damaged .ink path { stroke: var(--ink); stroke-width: 2.6; filter: drop-shadow(.5px .5px 0 rgba(142, 35, 35, .55)); }
+.wof-sheet .hbox.damaged:not(:has(.ink))::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2px; height: 130%; background: var(--ink); transform: translate(-50%, -50%) rotate(42deg); }
+/* Blocked by an untreated Critical Injury: barred ink, a status-red edge and the injury glyph */
+.wof-sheet .hbox.crossed {
+  cursor: help; opacity: 1; border-color: var(--ink); outline-color: rgba(214, 64, 47, .55);
+  background: repeating-linear-gradient(-45deg, rgba(214, 64, 47, .0) 0 3px, rgba(214, 64, 47, .35) 3px 4.5px), repeating-linear-gradient(45deg, transparent 0 3px, rgba(244, 236, 216, .12) 3px 4px), linear-gradient(160deg, var(--iron-hi), var(--ink));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .5), inset 0 -3px 0 var(--status);
+}
+.wof-sheet .hbox.crossed .glyph { position: relative; width: 66%; height: 66%; box-sizing: border-box; padding: 1px; border: 1px solid var(--status); border-radius: 2px; object-fit: contain; background: var(--paper-hi); box-shadow: 0 0 0 1px rgba(0, 0, 0, .55), 0 1px 2px rgba(0, 0, 0, .6); transform: rotate(-4deg); }
+.wof-sheet .hbox.crossed i.glyph { display: grid; place-items: center; font-size: calc(var(--box) * .42); line-height: 1; color: var(--status); }
+.wof-sheet .hbox.crossed:hover { outline-color: var(--status); }
 .wof-sheet .hbox.clean { background: var(--paper-hi); }
-.wof-sheet .sbox { width: 12px; height: 16px; border: 1.5px solid var(--ink2); background: var(--paper-hi); position: relative; flex: 0 0 auto; cursor: pointer; }
-.wof-sheet .sbox.on { background: var(--red); border-color: var(--red-lo); border-radius: 2px; }
-.wof-sheet .sbox.min { box-shadow: 0 3px 0 -1px var(--ink); }
-.wof-sheet .track { display: flex; gap: var(--s1); flex-wrap: wrap; align-items: flex-end; }
-.wof-sheet .track .sbox { width: 18px; height: 24px; }
-.wof-sheet .track .sbox.on::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: rgba(244, 236, 216, .55); }
+/* Stress: marked boxes are red stamps with a paper cross cut through; the Scar floor is inked under the box */
+.wof-sheet .sbox.on .ink path { stroke: var(--paper-hi); stroke-width: 2; opacity: .8; }
+.wof-sheet .sbox.min { border-bottom-width: 3px; border-bottom-color: var(--ink); }
+.wof-sheet .sbox.min::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 3px; height: 3px; background: var(--ink); transform: translateX(-50%) rotate(45deg); }
+.wof-sheet .hbox:hover:not(:disabled):not(.crossed), .wof-sheet .sbox:hover:not(:disabled) { border-color: var(--red); filter: brightness(1.05); }
+.wof-sheet .hbox:focus-visible, .wof-sheet .sbox:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.wof-sheet .hbox:disabled:not(.crossed), .wof-sheet .sbox:disabled { cursor: default; }
 .wof-sheet .down { display: inline-flex; align-items: center; gap: var(--s1); }
 .wof-sheet .down .stamp { padding: 1px 6px; transform: rotate(-3deg); }
 .wof-sheet .down .stamp.no { color: var(--green); border-color: var(--green); }

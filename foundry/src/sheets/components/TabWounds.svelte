@@ -9,6 +9,8 @@
   import { addListEntry, clickHealthBox, clickStressBox, deleteItem, openItem, removeListEntry, setField, setItem, setListEntry } from '../soldier-ops.ts';
   import { icon, type InjuryView, type SoldierView } from '../soldier-view.ts';
   import Figure from './Figure.svelte';
+  import HealthTrack from './HealthTrack.svelte';
+  import StressTrack from './StressTrack.svelte';
   import Sec from './Sec.svelte';
   import Stepper from './Stepper.svelte';
 
@@ -113,18 +115,7 @@
     <div class="block">
       <Sec n="1" title={t('WOF.Derived.health')} hint={t('WOF.Sheet.wounds.healthHint')} />
       <div class="vrow">
-        <div class="boxes" role="group" aria-label={t('WOF.Sheet.health.boxes')}>
-          {#each d.health_boxes as b, i (i)}
-            <button
-              type="button"
-              class="hbox {b === 'clean' ? 'held' : b}"
-              disabled={ro || b === 'crossed'}
-              aria-label={t(`WOF.Sheet.health.box.${b}`, { n: i + 1 })}
-              use:tooltip={b === 'crossed' ? t('WOF.Sheet.health.crossedTip') : null}
-              onclick={() => clickHealthBox(actor, i)}
-            ></button>
-          {/each}
-        </div>
+        <HealthTrack cells={view.health} disabled={ro} size="lg" onbox={(i) => clickHealthBox(actor, i)} />
         <span class="formula">{@html t('WOF.Sheet.wounds.healthFormula', { str: s.attributes.strength, agi: s.attributes.agility, health: d.health })}</span>
       </div>
       <div class="grid-form" style="margin-top:8px">
@@ -208,20 +199,7 @@
   <div>
     <div class="block">
       <Sec n="3" title={t('WOF.Derived.stress')} hint={t('WOF.Sheet.wounds.stressHint')} />
-      <div class="track" role="group" aria-label={t('WOF.Sheet.stress.boxes')}>
-        {#each Array.from({ length: stressCells }) as _, i (i)}
-          <button
-            type="button"
-            class="sbox"
-            class:on={i < d.stress_effective}
-            class:min={i < d.minimum_stress}
-            disabled={ro}
-            aria-label={t('WOF.Sheet.stress.box', { n: i + 1 })}
-            aria-pressed={i < d.stress_effective}
-            onclick={() => clickStressBox(actor, i)}
-          ></button>
-        {/each}
-      </div>
+      <StressTrack count={stressCells} value={d.stress_effective} minimum={d.minimum_stress} disabled={ro} size="lg" onbox={(i) => clickStressBox(actor, i)} />
       <p class="note" style="margin-top:4px">{t('WOF.Sheet.wounds.stressNote', { min: d.minimum_stress, scars: s.scars.length })}</p>
     </div>
 

@@ -70,3 +70,17 @@ export function strike(els: Element[]): void {
 export function reveal(el: Element | null | undefined): void {
   fx(el, { opacity: [0, 1], translateY: [6, 0], duration: MOTION.base });
 }
+
+/** Track boxes being marked: the box settles like a stamp and its ink stroke draws in. */
+export function inkIn(els: Element[]): void {
+  fx(els, { scale: [1.22, 1], rotate: [-5, 0], duration: MOTION.base, ease: MOTION.settle, delay: stagger(MOTION.stagger) });
+  fx(
+    els.flatMap((e) => [...e.querySelectorAll('.ink path')]),
+    { strokeDashoffset: [1, 0], duration: MOTION.base, ease: MOTION.ease, delay: stagger(MOTION.stagger) },
+  );
+}
+
+/** Track boxes being cleared: a small lift back onto the paper. */
+export function inkOut(els: Element[]): void {
+  fx(els, { scale: [0.86, 1], opacity: [0.55, 1], duration: MOTION.base, ease: MOTION.settle, delay: stagger(MOTION.stagger) });
+}

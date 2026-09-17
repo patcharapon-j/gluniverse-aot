@@ -1,11 +1,13 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import { jolt, popIn, pulse, strike } from '../../motion/fx.ts';
+  import { jolt, pulse } from '../../motion/fx.ts';
   import { tooltip } from '../actions.ts';
   import { sheetContext, t } from '../context.ts';
   import { clickHealthBox, clickStressBox, fitBladeSet, fitCanister, openItem, ruinBladeInHandles, setField, spendGas, stepStress } from '../soldier-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
+  import HealthTrack from './HealthTrack.svelte';
+  import StressTrack from './StressTrack.svelte';
   import Widget3d from './Widget3d.svelte';
 
   let { view, compact = false }: { view: SoldierView; compact?: boolean } = $props();
@@ -40,8 +42,6 @@
     ].join('. ');
   const responseTip = (r: SoldierView['responses'][number]) => [r.text, ...r.effects, t(`WOF.Sheet.ends.${r.ends}`)].filter(Boolean).join(' ');
 
-  const boxLabel = (b: string, i: number) => t(`WOF.Sheet.health.box.${b}`, { n: i + 1 });
-
   /** Animate after the document update has re-rendered. */
   async function after(p: Promise<unknown> | null | undefined, fn: () => void) {
     if (!p) return;
@@ -53,15 +53,9 @@
   function onHealth(i: number) {
     const before = d.current_health;
     after(clickHealthBox(actor, i), () => {
-      const boxes = [...(hpEl?.querySelectorAll('.hbox') ?? [])];
       const now = view.derived.current_health;
-      if (now < before) {
-        jolt(hpEl);
-        strike(boxes.filter((b) => b.classList.contains('damaged')));
-      } else if (now > before) {
-        pulse(hpEl);
-        popIn(boxes.filter((b) => b.classList.contains('held')));
-      }
+      if (now < before) jolt(hpEl);
+      else if (now > before) pulse(hpEl);
     });
   }
 
@@ -100,18 +94,7 @@
       </span>
     </div>
     <div class="vrow"><span class="big" class:red={d.current_health <= 1}>{d.current_health}<small>/{d.health}</small></span></div>
-    <div class="boxes" role="group" aria-label={t('WOF.Sheet.health.boxes')}>
-      {#each d.health_boxes as b, i (i)}
-        <button
-          type="button"
-          class="hbox {b === 'clean' ? 'held' : b}"
-          disabled={ro || b === 'crossed'}
-          aria-label={boxLabel(b, i)}
-          use:tooltip={b === 'crossed' ? t('WOF.Sheet.health.crossedTip') : null}
-          onclick={() => onHealth(i)}
-        ></button>
-      {/each}
-    </div>
+    <HealthTrack cells={view.health} disabled={ro} onbox={onHealth} />
     {#if view.injuries.length}
       <ul class="vchips" aria-label={t('WOF.Sheet.health.injuries')}>
         {#each view.injuries as w (w.id)}
@@ -138,20 +121,7 @@
         <button type="button" disabled={ro} aria-label={t('WOF.Sheet.stress.raise')} onclick={() => onStress(stepStress(actor, 1), true)}>+</button>
       </span>
     </div>
-    <div class="boxes" role="group" aria-label={t('WOF.Sheet.stress.boxes')}>
-      {#each Array.from({ length: stressBoxes }) as _, i (i)}
-        <button
-          type="button"
-          class="sbox"
-          class:on={i < d.stress_effective}
-          class:min={i < d.minimum_stress}
-          disabled={ro}
-          aria-label={t('WOF.Sheet.stress.box', { n: i + 1 })}
-          aria-pressed={i < d.stress_effective}
-          onclick={() => onStress(clickStressBox(actor, i), i >= d.stress_effective)}
-        ></button>
-      {/each}
-    </div>
+    <StressTrack count={stressBoxes} value={d.stress_effective} minimum={d.minimum_stress} disabled={ro} onbox={(i) => onStress(clickStressBox(actor, i), i >= d.stress_effective)} />
     {#if view.responses.length}
       <ul class="vchips" aria-label={t('WOF.Sheet.stress.responses')}>
         {#each view.responses as r (r.index)}
