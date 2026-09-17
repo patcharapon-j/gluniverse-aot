@@ -1,0 +1,25 @@
+trials per cell: 40000
+
+rating         build   policy    reach r1  reach r2  mean round  gas left r4
+----------------------------------------------------------------------------
+sparse         rookie  today        0.0%    66.7%        2.38         2.52
+sparse         rookie  swing       66.1%    88.6%        1.46         2.34
+sparse         flier   today        0.0%    76.8%        2.26         2.57
+sparse         flier   swing       76.8%    94.7%        1.29         2.41
+
+wooded         rookie  today        0.0%   100.0%        2.00         2.66
+wooded         rookie  swing       66.2%   100.0%        1.34         2.39
+wooded         flier   today        0.0%   100.0%        2.00         2.67
+wooded         flier   swing       77.0%   100.0%        1.23         2.43
+
+urban          rookie  today       66.6%    88.9%        1.45         2.51
+urban          rookie  swing       66.9%    88.7%        1.45         2.50
+urban          flier   today       76.9%    94.5%        1.29         2.56
+urban          flier   swing       76.5%    94.6%        1.29         2.57
+
+giant-forest   rookie  today      100.0%   100.0%        1.00         2.67
+giant-forest   rookie  swing      100.0%   100.0%        1.00         2.66
+giant-forest   flier   today      100.0%   100.0%        1.00         2.67
+giant-forest   flier   swing      100.0%   100.0%        1.00         2.67
+
+open: no step reaches Blind Spot while the Titan stands, so no row is shown.
