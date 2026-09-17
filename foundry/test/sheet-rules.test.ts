@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { previewPool, type PoolInputs } from '../src/rules/pool.ts';
-import { changeCanister, gainedInjuryState, healingDaysTotal, healthLostAfterClick, stressAfterClick } from '../src/rules/harm.ts';
+import { changeCanister, gainedInjuryState, healingDaysTotal, healthCells, healthLostAfterClick, stressAfterClick } from '../src/rules/harm.ts';
 import { loadTables } from '../tools/data/load.ts';
 import { buildTestConfig } from './wording-fixture.ts';
 
@@ -117,6 +117,20 @@ describe('sheet clicks', () => {
     expect(healthLostAfterClick(2, 4, 1, 1)).toBe(2);
     expect(healthLostAfterClick(0, 4, 1, 1)).toBe(1);
     expect(healthLostAfterClick(3, 4, 5, 0)).toBe(0);
+  });
+
+  it('names the untreated Critical Injury that blocks each crossed Health box', () => {
+    const held = [
+      { id: 'a', treated: false },
+      { id: 'b', treated: true },
+      { id: 'c', treated: false },
+    ];
+    const cells = healthCells(['crossed', 'crossed', 'damaged', 'clean'], held);
+    expect(cells.map((c) => c.blocker?.id ?? null)).toEqual(['a', 'c', null, null]);
+    expect(cells.map((c) => c.state)).toEqual(['crossed', 'crossed', 'damaged', 'clean']);
+    // More untreated injuries than Health: only the boxes that exist are blocked.
+    expect(healthCells(['crossed'], held).map((c) => c.blocker?.id)).toEqual(['a']);
+    expect(healthCells(['clean', 'clean'], held).every((c) => c.blocker === null)).toBe(true);
   });
 
   it('fills and clears Stress boxes, never below minimum Stress', () => {

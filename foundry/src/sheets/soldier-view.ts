@@ -5,7 +5,7 @@
  */
 import { actionIcon, CORE_DEFAULT_IMGS, gearIcon, iconPath } from '../art.ts';
 import type { SoldierDerived } from '../rules/derived.ts';
-import { healingDaysTotal, type InjuryType, type TypeRider } from '../rules/harm.ts';
+import { healingDaysTotal, healthCells, type HealthCell, type InjuryType, type TypeRider } from '../rules/harm.ts';
 import { actorPool, entryBlock, poolInputs } from '../dice/actor-pool.ts';
 import { previewPool, type PoolPreview } from '../rules/pool.ts';
 import type { MindEffect } from '../../tools/config-data.ts';
@@ -125,6 +125,8 @@ export interface SoldierView {
   talents: TalentView[];
   gear: GearView[];
   injuries: InjuryView[];
+  /** The Health row, each crossed box paired with the untreated Critical Injury that blocks it. */
+  health: HealthCell<InjuryView>[];
   rolls: RollView[];
   scars: MindRowView[];
   responses: (MindRowView & { ends: string; endsNote: string })[];
@@ -406,6 +408,7 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     talents,
     gear,
     injuries,
+    health: healthCells(derived.health_boxes, injuries),
     rolls,
     scars,
     responses,
