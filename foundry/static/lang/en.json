@@ -1163,7 +1163,9 @@
         "driveUsed": "Drive used",
         "key": "Key",
         "keyTip": "The key attribute of the Specialty can reach {max}.",
-        "keyLine": "{attr}, up to {max}"
+        "keyLine": "{attr}, up to {max}",
+        "rollAttr": "Roll {attr}: {dice} Base Dice, plus a Stress Die for each point of Stress",
+        "rollAttrLabel": "Roll {attr}"
       },
       "talent": {
         "dice": "Dice",
