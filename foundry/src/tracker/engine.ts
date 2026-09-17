@@ -4,7 +4,7 @@
  * round-end automation with Undo. Every rule decision is a pure function in src/rules/engagement/.
  */
 import { SYSTEM_ID } from '../config.ts';
-import { evaluateLadder, chooseEntry, entryTargets } from '../rules/engagement/attention.ts';
+import { evaluateLadder, chooseEntry, enteringAttention, entryTargets } from '../rules/engagement/attention.ts';
 import { dealBlock, dealCards, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
 import { countTurn, release } from '../rules/engagement/grab.ts';
 import { coreOf, grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
@@ -38,7 +38,7 @@ import { trackerApply } from '../settings.svelte.ts';
 import { CARD, ENGAGEMENT, engagementTurns, isEngagement } from './combat.ts';
 import { postNote, tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
-import { E, cardsOf, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanToken, wingsOf } from './snapshot.ts';
+import { E, cardsOf, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
 
 const rng = () => (CONFIG.Dice?.randomUniform ? CONFIG.Dice.randomUniform() : Math.random());
 const d6 = () => Math.floor(rng() * 6) + 1;
@@ -690,7 +690,8 @@ export async function enterTitan(combat: any, bg: any, rec: Recorder): Promise<s
   await token.actor.update(titanStartPatch(token.actor, label));
   const tempo = Math.max(1, token.actor.system.tempo);
   await rec.create(combat, 'Combatant', Array.from({ length: tempo }, (_, i) => ({ type: CARD, actorId: token.actorId, tokenId: token.id, sceneId: scene.id, initiative: null, system: { kind: 'titan', titan: token.id, index: i } })));
-  rec.set(combat, 'system.titans', [...(rec.get(combat, 'system.titans') as any[]), titanRowData(token.id, label, combat.round + 1)]);
+  const newRow = titanRowData(token.id, label, combat.round + 1);
+  rec.set(combat, 'system.titans', [...(rec.get(combat, 'system.titans') as any[]), newRow]);
   // Everyone who holds a Position holds Distant relative to it (positions.yaml, two_focus_titans, entering).
   const snap = snapshot(combat);
   for (const s of snap.soldiers) {
@@ -699,6 +700,10 @@ export async function enterTitan(combat: any, bg: any, rec: Recorder): Promise<s
   }
   const focus = snap.titans.filter((t) => t.status === 'focus').length + 1;
   rec.line(tr('note.entered', { name: token.name, label }));
+  // It works out its Attention at once, with this round's cards only mid-round (full_clock).
+  const ev = enteringAttention(snap, titanRow(combat, newRow), E().downCanMeet);
+  rec.set(token.actor, 'system.attention_holder', ev.holder ?? '');
+  rec.line(ev.holder ? tr('note.attention', { name: nameOf(ev.holder) }) : tr('note.noAttention'));
   if (focus >= 2) rec.line(tr('note.secondFocusFear'));
   if (token.actor.system.abnormal) rec.line(tr('note.abnormalFear'));
   return token.id;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chooseEntry, drawAttentionBlock, entryTargets, evaluateLadder, type LadderInput } from '../src/rules/engagement/attention.ts';
+import { chooseEntry, drawAttentionBlock, enteringAttention, entryTargets, evaluateLadder, type LadderInput } from '../src/rules/engagement/attention.ts';
 import { dealBlock, dealCards, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
 import { breakFreeNeeds, countTurn, grabLands, holdingArm, holdingArmReach, release } from '../src/rules/engagement/grab.ts';
 import { checkTrackerRequest, coreOf, fallBackBlock, type TrackerWorld } from '../src/rules/engagement/guard.ts';
@@ -318,6 +318,23 @@ describe('Attention (attention.yaml, evaluation)', () => {
     const t = titan('A');
     const r = evaluateLadder(input(t, [soldier('d', { down: true, positions: { A: 'on-body' } }), soldier('x', { positions: { A: 'distant' } })]));
     expect(r).toMatchObject({ holder: 'd', rung: 'nearest' });
+  });
+
+  it('works out an entering Titan’s Attention at once, with cards only mid-round (background-titans.yaml, full_clock)', () => {
+    const field = (extra: Partial<Snapshot>): Snapshot => ({
+      combat: 'C', mode: 'titan', step: 'play', round: 2, anchor: wooded, titans: [titan('A')], wings: {}, cards: { a: 3, b: 9, c: 1 }, titanCards: {}, swapped: [], proposal: null,
+      retreat: false, wingsSet: true, wingsOpen: false, reassign: [], tactics: { held: [], used: [] }, cloaks: [],
+      soldiers: [soldier('a', { positions: { A: 'blind-spot' } }), soldier('b', { positions: { A: 'in-reach' } }), soldier('c', { left: true, positions: {} })],
+      ...extra,
+    });
+    const entering = titan('B');
+    // Everyone holding a Position is Distant from it: a tie that this round's cards break mid-round.
+    expect(enteringAttention(field({}), entering, E.downCanMeet)).toMatchObject({ holder: 'a', rung: 'nearest', by: 'card' });
+    // At the background-clocks end step no card chooses.
+    expect(enteringAttention(field({ step: 'end' }), entering, E.downCanMeet).holder).toBeNull();
+    // A soldier Grabbed by the other Titan is no candidate; the one left holds it.
+    const grabbed = field({ step: 'end', titans: [titan('A', { grab: { soldier: 'a', counted: 0, lifted: false, arm: 'left-arm' } })] });
+    expect(enteringAttention(grabbed, entering, E.downCanMeet)).toMatchObject({ holder: 'b', by: 'one' });
   });
 
   it('keeps the holder in a tie, then takes the lowest card with a Wing after its player character', () => {

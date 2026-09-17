@@ -4,7 +4,9 @@
  * tested; the GM never picks the holder (evaluation, gm_choices).
  */
 import { meetsBodyParts, type BodyPart } from '../titan.ts';
-import type { Position, SoldierState, TitanRow } from './types.ts';
+import { tieCard } from './cards.ts';
+import { entering, holdsAPosition } from './positions.ts';
+import type { Position, Snapshot, SoldierState, TitanRow } from './types.ts';
 
 /** tests.nearest: the order Positions count as close. */
 const NEAREST_ORDER: readonly Position[] = ['on-body', 'in-reach', 'blind-spot', 'distant'];
@@ -171,4 +173,22 @@ export function drawAttentionBlock(s: SoldierState, titan: TitanRow, grabbed: bo
   if (grabbed) return 'grabbed';
   if (s.down) return 'down';
   return null;
+}
+
+/**
+ * A Titan that enters as a Focus Titan evaluates its Attention Ladder at once (background-titans.yaml,
+ * full_clock): every soldier who holds a Position holds distant relative to it, and only mid-round do
+ * this round's cards break a tie (evaluation, card and none).
+ */
+export function enteringAttention(snap: Snapshot, titan: TitanRow, downCanMeet: Record<string, boolean>): LadderResult {
+  const soldiers = snap.soldiers.map((s) => ({ ...s, positions: entering(s, titan.label, holdsAPosition(s, snap.titans)) }));
+  const held = (id: string) => snap.titans.find((t) => t.status === 'focus' && t.grab?.soldier === id)?.label ?? null;
+  return evaluateLadder({
+    titan,
+    soldiers,
+    grabbedBy: held,
+    downCanMeet,
+    cardOf: (id) => tieCard(id, snap.cards, snap.wings),
+    useCards: snap.step === 'play',
+  });
 }
