@@ -11,7 +11,7 @@
     { "type": "cover", "url": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp" }
   ],
   "esmodules": ["wings-of-freedom.mjs"],
-  "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }, { "src": "styles/chat.css" }, { "src": "styles/entry.css" }, { "src": "styles/lifepath.css" }],
+  "styles": [{ "src": "styles/fonts.css" }, { "src": "styles/sheet.css" }, { "src": "styles/chat.css" }, { "src": "styles/entry.css" }, { "src": "styles/lifepath.css" }, { "src": "styles/tracker.css" }],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
   "documentTypes": {
     "Actor": {
@@ -26,7 +26,9 @@
       "origin": { "htmlFields": ["description"] },
       "gear": { "htmlFields": ["description"] },
       "critical-injury": { "htmlFields": ["description"] }
-    }
+    },
+    "Combat": { "engagement": {} },
+    "Combatant": { "card": {} }
   },
   "packs": [
     { "name": "talents", "label": "Talents", "path": "packs/talents", "type": "Item", "system": "wings-of-freedom", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },

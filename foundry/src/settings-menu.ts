@@ -5,6 +5,7 @@
  */
 import { SYSTEM_ID } from './config.ts';
 import { APPLY_CATEGORIES } from './rules/roll.ts';
+import { TRACKER_CATEGORIES } from './rules/engagement/round.ts';
 import { iconPath } from './art.ts';
 
 const esc = (s: string) => foundry.utils.escapeHTML(s);
@@ -76,6 +77,18 @@ export function defineSettingsMenu() {
     <span>${esc(t(`WOF.Settings.autoApply.${c}.short`))}</span>
   </label>`;
   }).join('')}
+</fieldset>
+<fieldset class="pgroup gm">
+  <legend>${esc(t('WOF.Settings.menu.trackerApply'))}<span class="gm-tag">${esc(t('WOF.Settings.menu.gmOnly'))}</span></legend>
+  <p class="note">${esc(t('WOF.Settings.menu.trackerApplyHint'))}</p>
+  ${TRACKER_CATEGORIES.map((c) => {
+    const on = game.settings.get(SYSTEM_ID, `trackerApply.${c}`) !== false;
+    return `<label class="ptoggle" data-tooltip="${esc(t(`WOF.Settings.trackerApply.${c}.hint`))}">
+    <input type="checkbox" name="trackerApply.${c}" ${on ? 'checked' : ''}>
+    <span class="pt-box" aria-hidden="true"></span>
+    <span>${esc(t(`WOF.Settings.trackerApply.${c}.name`))}</span>
+  </label>`;
+  }).join('')}
 </fieldset>`
         : '';
       return `<div class="wof-prefs">
@@ -103,6 +116,10 @@ export function defineSettingsMenu() {
         if (typeof data.campaignChoice === 'string' && data.campaignChoice !== game.settings.get(SYSTEM_ID, 'campaignChoice')) writes.push(game.settings.set(SYSTEM_ID, 'campaignChoice', data.campaignChoice));
         const year = Number(data.campaignYear);
         if (Number.isInteger(year) && year !== Number(game.settings.get(SYSTEM_ID, 'campaignYear'))) writes.push(game.settings.set(SYSTEM_ID, 'campaignYear', year));
+        for (const c of TRACKER_CATEGORIES) {
+          const on = !!(data[`trackerApply.${c}`] ?? foundry.utils.getProperty(data, `trackerApply.${c}`));
+          if (on !== (game.settings.get(SYSTEM_ID, `trackerApply.${c}`) !== false)) writes.push(game.settings.set(SYSTEM_ID, `trackerApply.${c}`, on));
+        }
         for (const c of APPLY_CATEGORIES) {
           const on = !!(data[`autoApply.${c}`] ?? foundry.utils.getProperty(data, `autoApply.${c}`));
           if (on !== (game.settings.get(SYSTEM_ID, `autoApply.${c}`) !== false)) writes.push(game.settings.set(SYSTEM_ID, `autoApply.${c}`, on));

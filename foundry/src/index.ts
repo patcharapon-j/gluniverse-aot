@@ -6,6 +6,7 @@
  * 2e: Dice So Nice presets, the three.js gas and blade widgets, the preferences menu, token status
  * effects bound to the model, and default art.
  * 3: the Lifepath wizard.
+ * 4: the Titan Engagement tracker (HUD strip, board, token badges, round-end automation).
  */
 import { buildSystemConfig, SYSTEM_ID } from './config.ts';
 import { callRoll } from './dice/call.ts';
@@ -25,6 +26,7 @@ import { defineItemModels } from './models/items.ts';
 import { loadSettings, registerSettings } from './settings.svelte.ts';
 import { registerPortraits, registerSheets, registerTokenDefaults } from './sheets/register.ts';
 import { defineWizard, openLifepath } from './lifepath/wizard-app.ts';
+import { registerTracker } from './tracker/index.ts';
 
 Hooks.once('init', () => {
   CONFIG.WOF = buildSystemConfig();
@@ -52,6 +54,7 @@ Hooks.once('init', () => {
   registerTokenDefaults();
   registerPortraits();
   defineWizard();
+  registerTracker();
   game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse, widgetStats, openLifepath };
   console.log(`${SYSTEM_ID} | initialised: ${CONFIG.WOF.actionCatalog.length} Action Catalog entries`);
 });
