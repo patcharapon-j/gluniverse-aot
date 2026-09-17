@@ -191,6 +191,22 @@
 .wof-sheet.roll-dialog .rd-f .mini { min-height: 28px; padding: 0 var(--s3); }
 .wof-sheet.roll-dialog .rd-f .mini.red img { filter: invert(1); }
 
+/* ── A Focus Titan's card, dealt to the GM before any dice ───────────── */
+.wof-card.gm-only { box-shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 0 0 2px rgba(185, 146, 74, .5); }
+.wof-card.gm-only .rc-h .flag { border-color: var(--brass); color: var(--brass-hi); }
+.wof-card.gm-only .rc-b { background: repeating-linear-gradient(135deg, transparent 0 9px, rgba(142, 35, 35, .045) 9px 18px); }
+.wof-card.gm-only .stakes { white-space: normal; }
+.wof-card.gm-only .result .big { line-height: .9; }
+
+/* The GM's Titan roll dialog: the behavior, its targets, and the dice it throws */
+.wof-sheet.titan-dialog .rd-entry { display: flex; flex-direction: column; gap: 2px; padding: var(--s1) var(--s2); border-left: 2px solid var(--red); background: rgba(142, 35, 35, .05); }
+.wof-sheet.titan-dialog .rd-entry .fiction { font-style: italic; }
+.wof-sheet.titan-dialog .choices { max-height: 168px; overflow: auto; padding-right: var(--s1); scrollbar-width: thin; }
+.wof-sheet.titan-dialog .choice em.dodged { color: var(--blue); font-style: normal; }
+.wof-sheet.titan-dialog .dicerow { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+.wof-sheet.titan-dialog .dicerow input[type=number] { width: 54px; }
+.wof-sheet.titan-dialog .stepper button { width: 22px; height: 22px; }
+
 /* The small pick dialogs (Cover, Dodge, Fear, Gas, the GM's call) keep Foundry's dialog and read in the card's type. */
 .wof-pick .wof-field { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: var(--s2); align-items: center; margin: var(--s1) 0; }
 .wof-pick .wof-field > span { font: var(--t-xs)/1.2 var(--fl); letter-spacing: .12em; text-transform: uppercase; }

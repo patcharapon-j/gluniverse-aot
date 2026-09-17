@@ -8,7 +8,7 @@ import { entryView } from '../sheets/titan-view.ts';
 import type { ActionCard, AttackCard, FoeAttackCard } from './card.ts';
 import { successesOf } from './card.ts';
 import { cardOf, clock, postCard, saveCard, t } from './post.ts';
-import { WofRoll } from './terms.ts';
+import { hideDice, WofRoll } from './terms.ts';
 
 /** Writes (or rewrites, after a Push) a dodge's successes on the attack card. */
 export async function recordReaction(attackMessageId: string, dodge: ActionCard, dodgeMessageId: string): Promise<void> {
@@ -20,23 +20,30 @@ export async function recordReaction(attackMessageId: string, dodge: ActionCard,
   await saveCard(message, { ...card, reactions });
 }
 
-/** The GM rolls a Titan's Behavior Table entry (Titan Dice on 5 and 6, never Pushed, never adjusted). */
+/** The GM rolls a Titan's Behavior Table entry (Titan Dice on 5 and 6, never Pushed). */
 export interface TitanAttackOptions {
   targets?: { actor: string; name: string }[];
   titan?: { combat: string; key: string; label: string };
   /** Dodges already made against this Titan this round, which cancel against this card too. */
   reactions?: AttackCard['reactions'];
+  /** Attack Dice the GM set for this card, in place of the entry's own. */
+  dice?: number;
+  /** Throw the dice with Dice So Nice. Off by default: a Titan's turn never rains dice on the table. */
+  show?: boolean;
 }
 
 export async function rollTitanAttack(titan: any, entryId: string, opts: TitanAttackOptions = {}): Promise<any> {
   if (!game.user.isGM) return null;
   const all = titan.system.toObject().behavior_table.entries as any[];
   const entry = all.find((e) => e.id === entryId);
-  if (!entry?.attack_dice) {
+  const dice = Math.max(0, Math.round(opts.dice ?? entry?.attack_dice ?? 0));
+  if (!entry || !dice) {
     ui.notifications.warn(t('WOF.Roll.attack.noDice'));
     return null;
   }
-  const roll = await WofRoll().rollPool({ titan: entry.attack_dice });
+  const roll = await WofRoll().rollPool({ titan: dice });
+  // The Behavior roll shows no 3D dice unless the GM asks for them (they are the GM's own dice).
+  if (!opts.show) hideDice(roll);
   const faces = roll.facesOf('titan');
   const view = entryView(entry, all, titan.system.toObject().body_parts ?? []);
   const targets =

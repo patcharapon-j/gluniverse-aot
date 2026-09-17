@@ -325,6 +325,8 @@ body.wof-hud-on #ui-middle #ui-top { padding-top: var(--wof-hud-h, 0); }
 .wof-board .seal .wax.open::after { content: "!"; font: 900 var(--t-lg)/1 var(--fd); color: var(--red); }
 .wof-board .seal span { font: var(--t-xs)/1.35 var(--fl); color: var(--ink3); letter-spacing: .02em; }
 .wof-board .seal span b { font: 700 var(--t-sm)/1.2 var(--fd); color: var(--ink); letter-spacing: 0; }
+/* The GM's override: which entry this Titan's next card resolves. */
+.wof-board select.setnext { width: 100%; height: 20px; margin-top: 3px; font: var(--t-xs)/1 var(--fl); letter-spacing: .04em; }
 .wof-board .clocks { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s2); margin-top: var(--s2); }
 .wof-board .clockbox { display: flex; align-items: center; gap: var(--s2); padding: 4px var(--s2); border: 1px solid var(--ink2); background: var(--paper-hi); box-shadow: 2px 2px 0 rgba(36, 31, 27, .22); }
 .wof-board .clockbox .tclock { width: 44px; height: 44px; }

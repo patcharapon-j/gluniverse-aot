@@ -179,7 +179,7 @@
       <span class="lbl">{t('WOF.Roll.dialog.talent')}</span>
       <div class="choices" role="radiogroup" aria-label={t('WOF.Roll.dialog.talent')}>
         {#each v.talents as tal (tal.id)}
-          <label class="choice"><input type="radio" name="talent" value={tal.id} bind:group={talent} /><span>{tal.name} +{tal.dice}{#if tal.condition}<em> {t('WOF.Roll.dialog.if', { condition: tal.condition })}</em>{/if}</span></label>
+          <label class="choice"><input type="radio" name="talent" value={tal.id} bind:group={talent} /><span>{tal.name} +{tal.dice}{#if tal.condition}<em> {t('WOF.Roll.dialog.if', { condition: tal.condition })}</em>{:else if tal.hint}<em> {tal.hint}</em>{/if}</span></label>
         {/each}
         <label class="choice"><input type="radio" name="talent" value="none" bind:group={talent} /><span>{t('WOF.Sheet.none')}</span></label>
       </div>

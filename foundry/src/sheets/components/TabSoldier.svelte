@@ -6,7 +6,7 @@
   import { contextMenu, dragItem, tooltip } from '../actions.ts';
   import { sheetContext, t } from '../context.ts';
   import { deleteItem, openItem, setField, setItem } from '../soldier-ops.ts';
-  import { icon, type RollView, type SoldierView } from '../soldier-view.ts';
+  import { groupRollsByAttribute, icon, type RollView, type SoldierView } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
   import Pips from './Pips.svelte';
   import PoolDots from './PoolDots.svelte';
@@ -19,11 +19,14 @@
   const scaleMin = CONFIG.WOF.attributeScale.min;
 
   const attributes = CONFIG.WOF.attributes as { id: string; name: string; summary: string }[];
-  const groups = $derived([
-    { id: 'titan-engagement', label: t('WOF.Sheet.rolls.titanEngagement'), rolls: view.rolls.filter((r) => !r.fixed && r.context === 'titan-engagement') },
-    { id: 'any', label: t('WOF.Sheet.rolls.any'), rolls: view.rolls.filter((r) => !r.fixed && r.context !== 'titan-engagement') },
-    { id: 'fixed', label: t('WOF.Sheet.rolls.fixed'), rolls: view.rolls.filter((r) => r.fixed) },
-  ]);
+  // The rolls are laid out attribute by attribute (§2), so a player looks under the attribute they mean.
+  const groups = $derived(
+    groupRollsByAttribute(view.rolls, attributes, {
+      attribute: (id) => t(`WOF.Attribute.${id}`),
+      fixed: t('WOF.Sheet.rolls.fixed'),
+      other: t('WOF.Sheet.rolls.any'),
+    }),
+  );
 
   let rollsEl: HTMLElement | undefined = $state();
 
@@ -112,8 +115,12 @@
       </div>
       {#each groups as g (g.id)}
         {#if g.rolls.length}
-          <div class="rollgroup">
-            <span class="lbl">{g.label}</span>
+          <div class="rollgroup {g.attribute ? `s-${g.attribute}` : 'fixedgroup'}">
+            <span class="grouphead">
+              {#if g.attribute}<img class="ic s16" src={icon(`attr-${g.attribute}`)} alt="" />{/if}
+              <span class="lbl">{g.label}</span>
+              {#if g.attribute}<span class="gdice">{s.attributes[g.attribute]}<small>{t('WOF.Sheet.rolls.dice')}</small></span>{/if}
+            </span>
             <div class="rolls">
               {#each g.rolls as r (r.id)}
                 <button
@@ -130,7 +137,7 @@
                 >
                   <span class="tile"><img src={r.icon} alt="" /></span>
                   <span class="rn">
-                    <strong>{r.name}</strong>
+                    <strong>{r.name}{#if r.context === 'titan-engagement'}<span class="ctx" use:tooltip={t('WOF.Sheet.rolls.titanEngagement')}>{t('WOF.Sheet.rolls.titanShort')}</span>{/if}</strong>
                     {#if r.fixed}<Dots size="sm" groups={[{ cls: 'da', n: r.fixedDice }]} />{:else if !r.blockedReason}<PoolDots pool={r.pool} />{/if}
                     <span class:warn={!!r.blockedReason}>{r.why}</span>
                   </span>

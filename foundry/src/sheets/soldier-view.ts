@@ -96,6 +96,40 @@ export interface RollView {
   summary: string;
 }
 
+/** The quick rolls under one heading: an attribute, or the fixed rolls. */
+export interface RollGroup<R> {
+  id: string;
+  label: string;
+  /** The attribute the group is, for the heading's ink; null for the fixed rolls. */
+  attribute: string | null;
+  rolls: R[];
+}
+
+/**
+ * The quick-roll rows grouped by the attribute each entry rolls, in the attributes' own order
+ * (data/character/attributes.yaml), with the fixed rolls last. Within a group the Action Catalog's
+ * order is kept, Titan Engagement entries first so a fight's rolls sit at the top of the group.
+ */
+export function groupRollsByAttribute<R extends { attribute: string | null; fixed: boolean; context: string }>(
+  rolls: readonly R[],
+  attributes: readonly { id: string; name: string }[],
+  labels: { attribute: (id: string) => string; fixed: string; other: string },
+): RollGroup<R>[] {
+  const groups = attributes.map((a) => ({
+    id: a.id,
+    label: labels.attribute(a.id),
+    attribute: a.id as string | null,
+    rolls: rolls.filter((r) => !r.fixed && r.attribute === a.id),
+  }));
+  const known = new Set(attributes.map((a) => a.id));
+  const rest = rolls.filter((r) => !r.fixed && !(r.attribute && known.has(r.attribute)));
+  if (rest.length) groups.push({ id: 'other', label: labels.other, attribute: null, rolls: rest });
+  const fixed = rolls.filter((r) => r.fixed);
+  if (fixed.length) groups.push({ id: 'fixed', label: labels.fixed, attribute: null, rolls: fixed });
+  for (const g of groups) g.rolls = [...g.rolls].sort((a, b) => Number(b.context === 'titan-engagement') - Number(a.context === 'titan-engagement'));
+  return groups.filter((g) => g.rolls.length);
+}
+
 export interface MindRowView {
   index: number;
   row: string;

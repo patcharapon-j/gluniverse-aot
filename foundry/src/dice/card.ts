@@ -101,6 +101,35 @@ export interface GasCard extends CardBase {
   lightTrigger: boolean;
 }
 
+/**
+ * A Focus Titan's card, laid out for the GM before any dice (ADR-0019, deferred roll): what the
+ * behavior is, whom it is against, and the Attack Dice waiting to be rolled. Whispered to the GMs,
+ * so nothing is given away; the GM opens the roll dialog from it and may override any of it.
+ */
+export interface BehaviorCard extends CardBase {
+  kind: 'behavior';
+  combat: string;
+  /** The Focus Titan's token key and its board label. */
+  key: string;
+  label: string;
+  entry: string;
+  name: string;
+  tier: string;
+  /** The Next Behavior as rolled, when the choose step or the GM took another entry. */
+  rolledEntry: string;
+  rolledName: string;
+  holder: { actor: string; name: string } | null;
+  rung: string;
+  position: string;
+  attackDice: number | null;
+  effects: string[];
+  targets: { actor: string; name: string }[];
+  /** Dodges already made against this Titan this round, which cancel against this card too. */
+  reactions: { actor: string; name: string; successes: number; message: string }[];
+  /** The attack card this one rolled, 'none' when the GM resolved it without dice, or null. */
+  rolled: string | null;
+}
+
 export interface AttackCard extends CardBase {
   kind: 'attack';
   entry: string;
@@ -181,7 +210,7 @@ export interface FoeAttackCard extends CardBase {
   reactions: { actor: string; name: string; successes: number; message: string }[];
 }
 
-export type Card = ActionCard | TableCard | GasCard | AttackCard | CallCard | LifepathCard | FoeAttackCard;
+export type Card = ActionCard | TableCard | GasCard | AttackCard | BehaviorCard | CallCard | LifepathCard | FoeAttackCard;
 
 /** What the viewer may do on this card, decided by the chat code from permissions. */
 export interface CardViewer {
@@ -458,6 +487,38 @@ function attackCard(t: T, c: AttackCard, v: CardViewer): string {
 </div>`;
 }
 
+/**
+ * The GM's card for a Focus Titan's turn: the behavior, the Attention it answers, the targets, and
+ * the dice it will throw. Nothing is rolled until the GM presses Roll, and every line can be
+ * overridden in the dialog that opens.
+ */
+function behaviorCard(t: T, c: BehaviorCard, v: CardViewer): string {
+  if (!v.isGM) return '';
+  const tier = c.tier !== 'thrash' ? `<img class="tier-ic" src="${icon(`tier-${c.tier}`)}" alt="${esc(t(`WOF.Tier.${c.tier}`))}">` : '';
+  const dice = c.attackDice ? dots([['dtn', c.attackDice]], t('WOF.Card.Titan.attackDice', { dice: c.attackDice })) : '';
+  const flag = `<span class="flag">${esc(t('WOF.Roll.behavior.gmOnly'))}</span>`;
+  const line = (label: string, value: string) => `<p class="stakes"><b>${esc(label)}</b>${esc(value)}</p>`;
+  const rows = [
+    line(t('WOF.Roll.behavior.titan'), `${c.label} · ${c.actorName}`),
+    line(t('WOF.Roll.behavior.attention'), c.holder ? `${c.holder.name}${c.rung ? ` (${c.rung})` : ''}${c.position ? ` · ${c.position}` : ''}` : t('WOF.Roll.behavior.noHolder')),
+    line(t('WOF.Roll.behavior.targets'), c.targets.length ? c.targets.map((x) => x.name).join(', ') : t('WOF.Sheet.none')),
+    c.rolledEntry && c.rolledEntry !== c.entry ? line(t('WOF.Roll.behavior.rolledWas'), c.rolledName) : '',
+    c.effects.length ? line(t('WOF.Roll.behavior.effects'), c.effects.join(' ')) : '',
+  ].join('');
+  const acts = c.rolled
+    ? `<p class="block-why quiet">${esc(c.rolled === 'none' ? t('WOF.Roll.behavior.resolved') : t('WOF.Roll.behavior.rolledAlready'))}</p>`
+    : `<div class="rc-a">
+  <button class="mini red" type="button" data-wof-act="behaviorRoll"><img src="${icon('roll-push')}" alt="">${esc(t(c.attackDice ? 'WOF.Roll.behavior.roll' : 'WOF.Roll.behavior.open'))}</button>
+  <button class="mini" type="button" data-wof-act="behaviorNoDice">${esc(t('WOF.Roll.behavior.noDice'))}</button>
+  <p class="block-why quiet">${esc(t(c.attackDice ? 'WOF.Roll.behavior.hint' : 'WOF.Roll.behavior.hintNoDice'))}</p>
+</div>`;
+  return `${header(t, { img: c.img, name: c.name, time: c.time, who: c.actorName }, tier + dice, v.isGM, flag)}
+<div class="rc-b">
+  <div class="result"><span class="big red">${c.attackDice ?? '—'}</span><span class="rt"><b>${esc(t('WOF.Roll.die.titanDice'))}</b>${esc(t(`WOF.Tier.${c.tier}`))}</span></div>
+  ${rows}${acts}
+</div>`;
+}
+
 function foeAttackCard(t: T, c: FoeAttackCard, v: CardViewer): string {
   const whiff = c.severity <= 0;
   const target = c.target ? t('WOF.Roll.attack.vs', { names: c.target.name }) : t('WOF.Roll.attack.severity');
@@ -531,10 +592,13 @@ export function renderCard(t: T, c: Card, v: CardViewer, deathRows: { id: string
           ? gasCard(t, c, v)
           : c.kind === 'attack'
             ? attackCard(t, c, v)
-            : c.kind === 'foe-attack'
-              ? foeAttackCard(t, c, v)
-              : callCard(t, c, v);
-  return `<article class="wof-card rc${c.kind === 'attack' || c.kind === 'foe-attack' ? ' titanic' : ''}" data-kind="${c.kind}">${body}</article>`;
+            : c.kind === 'behavior'
+              ? behaviorCard(t, c, v)
+              : c.kind === 'foe-attack'
+                ? foeAttackCard(t, c, v)
+                : callCard(t, c, v);
+  const titanic = c.kind === 'attack' || c.kind === 'foe-attack' || c.kind === 'behavior';
+  return `<article class="wof-card rc${titanic ? ' titanic' : ''}${c.kind === 'behavior' ? ' gm-only' : ''}" data-kind="${c.kind}">${body}</article>`;
 }
 
 /** A plain summary kept in the message content, for places that do not run the system (exports, the chat log search). */
@@ -548,6 +612,8 @@ export function plainSummary(c: Card): string {
       return `${c.actorName}: Gas ${c.from} to ${c.to}`;
     case 'attack':
       return `${c.actorName}: ${c.name}, ${c.severity}`;
+    case 'behavior':
+      return `${c.actorName}: ${c.name}`;
     case 'call':
       return `${c.actorName}: ${c.label}`;
     case 'lifepath':

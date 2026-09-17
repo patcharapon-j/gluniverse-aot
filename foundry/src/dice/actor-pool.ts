@@ -124,9 +124,13 @@ export function actorPool(actor: any): ActorPool {
   };
 }
 
+/** A custom roll: an attribute alone, with no Action Catalog entry to say what it allows. */
+export const isCustomEntry = (entry: { id: string }): boolean => entry.id.startsWith('attribute-');
+
 /** The pool inputs for one entry, before the dialog's choices. */
 export function poolInputs(ap: ActorPool, entry: any, opts: { bonus?: number; passive?: boolean } = {}): PoolInputs {
   const ex = exceptionFor(entry.id, opts.passive);
+  const custom = isCustomEntry(entry);
   return {
     entry,
     attributes: ap.attributes,
@@ -139,6 +143,8 @@ export function poolInputs(ap: ActorPool, entry: any, opts: { bonus?: number; pa
     penaltyFloor: CONFIG.WOF.penaltyFloor,
     excluded: ex?.excluded,
     talentWhenAlone: entry.id === 'field-repair' && ap.ruleTalents.has('make-do'),
+    anyTalent: custom,
+    anyGear: custom,
   };
 }
 

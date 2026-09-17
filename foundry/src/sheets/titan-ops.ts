@@ -79,15 +79,17 @@ export function setOpenings(actor: any, n: number) {
 }
 
 /**
- * Rolls the hidden Next Behavior (behavior-procedure.yaml, next_behavior.roll). The D6 is rolled
- * with Foundry's dice and never posted, so only the sheet's owner sees the result.
+ * Rolls the hidden Next Behavior (behavior-procedure.yaml, next_behavior.roll). The D6 is taken from
+ * Foundry's own random source without making a Roll, so the result is never posted and no 3D die is
+ * ever thrown for it: the Next Behavior is the GM's, and it stays sealed until something reveals it.
  */
 export async function rollNextBehavior(actor: any): Promise<{ d6: number; entry: string }> {
-  const roll = await new foundry.dice.Roll('1d6').evaluate({ allowInteractive: false });
+  const rng = CONFIG.Dice?.randomUniform ? CONFIG.Dice.randomUniform() : Math.random();
+  const d6 = Math.floor(rng * 6) + 1;
   const s = actor.system;
-  const entry = nextBehaviorFor(s.behavior_table.entries, s.body_parts, s.previous_behavior, roll.total);
+  const entry = nextBehaviorFor(s.behavior_table.entries, s.body_parts, s.previous_behavior, d6);
   await actor.update({ 'system.next_behavior.entry': entry, 'system.next_behavior.revealed': false });
-  return { d6: roll.total, entry };
+  return { d6, entry };
 }
 
 export function setField(actor: any, path: string, value: unknown) {

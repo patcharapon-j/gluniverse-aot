@@ -146,6 +146,13 @@ export async function act(action: string, data: Record<string, any> = {}): Promi
         if (tok?.actor && isGM()) await tok.actor.update({ 'system.health_lost': data.lost, 'system.out': data.lost >= tok.actor.system.health });
         return;
       }
+      // The GM's override of a Titan's Next Behavior (the table's call beats the D6).
+      case 'set-next': {
+        const actor = combat.scene?.tokens.get(data.key)?.actor;
+        if (!isGM() || !actor) return;
+        await actor.update({ 'system.next_behavior.entry': data.entry ?? '', 'system.next_behavior.revealed': false });
+        return;
+      }
       case 'peek': {
         const actor = combat.scene?.tokens.get(data.key)?.actor;
         const entry = (actor?.system.toObject().behavior_table.entries as any[])?.find((e) => e.id === actor.system.next_behavior.entry);

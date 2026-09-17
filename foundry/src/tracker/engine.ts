@@ -512,21 +512,24 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
   targets.sort((a, b) => (tieCard(a, snap.cards, snap.wings) ?? 99) - (tieCard(b, snap.cards, snap.wings) ?? 99));
   await rec.commit();
   const full = entryOf(actor, entry.id);
-  const lines = [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), entry.tier === 'thrash' ? tr('note.thrash', { name: full?.name ?? entry.id }) : tr('note.behavior', { name: full?.name ?? entry.id, tier: game.i18n.localize(`WOF.Tier.${entry.tier}`) })];
-  let message: any = null;
-  if (full?.attack_dice) {
-    const { rollTitanAttack } = await import('../dice/reactions.ts');
-    const reactions = (row.dodges as any[]).filter((d) => targets.includes(d.soldier)).map((d) => ({ actor: game.actors.get(d.soldier)?.uuid, name: nameOf(d.soldier), successes: d.successes, message: d.message }));
-    message = await rollTitanAttack(actor, entry.id, {
-      targets: targets.map((id) => ({ actor: game.actors.get(id).uuid, name: nameOf(id) })),
-      titan: { combat: combat.id, key, label },
-      reactions,
-    });
-  } else lines.push(tr('note.noDice'));
+  // Nothing is rolled here (ADR-0019, deferred roll): the GM gets a card naming the behavior and its
+  // targets, and the dice wait for their button. The table hears only who holds the Attention.
+  const { postBehaviorCard } = await import('./behavior.ts');
+  const message = await postBehaviorCard({
+    combat,
+    key,
+    label,
+    round: combat.round,
+    entry: full ?? entry,
+    rolled: entryOf(actor, s.next_behavior.entry),
+    holder: holder.id,
+    rung: ev.rung,
+    targets,
+  });
   const telegraph = (full?.effects ?? []).some((e: any) => e.type === 'telegraph');
-  const titans = (plain(combat).titans as any[]).map((t) => (t.key === key ? { ...t, pending: JSON.stringify({ entry: entry.id, message: message?.id ?? '', telegraph }) } : t));
+  const titans = (plain(combat).titans as any[]).map((t) => (t.key === key ? { ...t, pending: JSON.stringify({ entry: entry.id, message: '', telegraph, behavior: message?.id ?? '' }) } : t));
   await writeSystem(combat, { titans });
-  await postNote({ title, lines, titan: true, round: combat.round });
+  await postNote({ title, lines: [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), tr('note.behaviorWaits')], titan: true, round: combat.round });
 }
 
 async function titanCardEnd(combat: any, combatant: any): Promise<void> {
@@ -534,13 +537,17 @@ async function titanCardEnd(combat: any, combatant: any): Promise<void> {
   const sys = plain(combat);
   const row = (sys.titans as any[]).find((t) => t.key === key);
   if (!row?.pending) return;
-  const pending = JSON.parse(row.pending) as { entry: string; message: string; telegraph: boolean };
+  const { closeBehaviorCard, readPending } = await import('./behavior.ts');
+  const pending = readPending(row.pending);
+  if (!pending) return;
   const actor = titanActor(combat, key);
   if (pending.message) {
     const { resolveAttack } = await import('./results.ts');
     const message = game.messages.get(pending.message);
     if (message) await resolveAttack(message, { auto: true });
   }
+  // The card is over: its GM card stops offering the roll, whether or not the GM took it.
+  if (pending.behavior) await closeBehaviorCard(pending.behavior);
   const after = plain(combat);
   const current = (after.titans as any[]).find((t) => t.key === key);
   if (!actor || current?.status !== 'focus') {

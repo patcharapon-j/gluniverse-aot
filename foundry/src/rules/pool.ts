@@ -66,6 +66,13 @@ export interface PoolInputs {
   conditionsMet?: readonly string[];
   /** Talent dice still count on an attribute-alone roll (Make Do). */
   talentWhenAlone?: boolean;
+  /**
+   * A custom roll (an attribute alone, called or not): the roller may bring any dice Talent, and any
+   * gear that has Gear Dice, because no Action Catalog entry names what the act allows. The table
+   * still says yes or no; the system only stops keeping the entry's list.
+   */
+  anyTalent?: boolean;
+  anyGear?: boolean;
 }
 
 export interface PoolPreview {
@@ -114,10 +121,17 @@ export function previewPool(i: PoolInputs): PoolPreview {
   if (!attrId || !ATTRIBUTES.includes(attrId)) return empty;
 
   // Gear: the best item the entry allows that is had (current rating above 0).
-  const usable = i.gear.filter((g) => i.entry.gear.includes(g.itemId) && g.dice > 0).sort((a, b) => b.dice - a.dice);
+  const usable = i.gear.filter((g) => (i.anyGear || i.entry.gear.includes(g.itemId)) && g.dice > 0).sort((a, b) => b.dice - a.dice);
   const hasGear = usable.length > 0;
+  // A custom roll brings nothing until the roller picks it; an entry's own gear is filled in for them.
   const chosen =
-    i.gearChoice === undefined ? usable[0] : i.gearChoice === 'none' ? undefined : usable.find((g) => g.id === i.gearChoice || g.itemId === i.gearChoice);
+    i.gearChoice === undefined
+      ? i.anyGear
+        ? undefined
+        : usable[0]
+      : i.gearChoice === 'none'
+        ? undefined
+        : usable.find((g) => g.id === i.gearChoice || g.itemId === i.gearChoice);
   let attributeAlone = false;
   if (i.entry.requiresGear && !hasGear) {
     if (i.entry.withoutGear === 'not_possible') return { ...empty, blocked: 'no-gear' };
@@ -131,15 +145,16 @@ export function previewPool(i: PoolInputs): PoolPreview {
   const conditionalTalents: PoolPreview['conditionalTalents'] = [];
   if ((!attributeAlone || i.talentWhenAlone) && !excluded.has('talent')) {
     for (const t of i.talents) {
-      if (t.type !== 'dice' || t.level <= 0 || !t.names.includes(i.entry.id)) continue;
+      if (t.type !== 'dice' || t.level <= 0 || !(i.anyTalent || t.names.includes(i.entry.id))) continue;
       const condition = t.condition[i.entry.id];
       if (i.talentChoice !== undefined) {
         if (t.id === i.talentChoice) talent = { id: t.id, name: t.name, dice: t.level };
         if (condition) conditionalTalents.push({ id: t.id, name: t.name, dice: t.level, condition });
         continue;
       }
+      // A custom roll names no entry, so no Talent fills itself in: the roller picks one.
       if (condition) conditionalTalents.push({ id: t.id, name: t.name, dice: t.level, condition });
-      else if (!talent || t.level > talent.dice) talent = { id: t.id, name: t.name, dice: t.level };
+      else if (!i.anyTalent && (!talent || t.level > talent.dice)) talent = { id: t.id, name: t.name, dice: t.level };
     }
   }
 
