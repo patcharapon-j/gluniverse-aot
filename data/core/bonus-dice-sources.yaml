@@ -153,7 +153,7 @@ sources:
       gives them to the soldier's next dodge this round. Declared with every other Bonus Dice
       source, before the roll.
     rules: [05-titan-engagement]
-    decided: [OQ-180]
+    decided: [OQ-182]
 
   - id: terrain-trait
     name: Terrain Trait
@@ -163,7 +163,7 @@ sources:
       (data/engagement/anchor-ratings.yaml, ratings, terrain_trait). Only the Open rating's does:
       a mounted soldier's Break Attention gains 1.
     rules: [05-titan-engagement]
-    decided: [OQ-180]
+    decided: [OQ-182]
 
   - id: ambush
     name: Ambush

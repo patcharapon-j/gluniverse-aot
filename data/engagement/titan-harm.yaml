@@ -244,7 +244,7 @@ falling_titan:
   wrecks_an_anchor: >-
     The Titan Engagement loses 1 Anchor where the body lands, resolved with the fall and before the
     Leap Clear rolls (data/engagement/anchor-ratings.yaml, anchors, wrecking). It happens whether
-    or not any soldier is in the path, and never below 0 (decision batch 10, OQ-180).
+    or not any soldier is in the path, and never below 0 (decision batch 10, OQ-182).
   path:
     in_it: Every soldier who holds On Body or Blind Spot relative to the falling Titan.
     airborne: >-

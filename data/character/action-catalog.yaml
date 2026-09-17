@@ -205,11 +205,11 @@ entries:
       leaves it standing (ADR-0024, limit 2, as first amended in decision batch 3e;
       data/engagement/attention.yaml, flag_duration). While a soldier holds the flag they match
       every ladder rung any other candidate meets except hooked into its body, so the shout takes
-      the Titan off any comrade who is not hooked in or On Body (decision batch 10, OQ-182;
+      the Titan off any comrade who is not hooked in or On Body (decision batch 10, OQ-184;
       data/engagement/attention.yaml, flags, loudest, matches).
     rules: [05-titan-engagement]
     adrs: [ADR-0024]
-    decided: [OQ-113, OQ-182]
+    decided: [OQ-113, OQ-184]
 
   - id: read
     name: Read
@@ -396,9 +396,9 @@ entries:
     changes: [blade-set-swap]
     notes: >-
       In a Titan Engagement it spends the soldier's move and never the action (decision batch 10,
-      OQ-183; data/gear/blade-sets.yaml, swap). Outside one it spends nothing.
+      OQ-185; data/gear/blade-sets.yaml, swap). Outside one it spends nothing.
     rules: [04-gear]
-    decided: [OQ-63, OQ-183]
+    decided: [OQ-63, OQ-185]
 
   - id: shed-load
     name: Shed Load
@@ -680,7 +680,7 @@ entries:
       actions, called_roll; decision batch 9, 9-43).
     needs: >-
       a Flight needs nothing: its step happens whatever the roll gives, and each success is 1
-      Momentum (decision batch 10, OQ-180). A roll another rule calls for needs what that rule
+      Momentum (decision batch 10, OQ-182). A roll another rule calls for needs what that rule
       states. Outside a Titan Engagement, 1
     changes: [momentum-gain]
     help_outside_titan_engagement: >-

@@ -6,7 +6,7 @@ id: positions
 name: Positions and Moves
 chapter: 05-titan-engagement
 adrs: [ADR-0009, ADR-0010, ADR-0019, ADR-0024]
-decided: [OQ-74, OQ-75, OQ-76, OQ-146, OQ-180, OQ-181]
+decided: [OQ-74, OQ-75, OQ-76, OQ-146, OQ-182, OQ-183]
 
 # ------------------------------------------------------------------ the Positions
 positions:
@@ -120,7 +120,7 @@ moves:
     that makes the distant to in-reach step may charge, and at the Open rating may make that step
     twice (data/engagement/anchor-ratings.yaml, mounted_charge).
 
-  # ---------------------------------------------------------------- Flight (decision batch 10, OQ-180)
+  # ---------------------------------------------------------------- Flight (decision batch 10, OQ-182)
   flight:
     what: >-
       Every ODM move is a Flight. The soldier makes a roll for fly
@@ -147,7 +147,7 @@ moves:
     not_made_by: >-
       A move that is not an ODM move. A soldier whose ODM Gear counts as not had makes no ODM move
       at all (data/gear/items.yaml, odm-gear, counts_as_not_had), so they make no Flight.
-    decided: [OQ-180]
+    decided: [OQ-182]
   tracked_value: position-change   # data/character/action-catalog.yaml; a move is not a Catalog entry
   kinds: data/engagement/anchor-ratings.yaml (move_kinds, ratings)
   mounted_soldier: >-

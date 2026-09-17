@@ -99,7 +99,7 @@ flags:
     matches: >-
       While a soldier holds this flag they also count, for this Titan's ladder, as meeting every
       rung any other candidate meets except hooked-into-its-body (evaluation, steps, loudest-matches;
-      decision batch 10, OQ-182). A shout cannot turn a Titan off a blade at its Nape or a soldier
+      decision batch 10, OQ-184). A shout cannot turn a Titan off a blade at its Nape or a soldier
       On Body, which is what ADR-0010 protects, and it can match anything below that.
 
 # ------------------------------------------------------------------ tests (closed list)
@@ -189,7 +189,7 @@ evaluation:
       text: >-
         Add to the tied set every candidate who holds the loudest flag, unless the highest rung met
         is hooked-into-its-body, in which case add none (flags, loudest, matches; decision batch 10,
-        OQ-182). This is the only step that adds a candidate, and it adds them whatever Position
+        OQ-184). This is the only step that adds a candidate, and it adds them whatever Position
         they hold, so a soldier who came in loud from distant is in the set. The lower rungs then
         narrow as they always do, and the loudest-or-brightest rung keeps them.
     - id: struck-first
@@ -245,7 +245,7 @@ draw_attention:
     Attention only when the Titan next evaluates its ladder, and a card that resolves nothing,
     including the last card of a decoy's hold, leaves the flag standing.
   adrs: [ADR-0024]   # limit 2, as amended in decision batch 3e
-  decided: [OQ-113, OQ-182]
+  decided: [OQ-113, OQ-184]
 
 # ------------------------------------------------------------------ Break Attention
 break_attention:

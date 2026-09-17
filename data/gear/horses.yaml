@@ -67,7 +67,7 @@ mounted:
     A mounted move that makes the distant to in-reach step may also set the loudest flag on that
     Focus Titan, and at the Open rating may make that step twice
     (data/engagement/anchor-ratings.yaml, mounted_charge). It is never rolled, spends nothing
-    beyond the move, and is not ODM use (decision batch 10, OQ-181).
+    beyond the move, and is not ODM use (decision batch 10, OQ-183).
   becoming_airborne: >-
     A mounted soldier whom a rule makes airborne, by an ODM move, which is a Flight, or by a Fly
     roll whose calling rule makes them airborne (data/gear/odm-gear.yaml, airborne), is dismounted first, with no

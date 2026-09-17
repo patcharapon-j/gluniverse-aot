@@ -894,7 +894,7 @@ def b_interim_setup():
 
 
 def b_position_steps():
-    """The step rows, and the Anchors and Terrain Trait each rating gives (decision batch 10, OQ-180)."""
+    """The step rows, and the Anchors and Terrain Trait each rating gives (decision batch 10, OQ-182)."""
     steps, field = [], []
     for rt in load(ANCH)["ratings"]:
         expect_keys(rt, {"id", "name", "meaning", "anchors", "terrain_trait", "steps"},

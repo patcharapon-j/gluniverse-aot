@@ -6,7 +6,7 @@ id: anchor-ratings
 name: Anchor Ratings, Position Steps, and Anchors
 chapter: 05-titan-engagement
 adrs: [ADR-0010, ADR-0024]
-decided: [OQ-74, OQ-99, OQ-180, OQ-181]   # OQ-180: Flight, Momentum, and Anchors; OQ-181: the mounted charge (decision batch 10)
+decided: [OQ-74, OQ-99, OQ-182, OQ-183]   # OQ-182: Flight, Momentum, and Anchors; OQ-183: the mounted charge (decision batch 10)
 
 # The four Positions (data/engagement/positions.yaml gives their meanings).
 positions: [distant, in-reach, on-body, blind-spot]
@@ -103,7 +103,7 @@ ratings:
       - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
       - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
 
-# ------------------------------------------------------------------ Anchors (decision batch 10, OQ-180)
+# ------------------------------------------------------------------ Anchors (decision batch 10, OQ-182)
 # The battlefield's own resource: what the ground offers a soldier on the wires, and what a Titan
 # takes away by going through it.
 anchors:
@@ -139,7 +139,7 @@ anchors:
     none (ADR-0024): the GM never spends, wrecks, or restores an Anchor. Only a wreck effect, a
     falling Titan, and a soldier's own spending change the count.
 
-# ------------------------------------------------------------------ Momentum (decision batch 10, OQ-180)
+# ------------------------------------------------------------------ Momentum (decision batch 10, OQ-182)
 momentum:
   what: >-
     A whole number each soldier holds, from 0 to their cap. It is public and is recorded on the
@@ -205,7 +205,7 @@ grounded_titan:
     and they never end for it (data/engagement/positions.yaml, corpse; decision batch 8, 8-9, OQ-146).
   decided: [OQ-74, OQ-146]
 
-# ------------------------------------------------------------------ the mounted charge (decision batch 10, OQ-181)
+# ------------------------------------------------------------------ the mounted charge (decision batch 10, OQ-183)
 mounted_charge:
   what: >-
     A mounted move that makes the distant to in-reach step may also set the loudest flag on that
@@ -216,7 +216,7 @@ mounted_charge:
     At the Open rating only, a mounted move may make the distant to in-reach step twice, in either
     order, so a rider can come in and get out again in one move. It is one move and one charge: the
     loudest flag is set at most once.
-  decided: [OQ-181]
+  decided: [OQ-183]
 
 # ------------------------------------------------------------------ history
 history:
@@ -226,7 +226,7 @@ history:
     a failure ending at in-reach). Both are withdrawn with the rows themselves, because every ODM
     move is now rolled and a move across two steps is Carry. Giant Forest's distant to blind-spot
     row is withdrawn with them, so no rating reaches the Nape from distant in one step
-    (decision batch 10, OQ-180).
+    (decision batch 10, OQ-182).
 
 gm_choices: >-
   A ruling, as framing: the Anchor Rating, named before the Titan Engagement starts where no starting

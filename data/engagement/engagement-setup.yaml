@@ -6,7 +6,7 @@ id: engagement-setup
 name: Interim Titan Engagement Setup
 chapter: 05-titan-engagement
 adrs: [ADR-0014, ADR-0024]
-decided: [OQ-87, OQ-104, OQ-126, OQ-141, OQ-167, OQ-180]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10); OQ-167: framing (decision batch 9, 9-15)
+decided: [OQ-87, OQ-104, OQ-126, OQ-141, OQ-167, OQ-182]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10); OQ-167: framing (decision batch 9, 9-15)
 
 used_when: >-
   A Titan Engagement begins and the rule that begins it does not name its Anchor Rating, its Focus

@@ -6,7 +6,7 @@ id: odm-gear
 name: ODM Gear and Gas
 chapter: 04-gear
 adrs: [ADR-0004, ADR-0009, ADR-0014, ADR-0015, ADR-0019, ADR-0024]
-decided: [OQ-01, OQ-12, OQ-23, OQ-60, OQ-61, OQ-180]
+decided: [OQ-01, OQ-12, OQ-23, OQ-60, OQ-61, OQ-182]
 
 item: odm-gear   # data/gear/items.yaml
 rolls_it_rates: [dodge, break-attention, fly, leap-clear]   # data/character/action-catalog.yaml; leap-clear: decision batch 8, 8-9
@@ -182,7 +182,7 @@ jam:
     - The soldier cannot make an ODM move while it is Jammed, so they make no Gas Roll for a later round. The Gas Roll for the round in which it Jammed is still made.
     - The Gas Rating does not change.
     - The soldier cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot (strikes).
-    - If the soldier is airborne, they fall once the roll that Jammed it is finished (data/gear/falls.yaml, jam-airborne). At the Urban rating a soldier at blind-spot is anchored to a roof and is not airborne, so a Jam does not drop them (data/engagement/anchor-ratings.yaml, ratings, urban, terrain_trait; decision batch 10, OQ-180).
+    - If the soldier is airborne, they fall once the roll that Jammed it is finished (data/gear/falls.yaml, jam-airborne). At the Urban rating a soldier at blind-spot is anchored to a roof and is not airborne, so a Jam does not drop them (data/engagement/anchor-ratings.yaml, ratings, urban, terrain_trait; decision batch 10, OQ-182).
   ends: >-
     When the current rating rises above 0: Field Repair (data/gear/field-repair.yaml), or
     Standard Issue replacing the Jammed ODM Gear (data/gear/standard-issue.yaml; the interim
