@@ -1,0 +1,2678 @@
+{
+  "TYPES": {
+    "Actor": {
+      "soldier": "Soldier",
+      "squadmate": "Squadmate",
+      "titan": "Titan",
+      "foe": "Foe"
+    },
+    "Item": {
+      "talent": "Talent",
+      "specialty": "Specialty",
+      "origin": "Origin",
+      "gear": "Gear",
+      "critical-injury": "Critical Injury"
+    },
+    "Combat": {
+      "engagement": "Engagement"
+    },
+    "Combatant": {
+      "card": "Card"
+    }
+  },
+  "WOF": {
+    "SystemTitle": "Wings of Freedom",
+    "Attribute": {
+      "strength": "Strength",
+      "agility": "Agility",
+      "wits": "Wits",
+      "perception": "Perception",
+      "instinct": "Instinct",
+      "empathy": "Empathy"
+    },
+    "InjuryType": {
+      "crush": "Crush",
+      "bite": "Bite",
+      "burn": "Burn",
+      "cut": "Cut",
+      "pierce": "Pierce"
+    },
+    "InjuryLocation": {
+      "arm": "Arm",
+      "leg": "Leg",
+      "torso": "Torso",
+      "head": "Head"
+    },
+    "Side": {
+      "left": "Left",
+      "right": "Right"
+    },
+    "SizeClass": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "Rank": {
+      "private": "Private",
+      "squad-leader": "Squad Leader",
+      "section-commander": "Section Commander"
+    },
+    "Position": {
+      "distant": "Distant",
+      "in-reach": "In Reach",
+      "on-body": "On Body",
+      "blind-spot": "Blind Spot"
+    },
+    "GearSubtype": {
+      "odm": "ODM Gear",
+      "blade-set": "Blade Set",
+      "firearm": "Firearm",
+      "horse": "Horse",
+      "kit": "Kit",
+      "prosthetic": "Prosthetic"
+    },
+    "BodyPartState": {
+      "intact": "Intact",
+      "wounded": "Wounded",
+      "broken": "Broken"
+    },
+    "TimeLimit": {
+      "turn": "Turn",
+      "engagement": "Engagement",
+      "day": "Day"
+    },
+    "TalentType": {
+      "dice": "Dice Talent",
+      "rule": "Rule Talent"
+    },
+    "TalentLimit": {
+      "none": "No limit",
+      "once_per_titan_engagement": "Once per Titan Engagement",
+      "once_per_leg": "Once per Leg",
+      "once_per_night_camp": "Once per Night Camp",
+      "once_per_skirmish": "Once per Skirmish",
+      "once_per_downtime": "Once per Downtime"
+    },
+    "Tier": {
+      "terrorize": "Terrorize",
+      "control": "Control",
+      "kill": "Kill",
+      "thrash": "Thrash"
+    },
+    "Ladder": {
+      "standard": "Standard Attention Ladder"
+    },
+    "Derived": {
+      "health": "Health",
+      "resolve": "Resolve",
+      "minimum_stress": "Minimum Stress",
+      "current_health": "Current Health",
+      "carrying_limit": "Carrying limit",
+      "items_carried": "Items carried",
+      "overloaded": "Overloaded",
+      "jammed": "Jammed",
+      "lame": "Lame",
+      "stress": "Stress"
+    },
+    "Pack": {
+      "talents": "Talents",
+      "specialties": "Specialties",
+      "origins": "Origins",
+      "gear": "Gear",
+      "criticalInjuries": "Critical Injuries",
+      "titans": "Titans",
+      "squadmates": "Squadmates",
+      "foes": "Foes",
+      "folderSoldiers": "Soldiers",
+      "folderThreats": "Threats",
+      "titanFieldNotes": "Titan Field Notes"
+    },
+    "Actor": {
+      "Base": {
+        "FIELDS": {
+          "attributes": {
+            "label": "Attributes",
+            "strength": {
+              "label": "Strength"
+            },
+            "agility": {
+              "label": "Agility"
+            },
+            "wits": {
+              "label": "Wits"
+            },
+            "perception": {
+              "label": "Perception"
+            },
+            "instinct": {
+              "label": "Instinct"
+            },
+            "empathy": {
+              "label": "Empathy"
+            }
+          },
+          "health_lost": {
+            "label": "Health lost",
+            "hint": "Health lost to damage. Boxes an untreated Critical Injury crosses off are not counted here."
+          },
+          "down": {
+            "label": "Down"
+          },
+          "stress": {
+            "label": "Stress"
+          },
+          "grief": {
+            "label": "Grief",
+            "hint": "Each point lowers Resolve by 1, up to 3 held."
+          },
+          "scars": {
+            "label": "Scars",
+            "element": {
+              "row": {
+                "label": "Scar"
+              }
+            }
+          },
+          "healed_permanent_injuries": {
+            "label": "Healed permanent injuries",
+            "element": {
+              "row": {
+                "label": "Injury"
+              },
+              "side": {
+                "label": "Side"
+              }
+            }
+          },
+          "lasting_stress_responses": {
+            "label": "Lasting Stress Responses",
+            "element": {
+              "row": {
+                "label": "Stress Response"
+              },
+              "ends": {
+                "label": "Ends"
+              },
+              "ends_note": {
+                "label": "Ends when"
+              }
+            }
+          },
+          "rallied_outside_titan_engagement_by": {
+            "label": "Rallied outside a Titan Engagement by"
+          },
+          "next_roll_penalty": {
+            "label": "Next roll penalty",
+            "hint": "Dice removed from the next attribute roll."
+          },
+          "pending_fear_results": {
+            "label": "Pending Fear Roll results",
+            "element": {
+              "effect": {
+                "label": "Effect"
+              },
+              "toward": {
+                "label": "Toward"
+              },
+              "titan": {
+                "label": "Titan"
+              }
+            }
+          },
+          "dropped_blade_sets": {
+            "label": "Dropped Blade Sets"
+          },
+          "pinned": {
+            "label": "Pinned",
+            "active": {
+              "label": "Under a body now"
+            },
+            "body": {
+              "label": "Under body"
+            },
+            "corpse": {
+              "label": "Corpse"
+            },
+            "limb": {
+              "label": "Pinned limb"
+            },
+            "side": {
+              "label": "Side"
+            },
+            "by_part": {
+              "label": "Pinning Body Part"
+            }
+          },
+          "faced_a_titan": {
+            "label": "Has faced a Titan"
+          },
+          "killed_a_person": {
+            "label": "Has killed a person"
+          },
+          "stabilized_injuries_scarred": {
+            "label": "Survived injuries already scarred"
+          },
+          "retiring": {
+            "label": "Retiring"
+          },
+          "gas_rating": {
+            "label": "Gas Rating",
+            "hint": "The gas left in the canister fitted to your ODM Gear."
+          },
+          "spare_canisters": {
+            "label": "Spare canisters"
+          },
+          "left_at": {
+            "label": "Items left at",
+            "position": {
+              "label": "Position"
+            },
+            "titan": {
+              "label": "Focus Titan"
+            },
+            "items": {
+              "label": "Items"
+            }
+          },
+          "positions": {
+            "label": "Positions",
+            "left": {
+              "label": "Left the Titan Engagement"
+            },
+            "entries": {
+              "label": "Positions",
+              "element": {
+                "titan": {
+                  "label": "Focus Titan"
+                },
+                "position": {
+                  "label": "Position"
+                }
+              }
+            }
+          },
+          "airborne": {
+            "label": "Airborne"
+          },
+          "carrying": {
+            "label": "Carrying"
+          },
+          "carried_by": {
+            "label": "Carried by"
+          },
+          "notes": {
+            "label": "Notes"
+          }
+        }
+      },
+      "Soldier": {
+        "FIELDS": {
+          "haven": {
+            "label": "Haven"
+          },
+          "canon_tie": {
+            "label": "Canon Tie"
+          },
+          "drive": {
+            "label": "Drive"
+          },
+          "drive_named_comrade": {
+            "label": "Named comrade"
+          },
+          "drive_used_this_session": {
+            "label": "Drive used this session"
+          },
+          "merit": {
+            "label": "Merit"
+          },
+          "class_rank": {
+            "label": "Class Rank"
+          },
+          "declined_military_police": {
+            "label": "Declined the Military Police"
+          },
+          "rank": {
+            "label": "Rank"
+          },
+          "xp": {
+            "label": "XP"
+          }
+        }
+      },
+      "Squadmate": {
+        "FIELDS": {
+          "template": {
+            "label": "Template"
+          },
+          "wing": {
+            "label": "Wing"
+          }
+        }
+      },
+      "Titan": {
+        "FIELDS": {
+          "size_class": {
+            "label": "Size Class"
+          },
+          "abnormal": {
+            "label": "Abnormal"
+          },
+          "tempo": {
+            "label": "Tempo"
+          },
+          "nape_depth": {
+            "label": "Nape Depth"
+          },
+          "regeneration_clock": {
+            "label": "Regeneration clock"
+          },
+          "heave": {
+            "label": "Heave"
+          },
+          "body_parts": {
+            "label": "Body Parts",
+            "element": {
+              "id": {
+                "label": "Body Part"
+              },
+              "kind": {
+                "label": "Kind"
+              },
+              "toughness": {
+                "label": "Toughness"
+              },
+              "state": {
+                "label": "State"
+              },
+              "progress": {
+                "label": "Successes toward the next state"
+              }
+            }
+          },
+          "attention_ladder": {
+            "label": "Attention Ladder"
+          },
+          "behavior_table": {
+            "label": "Behavior Table",
+            "entries": {
+              "label": "Entries",
+              "element": {
+                "id": {
+                  "label": "Id"
+                },
+                "name": {
+                  "label": "Name"
+                },
+                "results": {
+                  "label": "Results"
+                },
+                "tier": {
+                  "label": "Tier"
+                },
+                "targets": {
+                  "label": "Targets"
+                },
+                "position_requirement": {
+                  "label": "Position requirement"
+                },
+                "body_parts_used": {
+                  "label": "Body Parts used"
+                },
+                "attack_dice": {
+                  "label": "Attack Dice"
+                },
+                "effects": {
+                  "label": "Effects"
+                },
+                "fallback": {
+                  "label": "Fallback"
+                },
+                "text": {
+                  "label": "Text"
+                }
+              }
+            }
+          },
+          "regeneration": {
+            "label": "Regeneration filled"
+          },
+          "openings": {
+            "label": "Openings"
+          },
+          "next_behavior": {
+            "label": "Next Behavior",
+            "entry": {
+              "label": "Entry"
+            },
+            "revealed": {
+              "label": "Revealed"
+            }
+          },
+          "attention_holder": {
+            "label": "Attention held by"
+          },
+          "focus_titan_label": {
+            "label": "Focus Titan label"
+          },
+          "hidden_until_read": {
+            "label": "Hidden until Read",
+            "toughness": {
+              "label": "Toughness revealed"
+            },
+            "nape_depth": {
+              "label": "Nape Depth revealed"
+            },
+            "regeneration_clock": {
+              "label": "Regeneration clock revealed"
+            },
+            "attention_ladder": {
+              "label": "Attention Ladder revealed"
+            }
+          },
+          "corpse": {
+            "label": "Corpse"
+          },
+          "notes": {
+            "label": "Notes"
+          }
+        }
+      },
+      "Foe": {
+        "FIELDS": {
+          "kind": {
+            "label": "Foe kind"
+          },
+          "who": {
+            "label": "Who"
+          },
+          "attack_dice": {
+            "label": "Attack Dice"
+          },
+          "guard_dice": {
+            "label": "Guard"
+          },
+          "health": {
+            "label": "Health"
+          },
+          "grit": {
+            "label": "Grit"
+          },
+          "parley": {
+            "label": "Parley"
+          },
+          "watch": {
+            "label": "Watch"
+          },
+          "group_size": {
+            "label": "Group size"
+          },
+          "fight_weapon": {
+            "label": "Fight weapon",
+            "fixed": {
+              "label": "Weapon"
+            },
+            "roll": {
+              "label": "Roll"
+            },
+            "rows": {
+              "label": "Weapon rows",
+              "element": {
+                "results": {
+                  "label": "Results"
+                },
+                "weapon": {
+                  "label": "Weapon"
+                }
+              }
+            },
+            "at_night": {
+              "label": "At night",
+              "replaces": {
+                "label": "Replaces"
+              },
+              "with": {
+                "label": "With"
+              }
+            }
+          },
+          "shoot_weapon": {
+            "label": "Shoot weapon"
+          },
+          "health_lost": {
+            "label": "Health lost"
+          },
+          "held": {
+            "label": "Held"
+          },
+          "out": {
+            "label": "Out of the Skirmish"
+          },
+          "weapon": {
+            "label": "Fight weapon this Skirmish"
+          },
+          "firearm_loaded": {
+            "label": "Firearm loaded"
+          },
+          "notes": {
+            "label": "Notes"
+          }
+        }
+      }
+    },
+    "Item": {
+      "Talent": {
+        "FIELDS": {
+          "talent_id": {
+            "label": "Talent id"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "type": {
+            "label": "Type"
+          },
+          "max_level": {
+            "label": "Maximum level"
+          },
+          "names": {
+            "label": "Action Catalog entries"
+          },
+          "condition": {
+            "label": "Conditions"
+          },
+          "trigger": {
+            "label": "Trigger"
+          },
+          "effect": {
+            "label": "Effect"
+          },
+          "limit": {
+            "label": "Limit"
+          },
+          "specialties": {
+            "label": "Specialties"
+          },
+          "level": {
+            "label": "Level"
+          },
+          "used": {
+            "label": "Used",
+            "hint": "Recorded beside the Talent while its once-per use is spent."
+          }
+        }
+      },
+      "Specialty": {
+        "FIELDS": {
+          "specialty_id": {
+            "label": "Specialty id"
+          },
+          "key_attribute": {
+            "label": "Key attribute"
+          },
+          "summary": {
+            "label": "Summary"
+          },
+          "talents": {
+            "label": "Talent list"
+          },
+          "squadmate_template": {
+            "label": "Squadmate template"
+          }
+        }
+      },
+      "Origin": {
+        "FIELDS": {
+          "origin_id": {
+            "label": "Origin id"
+          },
+          "results": {
+            "label": "D66 results"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "attributes": {
+            "label": "Attributes"
+          },
+          "talent_choice": {
+            "label": "Talent choice"
+          },
+          "haven_choice": {
+            "label": "Haven choice"
+          },
+          "canon_tie": {
+            "label": "Canon Tie",
+            "character": {
+              "label": "Character"
+            },
+            "link": {
+              "label": "Link"
+            }
+          },
+          "condition": {
+            "label": "Condition",
+            "campaign_year_min": {
+              "label": "Campaign Year at least"
+            }
+          }
+        }
+      },
+      "Gear": {
+        "FIELDS": {
+          "item_id": {
+            "label": "Item"
+          },
+          "subtype": {
+            "label": "Subtype"
+          },
+          "rated": {
+            "label": "Rated"
+          },
+          "gear_dice_for": {
+            "label": "Gives Gear Dice to"
+          },
+          "items_counted": {
+            "label": "Counts as items"
+          },
+          "passable": {
+            "label": "Can be passed"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "rating": {
+            "label": "Rating"
+          },
+          "current": {
+            "label": "Current rating"
+          },
+          "kept": {
+            "label": "Kept item"
+          },
+          "in_handles": {
+            "label": "In the handles"
+          },
+          "loaded": {
+            "label": "Loaded"
+          },
+          "mounted": {
+            "label": "Mounted"
+          },
+          "position": {
+            "label": "Horse Position",
+            "position": {
+              "label": "Position"
+            },
+            "titan": {
+              "label": "Focus Titan"
+            },
+            "left": {
+              "label": "Left as a decoy"
+            }
+          },
+          "side": {
+            "label": "Fitted side"
+          }
+        }
+      },
+      "CriticalInjury": {
+        "FIELDS": {
+          "row": {
+            "label": "Row"
+          },
+          "location": {
+            "label": "Injury Location"
+          },
+          "row_data": {
+            "label": "Row",
+            "names": {
+              "label": "Names",
+              "crush": {
+                "label": "Crush"
+              },
+              "bite": {
+                "label": "Bite"
+              },
+              "burn": {
+                "label": "Burn"
+              },
+              "cut": {
+                "label": "Cut"
+              },
+              "pierce": {
+                "label": "Pierce"
+              }
+            },
+            "results": {
+              "label": "2D6 results",
+              "min": {
+                "label": "From"
+              },
+              "max": {
+                "label": "To"
+              }
+            },
+            "down": {
+              "label": "Down"
+            },
+            "lethal": {
+              "label": "Lethal"
+            },
+            "time_limit": {
+              "label": "Time limit"
+            },
+            "death_roll_penalty": {
+              "label": "Death Roll penalty"
+            },
+            "instant_death": {
+              "label": "Instant death"
+            },
+            "effects": {
+              "label": "Effects"
+            },
+            "permanent_effects": {
+              "label": "Permanent effects"
+            },
+            "healing_days": {
+              "label": "Healing days"
+            },
+            "repeat_row": {
+              "label": "Repeat row"
+            }
+          },
+          "type_riders": {
+            "label": "Injury Type riders",
+            "element": {
+              "injury_type": {
+                "label": "Injury Type"
+              },
+              "rider": {
+                "label": "Rider"
+              }
+            }
+          },
+          "description": {
+            "label": "Description"
+          },
+          "side": {
+            "label": "Side"
+          },
+          "injury_type": {
+            "label": "Injury Type"
+          },
+          "treated": {
+            "label": "Treated"
+          },
+          "time_limit": {
+            "label": "Time limit"
+          },
+          "healing_days_left": {
+            "label": "Healing days left"
+          },
+          "halved": {
+            "label": "Healing halved"
+          }
+        }
+      }
+    },
+    "Card": {
+      "Talent": {
+        "levelPerDie": "Add 1 base die per level to your {target}.",
+        "oneDie": "Add 1 base die to your {target}.",
+        "rolls": "{entries} rolls",
+        "rollsWhen": "{entries} rolls {condition}",
+        "trigger": "Trigger",
+        "effect": "Effect",
+        "limit": "Limit",
+        "entries": "Action Catalog entries",
+        "specialties": "Specialties",
+        "general": "General"
+      },
+      "Gear": {
+        "notHad": "Counts as not had",
+        "atZero": "At 0",
+        "wear": "Wear",
+        "restore": "Restored by",
+        "carried": "Carried",
+        "gearDice": "Gives Gear Dice to",
+        "notes": "Notes"
+      },
+      "Origin": {
+        "attributes": "Attributes",
+        "talents": "Talent choice",
+        "havens": "Haven choice",
+        "canonTie": "Canon Tie",
+        "condition": "Only from Campaign Year {year}",
+        "roll": "D66"
+      },
+      "Specialty": {
+        "key": "Key attribute",
+        "talents": "Talent list",
+        "issue": "Standard Issue also gives you a {item} with a rating of {rating}."
+      },
+      "Injury": {
+        "names": "By Injury Type",
+        "effects": "While held",
+        "permanent": "Permanent",
+        "healing": "Heals in {days} days",
+        "lethal": "Lethal, time limit: {limit}",
+        "down": "Down until treated",
+        "instantDeath": "Instant death",
+        "penalty": "{dice}-die penalty on {entries}",
+        "stressGain": "Gain {amount} Stress",
+        "entryName": "{location} {range}: {name}",
+        "range": "{min} to {max}",
+        "rangeUpTo": "{max} or less",
+        "rangeFrom": "{min} or more"
+      },
+      "Titan": {
+        "entry": "{roll}: {name}",
+        "attackDice": "{dice} Attack Dice",
+        "thrash": "Thrash (fallback)"
+      },
+      "Foe": {
+        "attackDice": "Attack Dice",
+        "guard": "Guard",
+        "health": "Health",
+        "grit": "Grit",
+        "parley": "Parley",
+        "watch": "Watch",
+        "group": "Group of {n}",
+        "fight": "Fight weapon",
+        "shoot": "Shoot weapon",
+        "none": "None"
+      },
+      "Entry": {
+        "diceTalent": "Dice Talent",
+        "ruleTalent": "Rule Talent",
+        "levels": "Levels",
+        "levelDie": "Level {n}: {n} base die",
+        "levelDice": "Level {n}: {n} base dice",
+        "oneLevel": "One level only.",
+        "actions": "Actions it names",
+        "diceTalents": "Dice Talents",
+        "ruleTalents": "Rule Talents",
+        "issue": "Standard Issue",
+        "attributes": "+1 to each",
+        "talentChoice": "Talent at level 1, choose one",
+        "or": "or",
+        "havenChoice": "Haven, choose one",
+        "canonTie": "Canon Tie, optional",
+        "rating": "Rating",
+        "carriedAs": "Counts as",
+        "injuryTable": "{location} Critical Injuries, 2D6",
+        "down": "Down",
+        "lethal": "Lethal",
+        "deathRollPenalty": "Death Roll penalty",
+        "whileHeld": "While you hold it",
+        "healing": "Healing",
+        "permanent": "Permanent",
+        "repeat": "Gained before at that side",
+        "riders": "What an Injury Type changes",
+        "squadmateRules": "What changes for a Squadmate",
+        "weapons": "Weapons",
+        "foeValues": "Values the Squad learns by fighting",
+        "specimen": "Specimen report · Size: {size} · {height}",
+        "specimenReport": "Specimen report",
+        "tempo": "Tempo",
+        "napeDepth": "Nape Depth",
+        "regeneration": "Regeneration",
+        "bodyParts": "Body Parts",
+        "bodyPartsToughness": "Body Parts and Toughness",
+        "toughnessEach": "Toughness {n} each",
+        "toughness": "Toughness {n}",
+        "attackDiceByTier": "Attack Dice by tier",
+        "behaviorTable": "Behavior Table",
+        "behaviorRoll": "Roll a d6 when it acts.",
+        "d6": "d6",
+        "behavior": "Behavior",
+        "tier": "Tier",
+        "attackDice": "Attack Dice",
+        "whatHappens": "What happens",
+        "none": "None",
+        "otherwise": "Otherwise",
+        "attackDiceN": "{n} Attack Dice.",
+        "plate": "Plate"
+      }
+    },
+    "Error": {
+      "dataShape": "Wings of Freedom: {what} is out of date. Rebuild the system."
+    },
+    "Settings": {
+      "motion": {
+        "name": "Motion",
+        "hint": "How much the Wings of Freedom sheets move: Full, Reduced (fades only), or Off. Your system's reduced-motion preference caps Full at Reduced. Only you see this.",
+        "full": "Full",
+        "reduced": "Reduced",
+        "off": "Off",
+        "fullHint": "Sheets settle, jolt, and flash; the gas and blade widgets animate.",
+        "reducedHint": "Short fades and colour only. Nothing slides or shakes.",
+        "offHint": "No movement. The gas and blade widgets are drawn still.",
+        "menuHint": "How much the sheets move. Only you see this.",
+        "osReduced": "Your system asks for reduced motion, so Full plays as Reduced."
+      },
+      "gore": {
+        "name": "Gore",
+        "short": "Gore",
+        "hint": "How wounds are drawn on the soldier figure: Low (clinical hatching), Standard, or Graphic. Only you see this.",
+        "low": "Low",
+        "standard": "Standard",
+        "graphic": "Graphic",
+        "lowHint": "Wounds as clinical hatching and dashed outlines. No blood.",
+        "standardHint": "Muted blood and cuts. No spatter or bone.",
+        "graphicHint": "Spatter, pooled blood, and bone; blood drips when Motion is Full.",
+        "menuHint": "How wounds show on the inked soldier and Titan. Only you see this."
+      },
+      "autoApply": {
+        "stress": {
+          "name": "Auto-apply: Stress",
+          "hint": "Roll cards change Stress themselves: a Push, a Cover, a Stress Response, a Fear result, and a failed called roll staked on Stress. Off: the card lists the change with an Apply button.",
+          "short": "Stress"
+        },
+        "wear": {
+          "name": "Auto-apply: gear wear",
+          "hint": "A Pushed roll’s Gear Dice showing 1 wear the gear item (a Blade Set is ruined), with any wear-ignoring Talent used. Off: the card lists the wear with an Apply button.",
+          "short": "Gear wear"
+        },
+        "stressResponse": {
+          "name": "Auto-apply: Stress Responses",
+          "hint": "A lasting Stress Response rolled on a card is recorded on the soldier. Off: the card lists it with an Apply button.",
+          "short": "Stress Responses"
+        },
+        "gas": {
+          "name": "Auto-apply: Gas Rating",
+          "hint": "A Gas Roll lowers the Gas Rating, and a Pushed ODM Gear roll marks the round’s Gas Roll as three dice. Off: the card lists the change with an Apply button.",
+          "short": "Gas Rating"
+        },
+        "fear": {
+          "name": "Auto-apply: Fear results and penalties",
+          "hint": "A Fear result’s next-roll penalty and forced move or strike are recorded, a used next-roll penalty is cleared, and a Drive shrug-off is marked. Off: the card lists them with an Apply button.",
+          "short": "Fear results and penalties"
+        }
+      },
+      "menu": {
+        "name": "Wings of Freedom preferences",
+        "label": "Open preferences",
+        "hint": "Motion and Gore for you; for the GM, which roll consequences apply themselves.",
+        "title": "Wings of Freedom preferences",
+        "heading": "Preferences",
+        "intro": "Motion and Gore are yours alone. Other players keep their own.",
+        "autoApply": "Roll consequences apply themselves",
+        "autoApplyHint": "A category switched off still lists its changes on the roll card, with an Apply button.",
+        "gmOnly": "GM",
+        "save": "Save preferences",
+        "campaign": "Character creation",
+        "trackerApply": "Engagement tracker",
+        "trackerApplyHint": "What the tracker applies by itself. A step switched off waits on the board or the card with an Apply button."
+      },
+      "campaignChoice": {
+        "name": "Procedures the campaign allows",
+        "hint": "Set once at session zero, before the campaign's first soldier is created. The Lifepath is always allowed.",
+        "option0": "The Lifepath only",
+        "option1": "The Lifepath and the Template Build",
+        "option2": "The Lifepath and the Free Build",
+        "option3": "The Lifepath, the Template Build, and the Free Build",
+        "menuHint": "The GM's choice for the whole campaign. It never changes once soldiers are made with it."
+      },
+      "campaignYear": {
+        "name": "Campaign Year",
+        "hint": "The year the campaign has reached, from 845 to 850. Origin conditions are tested against it.",
+        "unset": "Not recorded yet",
+        "menuHint": "Recorded before the first Lifepath, by the players or here. It changes only when a rule names a change."
+      },
+      "trackerApply": {
+        "roundGas": {
+          "name": "Round-end Gas Rolls",
+          "hint": "Roll the Gas Rolls due at the end of each round."
+        },
+        "regeneration": {
+          "name": "Regeneration",
+          "hint": "Fill each Focus Titan’s Regeneration clock at the end of each round."
+        },
+        "clocks": {
+          "name": "Background and retreat clocks",
+          "hint": "Fill the Background clocks and the retreat clock at the end of each round, and bring in a Titan whose clock is full."
+        },
+        "strikes": {
+          "name": "Strikes on Titans",
+          "hint": "Apply Nape strikes, Body Part strikes, Break Attention, and Break Free to the Titan."
+        },
+        "attacks": {
+          "name": "Titan attack effects",
+          "hint": "Apply a landed Titan attack’s Stress, Critical Injuries, Grab, and knock loose."
+        },
+        "skirmish": {
+          "name": "Skirmish harm",
+          "hint": "Roll Guard and apply damage to Foes and soldiers, and let broken groups leave."
+        }
+      }
+    },
+    "Sheet": {
+      "label": {
+        "soldier": "Soldier personnel file",
+        "squadmate": "Squadmate stat block",
+        "titan": "Titan observation record",
+        "foe": "Foe record",
+        "item": "Item slip"
+      },
+      "none": "None",
+      "choose": "Choose",
+      "add": "Add",
+      "ordinal": "Class Rank {n}",
+      "tab": {
+        "label": "Soldier file",
+        "soldier": "Soldier",
+        "kit": "Kit",
+        "wounds": "Wounds & Mind",
+        "record": "Record"
+      },
+      "foot": {
+        "left": "Wings of Freedom, field dossier",
+        "right": "Personnel division"
+      },
+      "header": {
+        "kicker": "Survey Corps personnel record",
+        "file": "File",
+        "name": "Soldier name",
+        "plate": "Plate",
+        "portrait": "Portrait of {name}",
+        "portraitEdit": "Change the portrait"
+      },
+      "state": {
+        "standing": "Standing",
+        "outOfGas": "Out of gas",
+        "handlesEmpty": "Handles empty",
+        "horseLame": "Horse lame",
+        "carrying": "Carrying {name}",
+        "carriedBy": "Carried by {name}",
+        "nextRoll": "Next roll −{dice}"
+      },
+      "menu": {
+        "open": "Open",
+        "remove": "Remove"
+      },
+      "remove": {
+        "title": "Remove from the sheet",
+        "body": "Remove {name} from this soldier?"
+      },
+      "aria": {
+        "rating": "{label}: {value} of {max}",
+        "setTo": "Set {label} to {value}",
+        "lower": "Lower {label}",
+        "raise": "Raise {label}",
+        "pool": "{base} base dice, {gear} Gear Dice, {stress} Stress Dice"
+      },
+      "health": {
+        "boxes": "Health boxes",
+        "crossedTip": "Crossed off by an untreated Critical Injury. Treating it gives the box back.",
+        "box": {
+          "clean": "Health box {n}, held",
+          "damaged": "Health box {n}, lost to damage",
+          "crossed": "Health box {n}, crossed off by a Critical Injury"
+        }
+      },
+      "stress": {
+        "min": "min {n}",
+        "lower": "Lower Stress",
+        "raise": "Raise Stress",
+        "boxes": "Stress boxes, one Stress Die each",
+        "box": "Stress box {n}"
+      },
+      "resolve": {
+        "short": "{base} + Scars {scars} − Grief {grief}",
+        "floorTip": "The formula gives {n}; the system keeps Resolve at 0 (rules question open)."
+      },
+      "down": {
+        "toggle": "Mark Down or Standing",
+        "ruleSaysDown": "By the rules this soldier is Down: current Health is 0, or an untreated injury keeps them Down.",
+        "ruleSaysUp": "By the rules this soldier is not Down.",
+        "match": "Match the rules",
+        "byRuleYes": "(the rules say Down)",
+        "byRuleNo": "(the rules say not Down)"
+      },
+      "gas": {
+        "title": "Gas",
+        "noOdm": "No ODM Gear",
+        "dry": "Dry",
+        "odm": "ODM {current}/{rating}",
+        "odmDice": "ODM Gear, {current} of {rating} Gear Dice",
+        "spares": "Spare: {list}",
+        "noSpare": "No spare canister",
+        "spend": "Spend 1",
+        "change": "Change",
+        "changeTip": "Change Canister: fit the fullest spare; the old canister stays a spare if it has gas."
+      },
+      "blades": {
+        "title": "Blade Sets",
+        "inHandles": "Handles:",
+        "empty": "Handles empty",
+        "ruin": "Ruin",
+        "ruinTip": "Any wear ruins a Blade Set: it is discarded and the handles are empty.",
+        "swap": "Swap",
+        "disciplineReady": "Discipline ready",
+        "disciplineUsed": "Discipline used"
+      },
+      "soldier": {
+        "attributes": "Attributes",
+        "attributesHint": "Each dot is a base die",
+        "rolls": "Quick rolls",
+        "rollsHint": "The dots are the pool you roll",
+        "talents": "Talents",
+        "noTalents": "No Talents yet.",
+        "enlistment": "Enlistment",
+        "driveUsed": "Drive used",
+        "key": "Key",
+        "keyTip": "The key attribute of the Specialty can reach {max}.",
+        "keyLine": "{attr}, up to {max}"
+      },
+      "talent": {
+        "dice": "Dice",
+        "rule": "Rule",
+        "markUsed": "Mark used",
+        "markReady": "Mark ready"
+      },
+      "talentDice": "+{dice} base dice on {entries}",
+      "rolls": {
+        "bonus": "Bonus Dice, next roll",
+        "bonusN": "{n} Bonus Dice",
+        "bonusHint": "Help, Openings and the like, up to {cap}",
+        "titanEngagement": "Titan Engagement",
+        "any": "Anywhere",
+        "fixed": "Fixed rolls",
+        "d6": "D6",
+        "dice": "dice"
+      },
+      "roll": {
+        "noGear": "Needs {gear}",
+        "noGearDice": "No Gear Dice",
+        "attributeAlone": "Attribute alone (no gear)",
+        "bonus": "Bonus",
+        "fixed": {
+          "fear-roll": "D6 + Stress {stress} − Resolve {resolve}",
+          "stress-response-roll": "D6 + Stress {stress} − Resolve {resolve}",
+          "gas-roll": "Count the 1s: each lowers the Gas Rating by 1"
+        }
+      },
+      "legend": {
+        "attribute": "attribute",
+        "talent": "Talent",
+        "bonus": "Bonus",
+        "penalty": "penalty",
+        "gear": "Gear",
+        "stress": "Stress"
+      },
+      "effect": {
+        "penalty": "−{dice} die: {entries}",
+        "stressGain": "+{amount} Stress",
+        "fearRollTotal": "+{amount} to the Fear Roll total",
+        "pushStress": "+{amount} Stress on every Push",
+        "loseSuccesses": "Lose {amount} success",
+        "spendNextTurn": "Lose your next turn",
+        "zeroSuccesses": "No successes",
+        "spendNextTurns": "Lose your next {turns} turns",
+        "nextRollPenalty": "−{dice} die on your next roll",
+        "spendNextAction": "Lose your next action",
+        "gasRoll": "Make a Gas Roll",
+        "noReactions": "No Reactions until your next turn ends",
+        "drawAttention": "You draw the Titan’s Attention",
+        "forcedMove": "Move toward {toward} on your next turn",
+        "forcedAction": "Strike the nearest Titan on your next turn",
+        "gainScar": "Gain a Scar",
+        "dropBladeSet": "Drop the Blade Set in your handles",
+        "stressGainNearby": "+{amount} Stress to each comrade within one Position step"
+      },
+      "drop": {
+        "hint": "Drop one from the compendium",
+        "set": "{what} set to {name}.",
+        "talentMax": "{name} is already at its highest level.",
+        "talentUp": "{name} raised to level {level}.",
+        "onlyOne": "This soldier already has {name}.",
+        "notHere": "{type} items do not go on a {sheet} sheet.",
+        "talents": "Drop Talents here. Dropping a held Talent raises its level.",
+        "specialty": "Drop a Specialty",
+        "origin": "Drop an Origin",
+        "gear": "Drop gear from the compendium here.",
+        "injuries": "Drop a Critical Injury row here; you pick its Injury Type and side."
+      },
+      "kit": {
+        "issued": "Issued equipment",
+        "issuedHint": "Boxes are Gear Dice",
+        "status": "Status",
+        "article": "Article",
+        "gearDice": "Gear Dice",
+        "unrated": "Unrated",
+        "noGear": "No gear recorded.",
+        "diceOf": "{name}: {current} of {rating} Gear Dice",
+        "keep": "Mark kept",
+        "unkeep": "Unmark kept",
+        "gasHint": "Full Gas Rating {full}",
+        "fitted": "Fitted",
+        "fit": "Fit",
+        "spareN": "Spare canister {n}",
+        "addSpare": "Add a spare",
+        "load": "Load",
+        "loadHint": "Strength + 4",
+        "loadAria": "{items} items carried of {limit}",
+        "engagement": "Titan Engagement",
+        "engagementHint": "Positions by Focus Titan",
+        "noPositions": "No Position recorded.",
+        "addPosition": "Add a Position",
+        "leftAtHint": "After death in a Titan Engagement",
+        "commaList": "Items, separated by commas"
+      },
+      "status": {
+        "carried": "Carried",
+        "mounted": "Mounted",
+        "dismounted": "Dismounted",
+        "inHandles": "In handles",
+        "loaded": "Loaded",
+        "empty": "Empty",
+        "fitted": "Fitted",
+        "spent": "Spent"
+      },
+      "figure": {
+        "caption": "Fig. 1, front",
+        "sides": "R · L",
+        "aria": "Soldier body diagram: {list}",
+        "ariaNone": "Soldier body diagram, no Critical Injuries"
+      },
+      "injury": {
+        "treated": "Treated",
+        "untreated": "untreated",
+        "bleeding": "Untreated",
+        "treat": "Treat",
+        "untreat": "Untreat",
+        "roll": "2D6 {range}",
+        "permanent": "Permanent",
+        "lethal": "Lethal, time limit: {limit}",
+        "noLimit": "No time limit",
+        "scarred": "Scar gained",
+        "days": "Healing days, {left} left",
+        "day": "Day {n}",
+        "dayDone": "Day {n}, healed",
+        "holdsBox": "Untreated: crosses off 1 Health box",
+        "dialogTitle": "Critical Injury: {name}",
+        "dialogHint": "The rule that inflicts the injury names its Injury Type; arms and legs also take a side.",
+        "apply": "Record the injury"
+      },
+      "wounds": {
+        "healthHint": "Down at 0",
+        "healthFormula": "ceil((Str <b>{str}</b> + Agi <b>{agi}</b>) / 2) = <b>{health}</b>",
+        "current": "Current Health {current} of {health}; {crossed} crossed off",
+        "injuries": "Critical Injuries",
+        "injuriesHint": "{held} held, {untreated} untreated",
+        "noInjuries": "No Critical Injuries.",
+        "stressHint": "Each box is a Stress Die",
+        "stressNote": "Minimum {min}: one per Scar. Every attribute roll adds one Stress Die per box.",
+        "resolveFormula": "ceil((Ins <b>{ins}</b> + Emp <b>{emp}</b>) / 2) = <b>{base}</b>, + Scars <b>{scars}</b>, − Grief <b>{grief}</b> = <b>{resolve}</b>",
+        "scarsGrief": "Scars and Grief",
+        "scarsHint": "{n} of {max}",
+        "noScars": "No Scars.",
+        "addScar": "Add a Scar",
+        "griefN": "Grief {n}",
+        "griefNote": "{n} of {max} count against Resolve",
+        "noResponses": "None held. A Stress Die showing 1 rolls on the table.",
+        "addResponse": "Add a lasting Stress Response",
+        "clearResponse": "Clear (Rally, or its ending)",
+        "field": "Field record",
+        "fieldHint": "Harm and mind fields the rules track",
+        "noFear": "None pending.",
+        "body": "Body",
+        "addRally": "Add a comrade",
+        "pickRow": "Choose the Critical Injury",
+        "otherRow": "A Critical Injury the tables do not list"
+      },
+      "ends": {
+        "titan-engagement-end": "Ends with the Titan Engagement",
+        "day": "Ends when a day passes",
+        "rule": "Ends as its rule states"
+      },
+      "fear": {
+        "forced-move": "Forced step",
+        "forced-action": "Forced strike"
+      },
+      "record": {
+        "service": "Service record",
+        "name": "Name",
+        "specialtyLine": "{name} (key: {attr})",
+        "declined": "Declined the MP",
+        "enlisted": "Enlisted",
+        "noSpecialty": "No Specialty",
+        "top10": "Top 10",
+        "xpAria": "{n} XP",
+        "notesHint": "Click the pen to write"
+      }
+    },
+    "BodyPart": {
+      "eyes": "Eyes",
+      "left-arm": "Left Arm",
+      "right-arm": "Right Arm",
+      "left-leg": "Left Leg",
+      "right-leg": "Right Leg"
+    },
+    "BodyPartKind": {
+      "eyes": "Eyes",
+      "arm": "Arm",
+      "leg": "Leg",
+      "broken": {
+        "eyes": "Broken: flare and thrown-cloak decoys fail against it.",
+        "arm": "Broken: it cannot Grab, and a soldier it holds is freed.",
+        "leg": "Broken: the Titan is grounded."
+      }
+    },
+    "Rung": {
+      "hooked-into-its-body": "Hooked into its body",
+      "nearest-person-in-reach": "Nearest person In Reach",
+      "just-hurt-it": "Just hurt it",
+      "loudest-or-brightest": "Loudest or brightest",
+      "nearest": "Nearest",
+      "current-holder": "Its current quarry, not at Distant",
+      "mounted": "Mounted",
+      "airborne": "Airborne",
+      "carrying-a-comrade": "Carrying a comrade",
+      "most-harmed": "Most untreated Critical Injuries",
+      "down": "Down"
+    },
+    "Targets": {
+      "holder": "The Attention holder",
+      "holder-and-position": "The holder and everyone at their Position"
+    },
+    "TitanEffect": {
+      "stress": "+{amount} Stress.",
+      "injury": "A {type} Critical Injury, {location}.",
+      "injuryNotLethal": "A {type} Critical Injury, {location}, never lethal.",
+      "rolledLocation": "rolled location",
+      "knockLoose": "Knocks loose: an airborne soldier, or one On Body or at Blind Spot, falls.",
+      "grab": "Grab.",
+      "telegraph": "Telegraphs: its next behavior is revealed."
+    },
+    "Squad": {
+      "kicker": "Squadmate stat block",
+      "template": "Template: {id}",
+      "name": "Squadmate name",
+      "noWing": "No Wing",
+      "onWing": "On {name}’s Wing",
+      "untreated": "{n} untreated",
+      "tab": {
+        "label": "Squadmate file",
+        "stat": "Stat block"
+      },
+      "attributesHint": "Set by the template; they never change",
+      "talentHint": "One template Talent",
+      "dropTalent": "Drop a Talent to replace the template Talent.",
+      "mind": "Mind",
+      "footLeft": "Wings of Freedom, Squad roster"
+    },
+    "FoeSheet": {
+      "kicker": "Foe record",
+      "name": "Foe name",
+      "statBlock": "Stat block",
+      "statHint": "Rolled in the open, never Pushed",
+      "attackNote": "base dice, each 6 a success",
+      "guardNote": "base dice against each attack",
+      "gritNote": "out before the group breaks",
+      "watchNote": "successes a Sneak needs",
+      "parleyNote": "base successes a Parley needs",
+      "healthHint": "Out of the Skirmish at 0",
+      "inFight": "In the Skirmish",
+      "atZero": "At 0 Health",
+      "zeroNote": "At 0 Health it leaves the Skirmish; the GM rules whether it is dead or out cold.",
+      "weapons": "Weapons",
+      "weaponLine": "{damage} damage, {type}, {target}",
+      "target": {
+        "engaged": "Engaged only",
+        "apart": "Apart only",
+        "either": "Engaged or Apart"
+      },
+      "atNight": "At night, {with} replaces {replaces}.",
+      "rollWeapon": "Roll D6",
+      "rolledWeapon": "Rolled {d6}: {name}.",
+      "reloadNote": "Empty after it Shoots; a Reload spends its turn.",
+      "footLeft": "Wings of Freedom, Skirmish record",
+      "footRight": "Garrison intelligence"
+    },
+    "TitanSheet": {
+      "kicker": "Titan observation record",
+      "name": "Titan name",
+      "plate": "Plate {size}",
+      "plateAlt": "Colour plate of {name}",
+      "focus": "Focus Titan {label}",
+      "sizeLine": "{size}, {height}",
+      "kind": "Kind",
+      "standard": "Standard",
+      "abnormal": "Abnormal",
+      "nape": "The nape",
+      "napeNote": "successes in one strike kill it",
+      "hidden": "Hidden until a Read",
+      "hiddenTip": "An Abnormal’s value stays hidden until a Read reveals it.",
+      "limited": "The observation record is sealed.",
+      "grounded": "Grounded",
+      "standing": "Standing",
+      "openingsTag": "Openings {n}",
+      "heldBy": "Held by {name}",
+      "tab": {
+        "label": "Titan file",
+        "engagement": "Engagement",
+        "behavior": "Behavior Table",
+        "record": "Record"
+      },
+      "profile": "Profile",
+      "profileHint": "From the {size} row",
+      "tempoNote": "cards per round",
+      "heaveCount": "Heave count",
+      "regen": {
+        "aria": "Regeneration clock, {filled} of {total} filled. Activate to fill a segment.",
+        "hiddenAria": "Regeneration clock, {filled} filled, length hidden",
+        "note": "Click to fill a segment. It fills 1 at each round’s end.",
+        "notePlayer": "It fills 1 segment at each round’s end.",
+        "back": "Step back",
+        "done": "Regenerated: {erased} Openings erased, every count cleared, {healed}.",
+        "healed": "{part} {from} to {to}",
+        "noHeal": "no Body Part to heal",
+        "steam": "Soldiers On Body roll on the steam table.",
+        "stands": "It stands again: every soldier it pins is freed."
+      },
+      "partsHint": "Click the figure or a part: intact, wounded, broken",
+      "partsHintPlayer": "State and count are public",
+      "figCaption": "Fig. T, front",
+      "figureAria": "Titan body diagram: {list}",
+      "partAria": "{part}, {state}. Activate to change the state.",
+      "woundedNote": "Wounded: no effect of its own.",
+      "toughNote": "Toughness {n}: successes to worsen it.",
+      "toughHidden": "Toughness hidden until a Read.",
+      "countAria": "{part}: {count} of {toughness} successes",
+      "setCount": "Set {part} to {n} successes",
+      "countOnly": "Count {n}",
+      "strike": "+1 success",
+      "strikeTip": "One Body Part strike success: at its Toughness the part worsens.",
+      "strikeBrokenTip": "The part is Broken: each further success is an Opening.",
+      "openingsHint": "1 Bonus Die each, never for its maker",
+      "addOpening": "Add an Opening",
+      "removeOpening": "Remove an Opening",
+      "noOpenings": "No Openings.",
+      "attention": "Attention",
+      "ladderHidden": "Its Attention Ladder is hidden until a Read.",
+      "holder": {
+        "nothing": "Nothing",
+        "decoy": "A decoy"
+      },
+      "next": {
+        "seal": "Wax seal: the Next Behavior is face down",
+        "none": "No Next Behavior rolled yet.",
+        "sealedNote": "Rolled face down. A Read, a telegraph, or its card reveals it.",
+        "revealedNote": "Revealed to every soldier.",
+        "peek": "Break seal (GM only)",
+        "reseal": "Seal again",
+        "roll": "Roll hidden",
+        "rollTip": "Rolls D6 on the Behavior Table, moving past the previous behavior and entries its Broken parts rule out. Nothing is posted to chat.",
+        "rolled": "Rolled {d6}: {name}.",
+        "reveal": "Reveal to players",
+        "set": "Next Behavior",
+        "short": "Next"
+      },
+      "previous": {
+        "label": "Previous behavior",
+        "short": "Previous",
+        "line": "Previous behavior: {name}"
+      },
+      "entryLine": "D6 {results}, {tier}, {targets}",
+      "behaviorHint": "D6, rolled hidden",
+      "cannot": "Parts Broken",
+      "anyPosition": "Any Position",
+      "legendTitanDie": "Titan Die, a success on 5 or 6",
+      "record": {
+        "status": "Status",
+        "read": "Revealed by a Read",
+        "readHint": "An Abnormal’s hidden values",
+        "sightings": "Sightings",
+        "sightingsHint": "Where it was seen, who engaged it, how it died"
+      },
+      "footLeft": "Wings of Freedom, observation record",
+      "footRight": "Research division",
+      "heaveNote": "heave count to free the pinned"
+    },
+    "ItemSheet": {
+      "name": "Name",
+      "imageEdit": "Change the image",
+      "heldBy": "Held by {name}",
+      "compendiumSlip": "Reference slip",
+      "rule": "Rule",
+      "article": "Article",
+      "state": "State",
+      "held": "As held",
+      "row": "Table row",
+      "yes": "Yes",
+      "no": "No",
+      "addTo": "Add to {label}",
+      "removeNamed": "Remove {name}",
+      "bladeCount": "(0 while in the handles)",
+      "medicalKit": "A Medical Kit gives its Gear Dice to Treat Injury.",
+      "toolKit": "A Tool Kit gives its Gear Dice to Field Repair.",
+      "odmNote": "At 0 the ODM Gear is jammed.",
+      "typeHint": "The rule that inflicts it names the type",
+      "injuryLine": "{name}: {location}, 2D6 {range}",
+      "noHealing": "No healing days.",
+      "deathPenalty": "Death Rolls −{n}",
+      "rider": {
+        "timeLimit": "time limit {limit}",
+        "healing": "healing days ×{n}",
+        "noHealUntreated": "does not heal untreated",
+        "treat": "changes Treat Injury",
+        "other": "a rule rider"
+      },
+      "lineList": "One per line"
+    },
+    "GearState": {
+      "jammed": "Jammed",
+      "lame": "Lame",
+      "spent": "Spent",
+      "worn-out": "Worn out",
+      "none": "No change"
+    },
+    "Roll": {
+      "die": {
+        "base": "Base die",
+        "gear": "Gear Die",
+        "stress": "Stress Die",
+        "titan": "Titan Die",
+        "baseDice": "Base dice",
+        "gearDice": "Gear Dice",
+        "stressDice": "Stress Dice",
+        "titanDice": "Titan Dice"
+      },
+      "aria": {
+        "face": "showing {face}",
+        "success": "success",
+        "stressOne": "Stress Response",
+        "locked": "locked, wears the gear",
+        "fresh": "added by the Push"
+      },
+      "push": "Push",
+      "pushed": "Pushed",
+      "pushedTwice": "Pushed twice",
+      "pushNote": "+1 Stress, +1 Stress Die",
+      "cover": "Cover",
+      "coveredBy": "Covered: {name}",
+      "coverNote": "{name} takes the Stress",
+      "undo": "Undo",
+      "redo": "Redo",
+      "apply": "Apply",
+      "applied": "Applied",
+      "notApplied": "Not applied",
+      "stakes": "Stakes",
+      "circumstances": "Circumstances",
+      "needs": "Needs",
+      "injury": "Injury",
+      "talent": "Talent",
+      "called": "Called",
+      "passive": "Passive",
+      "lasting": "Lasting",
+      "response": "Stress Response",
+      "responseMath": "D6 {d6} + Stress {stress} − Resolve {resolve} = {total}",
+      "tableMath": "D6 + {stress} − {resolve}",
+      "gallows": "Roll again",
+      "success": "Success",
+      "fails": "Fails",
+      "ofNeeds": "of {needs}",
+      "successesLabel": "successes",
+      "vsSeverity": "vs {severity}",
+      "attackLands": "{name} lands, {net} net",
+      "attackMisses": "{name} misses",
+      "death": {
+        "dies": "The soldier dies",
+        "holds-on": "Holds on: the limit stays",
+        "fights-back": "Fights back: the limit slows a step"
+      },
+      "notOwner": "You do not own this soldier.",
+      "noGM": "No GM is connected to make this change.",
+      "gmFailed": "The GM’s client could not make this change.",
+      "pushNotMade": "The GM’s client did not make the Push.",
+      "actionFailed": "The card could not be updated. See the console.",
+      "noSoldier": "You own no soldier who can do this.",
+      "pickSoldier": "Soldier",
+      "choose": "Choose",
+      "block": {
+        "down": "Down: no rolls but the Death Roll",
+        "downFear": "Down: no Fear Roll",
+        "noOdm": "Needs ODM Gear",
+        "jammed": "ODM Gear is Jammed",
+        "dry": "Gas Rating 0: running dry",
+        "push": {
+          "not-allowed": "This roll is never Pushed",
+          "down": "Down: no Push",
+          "stress-one": "A Stress Die shows 1: no Push",
+          "already-pushed": "Already Pushed",
+          "nothing": "Every die shows 6"
+        }
+      },
+      "op": {
+        "push": "+{n} Stress (Push) and 1 new Stress Die",
+        "cover": "{name} +1 Stress (Cover)",
+        "stress": "+{n} Stress ({why})",
+        "stakes": "+1 Stress (the stakes)",
+        "lasting": "{name} held",
+        "wear": "{name} wear {n}{state}",
+        "ruined": "{name} ruined, handles empty",
+        "wearIgnored": "{name} ignores 1 wear",
+        "talentUsed": "{name} used",
+        "gas": "Gas Rating {from} to {to}",
+        "pushedOdm": "Gas Roll this round: {n} dice",
+        "pushedOdmCleared": "ODM Push mark cleared",
+        "penalty": "−{n} die on the next roll",
+        "penaltyUsed": "Next-roll penalty {n} used",
+        "forcedMove": "Forced move pending",
+        "forcedAction": "Forced strike pending",
+        "drive": "Drive used this session"
+      },
+      "dialog": {
+        "title": "Roll: {name}",
+        "attribute": "Attribute",
+        "talent": "Talent",
+        "gear": "Gear",
+        "noGear": "No gear item",
+        "if": "(only {condition})",
+        "bonusHint": "Help, Openings, and other listed sources",
+        "capped": "The Bonus Dice cap leaves {n} of this step’s dice.",
+        "calledRoll": "A called roll with stakes",
+        "stakesDetail": "Details (optional)",
+        "passiveHint": "Rolled out of sight: no Push, no Stress Response",
+        "blocked": "This entry cannot be rolled without its gear.",
+        "roll": "Roll",
+        "against": "Against {name}: {severity} to cancel.",
+        "deathNote": "No Stress Dice, no Help, no Push, no Circumstances.",
+        "secondPush": "{name}: this roll can be Pushed twice.",
+        "bonus": "Bonus Dice",
+        "rule": "What it does"
+      },
+      "stakeMenu": {
+        "it-does-not-happen": "It does not happen",
+        "stress": "1 Stress",
+        "fall": "A fall",
+        "damage": "Damage",
+        "lost-item-or-unit": "An item or a unit of Squad Supply lost",
+        "time-or-position": "Time or position"
+      },
+      "fear": {
+        "title": "Fear Roll",
+        "label": "Fear",
+        "trigger": "Trigger",
+        "hint": "D6 + Stress {stress} − Resolve {resolve}. Everyone who rolls for one event rolls from the moment it was resolved.",
+        "steady": "{name}: Resolve counts 1 higher for a comrade Grabbed or killed.",
+        "drive": "Drive",
+        "shrug": "Shrug off (Drive)",
+        "shrugged": "Shrugged off: no effect",
+        "forbids": "Forbids: {what}."
+      },
+      "gas": {
+        "title": "Gas Roll",
+        "dice": "{n} dice",
+        "hint": "Gas Rating {gas}. Each die showing 1 lowers it by 1.",
+        "pushed": "A Pushed roll on ODM Gear this round ({n} dice)",
+        "useLight": "Use {name} (two dice)",
+        "lightTrigger": "Light Trigger: two dice",
+        "lostLabel": "gas lost",
+        "rating": "Gas Rating {from} to {to}"
+      },
+      "attack": {
+        "roll": "Roll attack",
+        "rollTip": "Roll this entry’s Attack Dice in the open (Titan Dice: 5 and 6 succeed). Target the soldiers first.",
+        "noDice": "This entry has no Attack Dice.",
+        "vs": "vs {names}",
+        "severity": "Severity",
+        "landsOn": "lands on 1+ net",
+        "whiff": "Whiffs against everyone",
+        "effects": "Lands: {effects}",
+        "dodge": "Dodge",
+        "dodged": "{name} dodged {n}",
+        "landsNet": "lands, {net} net",
+        "misses": "misses",
+        "rider": "(+{n} to the Critical Injury roll)",
+        "block": "Block",
+        "noReaction": "The Ambush leaves this attack unanswered: no Reaction."
+      },
+      "call": {
+        "button": "Call a roll",
+        "tip": "Name the entry, the Circumstances, and the stakes, and post the call for the player to roll.",
+        "title": "Call a roll: {name}",
+        "hint": "A called roll needs 1 success. Once rolled, the entry, the Circumstances, and the stakes stand.",
+        "entry": "Entry",
+        "entries": "Called-roll entries",
+        "attributes": "Attribute alone",
+        "attributeAlone": "{attribute} alone",
+        "post": "Post the call",
+        "for": "For",
+        "roll": "Roll it",
+        "rolled": "Rolled."
+      }
+    },
+    "Status": {
+      "down": "Down",
+      "untreated-injury": "Untreated Critical Injury",
+      "grabbed": "Grabbed",
+      "pinned": "Pinned",
+      "held": "Held",
+      "engaged": "Engaged",
+      "airborne": "Airborne",
+      "jammed": "Jammed",
+      "overloaded": "Overloaded",
+      "mounted": "Mounted",
+      "lame-horse": "Lame horse",
+      "carrying": "Carrying a comrade",
+      "carried": "Carried by a comrade",
+      "followsSheet": "{status} follows the soldier's sheet. Change it there.",
+      "derivedHint": "follows the sheet",
+      "followsTracker": "{status} follows the Engagement tracker.",
+      "trackerHint": "set by the Engagement tracker"
+    },
+    "Dice": {
+      "texture": {
+        "bone": "Wings of Freedom: bone",
+        "flesh": "Wings of Freedom: Titan flesh"
+      },
+      "colorset": {
+        "db": "Wings of Freedom: base dice (bone)",
+        "dg": "Wings of Freedom: Gear Dice (gunmetal)",
+        "ds": "Wings of Freedom: Stress Dice (wax red)",
+        "dt": "Wings of Freedom: Titan Dice (flesh)"
+      }
+    },
+    "Lifepath": {
+      "window": "Lifepath: {name}",
+      "kicker": "Training Corps · Personnel file",
+      "lede": {
+        "none": "Choose how this soldier is made, then work down the file one step at a time.",
+        "lifepath": "Roll your Cadet from Origin to Graduation. Every roll goes to the chat.",
+        "template-build": "Build your soldier on a Specialty's template, choosing the rest.",
+        "free-build": "Build your soldier from a Free Build shape, choosing the rest."
+      },
+      "rail": "Lifepath steps",
+      "step": {
+        "campaign": "Campaign",
+        "origin": "Origin",
+        "enlist": "Why You Enlisted",
+        "year-1": "First Year",
+        "year-2": "Second Year",
+        "year-3": "Third Year",
+        "exam": "Graduation Exam",
+        "graduation": "Graduation",
+        "specialty": "Specialty",
+        "attributes": "Attributes",
+        "drive": "Drive",
+        "stories": "Training Years",
+        "talents": "Talents",
+        "merit": "Merit",
+        "finish": "Finish",
+        "squad": "Join the Squad"
+      },
+      "status": {
+        "done": "Filed. You can still look it over.",
+        "ready": "Ready to file.",
+        "todo": "Make every roll and choice on this page.",
+        "blocked": "Finish the steps before this one.",
+        "filed": "This soldier is filed.",
+        "review": "Filed. A roll after this step fixed its choices.",
+        "sign": "Ready to sign and file.",
+        "name": "Name the soldier to file it."
+      },
+      "back": "Back",
+      "next": "Next",
+      "confirm": "File this step",
+      "filedStamp": "Filed",
+      "filedShort": "Filed",
+      "chosen": "Chosen",
+      "fixed": "Fixed",
+      "locked": "A later roll used this choice, so it can no longer change.",
+      "none": "None",
+      "rolled": "Rolled. The result stands.",
+      "rollD66": "Roll D66",
+      "range": "{a} to {b}",
+      "plusOne": "+1 {a}",
+      "meritChip": "Merit {merit}",
+      "successes": "successes",
+      "notOwner": "Only the soldier's owner can fill in the Lifepath.",
+      "error": "The Lifepath step failed: {message}",
+      "talentType": {
+        "dice": "Dice Talent",
+        "rule": "Rule Talent"
+      },
+      "procedure": {
+        "lifepath": {
+          "title": "Lifepath",
+          "sub": "Roll Origin, Why You Enlisted, and three Training Years, then graduate. The only way to a key attribute of 5 or 6 or a Top 10 Class Rank."
+        },
+        "template-build": {
+          "title": "Template Build",
+          "sub": "Take your Specialty's template ratings and choose your Origin, Drive, and Talents."
+        },
+        "free-build": {
+          "title": "Free Build",
+          "sub": "Place one of the two 18-point shapes with a 4 on your key attribute, and choose the rest."
+        },
+        "none": "No procedure yet",
+        "notAllowed": "The GM has not allowed this procedure for the campaign.",
+        "onlyLifepath": "This campaign allows the Lifepath only. The GM sets the procedures in the Wings of Freedom preferences."
+      },
+      "campaign": {
+        "hint": "Before the Lifepath",
+        "procedure": "How is this soldier made?",
+        "year": "Campaign Year",
+        "yearFixed": "Recorded for the campaign.",
+        "yearOpen": "The first soldier records it for the whole campaign.",
+        "yearLocked": "The Origin roll used it, so it stays.",
+        "exam": "Did the players vote to run the Graduation Exam?"
+      },
+      "exam": {
+        "run": "Run the Exam",
+        "runSub": "Three Trials replace the Third Year's performance roll.",
+        "skip": "No Exam",
+        "skipSub": "The Third Year ends with its performance roll.",
+        "hint": "Three Trials, in order",
+        "trialsRules": "The three Trials, with Help and Cover",
+        "company": "Who takes the Exam?",
+        "alone": "Alone",
+        "aloneSub": "A replacement character, or the only Cadet: no order rolls, no Help, no Cover.",
+        "group": "With other Cadets",
+        "groupSub": "Every Cadet rolls for the order before each Trial; the table settles who Helps and Covers.",
+        "trialN": "Trial {n}",
+        "rollOrder": "Roll for the order",
+        "orderNote": "Roll again on a tie. Cadets roll this Trial from the highest result down.",
+        "orderFirst": "Roll a D6 for the order before this Trial.",
+        "entry": "Your roll, needing {needs}",
+        "noGear": "No exam issue",
+        "hunterEye": "Use Perception for the Read (Hunter's Eye)",
+        "helped": "Helped by the Cadet who rolls after you",
+        "coverStress": "Stress from Covering before your roll",
+        "poolAria": "{base} base dice, {gear} Gear Dice, {stress} Stress Dice",
+        "poolWhy": "{attr} {a}, {talent}, {gear}",
+        "noTalent": "no Talent",
+        "roll": "Roll the Trial",
+        "ofNeeds": "of {needs} needed",
+        "response": "A Stress Die shows 1: a Stress Response. It costs 1 Merit on this Trial, and the roll cannot be Pushed.",
+        "push": "Push",
+        "pushCovered": "Push, Covered",
+        "pushedStress": "Pushed: 1 more Stress for the rest of the Exam.",
+        "pushedCovered": "Pushed and Covered: the Covering Cadet takes the Stress.",
+        "noPushHere": "This Trial forbids a Push.",
+        "block": {
+          "not-allowed": "This Trial forbids a Push.",
+          "down": "You cannot Push now.",
+          "stress-one": "A Stress Die shows 1: no Push.",
+          "already-pushed": "Already Pushed.",
+          "nothing": "Every die shows a success: nothing to Push."
+        },
+        "total": "Exam Merit {merit}. Merit total {total}."
+      },
+      "origin": {
+        "hint": "D66",
+        "hintBuilt": "Chosen, not rolled",
+        "rollAgain": "Roll again",
+        "rollNote": "Every attribute starts at 2.",
+        "again": "Roll again.",
+        "choose": "Choose an Origin",
+        "talent": "Talent, level 1",
+        "haven": "Haven",
+        "canonTie": "Canon Tie",
+        "noPoints": "A built soldier's Origin adds no attribute points."
+      },
+      "enlist": {
+        "hint": "D66",
+        "hintBuilt": "Any row's Drive",
+        "rollNote": "The point always comes from the rolled row.",
+        "fixedPoint": "Choosing another row's Drive never moves this point.",
+        "drive": "Drive",
+        "rolledBadge": "Rolled",
+        "comradeBadge": "Named comrade",
+        "comradeNote": "This Drive names a comrade when the Squad forms."
+      },
+      "overflow": {
+        "label": "Where the point goes",
+        "text": "{a} is already {cap}. The point goes to another attribute rated below {cap}, your choice:",
+        "done": "The point went to {a}."
+      },
+      "year": {
+        "limits": "Attribute cap and Talent cap",
+        "capBox": "Attribute cap",
+        "talentBox": "Talent cap",
+        "rollEvent": "Roll the event",
+        "rollNote": "Roll D66 on the {year} events.",
+        "talent": "Talent, +1 level",
+        "curriculumBadge": "Curriculum",
+        "capped": "Cannot gain a level now.",
+        "bothCapped": "Neither of the event's Talents can gain a level: take 1 level in a Talent on this year's curriculum.",
+        "dormant": "The only Talent here that can gain a level names only entries no rule calls for: take it, or a Talent on this year's curriculum.",
+        "performance": "Performance roll",
+        "tie": "Both are equal: pick one.",
+        "dice": "{n} dice",
+        "rollPerformance": "Roll {n} dice",
+        "noPush": "No Push, no Help.",
+        "choicesFirst": "Choose the Talent (and where any extra point goes) first.",
+        "examReplaces": "The Graduation Exam replaces this roll",
+        "meritTotal": "Merit total after this year: {merit}",
+        "bands": "Merit by successes"
+      },
+      "grad": {
+        "hint": "Five steps, in order",
+        "meritTotal": "Merit total",
+        "ofClass": "of a class of 200",
+        "top10": "Top 10",
+        "declined": "Offered the Military Police, and declined it.",
+        "declinedShort": "Declined the MP",
+        "specialty": "Specialty",
+        "keyAttr": "Key: {a}",
+        "swapFloor": "Swap and floor",
+        "noSwap": "{a} already holds your highest rating: nothing swaps.",
+        "swapTie": "Several attributes share your highest rating. Pick the one that swaps with {a}:",
+        "swapped": "{a} swaps its rating with {b}.",
+        "floor": "{a} is below 4: it rises to 4, and for each point added you lower another attribute rated 3 or more. Still to lower: {left}.",
+        "lower": "Lower {a}",
+        "floorUndo": "Undo",
+        "top10Line": "Top 10: {a} rises to {v}.",
+        "talent": "{name} Talent, +1 level"
+      },
+      "finish": {
+        "hint": "Record, receive, and name",
+        "health": "Health {n}",
+        "resolve": "Resolve",
+        "stress": "Stress",
+        "stressLine": "0, minimum 0",
+        "issue": "Standard Issue at Funding {funding}",
+        "rating": "Rating {n}",
+        "blades": "{n} × {name}",
+        "inHandles": "one in the handles",
+        "canisters": "Spare canisters: {n}",
+        "fitted": "fitted canister full ({n})",
+        "declineSpares": "Decline spare canisters",
+        "declineBlades": "Decline Blade Sets",
+        "declineItem": "Decline the Specialty item",
+        "issued": "Standard Issue received.",
+        "name": "Name the soldier",
+        "namePlaceholder": "Name",
+        "replaces": "Filing replaces what the sheet already holds: {names}.",
+        "replaceTitle": "Replace what the sheet holds?",
+        "replaceHint": "Filing the Lifepath replaces these on the soldier:",
+        "sign": "Sign and file the soldier",
+        "signNote": "Writes the soldier to the sheet in one go.",
+        "done": "{name} is filed.",
+        "missing": "The {pack} compendium has no entry for {key}."
+      },
+      "squad": {
+        "hint": "Once every player character is finished",
+        "comrade": "Named comrade",
+        "notYet": "Sign the file first.",
+        "later": "Name one later, at the table",
+        "nobody": "No other soldier or Squadmate is in this world yet. Name one when the Squad forms.",
+        "noComrade": "{name} needs no named comrade.",
+        "squadmates": "Starting Squadmates",
+        "pack": "Squadmate templates are in the Squadmates compendium.",
+        "close": "Close the file"
+      },
+      "specialty": {
+        "hint": "Not rolled, never changes"
+      },
+      "attributes": {
+        "hintFree": "Place a shape",
+        "hintTemplate": "The template's ratings",
+        "shape": "Shape",
+        "shapeSub": {
+          "one-four": "One attribute at 4",
+          "two-fours": "Two attributes at 4"
+        },
+        "ratings": "Ratings",
+        "left": "Still to place: {values}.",
+        "keyFour": "Put a 4 on {a}, your key attribute.",
+        "placed": "Every rating is placed."
+      },
+      "stories": {
+        "hint": "For the story only",
+        "none": "No event named"
+      },
+      "talents": {
+        "hint": "Five levels in all",
+        "limits": "Talent limits",
+        "fromList": "One level from the {name} list",
+        "cannot": "Cannot gain a level within the limits.",
+        "any": "Any Talents: {n} of {of}",
+        "add": "Choose a Talent",
+        "listFirst": "Choose the Specialty's Talent first",
+        "addBtn": "Add a level",
+        "remove": "Remove"
+      },
+      "merit": {
+        "hint": "None for a built soldier",
+        "note": "Not Top 10: no Military Police offer and no key attribute bonus."
+      },
+      "file": {
+        "title": "Personnel file",
+        "key": "Key",
+        "total": "Total",
+        "talents": "Talents, {n} levels",
+        "level": "{name}, level {level}",
+        "noTalents": "No Talents yet."
+      },
+      "card": {
+        "d66": "D66",
+        "tens": "Tens",
+        "units": "Units",
+        "rollAgain": "Rolled again",
+        "plusTwo": "+1 {a} and {b}",
+        "plusOne": "+1 {a}",
+        "drive": "Drive rolled: {name}",
+        "eventLine": "+1 {a}, Merit {merit}",
+        "performance": "{year}: performance roll",
+        "merit": "Merit {merit}",
+        "pool": "{a}, {n} dice",
+        "order": "{trial}: order",
+        "orderLabel": "Order roll",
+        "orderText": "Highest rolls first",
+        "needs": "{entry}, needs {needs}",
+        "talent": "{name} {n}",
+        "covered": "Covered"
+      },
+      "banner": {
+        "emptyTitle": "This file is empty",
+        "emptyText": "Make this soldier with the Lifepath wizard, or drop an Origin, a Specialty, and Talents from the compendia.",
+        "resumeTitle": "The Lifepath is not finished",
+        "resumeText": "Pick up where you left off, at step {step}.",
+        "stamp": "New recruit",
+        "open": "Open the Lifepath",
+        "resume": "Resume the Lifepath"
+      },
+      "reset": {
+        "title": "Clear the Lifepath",
+        "hint": "Clears this soldier's Lifepath progress and rolls. The sheet itself is not changed."
+      },
+      "orMore": "{n} or more"
+    },
+    "Tracker": {
+      "title": "Engagement tracker",
+      "idle": "No Titan Engagement or Skirmish is running.",
+      "failed": "The tracker could not make that change. See the console.",
+      "noRewind": "A round is never taken back. Undo the round-end steps instead.",
+      "dealtNotRolled": "Cards are dealt at the deal step, not rolled.",
+      "liftedPenalty": "Lifted",
+      "peek": "Next Behavior (only you see this): {name}",
+      "roundShort": "R{n}",
+      "roundLong": "Round {n}",
+      "round": {
+        "wrongStep": "That is not this step's action.",
+        "skirmish": "A Skirmish has no Wings and no swap step.",
+        "endOpen": "Stamp every round-end step first.",
+        "reassign": "Put each Squadmate whose player character died or left on a Wing, or on none, first.",
+        "notPlay": "No card is in play."
+      },
+      "retreat": "Retreat",
+      "retreatN": "Retreat {n} of {of}",
+      "retreatCalled": "Retreat under way",
+      "retreatTitle": "Retreat clock, {n} of {of}",
+      "called": "called",
+      "noRetreat": "A Skirmish has no retreat clock.",
+      "skirmish": "Skirmish",
+      "titan": "Titan",
+      "corpse": "Corpse",
+      "tempo": "Tempo {n}",
+      "of": "of",
+      "none": "none",
+      "used": "used",
+      "dead": "Dead",
+      "grabbed": "Grabbed",
+      "held": "Held",
+      "out": "out",
+      "engaged": "Engaged",
+      "apart": "Apart",
+      "engagedWith": "Engaged with Foe {n}",
+      "lifted": "lifted",
+      "notLifted": "not lifted",
+      "abnormal": "Abnormal",
+      "byHand": "added by hand",
+      "squadmate": "Squadmate",
+      "foeGroup": "Foe group",
+      "cardOrder": "Card order",
+      "stepOff": "{step}: none in a Skirmish",
+      "step": {
+        "setup": "Setup",
+        "setupShort": "S",
+        "wings": "Wings",
+        "wingsShort": "W",
+        "deal": "Deal",
+        "dealShort": "D",
+        "swap": "Swap",
+        "swapShort": "S",
+        "play": "Play",
+        "playShort": "P",
+        "end": "End",
+        "endShort": "E",
+        "closing": "Engagement end",
+        "closingShort": "X"
+      },
+      "hint": {
+        "setup": "Setting up",
+        "wings": "Wings step",
+        "deal": "The GM deals",
+        "swap": "Swap cards",
+        "play": "Cards come up",
+        "end": "Round end",
+        "closing": "The engagement has ended. Its end steps run on the board, in order."
+      },
+      "act": {
+        "newTitan": "Titan Engagement",
+        "newSkirmish": "Skirmish",
+        "keepWings": "Keep Wings",
+        "deal": "Deal cards",
+        "beginPlay": "Begin play",
+        "nextCard": "Next card",
+        "endTurn": "End turn",
+        "applyCheck": "Next check",
+        "nextRound": "Begin round {n}",
+        "board": "Board",
+        "boardLabel": "Open the Engagement board",
+        "fold": "Fold",
+        "foldLabel": "Fold the strip to a thin bar",
+        "unfold": "Unfold",
+        "accept": "Accept",
+        "decline": "Decline",
+        "apply": "Apply",
+        "skip": "Skip",
+        "undo": "Undo",
+        "end": "End the engagement",
+        "leave": "Leave",
+        "return": "Return",
+        "drawAttention": "Draw Attention",
+        "fallBack": "Fall Back: {name} to In Reach of {label}",
+        "foeAct": "Act",
+        "close": "Close the engagement",
+        "stamp": "Stamp"
+      },
+      "chip": {
+        "card": "{name}, card {card}",
+        "wing": "{name}, on the Wing of {of}",
+        "actingNow": "acting now",
+        "titanCard": "Titan {label}, card {card}",
+        "foeCard": "Foe group, card {card}",
+        "was": "Swapped: was {n}"
+      },
+      "att": {
+        "nothing": "Nothing",
+        "holdsGrab": "{name}, Grabbed",
+        "decoy": "Decoy: {decoy}, {n} cards left",
+        "wouldBe": "If its card came up now: {name}.",
+        "countdown": "The Grab overrides the ladder. Countdown {n} of 2, {lifted}.",
+        "chip": "Att: {name}",
+        "chipHolds": "Holds {name}{lifted}",
+        "chipDecoy": "Att: {decoy}",
+        "chipNothing": "Att: nothing"
+      },
+      "flag": {
+        "hurt": "just hurt: {name}",
+        "loud": "loudest: {name}",
+        "hooked": "hooked: {name}"
+      },
+      "cue": {
+        "swap": "Swap step. Pick two soldiers' cards to swap: same Position or one step apart, not Down or Grabbed, one swap each.",
+        "swapMade": "Swap made this round: {list}",
+        "proposal": "{a} asks {b} to swap cards.",
+        "pickOwnFirst": "Pick your own soldier's card first.",
+        "pickSecond": "Picked. Pick a second card, or the same one again to drop it.",
+        "wingsOpen": "Wings step. Put each Squadmate on a player character's Wing, or on none, on the board.",
+        "wingsKept": "Wings step. Wings stand this round: nothing since the last Wings step lets them change.",
+        "end": "Round end. The checklist runs on the board, in order.",
+        "closing": "End steps: the table resolves the stamped ones, then the GM stamps them.",
+        "closed": "Every end step is stamped. Close the engagement to clear the Positions."
+      },
+      "now": {
+        "soldier": "Now {card}: {name}",
+        "wing": "Now: {name}, on the Wing of {of}",
+        "titan": "Now {card}: Titan {label}",
+        "foes": "Now {card}: Foe group",
+        "next": "Next {card}: {name}"
+      },
+      "pos": {
+        "distant": "Distant",
+        "in-reach": "In Reach",
+        "on-body": "On Body",
+        "blind-spot": "Blind Spot",
+        "none": "No Position",
+        "noneDead": "No Position"
+      },
+      "stamp": {
+        "dead": "Dead",
+        "left": "Left",
+        "down": "Down",
+        "grabbed": "Grabbed",
+        "pinned": "Pinned"
+      },
+      "line": {
+        "anchor": "Anchor",
+        "round": "Round",
+        "step": "Step",
+        "tactics": "Tactics",
+        "cloaks": "Cloaks",
+        "foes": "Foes",
+        "ambush": "Ambush",
+        "retreatActive": "under way since round {round}, stay limit {stay}"
+      },
+      "sk": {
+        "grit": "Grit {grit}, {out} out",
+        "dice": "Attack {attack}, Guard {guard}, Watch {watch}, Parley {parley}",
+        "ambush": {
+          "none": "none",
+          "squad": "the Squad",
+          "foes": "the Foes"
+        }
+      },
+      "deal": {
+        "tooMany": "{n} cards are needed and only {max} exist. Put more Squadmates on Wings.",
+        "nobody": "Nobody is dealt a card."
+      },
+      "wing": {
+        "closed": "Wings stand this round.",
+        "notSquadmate": "Only a Squadmate goes on a Wing.",
+        "dead": "That Squadmate is dead.",
+        "notPlayer": "A Wing belongs to a player character.",
+        "pcGone": "That player character is dead or has left.",
+        "full": "That Wing already holds a Squadmate."
+      },
+      "swap": {
+        "notStep": "Cards are swapped at the swap step only.",
+        "same": "Pick two different soldiers.",
+        "dead": "{name} is dead.",
+        "wing": "{name} is on a Wing and holds no card.",
+        "noCard": "{name} holds no card.",
+        "down": "{name} is Down.",
+        "grabbed": "{name} is Grabbed.",
+        "already": "{name} has already swapped this round.",
+        "oneLeft": "A soldier who has left swaps only with another who has left.",
+        "far": "They are more than one Position step apart.",
+        "farDetail": "{a} and {b} are {n} steps apart relative to {label} under {anchor}.",
+        "unknown": "No engagement is running."
+      },
+      "move": {
+        "dead": "The soldier is dead.",
+        "left": "The soldier has left.",
+        "grabbed": "A Grabbed soldier's move changes nothing.",
+        "pinned": "A Pinned soldier's move changes nothing.",
+        "carried": "A carried soldier moves with their carrier.",
+        "noPosition": "The soldier holds no Position toward this body.",
+        "notOneStep": "No single step reaches it under this Anchor Rating.",
+        "down": "A Down soldier can only step from In Reach to Distant, on foot.",
+        "mounted": "A mounted soldier makes mounted steps or an ODM move.",
+        "noOdm": "It needs an ODM move, and the soldier's ODM Gear is Jammed, dry, or missing.",
+        "kind": "No move the soldier can make reaches it.",
+        "notDistant": "Leaving needs Distant toward every body.",
+        "notLeft": "The soldier has not left.",
+        "retreat": "No one returns during a retreat.",
+        "notClose": "Letting go needs On Body or Blind Spot.",
+        "byRule": "Set by a rule",
+        "letGo": "Let go and fall",
+        "fly": "Fly roll, needs {n}, else {failure}",
+        "way": {
+          "onFoot": "On foot",
+          "mounted": "Mounted",
+          "odm": "ODM"
+        },
+        "forced": "Retreat: the move must go toward Distant, or toward a fallen comrade while the stay limit allows."
+      },
+      "block": {
+        "corpse": "That body is a corpse.",
+        "dead": "The soldier is dead.",
+        "noPosition": "The soldier holds no Position toward that Titan.",
+        "grabbed": "A Grabbed soldier cannot.",
+        "grabbedOnly": "A Grabbed soldier can only Break Free.",
+        "retreat": "No Nape strike is made during a retreat.",
+        "notBlindSpot": "A Nape strike is made from Blind Spot.",
+        "holder": "The soldier holds that Titan's Attention.",
+        "noOdm": "It needs working ODM Gear.",
+        "noPart": "No such Body Part.",
+        "broken": "That Body Part is Broken.",
+        "reach": "That Body Part cannot be reached from this Position.",
+        "decoyHolds": "A decoy already holds its Attention.",
+        "eyesBroken": "Its eyes are Broken.",
+        "cloakThrown": "The cloak has been thrown already.",
+        "notClose": "It needs On Body or Blind Spot.",
+        "noHorse": "It needs the soldier's own horse, not lame.",
+        "feintReach": "A Feint is made from In Reach or On Body.",
+        "feintWay": "A Feint needs working ODM Gear, the horse, or a grounded Titan.",
+        "notGrabbed": "The soldier is not Grabbed.",
+        "down": "A Down soldier cannot.",
+        "distant": "Not from Distant.",
+        "noTitan": "No Focus Titan can be struck.",
+        "pryReach": "Pry Loose needs On Body toward the holding Titan.",
+        "holdingOther": "The soldier holds another Foe.",
+        "notEngaged": "A Fight needs a Foe the soldier is Engaged with.",
+        "holdingShoot": "A soldier who holds a Foe cannot Shoot.",
+        "noTarget": "Pick what the roll is made against.",
+        "pickPart": "Pick a Body Part that can be struck.",
+        "pickDecoy": "Pick a decoy the soldier can use.",
+        "openings": "More Openings than the soldier may spend."
+      },
+      "roll": {
+        "against": "Against",
+        "part": "Body Part",
+        "decoy": "Decoy",
+        "needsN": "needs {n}",
+        "openings": "Openings",
+        "spendN": "Spend {n}",
+        "noOpenings": "No Openings to spend.",
+        "grounded": "Grounded: +{n}",
+        "grapple": "Grapple",
+        "grappleHint": "A Grapple takes no Gear Dice and deals no damage.",
+        "targetBonus": "+{n} Bonus Dice from the target"
+      },
+      "check": {
+        "gas-rolls": "Gas Rolls",
+        "regeneration": "Regeneration +1",
+        "background-clocks": "Background clocks",
+        "retreat-clock": "Retreat clock",
+        "round-ends": "Round ends",
+        "broken-leave": "Broken groups leave",
+        "ending": "Check the ending",
+        "due": "Due: {who}",
+        "noGas": "Nobody used ODM Gear",
+        "stopped": "Stopped: retreat",
+        "lost": "Unspent moves and actions are lost",
+        "brokenDetail": "A broken group's Foes leave",
+        "endingDetail": "Foes gone, the Squad leaves, or no one stands",
+        "turns": "Turns and pending results",
+        "stress-relief": "Stress relief",
+        "lasting-stress-responses": "Lasting Stress Responses end",
+        "turn-limits": "Turn limits",
+        "aftermath-rolls": "Aftermath rolls",
+        "death-rolls": "Death Rolls",
+        "care-window": "Care window",
+        "grief": "Grief",
+        "retirement-and-promotion": "Retirement and promotion",
+        "detail": {
+          "turns": "Pending forced moves and strikes are cancelled",
+          "stress-relief": "Every soldier who took part loses Stress",
+          "lasting-stress-responses": "Responses gained in the engagement end",
+          "turn-limits": "Lethal injuries with a turn limit now last the engagement",
+          "aftermath-rolls": "One aftermath roll per patient, from a treater the players choose",
+          "death-rolls": "Each untreated lethal injury still limited causes a Death Roll",
+          "care-window": "The Squad treats its wounded",
+          "grief": "Grief for the engagement's deaths",
+          "retirement-and-promotion": "Five Scars retire; left items are shared out; promotion"
+        }
+      },
+      "end": {
+        "gasFor": "Gas Rolls for {who}.",
+        "gasNone": "Nobody used ODM Gear this round.",
+        "regenFill": "{label}: Regeneration {n}.",
+        "regenFull": "{label}: the clock fills. Openings erased, counts cleared.",
+        "regenHealed": "{label}: {part} moves one state toward Intact.",
+        "stands": "{label} stands. The soldiers it pinned are freed.",
+        "noFocus": "No living Focus Titan.",
+        "stopped": "A retreat is under way: no clock fills.",
+        "bgLine": "{name}: {filled} of {length}.",
+        "retreatBegins": "The Titan Engagement becomes a retreat.",
+        "retreatLine": "Retreat clock {filled} of {length}.",
+        "roundEnds": "Unspent moves and actions are lost.",
+        "skipped": "Skipped by the GM.",
+        "kept": "Kept, changed since: {list}",
+        "notBroken": "{out} out, Grit {grit}: the group holds.",
+        "brokenLeave": "{n} Foes leave.",
+        "foesGone": "Every Foe is gone: the Skirmish ends.",
+        "noneStanding": "No soldier stands: the Skirmish ends.",
+        "mayLeave": "The players may declare that the Squad leaves.",
+        "goesOn": "The Skirmish goes on."
+      },
+      "note": {
+        "startTitle": "Titan Engagement begins",
+        "startTitan": "Anchor Rating {anchor}. Focus Titan A: {titan}. Everyone holds Distant.",
+        "startSkirmish": "Skirmish begins",
+        "startSkirmishLine": "{name}. Everyone is Apart.",
+        "wingsKept": "Wings",
+        "wingLine": "{mate} on the Wing of {pc}.",
+        "noWings": "No Squadmate is on a Wing.",
+        "dealt": "Cards dealt",
+        "swapped": "Cards swapped",
+        "swapLine": "{a} gave {ca} for {cb}, {b} gave {cb} for {ca}",
+        "allCards": "Every card has come up",
+        "roundBegins": "Round {n}",
+        "retreatForced": "Retreat: every standing soldier must move, toward Distant and out, or toward a fallen comrade while the stay limit allows. Other moves are refused.",
+        "titanCard": "Titan {label}, card {card}",
+        "holding": "Holds {name}: no behavior, the ladder is not read, the Next Behavior is kept.",
+        "decoyCard": "The decoy ({decoy}) holds its Attention: no behavior, {left} cards left. The Next Behavior is spent.",
+        "attention": "Attention: {name}.",
+        "attentionRung": "Attention: {name} ({rung}).",
+        "noAttention": "Nothing holds its Attention.",
+        "nextKept": "The Next Behavior is kept.",
+        "behavior": "{name}, {tier}.",
+        "noDice": "It rolls nothing.",
+        "telegraph": "Titan {label} telegraphs",
+        "telegraphLine": "Its Next Behavior is {name}.",
+        "lifted": "{name} is lifted",
+        "liftedLine": "The first counted turn ends: the Grab spent its action.",
+        "devoured": "{name} is devoured",
+        "corpseHeat": "Corpse heat on {name}",
+        "corpseHeatLine": "A Burn Critical Injury at the pinned location, at the start of this turn.",
+        "moved": "{name} moves",
+        "movedLine": "Toward {label}: {from} to {to} ({kind}).",
+        "left": "{name} leaves the Titan Engagement",
+        "returned": "{name} returns at Distant",
+        "entered": "{name} enters as Focus Titan {label}.",
+        "enterNoActor": "{name}'s clock is full, but no Titan actor was found to bring in.",
+        "loud": "{name} draws the Attention of {label}",
+        "fallBack": "Fall Back: {name} holds In Reach of {label}",
+        "closeIn": "{name} closes in on {foe}",
+        "breakAway": "{name} breaks away",
+        "thrash": "{name}: it falls back on its Thrash.",
+        "startWho": "Taking part: {who}."
+      },
+      "death": {
+        "relief": "Nape-kill Stress relief: {who}.",
+        "freed": "{name} is freed.",
+        "freedFalls": "{name} is freed and falls.",
+        "fall": "In the falling body's path, Leap Clear from the sheet or be Pinned: {who}.",
+        "ends": "No Focus Titan is alive and no one is Pinned: the Titan Engagement ends."
+      },
+      "grab": {
+        "freed": "{name} is freed and holds In Reach.",
+        "freedFalls": "{name} is freed and falls, then holds In Reach."
+      },
+      "ending": {
+        "notMet": "No ending test is met yet.",
+        "byNoFocus": "No Focus Titan is alive and no soldier is Pinned.",
+        "byNoStanding": "No soldier who holds a Position is standing.",
+        "title": "The Titan Engagement ends",
+        "steps": "The end steps follow on the board, in order.",
+        "skirmishTitle": "The Skirmish ends",
+        "stepsOpen": "Stamp every end step first.",
+        "closed": "The engagement is closed. Positions are cleared."
+      },
+      "foe": {
+        "out": "{name} takes no turn",
+        "none": "{name} does nothing",
+        "reload": "{name} reloads",
+        "pick": {
+          "held": "Fights its holder, {target}, bare-handed",
+          "engaged": "Fights {target} with the {weapon}",
+          "loaded": "Shoots {target} with the {weapon}",
+          "empty": "Reloads",
+          "close-in": "Closes in on {target} and fights with the {weapon}",
+          "none": "Does nothing",
+          "out": "Out of the Skirmish"
+        }
+      },
+      "result": {
+        "applied": "Applied",
+        "undone": "Undone",
+        "notApplied": "Not applied",
+        "waiting": "Waiting for Reactions",
+        "resolve": "Resolve",
+        "undo": "Undo",
+        "redo": "Redo",
+        "apply": "Apply",
+        "refused": "Not applied: {why}",
+        "ignored": "The tracker ignored a card from {name}: {why}",
+        "spent": "Openings spent: {n}.",
+        "kill": "{name} kills Titan {label}.",
+        "short": "{name} falls short. Openings left on {label}: {n}.",
+        "part": "{name}: {state}, count {count}.",
+        "openings": "Openings made: {n}.",
+        "grounded": "Titan {label} is grounded.",
+        "decoy": "The decoy ({decoy}) holds its Attention for {n} cards (needed {need}).",
+        "decoyFails": "Not enough: it needed {need}.",
+        "horseBolts": "The horse bolts and leaves the Titan Engagement.",
+        "flare": "The flare fills every Background clock by 1.",
+        "stillHeld": "Still Grabbed.",
+        "whiff": "The card whiffs against every target.",
+        "misses": "{name}: it misses.",
+        "lands": "{name}: it lands with {n} Net Successes.",
+        "stress": "{name} gains {n} Stress.",
+        "mountedStays": "{name} is mounted and stays put.",
+        "notLoose": "{name} is not knocked loose.",
+        "falls": "{name} is knocked loose and falls.",
+        "noArm": "No arm can hold: the Grab does nothing.",
+        "grabbed": "{name} is Grabbed and held On Body by {label}.",
+        "pinnedCrush": "{name} is Pinned: only the crush lands.",
+        "injury": "{name}: {where}, total {total}: {injury}.",
+        "injuryMissing": "The Critical Injury entry is missing from the compendium.",
+        "dies": "{name} dies.",
+        "down": "{name} is Down.",
+        "guard": "{name}'s Guard: {faces}, {n} cancelled.",
+        "noGuard": "No Guard: the Ambush leaves it unanswered.",
+        "guarded": "The Guard cancels it.",
+        "grapple": "{name} is Held.",
+        "foeDamage": "{name} takes {n} damage from the {weapon}.",
+        "foeKilled": "{name} is killed.",
+        "foeOutCold": "{name} is out cold.",
+        "firstKill": "{name} has killed a person for the first time: a Fear Roll.",
+        "groupBreaks": "The group reaches its Grit and breaks.",
+        "soldierDamage": "{name} takes {n} damage from {by}'s {weapon}."
+      },
+      "board": {
+        "title": "Engagement board",
+        "titleTitan": "Engagement board, round {n}",
+        "titleSkirmish": "Skirmish board, round {n}",
+        "kind": "Scene kind",
+        "tabTitan": "Titan Engagement",
+        "leftKick": "Engagement ledger, left folio",
+        "leftKickSk": "Skirmish ledger, left folio",
+        "rightKick": "Engagement ledger, right folio",
+        "rightKickSk": "Skirmish ledger, right folio",
+        "positions": "Positions",
+        "range": "Range",
+        "folio": "Soldier by Focus Titan, Anchor Rating {anchor}",
+        "folioSk": "Soldier by Foe, no Positions",
+        "matrix": "Position matrix",
+        "matrixHint": "Pick a cell to change a Position",
+        "engaged": "Engaged or Apart",
+        "engagedHint": "Each pair apart; pick to close in or break away",
+        "card": "Card",
+        "soldier": "Soldier",
+        "gas": "Gas",
+        "stress": "Stress",
+        "foeN": "Foe {n}",
+        "wing": "Wing",
+        "onWing": "On the Wing of {name}: no card",
+        "pickSwap": "Pick {name}'s card {card} to swap",
+        "was": "was {n}",
+        "grabbedCell": "Grabbed: holds On Body toward {label} until freed",
+        "gasTitle": "Gas Rating {n} of {of}",
+        "stressTitle": "Stress {n}",
+        "odmUsed": "Used ODM Gear this round",
+        "odmShort": "ODM",
+        "key": "Letters: D Distant, I In Reach, O On Body, B Blind Spot, coloured by Titan",
+        "keyHollow": "Hollow: Distant",
+        "wings": "Wings",
+        "wingsOpen": "Wings may be set now",
+        "wingsClosed": "Wings stand",
+        "noWing": "No Wing",
+        "swapMade": "Swap made this round: {line}.",
+        "closeRule": "On Body or Blind Spot toward one Titan turns the other's On Body or Blind Spot into In Reach. A Grabbed soldier holds On Body toward the Titan holding them.",
+        "odmList": "ODM Gear used this round: {list}.",
+        "skirmishNote": "No Wings in a Skirmish: Squadmates act on their own cards. No swap step. The Foe group takes one card and its Foes act in label order.",
+        "titans": "Titans",
+        "titanFolio": "Focus Titans {n}, Background {bg}",
+        "cardsRound": "Cards this round",
+        "attention": "Attention",
+        "next": "Next Behavior",
+        "sealed": "Sealed",
+        "peek": "Peek at the Next Behavior",
+        "prev": "Prev: {name}",
+        "kept": "Kept while it holds",
+        "parts": "Body Parts",
+        "openings": "Openings",
+        "openingBy": "Made by {name}, who cannot spend it",
+        "openingsBy": "by {list}",
+        "regen": "Regeneration",
+        "heave": "Heave",
+        "bgNote": "Full with two Focus Titans alive: retreat",
+        "bgEntered": "Entered as a Focus Titan",
+        "retreatClock": "Retreat clock",
+        "retreatNote": "Full: the Titan Engagement becomes a retreat",
+        "foes": "Foes",
+        "foeFolio": "One Foe group, no Titan takes part",
+        "foeGroup": "Foe group",
+        "foeHint": "Guard and Attack Dice are never adjusted",
+        "foeHealth": "Health of {name}",
+        "healthN": "Health {n}",
+        "clocks": "Clocks",
+        "noClocks": "A Skirmish carries no Background clock and no retreat clock. It ends when the Foes are gone, the Squad leaves, or no soldier stands.",
+        "roundEnd": "Round end",
+        "checklist": "Checklist",
+        "allStamped": "All stamped",
+        "inOrder": "In order",
+        "afterLast": "After the last card",
+        "notApplied": "Switched off:",
+        "done": "Done",
+        "skipped": "Skipped",
+        "menuTitle": "{name} toward {label}",
+        "current": "Here now",
+        "engagementEnd": "Engagement end",
+        "manual": "The table resolves this step; stamp it when done."
+      },
+      "setup": {
+        "titleTitan": "Begin a Titan Engagement",
+        "titleSkirmish": "Begin a Skirmish",
+        "noScene": "View a scene first.",
+        "focus": "Focus Titan",
+        "noTitans": "Place a Titan token on the scene first.",
+        "background": "Background Titans",
+        "statBlock": "Titan",
+        "clock": "Clock",
+        "segments": "{n} segments",
+        "remove": "Remove",
+        "addBackground": "Add one",
+        "rollBackground": "Roll",
+        "roll": "Roll",
+        "rolledAnchor": "Anchor Rating roll {n}: {name}.",
+        "rolledBackground": "Background Titans roll {n}: {count} clocks.",
+        "retreat": "The retreat clock has {n} segments.",
+        "soldiers": "Taking part",
+        "noSoldiers": "Place the soldiers' tokens on the scene first.",
+        "noFoes": "Place the Foe tokens on the scene first.",
+        "groupName": "Group name",
+        "night": "Night",
+        "nightHint": "At night: a Bandit's club is a firebrand.",
+        "start": "Begin",
+        "footTitan": "Everyone starts at Distant. Round 1 begins at its Wings step.",
+        "footSkirmish": "Everyone starts Apart. Round 1 begins at its deal."
+      },
+      "fear": {
+        "title": "Fear Rolls",
+        "rolled": "Fear Rolls made: {who}."
+      },
+      "harm": {
+        "steam": "Steam on {name}: {face}, {n} damage.",
+        "fall": "{name} falls ({band}): {face} plus {adds}, {n} damage.",
+        "band": {
+          "low": "low",
+          "high": "high",
+          "extreme": "extreme"
+        }
+      },
+      "close": {
+        "turns": "Pending results cancelled: {who}.",
+        "relief": "Stress lowered by {n}: {who}.",
+        "responses": "Lasting Stress Responses ended: {who}.",
+        "limits": "Now limited to the engagement: {list}.",
+        "aftermath": "Aftermath rolls for: {list}. Roll Treat Injury from the sheet.",
+        "deathRolls": "Death Rolls for: {list}. Roll them from the sheet; these deaths cause no Fear Roll.",
+        "care": "Hold the care window: treat from the sheets.",
+        "grief": "Grief gained: {who}.",
+        "retire": "Retiring with five Scars: {who}. A soldier who lost both arms or both legs retires too.",
+        "promotion": "Share out left items and dropped Blade Sets, then promote replacements for the dead and retired."
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "wings-of-freedom-foundry",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Wings of Freedom, the Foundry VTT v14 system (ADR-0025).",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "packageManager": "pnpm@10.10.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "classic-level",
+      "esbuild"
+    ]
+  },
+  "scripts": {
+    "build": "pnpm run build:code && pnpm run build:packs",
+    "build:code": "vite build",
+    "build:packs": "tsx tools/build-packs.ts",
+    "check:data": "tsx tools/check-data.ts",
+    "watch": "vite build --watch --mode development",
+    "link": "tsx tools/link.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "animejs": "4.5.0",
+    "svelte": "5.57.0",
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "3.0.4",
+    "@sveltejs/vite-plugin-svelte": "7.3.0",
+    "@types/node": "22.20.3",
+    "@types/three": "0.186.0",
+    "svelte-check": "4.7.6",
+    "tsx": "4.23.13",
+    "typescript": "6.0.3",
+    "vite": "8.3.0",
+    "vitest": "5.0.1",
+    "yaml": "2.9.1",
+    "zod": "4.6.5"
+  }
+}

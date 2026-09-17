@@ -1,0 +1,181 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, it } from 'vitest';
+import { FOUNDRY_ROOT } from '../tools/data/load.ts';
+import { buildPackDocs, PACKS, sweepLangText, sweepPackText, type Lang } from '../tools/pack-docs.ts';
+import { foundryWording, site, tables } from './wording-fixture.ts';
+
+const lang = JSON.parse(readFileSync(join(FOUNDRY_ROOT, 'static/lang/en.json'), 'utf8')) as Lang;
+const system = JSON.parse(readFileSync(join(FOUNDRY_ROOT, 'static/system.json'), 'utf8'));
+const docs = buildPackDocs(tables, lang, site, foundryWording, { systemVersion: '0.0.0-test' });
+const { 'titan-field-notes': journals, ...documents } = docs;
+/** The Item and Actor documents; the journal pack is checked on its own. */
+const all = Object.values(documents).flat();
+
+describe('pack documents', () => {
+  it('has one entry per table row', () => {
+    expect(docs.talents).toHaveLength(tables.talents.talents.length);
+    expect(docs.specialties).toHaveLength(tables.specialties.specialties.length);
+    expect(docs.origins).toHaveLength(tables.origins.rows.length);
+    expect(docs.gear).toHaveLength(tables.gearItems.items.length - 1); // the gas canister is an actor field
+    expect(docs['critical-injuries']).toHaveLength(Object.values(tables.criticalInjuries.tables).reduce((n, x) => n + x.rows.length, 0));
+    expect(docs.titans).toHaveLength(tables.titans.length);
+    expect(docs.squadmates).toHaveLength(tables.squadmates.templates.length);
+    expect(docs.foes).toHaveLength(tables.foes.foes.length);
+    expect(journals).toHaveLength(tables.titans.length);
+  });
+
+  it('declares every pack in system.json with its document type', () => {
+    for (const p of PACKS) expect(system.packs).toContainEqual(expect.objectContaining({ name: p.name, type: p.type, path: `packs/${p.name}` }));
+    expect(system.packs).toHaveLength(PACKS.length);
+  });
+
+  it('uses unique, stable, 16-character ids and matching keys', () => {
+    const ids = new Set<string>();
+    const check = (d: any, key: string) => {
+      expect(d._id).toMatch(/^[A-Za-z0-9]{16}$/);
+      expect(ids.has(d._id)).toBe(false);
+      ids.add(d._id);
+      expect(d._key).toBe(key);
+    };
+    for (const d of all) {
+      const collection = d.type in lang.TYPES.Actor ? 'actors' : 'items';
+      check(d, `!${collection}!${d._id}`);
+      for (const e of d.items ?? []) check(e, `!actors.items!${d._id}.${e._id}`);
+    }
+    const again = buildPackDocs(tables, lang, site, foundryWording, { systemVersion: '0.0.0-test' });
+    expect(again.talents.map((d) => d._id)).toEqual(docs.talents.map((d) => d._id));
+  });
+
+  it('only uses document types system.json declares', () => {
+    for (const d of all) {
+      const kind = d._key.startsWith('!actors') ? 'Actor' : 'Item';
+      expect(Object.keys(system.documentTypes[kind])).toContain(d.type);
+      for (const e of d.items ?? []) expect(Object.keys(system.documentTypes.Item)).toContain(e.type);
+    }
+  });
+
+  it('gives each Squadmate its template Talent at level 1, its Specialty, and Standard Issue', () => {
+    const slayer = docs.squadmates.find((d) => d.system.template === 'slayer')!;
+    const talent = slayer.items.filter((i: any) => i.type === 'talent');
+    expect(talent).toHaveLength(1);
+    expect(talent[0].system).toMatchObject({ talent_id: 'clean-cut', level: 1 });
+    expect(slayer.items.filter((i: any) => i.type === 'specialty')[0].system.specialty_id).toBe('slayer');
+    const blades = slayer.items.filter((i: any) => i.system.subtype === 'blade-set');
+    const row = tables.standardIssue.by_funding.find((r) => r.funding === tables.standardIssue.funding.until_funding_rules)!;
+    expect(blades).toHaveLength(row.blade_sets);
+    expect(blades.filter((b: any) => b.system.in_handles)).toHaveLength(1);
+    expect(slayer.system.spare_canisters).toHaveLength(row.spare_canisters);
+    const medic = docs.squadmates.find((d) => d.system.template === 'medic')!;
+    expect(medic.items.some((i: any) => i.system.item_id === 'medical-kit')).toBe(true);
+    expect(slayer.items.some((i: any) => i.system.subtype === 'kit')).toBe(false);
+  });
+
+  it('gives every entry an image the system ships', () => {
+    const shipped = (src: string) => existsSync(join(FOUNDRY_ROOT, 'static', src.replace('systems/wings-of-freedom/', '')));
+    const embedded = all.flatMap((d) => d.items ?? []);
+    for (const d of [...all, ...embedded]) {
+      expect(d.img, d.name).toMatch(/^systems\/wings-of-freedom\/assets\//);
+      expect(shipped(d.img), d.img).toBe(true);
+      if (d.prototypeToken) expect(shipped(d.prototypeToken.texture.src), d.prototypeToken.texture.src).toBe(true);
+    }
+    expect(docs.squadmates.map((d) => d.img)).toContain('systems/wings-of-freedom/assets/portraits/portrait-slayer.webp');
+    expect(docs.foes.map((d) => d.img)).toContain('systems/wings-of-freedom/assets/plates/plate-foe-bandit.webp');
+  });
+
+  it('keeps the Titan stat blocks as the data writes them', () => {
+    const medium = docs.titans.find((d) => d.flags['wings-of-freedom'].sourceId === 'standard-medium')!;
+    expect(medium.system).toMatchObject({ size_class: 'medium', tempo: 1, nape_depth: 4, regeneration_clock: 3, heave: 3 });
+    expect(medium.system.body_parts.map((b: any) => b.state)).toEqual(['intact', 'intact', 'intact', 'intact', 'intact']);
+    expect(medium.system.behavior_table.entries.find((e: any) => e.id === 'bite').attack_dice).toBe(9);
+  });
+
+  it('gives each Actor type its prototype Token defaults and each Titan its plate', () => {
+    for (const d of docs.titans) {
+      expect(d.img).toMatch(/assets\/plates\/plate-titan-(small|medium|large|sprinting-abnormal)\.webp$/);
+      expect(existsSync(join(FOUNDRY_ROOT, 'static', d.img.replace('systems/wings-of-freedom/', '')))).toBe(true);
+      expect(d.prototypeToken).toMatchObject({ actorLink: false, disposition: -1, displayBars: 0, bar1: { attribute: null } });
+    }
+    const large = docs.titans.find((d) => d.system.size_class === 'large')!;
+    expect(large.prototypeToken).toMatchObject({ width: 4, height: 4 });
+    for (const d of [...docs.foes, ...docs.squadmates]) expect(d.prototypeToken.bar1).toEqual({ attribute: 'health_bar' });
+    expect(docs.squadmates[0].prototypeToken).toMatchObject({ actorLink: true, disposition: 1 });
+    expect(docs.foes[0].prototypeToken).toMatchObject({ actorLink: false, disposition: -1 });
+  });
+
+  it('records the row riders on each Critical Injury', () => {
+    const torn = docs['critical-injuries'].find((d) => d.system.row === 'arm-torn-artery')!;
+    expect(torn.system.type_riders.map((r: any) => r.injury_type).sort()).toEqual(['burn', 'burn', 'cut', 'pierce']);
+    expect(torn.system.time_limit).toBe('engagement');
+    const wrenched = docs['critical-injuries'].find((d) => d.system.row === 'arm-wrenched-shoulder')!;
+    expect(wrenched.system.type_riders.map((r: any) => r.injury_type)).toEqual(['burn']);
+  });
+
+  it('passes the website text guard on every string a pack shows, and fails on design notation', () => {
+    expect(sweepPackText(docs, tables)).toBeGreaterThan(800);
+    const bad = { ...docs.talents[0], system: { ...docs.talents[0].system, description: '<p>See data/character/talents.yaml.</p>' } };
+    expect(() => sweepPackText({ talents: [bad] }, tables)).toThrow(/file path/);
+    const field = { ...docs.gear[0], system: { ...docs.gear[0].system, description: '<p>Its gear_dice_for list.</p>' } };
+    expect(() => sweepPackText({ gear: [field] }, tables)).toThrow(/field name/);
+    expect(sweepLangText(lang)).toBeGreaterThan(500);
+    expect(() => sweepLangText({ WOF: { x: 'A playtest note' }, TYPES: {} })).toThrow(/design word/);
+  });
+
+  it('lays out each entry: Actions with icons, Talent levels, key attribute, Origin facts', () => {
+    const cleanCut = docs.talents.find((d) => d.system.talent_id === 'clean-cut')!.system.description;
+    expect(cleanCut).toContain('assets/icons/action-nape-strike.webp');
+    expect(cleanCut).toContain('Level 2: 2 base dice');
+    const slayer = docs.specialties.find((d) => d.system.specialty_id === 'slayer')!.system.summary;
+    expect(slayer).toContain('assets/icons/attr-strength.webp');
+    expect(slayer).toContain('assets/icons/talent-dice.webp');
+    const refugee = docs.origins.find((d) => d.system.origin_id === 'wall-maria-refugee')!;
+    expect(refugee.img).toBe('systems/wings-of-freedom/assets/icons/gear-rations.webp');
+    expect(refugee.system.description).toContain('Keep only in Campaign Year 848 or later.');
+    expect(refugee.system.description).toContain('+1 Strength');
+    expect(docs.origins.find((d) => d.system.origin_id === 'shiganshina')!.img).toBe('systems/wings-of-freedom/assets/icons/brand-emblem.webp');
+    const torn = docs['critical-injuries'].find((d) => d.system.row === 'arm-torn-artery')!.system.description;
+    expect(torn).toContain('assets/icons/injury-bite.webp');
+    expect(torn).toMatch(/Burn: Healing time is multiplied by 2/);
+  });
+
+  it('files a public field-notes journal for each Titan, with its plate and no hidden value', () => {
+    const notes = docs['titan-field-notes'];
+    expect(notes).toHaveLength(tables.titans.length);
+    for (const j of notes) {
+      expect(j._key).toBe(`!journal!${j._id}`);
+      const [report, plate] = j.pages;
+      expect(plate).toMatchObject({ type: 'image', _key: `!journal.pages!${j._id}.${plate._id}` });
+      expect(existsSync(join(FOUNDRY_ROOT, 'static', plate.src.replace('systems/wings-of-freedom/', '')))).toBe(true);
+      expect(report.type).toBe('text');
+      expect(report.text.content).not.toMatch(/Heave|Attention Ladder/);
+    }
+    const abnormal = notes.find((j) => j.flags['wings-of-freedom'].sourceId === 'sprinting-abnormal')!.pages[0].text.content;
+    const nape = tables.titans.find((x) => x.id === 'sprinting-abnormal')!.nape_depth;
+    expect(abnormal).toContain('Unknown until a Read');
+    expect(abnormal).not.toContain(`<dd class="wof-num">${nape}</dd>`);
+    expect(system.packs.find((x: any) => x.name === 'titan-field-notes').ownership.PLAYER).toBe('OBSERVER');
+  });
+
+  it('writes descriptions from the site wording, with no references left in them', () => {
+    const relentless = docs.talents.find((d) => d.system.talent_id === 'relentless')!;
+    expect(relentless.system.trigger).toMatch(/^Your Nape strike falls short/);
+    const odm = docs.gear.find((d) => d.system.item_id === 'odm-gear')!;
+    expect(odm.system.description).toContain('gas-powered harness');
+    for (const d of all) {
+      const html = JSON.stringify([d.system.description, d.system.summary, d.system.who]);
+      expect(html, d.name).not.toMatch(/data\/|\.yaml|ADR-|OQ-/);
+    }
+  });
+});
+
+describe('pack ids the Engagement tracker looks up', () => {
+  it('finds every Critical Injury row, Titan, and Foe by its row id', async () => {
+    const { packIds } = await import('../tools/config-data.ts');
+    const ids = packIds(tables);
+    const inPack = (pack: string) => new Set((docs as Record<string, { _id: string }[]>)[pack].map((d) => d._id));
+    for (const [pack, map] of [['critical-injuries', ids.criticalInjuries], ['titans', ids.titans], ['foes', ids.foes]] as const) {
+      expect(Object.keys(map).length).toBe(inPack(pack).size);
+      for (const id of Object.values(map)) expect(inPack(pack).has(id)).toBe(true);
+    }
+  });
+});
