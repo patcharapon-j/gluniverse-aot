@@ -4,6 +4,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { fearPlan, type FearSoldier } from '../src/rules/engagement/fear.ts';
+import { checkTrackerRequest, type TrackerWorld } from '../src/rules/engagement/guard.ts';
+import { damageSoldier, fallBand, fallDamage, fallLands, referenceLabel, steamDamage, steamRollers } from '../src/rules/engagement/harm-rolls.ts';
 import { emptyFlags, type SoldierState, type TitanRow } from '../src/rules/engagement/types.ts';
 import { engagementConfig } from '../tools/config-data.ts';
 import { loadTables } from '../tools/data/load.ts';
@@ -67,5 +69,72 @@ describe('Fear Rolls from the tracker (fear-rolls.yaml)', () => {
     const ids = tables.fearRolls.triggers.map((t) => t.id);
     for (const t of ['first-titan-engagement', 'abnormal', 'second-focus-titan', 'comrade-grabbed', 'comrade-dies']) expect(ids).toContain(t);
     expect(E.cards).toBe(20);
+  });
+});
+
+describe('steam and fall rolls (titan-harm.yaml, steam; falls.yaml)', () => {
+  it('reads the steam table: 1 to 3 nothing, 4 and 5 one, 6 two', () => {
+    expect([1, 2, 3, 4, 5, 6].map((d) => steamDamage(E.steam.rows, d))).toEqual([0, 0, 0, 1, 1, 2]);
+    expect(E.steam.type).toBe('burn');
+  });
+
+  it('names On Body and Blind Spot and the freed soldier at a kill, only On Body at a Regeneration fill', () => {
+    const s = [
+      { id: 'on', alive: true, left: false, positions: { A: 'on-body' as const } },
+      { id: 'blind', alive: true, left: false, positions: { A: 'blind-spot' as const } },
+      { id: 'reach', alive: true, left: false, positions: { A: 'in-reach' as const } },
+      { id: 'held', alive: true, left: false, positions: { A: 'in-reach' as const } },
+      { id: 'dead', alive: false, left: false, positions: { A: 'on-body' as const } },
+    ];
+    expect(steamRollers('kill', s, 'A', 'held')).toEqual(['on', 'blind', 'held']);
+    expect(steamRollers('regeneration-fill', s, 'A')).toEqual(['on']);
+  });
+
+  it('finds the fall band: low from Distant or In Reach, high from the body, one step up in the Giant Forest or by a Large Titan', () => {
+    expect(fallBand({ position: 'in-reach', anchor: 'wooded', referenceSize: 'medium' })).toBe('low');
+    expect(fallBand({ position: 'on-body', anchor: 'wooded', referenceSize: 'medium' })).toBe('high');
+    expect(fallBand({ position: 'blind-spot', anchor: 'giant-forest', referenceSize: 'large' })).toBe('extreme');
+    expect(fallBand({ position: 'distant', anchor: 'open', referenceSize: 'large' })).toBe('high');
+    expect(fallBand({ position: 'on-body', anchor: 'giant-forest', referenceSize: 'small', fromHorse: true })).toBe('low');
+    expect(fallBand({ position: 'on-body', anchor: 'giant-forest', referenceSize: 'small', named: 'low' })).toBe('low');
+    expect(fallBand({ position: null, anchor: null, referenceSize: null })).toBe('low');
+  });
+
+  it('rolls D6 plus the band on the damage table', () => {
+    expect(E.falls.bands).toEqual({ low: 0, high: 2, extreme: 4 });
+    expect([1, 2, 3, 4, 5, 6].map((d) => fallDamage(E.falls.rows, E.falls.bands, 'low', d))).toEqual([0, 0, 1, 1, 2, 2]);
+    expect([1, 6].map((d) => fallDamage(E.falls.rows, E.falls.bands, 'extreme', d))).toEqual([2, 4]);
+    expect(E.falls.type).toBe('crush');
+  });
+
+  it('lands On Body and Blind Spot at In Reach, and picks the closest Titan, the causing one on a tie', () => {
+    expect(fallLands('blind-spot')).toBe('in-reach');
+    expect(fallLands('distant')).toBe('distant');
+    expect(referenceLabel({ A: 'in-reach', B: 'on-body' }, ['A', 'B'], 'A')).toBe('B');
+    expect(referenceLabel({ A: 'on-body', B: 'blind-spot' }, ['A', 'B'], 'B')).toBe('A');
+    expect(referenceLabel({ A: 'in-reach', B: 'in-reach' }, ['A', 'B'], 'B')).toBe('B');
+    expect(referenceLabel({ A: 'in-reach', B: 'in-reach' }, ['A', 'B'], null)).toBe('A');
+    expect(referenceLabel({}, ['A'], null)).toBeNull();
+  });
+
+  it('applies damage: nothing for 0, Health lost to 0 then a Critical Injury, and at 0 only the injury', () => {
+    expect(damageSoldier(1, 3, 0)).toEqual({ lost: 1, injury: false });
+    expect(damageSoldier(1, 3, 2)).toEqual({ lost: 3, injury: false });
+    expect(damageSoldier(1, 3, 3)).toEqual({ lost: 4, injury: true });
+    expect(damageSoldier(1, 2, 4)).toEqual({ lost: 3, injury: true });
+    expect(damageSoldier(4, 0, 1)).toEqual({ lost: 4, injury: true });
+  });
+
+  it('lets a player ask the GM to let go only for their own soldier close to the body', () => {
+    const snap = {
+      combat: 'c', mode: 'titan', step: 'play', round: 1, anchor: null,
+      soldiers: [soldier('mine', { positions: { A: 'on-body' } }), soldier('far', { positions: { A: 'distant' } })],
+      titans: [titan('A')], wings: {}, cards: {}, titanCards: {}, swapped: [], proposal: null,
+      retreat: false, wingsSet: true, wingsOpen: false, reassign: [], tactics: { held: [], used: [] }, cloaks: [],
+    } as never;
+    const w = (owned: string[]): TrackerWorld => ({ userId: 'u', owns: (id) => owned.includes(id), snapshot: () => snap });
+    expect(checkTrackerRequest(w(['mine']), { act: 'let-go', combat: 'c', soldier: 'mine', titan: 'tA' })).toBeNull();
+    expect(checkTrackerRequest(w([]), { act: 'let-go', combat: 'c', soldier: 'mine', titan: 'tA' })).toMatch(/owner/);
+    expect(checkTrackerRequest(w(['far']), { act: 'let-go', combat: 'c', soldier: 'far', titan: 'tA' })).toMatch(/notClose/);
   });
 });

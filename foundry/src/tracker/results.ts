@@ -21,6 +21,7 @@ import { showDice, WofRoll } from '../dice/terms.ts';
 import { clock, postCard } from '../dice/post.ts';
 import { enterTitan, isActiveGM, isGM, markOdm, recordRelease, skirmishFoes, titanDies, wingEvent } from './engine.ts';
 import { fearRolls, trackerDeaths } from './fear.ts';
+import { rollFall } from './harm.ts';
 import { tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
 import { E, grabbedBy, partsOf, snapshot, soldierState, titanActor, titanRow } from './snapshot.ts';
@@ -290,7 +291,7 @@ async function strike(card: ActionCard, rec: Recorder): Promise<void> {
       addOpenings(r.openings, soldier.id);
       if (r.openings) rec.line(tr('result.openings', { n: r.openings }));
       if (r.hurt) setFlag('hurt', soldier.id);
-      if (r.freed) recordRelease(combat, key, rec);
+      if (r.freed) await recordRelease(combat, key, rec);
       if (r.grounds) {
         const snap = snapshot(combat);
         const path = snap.soldiers.filter((s) => s.alive && !s.airborne && isClose(s.positions[label]) && grabbedBy(snap, s.id) === null).map((s) => s.name);
@@ -310,7 +311,7 @@ async function strike(card: ActionCard, rec: Recorder): Promise<void> {
         if (!cloaks.includes(soldier.id)) rec.set(combat, 'system.cloaks', [...cloaks, soldier.id]);
       }
       if (r.success) {
-        if (r.freed) recordRelease(combat, key, rec);
+        if (r.freed) await recordRelease(combat, key, rec);
         const list = rec.get(combat, 'system.titans') as any[];
         rec.set(combat, 'system.titans', list.map((x) => (x.key === key ? { ...x, decoy: { name: decoyName, left: r.hold }, decoysInRow: x.decoysInRow + 1 } : x)));
         rec.set(titan, 'system.attention_holder', 'decoy');
@@ -326,7 +327,7 @@ async function strike(card: ActionCard, rec: Recorder): Promise<void> {
       const who = target.forSoldier ?? soldier.id;
       const held = rows(combat).find((x) => x.grab?.soldier === who && x.key === key);
       if (!held) return;
-      if (n >= E().breakFree.needs) recordRelease(combat, key, rec);
+      if (n >= E().breakFree.needs) await recordRelease(combat, key, rec);
       else rec.line(tr('result.stillHeld'));
       return;
     }
@@ -403,6 +404,7 @@ async function effect(combat: any, key: string, label: string, actor: any, e: an
       setPositions(rec, actor, positions);
       rec.set(actor, 'system.airborne', false);
       rec.line(tr('result.falls', { name: actor.name }));
+      await rollFall(combat, actor, { positions: s.positions, causing: label }, rec);
       return;
     }
     case 'grab':

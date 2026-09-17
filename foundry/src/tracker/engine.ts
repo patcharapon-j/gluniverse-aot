@@ -30,6 +30,7 @@ import {
   type WingEvent,
 } from '../rules/engagement/round.ts';
 import { planTitanDeath } from '../rules/engagement/titan-death.ts';
+import { steamRollers } from '../rules/engagement/harm-rolls.ts';
 import { foeCandidates, groupBroken, skirmishEnding, rollFightWeapon } from '../rules/engagement/skirmish.ts';
 import { emptyFlags, type Position, type Snapshot, type SoldierState } from '../rules/engagement/types.ts';
 import { isGrounded, nextBehaviorFor, type BodyPart } from '../rules/titan.ts';
@@ -38,6 +39,7 @@ import { trackerApply } from '../settings.svelte.ts';
 import { CARD, ENGAGEMENT, engagementTurns, isEngagement } from './combat.ts';
 import { KeyedLock } from './busy.ts';
 import { fearRolls, trackerDeaths } from './fear.ts';
+import { rollFall, rollSteam } from './harm.ts';
 import { postNote, tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
 import { E, cardsOf, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
@@ -576,6 +578,11 @@ export async function movePosition(combat: any, req: MoveRequest): Promise<boole
   } else if (req.way === 'letGo') {
     const why = letGoBlock(s, t.label, grabbed);
     if (why) return warn(`move.${why}`);
+    // Letting go is a fall (falls.yaml, triggers, rule-named): the GM's client rolls it.
+    if (isGM()) return letGo(combat, req.actor, s, t.label);
+    const { extViaGM } = await import('../dice/proxy.ts');
+    await extViaGM('tracker', { act: 'let-go', combat: combat.id, soldier: s.id, titan: t.key });
+    return true;
   } else {
     const opt = moveOptions(s, { rating: snap.anchor, titan: t, grabbed, retreat: snap.retreat }).find((o) => o.to === req.to);
     if (!opt || opt.block) return warn(`move.${opt?.block ?? 'notOneStep'}`);
@@ -583,8 +590,20 @@ export async function movePosition(combat: any, req: MoveRequest): Promise<boole
     if (!way) return warn('move.kind');
     if (way.fly) return flyMove(combat, req, s, t.label, way.fly);
   }
-  const to = req.way === 'letGo' ? 'in-reach' : req.to;
-  await applyPosition(combat, req.actor, s, t.label, to, req.way);
+  await applyPosition(combat, req.actor, s, t.label, req.to, req.way);
+  return true;
+}
+
+/** Letting go (positions.yaml, moves, letting_go): the soldier falls and holds In Reach. */
+export async function letGo(combat: any, actor: any, s: SoldierState, label: string): Promise<boolean> {
+  const snap = snapshot(combat);
+  const rec = new Recorder();
+  recordPositions(rec, actor, withPosition(s.positions, label, 'in-reach', focusLabels(snap.titans)));
+  rec.set(actor, 'system.airborne', false);
+  await rollFall(combat, actor, { positions: s.positions, causing: label }, rec);
+  await rec.commit();
+  const moved = tr('note.movedLine', { label, from: tr(`pos.${s.positions[label] ?? 'none'}`), to: tr('pos.in-reach'), kind: tr('move.letGo') });
+  await postNote({ title: tr('note.moved', { name: actor.name }), lines: [moved, ...rec.lines], round: combat.round });
   return true;
 }
 
@@ -609,13 +628,13 @@ async function applyPosition(combat: any, actor: any, s: SoldierState, label: st
   const positions = withPosition(s.positions, label, to, focusLabels(snap.titans));
   const patch: Record<string, unknown> = positionsPatch(positions);
   if (way === 'odm') patch['system.airborne'] = true;
-  if (way === 'onFoot' || way === 'letGo') patch['system.airborne'] = false;
+  if (way === 'onFoot') patch['system.airborne'] = false;
   await actor.update(patch);
   // A carried comrade changes Position with their carrier (carrying.yaml).
   const carried = s.carrying ? game.actors.get(s.carrying) : null;
   if (carried && isGM()) await carried.update(positionsPatch(positions));
   if (way === 'odm') await markOdm(combat, actor.id);
-  const kind = way === 'rule' ? tr('move.byRule') : way === 'letGo' ? tr('move.letGo') : tr(`move.way.${way}`);
+  const kind = way === 'rule' ? tr('move.byRule') : tr(`move.way.${way}`);
   await postNote({ title: tr('note.moved', { name: actor.name }), lines: [tr('note.movedLine', { label, from: tr(`pos.${s.positions[label] ?? 'none'}`), to: tr(`pos.${to}`), kind })], round: combat.round });
 }
 
@@ -726,8 +745,12 @@ export async function titanDies(combat: any, key: string, rec: Recorder): Promis
   if (!plan) return;
   const names = (ids: string[]) => ids.map(nameOf).join(', ');
   rec.line(tr('death.relief', { who: names(plan.relief) }));
-  if (plan.freed) rec.line(tr(row.grab.lifted ? 'death.freedFalls' : 'death.freed', { name: nameOf(plan.freed) }));
-  if (plan.steam.length) rec.line(tr('death.steam', { who: names(plan.steam) }));
+  if (plan.freed) {
+    rec.line(tr(row.grab.lifted ? 'death.freedFalls' : 'death.freed', { name: nameOf(plan.freed) }));
+    // A fall the release makes them take is resolved first, from On Body (titan_death, freed).
+    if (row.grab.lifted) await rollFall(combat, game.actors.get(plan.freed), { positions: { ...snap.soldiers.find((x) => x.id === plan.freed)?.positions, [row.label]: 'on-body' }, causing: row.label }, rec);
+  }
+  if (plan.steam.length) await rollSteam(combat, plan.steam, rec);
   if (plan.fall.length) rec.line(tr('death.fall', { who: names(plan.fall) }));
   rec.set(actor, 'system.corpse', true);
   rec.set(actor, 'system.openings', 0);
@@ -852,8 +875,7 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
         rec.line(tr('end.regenFull', { label }));
         if (p.result.healed) {
           rec.line(tr('end.regenHealed', { label, part: game.i18n.localize(`WOF.BodyPart.${p.result.healed.id}`) }));
-          const onBody = snap.soldiers.filter((s) => s.alive && s.positions[label] === 'on-body').map((s) => s.name);
-          if (onBody.length) rec.line(tr('end.steam', { who: onBody.join(', ') }));
+          await rollSteam(combat, steamRollers('regeneration-fill', snap.soldiers, label), rec);
         }
         if (p.result.stands) {
           rec.set(a, 'system.heave_count', 0);
@@ -1008,6 +1030,13 @@ export async function performRequest(combat: any, req: any, user: any): Promise<
       return setLoud(combat, req.soldier, req.titan);
     case 'fall-back':
       return fallBack(combat, req.soldier, req.titan);
+    case 'let-go': {
+      const actor = game.actors.get(req.soldier);
+      const snap = snapshot(combat);
+      const s = snap.soldiers.find((x) => x.id === req.soldier);
+      const t = snap.titans.find((x) => x.key === req.titan);
+      return !!actor && !!s && !!t && letGo(combat, actor, s, t.label);
+    }
     case 'engage': {
       const list = plain(combat).skirmish.engaged as { soldier: string; foe: string }[];
       const has = list.some((e) => e.soldier === req.soldier && e.foe === req.foe);
@@ -1050,7 +1079,7 @@ export async function fallBack(combat: any, soldier: string, key: string): Promi
 }
 
 /** The release of a Grabbed soldier (grab.yaml, release), recorded on a Recorder. */
-export function recordRelease(combat: any, key: string, rec: Recorder): void {
+export async function recordRelease(combat: any, key: string, rec: Recorder): Promise<void> {
   const rows = rec.get(combat, 'system.titans') as any[];
   const row = rows.find((r) => r.key === key);
   if (!row?.grab) return;
@@ -1060,10 +1089,13 @@ export function recordRelease(combat: any, key: string, rec: Recorder): void {
   if (actor) {
     const s = soldierState(actor);
     const positions = { ...(rec.get(actor, 'system.positions.entries') as { titan: string; position: Position }[]).reduce((m, e) => ({ ...m, [e.titan]: e.position }), {} as Record<string, Position>) };
+    const before = { ...positions, [row.label]: 'on-body' as Position };
     if (out.position) positions[row.label] = out.position;
     else delete positions[row.label];
     recordPositions(rec, actor, positions);
     rec.line(tr(out.falls ? 'grab.freedFalls' : 'grab.freed', { name: s.name }));
+    // A release from a lift is a fall (grab.yaml, release, lifted), from On Body relative to the holding Titan.
+    if (out.falls && out.position) await rollFall(combat, actor, { positions: before, causing: row.label }, rec);
   }
   if (titan) {
     rec.set(titan, 'system.attention_holder', '');

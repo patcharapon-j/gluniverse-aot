@@ -2370,7 +2370,6 @@
         "regenFill": "{label}: Regeneration {n}.",
         "regenFull": "{label}: the clock fills. Openings erased, counts cleared.",
         "regenHealed": "{label}: {part} moves one state toward Intact.",
-        "steam": "Steam: {who} roll on the steam table.",
         "stands": "{label} stands. The soldiers it pinned are freed.",
         "noFocus": "No living Focus Titan.",
         "stopped": "A retreat is under way: no clock fills.",
@@ -2434,8 +2433,7 @@
         "relief": "Nape-kill Stress relief: {who}.",
         "freed": "{name} is freed.",
         "freedFalls": "{name} is freed and falls.",
-        "steam": "Steam: {who} roll on the steam table.",
-        "fall": "In the falling body's path, Leap Clear or be Pinned: {who}.",
+        "fall": "In the falling body's path, Leap Clear from the sheet or be Pinned: {who}.",
         "ends": "No Focus Titan is alive and no one is Pinned: the Titan Engagement ends."
       },
       "grab": {
@@ -2622,6 +2620,15 @@
       "fear": {
         "title": "Fear Rolls",
         "rolled": "Fear Rolls made: {who}."
+      },
+      "harm": {
+        "steam": "Steam on {name}: {face}, {n} damage.",
+        "fall": "{name} falls ({band}): {face} plus {adds}, {n} damage.",
+        "band": {
+          "low": "low",
+          "high": "high",
+          "extreme": "extreme"
+        }
       }
     }
   }

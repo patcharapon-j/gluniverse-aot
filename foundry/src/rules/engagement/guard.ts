@@ -5,7 +5,7 @@
  */
 import { drawAttentionBlock } from './attention.ts';
 import { swapBlock } from './cards.ts';
-import { comparisonLabel, isClose, nearEachOther } from './positions.ts';
+import { comparisonLabel, isClose, letGoBlock, nearEachOther } from './positions.ts';
 import { wingBlock, type RoundCore } from './round.ts';
 import type { Snapshot } from './types.ts';
 
@@ -18,6 +18,7 @@ export type TrackerRequest =
   | { act: 'left'; combat: string; soldier: string }
   | { act: 'loud'; combat: string; soldier: string; titan: string }
   | { act: 'fall-back'; combat: string; soldier: string; titan: string }
+  | { act: 'let-go'; combat: string; soldier: string; titan: string }
   | { act: 'engage'; combat: string; soldier: string; foe: string };
 
 export interface TrackerWorld {
@@ -107,6 +108,15 @@ export function checkTrackerRequest(w: TrackerWorld, req: TrackerRequest): strin
       if (!w.owns(req.soldier)) return 'only the soldier’s owner chooses Fall Back';
       const why = fallBackBlock(s, req.soldier, req.titan);
       return why ? `Fall Back is not allowed (${why})` : null;
+    }
+    case 'let-go': {
+      if (!taking(req.soldier)) return 'the soldier is not taking part';
+      if (!w.owns(req.soldier)) return 'only the soldier’s owner lets go';
+      const soldier = s.soldiers.find((x) => x.id === req.soldier)!;
+      const titan = s.titans.find((t) => t.key === req.titan);
+      if (!titan) return 'no such Titan';
+      const why = letGoBlock(soldier, titan.label, grabbedIn(s)(soldier.id));
+      return why ? `letting go is not allowed (${why})` : null;
     }
     case 'engage': {
       if (!taking(req.soldier)) return 'the soldier is not taking part';
