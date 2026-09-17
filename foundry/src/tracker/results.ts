@@ -7,6 +7,7 @@
 import { SYSTEM_ID } from '../config.ts';
 import { FLAG, successesOf, type ActionCard, type AttackCard, type Card, type FoeAttackCard } from '../dice/card.ts';
 import { attackResult, titanSuccesses } from '../rules/roll.ts';
+import { cardRefusal, resultDigest, resultTrust, strikeRefusal } from '../rules/engagement/card-trust.ts';
 import { grabLands } from '../rules/engagement/grab.ts';
 import { gainInjury, type Location } from '../rules/engagement/injury.ts';
 import { focusLabels, isClose } from '../rules/engagement/positions.ts';
@@ -35,8 +36,31 @@ export interface Result {
 }
 
 const STRIKES = ['nape-strike', 'body-part-strike', 'break-attention', 'break-free'];
+const RECORD_FLAG = 'results';
 const cardOf = (m: any): Card | undefined => m?.getFlag?.(SYSTEM_ID, FLAG);
-const resultOf = (m: any): Result | undefined => m?.getFlag?.(SYSTEM_ID, RESULT_FLAG);
+
+/** The engagement a card's result belongs to. */
+function combatOf(card: Card | undefined): any {
+  const id = card?.kind === 'action' ? card.target?.combat : card?.kind === 'attack' ? card.titan?.combat : card?.kind === 'foe-attack' ? card.combat : undefined;
+  return id ? game.combats.get(id) : undefined;
+}
+
+/** The message's result, with whether it is the one the GM wrote (its digest is kept on the engagement). */
+function resultState(m: any): { result: Result | undefined; trust: 'trusted' | 'none' | 'tampered' } {
+  const raw = m?.getFlag?.(SYSTEM_ID, RESULT_FLAG) as Result | undefined;
+  const recorded = combatOf(cardOf(m))?.getFlag?.(SYSTEM_ID, RECORD_FLAG)?.[m?.id] as string | undefined;
+  const trust = resultTrust(raw, recorded);
+  return { result: trust === 'trusted' ? raw : undefined, trust };
+}
+const resultOf = (m: any): Result | undefined => resultState(m).result;
+
+/** Writes a result: its digest on the engagement first, so the message renders it as trusted. */
+async function writeResult(message: any, result: Result): Promise<void> {
+  const combat = combatOf(cardOf(message));
+  if (!combat) return;
+  await combat.setFlag(SYSTEM_ID, `${RECORD_FLAG}.${message.id}`, resultDigest(result));
+  await message.setFlag(SYSTEM_ID, RESULT_FLAG, result);
+}
 const actorSync = (uuid: string) => foundry.utils.fromUuidSync(uuid, { strict: false });
 const rows = (combat: any) => combat.system.toObject().titans as any[];
 const rollD6 = async (n: number) => {
@@ -46,12 +70,54 @@ const rollD6 = async (n: number) => {
 
 // ---------------------------------------------------------------- the hooks
 
+/** The card each message held when a GM last accepted it (GM memory only). */
+const accepted = new Map<string, Card>();
+
+const userIsGM = (id: string | null) => !!(id && game.users.get(id)?.isGM);
+const trustWorld = {
+  isGM: userIsGM,
+  owns: (id: string | null, uuid: string) => {
+    const user = id ? game.users.get(id) : null;
+    return !!user && !!actorSync(uuid)?.testUserPermission?.(user, 'OWNER');
+  },
+};
+const authorOf = (message: any): string | null => message.author?.id ?? null;
+
+/** Cards the tracker acts on. */
+const tracked = (card: Card | undefined): card is Card =>
+  !!card && (card.kind === 'foe-attack' || (card.kind === 'attack' && !!card.titan) || (card.kind === 'action' && !!(card.target || card.attack || card.pool?.gear?.itemId === 'odm-gear')));
+
+function remember(message: any): void {
+  const card = cardOf(message);
+  if (card) accepted.set(message.id, foundry.utils.deepClone(card));
+}
+
+function ignore(message: any, why: string): void {
+  console.warn(`wings-of-freedom | the tracker ignored card ${message.id}: ${why}`);
+  if (isActiveGM()) ui.notifications.warn(tr('result.ignored', { name: message.author?.name ?? '?', why }));
+}
+
 export function registerResults(): void {
+  Hooks.once('ready', () => {
+    if (isGM()) for (const m of game.messages) remember(m);
+  });
   Hooks.on('createChatMessage', (message: any) => {
+    const card = cardOf(message);
+    if (!tracked(card) || !isGM()) return;
+    const why = cardRefusal(trustWorld, authorOf(message), card);
+    if (why) return void ignore(message, why);
+    remember(message);
     if (isActiveGM()) void onCard(message);
   });
-  Hooks.on('updateChatMessage', (message: any, changed: any) => {
-    if (isActiveGM() && foundry.utils.hasProperty(changed, `flags.${SYSTEM_ID}.${FLAG}`)) void onCard(message);
+  Hooks.on('updateChatMessage', (message: any, changed: any, _options: any, userId: string) => {
+    if (!isGM() || !foundry.utils.hasProperty(changed, `flags.${SYSTEM_ID}.${FLAG}`)) return;
+    const card = cardOf(message);
+    if (!tracked(card)) return;
+    // A player's edit is acted on only when it is a change the roller may make (a Push, a Cover).
+    const why = cardRefusal(trustWorld, authorOf(message), card, { userId, previous: accepted.get(message.id) });
+    if (why) return void ignore(message, why);
+    remember(message);
+    if (isActiveGM()) void onCard(message);
   });
 }
 
@@ -78,8 +144,10 @@ async function onCard(message: any): Promise<void> {
 
 /** A dodge against a Titan's card also cancels against its later cards this round (rules question 14). */
 async function recordDodge(card: ActionCard, message: any): Promise<void> {
-  const attack = cardOf(game.messages.get(card.attack!.message));
-  if (attack?.kind !== 'attack' || !attack.titan) return;
+  const attackMessage = game.messages.get(card.attack!.message);
+  const attack = cardOf(attackMessage);
+  if (attack?.kind !== 'attack' || !attack.titan || !userIsGM(authorOf(attackMessage))) return;
+  if (!attack.targets.some((t) => t.actor === card.actor)) return;
   const combat = game.combats.get(attack.titan.combat);
   const soldier = actorSync(card.actor);
   if (!combat || !soldier) return;
@@ -100,13 +168,22 @@ export async function applyResult(message: any, kind: Result['kind'], opts: { fo
   if (!isGM()) return;
   const card = cardOf(message);
   if (!card) return;
+  const refused = cardRefusal(trustWorld, authorOf(message), card);
+  if (refused) return void ignore(message, refused);
+  const { result: prev, trust } = resultState(message);
+  if (trust === 'tampered') return void ignore(message, 'its result was changed by someone other than a GM');
   const sig = sigOf(card);
-  const prev = resultOf(message);
   if (prev && prev.sig === sig && !opts.force && prev.state !== 'pending') return;
   if (prev?.state === 'undone' && !opts.force) return;
   if (prev?.state === 'done') await revertOps(prev.ops);
   if (!opts.force && !trackerApply()[CATEGORY[kind]]) {
-    await message.setFlag(SYSTEM_ID, RESULT_FLAG, { state: 'pending', ops: [], lines: [], sig, kind } satisfies Result);
+    await writeResult(message, { state: 'pending', ops: [], lines: [], sig, kind });
+    return;
+  }
+  // The roll's requirements, checked again on the GM's client once any earlier result is taken back.
+  const block = kind === 'strike' ? strikeBlock(card as ActionCard) : null;
+  if (block) {
+    await writeResult(message, { state: 'undone', ops: [], lines: [tr('result.refused', { why: tr(`block.${block}`) })], sig, kind });
     return;
   }
   const rec = new Recorder();
@@ -115,7 +192,30 @@ export async function applyResult(message: any, kind: Result['kind'], opts: { fo
   else if (kind === 'guard') await guard(card as ActionCard, rec);
   else await foeHarm(card as FoeAttackCard, rec);
   await rec.commit();
-  await message.setFlag(SYSTEM_ID, RESULT_FLAG, { state: 'done', ops: rec.ops, lines: rec.lines, sig, kind } satisfies Result);
+  await writeResult(message, { state: 'done', ops: rec.ops, lines: rec.lines, sig, kind });
+}
+
+/** Why a strike card's roll may not be made now, by the engagement as the GM sees it. */
+function strikeBlock(card: ActionCard): string | null {
+  const target = card.target;
+  const combat = target ? game.combats.get(target.combat) : null;
+  const soldier = actorSync(card.actor);
+  if (!target?.titan || combat?.type !== 'engagement' || !soldier) return 'noTitan';
+  const titan = titanActor(combat, target.titan);
+  if (!titan) return 'noTitan';
+  const row = (combat.system.titans as any[]).find((r) => r.key === target.titan);
+  const items = [...soldier.items];
+  const horse = items.find((i: any) => i.type === 'gear' && i.system.subtype === 'horse');
+  return strikeRefusal(snapshot(combat), soldier.id, card.entry, target, {
+    parts: partsOf(titan),
+    strikeFrom: Object.fromEntries((CONFIG.WOF.bodyPartKinds as { id: string; strikeFrom: string[] }[]).map((k) => [k.id, k.strikeFrom])),
+    holdingReach: E().holdingArmReach,
+    clearTheHand: !!row?.clearTheHand,
+    openingsBy: titan.system.toObject().openings_by ?? [],
+    decoys: E().breakAttention.decoys.map((d) => d.id),
+    horseReady: !!horse && horse.system.current > 0,
+    pryLoose: items.some((i: any) => i.type === 'talent' && i.system.talent_id === 'pry-loose' && i.system.level > 0),
+  });
 }
 
 export async function undoResult(message: any): Promise<void> {
@@ -123,7 +223,7 @@ export async function undoResult(message: any): Promise<void> {
   if (!isGM() || prev?.state !== 'done') return;
   const kept = await revertOps(prev.ops);
   if (kept.length) ui.notifications.warn(tr('end.kept', { list: kept.join(', ') }));
-  await message.setFlag(SYSTEM_ID, RESULT_FLAG, { ...prev, state: 'undone', ops: [] });
+  await writeResult(message, { ...prev, state: 'undone', ops: [] });
 }
 
 /** Resolves a Titan attack card now (the GM's button, or the end of the Titan's card). */

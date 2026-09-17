@@ -2332,7 +2332,8 @@
         "holdingShoot": "A soldier who holds a Foe cannot Shoot.",
         "noTarget": "Pick what the roll is made against.",
         "pickPart": "Pick a Body Part that can be struck.",
-        "pickDecoy": "Pick a decoy the soldier can use."
+        "pickDecoy": "Pick a decoy the soldier can use.",
+        "openings": "More Openings than the soldier may spend."
       },
       "roll": {
         "against": "Against",
@@ -2476,6 +2477,8 @@
         "undo": "Undo",
         "redo": "Redo",
         "apply": "Apply",
+        "refused": "Not applied: {why}",
+        "ignored": "The tracker ignored a card from {name}: {why}",
         "spent": "Openings spent: {n}.",
         "kill": "{name} kills Titan {label}.",
         "short": "{name} falls short. Openings left on {label}: {n}.",
