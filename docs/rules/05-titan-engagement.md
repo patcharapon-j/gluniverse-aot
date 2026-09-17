@@ -401,15 +401,16 @@ In order (`end_steps`):
 1. **Gas Rolls** for everyone who used ODM Gear this round, rolled together. If the Titan Engagement ends mid-round, these Gas Rolls are made at once, before Chapter 3's end steps (Chapter 4, `gas_roll`, `when`).
 2. **Regeneration:** each living Focus Titan's clock fills 1 segment.
 3. **Background Titan clocks** fill 1 segment each, and full clocks resolve. Then the **retreat clock** fills 1 segment, and if it is full the Titan Engagement becomes a retreat (section 5.10). During a retreat no Background clock fills and the retreat clock does not fill; step 2's Regeneration clocks still fill (decision batch 6, OQ-134).
-4. **Round ends:** unspent moves and actions are lost.
+4. **Momentum:** every soldier who made no ODM move this round loses all of theirs (section 5.2). A soldier who flew keeps what they hold, to the cap the Anchors left give.
+5. **Round ends:** unspent moves and actions are lost.
 
-> **Design note (OQ-77):** A turn's move and action come in either order, so a soldier can fly in and strike or strike and fly clear; an unsplit move keeps every Position check at one moment. A retreat is the exception: its forced move comes first (section 5.10). The retreat's closed cut does not rest on that order but on its own rule, since no Nape strike is made in a retreat (ADR-0010, as amended in decision batches 5 and 5b). The one-step limit on swaps makes swapping a teamwork lever tied to Position, like Help (ADR-0010). Wings stand between losses: assigning them every round is a deliberation the table pays each round for a choice that rarely changes, and the losses that made a new assignment worth having are exactly the moments the rule keeps (OQ-97). Gas Rolls come first, as Chapter 4 expects. Regeneration comes before Background clocks, so a Titan that enters at the end of a round starts its first full round clean. The retreat clock fills last, so a Background Titan whose clock fills at the same end step enters before the retreat begins.
+> **Design note (OQ-77):** A turn's move and action come in either order, so a soldier can fly in and strike or strike and fly clear; an unsplit move keeps every Position check at one moment. A retreat is the exception: its forced move comes first (section 5.10). The retreat's closed cut does not rest on that order but on its own rule, since no Nape strike is made in a retreat (ADR-0010, as amended in decision batches 5 and 5b). The one-step limit on swaps makes swapping a teamwork lever tied to Position, like Help (ADR-0010). Wings stand between losses: assigning them every round is a deliberation the table pays each round for a choice that rarely changes, and the losses that made a new assignment worth having are exactly the moments the rule keeps (OQ-97). Gas Rolls come first, as Chapter 4 expects. Regeneration comes before Background clocks, so a Titan that enters at the end of a round starts its first full round clean. The retreat clock fills last, so a Background Titan whose clock fills at the same end step enters before the retreat begins. Momentum is lost after the clocks and before the round ends, so a soldier who flew this round carries what their Flights gave them into the next round, and a soldier who stood still carries nothing (section 5.2).
 
 ### What the GM tracks
 
 The GM keeps one tracker row per Focus Titan and per Background Titan, plus one Titan Engagement line (`gm_tracker`, with example rows). Everything on the tracker is public except an unrevealed Next Behavior and the values an Abnormal keeps hidden until a Read (section 5.8).
 
-- **Engagement line:** the Anchor Rating, the round number, the retreat clock's filled segments out of its length (such as `Retreat 2/8`), whether it is a retreat and the round it began, which counts the retreat's first rounds for the stay limit (section 5.10; decision batch 8, 8-32 and 8-36), the Squad Tactics and which are used, whose cloaks are thrown, and the round in which no soldier was left standing while the ending waits (section 5.11).
+- **Engagement line:** the Anchor Rating, the Anchors left out of the Anchors it began with (such as `Anchors 1/2`), which is every soldier's Momentum cap (section 5.2), the round number, the retreat clock's filled segments out of its length (such as `Retreat 2/8`), whether it is a retreat and the round it began, which counts the retreat's first rounds for the stay limit (section 5.10; decision batch 8, 8-32 and 8-36), the Squad Tactics and which are used, whose cloaks are thrown, and the round in which no soldier was left standing while the ending waits (section 5.11).
 - **Focus Titan row:**
   - its label, stat block, and cards this round;
   - the Attention holder, the decoy holding it and the cards its hold has left, or nothing;
@@ -423,7 +424,7 @@ The GM keeps one tracker row per Focus Titan and per Background Titan, plus one 
 - **Corpse row:** a dead Focus Titan's row stays for its corpse, with each Body Part's state and count, its heave count, and each soldier it pins (`corpse_row`).
 - **Background Titan row:** its Size Class and its clock.
 
-The GM updates the tracker after the deal, after each Titan card, after each strike or Break Attention, after each counted turn of a Grabbed soldier (the countdown and lifted), after each fall of a Titan's body and each Heave (pins and the heave count), and at the end steps (`per_round_order`). Players track everything else on their own sheets: Positions per Focus Titan, mounted, airborne, turns spent in advance, Stress, harm, and gear.
+The GM updates the tracker after the deal, after each Titan card, after each strike or Break Attention, after each counted turn of a Grabbed soldier (the countdown and lifted), after each fall of a Titan's body and each Heave (pins and the heave count), and at the end steps (`per_round_order`). Players track everything else on their own sheets: Positions per Focus Titan, Momentum, mounted, airborne, turns spent in advance, Stress, harm, and gear.
 
 Two aids keep a round moving (`titan_card_checklist`, `rolled_together`):
 - **On a Titan's card,** the GM reads its tracker row in the order of the card procedure. Every soldier who takes part, player character or Squadmate, has a Squad sheet row whose positions column gives their Position relative to every living Focus Titan by letter, such as `A In Reach B Distant` (`data/gear/sheet-fields.yaml`, `squad_sheet_row`). That column is the one record of Positions: the ladder is read straight off it, and the character sheet's `positions` field mirrors it.
@@ -486,7 +487,7 @@ Every entry lists the fields ADR-0024, limit 11, requires, plus what the procedu
 - **Kill** adds lethal Critical Injuries and the Grab.
 - **Thrash** works at any Position, uses no Body Parts, and inflicts nothing lethal.
 
-No entry names death; only the Grab's devour step does (Chapter 3).
+Every tier can also wreck an Anchor, and the heavy entries of each table carry it (section 5.2). No entry names death; only the Grab's devour step does (Chapter 3).
 
 **Titan Dice** (`titan_dice`) are the dice an entry's Attack Dice are rolled with. Each die that shows 5 or 6 is a success. The GM rolls them in the open when a card resolves the entry, and they never Push and never take Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances (ADR-0024, limits 8 and 16). Use a colour no soldier's pool uses. The roll's successes are the card's Severity, and every target of the card cancels against the same roll (section 5.5; ADR-0019).
 
@@ -495,6 +496,7 @@ No entry names death; only the Grab's devour step does (Chapter 3).
 - **critical-injury:** a Titan attack at the listed Injury Location, of the listed Injury Type, lethal or not as listed. A Bite entry's type is Bite, and every other entry's is Crush (decision batch 7, 7-5). Its roll adds 1 for each Net Success beyond the first (Chapter 3, section 3.2; decision batch 8, 8-2).
 - **knock-loose:** an airborne target, or one at On Body or Blind Spot, falls. A mounted target is not affected. The fall is the same whatever the Net Successes.
 - **grab:** the Grab procedure (section 5.9), the same whatever the Net Successes.
+- **wreck:** the Titan Engagement loses 1 Anchor (section 5.2). Like a telegraph it applies whether the behavior landed or whiffed, and whatever the Net Successes, because it is the Titan going through the place and not an attack on a person. It affects no soldier, no horse, and no Position, and Anchors never fall below 0.
 - **telegraph:** the next Next Behavior is revealed to every soldier. It applies whether the behavior lands or whiffs, because what the Titan will do next shows either way.
 
 `tuning.yaml` (`simulation_reference_titan`) is a complete example of the format. It is the Titan the simulations fought, not a playable Titan. The playable Titans are in `data/titans/` (Chapter 6).
@@ -561,7 +563,7 @@ When a Focus Titan's card comes up (`resolving_a_card`):
    - If the fallback repeats the previous behavior or fails either test, the behavior is Thrash.
 6. **Roll and announce.** Announce the behavior's name, tier, and targets to every soldier, then roll its Attack Dice as Titan Dice in the open and announce the successes: the card's Severity, the same for every target. The roll takes no Circumstances, and the GM never re-rolls or adjusts it (ADR-0024, limit 8; ADR-0019).
 7. **Reactions.** On 0 successes the card whiffs against every target, and no one dodges. Otherwise each target dodges, or cancels with an earlier dodge against this Titan, by Chapter 1's *Attack and Reaction* (below). The card lands on a target on 1 or more Net Successes and whiffs on 0.
-8. **Effects.** For each target it lands on, apply the effects in order, targets in card order. Only a Critical Injury reads the Net Successes, and a telegraph applies whether the card landed or whiffed. A target who dies receives none of the card's later effects; every other target still does (decision batch 4, OQ-107).
+8. **Effects.** For each target it lands on, apply the effects in order, targets in card order. Only a Critical Injury reads the Net Successes. A telegraph applies whether the card landed or whiffed, and so does a wreck, which is the one effect that lands on nobody: it destroys 1 Anchor once, however many targets the card had (section 5.2). A target who dies receives none of the card's later effects; every other target still does (decision batch 4, OQ-107).
 9. **Next.** A card that whiffed has still resolved a behavior. The behavior becomes the previous behavior, the Titan's decoys in a row returns to 0, every flag for this Titan clears, and the new Next Behavior is rolled. If the behavior had a telegraph effect, the new Next Behavior is revealed.
 
 ### Dodging a Titan
@@ -614,26 +616,31 @@ The **standard ladder's** rungs are, highest first (`ladders`, `tests`):
 
 To evaluate the ladder (`evaluation`):
 1. Find the highest rung any candidate meets. The candidates who meet it are tied. When that rung is nearest, only the candidates at the closest Position are tied.
-2. If that rung is hooked into its body and anyone tied there holds the hooked-by-strike flag, only they stay tied. A Nape striker who falls short draws the Titan before a soldier who is only On Body.
-3. Narrow the tied soldiers by each lower rung in turn. At the nearest rung, keep the tied soldiers at the closest Position any of them holds.
-4. If still tied, the current holder keeps Attention. Since nearest has already narrowed the tie, this happens only between soldiers at the same distance (decision batch 3e, 3e-6).
-5. Otherwise the lowest card this round takes it, a Wing Squadmate counting just after its player character. This step is skipped when no cards have been dealt this round, and at an end step, as when a Background Titan enters at the background-clocks end step, because the cards of a round that is ending choose nothing. A Titan that enters mid-round, when a flare fills its clock, is evaluated with that round's cards (section 5.10; decision batch 4b, 4b-3).
-6. Otherwise nothing holds its Attention until its next card, which evaluates the ladder again with that round's cards. Only the start of a Titan Engagement, an end step, and a tie among Wing Squadmates of one player character (none in Phase 1, since a Wing holds one Squadmate) reach this step, because during a round every player character's card is distinct and a Wing Squadmate comes right after its player character's. The order of the Squad sheet chooses nothing (ADR-0024 and ADR-0010, as amended in decision batch 4; OQ-81, as revised in decision batch 4; decision batch 4b, 4b-3).
+2. **The loudest match.** Add to the tied set every candidate who holds the loudest flag, unless the highest rung met is hooked into its body, in which case add none (`flags`, `loudest`, `matches`; decision batch 10, OQ-184). This is the only step that adds a candidate, and it adds them whatever Position they hold, so a soldier who came in loud from Distant is in the set. The lower rungs then narrow as they always do, and the loudest or brightest rung keeps them.
+3. If the highest rung met is hooked into its body and anyone tied there holds the hooked-by-strike flag, only they stay tied. A Nape striker who falls short draws the Titan before a soldier who is only On Body.
+4. Narrow the tied soldiers by each lower rung in turn. At the nearest rung, keep the tied soldiers at the closest Position any of them holds.
+5. If still tied, the current holder keeps Attention. Since nearest has already narrowed the tie, this happens only between soldiers at the same distance (decision batch 3e, 3e-6).
+6. Otherwise the lowest card this round takes it, a Wing Squadmate counting just after its player character. This step is skipped when no cards have been dealt this round, and at an end step, as when a Background Titan enters at the background-clocks end step, because the cards of a round that is ending choose nothing. A Titan that enters mid-round, when a flare fills its clock, is evaluated with that round's cards (section 5.10; decision batch 4b, 4b-3).
+7. Otherwise nothing holds its Attention until its next card, which evaluates the ladder again with that round's cards. Only the start of a Titan Engagement, an end step, and a tie among Wing Squadmates of one player character (none in Phase 1, since a Wing holds one Squadmate) reach this step, because during a round every player character's card is distinct and a Wing Squadmate comes right after its player character's. The order of the Squad sheet chooses nothing (ADR-0024 and ADR-0010, as amended in decision batch 4; OQ-81, as revised in decision batch 4; decision batch 4b, 4b-3).
 
 **Flags** are public. Each lasts until the end of the Titan's next card that resolves a behavior, and clears at that card's Next step (`flag_duration`; section 5.5; ADR-0024, limit 2, and ADR-0010, as amended in decision batch 3e). A card that resolves nothing leaves every flag standing: each card of a decoy's hold, the last one included, which evaluates the ladder with the flags; a card that comes up while the Titan holds a Grabbed soldier; and a card with no one holding its Attention (OQ-81 and OQ-111, as revised in decision batch 3e). So a flag is always read by the card that acts. The flags are:
 - **hooked-by-strike:** set by any Nape strike against the Titan, whatever its result (ADR-0010);
 - **just-hurt:** set by a Body Part strike with at least 1 success;
-- **loudest:** set by Draw Attention, or by a Fear Roll result's loudest flag (Chapter 3, section 3.9), never from Distant.
+- **loudest:** set by Draw Attention, or by a Fear Roll result's loudest flag (Chapter 3, section 3.9), neither from Distant; by a Flight with no successes, on the Focus Titan the move named and from any Position, Distant included; and by a mounted charge (section 5.2). Momentum spent on Quiet stops a flag the soldier would set that turn. While a soldier holds this flag they also count, for this Titan's ladder, as meeting every rung any other candidate meets except hooked into its body (step 2 below).
 
 **Down and carried soldiers** are candidates but meet only the rows marked `down_can_meet`, which on the standard ladder is only nearest, met by their Position like anyone else's. On the standard ladder, a Titan turns to a Down soldier only when no one is closer, hooked in, hurting it, or louder (decision batch 3e, 3e-6; decision batch 4, 4-13). An Abnormal ladder that names current-holder also keeps a Down holder who is not at Distant (*Abnormal ladders*, below). This settles the question Chapter 3 left to this chapter.
 
 ### Draw Attention
 
-**Draw Attention** is an unrolled action against one Focus Titan, for a soldier who holds a Position other than Distant relative to it and is not Grabbed (decision batch 5, OQ-113). It sets the loudest flag, which lasts until the end of that Titan's next card that resolves a behavior, like every flag (ADR-0024, limit 2, as amended in decision batch 3e).
+**Draw Attention** is an unrolled action against one Focus Titan, for a soldier who holds a Position other than Distant relative to it and is not Grabbed (decision batch 5, OQ-113). It spends the soldier's action, and Shout Them Off lets them spend their move instead (Chapter 2), as Quick Refit does for Change Canister (Chapter 4, section 4.3). It sets the loudest flag, which lasts until the end of that Titan's next card that resolves a behavior, like every flag (ADR-0024, limit 2, as amended in decision batch 3e).
+
+While the soldier holds that flag they also count, for that Titan's ladder, as meeting every rung any other candidate meets except hooked into its body (`flags`, `loudest`, `matches`; decision batch 10, OQ-184). So the shout takes the Titan off any comrade who is not hooked into its body or On Body, which is the room ADR-0010 leaves. It moves Attention only when the Titan next evaluates its ladder, and a card that resolves nothing, the last card of a decoy's hold included, leaves the flag standing.
 
 A Chapter 3 Fear Roll row can set the same flag with no action: the soldier holds the loudest flag for the event's Titan, if they hold a Position other than Distant relative to it (`attention.yaml`, `flags`, `loudest`; `data/harm/effect-types.yaml`, `draw-attention`; decision batch 7, 7-8). It lasts and is read exactly as Draw Attention's flag is.
 
 > **Design note (OQ-113):** A shout from beyond a Titan's reach is not what turns it, and a flare from there is Break Attention, which stays. Requiring a closer Position changes one action's requirement rather than the loudest test on every ladder, and needs no bar reading for a soldier who makes noise out of reach. Chapter 6, section 6.6 reports cutters who take Draw Attention against the Sprinting Abnormal under it.
+
+> **Design note (OQ-184):** Draw Attention set a flag on the fourth rung, under hooked into its body, nearest person in reach, and just hurt it, so the shout almost never moved a Titan: the comrade about to be mauled was usually the one meeting a higher rung, and the action that exists to pull a Titan off a comrade did nothing for the comrade who needed it. Matching every rung but the first fixes that without touching the ladder, the rungs, or any Abnormal's own ladder, because the ladder is still read as written and only the tied set changes. The first rung stays closed: a shout cannot turn a Titan off a blade at its Nape or a soldier On Body, which is exactly what ADR-0010 protects, and it can match anything below that. Because a Flight with no successes writes the same flag from any Position (section 5.2), the two are measured together, and the figures they move are ADR-0014 starting values whose committed readings are stale until the rerun (section 5.13).
 
 ### Break Attention and decoys
 
@@ -792,6 +799,7 @@ Only a Nape strike that reaches the Nape Depth kills a Titan in Phase 1 (`titan_
 ### The falling Titan
 
 A Focus Titan's body comes down on the soldiers under it when it dies and when it becomes grounded (`falling_titan`; decision batch 8, 8-9, 8-17, 8-18; OQ-146, OQ-151). It is Titan harm that no Behavior Table entry deals: it rolls no Attack Dice, and no Reaction answers it.
+- **The Anchor:** the body destroys 1 Anchor where it lands, resolved with the fall and before the Leap Clear rolls (section 5.2). It happens whether or not anyone is in the path, and Anchors never fall below 0.
 - **The path:** every soldier who holds On Body or Blind Spot relative to the Titan. An airborne soldier swings clear with no roll and keeps their Position. In Reach and Distant are outside the path. So is a soldier Grabbed in another Titan's hand, and one Grabbed in this Titan's hand at its grounding, who stays Grabbed. A soldier its death freed from its hand is in the path, at On Body.
 - **Leap Clear:** each soldier in the path who is not airborne, Down, or carried rolls `leap-clear`: Agility, with Gear Dice from ODM Gear or from the horse while mounted, needing 1 success. It is not an action and not a Reaction, so it spends no turn. Comrades at the same Position may Help, each spending their action, and it can be Pushed (Chapter 1, sections 1.5 and 1.8). A success clears the soldier, who holds In Reach relative to the Titan. A failure pins them.
 - **Down or carried:** a Down soldier in the path is pinned with no roll. A carried soldier follows their carrier: if the carrier clears, both hold In Reach; if the carrier is Pinned, carrying ends and both are Pinned, each with their own Critical Injury and pinning Body Part.
@@ -1044,12 +1052,14 @@ Every value in `size-classes.yaml` is a starting value for the ADR-0014 simulato
 - the Grab needs, penalties, and reach in `grab.yaml`;
 - Break Attention's needs;
 - Read's needs, Call It's successes, and their Bonus Dice rows in Chapter 1;
-- the Fly roll needs;
+- the Anchors each Anchor Rating gives, what a point of Momentum buys, and the Terrain Traits (section 5.2);
 - the Background clock lengths.
 
 The probe figures in this section's tables were measured with each entry's fixed need of dodge successes, before Attack Dice replaced it at 3 dice per point (decision batch 8, 8-1), and stand as that record. Every verdict in this section reads the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`; decision batch 8, 8-14 and 8-31), in which every target, band, and bar limit is Met and no fight reached the safety cap.
 
 Every figure, target, band, and bar limit in this section is measured at Standard Circumstances with no rulings: no framing beyond the setup table and no improvised acts. A table's rulings change what happens on a given night, not what these figures mean, and the playtest logs every non-Standard step named in a Titan Engagement, the roll it was named on, and every framed start (ADR-0014, as amended in decision batch 9, 9-17; OQ-167).
+
+**Stale since Flight (decision batch 10, OQ-182 to OQ-185).** Flight, Momentum, Anchors and the `wreck` effect, the loudest flag's match on the ladder, the mounted charge, and the blade swap that spends the move all change what a round holds, and Flight replaces the move rather than adding to it, so this is a retune and not a sensitivity row. Every figure, target, band, and bar limit printed in this section, and every figure in `docs/reviews/simulator-report.md` and in `tuning.yaml`, was measured before them. They stand as the record of the rules they measured and are stale until the rerun, which replaces them.
 
 `tuning.yaml` (`starting_values`) lists them. The simulator re-measures each with the full rules. When it changes one, the YAML file changes and this chapter follows. The numbers below come from the files at the time of writing; if the files change, the files govern.
 
@@ -1210,7 +1220,7 @@ ADR-0024, limit 12, keeps the tracked values as an index of what soldiers change
 | Dodge | `dodge` | `behavior-avoid` |
 | Swap initiative cards | `swap-initiative-card` (new, OQ-90) | `initiative-swap` (new) |
 | Use a Squad Tactic | `squad-tactic` (new, OQ-90) | `squad-tactic-use` (new) |
-| Moves, letting go, leaving, and returning | none: these are moves | `position-change` |
+| Moves, letting go, leaving, and returning; a Flight, which every ODM move is | none for the move itself; a Flight's roll is the entry `fly` | `position-change`, and `momentum-gain` on a Flight |
 | An improvised act (section 5.4; decision batch 9, 9-8) | its model entry | its model entry's |
 
 These are rules or procedure steps, not acts, so they need no tracked value of their own:
@@ -1222,16 +1232,18 @@ These are rules or procedure steps, not acts, so they need no tracked value of t
 - Background clocks;
 - witnesses' Fear Rolls;
 - the retreat clock and the retreat's forced moves;
+- an Anchor wrecked by a Titan's card or by its falling body, which changes `anchor-wreck` (section 5.2);
 - the end of a Titan Engagement.
 
 ### Rows and changes in earlier chapters
 
 The rows and pointers this chapter needs in Chapters 1 to 4 are applied in those chapters' own files:
-- **Chapter 1 Bonus Dice rows:** Read from Distant, Call It, and the Opening condition.
+- **Chapter 1 Bonus Dice rows:** Read from Distant, Call It, the Opening condition, and, for OQ-182, Momentum spent on Bite or Brace and the Open rating's Terrain Trait.
 - **Catalog rows:** the two new options and tracked values, and requirement pointers to this chapter's files.
 - **The Grabbed carrying row:** carrying ends with no fall when the carried comrade is Grabbed.
 - **Horses:** a successful riderless-horse decoy leaves the Titan Engagement, and the sheet records the horse as left.
-- **Sheet:** every soldier in a Titan Engagement has a Squad sheet row, whose positions column records their Position relative to each Focus Titan, and the character sheet's `positions` field mirrors it (Chapter 4, `data/gear/sheet-fields.yaml`).
+- **Sheet:** every soldier in a Titan Engagement has a Squad sheet row, whose positions column records their Position relative to each Focus Titan, and the character sheet's `positions` field mirrors it; the sheet also records the soldier's Momentum (Chapter 4, `data/gear/sheet-fields.yaml`).
+- **Chapter 4 rules this chapter now leans on:** every ODM move is a Flight, a clean line removes a round's Gas Roll, a Jam does not drop a soldier at Blind Spot at Urban, and Swap Blade Set spends the move in a Titan Engagement (sections 4.2, 4.3, and 4.4).
 - **Catalog needs:** the `break-attention` entry states Break Attention's needs, with the Feint and the decoys in a row, and points to its `needs_rule`.
 - **Pointers:** every Chapter 1 to 4 sentence that said Chapter 5 would state a rule now points to the file that does, including Chapter 1's turn order (`round.yaml`, `turn_order`) and the turn a dodge the Grab's card answered or compared gives back (`grab.yaml`, `countdown`, `failed_dodge`).
 
@@ -1246,6 +1258,7 @@ The rows and pointers this chapter needs in Chapters 1 to 4 are applied in those
 The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The example joins in round 3.
 
 **The field.**
+- **The engagement line** reads `Wooded | Anchors 2/2 | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut, Fall Back | Cloaks: - | No one standing since: -`. Nothing has wrecked an Anchor, so every soldier's Momentum cap is 2.
 - **The tracker row** reads `A Medium | cards 9 | Att: Jonas | Next: [hidden] | Prev: Roar | Eyes I0 LA I0 RA I0 LL B0 RL W1 | Op 1 (Jonas) | Regen 2/3 | Decoys 0 | Grab: - | Flags: -`.
 - **The left leg is Broken,** so the Titan is grounded. Jonas created its one Opening with a success beyond Breaking the leg last round.
 - **Private Mila Brandt** holds Blind Spot, with Strength 4, Clean Cut 1, Blade Set 1, Agility 3, ODM Gear 2, and Stress 1.
@@ -1254,7 +1267,7 @@ The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The exa
 
 **The deal.** Mila draws 6, the Titan draws 9, and Jonas draws 11. No one swaps.
 
-**Card 6: Mila.** She keeps her Position and takes a Nape strike, which she can make because Jonas holds the Titan's Attention.
+**Card 6: Mila.** She keeps her Position and takes a Nape strike, which she can make because Jonas holds the Titan's Attention. She holds no Momentum: she made no ODM move in round 2, so she lost it at that round's Momentum step.
 - **Bonus Dice.** She declares 3: Jonas's Opening (she did not create it) and 2 for the grounded Titan.
 - **Pool.** Strength 4, Clean Cut 1, and 3 Bonus Dice make 8 base dice, plus 1 Gear Die and 1 Stress Die.
 - **First roll.** The base dice show 6, 6, 3, 2, 5, 1, 4, and 2, the Gear Die shows 3, and the Stress Die 4. That is 2 successes against Nape Depth 4.
@@ -1269,8 +1282,8 @@ The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The exa
 - **Next.** Thrash becomes the previous behavior, Mila's flag clears, and the GM rolls the new Next Behavior out of sight.
 
 **Card 11: Jonas.** Jonas no longer holds Attention.
-- **His move** is an ODM move from In Reach to Blind Spot, a Wooded step.
-- **Bonus Dice.** He declares 4, the cap: 2 of Mila's Openings and 2 for the grounded Titan.
+- **His move** is an ODM move from In Reach to Blind Spot, a Wooded step, and every ODM move is a Flight. He rolls for Fly: Agility 3, ODM Gear 2, and Stress 2 make 3 base dice, 2 Gear Dice, and 2 Stress Dice. The base dice show 6, 4, and 2, the Gear Dice 3 and 5, and the Stress Dice 4 and 2. The step happens whatever the roll gives, and the one success gives him 1 Momentum, under the cap of 2.
+- **Bonus Dice.** He declares 4, the cap: 2 of Mila's Openings and 2 for the grounded Titan. His Momentum would buy a Bite, but the cap is full, so he keeps it.
 - **Pool.** Strength 3 and 4 Bonus Dice make 7 base dice, plus 1 Gear Die and 2 Stress Dice.
 - **The roll.** The base dice show 6, 6, 6, 2, 4, 1, and 5, the Gear Die 6, and the Stress Dice 3 and 2. That is 4 successes: the Nape Depth.
 
@@ -1279,6 +1292,6 @@ The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The exa
 - The last Opening, the hidden Next Behavior, and the clock are removed.
 - Positions relative to A end.
 - No Focus Titan is alive, so the Titan Engagement ends, and Ilse's turn after Jonas never comes.
-- Mila's dodge and Jonas's move used ODM Gear this round, so both make their Gas Rolls at once, before Chapter 3's end steps (section 5.3).
+- Mila's dodge and Jonas's Flight used ODM Gear this round, so both make their Gas Rolls at once, before Chapter 3's end steps (section 5.3). Jonas's Flight was ODM use twice over and still makes him one Gas Roll.
 
 Chapter 3's end steps begin. The first cancels Mila's round 4 turn, which her dodge spent in advance, so she owes nothing.

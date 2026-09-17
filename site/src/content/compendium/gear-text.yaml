@@ -47,7 +47,8 @@ items:
       - Your Gas Rating is 0. The training harness of the Graduation Exam has no canister, so this never applies to it.
     at_zero: >-
       It Jams. No Gear Dice, no ODM move, no Nape strike or close Body Part strike, and a fall if
-      you are airborne.
+      you are airborne. At the Urban rating a soldier at Blind Spot is on a roof rather than in the
+      air, so a Jam does not drop them.
     wear: Each point of wear lowers the current rating by 1.
     restore:
       - Field Repair, 1 point per success.
@@ -56,6 +57,7 @@ items:
     carried: Worn, with its fitted canister, its handles, and its scabbards. It counts as no item.
     extra:
       - A roll takes Gear Dice from one item only, chosen before you roll.
+      - In a Titan Engagement every ODM move you make on it is a Flight, rolled for Fly on this harness.
   gas-canister:
     what: >-
       The pressurised gas your harness runs on. The one fitted to your ODM Gear holds your Gas
@@ -84,7 +86,7 @@ items:
     carried: The set in your handles counts as no item. Every other Blade Set counts as 1.
     extra:
       - Your handles hold at most one Blade Set. When a Titan Engagement begins, empty handles take one of your carried sets.
-      - The swap costs neither your move nor your action, once during each of your own turns.
+      - In a Titan Engagement the swap spends your move, once during each of your own turns. It never spends your action, so a ruined set costs you that turn's Flight and not the strike that follows it. Outside one it costs nothing.
   horse:
     what: >-
       The mount Standard Issue gives you. You can mount only your own horse, and in a Titan

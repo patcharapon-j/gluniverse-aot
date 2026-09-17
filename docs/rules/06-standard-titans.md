@@ -946,7 +946,7 @@ The Squad fights Focus Titan A, the standard Medium Titan, at Anchor Rating Wood
 - **The telegraph.** The GM rolls the new Next Behavior: a 6, Grab. Fixed Grin is the previous behavior and both arms are unbroken, so Grab can be rolled. Its telegraph effect reveals it to every soldier at once.
 
 **Round 3.** Oskar draws 4, Renate 7, and the Titan 12.
-- **Card 4: Oskar** makes an ODM move from In Reach to Blind Spot, a Wooded step with no roll. He still holds Attention, which changes only when the Titan's card comes up, so he cannot strike the Nape. He strikes the eyes instead and scores 1 success: their count is 1 of Toughness 2, and he holds the just-hurt flag.
+- **Card 4: Oskar** makes an ODM move from In Reach to Blind Spot, a Wooded step. Every ODM move is a Flight, so he rolls for Fly and scores 2 successes, which give him 2 Momentum, the cap Wooded's 2 Anchors set (Chapter 5, section 5.2). The step would have happened on no successes too, though he would have come in loud. He still holds Attention, which changes only when the Titan's card comes up, so he cannot strike the Nape. He strikes the eyes instead and scores 1 success: their count is 1 of Toughness 2, and he holds the just-hurt flag.
 - **Card 7: Renate** stays In Reach and strikes the left leg for 1 success, a count of 1, which gives her the just-hurt flag too.
 - **Card 12: the Titan.**
   - **Attention.** No one is On Body or holds the hooked-by-strike flag. Renate is the only soldier In Reach, so she takes Attention on the second rung. The flags stay until this card's Next step.

@@ -83,12 +83,29 @@ function closest(set: readonly SoldierState[], label: string): SoldierState[] {
   return set.filter((s) => rank(s) === best);
 }
 
-function meeting(rung: string, set: readonly SoldierState[], inp: LadderInput, pool: readonly SoldierState[]): SoldierState[] {
-  if (rung === 'nearest') return set.length ? closest(set, inp.titan.label) : [];
-  return set.filter((s) => test(rung, s, inp, pool));
+/**
+ * evaluation.steps, loudest-matches (flags, loudest, matches; decision batch 10, OQ-184): while a
+ * soldier holds the loudest flag they count, for this Titan's ladder, as meeting every rung any
+ * other candidate meets except hooked-into-its-body, which is the room ADR-0010 leaves. They are
+ * kept whatever Position they hold, so a soldier who came in loud from Distant stays in the set; a
+ * Down or carried candidate is kept only where that rung's down_can_meet allows it. It adds no one
+ * where no candidate meets the rung.
+ */
+function loudAlso(rung: string, set: readonly SoldierState[], met: readonly SoldierState[], inp: LadderInput, pool: readonly SoldierState[]): SoldierState[] {
+  if (rung === 'hooked-into-its-body') return [...met];
+  const anyone = met.length > 0 || (rung !== 'nearest' && pool.some((s) => test(rung, s, inp, pool)));
+  if (!anyone) return [...met];
+  const has = new Set(met.map((s) => s.id));
+  const extra = set.filter((s) => !has.has(s.id) && inp.titan.flags.loud.includes(s.id) && (inp.downCanMeet[rung] || !(s.down || s.carriedBy)));
+  return extra.length ? [...met, ...extra] : [...met];
 }
 
-/** evaluation.steps: top, struck-first, narrow, holder, card, none. */
+function meeting(rung: string, set: readonly SoldierState[], inp: LadderInput, pool: readonly SoldierState[]): SoldierState[] {
+  const met = rung === 'nearest' ? (set.length ? closest(set, inp.titan.label) : []) : set.filter((s) => test(rung, s, inp, pool));
+  return loudAlso(rung, set, met, inp, pool);
+}
+
+/** evaluation.steps: top, loudest-matches, struck-first, narrow, holder, card, none. */
 export function evaluateLadder(inp: LadderInput): LadderResult {
   const pool = candidates(inp);
   if (!pool.length) return { holder: null, rung: null, tied: [], by: 'none' };

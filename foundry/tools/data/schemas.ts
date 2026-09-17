@@ -168,7 +168,8 @@ export const specialtyRow = z.strictObject({
   name: text,
   key_attribute: attributeId,
   summary: text,
-  talents: z.array(id).length(8),
+  // The list size is no longer fixed at eight (the Leader's holds nine).
+  talents: z.array(id).min(8),
   squadmate_template: id,
 });
 

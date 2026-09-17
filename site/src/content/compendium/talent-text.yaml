@@ -113,6 +113,9 @@ talents:
   unshaken-command:
     trigger: In a Titan Engagement, a comrade who holds your Position or a Position one step from you makes a Fear Roll, and you are not Down.
     effect: That Fear Roll uses your Resolve in place of the comrade's, if yours is higher.
+  shout-them-off:
+    trigger: You declare Draw Attention in a Titan Engagement.
+    effect: You may spend your move on it instead of your action, so the shout and a blade can fall in the same turn. Once per Titan Engagement.
   carrying-voice:
     trigger: You declare Rally.
     effect: >-

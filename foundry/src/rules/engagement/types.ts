@@ -4,10 +4,10 @@
  * never touch a document.
  */
 
+import type { TerrainTrait } from './momentum.ts';
+
 export type Position = 'distant' | 'in-reach' | 'on-body' | 'blind-spot';
 export const POSITION_IDS: readonly Position[] = ['distant', 'in-reach', 'on-body', 'blind-spot'];
-
-import type { TerrainTrait } from './momentum.ts';
 
 export type Mode = 'titan' | 'skirmish';
 export type Step = 'setup' | 'wings' | 'deal' | 'swap' | 'play' | 'end' | 'closing';
