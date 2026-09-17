@@ -357,6 +357,10 @@ body.wof-hud-on #ui-middle #ui-top { padding-top: var(--wof-hud-h, 0); }
 .wof-board .ck .dst { position: absolute; right: 4px; bottom: 3px; transform: rotate(-8deg); font-size: var(--t-xs); padding: 0 4px; border-width: 1.5px; display: none; }
 .wof-board .ck.done .dst { display: inline-block; }
 .wof-board .checks .go { flex: 0 0 auto; display: flex; align-items: center; }
+/* The engagement-end steps: nine, so they wrap onto two rows. */
+.wof-board .checks.closing { flex-wrap: wrap; row-gap: var(--s2); }
+.wof-board .checks.closing .ck { flex: 1 1 150px; }
+.wof-board .checks.closing .ttl { flex-basis: 100%; flex-direction: row; align-items: baseline; gap: var(--s2); }
 
 @container (max-width: 760px) {
   .wof-board .spread { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; overflow: auto; }

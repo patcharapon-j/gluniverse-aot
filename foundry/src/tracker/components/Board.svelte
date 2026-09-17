@@ -300,7 +300,7 @@
           <p class="lognote">{t('board.noClocks')}</p>
         {/if}
       </div></div>
-      <div class="checks">
+      <div class="checks" class:closing={v.closing}>
         <div class="ttl"><span class="lbl">{v.closing ? t('board.engagementEnd') : t('board.roundEnd')}</span><strong>{t('board.checklist')}</strong><span class="note">{v.step === 'end' || v.closing ? (v.allStamped ? t('board.allStamped') : t('board.inOrder')) : t('board.afterLast')}</span></div>
         {#each v.checks as ck (ck.index)}
           <div class="ck" class:done={ck.state === 'done' || ck.state === 'skipped'} class:next={ck.next}>
