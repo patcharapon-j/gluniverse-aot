@@ -75,6 +75,8 @@ export interface ActionCard extends CardBase {
   injury: { name: string; penalty: number } | null;
   /** The GM's call card this roll answers. */
   call: string | null;
+  /** What the roll is made against in the running engagement. */
+  target?: RollTarget | null;
 }
 
 export interface TableCard extends CardBase {
@@ -107,6 +109,24 @@ export interface AttackCard extends CardBase {
   critical: boolean;
   targets: { actor: string; name: string }[];
   reactions: { actor: string; name: string; successes: number; message: string }[];
+  /** The Focus Titan whose card rolled it, when the tracker rolled it. */
+  titan?: { combat: string; key: string; label: string };
+}
+
+/** What a roll is made against in an engagement (foundry/docs/tracker-plan.md, section 5). */
+export interface RollTarget {
+  combat: string;
+  /** The Focus Titan's token id. */
+  titan?: string;
+  part?: string;
+  decoy?: string;
+  /** Openings spent on a Nape strike. */
+  openings?: number;
+  /** A Foe's token id, and whether the Fight is a Grapple. */
+  foe?: string;
+  grapple?: boolean;
+  /** Break Free made on a Grabbed comrade's behalf (Pry Loose). */
+  forSoldier?: string;
 }
 
 export interface CallCard extends CardBase {
@@ -144,7 +164,21 @@ export interface LifepathCard extends CardBase {
   struck: boolean;
 }
 
-export type Card = ActionCard | TableCard | GasCard | AttackCard | CallCard | LifepathCard;
+/** A Foe's attack or Guard in a Skirmish (skirmish.yaml, attack). */
+export interface FoeAttackCard extends CardBase {
+  kind: 'foe-attack';
+  combat: string;
+  foe: string;
+  weapon: string;
+  usedWith: 'fight' | 'shoot';
+  faces: number[];
+  severity: number;
+  target: { actor: string; name: string } | null;
+  cancel: boolean;
+  reactions: { actor: string; name: string; successes: number; message: string }[];
+}
+
+export type Card = ActionCard | TableCard | GasCard | AttackCard | CallCard | LifepathCard | FoeAttackCard;
 
 /** What the viewer may do on this card, decided by the chat code from permissions. */
 export interface CardViewer {
@@ -409,6 +443,30 @@ function attackCard(t: T, c: AttackCard, v: CardViewer): string {
 </div>`;
 }
 
+function foeAttackCard(t: T, c: FoeAttackCard, v: CardViewer): string {
+  const whiff = c.severity <= 0;
+  const target = c.target ? t('WOF.Roll.attack.vs', { names: c.target.name }) : t('WOF.Roll.attack.severity');
+  const reactions = c.reactions
+    .map((r) => {
+      const res = attackResult(c.severity, r.successes);
+      return `<li>${esc(t('WOF.Roll.attack.dodged', { name: r.name, n: r.successes }))}: <b>${esc(res.lands ? t('WOF.Roll.attack.landsNet', { net: res.net }) : t('WOF.Roll.attack.misses'))}</b></li>`;
+    })
+    .join('');
+  const entries = c.usedWith === 'fight' ? ['block', 'dodge'] : ['dodge'];
+  const buttons =
+    !whiff && c.cancel && v.canDodge && !c.reactions.length
+      ? `<div class="rc-a">${entries.map((e) => `<button class="mini" type="button" data-wof-act="foeReact" data-entry="${e}"><img src="${icon(`action-${e}`)}" alt="">${esc(t(`WOF.Roll.attack.${e}`))}</button>`).join('')}</div>`
+      : '';
+  const note = c.cancel ? '' : `<p class="block-why quiet">${esc(t('WOF.Roll.attack.noReaction'))}</p>`;
+  return `${header(t, { img: c.img, name: c.weapon, time: c.time, who: c.actorName, glyph: actionIcon(c.usedWith) }, '', v.isGM)}
+<div class="rc-b">
+  <div class="dice">${drow('base', 'die-base', t('WOF.Roll.die.baseDice'), c.faces.map((f) => dieIcon(t, 'base', f)).join(''))}</div>
+  <div class="result"><span class="big red">${c.severity}</span><span class="rt"><b>${esc(target)}</b>${esc(whiff ? t('WOF.Roll.attack.whiff') : t('WOF.Roll.attack.landsOn'))}</span></div>
+  ${reactions ? `<ul class="reacts">${reactions}</ul>` : ''}${note}
+  ${buttons}
+</div>`;
+}
+
 function callCard(t: T, c: CallCard, v: CardViewer): string {
   const flag = `<span class="flag">${esc(t('WOF.Roll.called'))}</span>`;
   const roll =
@@ -458,8 +516,10 @@ export function renderCard(t: T, c: Card, v: CardViewer, deathRows: { id: string
           ? gasCard(t, c, v)
           : c.kind === 'attack'
             ? attackCard(t, c, v)
-            : callCard(t, c, v);
-  return `<article class="wof-card rc${c.kind === 'attack' ? ' titanic' : ''}" data-kind="${c.kind}">${body}</article>`;
+            : c.kind === 'foe-attack'
+              ? foeAttackCard(t, c, v)
+              : callCard(t, c, v);
+  return `<article class="wof-card rc${c.kind === 'attack' || c.kind === 'foe-attack' ? ' titanic' : ''}" data-kind="${c.kind}">${body}</article>`;
 }
 
 /** A plain summary kept in the message content, for places that do not run the system (exports, the chat log search). */
@@ -477,5 +537,7 @@ export function plainSummary(c: Card): string {
       return `${c.actorName}: ${c.label}`;
     case 'lifepath':
       return `${c.actorName}: ${c.title}, ${c.big} ${c.text}`;
+    case 'foe-attack':
+      return `${c.actorName}: ${c.weapon}, ${c.severity}`;
   }
 }

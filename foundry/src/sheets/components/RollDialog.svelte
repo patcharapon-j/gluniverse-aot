@@ -6,6 +6,7 @@
    */
   import type { RollChoice, RollDialogView } from '../../dice/roll-dialog.ts';
   import { buildRollPool } from '../../rules/roll.ts';
+  import { napeBonus } from '../../rules/engagement/strikes.ts';
   import { t } from '../context.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import PoolDots from './PoolDots.svelte';
@@ -30,6 +31,29 @@
   let passive = $state(false);
   let injury = $state(v.injuries[0]?.id ?? '');
 
+  // The running engagement: what the roll is made against (tracker-plan section 5.1).
+  const eg = v.engagement;
+  let targetId = $state(eg?.options[0]?.id ?? '');
+  const target = $derived(eg?.options.find((o) => o.id === targetId) ?? null);
+  let partId = $state(eg?.options[0]?.parts.find((p) => !p.block)?.id ?? '');
+  let decoyId = $state(eg?.options[0]?.decoys.find((d) => !d.block)?.id ?? '');
+  let spend = $state(0);
+  let grapple = $state(false);
+  const decoy = $derived(target?.decoys.find((d) => d.id === decoyId) ?? null);
+  const targetBonus = $derived.by(() => {
+    if (!target) return 0;
+    if (eg?.entry === 'nape-strike') {
+      const b = napeBonus(Math.min(spend, target.openings), target.grounded, CONFIG.WOF.engagement.bonus, bonus, v.bonusCap);
+      return b.openings + b.grounded;
+    }
+    return grapple ? 0 : target.bonus;
+  });
+  const targetNeeds = $derived(eg?.entry === 'break-attention' ? (decoy?.needs ?? null) : (target?.needs ?? null));
+  $effect(() => {
+    if (eg && targetNeeds !== null && !v.lockStakes) needs = targetNeeds;
+  });
+  const targetBlock = $derived(!eg ? null : !target ? t('WOF.Tracker.block.noTarget') : eg.entry === 'body-part-strike' && !target.parts.find((p) => p.id === partId && !p.block) ? t('WOF.Tracker.block.pickPart') : eg.entry === 'break-attention' && (!decoy || decoy.block) ? t('WOF.Tracker.block.pickDecoy') : target.block);
+
   const step = $derived(v.circumstances.find((c) => c.id === circumstance) ?? null);
   const injuryPenalty = $derived(v.injuries.find((i) => i.id === injury)?.penalty ?? 0);
   const pool = $derived(
@@ -39,9 +63,13 @@
         attribute,
         talentChoice: talent,
         gearChoice: gear,
-        bonus,
+        bonus: Math.min(v.bonusCap, bonus + targetBonus),
         conditionsMet: met,
-        penalties: injuryPenalty ? [...v.inputs.penalties, { source: t('WOF.Roll.injury'), dice: injuryPenalty, entries: 'all' }] : v.inputs.penalties,
+        penalties: [
+          ...v.inputs.penalties,
+          ...(injuryPenalty ? [{ source: t('WOF.Roll.injury'), dice: injuryPenalty, entries: 'all' as const }] : []),
+          ...(target?.penalty ? [{ source: t('WOF.Tracker.liftedPenalty'), dice: target.penalty, entries: 'all' as const }] : []),
+        ],
       },
       v.showCircumstances ? step : null,
     ),
@@ -66,6 +94,20 @@
       conditionsMet: met,
       passive,
       injury: injury || null,
+      target:
+        eg && target
+          ? {
+              combat: eg.combat,
+              ...(eg.kind === 'titan' ? { titan: target.id } : { foe: target.id }),
+              ...(eg.entry === 'body-part-strike' ? { part: partId } : {}),
+              ...(eg.entry === 'break-attention' ? { decoy: decoyId } : {}),
+              ...(eg.entry === 'nape-strike' ? { openings: Math.min(spend, target.openings) } : {}),
+              ...(eg.grapple && grapple ? { grapple: true } : {}),
+              ...(target.forSoldier ? { forSoldier: target.forSoldier } : {}),
+            }
+          : null,
+      targetBonus,
+      targetPenalty: target?.penalty ?? 0,
     } satisfies RollChoice);
   }
 </script>
@@ -91,6 +133,38 @@
   <div class="rd-pool"><PoolDots {pool} size="big" /></div>
 
   <div class="rd-grid">
+    {#if eg}
+      <label class="lbl" for="{sheet.id}-against">{t('WOF.Tracker.roll.against')}</label>
+      <select id="{sheet.id}-against" bind:value={targetId}>
+        {#each eg.options as o (o.id)}<option value={o.id} disabled={!!o.block}>{o.name}{o.block ? ` (${o.block})` : ''}</option>{/each}
+      </select>
+      {#if eg.entry === 'body-part-strike' && target}
+        <label class="lbl" for="{sheet.id}-part">{t('WOF.Tracker.roll.part')}</label>
+        <select id="{sheet.id}-part" bind:value={partId}>
+          {#each target.parts as p (p.id)}<option value={p.id} disabled={!!p.block}>{p.name}{p.block ? ` (${p.block})` : ''}</option>{/each}
+        </select>
+      {/if}
+      {#if eg.entry === 'break-attention' && target}
+        <label class="lbl" for="{sheet.id}-decoy">{t('WOF.Tracker.roll.decoy')}</label>
+        <select id="{sheet.id}-decoy" bind:value={decoyId}>
+          {#each target.decoys as d (d.id)}<option value={d.id} disabled={!!d.block}>{d.name}{d.block ? ` (${d.block})` : ` · ${t('WOF.Tracker.roll.needsN', { n: d.needs })}`}</option>{/each}
+        </select>
+      {/if}
+      {#if eg.entry === 'nape-strike' && target}
+        <span class="lbl">{t('WOF.Tracker.roll.openings')}</span>
+        <span class="pick" role="group" aria-label={t('WOF.Tracker.roll.openings')}>
+          {#each Array.from({ length: target.openings }) as _, i (i)}
+            <button type="button" aria-pressed={i < spend} aria-label={t('WOF.Tracker.roll.spendN', { n: i + 1 })} onclick={() => (spend = spend === i + 1 ? i : i + 1)}><i class="op{i < spend ? '' : ' o'}"></i></button>
+          {:else}<small class="note">{t('WOF.Tracker.roll.noOpenings')}</small>{/each}
+          {#if target.grounded}<small class="note">{t('WOF.Tracker.roll.grounded', { n: CONFIG.WOF.engagement.bonus.grounded })}</small>{/if}
+        </span>
+      {/if}
+      {#if eg.grapple}
+        <span class="lbl">{t('WOF.Tracker.roll.grapple')}</span>
+        <label class="choice"><input type="checkbox" bind:checked={grapple} /><span>{t('WOF.Tracker.roll.grappleHint')}</span></label>
+      {/if}
+      {#if targetBonus}<span class="lbl"></span><small class="note">{t('WOF.Tracker.roll.targetBonus', { n: targetBonus })}</small>{/if}
+    {/if}
     {#if v.attributes.length > 1}
       <label class="lbl" for="{sheet.id}-attr">{t('WOF.Roll.dialog.attribute')}</label>
       <select id="{sheet.id}-attr" bind:value={attribute}>
@@ -189,9 +263,10 @@
 
   {#each v.notes as n, i (i)}<p class="note">{n}</p>{/each}
   {#if pool.blocked}<p class="note warn">{t('WOF.Roll.dialog.blocked')}</p>{/if}
+  {#if targetBlock}<p class="note warn">{targetBlock}</p>{/if}
 
   <footer class="rd-f">
     <span class="note">{pool.penalties.map((p) => `${p.source} −${p.dice}`).join(' · ')}</span>
-    <button class="mini red" type="submit" disabled={!!pool.blocked}><img src="systems/wings-of-freedom/assets/icons/roll-push.webp" alt="" />{t('WOF.Roll.dialog.roll')}</button>
+    <button class="mini red" type="submit" disabled={!!pool.blocked || !!targetBlock}><img src="systems/wings-of-freedom/assets/icons/roll-push.webp" alt="" />{t('WOF.Roll.dialog.roll')}</button>
   </footer>
 </form>

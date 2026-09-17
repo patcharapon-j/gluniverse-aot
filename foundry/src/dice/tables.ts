@@ -118,7 +118,7 @@ export async function rollStressResponse(actor: any): Promise<any> {
 }
 
 /** The Gas Roll: two dice, three after a Pushed ODM Gear roll this round (Light Trigger: two), 1s lower the Gas Rating. */
-export async function rollGas(actor: any, opts: { pushedOdm?: boolean } = {}): Promise<any> {
+export async function rollGas(actor: any, opts: { pushedOdm?: boolean; silent?: boolean } = {}): Promise<any> {
   const ap = actorPool(actor);
   if (blocked(ap, 'gas-roll')) return null;
   const W = CONFIG.WOF;
@@ -126,6 +126,8 @@ export async function rollGas(actor: any, opts: { pushedOdm?: boolean } = {}): P
   const light = readyTalent(ap, 'light-trigger');
   const result = ap.squadmate
     ? { pushed: false, light: false }
+    : opts.silent
+      ? { pushed: !!(opts.pushedOdm || flagged), light: !!light }
     : await foundry.applications.api.DialogV2.input({
         window: { title: t('WOF.Roll.gas.title') },
         classes: ['wof-pick'],

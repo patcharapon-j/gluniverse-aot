@@ -203,6 +203,8 @@ export function defineActorModels() {
         // Play state (milestone 4 drives it; milestone 2 edits it by hand)
         regeneration: k.nonNeg(),
         openings: k.nonNeg(),
+        // Who created each Opening (a soldier's actor id; '' for one added by hand): titan-harm.yaml, openings
+        openings_by: new f.ArrayField(new f.StringField({ required: true, blank: true })),
         // The public heave count of the body (titan-harm.yaml, falling_titan, heave, count)
         heave_count: k.nonNeg(),
         next_behavior: new f.SchemaField({ entry: k.str(), revealed: k.bool() }),

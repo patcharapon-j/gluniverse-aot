@@ -6,6 +6,15 @@ import { cycleState, fillRegeneration, isGrounded, nextBehaviorFor, strikeSucces
 
 const parts = (actor: any): BodyPart[] => foundry.utils.deepClone(actor.system.toObject().body_parts);
 
+/** The Openings list resized to n: hand-added Openings have no creator; removals take the newest first. */
+export function openingsTo(actor: any, n: number): { 'system.openings': number; 'system.openings_by': string[] } {
+  const by = [...(actor.system.toObject().openings_by ?? [])] as string[];
+  while (by.length < actor.system.openings) by.push('');
+  const count = Math.max(0, n);
+  while (by.length < count) by.push('');
+  return { 'system.openings': count, 'system.openings_by': by.slice(0, count) };
+}
+
 /** A living Titan that stops being grounded clears its heave count (titan-harm.yaml, grounded, ends). */
 function standingPatch(before: BodyPart[], after: BodyPart[]): Record<string, unknown> {
   return isGrounded(before) && !isGrounded(after) ? { 'system.heave_count': 0 } : {};
@@ -32,7 +41,7 @@ export function strikePart(actor: any, index: number) {
   const list = parts(actor);
   const { part, openings } = strikeSuccesses(list[index], 1);
   list[index] = part;
-  return actor.update({ 'system.body_parts': list, 'system.openings': actor.system.openings + openings });
+  return actor.update({ 'system.body_parts': list, ...openingsTo(actor, actor.system.openings + openings) });
 }
 
 export async function fillRegen(actor: any): Promise<RegenerationResult | null> {
@@ -42,7 +51,7 @@ export async function fillRegen(actor: any): Promise<RegenerationResult | null> 
   await actor.update({
     'system.regeneration': next.filled,
     'system.body_parts': next.parts,
-    'system.openings': next.openings,
+    ...openingsTo(actor, next.openings),
     ...(next.result?.stands ? { 'system.heave_count': 0 } : {}),
   });
   return next.result;
@@ -53,7 +62,7 @@ export function stepBackRegen(actor: any) {
 }
 
 export function setOpenings(actor: any, n: number) {
-  return actor.update({ 'system.openings': Math.max(0, n) });
+  return actor.update(openingsTo(actor, n));
 }
 
 /**

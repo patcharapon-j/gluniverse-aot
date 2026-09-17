@@ -766,4 +766,15 @@ describe('tracker requests (the GM proxy guard)', () => {
     expect(fallBackBlock({ ...fb, tactics: { held: ['fall-back'], used: ['fall-back', 'fall-back@2'] } }, 'b', 'tA')).toBeNull();
     expect(checkTrackerRequest(world(snap(), ['a']), { act: 'nope' } as never)).toMatch(/malformed|unknown/);
   });
+
+  it('checks a Skirmish close-in or break-away', () => {
+    const sk = { ...snap({ mode: 'skirmish', step: 'play' }), titans: [] };
+    const w = (mine: string[], holding: string[] = []): TrackerWorld => ({ ...world(sk, mine), skirmish: () => ({ foes: ['f1'], holding }) });
+    expect(checkTrackerRequest(w(['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toBeNull();
+    expect(checkTrackerRequest(w(['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f9' })).toMatch(/not in the Skirmish/);
+    expect(checkTrackerRequest(w(['b']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/owner/);
+    expect(checkTrackerRequest(w(['a'], ['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Held/);
+    expect(checkTrackerRequest({ ...w(['a']), snapshot: () => ({ ...sk, soldiers: [soldier('a', { down: true })] }) }, { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Down/);
+    expect(checkTrackerRequest(world(snap({ step: 'play' }), ['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Skirmish/);
+  });
 });

@@ -9,6 +9,10 @@ import { SYSTEM_ID } from '../config.ts';
 import { boundStatuses, statusBinding } from '../rules/statuses.ts';
 
 const STATUS_PREFIX = 'WOF.Status';
+
+/** The statuses the running engagement gives an actor (set by src/tracker/statuses.ts). */
+let engagementStatuses: (actorId: string) => string[] = () => [];
+export const setEngagementStatuses = (fn: (actorId: string) => string[]) => (engagementStatuses = fn);
 /** Unsaved effects shown for bound statuses, per actor. */
 const SHOWN = new WeakMap<object, Map<string, any>>();
 
@@ -42,7 +46,7 @@ export function defineActorDocument() {
     prepareData() {
       super.prepareData();
       const sys: any = this.system ?? {};
-      this.boundStatuses = boundStatuses(this.type, sys, this.items ?? []);
+      this.boundStatuses = boundStatuses(this.type, sys, this.items ?? [], this.id ? engagementStatuses(this.id) : []);
       for (const id of this.boundStatuses) this.statuses.add(id);
     }
 
@@ -82,8 +86,9 @@ export function defineActorDocument() {
       const isOn = (this.boundStatuses ?? []).includes(statusId);
       const want = options.active ?? !isOn;
       if (want === isOn) return undefined;
-      if (bind.kind === 'derived') {
-        ui.notifications.info(game.i18n.format('WOF.Status.followsSheet', { status: game.i18n.localize(`${STATUS_PREFIX}.${statusId}`) }));
+      if (bind.kind === 'derived' || bind.kind === 'engagement') {
+        const key = bind.kind === 'derived' ? 'WOF.Status.followsSheet' : 'WOF.Status.followsTracker';
+        ui.notifications.info(game.i18n.format(key, { status: game.i18n.localize(`${STATUS_PREFIX}.${statusId}`) }));
         return undefined;
       }
       await this.update({ [bind.path]: want });
@@ -113,6 +118,7 @@ export function defineTokenHUD() {
         const rule = text[c.id];
         if (rule) c.title = `${c.title}: ${rule}`;
         if (kind === 'derived') c.title = `${c.title} (${game.i18n.localize('WOF.Status.derivedHint')})`;
+        if (kind === 'engagement') c.title = `${c.title} (${game.i18n.localize('WOF.Status.trackerHint')})`;
       }
       return choices;
     }

@@ -97,8 +97,9 @@ describe('token statuses bound to the model', () => {
     expect(statusBinding('squadmate', 'pinned')).toEqual({ kind: 'field', path: 'system.pinned.active' });
     expect(statusBinding('foe', 'held')).toEqual({ kind: 'field', path: 'system.held' });
     expect(statusBinding('soldier', 'jammed')).toEqual({ kind: 'derived' });
-    expect(statusBinding('soldier', 'grabbed')).toEqual({ kind: 'manual' });
-    expect(statusBinding('soldier', 'held')).toEqual({ kind: 'manual' });
+    expect(statusBinding('soldier', 'grabbed')).toEqual({ kind: 'engagement' });
+    expect(statusBinding('soldier', 'held')).toEqual({ kind: 'engagement' });
+    expect(boundStatuses('squadmate', {}, [], ['engaged', 'grabbed'])).toEqual(['grabbed', 'engaged']);
     expect(statusBinding('foe', 'engaged')).toEqual({ kind: 'manual' });
   });
 });

@@ -7,6 +7,7 @@ import type { MindEffect } from '../../tools/config-data.ts';
 import type { AttributeId } from '../rules/derived.ts';
 import type { PoolComponent, PoolGear, PoolInputs, PoolPenalty, PoolTalent } from '../rules/pool.ts';
 import type { ResponseEffect } from '../rules/roll.ts';
+import { engagementContext } from './engagement-context.ts';
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
@@ -157,9 +158,12 @@ export function entryBlock(ap: ActorPool, entry: any): string | null {
   if (ap.down && entry.id !== 'death-roll' && entry.id !== 'gas-roll') {
     return entry.id === 'fear-roll' ? t('WOF.Roll.block.downFear') : t('WOF.Roll.block.down');
   }
-  // A Titan grounded by a Broken leg lifts the ODM requirement (titan-harm.yaml, grounded); the
-  // system reads it from the Titans on the viewed scene.
-  if (entry.id === 'nape-strike' && !groundedTitanInScene()) {
+  // In a running engagement the tracker knows the struck Titan (rules question 6).
+  const context = engagementContext(ap.actor, entry);
+  if (context.block) return context.block;
+  // A Titan grounded by a Broken leg lifts the ODM requirement (titan-harm.yaml, grounded); outside
+  // an engagement the system reads it from the Titans on the viewed scene.
+  if (entry.id === 'nape-strike' && !context.pick && !groundedTitanInScene()) {
     if (!ap.odm) return t('WOF.Roll.block.noOdm');
     if (ap.odm.current <= 0) return t('WOF.Roll.block.jammed');
     if (ap.gas <= 0) return t('WOF.Roll.block.dry');

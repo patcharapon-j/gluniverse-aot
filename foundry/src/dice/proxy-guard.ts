@@ -77,7 +77,7 @@ export function checkCardRewrite(w: GuardWorld, messageId: string, stored: Card 
   const strip = (c: Card) => {
     const x: Record<string, unknown> = { ...c, ops: (c.ops ?? []).map(withoutState) };
     if (c.kind === 'action') delete x.cover;
-    if (c.kind === 'attack') delete x.reactions;
+    if (c.kind === 'attack' || c.kind === 'foe-attack') delete x.reactions;
     if (c.kind === 'call') delete x.rolled;
     return x;
   };
@@ -92,8 +92,8 @@ export function checkCardRewrite(w: GuardWorld, messageId: string, stored: Card 
     const why = checkCover(w, messageId, stored, next.cover);
     if (why) return why;
   }
-  if (stored.kind === 'attack' && next.kind === 'attack' && !same(stored.reactions, next.reactions)) {
-    const why = checkReactions(w, messageId, stored.reactions, next.reactions);
+  if ((stored.kind === 'attack' || stored.kind === 'foe-attack') && next.kind === stored.kind && !same(stored.reactions, (next as typeof stored).reactions)) {
+    const why = checkReactions(w, messageId, stored.reactions, (next as typeof stored).reactions);
     if (why) return why;
   }
   if (stored.kind === 'call' && next.kind === 'call' && stored.rolled !== next.rolled) {

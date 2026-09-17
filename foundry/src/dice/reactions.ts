@@ -5,7 +5,7 @@
  */
 import { titanSuccesses } from '../rules/roll.ts';
 import { entryView } from '../sheets/titan-view.ts';
-import type { ActionCard, AttackCard } from './card.ts';
+import type { ActionCard, AttackCard, FoeAttackCard } from './card.ts';
 import { successesOf } from './card.ts';
 import { cardOf, clock, postCard, saveCard, t } from './post.ts';
 import { WofRoll } from './terms.ts';
@@ -13,15 +13,22 @@ import { WofRoll } from './terms.ts';
 /** Writes (or rewrites, after a Push) a dodge's successes on the attack card. */
 export async function recordReaction(attackMessageId: string, dodge: ActionCard, dodgeMessageId: string): Promise<void> {
   const message = game.messages.get(attackMessageId);
-  const card = cardOf(message) as AttackCard | undefined;
-  if (!card || card.kind !== 'attack') return;
+  const card = cardOf(message) as AttackCard | FoeAttackCard | undefined;
+  if (!card || (card.kind !== 'attack' && card.kind !== 'foe-attack')) return;
   const reactions = card.reactions.filter((r) => r.message !== dodgeMessageId);
   reactions.push({ actor: dodge.actor, name: dodge.actorName, successes: successesOf(dodge), message: dodgeMessageId });
   await saveCard(message, { ...card, reactions });
 }
 
 /** The GM rolls a Titan's Behavior Table entry (Titan Dice on 5 and 6, never Pushed, never adjusted). */
-export async function rollTitanAttack(titan: any, entryId: string): Promise<any> {
+export interface TitanAttackOptions {
+  targets?: { actor: string; name: string }[];
+  titan?: { combat: string; key: string; label: string };
+  /** Dodges already made against this Titan this round, which cancel against this card too. */
+  reactions?: AttackCard['reactions'];
+}
+
+export async function rollTitanAttack(titan: any, entryId: string, opts: TitanAttackOptions = {}): Promise<any> {
   if (!game.user.isGM) return null;
   const all = titan.system.toObject().behavior_table.entries as any[];
   const entry = all.find((e) => e.id === entryId);
@@ -32,10 +39,12 @@ export async function rollTitanAttack(titan: any, entryId: string): Promise<any>
   const roll = await WofRoll().rollPool({ titan: entry.attack_dice });
   const faces = roll.facesOf('titan');
   const view = entryView(entry, all, titan.system.toObject().body_parts ?? []);
-  const targets = [...(game.user.targets ?? [])]
-    .map((tok: any) => tok.actor)
-    .filter((a: any) => a && (a.type === 'soldier' || a.type === 'squadmate'))
-    .map((a: any) => ({ actor: a.uuid, name: a.name }));
+  const targets =
+    opts.targets ??
+    [...(game.user.targets ?? [])]
+      .map((tok: any) => tok.actor)
+      .filter((a: any) => a && (a.type === 'soldier' || a.type === 'squadmate'))
+      .map((a: any) => ({ actor: a.uuid, name: a.name }));
   const card: AttackCard = {
     v: 1,
     kind: 'attack',
@@ -52,7 +61,8 @@ export async function rollTitanAttack(titan: any, entryId: string): Promise<any>
     effects: view.effects,
     critical: (entry.effects as any[]).some((e) => e.type === 'critical-injury'),
     targets,
-    reactions: [],
+    reactions: (opts.reactions ?? []).filter((r) => r.actor),
+    ...(opts.titan ? { titan: opts.titan } : {}),
   };
   return postCard(titan, card, [roll], 'public');
 }

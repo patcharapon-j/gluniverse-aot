@@ -5,10 +5,14 @@
  * - `field`: the status is a stored boolean; the HUD toggles that field.
  * - `derived`: the status follows other data (derived values, gear items, a carried comrade); the
  *   HUD cannot switch it, the sheet changes the data it follows.
- * - `manual`: the model does not track it yet (the Engagement tracker, milestone 4, will); the HUD
- *   adds or removes an ordinary Active Effect.
+ * - `engagement`: the running engagement records it (milestone 4: Grabbed, Engaged, a soldier's
+ *   Held); the HUD cannot switch it, the tracker changes it.
+ * - `manual`: nothing records it; the HUD adds or removes an ordinary Active Effect.
  */
-export type StatusBinding = { kind: 'field'; path: string } | { kind: 'derived' } | { kind: 'manual' };
+export type StatusBinding = { kind: 'field'; path: string } | { kind: 'derived' } | { kind: 'engagement' } | { kind: 'manual' };
+
+/** The statuses the Engagement tracker derives for soldiers and Squadmates, in display order. */
+export const ENGAGEMENT_STATUSES = ['grabbed', 'engaged', 'held'] as const;
 
 const PC_FIELDS: Record<string, string> = { down: 'system.down', pinned: 'system.pinned.active', airborne: 'system.airborne' };
 const PC_DERIVED = new Set(['untreated-injury', 'jammed', 'overloaded', 'mounted', 'lame-horse', 'carrying', 'carried']);
@@ -18,6 +22,7 @@ export function statusBinding(actorType: string, statusId: string): StatusBindin
   if (actorType === 'soldier' || actorType === 'squadmate') {
     if (PC_FIELDS[statusId]) return { kind: 'field', path: PC_FIELDS[statusId] };
     if (PC_DERIVED.has(statusId)) return { kind: 'derived' };
+    if ((ENGAGEMENT_STATUSES as readonly string[]).includes(statusId)) return { kind: 'engagement' };
   }
   return { kind: 'manual' };
 }
@@ -38,7 +43,7 @@ export interface StatusItem {
 }
 
 /** The bound statuses (field and derived) the actor's data holds right now, in display order. */
-export function boundStatuses(actorType: string, s: StatusInputs, items: Iterable<StatusItem>): string[] {
+export function boundStatuses(actorType: string, s: StatusInputs, items: Iterable<StatusItem>, engagement: readonly string[] = []): string[] {
   if (actorType === 'foe') return s.held ? ['held'] : [];
   if (actorType !== 'soldier' && actorType !== 'squadmate') return [];
   const list = [...items];
@@ -53,5 +58,6 @@ export function boundStatuses(actorType: string, s: StatusInputs, items: Iterabl
   if (s.derived?.lame) out.push('lame-horse');
   if (s.carrying) out.push('carrying');
   if (s.carried_by) out.push('carried');
+  for (const id of ENGAGEMENT_STATUSES) if (engagement.includes(id)) out.push(id);
   return out;
 }

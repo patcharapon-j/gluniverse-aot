@@ -8,6 +8,7 @@ import { named, SvelteSheetMixin } from '../sheets/svelte-sheet.ts';
 import type { AttributeId } from '../rules/derived.ts';
 import type { PoolInputs } from '../rules/pool.ts';
 import type { Circumstance } from '../rules/roll.ts';
+import type { EngagementPick, EngagementChoice } from './engagement-context.ts';
 
 export interface RollDialogView {
   title: string;
@@ -36,6 +37,8 @@ export interface RollDialogView {
   passiveOption: boolean;
   injuries: { id: string; name: string; penalty: number }[];
   notes: string[];
+  /** What the running engagement lets the roll be made against. */
+  engagement: EngagementPick | null;
 }
 
 export interface RollChoice {
@@ -49,6 +52,11 @@ export interface RollChoice {
   conditionsMet: string[];
   passive: boolean;
   injury: string | null;
+  target: EngagementChoice | null;
+  /** Bonus Dice the target gives (Openings, a grounded Titan, the Ambush), within the cap. */
+  targetBonus: number;
+  /** Penalty dice the target gives (Break Free once lifted). */
+  targetPenalty: number;
 }
 
 let DialogClass: any = null;

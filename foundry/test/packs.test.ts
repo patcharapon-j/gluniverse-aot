@@ -167,3 +167,15 @@ describe('pack documents', () => {
     }
   });
 });
+
+describe('pack ids the Engagement tracker looks up', () => {
+  it('finds every Critical Injury row, Titan, and Foe by its row id', async () => {
+    const { packIds } = await import('../tools/config-data.ts');
+    const ids = packIds(tables);
+    const inPack = (pack: string) => new Set((docs as Record<string, { _id: string }[]>)[pack].map((d) => d._id));
+    for (const [pack, map] of [['critical-injuries', ids.criticalInjuries], ['titans', ids.titans], ['foes', ids.foes]] as const) {
+      expect(Object.keys(map).length).toBe(inPack(pack).size);
+      for (const id of Object.values(map)) expect(inPack(pack).has(id)).toBe(true);
+    }
+  });
+});

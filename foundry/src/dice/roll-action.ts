@@ -12,6 +12,7 @@ import type { ActionCard, CallCard } from './card.ts';
 import { cardOf, clock, postCard, readyTalent, rollResponse, saveCard, stakesOps, t } from './post.ts';
 import { recordReaction } from './reactions.ts';
 import { askRoll, type RollDialogView } from './roll-dialog.ts';
+import { engagementContext, type EngagementPick } from './engagement-context.ts';
 import { rollFear, rollGas, rollStressResponse } from './tables.ts';
 import { WofRoll } from './terms.ts';
 
@@ -53,7 +54,7 @@ function attributeOptions(ap: ActorPool, entry: any): AttributeId[] {
   return [...new Set(out)];
 }
 
-function dialogView(ap: ActorPool, entry: any, opts: RollActionOptions): RollDialogView {
+function dialogView(ap: ActorPool, entry: any, opts: RollActionOptions, pick: EngagementPick | null = null): RollDialogView {
   const W = CONFIG.WOF;
   const isGM = !!game.user.isGM;
   const ex = exceptionFor(entry.id);
@@ -102,6 +103,7 @@ function dialogView(ap: ActorPool, entry: any, opts: RollActionOptions): RollDia
     passiveOption: isGM && !call && ['spot', 'size-up'].includes(entry.id),
     injuries,
     notes,
+    engagement: pick,
   };
 }
 
@@ -137,14 +139,20 @@ export async function rollAction(actor: any, entryId: string, options: RollActio
     return null;
   }
 
-  const view = dialogView(ap, entry, options);
+  const context = options.attributeAlone ? { pick: null, block: null } : engagementContext(actor, entry);
+  if (context.block) {
+    ui.notifications.warn(`${entry.name}: ${context.block}`);
+    return null;
+  }
+  const view = dialogView(ap, entry, options, context.pick);
   const choice = await askRoll(view);
   if (!choice) return null;
 
   const ex = exceptionFor(entry.id, choice.passive);
   const step = view.showCircumstances ? (view.circumstances.find((c) => c.id === choice.circumstance) ?? null) : null;
   const injury = view.injuries.find((i) => i.id === choice.injury) ?? null;
-  const base = poolInputs(ap, entry, { bonus: choice.bonus, passive: choice.passive });
+  const base = poolInputs(ap, entry, { bonus: Math.min(W.bonusDiceCap, choice.bonus + choice.targetBonus), passive: choice.passive });
+  if (choice.targetPenalty) base.penalties = [...base.penalties, { source: t('WOF.Tracker.liftedPenalty'), dice: choice.targetPenalty, entries: 'all' as const }];
   const pool = buildRollPool(
     {
       ...base,
@@ -205,6 +213,7 @@ export async function rollAction(actor: any, entryId: string, options: RollActio
     attack: options.attack ?? null,
     injury: injury ? { name: injury.name, penalty: injury.penalty } : null,
     call: options.call?.message ?? null,
+    target: choice.target,
   };
 
   const rolls = [roll];

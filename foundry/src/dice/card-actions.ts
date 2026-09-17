@@ -7,7 +7,7 @@
 import { applyPush, pushBlock, pushStress, rerollCounts, responseDue, wearOutcome, wearPoints, WEAR_TALENTS, type Op } from '../rules/roll.ts';
 import { actorPool } from './actor-pool.ts';
 import { applyNew, cardAction, dropOps, ops } from './apply.ts';
-import type { ActionCard, AttackCard, CallCard, TableCard } from './card.ts';
+import type { ActionCard, AttackCard, CallCard, FoeAttackCard, TableCard } from './card.ts';
 import { cardOf, ownSoldiers, pickSoldier, readyTalent, rollResponse, saveCard, stakesOps, t, usedTalentOp } from './post.ts';
 import { pushViaGM, setCovering, type PushRunner } from './proxy.ts';
 import { recordReaction } from './reactions.ts';
@@ -224,6 +224,15 @@ export async function dodge(message: any) {
   const who = await pickSoldier(pool.length ? pool : mine, t('WOF.Roll.attack.dodge'));
   if (!who) return;
   await rollAction(who, 'dodge', { attack: { message: message.id, name: card.name, severity: card.severity } });
+}
+
+/** A Block or Dodge against a Foe's attack (skirmish.yaml, reactions). */
+export async function foeReact(message: any, entry: string) {
+  const card = cardOf(message) as FoeAttackCard;
+  if (!card.target) return;
+  const who = await foundry.utils.fromUuid(card.target.actor);
+  if (!who?.isOwner) return;
+  await rollAction(who, entry === 'block' ? 'block' : 'dodge', { attack: { message: message.id, name: card.weapon, severity: card.severity } });
 }
 
 export async function answer(message: any) {

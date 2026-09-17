@@ -16,7 +16,8 @@ export type TrackerRequest =
   | { act: 'swap-cancel'; combat: string }
   | { act: 'odm'; combat: string; soldier: string }
   | { act: 'loud'; combat: string; soldier: string; titan: string }
-  | { act: 'fall-back'; combat: string; soldier: string; titan: string };
+  | { act: 'fall-back'; combat: string; soldier: string; titan: string }
+  | { act: 'engage'; combat: string; soldier: string; foe: string };
 
 export interface TrackerWorld {
   userId: string;
@@ -24,6 +25,8 @@ export interface TrackerWorld {
   owns(actorId: string): boolean;
   /** The engagement the request names, or null. */
   snapshot(combatId: string): Snapshot | null;
+  /** A Skirmish's Foes still in it, and who holds or is held (engaged_and_apart, held). */
+  skirmish?(combatId: string): { foes: string[]; holding: string[] } | null;
 }
 
 export const coreOf = (s: Snapshot): RoundCore => ({ mode: s.mode, step: s.step, round: s.round, wingsSet: s.wingsSet, wingsOpen: s.wingsOpen, reassign: s.reassign, endLog: [] });
@@ -96,6 +99,17 @@ export function checkTrackerRequest(w: TrackerWorld, req: TrackerRequest): strin
       if (!w.owns(req.soldier)) return 'only the soldier’s owner chooses Fall Back';
       const why = fallBackBlock(s, req.soldier, req.titan);
       return why ? `Fall Back is not allowed (${why})` : null;
+    }
+    case 'engage': {
+      if (!taking(req.soldier)) return 'the soldier is not taking part';
+      if (!w.owns(req.soldier)) return 'only the soldier’s owner moves them';
+      if (s.mode !== 'skirmish' || s.step !== 'play') return 'Engaged and Apart change during a Skirmish’s play';
+      const sk = w.skirmish?.(req.combat);
+      if (!sk || !sk.foes.includes(req.foe)) return 'the Foe is not in the Skirmish';
+      const soldier = s.soldiers.find((x) => x.id === req.soldier)!;
+      if (soldier.down || !soldier.alive) return 'a Down soldier’s move changes nothing';
+      if (sk.holding.includes(req.soldier)) return 'a Held soldier, or one who holds a Foe, cannot move';
+      return null;
     }
     default:
       return 'unknown request';

@@ -21,7 +21,22 @@ type Request =
   | { kind: 'update'; uuid: string; data: Record<string, unknown>; ctx: OpContext }
   | { kind: 'create-item'; actor: string; data: Record<string, unknown>; ctx: OpContext }
   | { kind: 'delete-item'; uuid: string; ctx: OpContext }
-  | { kind: 'push'; message: string };
+  | { kind: 'push'; message: string }
+  | { kind: 'ext'; ext: string; data: any };
+
+/** Other request kinds the GM performs (the Engagement tracker, src/tracker/requests.ts). */
+export interface ProxyExtension {
+  refusal(data: any, user: any): Promise<string | null> | string | null;
+  perform(data: any, user: any): Promise<boolean>;
+}
+
+const extensions = new Map<string, ProxyExtension>();
+export const registerProxyExtension = (name: string, ext: ProxyExtension) => extensions.set(name, ext);
+
+/** Asks the active GM to make an extension's change. */
+export function extViaGM(ext: string, data: unknown): Promise<boolean> {
+  return viaGM({ kind: 'ext', ext, data });
+}
 
 /** How the GM's client makes a Push (src/dice/card-actions.ts, passed in to keep the imports one way). */
 export interface PushRunner {
@@ -95,6 +110,10 @@ async function refusal(req: Request, user: any): Promise<string | null> {
       if (!pushRunner) return 'the GM’s client cannot Push';
       return pushRunner.blocked(message);
     }
+    case 'ext': {
+      const ext = extensions.get(req.ext);
+      return ext ? ext.refusal(req.data, user) : 'unknown request';
+    }
     case 'delete-item': {
       const doc = await foundry.utils.fromUuid(req.uuid);
       if (doc?.documentName !== 'Item' || doc.parent?.documentName !== 'Actor') return 'the item is gone';
@@ -105,8 +124,12 @@ async function refusal(req: Request, user: any): Promise<string | null> {
   }
 }
 
-async function perform(req: Request): Promise<boolean> {
+async function perform(req: Request, user: any): Promise<boolean> {
   switch (req.kind) {
+    case 'ext': {
+      const ext = extensions.get(req.ext);
+      return ext ? ext.perform(req.data, user) : false;
+    }
     case 'push': {
       const message = game.messages.get(req.message);
       const card = message && (await pushRunner!.run(message));
@@ -143,7 +166,7 @@ async function perform(req: Request): Promise<boolean> {
       break;
     }
   }
-  recordRun(ledger, game.messages.get(req.ctx.message)?.getFlag(SYSTEM_ID, FLAG), req.ctx);
+  if ('ctx' in req) recordRun(ledger, game.messages.get(req.ctx.message)?.getFlag(SYSTEM_ID, FLAG), req.ctx);
   return true;
 }
 
@@ -163,7 +186,7 @@ export function registerProxy(push: PushRunner): void {
         throw new Error(`${user?.name} may not make this change: ${why}`);
       }
     }
-    return perform(req);
+    return perform(req, user);
   };
 }
 

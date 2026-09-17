@@ -4,7 +4,7 @@
  * carries the name, the pool, the time, and the GM's delete.
  */
 import { actorPool } from './actor-pool.ts';
-import { answer, cover, currentPushBlock, dodge, gasFromFear, gallows, opsAction, push, pushBlockText, shrug } from './card-actions.ts';
+import { answer, cover, currentPushBlock, dodge, foeReact, gasFromFear, gallows, opsAction, push, pushBlockText, shrug } from './card-actions.ts';
 import { renderCard, type Card, type CardViewer } from './card.ts';
 import { cardOf, ownSoldiers, readyTalent, t } from './post.ts';
 
@@ -33,6 +33,7 @@ function viewerFor(message: any, card: Card): CardViewer {
     }
   }
   if (card.kind === 'table' && actor?.type === 'soldier') v.drive = !actor.system.drive_used_this_session;
+  if (card.kind === 'foe-attack') v.canDodge = !!card.target && !!actorSync(card.target.actor)?.isOwner;
   if (card.kind === 'attack') {
     const mine = ownSoldiers();
     const targeted = card.targets.map((x) => x.actor);
@@ -41,7 +42,8 @@ function viewerFor(message: any, card: Card): CardViewer {
   return v;
 }
 
-const ACTIONS: Record<string, (m: any) => unknown> = {
+const ACTIONS: Record<string, (m: any, button: HTMLButtonElement) => unknown> = {
+  foeReact: (m, b) => foeReact(m, b.dataset.entry ?? 'dodge'),
   push,
   cover,
   undo: (m) => opsAction(m, 'undo'),
@@ -71,7 +73,7 @@ export function registerChat(): void {
       const fn = ACTIONS[button.dataset.wofAct ?? ''];
       if (!fn) return;
       button.disabled = true;
-      Promise.resolve(fn(message)).finally(() => {
+      Promise.resolve(fn(message, button)).finally(() => {
         if (button.isConnected) button.disabled = false;
       });
     });

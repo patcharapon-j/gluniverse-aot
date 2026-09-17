@@ -7,6 +7,7 @@ import type { GoreLevel, MotionMode } from './motion/tokens.ts';
 import { APPLY_CATEGORIES, type ApplyCategory } from './rules/roll.ts';
 import { registerSettingsMenu } from './settings-menu.ts';
 import { registerCampaignSettings } from './lifepath/campaign.ts';
+import { TRACKER_CATEGORIES, type TrackerCategory } from './rules/engagement/round.ts';
 
 export const viewer = $state({ motion: 'full' as MotionMode, gore: 'standard' as GoreLevel, reducedByOS: false });
 
@@ -23,6 +24,18 @@ export function motionMode(): MotionMode {
  */
 export function registerWorldSettings(): void {
   registerCampaignSettings();
+  for (const cat of TRACKER_CATEGORIES) {
+    game.settings.register(SYSTEM_ID, `trackerApply.${cat}`, {
+      name: `WOF.Settings.trackerApply.${cat}.name`,
+      hint: `WOF.Settings.trackerApply.${cat}.hint`,
+      scope: 'world',
+      config: false,
+      restricted: true,
+      type: Boolean,
+      default: true,
+    });
+  }
+  game.settings.register(SYSTEM_ID, 'hudFolded', { scope: 'client', config: false, type: Boolean, default: false });
   for (const cat of APPLY_CATEGORIES) {
     game.settings.register(SYSTEM_ID, `autoApply.${cat}`, {
       name: `WOF.Settings.autoApply.${cat}.name`,
@@ -34,6 +47,11 @@ export function registerWorldSettings(): void {
       default: true,
     });
   }
+}
+
+/** Which tracker automation categories are on (round-end steps, strike results, attack effects, Skirmish harm). */
+export function trackerApply(): Record<TrackerCategory, boolean> {
+  return Object.fromEntries(TRACKER_CATEGORIES.map((c) => [c, game.settings.get(SYSTEM_ID, `trackerApply.${c}`) !== false])) as Record<TrackerCategory, boolean>;
 }
 
 /** Which auto-apply categories are on, read when a card records its changes. */
