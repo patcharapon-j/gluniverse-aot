@@ -19,7 +19,8 @@ import { injuryData } from '../sheets/soldier-ops.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { showDice, WofRoll } from '../dice/terms.ts';
 import { clock, postCard } from '../dice/post.ts';
-import { enterTitan, isActiveGM, isGM, markOdm, recordRelease, skirmishFoes, titanDies, wingEvent, witnesses } from './engine.ts';
+import { enterTitan, isActiveGM, isGM, markOdm, recordRelease, skirmishFoes, titanDies, wingEvent } from './engine.ts';
+import { fearRolls, trackerDeaths } from './fear.ts';
 import { tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
 import { E, grabbedBy, partsOf, snapshot, soldierState, titanActor, titanRow } from './snapshot.ts';
@@ -450,7 +451,7 @@ async function grab(combat: any, key: string, label: string, actor: any, rec: Re
   } else rec.line(tr('result.pinnedCrush', { name: actor.name }));
   const crush = E().crush;
   await gainOn(combat, actor, { location: crush.location as Location, type: crush.type, cannotBeLethal: crush.cannotBeLethal, net: 0 }, rec);
-  if (!land.crushOnly) rec.line(tr('note.witnessesGrab', { who: witnesses(combat, actor.id).join(', ') || tr('none') }));
+  if (!land.crushOnly && !actor.statuses.has('dead')) await fearRolls(combat, { kind: 'grabbed', soldier: actor.id }, rec);
 }
 
 /** Gains a Critical Injury (critical-injuries.yaml, gaining) and records it on the soldier. */
@@ -469,10 +470,12 @@ export async function gainOn(combat: any, actor: any, x: { location: Location | 
   rec.line(tr('result.injury', { name: actor.name, where, total: g.total, injury: data.name }));
   if (g.instant) {
     await rec.commit();
+    trackerDeaths.add(actor.id);
     const effect = await actor.toggleStatusEffect('dead', { active: true, overlay: true });
     if (effect?.uuid) rec.ops.push({ t: 'create', uuid: effect.uuid, parent: actor.uuid, collection: 'ActiveEffect', data: effect.toObject() });
     rec.line(tr('result.dies', { name: actor.name }));
     await wingEvent(combat, { kind: 'death', soldier: actor.id }, rec);
+    await fearRolls(combat, { kind: 'dies', soldier: actor.id }, rec);
     return;
   }
   await rec.create(actor, 'Item', [data]);

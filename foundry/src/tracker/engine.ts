@@ -37,6 +37,7 @@ import { rollGas } from '../dice/tables.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { CARD, ENGAGEMENT, engagementTurns, isEngagement } from './combat.ts';
 import { KeyedLock } from './busy.ts';
+import { fearRolls, trackerDeaths } from './fear.ts';
 import { postNote, tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
 import { E, cardsOf, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
@@ -173,9 +174,10 @@ export async function startEngagement(choice: SetupChoice): Promise<any> {
   const who = choice.soldiers.map(nameOf).join(', ');
   if (mode === 'titan') {
     const focus = choice.focus ? scene.tokens.get(choice.focus)?.actor : null;
-    const lines = [tr('note.startTitan', { anchor: E().ratings.find((r) => r.id === choice.anchor)?.name ?? choice.anchor, titan: focus?.name ?? '?' }), tr('note.startFear', { who })];
-    if (focus?.system.abnormal) lines.push(tr('note.abnormalFear'));
+    const lines = [tr('note.startTitan', { anchor: E().ratings.find((r) => r.id === choice.anchor)?.name ?? choice.anchor, titan: focus?.name ?? '?' }), tr('note.startWho', { who })];
     await postNote({ title: tr('note.startTitle'), lines, titan: true, round: 1 });
+    // The Fear Rolls for a first Titan Engagement and an Abnormal (fear-rolls.yaml, triggers).
+    await fearRolls(combat, { kind: 'start', abnormal: !!focus?.system.abnormal }, null);
   } else {
     await postNote({ title: tr('note.startSkirmish'), lines: [tr('note.startSkirmishLine', { name: choice.skirmish?.name ?? '' })], round: 1 });
   }
@@ -423,19 +425,15 @@ async function countGrabbedTurn(combat: any, soldierId: string): Promise<void> {
     const s = soldierState(actor);
     recordPositions(rec, actor, Object.fromEntries(Object.entries(s.positions).filter(([k]) => k !== row.label)) as Record<string, Position>);
     await rec.commit();
+    trackerDeaths.add(soldierId);
     await actor.toggleStatusEffect('dead', { active: true, overlay: true });
     await wingEvent(combat, { kind: 'death', soldier: soldierId });
-    await postNote({ title: tr('note.devoured', { name: actor.name }), lines: [tr('note.witnessesDies', { who: witnesses(combat, soldierId).join(', ') || tr('none') })], titan: true, round: combat.round });
+    await fearRolls(combat, { kind: 'dies', soldier: soldierId }, rec);
+    await postNote({ title: tr('note.devoured', { name: actor.name }), lines: rec.lines, titan: true, round: combat.round });
   } else {
     await rec.commit();
     await postNote({ title: tr('note.lifted', { name: actor?.name ?? '?' }), lines: [tr('note.liftedLine')], titan: true, round: combat.round });
   }
-}
-
-/** Witnesses of a comrade Grabbed or dying (engagement-flow.yaml, witnesses): alive, holding a Position, not Down (Down ones make no Fear Roll). */
-export function witnesses(combat: any, except: string): string[] {
-  const snap = snapshot(combat);
-  return snap.soldiers.filter((s) => s.id !== except && s.alive && !s.down && holdsAPosition(s, snap.titans)).map((s) => s.name);
 }
 
 // ---------------------------------------------------------------- a Focus Titan's card
@@ -705,8 +703,7 @@ export async function enterTitan(combat: any, bg: any, rec: Recorder): Promise<s
   const ev = enteringAttention(snap, titanRow(combat, newRow), E().downCanMeet);
   rec.set(token.actor, 'system.attention_holder', ev.holder ?? '');
   rec.line(ev.holder ? tr('note.attention', { name: nameOf(ev.holder) }) : tr('note.noAttention'));
-  if (focus >= 2) rec.line(tr('note.secondFocusFear'));
-  if (token.actor.system.abnormal) rec.line(tr('note.abnormalFear'));
+  await fearRolls(combat, { kind: 'enter', abnormal: !!token.actor.system.abnormal, focusCount: focus }, rec);
   return token.id;
 }
 

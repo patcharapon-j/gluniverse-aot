@@ -49,6 +49,13 @@ export function registerTracker(): void {
   });
   const refresh = () => refreshTracker();
   for (const hook of ['updateActor', 'createItem', 'updateItem', 'deleteItem', 'createToken', 'updateToken', 'deleteToken', 'createActiveEffect', 'deleteActiveEffect', 'canvasReady', 'deleteCombat', 'createCombat', 'updateSetting']) Hooks.on(hook, refresh);
+  // A soldier marked dead by hand during a Titan Engagement: its witnesses' Fear Rolls (fear-rolls.yaml).
+  Hooks.on('createActiveEffect', async (effect: any) => {
+    const actor = effect.parent;
+    if (!game.user.isActiveGM || !effect.statuses?.has?.('dead') || !actor || actor.documentName !== 'Actor') return;
+    const [{ currentEngagement }, { onDeadStatus }] = await Promise.all([import('./combat.ts'), import('./fear.ts')]);
+    await onDeadStatus(currentEngagement(), actor);
+  });
   Hooks.once('ready', async () => {
     game.wof.tracker = await trackerApi();
     mountHud();

@@ -2390,9 +2390,6 @@
       "note": {
         "startTitle": "Titan Engagement begins",
         "startTitan": "Anchor Rating {anchor}. Focus Titan A: {titan}. Everyone holds Distant.",
-        "startFear": "Fear Rolls for a first Titan Engagement where they apply: {who}.",
-        "abnormalFear": "An Abnormal: every soldier who holds a Position makes a Fear Roll for it.",
-        "secondFocusFear": "Two Focus Titans: every soldier who holds a Position makes a Fear Roll.",
         "startSkirmish": "Skirmish begins",
         "startSkirmishLine": "{name}. Everyone is Apart.",
         "wingsKept": "Wings",
@@ -2418,8 +2415,6 @@
         "lifted": "{name} is lifted",
         "liftedLine": "The first counted turn ends: the Grab spent its action.",
         "devoured": "{name} is devoured",
-        "witnessesDies": "Fear Rolls for a comrade's death: {who}.",
-        "witnessesGrab": "Fear Rolls for a comrade Grabbed: {who}.",
         "corpseHeat": "Corpse heat on {name}",
         "corpseHeatLine": "A Burn Critical Injury at the pinned location, at the start of this turn.",
         "moved": "{name} moves",
@@ -2432,7 +2427,8 @@
         "fallBack": "Fall Back: {name} holds In Reach of {label}",
         "closeIn": "{name} closes in on {foe}",
         "breakAway": "{name} breaks away",
-        "thrash": "{name}: it falls back on its Thrash."
+        "thrash": "{name}: it falls back on its Thrash.",
+        "startWho": "Taking part: {who}."
       },
       "death": {
         "relief": "Nape-kill Stress relief: {who}.",
@@ -2622,6 +2618,10 @@
         "start": "Begin",
         "footTitan": "Everyone starts at Distant. Round 1 begins at its Wings step.",
         "footSkirmish": "Everyone starts Apart. Round 1 begins at its deal."
+      },
+      "fear": {
+        "title": "Fear Rolls",
+        "rolled": "Fear Rolls made: {who}."
       }
     }
   }

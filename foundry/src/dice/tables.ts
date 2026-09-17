@@ -36,14 +36,29 @@ export function fearOps(actor: any, row: { name: string; effects: any[] }): Op[]
   return out;
 }
 
-export async function rollFear(actor: any): Promise<any> {
+/**
+ * A Fear Roll. The tracker passes the trigger and the event's snapshot of Stress and Resolve
+ * (fear-rolls.yaml, limits, timing) and rolls without the dialog.
+ */
+export async function rollFear(actor: any, preset: { trigger: string; stress: number; resolve: number } | null = null): Promise<any> {
   const ap = actorPool(actor);
-  if (blocked(ap, 'fear-roll')) return null;
+  if (preset) {
+    if (entryBlock(ap, CONFIG.WOF.actionCatalogById['fear-roll'])) return null;
+    ap.stress = preset.stress;
+    ap.resolve = preset.resolve;
+  } else if (blocked(ap, 'fear-roll')) return null;
   const W = CONFIG.WOF;
   const triggers = W.fearTriggers as { id: string; name: string; event: string }[];
   const steady = readyTalent(ap, 'steady-heart');
+  const result = preset ?? (await fearDialog(ap, triggers, steady));
+  if (!result) return null;
+  const trigger = String(result.trigger ?? '');
+  return fearCard(actor, ap, triggers, steady, trigger);
+}
+
+function fearDialog(ap: ActorPool, triggers: { id: string; name: string; event: string }[], steady: { name: string } | null): Promise<any> {
   const options = triggers.map((x) => `<option value="${x.id}" title="${esc(x.event)}">${esc(x.name)}</option>`).join('');
-  const result = await foundry.applications.api.DialogV2.input({
+  return foundry.applications.api.DialogV2.input({
     window: { title: t('WOF.Roll.fear.title') },
     classes: ['wof-pick'],
     content: `<p class="hint">${esc(t('WOF.Roll.fear.hint', { stress: ap.stress, resolve: ap.resolve }))}</p>
@@ -51,8 +66,10 @@ export async function rollFear(actor: any): Promise<any> {
 ${steady ? `<p class="hint">${esc(t('WOF.Roll.fear.steady', { name: steady.name }))}</p>` : ''}`,
     ok: { label: t('WOF.Roll.dialog.roll') },
   });
-  if (!result) return null;
-  const trigger = String(result.trigger ?? '');
+}
+
+async function fearCard(actor: any, ap: ActorPool, triggers: { id: string; name: string; event: string }[], steady: { name: string } | null, trigger: string): Promise<any> {
+  const W = CONFIG.WOF;
   const steadyUsed = !!steady && (trigger === 'comrade-grabbed' || trigger === 'comrade-dies');
 
   const roll = await new foundry.dice.Roll('1d6').evaluate();
