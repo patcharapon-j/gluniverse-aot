@@ -118,7 +118,7 @@ async function pushCard(message: any): Promise<ActionCard | null> {
   // A Stress Die 1 after the Push: one Stress Response, with the Stress after the Push.
   if (responseDue(card.dice, !!card.response, card.responses)) {
     const stressNow = actor.system.derived.stress_effective + (covered ? 0 : pushStress(false, ap.heldEffects));
-    const r = await rollResponse(ap, stressNow, { show: true });
+    const r = await rollResponse(ap, stressNow);
     rolls.push(r.roll);
     card.response = r.response;
     fresh.push(...r.ops);
@@ -193,7 +193,7 @@ export function gallows(message: any) {
     if (!readyTalent(ap, 'gallows-humour')) return;
     card.ops = await dropOps(card.ops, (o) => !!o.response, message.id);
     // The held list no longer has the first result, so the table is read as it stood before it.
-    const again = await rollResponse(actorPool(actor), card.response.stress, { show: true });
+    const again = await rollResponse(actorPool(actor), card.response.stress);
     const used = usedTalentOp(ap, 'gallows-humour', 'stressResponse');
     card.response = { ...again.response, rerolled: true };
     card.ops = [...card.ops, ...(await applyNew([...again.ops, ...(used ? [used] : [])], message.id))];
