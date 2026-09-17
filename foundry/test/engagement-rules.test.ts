@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { chooseEntry, drawAttentionBlock, entryTargets, evaluateLadder, type LadderInput } from '../src/rules/engagement/attention.ts';
 import { dealBlock, dealCards, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
 import { breakFreeNeeds, countTurn, grabLands, holdingArm, holdingArmReach, release } from '../src/rules/engagement/grab.ts';
-import { checkTrackerRequest, fallBackBlock, type TrackerWorld } from '../src/rules/engagement/guard.ts';
+import { checkTrackerRequest, coreOf, fallBackBlock, type TrackerWorld } from '../src/rules/engagement/guard.ts';
 import { gainInjury } from '../src/rules/engagement/injury.ts';
 import {
   comparisonLabel,
@@ -759,6 +759,18 @@ describe('tracker requests (the GM proxy guard)', () => {
     expect(checkTrackerRequest(world(s, ['c']), { act: 'swap-cancel', combat: 'C' })).toMatch(/neither/);
     expect(checkTrackerRequest(world(snap(), ['b']), { act: 'swap-accept', combat: 'C' })).toMatch(/no swap/);
     expect(checkTrackerRequest(world({ ...s, swapped: ['b'] }, ['b']), { act: 'swap-accept', combat: 'C' })).toMatch(/already/);
+  });
+
+  it('lets a player report their own soldier’s departure, so Wings open again', () => {
+    const gone = snap({ step: 'play', soldiers: [soldier('a', { left: true, positions: {} }), soldier('b', { positions: { A: 'on-body' } })] });
+    expect(checkTrackerRequest(world(gone, ['a']), { act: 'left', combat: 'C', soldier: 'a' })).toBeNull();
+    expect(checkTrackerRequest(world(gone, ['b']), { act: 'left', combat: 'C', soldier: 'a' })).toMatch(/owner/);
+    expect(checkTrackerRequest(world(gone, ['b']), { act: 'left', combat: 'C', soldier: 'b' })).toMatch(/not left/);
+    expect(checkTrackerRequest(world(gone, ['a']), { act: 'left', combat: 'C', soldier: 'z' })).toMatch(/taking part/);
+    expect(checkTrackerRequest(world({ ...gone, mode: 'skirmish' }, ['a']), { act: 'left', combat: 'C', soldier: 'a' })).toMatch(/Titan Engagement/);
+    // What the GM records: the Wing of the departed player character opens for reassignment.
+    const core = noteWingEvent(coreOf(gone), { kind: 'left', soldier: 'a' }, { m: 'a' });
+    expect(core).toMatchObject({ wingsOpen: true, reassign: ['m'] });
   });
 
   it('checks Wings, ODM use, Draw Attention, and Fall Back', () => {

@@ -637,7 +637,12 @@ export async function leave(combat: any, actor: any): Promise<boolean> {
   const why = leaveBlock(s, snap.titans, grabbedIn(snap)(s.id));
   if (why) return warn(`move.${why}`);
   await actor.update(positionsPatch({}, true));
+  // A player character's departure opens the next wings step; a player asks the GM to record it.
   if (isGM()) await wingEvent(combat, { kind: 'left', soldier: actor.id });
+  else {
+    const { extViaGM } = await import('../dice/proxy.ts');
+    await extViaGM('tracker', { act: 'left', combat: combat.id, soldier: actor.id });
+  }
   await postNote({ title: tr('note.left', { name: actor.name }), lines: [], round: combat.round });
   return true;
 }
@@ -970,6 +975,9 @@ export async function performRequest(combat: any, req: any, user: any): Promise<
       return true;
     case 'odm':
       await markOdm(combat, req.soldier);
+      return true;
+    case 'left':
+      await wingEvent(combat, { kind: 'left', soldier: req.soldier });
       return true;
     case 'loud':
       return setLoud(combat, req.soldier, req.titan);

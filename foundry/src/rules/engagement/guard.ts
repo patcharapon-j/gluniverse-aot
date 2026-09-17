@@ -15,6 +15,7 @@ export type TrackerRequest =
   | { act: 'swap-accept'; combat: string }
   | { act: 'swap-cancel'; combat: string }
   | { act: 'odm'; combat: string; soldier: string }
+  | { act: 'left'; combat: string; soldier: string }
   | { act: 'loud'; combat: string; soldier: string; titan: string }
   | { act: 'fall-back'; combat: string; soldier: string; titan: string }
   | { act: 'engage'; combat: string; soldier: string; foe: string };
@@ -83,6 +84,13 @@ export function checkTrackerRequest(w: TrackerWorld, req: TrackerRequest): strin
       if (!w.owns(req.soldier)) return 'only the soldier’s owner marks ODM use';
       if (s.mode !== 'titan' || s.step !== 'play') return 'ODM use is marked during play';
       return null;
+    }
+    case 'left': {
+      // The departure itself is the owner's own actor change; the GM only opens the next wings step.
+      if (!taking(req.soldier)) return 'the soldier is not taking part';
+      if (!w.owns(req.soldier)) return 'only the soldier’s owner reports their departure';
+      if (s.mode !== 'titan') return 'only a Titan Engagement has Wings';
+      return s.soldiers.find((x) => x.id === req.soldier)!.left ? null : 'the soldier has not left';
     }
     case 'loud': {
       if (!taking(req.soldier)) return 'the soldier is not taking part';
