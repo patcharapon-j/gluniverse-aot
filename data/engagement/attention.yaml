@@ -236,7 +236,7 @@ draw_attention:
     - The soldier holds a Position relative to the named Focus Titan.
     - The soldier holds a Position other than distant relative to that Titan (decision batch 5, OQ-113).
     - The soldier is not Grabbed.
-  spends: the soldier's action
+  spends: the soldier's action (Shout Them Off lets the soldier spend their move instead)
   effect: >-
     The soldier holds the loudest flag for that Titan until the end of its next card that resolves
     a behavior (flag_duration). While they hold it they match every rung any other candidate meets

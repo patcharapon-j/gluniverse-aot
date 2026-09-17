@@ -3740,7 +3740,9 @@ No new ADR, and no ADR amended. ADR-0010 is preserved as written and is the boun
 
 **Files.** `data/engagement/attention.yaml` (`flags.loudest.matches`, `evaluation.steps.loudest-matches`, `draw_attention`), `data/character/action-catalog.yaml` (`draw-attention`).
 
-**Not taken.** A Talent naming `draw-attention`, which would have ended its status as the only Titan Engagement action no Talent names. Each Specialty's list is exactly eight Talents and the total is 83, both schema-enforced, so adding one means dropping one. Deferred to the Phase 2 Talent pass.
+**The Talent, added on the owner's instruction (2026-09-17).** The first pass deferred it because each Specialty's list was exactly eight Talents and the total 83, both schema-enforced, so adding one meant dropping one. The owner's answer was to remove the lock and add the Talent. `list_size` in `data/character/specialties.yaml` now reads "at least eight", every list still holds eight but the Leader's, which holds nine, the total is 84, and the schema in `foundry/tools/data/schemas.ts` that enforced exactly eight becomes a minimum.
+
+**Shout Them Off** (Leader, rule, max level 1, once per Titan Engagement). *Trigger:* you declare `draw-attention` in a Titan Engagement. *Effect:* you may spend your move on it instead of your action. It follows Quick Refit's precedent exactly, which is the only cost-swap shape the rules already carry (`change_canister` reads "the soldier's action (Quick Refit lets the soldier spend their move instead)"). The obvious alternative, a Talent granting Bonus Dice, was not taken: no Talent in the game grants Bonus Dice and `data/core/bonus-dice-sources.yaml` is a closed list with no Talent row, so that would have meant a new source row and a new pattern for one Talent. A dice Talent is impossible here because `draw-attention` is never rolled. Draw Attention is no longer the only Titan Engagement action no Talent names. ADR-0016's guardrails hold: it changes a cost, not a Circumstances step (guardrail 10), and it carries a per-procedure limit (guardrail 8).
 
 ### 10-4: What a ruined Blade Set costs (OQ-185)
 
