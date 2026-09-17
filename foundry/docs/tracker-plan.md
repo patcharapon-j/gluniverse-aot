@@ -179,20 +179,29 @@ The board's Position matrix shows the soldier by the Focus Titan (and corpse) gr
 - **Injury roll:** location and side, worsening, the Net Success rider, repeat rows, the non-lethal cap, type riders, against the live table.
 - **Guard:** each request kind allowed and refused.
 
-## 10. Deferred (named, not built in this milestone)
+## 10. Deferred, and the v1 additions
+
+**Built for v1 (owner decisions, 2026-09-17).**
+
+- **Fear Rolls are rolled.** `src/rules/engagement/fear.ts` (`fearPlan`) finds who rolls for which trigger: a first Titan Engagement and an Abnormal at the start (faced_a_titan set, a Down soldier's too), a Background Titan entering as a second Focus Titan or as an Abnormal, and the witnesses of a Grab or a death (never Down, departed, or dead; the Numb Scar skips a death). One roll per soldier per event, in the data's trigger order. `src/tracker/fear.ts` takes one snapshot of each roller's Stress and Resolve (limits, timing) and posts the ordinary Fear card through `rollFear` with the trigger preset, so its results apply by the Fear category with the card's Undo; a tracker step that caused the rolls records the cards, so the step's Undo removes them. A soldier marked dead by hand during a Titan Engagement rolls its witnesses' Fear Rolls (a `createActiveEffect` hook on the active GM); none are rolled during the engagement-end steps.
+- **Steam and fall rolls.** `src/rules/engagement/harm-rolls.ts` reads the steam table (`titan-harm.yaml`, steam) and the fall band and damage table (`gear/falls.yaml`), finds the reference Titan, and applies damage (`health.yaml`, harm_kinds, damage). `src/tracker/harm.ts` rolls each D6 with Dice So Nice and writes the damage and any Critical Injury through the step's recorder. Steam is rolled at a kill (On Body, Blind Spot, and the freed soldier) and at a Regeneration fill that heals a part (On Body). A fall is rolled for a lifted soldier freed at the death (first, from On Body) or by a living Titan's release, a knock loose, and letting go (a player's let-go goes through the GM proxy, `let-go` request). The falling Titan's path is still listed for Leap Clear.
+- **Engagement-end steps.** Ending sets the step to `closing` with the nine `engagement-end.yaml` steps as a stamped checklist with Undo (`src/rules/engagement/closing.ts`): pending Fear results cancelled, the end Stress relief (`engagement-ends` or `skirmish-ends`), lasting Stress Responses gained in the engagement ended, lethal turn limits made engagement limits, aftermath rolls and Death Rolls listed (the table rolls them from the sheet and the GM stamps them, as the care window), Grief for the engagement's deaths (1 in total, plus the Drive's named comrade and the Numb Scar, at most 3), and retirement at five Scars with a promotion reminder. "Close the engagement" then clears the Positions and removes the Combat. The data's step list, Grief rows, and relief amounts are checked by the schemas.
+- **Forced retreat moves.** `src/rules/engagement/retreat.ts` (`forcedTargets`): while a retreat binds a soldier (holds a Position, not Down, Grabbed, or carried), their move may only step toward distant relative to the earliest living Focus Titan not held at distant (then the earliest such corpse), or toward a Down, Grabbed, or Pinned comrade compared relative to the holding Titan, the pinning body, or the comparison body, while the stay limit allows. `moveOptions` refuses every other step (the board menu shows why); leaving and letting go stay as they were.
+- **HUD fade.** `src/tracker/dice-fade.ts`: while Dice So Nice dice are on screen (its roll start and complete hooks, and its `showForRoll` for rolls without a message, until its hide delay ends), the HUD strip drops to low opacity and takes no pointer events. Nothing is registered to fire without Dice So Nice.
+
+**Still deferred (v1.1).**
 
 - Horses as tracked tokens (a dismounted horse's Position, Horse Whistle, the riderless horse's departure beyond a note).
-- The falling Titan's Leap Clear rolls, Pinned by a fall, corpse heat, Heave, and cutting free are posted as reminders and recorded on the sheet by hand (the Pinned fields exist); the tracker does not roll them.
-- Steam rolls (listed with who rolls), fall damage (listed with its band), and the witnesses' Fear Rolls (listed; each soldier rolls from the sheet).
-- Turns spent in advance by a dodge and the failed-dodge rule of the countdown; Call It; the Read's revealed facts are set on the Titan sheet (milestone 2).
-- The retreat's forced moves are shown as a reminder, not enforced; the stay limit is shown as a count.
+- Leap Clear rolls, Pinned by a fall, corpse heat, Heave, and cutting free: the path is posted as a reminder and the Pinned fields are recorded on the sheet by hand.
+- Turns spent in advance by a dodge and the failed-dodge rule of the countdown; Call It; the Read's revealed facts are set on the Titan sheet (milestone 2). The end step's cancelled turns and Reaction bans are not tracked beyond pending Fear results.
+- The retreat's stay-with-a-comrade move (option 4) is a move that changes nothing and is not recorded; a soldier who cannot decline their move is reminded, not made to move; the lost-limb standing test past the stay limit is read by the table.
 - Pry Loose and Hook and Cut are declared from the board and rolled from the sheet; Hamstring Line and Clear the Hand are recorded as used.
-- The engagement-end steps (`data/harm/engagement-end.yaml`) beyond the owed Gas Rolls and clearing the records.
+- Sharing out left items and promotion at the last end step are a reminder.
 - Parley, Size Up's reveal, and the Squad leaving a Skirmish are recorded by button, not rolled by the tracker.
 
 ## 11. Rules questions raised
 
-Appended to `docs/rules-questions.md` (11 to 14): more than twenty card holders; which Focus Titan a swap compares Positions against, and a soldier who holds a Position only relative to a corpse; how long the foe rule's "last attacker" lasts; and which dodge cancels a Titan's second card in a round after a later Push.
+Appended to `docs/rules-questions.md` (11 to 14): more than twenty card holders; which Focus Titan a swap compares Positions against, and a soldier who holds a Position only relative to a corpse; how long the foe rule's "last attacker" lasts; and which dodge cancels a Titan's second card in a round after a later Push. The v1 additions raised 15 to 17: the reference Titan of a fall at a death, which steps the retreat's shortest chain counts, and Fear Rolls for a death marked by hand.
 
 ## 12. Order of work
 
