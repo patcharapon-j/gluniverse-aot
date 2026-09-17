@@ -32,7 +32,7 @@ async function once<T>(message: any, fn: () => Promise<T>): Promise<T | undefine
   }
 }
 
-const actorOf = (card: { actor: string }) => foundry.utils.fromUuid(card.actor);
+const actorOf = async (card: { actor: string }): Promise<any> => (card.actor ? foundry.utils.fromUuid(card.actor) : null);
 
 /** The reason text a card shows under a blocked Push. */
 export function pushBlockText(block: string | null): string | null {

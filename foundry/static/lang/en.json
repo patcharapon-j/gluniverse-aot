@@ -1575,6 +1575,17 @@
       "worn-out": "Worn out",
       "none": "No change"
     },
+    "ChatBar": {
+      "label": "Dice pool",
+      "roll": "Roll",
+      "rollN": "Roll {n}",
+      "reset": "Reset the pool",
+      "add": "Add one to {kind}",
+      "remove": "Take one from {kind}",
+      "hint": "Click to add one, right-click to take one away.",
+      "empty": "Set some dice in the pool first.",
+      "cardName": "Dice Pool"
+    },
     "Roll": {
       "die": {
         "base": "Base die",

@@ -78,6 +78,8 @@ export interface ActionCard extends CardBase {
   call: string | null;
   /** What the roll is made against in the running engagement. */
   target?: RollTarget | null;
+  /** Titan Dice in an ad hoc pool (the chat bar): kept as rolled, successes on 5 and 6. */
+  titan?: number[];
 }
 
 export interface TableCard extends CardBase {
@@ -310,7 +312,8 @@ function responseLine(t: T, r: ResponseRoll | null, v: CardViewer): string {
 }
 
 export function successesOf(c: ActionCard): number {
-  return finalSuccesses(rawSuccesses(c.dice), c.response?.effects ?? []);
+  const titan = (c.titan ?? []).filter((f) => f >= 5).length;
+  return finalSuccesses(rawSuccesses(c.dice) + titan, c.response?.effects ?? []);
 }
 
 /** The result line beside the big count. */
@@ -346,6 +349,7 @@ function actionCard(t: T, c: ActionCard, v: CardViewer, deathRows: { id: string;
       ['dx', p.removed.bonus + p.removed.talent + p.removed.attribute],
       ['dg', c.dice.gear.length],
       ['ds', c.dice.stress.length],
+      ['dtn', c.titan?.length ?? 0],
     ],
     t('WOF.Sheet.aria.pool', { base: c.dice.base.length, gear: c.dice.gear.length, stress: c.dice.stress.length }),
     p.why,
@@ -359,6 +363,7 @@ function actionCard(t: T, c: ActionCard, v: CardViewer, deathRows: { id: string;
     c.dice.base.length ? drow('base', 'die-base', t('WOF.Roll.die.baseDice'), c.dice.base.map((f) => dieIcon(t, 'base', f)).join('')) : '',
     c.dice.gear.length ? drow('gear', 'die-gear', `${t('WOF.Roll.die.gearDice')}: ${p.gear?.name ?? ''}`, c.dice.gear.map((f) => dieIcon(t, 'gear', f, { locked: f === 1 && c.pushes > 0 })).join('')) : '',
     c.dice.stress.length ? drow('stress', 'die-stress', t('WOF.Roll.die.stressDice'), c.dice.stress.map((f, i) => dieIcon(t, 'stress', f, { fresh: i === c.fresh, quiet: !c.responses })).join('')) : '',
+    c.titan?.length ? drow('titan', 'die-titan-attack', t('WOF.Roll.die.titanDice'), c.titan.map((f) => dieIcon(t, 'titan', f)).join('')) : '',
   ].join('');
   const out = outcomeText(t, c, s, deathRows);
   const stakes = c.stakes ? `<p class="stakes"><b>${esc(t('WOF.Roll.stakes'))}</b>${esc(c.stakes.text)}</p>` : '';
@@ -385,7 +390,7 @@ function actionCard(t: T, c: ActionCard, v: CardViewer, deathRows: { id: string;
     if (push || cover) acts = `<div class="rc-a">${push}${cover}${note}</div>`;
   }
   const newGlyph = newStress ? ` data-fresh="1"` : '';
-  const glyph = c.entry ? entryIcon({ id: c.entry, attribute: c.attribute }) : undefined;
+  const glyph = c.entry ? entryIcon({ id: c.entry, attribute: c.attribute }) : icon('die-base');
   return `${header(t, { img: c.img, name: c.name, time: c.time, who: c.actorName, glyph }, glyphs, v.isGM, flags)}
 <div class="rc-b"${newGlyph}>
   <div class="dice">${rows}</div>
