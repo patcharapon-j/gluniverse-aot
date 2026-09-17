@@ -200,10 +200,10 @@
 
 /* ── Vitals strip ───────────────────────────────────────────────────── */
 /* One band of five: the body (Health, Stress, Resolve) beside the kit that keeps it alive (Gas,
-   Blade Sets). The rigs take the wider columns, since each carries a drawing as well as a readout;
-   the strip folds back into two bands once the window is too narrow for that (below). */
+   Blade Sets). Each is a readout and its two quick actions, so the columns are nearly even; the
+   strip folds into two rows only in the narrow layout (below). */
 .wof-sheet .vitals {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .62fr) minmax(0, 1.46fr) minmax(0, 1.6fr);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .62fr) minmax(0, 1.1fr) minmax(0, 1.1fr);
   margin: var(--s3) var(--gr) 0 var(--gl); border: 1px solid var(--ink2); flex: 0 0 auto;
   background: linear-gradient(var(--paper-hi), var(--paper-lo)); box-shadow: 2px 2px 0 var(--ink);
 }
@@ -291,58 +291,34 @@
 .wof-sheet .down { display: inline-flex; align-items: center; gap: var(--s1); }
 .wof-sheet .down .stamp { padding: 1px 6px; transform: rotate(-3deg); }
 .wof-sheet .down .stamp.no { color: var(--green); border-color: var(--green); }
-.wof-sheet .w3 { display: flex; align-items: center; gap: var(--s2); min-width: 0; }
-/* The drawing keeps its proportions and takes what the column can spare: --ww/--wh come from the
-   widget (its render buffer stays fixed and is drawn down), --wscale trims the slot from that. */
-.wof-sheet .w3 .still, .wof-sheet .w3 .w3d {
-  display: block; flex: 0 1 calc(var(--ww, 150) * var(--wscale, .8) * 1px);
-  width: auto; height: auto; min-width: 40px; aspect-ratio: var(--ww, 150) / var(--wh, 108);
+/* ── The kit vitals: the gas tanks and the Blade Sets, read at a glance ─── */
+/* Gas is the fitted tank's gauge and the spares beside it, each spare a tank a click fits. The
+   chips are the Kit page's own canisters, so a canister reads the same wherever it is shown. */
+.wof-sheet .tanks { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); }
+.wof-sheet .canister.fitted { padding: 2px 3px; gap: 2px; }
+.wof-sheet .canister.fitted .gasbar { width: 12px; height: 22px; }
+.wof-sheet .canister.fitted.dry .gasbar { border-color: var(--red); }
+.wof-sheet button.canister { cursor: pointer; transition: transform .12s var(--ease), box-shadow .12s var(--ease); }
+.wof-sheet button.canister:hover:not(:disabled) { border-color: var(--red); transform: translate(-1px, -1px); box-shadow: 2px 2px 0 rgba(36, 31, 27, .35); }
+.wof-sheet button.canister:disabled { cursor: default; }
+/* The Blade Sets: the set in the hand, and the sets still in the box on the hip. */
+.wof-sheet .slots { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); min-width: 0; }
+.wof-sheet .slot {
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--s1); padding: 2px var(--s2); max-width: 100%;
+  border: 1px solid var(--ink2); background: var(--paper-hi); box-shadow: 1px 1px 0 rgba(36, 31, 27, .25);
 }
-.wof-sheet .w3 .still svg { display: block; width: 100%; height: 100%; }
-.wof-sheet .w3 .wtxt { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
-.wof-sheet .w3 .val { font: 700 var(--t-lg)/1 var(--fd); }
-.wof-sheet .w3 .val small { font: 600 var(--t-sm) var(--fd); color: var(--ink3); }
-
-/* ── The kit rigs: the gas canisters and the Blade Sets, on their own steel plate ─── */
-.wof-sheet .rig {
-  align-items: stretch; gap: var(--s3); padding: var(--s2); margin-top: 2px;
-  border: 1px solid var(--iron-lo); border-radius: 2px;
-  background: linear-gradient(160deg, #3d4348, #23272b 55%, #171a1d);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16), inset 0 -10px 22px rgba(0, 0, 0, .5), 2px 2px 0 rgba(36, 31, 27, .3);
+.wof-sheet .slot.bad { border-color: var(--red); background: rgba(142, 35, 35, .06); }
+.wof-sheet .slot.bad .note, .wof-sheet .slot.bad b { color: var(--red); }
+.wof-sheet .slot b { font: 700 var(--t-md)/1 var(--fd); font-variant-numeric: lining-nums tabular-nums; }
+.wof-sheet .slot i.blade {
+  width: 20px; height: 7px; flex: 0 0 auto; border-radius: 1px 4px 4px 1px;
+  background: linear-gradient(#f2f5f7, #aeb6bd 55%, #767e85); box-shadow: inset 0 0 0 1px #5d646b;
 }
-/* A faint grid of rivets, so the plate reads as pressed steel rather than a flat box. */
-.wof-sheet .rig::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: 2px;
-  background: radial-gradient(circle at 6px 6px, rgba(255, 255, 255, .22) 0 1px, transparent 1.6px),
-    radial-gradient(circle at calc(100% - 6px) 6px, rgba(255, 255, 255, .22) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 6px calc(100% - 6px), rgba(255, 255, 255, .22) 0 1px, transparent 1.6px),
-    radial-gradient(circle at calc(100% - 6px) calc(100% - 6px), rgba(255, 255, 255, .22) 0 1px, transparent 1.6px);
+.wof-sheet .slot:not(.on) i.blade { background: var(--paper-lo); box-shadow: inset 0 0 0 1px var(--ink3); }
+.wof-sheet .slot i.box {
+  width: 15px; height: 13px; flex: 0 0 auto; border-radius: 1px;
+  background: linear-gradient(#8d959c, #5b6268); box-shadow: inset 0 0 0 1px #2a2d31;
 }
-.wof-sheet .rig { position: relative; }
-.wof-sheet .rig .still, .wof-sheet .rig .w3d { filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .55)); }
-.wof-sheet .rig .gauge { flex: 1 1 auto; justify-content: center; gap: var(--s1); color: #e7e0cd; }
-.wof-sheet .rig .gauge .val { font: 900 var(--t-2xl)/.9 var(--fd); color: #f3ecd9; text-shadow: 0 1px 0 #000; font-variant-numeric: lining-nums tabular-nums; }
-.wof-sheet .rig .gauge .val small { color: #a9a294; }
-.wof-sheet .rig .gauge .note { color: #b3ac9b; }
-.wof-sheet .rig.dry .gauge .val { color: var(--red-hi); }
-/* The gas gauge: one lit segment per point of Gas Rating, read left to right. */
-.wof-sheet .rig .bar { display: flex; gap: 3px; align-items: center; }
-.wof-sheet .rig .bar i {
-  flex: 1 1 0; min-width: 6px; max-width: 22px; height: 12px; border-radius: 1px;
-  background: #23272b; box-shadow: inset 0 0 0 1px #0d0f11, inset 0 1px 0 rgba(255, 255, 255, .08);
-}
-.wof-sheet .rig .bar i.on {
-  background: linear-gradient(#c04141, #8e2323 60%, #5f1717);
-  box-shadow: inset 0 0 0 1px #3d0f0f, 0 0 6px rgba(192, 65, 65, .5);
-}
-/* The blade rack: the set in the handles first, then the sets still in the box. */
-.wof-sheet .rig .rack { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
-.wof-sheet .rig .rack i.set {
-  width: 26px; height: 8px; border-radius: 1px 4px 4px 1px; background: #23272b; box-shadow: inset 0 0 0 1px #0d0f11;
-}
-.wof-sheet .rig .rack i.set.on { background: linear-gradient(#f2f5f7, #aeb6bd 55%, #767e85); box-shadow: inset 0 0 0 1px #5d646b, 0 1px 2px rgba(0, 0, 0, .5); }
-.wof-sheet .rig .rack i.set.handles { width: 34px; }
-.wof-sheet .rig .rack i.set.handles.on { background: linear-gradient(#fff, #cfd6db 55%, #8d959c); }
 .wof-sheet .vit.gasv .acts, .wof-sheet .vit.bladev .acts { margin-top: 2px; }
 
 /* ── Tabs ───────────────────────────────────────────────────────────── */
@@ -652,16 +628,6 @@
 .wof-sheet .notes.entry-first prose-mirror { overflow: visible; }
 .wof-sheet .notes.entry-first prose-mirror .editor-content { position: static; min-height: 0; height: auto; overflow: visible; }
 
-/* Less room for the rigs: the slots trim further and the readout sits against the drawing. */
-@container wofsheet (max-width: 1100px) {
-  .wof-sheet .vitals .w3 { --wscale: .66; gap: var(--s1); }
-  .wof-sheet .vitals .rig { padding: var(--s1); gap: var(--s2); }
-  .wof-sheet .vitals .rig .gauge .val { font-size: var(--t-xl); }
-}
-@container wofsheet (max-width: 880px) {
-  .wof-sheet .vitals .w3 { --wscale: .5; }
-  .wof-sheet .vitals .rig .bar i { height: 10px; }
-}
 /* Nothing left for the captions: each field keeps its value, and its tooltip names it. */
 @container wofsheet (max-width: 860px) {
   .wof-sheet .meta.line { gap: var(--s3); }
@@ -669,18 +635,16 @@
 }
 /* ── Narrow ─────────────────────────────────────────────────────────── */
 @container wofsheet (max-width: 760px) {
-  .wof-sheet .vitals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .wof-sheet .vit + .vit { border-left: 0; }
-  .wof-sheet .vit { border-top: 1px solid var(--rule); grid-column: span 1; }
-  .wof-sheet .vit.gasv, .wof-sheet .vit.bladev { grid-column: span 2; }
-  /* Each rig has a whole row of the strip here, so its drawing takes its full slot again. */
-  .wof-sheet .vitals .w3 { --wscale: 1; }
-  /* Too narrow for the rig beside its gauge: the readout drops under the drawing. */
-  .wof-sheet .rig { flex-wrap: wrap; }
   .wof-sheet .two, .wof-sheet .two.even, .wof-sheet .record { grid-template-columns: minmax(0, 1fr); }
   .wof-sheet .wm { grid-template-columns: 176px minmax(0, 1fr); }
   .wof-sheet .wm > :last-child { grid-column: 1 / -1; }
   .wof-sheet .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Too narrow for five readouts side by side: two to a row, the kit below the body. */
+@container wofsheet (max-width: 620px) {
+  .wof-sheet .vitals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wof-sheet .vit + .vit { border-left: 0; }
+  .wof-sheet .vit { border-top: 1px solid var(--rule); grid-column: span 1; }
 }
 @container wofsheet (max-width: 560px) {
   .wof-sheet { --gl: 28px; --gr: 10px; }
@@ -937,11 +901,7 @@
 .wof-sheet.compact .vitals .vit + .vit { border-left: 1px solid var(--rule); }
 .wof-sheet.compact .vitals .vit.gasv { border-left: 0; }
 .wof-sheet.compact .vitals .big { font-size: var(--t-2xl); }
-.wof-sheet.compact .vitals .w3 .wtxt { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 2px var(--s2); }
-/* No widget is drawn on a compact sheet, so the rig is just the readout on its plate. */
-.wof-sheet.compact .vitals .rig { padding: var(--s1) var(--s2); gap: var(--s2); }
-.wof-sheet.compact .vitals .rig .gauge .val { font-size: var(--t-xl); }
-.wof-sheet.compact .vitals .rig .bar i { height: 10px; }
+.wof-sheet.compact .vitals .canister.fitted .gasbar { width: 10px; height: 18px; }
 .wof-sheet.compact .vitals .vrow { flex-wrap: wrap; }
 .wof-sheet .slipline .link { text-align: left; }
 /* Foundry's default white glyphs, inked for the paper */
