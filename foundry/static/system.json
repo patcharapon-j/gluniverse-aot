@@ -2,7 +2,7 @@
   "id": "wings-of-freedom",
   "title": "Wings of Freedom",
   "description": "Attack on Titan on the Year Zero Engine, set on Paradis in the walls era (845 to 850).",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "compatibility": {
     "minimum": "14",
     "verified": "14"
@@ -14,7 +14,7 @@
   ],
   "url": "https://github.com/patcharapon-j/gluniverse-aot",
   "manifest": "https://github.com/patcharapon-j/gluniverse-aot/releases/latest/download/system.json",
-  "download": "https://github.com/patcharapon-j/gluniverse-aot/releases/download/v0.1.7/wings-of-freedom.zip",
+  "download": "https://github.com/patcharapon-j/gluniverse-aot/releases/download/v0.1.8/wings-of-freedom.zip",
   "background": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp",
   "media": [
     {
