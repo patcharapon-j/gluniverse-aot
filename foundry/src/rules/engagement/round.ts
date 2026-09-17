@@ -141,13 +141,10 @@ const stable = (x: unknown) => JSON.stringify(x, (_k, v) => (v && typeof v === '
 
 /**
  * The value Undo writes back for a set op: the value before, when the document still holds the
- * value the op wrote; a number another change moved since is moved back by the op's own delta; any
- * other later change is kept (undefined: skip and warn).
+ * value the op wrote; any later change, a number included, is kept (undefined: skip and warn).
  */
 export function revertValue(op: Extract<TrackerOp, { t: 'set' }>, current: unknown): { value: unknown } | undefined {
-  if (stable(current) === stable(op.to)) return { value: op.from };
-  if (typeof current === 'number' && typeof op.from === 'number' && typeof op.to === 'number') return { value: Math.max(0, current - (op.to - op.from)) };
-  return undefined;
+  return stable(current) === stable(op.to) ? { value: op.from } : undefined;
 }
 
 // ---------------------------------------------------------------- Wings

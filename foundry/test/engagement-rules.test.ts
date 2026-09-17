@@ -595,7 +595,9 @@ describe('the round (round.yaml, round_steps and end_steps)', () => {
     expect(undoOrder(log, 1)).toEqual([3, 2, 1]);
     const op = { t: 'set' as const, uuid: 'x', path: 'system.regeneration', from: 1, to: 2 };
     expect(revertValue(op, 2)).toEqual({ value: 1 });
-    expect(revertValue(op, 3)).toEqual({ value: 2 });
+    // A number changed after the step is kept, not moved back by the op's delta (milestone 4 review, M6).
+    expect(revertValue(op, 3)).toBeUndefined();
+    expect(revertValue(op, 0)).toBeUndefined();
     const list = { t: 'set' as const, uuid: 'x', path: 'system.openings_by', from: ['a'], to: [] };
     expect(revertValue(list, [])).toEqual({ value: ['a'] });
     expect(revertValue(list, ['b'])).toBeUndefined();
