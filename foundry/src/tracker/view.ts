@@ -14,7 +14,7 @@ import { drawAttentionBlock } from '../rules/engagement/attention.ts';
 import type { Position, Snapshot, SoldierState, TitanRow } from '../rules/engagement/types.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { currentEngagement, engagementTurns } from './combat.ts';
-import { checkCategoryOf, endingState, roundCore, skirmishFoes } from './engine.ts';
+import { checkCategoryOf, endLock, endingState, roundCore, skirmishFoes } from './engine.ts';
 import { tr } from './notes.ts';
 import { E, grabbedBy, partsOf, snapshot, titanActor, titanToken } from './snapshot.ts';
 
@@ -137,6 +137,8 @@ export interface CheckView {
   state: string;
   next: boolean;
   off: boolean;
+  /** This client may apply or skip the check now (the active GM, with no step under way). */
+  canRun: boolean;
   canUndo: boolean;
 }
 
@@ -326,6 +328,7 @@ export function buildView(): TrackerView | null {
   const steps = order5.map((id, i) => ({ id, label: tr(`step.${id}`), short: tr(`step.${id}Short`), state: !mine.includes(id) ? 'off' : i < cur ? 'done' : i === cur ? 'on' : '' }));
   const log = combat.system.toObject().endLog as EndEntry[];
   const nc = nextCheck(log);
+  const endFree = sys.step === 'end' && !!game.user.isActiveGM && !endLock.held(combat.id);
   const enabled = trackerApply();
   const checks: CheckView[] = (log.length ? log : checksOf(snap.mode).map((check) => ({ check, state: 'waiting', ops: [], lines: [] }) as EndEntry)).map((e, index) => {
     const cat = checkCategoryOf(e.check);
@@ -337,7 +340,8 @@ export function buildView(): TrackerView | null {
       state: sys.step === 'end' ? e.state : 'waiting',
       next: sys.step === 'end' && index === nc,
       off: !!cat && !enabled[cat],
-      canUndo: isGM && sys.step === 'end' && e.state === 'done',
+      canRun: endFree && index === nc,
+      canUndo: endFree && e.state === 'done',
     };
   });
   const allStamped = sys.step === 'end' && endComplete(roundCore(combat));
@@ -347,7 +351,7 @@ export function buildView(): TrackerView | null {
     else if (sys.step === 'deal') primary = { action: 'deal', label: tr('act.deal') };
     else if (sys.step === 'swap') primary = { action: 'begin-play', label: tr('act.beginPlay') };
     else if (sys.step === 'play') primary = { action: 'next-card', label: tr('act.nextCard') };
-    else if (sys.step === 'end') primary = allStamped ? { action: 'next-round', label: tr('act.nextRound', { n: combat.round + 1 }) } : nc >= 0 ? { action: 'apply-check', label: tr('act.applyCheck') } : null;
+    else if (sys.step === 'end') primary = allStamped ? { action: 'next-round', label: tr('act.nextRound', { n: combat.round + 1 }) } : nc >= 0 && endFree ? { action: 'apply-check', label: tr('act.applyCheck') } : null;
   } else if (sys.step === 'play' && current?.isOwner && current.system.kind !== 'titan') primary = { action: 'next-card', label: tr('act.endTurn') };
   const hint = tr(`hint.${sys.step}`);
 

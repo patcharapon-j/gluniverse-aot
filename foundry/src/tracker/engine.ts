@@ -36,6 +36,7 @@ import { isGrounded, nextBehaviorFor, type BodyPart } from '../rules/titan.ts';
 import { rollGas } from '../dice/tables.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { CARD, ENGAGEMENT, engagementTurns, isEngagement } from './combat.ts';
+import { KeyedLock } from './busy.ts';
 import { postNote, tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
 import { E, cardsOf, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
@@ -754,17 +755,35 @@ function enabledCategories(): Record<TrackerCategory, boolean> {
   return trackerApply();
 }
 
-export async function runEnd(combat: any): Promise<void> {
+/**
+ * Round-end steps are run, applied, skipped, and undone by the active GM only, one at a time per
+ * engagement, so neither a second click nor a second GM applies a step twice.
+ */
+export const endLock = new KeyedLock();
+
+const withEndLock = async (combat: any, fn: () => Promise<void>): Promise<void> => {
   if (!isActiveGM()) return;
+  await endLock.run(combat.id, fn);
+};
+
+export async function runEnd(combat: any): Promise<void> {
+  await withEndLock(combat, () => runEndNow(combat));
+}
+
+async function runEndNow(combat: any): Promise<void> {
   for (;;) {
     const log = plain(combat).endLog as EndEntry[];
     const auto = autoChecks(log, enabledCategories());
     if (!auto.length) return;
-    await applyCheck(combat, auto[0]);
+    await applyCheckNow(combat, auto[0]);
   }
 }
 
 export async function applyCheck(combat: any, index: number): Promise<void> {
+  await withEndLock(combat, () => applyCheckNow(combat, index));
+}
+
+async function applyCheckNow(combat: any, index: number): Promise<void> {
   const log = plain(combat).endLog as EndEntry[];
   const entry = log[index];
   if (!entry || entry.state === 'done' || nextCheck(log) !== index) return;
@@ -777,23 +796,27 @@ export async function applyCheck(combat: any, index: number): Promise<void> {
 }
 
 export async function skipCheck(combat: any, index: number): Promise<void> {
-  const log = plain(combat).endLog as EndEntry[];
-  if (nextCheck(log) !== index) return;
-  log[index] = { ...log[index], state: 'skipped', ops: [], lines: [tr('end.skipped')] };
-  await writeSystem(combat, { endLog: log });
-  await runEnd(combat);
+  await withEndLock(combat, async () => {
+    const log = plain(combat).endLog as EndEntry[];
+    if (nextCheck(log) !== index) return;
+    log[index] = { ...log[index], state: 'skipped', ops: [], lines: [tr('end.skipped')] };
+    await writeSystem(combat, { endLog: log });
+    await runEndNow(combat);
+  });
 }
 
 export async function undoCheck(combat: any, index: number): Promise<void> {
-  const log = plain(combat).endLog as EndEntry[];
-  for (const i of undoOrder(log, index)) {
-    const kept = await revertOps(log[i].ops);
-    if (kept.length) ui.notifications.warn(tr('end.kept', { list: kept.join(', ') }));
-    const now = plain(combat).endLog as EndEntry[];
-    now[i] = { ...now[i], state: 'undone', ops: [], lines: [] };
-    for (let j = i + 1; j < now.length; j++) if (now[j].state === 'skipped') now[j] = { ...now[j], state: 'undone', lines: [] };
-    await writeSystem(combat, { endLog: now });
-  }
+  await withEndLock(combat, async () => {
+    const log = plain(combat).endLog as EndEntry[];
+    for (const i of undoOrder(log, index)) {
+      const kept = await revertOps(log[i].ops);
+      if (kept.length) ui.notifications.warn(tr('end.kept', { list: kept.join(', ') }));
+      const now = plain(combat).endLog as EndEntry[];
+      now[i] = { ...now[i], state: 'undone', ops: [], lines: [] };
+      for (let j = i + 1; j < now.length; j++) if (now[j].state === 'skipped') now[j] = { ...now[j], state: 'undone', lines: [] };
+      await writeSystem(combat, { endLog: now });
+    }
+  });
 }
 
 async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): Promise<void> {

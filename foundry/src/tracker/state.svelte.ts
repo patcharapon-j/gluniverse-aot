@@ -5,7 +5,7 @@
 import { SYSTEM_ID } from '../config.ts';
 import { nextCheck, type EndEntry } from '../rules/engagement/round.ts';
 import { currentEngagement } from './combat.ts';
-import { applyCheck, endEngagement, isGM, leave, movePosition, nextCard, returnTo, roundAction, runEnd, skipCheck, swap, undoCheck } from './engine.ts';
+import { applyCheck, endEngagement, endLock, isGM, leave, movePosition, nextCard, returnTo, roundAction, runEnd, skipCheck, swap, undoCheck } from './engine.ts';
 import { ask } from './requests.ts';
 import { foeAct } from './results.ts';
 import { refreshStatuses } from './statuses.ts';
@@ -27,6 +27,9 @@ export const onRefresh = (fn: () => void) => {
   listeners.add(fn);
   return () => listeners.delete(fn);
 };
+
+// The round-end actions hide while a step is under way.
+endLock.onChange(() => refreshTracker());
 
 export function refreshTracker(): void {
   window.clearTimeout(timer);

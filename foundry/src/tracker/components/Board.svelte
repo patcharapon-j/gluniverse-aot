@@ -307,7 +307,7 @@
             <span class="box">{ck.state === 'done' ? '✓' : ck.state === 'skipped' ? '–' : ck.index + 1}</span>
             <strong>{ck.label}</strong>
             <span class="det" title={ck.lines.join(' ') || ck.detail}>{ck.lines.length ? ck.lines.join(' ') : ck.detail}</span>
-            {#if ck.next && isGM}
+            {#if ck.canRun}
               <span class="ckacts">
                 {#if ck.off}<em class="note">{t('board.notApplied')}</em>{/if}
                 <button type="button" class="mini red" onclick={() => act('check-apply', { index: ck.index })}>{t('act.apply')}</button>
