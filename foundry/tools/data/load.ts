@@ -78,6 +78,13 @@ export const FILES = {
   talentWording: ['site/src/content/compendium/talent-text.yaml', S.talentWordingFile],
   gearWording: ['site/src/content/compendium/gear-text.yaml', S.gearWordingFile],
   actionWording: ['site/src/content/compendium/action-text.yaml', S.actionWordingFile],
+  round: ['data/engagement/round.yaml', S.roundFile],
+  positions: ['data/engagement/positions.yaml', S.positionsFile],
+  anchorRatings: ['data/engagement/anchor-ratings.yaml', S.anchorRatingsFile],
+  grab: ['data/engagement/grab.yaml', S.grabFile],
+  backgroundTitans: ['data/engagement/background-titans.yaml', S.backgroundTitansFile],
+  engagementSetup: ['data/engagement/engagement-setup.yaml', S.engagementSetupFile],
+  squadTactics: ['data/engagement/squad-tactics.yaml', S.squadTacticsFile],
 } as const;
 
 type Files = typeof FILES;
@@ -172,6 +179,11 @@ function crossCheck(t: Tables): void {
     const fw = typeof f.fight_weapon === 'string' ? [f.fight_weapon] : [...f.fight_weapon.rows.map((r) => r.weapon), ...(f.fight_weapon.at_night ? [f.fight_weapon.at_night.with] : [])];
     for (const w of [...fw, ...(f.shoot_weapon ? [f.shoot_weapon] : [])]) if (!weapons.has(w)) fail(FILES.foes[0], `"${f.id}" names the missing weapon "${w}"`);
   }
+  const ratings = new Set(t.anchorRatings.ratings.map((r) => r.id));
+  for (const r of t.engagementSetup.anchor_rating.rows) if (!ratings.has(r.anchor_rating)) fail(FILES.engagementSetup[0], `names the missing Anchor Rating "${r.anchor_rating}"`);
+  const titanIds = new Set(t.titans.map((x) => x.id));
+  for (const r of t.engagementSetup.medium_abnormal.rows) if (!titanIds.has(r.titan)) fail(FILES.engagementSetup[0], `names the missing Titan "${r.titan}"`);
+  if (t.grab.grab_lands.grip_toughness !== t.sizeClasses.grip_toughness) fail(FILES.grab[0], 'its grip Toughness differs from data/engagement/size-classes.yaml');
   for (const titan of t.titans) {
     if (!ladders.has(titan.attention_ladder)) fail(`data/titans/${titan.id}.yaml`, `names the missing Attention Ladder "${titan.attention_ladder}"`);
     if (!titan.abnormal) {

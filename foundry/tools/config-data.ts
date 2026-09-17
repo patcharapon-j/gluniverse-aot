@@ -245,8 +245,84 @@ export function packIds(t: Tables) {
     specialties: ids('specialties', t.specialties.specialties),
     origins: ids('origins', t.origins.rows),
     gear: ids('gear', t.gearItems.items.filter((g) => gearSubtype(g.id) !== null)),
+    criticalInjuries: ids('critical-injuries', Object.values(t.criticalInjuries.tables).flatMap((x) => x.rows)),
+    titans: ids('titans', t.titans),
+    foes: ids('foes', t.foes.foes),
   };
 }
+
+/** The tables the Engagement tracker reads (milestone 4, foundry/docs/tracker-plan.md). */
+export function engagementConfig(t: Tables) {
+  const source = (sid: string) => {
+    const x = t.bonusDice.sources.find((s) => s.id === sid)!;
+    if (typeof x.dice_per_unit !== 'number') throw new Error(`data/core/bonus-dice-sources.yaml: "${sid}" gives no fixed dice.`);
+    return x.dice_per_unit;
+  };
+  const escape = (sid: string) => t.grab.escapes.find((e) => e.id === sid)!;
+  const range = (r: { min: number | null; max: number | null }) => ({ min: r.min, max: r.max });
+  return {
+    cards: 20,
+    steps: t.round.round_steps.map((x) => x.id),
+    endSteps: t.round.end_steps.map((x) => x.id),
+    positions: [...t.anchorRatings.positions],
+    ratings: t.anchorRatings.ratings.map((r) => ({
+      id: r.id,
+      name: r.name,
+      steps: r.steps.map((x) => ({ a: x.between[0], b: x.between[1], onFoot: x.on_foot, mounted: x.mounted, odm: x.odm, fly: x.fly_roll ? { needs: x.fly_roll.needs, failure: x.fly_roll.failure_ends_at } : null })),
+    })),
+    focusLimit: t.backgroundTitans.focus_titan_limit,
+    gripToughness: t.grab.grab_lands.grip_toughness,
+    crush: { location: t.grab.grab_lands.crush_harm.injury_location, type: t.grab.grab_lands.crush_harm.injury_type, cannotBeLethal: t.grab.grab_lands.crush_harm.cannot_be_lethal },
+    breakFree: { needs: escape('break-free').needs ?? 2, liftedPenalty: escape('break-free').lifted_penalty ?? 0 },
+    holdingArmReach: { before: [...(escape('strike-the-holding-arm').reach_before_lift ?? [])], after: [...(escape('strike-the-holding-arm').reach_after_lift ?? [])] },
+    grabForbids: [...t.grab.grabbed_state.forbids],
+    breakAttention: { needs: t.attention.break_attention.needs, decoys: t.attention.break_attention.decoys.map((d) => ({ id: d.id, name: d.name })) },
+    downCanMeet: Object.fromEntries(t.attention.tests.map((x) => [x.id, x.down_can_meet])),
+    bonus: { opening: source('opening'), grounded: source('grounded-titan'), ambush: source('ambush') },
+    tactics: t.squadTactics.tactics.map((x) => ({ id: x.id, name: x.name })),
+    setup: {
+      anchor: t.engagementSetup.anchor_rating.rows.map((r) => ({ results: r.results, id: r.anchor_rating })),
+      size: t.engagementSetup.size_class.rows.map((r) => ({ results: r.results, id: r.size_class })),
+      mediumAbnormal: t.engagementSetup.medium_abnormal.rows.map((r) => ({ results: r.results, id: r.titan })),
+      background: t.engagementSetup.background_titans.rows.map((r) => ({ results: r.results, clocks: r.clocks })),
+      retreatClock: t.engagementSetup.retreat_clock,
+      clockLengths: [4, 6, 8],
+      standard: t.titanIndex.standard_titans,
+    },
+    titans: t.titans.map((x) => ({ id: x.id, name: x.name, sizeClass: x.size_class, abnormal: x.abnormal, tempo: x.tempo })),
+    injury: {
+      locations: t.criticalInjuries.injury_location_table.rows.map((r) => ({ ...range(r.results), location: r.injury_location, side: r.side })),
+      worsening: t.criticalInjuries.worsening.per_held_injury,
+      rider: t.criticalInjuries.gaining.net_success_rider.add_per_net_success_beyond_first,
+      tables: Object.fromEntries(
+        Object.entries(t.criticalInjuries.tables).map(([loc, table]) => [
+          loc,
+          {
+            cap: table.non_lethal_cap,
+            rows: table.rows.map((r) => ({
+              id: r.id,
+              ...range(r.results),
+              instant: 'instant_death' in r,
+              lethal: 'instant_death' in r ? true : r.lethal,
+              permanent: 'permanent_effects' in r && (r.permanent_effects ?? []).length > 0,
+              repeat: 'repeat_row' in r ? (r.repeat_row ?? null) : null,
+            })),
+          },
+        ]),
+      ) as Record<string, { cap: string; rows: { id: string; min: number | null; max: number | null; instant: boolean; lethal: boolean; permanent: boolean; repeat: string | null }[] }>,
+    },
+    skirmish: {
+      perNetBeyond: t.skirmish.damage.amount.per_net_success_beyond_the_first,
+      killedBy: [...t.skirmish.damage.on_a_foe.killed_by],
+      outColdBy: [...t.skirmish.damage.on_a_foe.out_cold_by],
+      reactions: t.skirmish.reactions.entries.map((r) => ({ entry: r.entry, against: [...r.against] })),
+      asks: t.skirmish.parley.asks.map((a) => ({ id: a.id, name: a.name, needsAdd: a.needs_add })),
+      foes: t.foes.foes.map((f) => ({ id: f.id, name: f.name })),
+    },
+  };
+}
+
+export type EngagementConfig = ReturnType<typeof engagementConfig>;
 
 export function buildConfig(t: Tables, site: SiteWording, fw: FoundryWording) {
   checkConstants(t);
@@ -405,6 +481,7 @@ export function buildConfig(t: Tables, site: SiteWording, fw: FoundryWording) {
     lifepath: lifepathTables(t, site),
     lifepathPage: { sections: site.lifepathPage.sections, boxes: site.lifepathPage.boxes, flows: site.lifepathPage.flows },
     packIds: packIds(t),
+    engagement: engagementConfig(t),
   };
 }
 
