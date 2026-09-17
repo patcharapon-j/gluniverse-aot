@@ -16,6 +16,7 @@ import {
   returnBlock,
   stepRows,
   stepsApart,
+  type MoveContext,
   withPosition,
 } from '../src/rules/engagement/positions.ts';
 import {
@@ -205,7 +206,7 @@ describe('swaps (round.yaml, swapping)', () => {
 // ------------------------------------------------------------------ positions
 
 describe('Positions and moves (positions.yaml, anchor-ratings.yaml)', () => {
-  const ctx = (t: TitanRow = titan('A'), r: AnchorRating = wooded) => ({ rating: r, titan: t, grabbed: false, retreat: false });
+  const ctx = (t: TitanRow = titan('A'), r: AnchorRating = wooded, momentum = 0): MoveContext => ({ rating: r, titan: t, grabbed: false, retreat: false, momentum });
   const opts = (s: SoldierState, c = ctx()) => Object.fromEntries(moveOptions(s, c).map((o) => [o.to, o]));
 
   it('makes one step the rating allows, by the kinds its row names', () => {
@@ -216,9 +217,15 @@ describe('Positions and moves (positions.yaml, anchor-ratings.yaml)', () => {
     expect(near['blind-spot'].ways.map((w) => w.kind)).toEqual(['odm']);
   });
 
-  it('gives a Fly-roll step its need and failure Position (Urban, Distant to Blind Spot)', () => {
-    const o = opts(soldier('a'), ctx(titan('A'), rating('urban')));
-    expect(o['blind-spot'].ways).toEqual([{ kind: 'odm', fly: { needs: 1, failure: 'in-reach' } }]);
+  it('has no Fly-roll step left: Urban no longer joins Distant to Blind Spot, and Carry crosses it (anchor-ratings.yaml, history)', () => {
+    const urban = rating('urban');
+    expect(urban.steps.some((r) => r.a === 'distant' && r.b === 'blind-spot')).toBe(false);
+    expect(rating('sparse').steps.some((r) => (r.a === 'in-reach' && r.b === 'blind-spot') || (r.a === 'blind-spot' && r.b === 'in-reach'))).toBe(false);
+    expect(rating('giant-forest').steps.some((r) => r.a === 'distant' && r.b === 'blind-spot')).toBe(false);
+    const o = opts(soldier('a'), ctx(titan('A'), urban));
+    expect(o['blind-spot'].block).toBe('notOneStep');
+    const carried = opts(soldier('a', { momentum: 1 }), ctx(titan('A'), urban, 1));
+    expect(carried['blind-spot'].ways).toEqual([{ kind: 'odm', steps: 2, carry: 1, charge: false }]);
     expect(o['in-reach'].ways.map((w) => w.kind)).toEqual(['onFoot', 'odm']);
   });
 
@@ -512,7 +519,7 @@ describe('the round (round.yaml, round_steps and end_steps)', () => {
     let c = core();
     for (const a of ['keep-wings', 'deal', 'begin-play', 'finish-play'] as const) c = roundNext(c, a);
     expect(c.step).toBe('end');
-    expect(c.endLog.map((e) => e.check)).toEqual(['gas-rolls', 'regeneration', 'background-clocks', 'retreat-clock', 'round-ends']);
+    expect(c.endLog.map((e) => e.check)).toEqual(['gas-rolls', 'regeneration', 'background-clocks', 'retreat-clock', 'momentum', 'round-ends']);
     expect(roundBlock(c, 'next-round')).toBe('endOpen');
     c = { ...c, endLog: c.endLog.map((e) => ({ ...e, state: 'done' })) };
     expect(endComplete(c)).toBe(true);
@@ -608,7 +615,7 @@ describe('the round (round.yaml, round_steps and end_steps)', () => {
   it('runs the switched-on checks in order and stops at a switched-off one', () => {
     const log: EndEntry[] = checksOf('titan').map((check) => ({ check, state: 'waiting', ops: [], lines: [] }));
     const on = Object.fromEntries(TRACKER_CATEGORIES.map((c) => [c, true])) as Record<TrackerCategory, boolean>;
-    expect(autoChecks(log, on)).toEqual([0, 1, 2, 3, 4]);
+    expect(autoChecks(log, on)).toEqual([0, 1, 2, 3, 4, 5]);
     expect(autoChecks(log, { ...on, regeneration: false })).toEqual([0]);
     const partly = log.map((e, i) => (i < 2 ? { ...e, state: 'done' as const } : e));
     expect(nextCheck(partly)).toBe(2);
@@ -756,6 +763,10 @@ describe('tracker requests (the GM proxy guard)', () => {
     reassign: [],
     tactics: { held: ['fall-back'], used: [] },
     cloaks: [],
+    anchors: 2,
+    wrecks: 0,
+    odmUsed: [],
+    movesSpent: [],
     ...extra,
   });
   const world = (s: Snapshot, mine: string[]): TrackerWorld => ({ userId: 'u', owns: (id) => mine.includes(id), snapshot: (id) => (id === s.combat ? s : null) });

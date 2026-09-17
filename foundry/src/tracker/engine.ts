@@ -532,7 +532,8 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
     targets,
   });
   const telegraph = (full?.effects ?? []).some((e: any) => e.type === 'telegraph');
-  const titans = (plain(combat).titans as any[]).map((t) => (t.key === key ? { ...t, pending: JSON.stringify({ entry: entry.id, message: '', telegraph, behavior: message?.id ?? '' }) } : t));
+  const wrecksAnchor = (full?.effects ?? []).some((e: any) => e.type === 'wreck');
+  const titans = (plain(combat).titans as any[]).map((t) => (t.key === key ? { ...t, pending: JSON.stringify({ entry: entry.id, message: '', telegraph, wreck: wrecksAnchor, behavior: message?.id ?? '' }) } : t));
   await writeSystem(combat, { titans });
   await postNote({ title, lines: [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), tr('note.behaviorWaits')], titan: true, round: combat.round });
 }
@@ -561,6 +562,9 @@ async function titanCardEnd(combat: any, combatant: any): Promise<void> {
   }
   // resolving_a_card, next: the previous behavior, decoys in a row 0, flags cleared, a new Next Behavior.
   const rec = new Recorder();
+  // A wreck effect applies whether the behavior landed or whiffed, as telegraph does
+  // (titan-format.yaml, effect_types, wreck).
+  if (pending.wreck) wreck(combat, rec);
   rec.set(actor, 'system.previous_behavior', pending.entry);
   const next = await rollNext(actor, pending.entry, rec, pending.telegraph);
   rec.set(combat, 'system.titans', (after.titans as any[]).map((t) => (t.key === key ? { ...t, pending: '', decoysInRow: 0, flags: emptyFlags() } : t)));

@@ -27,7 +27,7 @@ export const PART_KINDS = ['eyes', 'arm', 'leg'] as const;
 /** titan-format.yaml, entry_fields.targets. */
 export const TITAN_TARGETS = ['holder', 'holder-and-position'] as const;
 /** titan-format.yaml, entry_fields.effects: what a landed entry causes. */
-export const TITAN_EFFECTS = ['stress', 'critical-injury', 'knock-loose', 'grab', 'telegraph'] as const;
+export const TITAN_EFFECTS = ['stress', 'critical-injury', 'knock-loose', 'grab', 'wreck', 'telegraph'] as const;
 
 export interface BehaviorEntry {
   id: string;
