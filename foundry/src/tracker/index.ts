@@ -7,6 +7,7 @@ import { refreshBadges, registerBadges } from './badges.ts';
 import { retitleBoard } from './board.ts';
 import { defineCombatDocuments, defineCombatModels, setCombatHandlers } from './combat.ts';
 import { cardEnd, cardStart, nextCard, nextRoundHandler, roundAction } from './engine.ts';
+import { registerDiceFade } from './dice-fade.ts';
 import { mountHud } from './hud.ts';
 import { registerNotes } from './notes.ts';
 import { registerRequests } from './requests.ts';
@@ -43,6 +44,7 @@ export function registerTracker(): void {
   registerResultView();
   registerStatuses();
   registerBadges();
+  registerDiceFade(() => document.getElementById('wof-hud-host'));
   onRefresh(() => {
     refreshBadges();
     retitleBoard();

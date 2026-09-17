@@ -10,6 +10,7 @@ import { checkTrackerRequest, type TrackerWorld } from '../src/rules/engagement/
 import { damageSoldier, fallBand, fallDamage, fallLands, referenceLabel, steamDamage, steamRollers } from '../src/rules/engagement/harm-rolls.ts';
 import { moveOptions, stepsApart } from '../src/rules/engagement/positions.ts';
 import { forcedTargets, moveKinds, retreatBinds, retreatBody, stayOpen } from '../src/rules/engagement/retreat.ts';
+import { DiceFade } from '../src/tracker/dice-fade.ts';
 import { emptyFlags, type SoldierState, type TitanRow } from '../src/rules/engagement/types.ts';
 import { engagementConfig } from '../tools/config-data.ts';
 import { loadTables } from '../tools/data/load.ts';
@@ -257,5 +258,50 @@ describe('the retreat forced moves (background-titans.yaml, retreat, moves)', ()
     expect(forcedTargets(s, 'B', w, kinds)).toEqual(['in-reach']);
     expect(forcedTargets(s, 'A', w, kinds)).toEqual([]);
     expect(moveKinds(soldier('m', { mounted: true, odmHad: false }))).toEqual(['mounted']);
+  });
+});
+
+describe('the HUD fade while Dice So Nice dice are on screen', () => {
+  function clock() {
+    let now = 0;
+    const jobs = new Map<number, { at: number; fn: () => void }>();
+    let id = 0;
+    return {
+      timers: { set: (fn: () => void, ms: number) => (jobs.set(++id, { at: now + ms, fn }), id), clear: (h: unknown) => void jobs.delete(h as number) },
+      tick(ms: number) {
+        now += ms;
+        for (const [k, j] of [...jobs]) if (j.at <= now) {
+          jobs.delete(k);
+          j.fn();
+        }
+      },
+    };
+  }
+
+  it('fades on the first roll, stays faded while any roll is on screen, and returns after the last one hides', () => {
+    const c = clock();
+    const seen: boolean[] = [];
+    const fade = new DiceFade((a) => seen.push(a), 20000, c.timers);
+    fade.start('m:1');
+    fade.start('r:1');
+    expect(seen).toEqual([true]);
+    fade.finish('m:1', 3000);
+    c.tick(3000);
+    expect(fade.active).toBe(true);
+    fade.finish('r:1', 0);
+    expect(seen).toEqual([true, false]);
+    fade.finish('unknown', 0);
+    expect(seen).toEqual([true, false]);
+  });
+
+  it('never stays faded: a roll that never completes ends after the cap', () => {
+    const c = clock();
+    const seen: boolean[] = [];
+    const fade = new DiceFade((a) => seen.push(a), 5000, c.timers);
+    fade.start('m:2');
+    c.tick(4999);
+    expect(fade.active).toBe(true);
+    c.tick(1);
+    expect(seen).toEqual([true, false]);
   });
 });
