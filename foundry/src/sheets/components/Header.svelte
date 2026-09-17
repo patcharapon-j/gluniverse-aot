@@ -17,6 +17,10 @@
   });
 
   const ordinal = (n: number | null) => (n === null ? '' : t('WOF.Sheet.ordinal', { n }));
+  // The Class Rank number carries no caption of its own on a narrow sheet, so its tooltip names it.
+  const classRankTip = $derived(
+    [t('WOF.Actor.Soldier.FIELDS.class_rank.label'), s.class_rank ? ordinal(s.class_rank) : ''].filter(Boolean).join(': '),
+  );
 
   const tags = $derived.by(() => {
     const out: { cls: string; text: string; tip?: string }[] = [];
@@ -74,20 +78,20 @@
       onchange={(e) => actor.update({ name: e.currentTarget.value.trim() || view.name })}
     />
     <div class="meta line">
-      <span use:contextMenu={itemMenu(view.specialty?.id)}>
-        {t('TYPES.Item.specialty')}
+      <span use:contextMenu={itemMenu(view.specialty?.id)} use:tooltip={t('TYPES.Item.specialty')}>
+        <span class="cap">{t('TYPES.Item.specialty')}</span>
         {#if view.specialty}
           <button type="button" class="link" onclick={() => openItem(actor, view.specialty!.id)}>{view.specialty.name}</button>
         {:else}<b class="blank" use:tooltip={t('WOF.Sheet.drop.hint')}>{t('WOF.Sheet.none')}</b>{/if}
       </span>
-      <span use:contextMenu={itemMenu(view.origin?.id)}>
-        {t('TYPES.Item.origin')}
+      <span use:contextMenu={itemMenu(view.origin?.id)} use:tooltip={t('TYPES.Item.origin')}>
+        <span class="cap">{t('TYPES.Item.origin')}</span>
         {#if view.origin}
           <button type="button" class="link" onclick={() => openItem(actor, view.origin!.id)}>{view.origin.name}</button>
         {:else}<b class="blank" use:tooltip={t('WOF.Sheet.drop.hint')}>{t('WOF.Sheet.none')}</b>{/if}
       </span>
-      <label class="grow">
-        {t('WOF.Actor.Soldier.FIELDS.haven.label')}
+      <label class="grow" use:tooltip={t('WOF.Actor.Soldier.FIELDS.haven.label')}>
+        <span class="cap">{t('WOF.Actor.Soldier.FIELDS.haven.label')}</span>
         {#if havens.length}
           <select value={s.haven} disabled={!view.editable} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)}>
             <option value="">{t('WOF.Sheet.choose')}</option>
@@ -97,27 +101,30 @@
           <input type="text" value={s.haven} disabled={!view.editable} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)} />
         {/if}
       </label>
-      <label class="grow">
-        {t('WOF.Actor.Soldier.FIELDS.canon_tie.label')}
+      <label class="grow" use:tooltip={t('WOF.Actor.Soldier.FIELDS.canon_tie.label')}>
+        <span class="cap">{t('WOF.Actor.Soldier.FIELDS.canon_tie.label')}</span>
         <input type="text" value={s.canon_tie} placeholder={view.origin?.canonTie || ''} disabled={!view.editable} onchange={(e) => setField(actor, 'system.canon_tie', e.currentTarget.value)} />
       </label>
-      <label>
-        {t('WOF.Actor.Soldier.FIELDS.rank.label')}
-        <select value={s.rank} disabled={!view.editable} onchange={(e) => setField(actor, 'system.rank', e.currentTarget.value)}>
-          {#each RANKS as r (r)}<option value={r}>{t(`WOF.Rank.${r}`)}</option>{/each}
-        </select>
-      </label>
-      <label use:tooltip={s.class_rank ? ordinal(s.class_rank) : null}>
-        {t('WOF.Actor.Soldier.FIELDS.class_rank.label')}
+      <!-- Rank and the Class Rank number read as one field, so the line stays five wide. -->
+      <span class="rankf">
+        <label use:tooltip={t('WOF.Actor.Soldier.FIELDS.rank.label')}>
+          <span class="cap">{t('WOF.Actor.Soldier.FIELDS.rank.label')}</span>
+          <select value={s.rank} disabled={!view.editable} onchange={(e) => setField(actor, 'system.rank', e.currentTarget.value)}>
+            {#each RANKS as r (r)}<option value={r}>{t(`WOF.Rank.${r}`)}</option>{/each}
+          </select>
+        </label>
         <input
           type="number"
+          class="short"
           min="1"
           step="1"
           value={s.class_rank ?? ''}
+          aria-label={t('WOF.Actor.Soldier.FIELDS.class_rank.label')}
+          use:tooltip={classRankTip}
           disabled={!view.editable}
           onchange={(e) => setField(actor, 'system.class_rank', e.currentTarget.value === '' ? null : Math.max(1, Math.round(Number(e.currentTarget.value))))}
         />
-      </label>
+      </span>
     </div>
     <div class="tags">
       {#each tags as tag, i (i)}<span class="tag {tag.cls}" use:tooltip={tag.tip}>{tag.text}</span>{/each}
