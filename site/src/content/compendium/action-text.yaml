@@ -15,27 +15,27 @@
 # the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/action-catalog.yaml
-    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+    sha: "9eba542902e16a0011914c52daa225f11e42e671"
   - path: data/engagement/attention.yaml
-    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
+    sha: "3d64d61249c17643e00e10197041a9dc0cd9b798"
   - path: data/engagement/read.yaml
     sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/round.yaml
-    sha: "e03cf49bfa0f41b2b3b50c3fa5f107d490f6d1e0"
+    sha: "49d3a172e4a7ca7e0bbbaa7f5d74c9e3887b40d7"
   - path: data/engagement/squad-tactics.yaml
     sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
   - path: data/engagement/titan-harm.yaml
-    sha: "1ceaf068ccaa41d90e42df94483dba0334200786"
+    sha: "286457b6cca7e728c54919581b96ed55c24dbe45"
   - path: data/engagement/grab.yaml
     sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
   - path: data/gear/carrying.yaml
     sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
   - path: data/gear/horses.yaml
-    sha: "879202de4b48ec13bf78e1e56a8bc461fdf6d72d"
+    sha: "48bd1167d74e56c1e26f8265358876e0052c96e3"
   - path: data/gear/odm-gear.yaml
-    sha: "79daa17608d56b70fc4d1835336f10cb552d7246"
+    sha: "f94d9eb82fea1f7ae58339f7b037d3162e837b11"
   - path: data/gear/blade-sets.yaml
-    sha: "e62aaab8e850513bbce923e7a8b7a66a9d1f5e2e"
+    sha: "2f33a0bf9d8236c8c471881d782878d54e144bbe"
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/gear/field-repair.yaml
