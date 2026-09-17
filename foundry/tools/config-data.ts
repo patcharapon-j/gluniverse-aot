@@ -260,6 +260,11 @@ export function engagementConfig(t: Tables) {
   };
   const escape = (sid: string) => t.grab.escapes.find((e) => e.id === sid)!;
   const range = (r: { min: number | null; max: number | null }) => ({ min: r.min, max: r.max });
+  const reliefOf = (rid: string) => {
+    const amount = t.stressChanges.reductions.find((x) => x.id === rid)?.amount;
+    if (typeof amount !== 'number') throw new Error(`data/core/stress-changes.yaml: "${rid}" gives no fixed amount.`);
+    return amount;
+  };
   return {
     cards: 20,
     steps: t.round.round_steps.map((x) => x.id),
@@ -310,6 +315,17 @@ export function engagementConfig(t: Tables) {
           },
         ]),
       ) as Record<string, { cap: string; rows: { id: string; min: number | null; max: number | null; instant: boolean; lethal: boolean; permanent: boolean; repeat: string | null }[] }>,
+    },
+    steam: { type: t.titanHarm.steam.injury_type, rows: t.titanHarm.steam.table.rows.map((r) => ({ ...range(r.results), damage: r.damage })) },
+    falls: {
+      type: t.falls.injury_type,
+      bands: Object.fromEntries(t.falls.height.bands.map((b) => [b.id, b.adds])) as Record<'low' | 'high' | 'extreme', number>,
+      rows: t.falls.damage_table.rows.map((r) => ({ ...range(r.results), damage: r.damage })),
+    },
+    closing: {
+      steps: [...t.engagementEnd.steps.map((x) => x.id)],
+      relief: { titan: reliefOf('engagement-ends'), skirmish: reliefOf('skirmish-ends') },
+      griefMax: t.grief.maximum,
     },
     skirmish: {
       perNetBeyond: t.skirmish.damage.amount.per_net_success_beyond_the_first,

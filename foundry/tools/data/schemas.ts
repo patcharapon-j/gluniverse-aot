@@ -981,6 +981,59 @@ export const titanHarmFile = z.looseObject({
         'the Regeneration steps changed; update src/rules/titan.ts (regenerate)',
       ),
   }),
+  // The tracker rolls steam at a death and at a Regeneration fill (src/rules/engagement/harm-rolls.ts).
+  steam: z.looseObject({
+    injury_type: injuryType,
+    injury_location: z.literal('rolled'),
+    triggers: z.tuple([z.looseObject({ id: z.literal('kill') }), z.looseObject({ id: z.literal('regeneration-fill') })]),
+    table: z.looseObject({ roll: z.literal('D6'), rows: z.array(z.strictObject({ results: openRange, damage: z.number().int().min(0) })).min(1) }),
+  }),
+});
+
+// ---------------------------------------------------------------- gear/falls.yaml
+// The tracker rolls a fall's damage (src/rules/engagement/harm-rolls.ts, fallBand and fallDamage).
+
+export const fallsFile = z.looseObject({
+  id: z.literal('falls'),
+  injury_type: injuryType,
+  height: z.looseObject({
+    steps: z.array(text).length(5).refine((s) => /On Body or Blind Spot is high/.test(s[3]) && /Giant Forest/.test(s[4]) && /Large Size Class/.test(s[4]), 'the fall height steps changed; update src/rules/engagement/harm-rolls.ts (fallBand)'),
+    bands: z.tuple([z.strictObject({ id: z.literal('low'), adds: z.number().int() }), z.strictObject({ id: z.literal('high'), adds: z.number().int() }), z.strictObject({ id: z.literal('extreme'), adds: z.number().int() })]),
+  }),
+  damage_table: z.looseObject({ rows: z.array(z.strictObject({ id, results: openRange, damage: z.number().int().min(0) })).min(1) }),
+});
+
+// ---------------------------------------------------------------- harm/engagement-end.yaml
+// The tracker runs these steps in this order (src/rules/engagement/closing.ts); a changed list fails the build.
+
+export const ENGAGEMENT_END_STEPS = ['turns', 'stress-relief', 'lasting-stress-responses', 'turn-limits', 'aftermath-rolls', 'death-rolls', 'care-window', 'grief', 'retirement-and-promotion'] as const;
+
+export const engagementEndFile = z.looseObject({
+  id: z.literal('engagement-end'),
+  steps: z
+    .array(z.looseObject({ id, text }))
+    .refine((rows) => rows.map((r) => r.id).join() === ENGAGEMENT_END_STEPS.join(), 'the engagement-end steps changed; update src/rules/engagement/closing.ts'),
+});
+
+// ---------------------------------------------------------------- mind/grief.yaml
+
+export const griefFile = z.looseObject({
+  id: z.literal('grief'),
+  gaining: z.looseObject({
+    amount: z.tuple([
+      z.looseObject({ grief: z.literal(1), limit: text.refine((x) => /one Titan Engagement give each soldier 1 Grief in total/.test(x), 'the Grief limit changed; update src/rules/engagement/closing.ts') }),
+      z.looseObject({ grief: z.literal(1), who: text.refine((x) => /Drive named/.test(x), 'the Drive Grief changed') }),
+      z.looseObject({ grief: z.literal(1), who: text.refine((x) => /Numb Scar/.test(x), 'the Numb Grief changed') }),
+    ]),
+  }),
+  maximum: z.number().int().min(1),
+});
+
+// ---------------------------------------------------------------- core/stress-changes.yaml (the two end reliefs)
+
+export const stressChangesFile = z.looseObject({
+  id: z.literal('stress-changes'),
+  reductions: z.array(z.looseObject({ id, amount: z.union([z.number().int(), text]) })),
 });
 
 // ---------------------------------------------------------------- skirmish/skirmish.yaml (weapons)
@@ -1078,6 +1131,13 @@ export const backgroundTitansFile = z.looseObject({
   id: z.literal('background-titans'),
   focus_titan_limit: z.number().int().min(1),
   ticks: z.looseObject({ rows: z.array(z.looseObject({ id: z.enum(['end-of-round', 'flare', 'retreat-clock']) })).length(3) }),
+  // The tracker forces these moves (src/rules/engagement/retreat.ts); a changed list fails the build.
+  retreat: z.looseObject({
+    effects: z.array(z.looseObject({ id, text })).refine((rows) => {
+      const moves = rows.find((r) => r.id === 'moves')?.text ?? '';
+      return ['1. Toward distant', '2. Leave', '3. Toward a fallen comrade', '4. Stay with a fallen comrade', 'The stay limit'].every((x) => moves.includes(x));
+    }, 'the retreat moves changed; update src/rules/engagement/retreat.ts'),
+  }),
 });
 
 const d6Row = <T extends z.ZodRawShape>(shape: T) => z.strictObject({ results: z.array(z.number().int().min(1).max(6)).min(1), ...shape });

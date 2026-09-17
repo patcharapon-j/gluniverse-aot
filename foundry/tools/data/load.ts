@@ -85,6 +85,10 @@ export const FILES = {
   backgroundTitans: ['data/engagement/background-titans.yaml', S.backgroundTitansFile],
   engagementSetup: ['data/engagement/engagement-setup.yaml', S.engagementSetupFile],
   squadTactics: ['data/engagement/squad-tactics.yaml', S.squadTacticsFile],
+  falls: ['data/gear/falls.yaml', S.fallsFile],
+  engagementEnd: ['data/harm/engagement-end.yaml', S.engagementEndFile],
+  grief: ['data/mind/grief.yaml', S.griefFile],
+  stressChanges: ['data/core/stress-changes.yaml', S.stressChangesFile],
 } as const;
 
 type Files = typeof FILES;
