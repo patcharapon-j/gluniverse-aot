@@ -36,7 +36,7 @@ Later rules this chapter only refers to:
   - the Squad Points and Rank rules, which may let a Squad hold more Squad Tactics;
   - Research Points earned from Reads.
 
-**Tables.** Every table, procedure, and data format in this chapter is a YAML file in `data/engagement/`. Those files are the only source of truth (ADR-0012). The interim setup table (section 5.1) and the Position steps of every Anchor Rating (section 5.2) are rendered from them by `tools/render/render.py`, between `BEGIN RENDERED` and `END RENDERED` markers that name each block's source file; nothing between the markers is written by hand, and `render.py check` fails if a rendered block and its YAML differ. Chapter 6 renders the Titans' stat blocks and Behavior Tables.
+**Tables.** Every table, procedure, and data format in this chapter is a YAML file in `data/engagement/`. Those files are the only source of truth (ADR-0012). The interim setup table (section 5.1) and the Position steps, Anchors, and Terrain Traits of every Anchor Rating (section 5.2) are rendered from them by `tools/render/render.py`, between `BEGIN RENDERED` and `END RENDERED` markers that name each block's source file; nothing between the markers is written by hand, and `render.py check` fails if a rendered block and its YAML differ. Chapter 6 renders the Titans' stat blocks and Behavior Tables.
 
 | File | What it holds |
 |---|---|
@@ -90,7 +90,7 @@ A condition that would slow or blind a Titan reaches the table only through the 
 
 `engagement-flow.yaml` (`starting`) lists the steps in order:
 
-1. The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any Background Titans with their clock lengths, and the length of its retreat clock. The GM's framing may name what that rule leaves unnamed, except the retreat clock's length (*Framing*, below). Anything neither names comes from `engagement-setup.yaml`. The retreat clock starts empty (section 5.10).
+1. The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any Background Titans with their clock lengths, and the length of its retreat clock. The GM's framing may name what that rule leaves unnamed, except the retreat clock's length (*Framing*, below). Anything neither names comes from `engagement-setup.yaml`. The Anchor Rating brings the Titan Engagement's Anchors and its Terrain Trait with it, whichever names the rating, and neither is rolled (section 5.2). The retreat clock starts empty (section 5.10).
 2. The Focus Titan is labelled A.
 3. Its Body Parts start Intact, it has no Openings, its Regeneration clock is empty, and its hidden Next Behavior is rolled.
 4. Soldiers and horses are placed (`positions.yaml`, `placement`).
@@ -113,7 +113,7 @@ A condition that would slow or blind a Titan reaches the table only through the 
 
 The GM frames a Titan Engagement as Command would, and as a Mission Brief could. Before any setup roll is made, the GM may name any of these that the starting rule leaves unnamed (decision batch 9, 9-15):
 - **the Focus Titan:** any Titan in Chapter 6, standard or Abnormal;
-- **the Anchor Rating;**
+- **the Anchor Rating,** which brings its Anchors and its Terrain Trait with it (section 5.2);
 - **the Background Titans:** none, one, or two, which Titans they are, and each one's clock of 4, 6, or 8 segments, the counts and lengths the setup table uses (decision batch 9, 9-34).
 
 What the GM names is never rolled, so no `medium_abnormal` roll is made for a Focus Titan the GM names. The setup table fills whatever the starting rule and the GM leave unnamed, and it is the whole setup when the GM names nothing. A value a starting rule names, such as a hazard row's, stands, and the GM never swaps it. These stay closed:
@@ -130,7 +130,8 @@ Until Mission Briefs and Expeditions name a Titan Engagement's setup, `engagemen
 1. Roll D6 for the Anchor Rating.
 2. Roll D6 for the Focus Titan's Size Class. The Focus Titan is the standard Titan of that Size Class (`data/titans/index.yaml`, `standard_titans`; Chapter 6). On Medium, roll D6 on `medium_abnormal`: on a 6 the Focus Titan is the Sprinting Abnormal instead (Chapter 6, section 6.5).
 3. Roll D6 for Background Titans and their clock lengths. Then, for each Background Titan the row gives, in the order it lists the clocks, roll D6 on the Size Class table below. Each Background Titan is the standard Titan of the Size Class it rolls (Chapter 6), and the `medium_abnormal` roll is never made for one (`steps`, `background-titans`; decision batch 5, OQ-131).
-4. Give the retreat clock the length the table names for every Titan Engagement it sets up (below). Nothing is rolled for it.
+4. The Titan Engagement's Anchors are the Anchor Rating's `anchors` value (section 5.2). Nothing is rolled: the rating sets it.
+5. Give the retreat clock the length the table names for every Titan Engagement it sets up (below). Nothing is rolled for it.
 
 A value the starting rule or the GM's framing names is never rolled.
 
@@ -198,11 +199,9 @@ When a rule compares two soldiers' Positions, it compares them relative to one T
 
 Two Positions joined by a step row are one Position step apart, whatever kinds of move make it. Help, Covering, Rally, and aftermath rolls count steps this way.
 
-Some steps need a **Fly roll**. The move calls for a roll for `fly` with the soldier's ODM Gear as its gear item:
-- On a success, the move ends at the far Position.
-- On a failure, it ends at the Position the row names.
+No step row calls for a roll of its own. Every ODM move is a **Flight** and is rolled (*Flight*, below), and a move that crosses more than one step does it by spending Momentum on Carry (*Momentum*, below). The soldier is airborne after any ODM move, as Chapter 4 states (section 4.2).
 
-Either way the soldier is airborne, because it was an ODM move.
+Each rating also gives the Titan Engagement a pool of **Anchors** and one **Terrain Trait**, in the second table below (*Anchors* and *Terrain Traits*, below).
 
 <!-- BEGIN RENDERED: position-steps from data/engagement/anchor-ratings.yaml -->
 | Anchor Rating | Position step (either way) | On foot | Mounted | ODM |
@@ -236,20 +235,18 @@ Either way the soldier is airborne, because it was an ODM move.
 | Giant Forest | 3 | The first step a Flight Carries costs no Momentum. The Corps fights best here. |
 <!-- END RENDERED: position-steps -->
 
-> **Design note (OQ-74):** The step rows are:
+> **Design note (OQ-74, as revised by OQ-182):** The step rows are:
 > - **Every rating:** Distant to In Reach, and In Reach to On Body.
 > - **Every rating but Open:** On Body to Blind Spot.
-> - **Sparse:** adds an In Reach to Blind Spot step that needs a Fly roll.
-> - **Wooded:** adds it with no roll.
-> - **Urban:** adds it with no roll, plus a Distant to Blind Spot step that needs a Fly roll.
-> - **Giant Forest:** adds both with no roll.
+> - **Wooded, Urban, and Giant Forest:** In Reach to Blind Spot as well.
+> - **Sparse:** nothing joins In Reach and Blind Spot, so a soldier reaches the Nape by way of On Body.
 > - **Open:** Distant to In Reach cannot be flown, and nothing reaches Blind Spot while the Titan stands, because there is nothing to anchor to but the Titan.
 >
-> A mounted move makes only the Distant to In Reach step, and not at Urban. The rating decides what ODM Gear allows, one row per step with nothing to judge: Open is the plain where only a horse helps, and Giant Forest is where the Survey Corps fights best. The Fly roll needs are simulator starting values. The prepared-Squad figures in section 5.13 use the Wooded rows, which the interim setup table deals 2 times in 6.
+> A mounted move makes only the Distant to In Reach step, and not at Urban. The rating decides what ODM Gear allows, one row per step with nothing to judge: Open is the plain where only a horse helps, and Giant Forest is where the Survey Corps fights best. Three rows are gone. The two that called for a Fly roll of their own, Sparse's In Reach to Blind Spot and Urban's Distant to Blind Spot, went with the roll, because every ODM move is rolled now and a move across two steps is Carry; Giant Forest's Distant to Blind Spot went with them, so no rating reaches the Nape from Distant in one step (`anchor-ratings.yaml`, `history`). What separates the ratings above their step rows is Anchors and the Terrain Trait. The prepared-Squad figures in section 5.13 use the Wooded rows, which the interim setup table deals 2 times in 6.
 
 ### What a move can do
 
-A **move** changes the soldier's Position relative to one named Focus Titan by one step their kind of move can make. Or it changes no Position, as when landing or mounting at the soldier's own Position. A move can include one mount or dismount (Chapter 4). A move is the only way a soldier changes their own Position; every other change comes from a rule that names it, such as a fall, a Grab, Fall Back, or a Fear Roll result's forced step. Moves change the tracked value `position-change`.
+A **move** changes the soldier's Position relative to one named Focus Titan by one step their kind of move can make. Or it changes no Position, as when landing or mounting at the soldier's own Position. A move can include one mount or dismount (Chapter 4). A move is the only way a soldier changes their own Position; every other change comes from a rule that names it, such as a fall, a Grab, Fall Back, or a Fear Roll result's forced step. Moves change the tracked value `position-change`. An ODM move is a Flight, and crosses more than one step only by spending Momentum on Carry; a mounted move that makes the Distant to In Reach step may charge (*Flight*, *Momentum*, and *The mounted charge*, below).
 
 `positions.yaml` (`moves`) sets what particular soldiers' moves can do:
 
@@ -258,8 +255,72 @@ A **move** changes the soldier's Position relative to one named Focus Titan by o
 - **A Grabbed or carried soldier's** move changes nothing.
 - **A Pinned soldier's** move changes nothing, and no rule moves them while they are Pinned (section 5.7; `pinned_soldier`; decision batch 8, 8-9).
 - **Letting go.** A soldier at On Body or Blind Spot, not Grabbed or carried, may use their move to let go. They fall from that height (Chapter 4, `rule-named`). It is how a soldier with a Jammed or empty harness gets off a Titan.
-- **ODM use.** This chapter names no act as ODM use beyond Chapter 4's list. A Fly roll is a roll with ODM Gear, so it already is ODM use.
+- **ODM use.** This chapter names no act as ODM use beyond Chapter 4's list. A Flight is ODM use twice over, an ODM move and a roll whose gear item is the soldier's ODM Gear, and it still makes one Gas Roll for the round (Chapter 4, section 4.3). A mounted charge is not ODM use.
+- **Swapping a Blade Set** spends the move in a Titan Engagement (Chapter 4, section 4.4). A move can change no Position, so a soldier who refits stays where they are and keeps their action; what they give up is that turn's Flight.
 - **A forced step.** A Chapter 3 Fear Roll result can move a soldier one step at the start of their next turn, toward Distant or toward the nearest comrade (`positions.yaml`, `moves`, `forced_step`; `data/harm/effect-types.yaml`, `forced-move`; decision batch 7, 7-8). A step toward Distant is the retreat's first option (section 5.10). The step is a result, not the soldier's move: it spends nothing, it happens even on a turn spent in advance (decision batch 8, 8-13), and no step is made for a soldier who is Down, Grabbed, or carried, or who has no such step to make. It never makes a soldier leave or let go.
+
+### Flight
+
+**Every ODM move is a Flight** (`positions.yaml`, `moves`, `flight`). The soldier makes a roll for `fly` with their own ODM Gear as its gear item, and the roll decides what the flight was worth, never whether it happened:
+
+- **The step happens whatever the roll gives.** A Flight needs nothing, so it never leaves a soldier short of the step an ODM move has always made.
+- **Each success gives the soldier 1 Momentum,** up to their cap (*Momentum*, below). Momentum above the cap is not gained.
+- **On no successes the soldier comes in loud:** they set the loudest flag on the Focus Titan the move named, from whatever Position they hold, Distant included (section 5.6). Momentum spent on Quiet stops it.
+- **The soldier is airborne** after a Flight, as after any ODM move (Chapter 4, section 4.2).
+- **It is a soldier's roll like any other:** it takes Circumstances and Stress Dice and the Talents that name Fly, and it can be Helped, Pushed, and Covered as Chapter 1 states. A Pushed Flight wears the ODM Gear as any Pushed roll with that gear item does, and makes that round's Gas Roll three dice.
+- **Gas.** A Flight is ODM use twice over, an ODM move and a roll whose gear item is the ODM Gear, and a soldier who used ODM Gear makes one Gas Roll for the round however many times they used it (Chapter 4, section 4.3).
+
+A soldier whose ODM Gear counts as not had makes no ODM move at all, and so no Flight. Letting go is not an ODM move, so it is never rolled.
+
+### Momentum
+
+**Momentum** is a whole number each soldier holds, from 0 to their cap. It is public, and the sheet records it (`anchor-ratings.yaml`, `momentum`; Chapter 4, section 4.12).
+
+- **Cap:** the Anchors left in the Titan Engagement (*Anchors*, below). When Anchors fall, every soldier whose Momentum is above the new cap loses the excess at once.
+- **Gained:** 1 for each success on a Flight, to the cap.
+- **Lost:** all of it, at the Momentum end step of any round in which the soldier made no ODM move (section 5.3). A soldier who has left the Titan Engagement, who is Down, Grabbed, carried, or Pinned, or who dies, holds none.
+- **Spent** at any point in the soldier's own turn, any amount at once, by the soldier's own choice. Carry is spent as part of the move it extends, and every other spend is declared before the roll it names.
+
+Each point spent buys one of these:
+
+- **Carry:** the move makes one more Position step, along a chain of step rows the soldier's kind of move could make, relative to the same named Focus Titan. Carry can be spent more than once on one move.
+- **Bite:** 1 Bonus Die on a strike or a Break Attention the soldier takes this turn against the Focus Titan the Flight named.
+- **Brace:** 1 Bonus Die on the soldier's next dodge this round.
+- **Quiet:** the soldier sets no flag this turn, the loudest flag of a Flight with no successes included. A flag already standing is not cleared.
+- **Clean line:** the soldier makes no Gas Roll for this round (Chapter 4, section 4.3).
+
+Bite and Brace are Bonus Dice, so they are declared with every other source and fall under the cap of 4 (Chapter 1, section 1.7). The GM never grants, spends, or removes Momentum.
+
+### Anchors
+
+The Anchor Rating gives the Titan Engagement a pool of **Anchors**, the count in the table above (`anchor-ratings.yaml`, `anchors`). It is held by the Titan Engagement and not by any soldier, it is public, and the GM's tracker carries it on the engagement line (section 5.3).
+
+- **Set** as the Titan Engagement begins, from the Anchor Rating (section 5.1). It never rises, and nothing restores an Anchor while the Titan Engagement lasts.
+- **Every soldier's Momentum cap is the Anchors left.**
+- **Wrecked** by a Behavior Table entry with the `wreck` effect, which destroys 1 (section 5.4). Like a telegraph it applies whether the behavior landed or whiffed, because it is the Titan going through the place rather than an attack on a person. A Focus Titan's falling body destroys 1 where it lands (section 5.7).
+- **At Sparse** the first Anchor that would be wrecked in the Titan Engagement is not lost. It applies once, to the first wrecking, whatever caused it.
+- Anchors never fall below 0. **At 0** no soldier holds Momentum and none can be gained. Flights are still rolled and still make their step, and no step row changes: a wrecked field never closes a route to the Nape, which keeps ADR-0010's promise whatever the Titan has flattened.
+
+The GM never spends, wrecks, or restores an Anchor. Only a `wreck` effect, a falling Titan, and a soldier's own spending change the count.
+
+### Terrain Traits
+
+Each Anchor Rating carries one **Terrain Trait**, printed in the table above (`ratings`, `terrain_trait`). Wooded has none, because it is the tuned default battlefield. The other four:
+
+- **Open:** a mounted soldier's Break Attention gains 1 Bonus Die. The plain is the horse's.
+- **Sparse:** the first Anchor wrecked in the Titan Engagement is not lost. One good tree survives.
+- **Urban:** a soldier who holds Blind Spot relative to a Focus Titan is anchored to a roof and is not airborne, so a Jam does not drop them (Chapter 4, section 4.2).
+- **Giant Forest:** the first step a Flight Carries costs no Momentum, and every later Carry on that move costs 1. The Corps fights best here.
+
+### The mounted charge
+
+A mounted move that makes the **Distant to In Reach** step may also set the loudest flag on that Focus Titan (`mounted_charge`), and no other move sets a flag. The rider must not be Grabbed or carried. It spends nothing beyond the move, it is never rolled, and it is not ODM use, so it costs no gas.
+
+**At the Open rating only,** a mounted move may make that step twice, in either order, so a rider can come in and get out again in one move. It is one move and one charge: the loudest flag is set at most once.
+
+> **Design note (OQ-182):** One roll, one currency, one shrinking battlefield. Flying used to be a fact: a soldier crossed a step and nothing was ever at stake in the crossing, and the two rows that did call for a Fly roll bottled the Nape behind it. A Flight makes every ODM move a moment and leaves the step alone, so movement is never slower or less reliable than it was; what the dice decide is what the flight was worth, and whether the soldier arrived badly. About a third of a Rookie's Flights score nothing, and coming in loud is the right consequence in this game, because the Titan looks at you and it costs no new machinery. Momentum pays for flying again: it is lost at the end of any round in which the soldier made no ODM move, which inverts the baseline, where a striker reaches Blind Spot on round 2 and then stands still for the rest of the fight. Wirework stops being a dead Talent, since it is the difference between a soldier who arrives and one who arrives with a die in hand. Anchors are the cap rather than a second currency, which is what lets the three parts sit together: one number on the battlefield sets every soldier's ceiling, and when the Titan goes through the treeline the ceiling drops for everyone at once. Round 1 in a giant forest is three Anchors and soldiers crossing two Positions a turn; by round 4 the place is flattened and everyone is walking. At 0 Anchors the fight has become Open whatever it started as, and no step row changes, so the Nape stays reachable and Break Attention stays available, which is what ADR-0010 requires. The Anchor counts, what a point of Momentum buys, the Terrain Traits, and a Flight's own odds are all ADR-0014 starting values (section 5.13). Because Flight replaces the move rather than adding to it, this is a retune and not a sensitivity row: every committed simulator figure was measured without it and is stale until the rerun. Bite is the first thing to cut if `prepared_squad_kill` moves, because Bonus Dice on strikes shorten the fight, and the loudest flag from a failed Flight is measured beside Draw Attention's, since both now write the same flag.
+
+> **Design note (OQ-183):** The charge gives a rider something to do at a Titan besides arrive. It writes the flag Draw Attention writes, so it needs no new machinery and reaches the ladder by the route the ladder already reads, and it is not ODM use, so a mounted approach still spends no gas (ADR-0009). The double step belongs to Open alone, where nothing holds a wire and the plain is the horse's: a rider can charge in and be out again before the Titan turns. Both are ADR-0014 starting values, and the rerun measures them with the rest.
 
 ### A grounded Titan
 

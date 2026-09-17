@@ -1665,7 +1665,7 @@ th{background:var(--tint);font-weight:500}
 <li>A strike whose requirements you do not meet does not end it.</li>
 <li>It ends only when you make the strike, whatever its result; when Rally clears it; when the event's Titan dies; or when the Titan Engagement ends. The ban on Help and Covering lasts exactly as long.</li>
 </ul></li>
-<li><b>Drop the Blade Set.</b> The Blade Set in your handles falls, and your handles are empty. If they were already empty, nothing happens. The set lies at your Position. No one takes it during the Titan Engagement and no rule moves it. When the Titan Engagement ends, it is shared out with the left items (see <a href="#gear-death">Gear</a>). Refit from a carried Blade Set with Swap Blade Set, which spends neither your move nor your action and can be made on a turn spent in advance.</li>
+<li><b>Drop the Blade Set.</b> The Blade Set in your handles falls, and your handles are empty. If they were already empty, nothing happens. The set lies at your Position. No one takes it during the Titan Engagement and no rule moves it. When the Titan Engagement ends, it is shared out with the left items (see <a href="#gear-death">Gear</a>). Refit from a carried Blade Set with Swap Blade Set, which spends your move in a Titan Engagement and can be made on a turn spent in advance.</li>
 <li><b>A Gas Roll at once.</b> If a canister with a Gas Rating above 0 is fitted to your ODM Gear, make a <a href="#gear-gas">Gas Roll</a> on it at once: two dice, whatever you have Pushed this round. Each 1 lowers the Gas Rating by 1, to a minimum of 0. It is not the round's Gas Roll and not ODM use, so it neither replaces nor adds to the round's own Gas Roll. With no canister fitted, or a Gas Rating of 0, nothing happens.</li>
 </ul>
 
@@ -1990,6 +1990,7 @@ th{background:var(--tint);font-weight:500}
 <h3>ODM moves</h3>
 <ul>
 <li>An <b>ODM move</b> is a move you make on your own ODM Gear. The Position steps table in <a href="#fight-positions">Fighting Titans</a> shows which steps need one.</li>
+<li>In a Titan Engagement every ODM move is a <b><a href="#fight-flight">Flight</a></b>: you roll Fly with your ODM Gear, the step happens whatever the roll gives, each success is 1 Momentum, and no successes marks you as loud.</li>
 <li>An ODM move needs working ODM Gear, so you cannot make one while Jammed or dry.</li>
 <li>If you are mounted, an ODM move dismounts you before your Position changes.</li>
 <li>While you are Overloaded, an ODM move also spends your action, and you cannot make one once your action is spent.</li>
@@ -1997,15 +1998,15 @@ th{background:var(--tint);font-weight:500}
 </ul>
 
 <h3>Using ODM Gear</h3>
-<p>You <b>use ODM Gear</b> in a round if, during that round, you make an ODM move, make a roll whose gear item is your ODM Gear (such as a dodge or a Fly roll made with it), or take an act that <a href="#fight-positions">Fighting Titans</a> names as ODM use.</p>
-<p>Holding a Position without moving is not ODM use, even while airborne. Neither is a roll made with a Blade Set, a horse, or a kit (every Nape strike included), nor being carried. Outside a Titan Engagement there are no rounds, and ODM use makes a Gas Roll only when the rule that calls for it says so. Travel on horseback never spends gas, and the Graduation Exam makes no Gas Rolls.</p>
+<p>You <b>use ODM Gear</b> in a round if, during that round, you make an ODM move, make a roll whose gear item is your ODM Gear (such as a dodge or a Fly roll made with it), or take an act that <a href="#fight-positions">Fighting Titans</a> names as ODM use. A <a href="#fight-flight">Flight</a> is both at once, and a soldier who used ODM Gear makes one Gas Roll for the round however many times they used it.</p>
+<p>Holding a Position without moving is not ODM use, even while airborne. Neither is a roll made with a Blade Set, a horse, or a kit (every Nape strike included), nor a mounted charge, nor being carried. Outside a Titan Engagement there are no rounds, and ODM use makes a Gas Roll only when the rule that calls for it says so. Travel on horseback never spends gas, and the Graduation Exam makes no Gas Rolls.</p>
 
 <h3 id="gear-airborne">Airborne</h3>
 <p>You are <b>airborne</b> while you are in the air on your own ODM Gear. Your sheet records it.</p>
 <ul>
 <li><b>You become airborne</b> when you make an ODM move, or when a rule calls for a Fly roll with your ODM Gear and says the roll makes you airborne. If you are mounted, you are dismounted first, with no fall.</li>
 <li><b>You stop being airborne</b> when you make a move that is not an ODM move, fall, become Grabbed, or the Titan Engagement ends (everyone airborne lands with no fall). Outside a Titan Engagement, a rule that made you airborne lands you when its procedure ends, unless it names another point.</li>
-<li><b>You are never airborne</b> while carried by a comrade, while Grabbed, or while mounted.</li>
+<li><b>You are never airborne</b> while carried by a comrade, while Grabbed, or while mounted. At the <b>Urban</b> Anchor Rating you are not airborne while you hold Blind Spot either: you stand anchored to a roof (see <a href="#fight-anchors">Terrain Traits</a>).</li>
 <li>Running out of gas while airborne leaves you airborne.</li>
 </ul>
 <p>The Freedom Drive's trigger is met while you are airborne under this definition, in or outside a Titan Engagement.</p>
@@ -2018,7 +2019,7 @@ th{background:var(--tint);font-weight:500}
 <li>You cannot make an ODM move while it is Jammed, so you make no Gas Roll for any later round. The Gas Roll for the round in which it Jammed is still made.</li>
 <li>Your Gas Rating does not change.</li>
 <li>You cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot, unless the Titan is grounded (see <a href="#fight-grounded">A grounded Titan</a>).</li>
-<li>If you are airborne, you fall once the roll that Jammed it is finished.</li>
+<li>If you are airborne, you fall once the roll that Jammed it is finished. At the <b>Urban</b> Anchor Rating a soldier who holds Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them (see <a href="#fight-anchors">Terrain Traits</a>).</li>
 </ol>
 </div>
 <p>A Jam ends when the current rating rises above 0: through Field Repair, through Maintain Gear, or through Standard Issue replacing the Jammed ODM Gear. The interim issue replaces it only if it is rated below the Funding row, and you may decline the exchange.</p>
@@ -2042,13 +2043,13 @@ th{background:var(--tint);font-weight:500}
 <h4>The Gas Roll</h4>
 <ol>
 <li><b>Who.</b> Every soldier, player character or Squadmate, who used ODM Gear during the round.</li>
-<li><b>When.</b> At the end of the round, once for each such soldier however often they used it. If the Titan Engagement ends partway through a round, that round's Gas Rolls are made at once, before the steps that follow the end of a Titan Engagement.</li>
+<li><b>When.</b> At the end of the round, once for each such soldier however often they used it. A soldier who spends Momentum on a clean line makes none for that round. If the Titan Engagement ends partway through a round, that round's Gas Rolls are made at once, before the steps that follow the end of a Titan Engagement.</li>
 <li><b>Dice.</b> Two dice. Three dice if any Pushed roll you made that round had your ODM Gear as its gear item, however many there were. A Pushed dodge made with your horse does not make it three. Light Trigger can make a three-die Gas Roll two dice.</li>
 <li><b>Read.</b> Count the dice showing 1. The dice are not added, and a 6 does nothing.</li>
 <li><b>Effect.</b> Lower your Gas Rating by 1 for each 1, to a minimum of 0.</li>
 </ol>
 </div>
-<p>A Push never adds a second Gas Roll; its cost is the third die of that round's one roll. The Gas Roll has no attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed, Helped, or Covered, and it never causes a Stress Response. A Squadmate never Pushes, so its Gas Roll is always two dice.</p>
+<p>A Flight is ODM use twice over and still makes one Gas Roll. A Push never adds a second Gas Roll; its cost is the third die of that round's one roll. The Gas Roll has no attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed, Helped, or Covered, and it never causes a Stress Response. A Squadmate never Pushes, so its Gas Roll is always two dice.</p>
 <p>A Titan's Attack Dice spend no gas. Gas goes only on the Gas Roll, and on a Fear Roll result that calls for one.</p>
 <p><b>When a Fear Roll result calls for a Gas Roll</b> (see <a href="#harm-fear">Fear Rolls</a>), roll two dice at once on the canister fitted to your ODM Gear, whatever you have Pushed this round, and read them as above. With no canister fitted, or at Gas Rating 0, nothing happens. It is not the round's Gas Roll and it is not ODM use, so it neither replaces nor adds to your Gas Roll at the end of the round.</p>
 
@@ -2098,7 +2099,7 @@ th{background:var(--tint);font-weight:500}
 <h3>The swap</h3>
 <ul>
 <li>If your handles are empty, fit one carried Blade Set into them.</li>
-<li><b>In a Titan Engagement:</b> once during each of your own turns, at any point, spending neither your move nor your action. A turn spent in advance still happens, so you can swap during it.</li>
+<li><b>In a Titan Engagement:</b> once during each of your own turns, at any point, spending <b>your move</b> and never your action. A move can change no Position, so you stay where you are and still have your action: what a ruined blade costs you is that turn's <a href="#fight-flight">Flight</a>, and the Momentum it would have given. A turn spent in advance still happens, so you can swap during it, spending that turn's move.</li>
 <li><b>Outside a Titan Engagement:</b> at any time, as often as you like.</li>
 <li>A Down soldier cannot swap. A Squadmate swaps exactly as a player character does.</li>
 </ul>
@@ -2563,37 +2564,89 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </ul>
 
 <h3>Anchor Ratings and Position steps</h3>
-<p>The <b>Anchor Rating</b> of the battlefield decides which <b>Position steps</b> exist and which kinds of move can make them: <b>on foot</b>, <b>mounted</b>, or <b>ODM</b> (on your own ODM Gear). Two Positions joined by a step are one step apart, whatever kind of move makes it; Help, Covering, Rally, and aftermath rolls count steps this way.</p>
-<p>Some steps need a <b>Fly roll</b>: roll Fly with your ODM Gear. On a success the move ends at the far Position; on a failure it ends where the table says. Either way you are airborne.</p>
+<p>The <b>Anchor Rating</b> of the battlefield decides which <b>Position steps</b> exist and which kinds of move can make them: <b>on foot</b>, <b>mounted</b>, or <b>ODM</b> (on your own ODM Gear). Two Positions joined by a step are one step apart, whatever kind of move makes it; Help, Covering, Rally, and aftermath rolls count steps this way. A step is made in either direction, and no step calls for a roll of its own.</p>
 <div class="table-wrap"><table>
 <caption>Position steps by Anchor Rating</caption>
-<thead><tr><th>Anchor Rating</th><th>Position step (either way)</th><th>On foot</th><th>Mounted</th><th>ODM</th><th>Fly roll</th></tr></thead><tbody>
-<tr><td>Open</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>no</td><td>no</td></tr>
-<tr><td>Open</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>needs 1; on a failure the move ends at On Body</td></tr>
-<tr><td>Wooded</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><td>Wooded</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Wooded</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Wooded</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>Distant to In Reach</td><td>yes</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>Distant to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>needs 1; on a failure the move ends at In Reach</td></tr>
-<tr><td>Giant Forest</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>Distant to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
+<thead><tr><th>Anchor Rating</th><th>Position step (either way)</th><th>On foot</th><th>Mounted</th><th>ODM</th></tr></thead><tbody>
+<tr><td>Open</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>no</td></tr>
+<tr><td>Open</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Sparse</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Sparse</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Sparse</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>Distant to In Reach</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
 </tbody></table></div>
+<p>No rating reaches Blind Spot from Distant in one step, so a Nape is never less than two steps from the ground. At <b>Open</b> nothing reaches Blind Spot at all while the Titan stands, because there is nothing to anchor to but the Titan.</p>
+
+<h3 id="fight-flight">Flight</h3>
+<p><b>Every ODM move you make in a Titan Engagement is a Flight.</b> Roll <b>Fly</b> with your own ODM Gear. The roll needs nothing: the move's step happens whatever the dice give, so a Flight never leaves you short of the step. What the dice decide is what the flight was worth, and whether you arrived badly.</p>
+<ol>
+<li><b>Name the Focus Titan</b> your move is relative to, and the step you make.</li>
+<li><b>Roll Fly</b> with your ODM Gear. It is a roll like any other: it takes Circumstances, Stress Dice, and the Talents that name Fly, and it can be Helped, Pushed, and Covered.</li>
+<li><b>Each success is 1 <a href="#fight-momentum">Momentum</a></b>, up to your cap. Momentum above the cap is not gained.</li>
+<li><b>On no successes you come in loud:</b> you are marked as loud on that Focus Titan, from whatever Position you hold, Distant included. It is the one way the loud mark is made from Distant.</li>
+<li><b>The step happens,</b> and you are airborne, as after any ODM move.</li>
+</ol>
+<ul>
+<li><b>Gas.</b> A Flight is ODM use twice over: it is an ODM move, and it is a roll whose gear item is your ODM Gear. However many times you use ODM Gear in a round, you make <b>one</b> Gas Roll for it. A Pushed Flight wears your ODM Gear as any Pushed roll with it does, and makes that round's Gas Roll three dice.</li>
+<li><b>No gear, no Flight.</b> While your ODM Gear is Jammed or your Gas Rating is 0 you make no ODM move at all, so you make no Flight.</li>
+<li>A move that is not an ODM move is never a Flight and is never rolled: a step on foot, a mounted step, and letting go.</li>
+</ul>
+
+<h3 id="fight-momentum">Momentum</h3>
+<p><b>Momentum</b> is the speed you carry out of a good Flight. It is public, you record it on your sheet, and it runs from <b>0</b> to the number of <a href="#fight-anchors">Anchors</a> left in the Titan Engagement.</p>
+<ul>
+<li><b>You gain</b> 1 for each success on a Flight, to your cap.</li>
+<li><b>You lose all of it</b> at the end of any round in which you made no ODM move. Keep flying, or it is gone.</li>
+<li>When Anchors are wrecked, every soldier holding more Momentum than the new cap loses the excess at once.</li>
+<li>You hold no Momentum while Down, Grabbed, carried, or Pinned, or once you have left the Titan Engagement, and none is carried out of it.</li>
+</ul>
+<p><b>Spend it</b> at any point in your own turn, any amount at once, 1 for each of these. Carry is spent as part of the move it extends; every other spend is declared before the roll it names.</p>
+<div class="table-wrap"><table>
+<caption>Spending Momentum</caption>
+<thead><tr><th>Spend</th><th>Cost</th><th>What it does</th></tr></thead><tbody>
+<tr><td>Carry</td><td>1</td><td>This move makes one more Position step, along steps your kind of move can make, relative to the same Focus Titan. You may Carry more than once on one move.</td></tr>
+<tr><td>Bite</td><td>1</td><td>1 Bonus Die on a strike or a Break Attention you take this turn against the Focus Titan your Flight named.</td></tr>
+<tr><td>Brace</td><td>1</td><td>1 Bonus Die on your next dodge this round.</td></tr>
+<tr><td>Quiet</td><td>1</td><td>You set no mark this turn, the loud mark a Flight with no successes sets included. A mark already standing is not cleared.</td></tr>
+<tr><td>Clean line</td><td>1</td><td>You make no Gas Roll for this round.</td></tr>
+</tbody></table></div>
+<p>Bite and Brace give <a href="#core-bonus">Bonus Dice</a>, so they are declared with every other source before the roll, and they count against the cap of 4.</p>
+
+<h3 id="fight-anchors">Anchors and Terrain Traits</h3>
+<p>The Anchor Rating also gives the Titan Engagement a pool of <b>Anchors</b>: the trees, roofs, and beams a line can bite into. Anchors belong to the battlefield, not to any soldier, and <b>the Anchors left are every soldier's Momentum cap</b>. They are public, and the GM keeps them on the tracker.</p>
+<div class="table-wrap"><table>
+<caption>Anchors and Terrain Traits</caption>
+<thead><tr><th>Anchor Rating</th><th>Anchors</th><th>Terrain Trait</th></tr></thead><tbody>
+<tr><td>Open</td><td>0</td><td>A mounted soldier's Break Attention gains 1 Bonus Die. The plain is the horse's.</td></tr>
+<tr><td>Sparse</td><td>1</td><td>The first Anchor wrecked in the Titan Engagement is not lost. One good tree survives.</td></tr>
+<tr><td>Wooded</td><td>2</td><td>None. The ordinary woodland is the plain baseline.</td></tr>
+<tr><td>Urban</td><td>3</td><td>A soldier who holds Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them.</td></tr>
+<tr><td>Giant Forest</td><td>3</td><td>The first step a Flight Carries costs no Momentum. The Corps fights best here.</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Set at the start</b> from the Anchor Rating. Nothing is rolled for them, and nothing restores one during the Titan Engagement.</li>
+<li><b>Wrecked</b> by a Behavior Table entry with the <b>Wreck</b> effect, which destroys 1 whether the card landed or whiffed, and by a Titan's body falling, which destroys 1 where it lands. Anchors never fall below 0.</li>
+<li><b>At 0 Anchors</b> nobody holds Momentum and none can be gained. Flights are still rolled and still make their step, and no step changes: however flat a Titan beats the ground, the route to its Nape never closes.</li>
+</ul>
 
 <h3>What a move can do</h3>
 <p>A <b>move</b> changes your Position relative to one named Focus Titan or Corpse by one step your kind of move can make, or changes no Position, as when you land or mount where you are. A move can include one mount or dismount. It is the only way you change your own Position; falls, Grabs, Fall Back, and a Fear Roll's forced step are rules that move you.</p>
 <ul>
-<li><b>Mounted:</b> you make a mounted step, or an ODM move that dismounts you first.</li>
+<li><b>An ODM move is a <a href="#fight-flight">Flight</a>,</b> and it crosses more than one step only by spending Momentum on Carry.</li>
+<li><b>Mounted:</b> you make a mounted step, or an ODM move that dismounts you first, which is a Flight.</li>
+<li><b>A mounted charge.</b> A mounted move that makes the Distant to In Reach step may also mark you as loud on that Focus Titan. It is never rolled, spends nothing beyond the move, and is not ODM use. At the <b>Open</b> rating a mounted move may make that step twice, in either order, so a rider comes in and gets out again in one move; it is still one charge, and it marks you loud at most once.</li>
+<li><b>Swapping a Blade Set</b> spends your move in a Titan Engagement (see <a href="#gear-blades">Blade Sets</a>). A move can change no Position, so you refit and still strike on that turn; what a ruined blade costs you is that turn's Flight, and the Momentum it would have given.</li>
 <li><b>Down:</b> you can make only the step from In Reach to Distant, on foot, while not Grabbed, carried, or Pinned.</li>
 <li><b>Grabbed or carried:</b> your move changes nothing.</li>
 <li><b>Pinned:</b> your move changes nothing, and no rule moves you (see <a href="#fight-pinned">Pinned</a>).</li>

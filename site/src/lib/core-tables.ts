@@ -359,9 +359,11 @@ export function stressChanges(): CoreTableData {
 interface RawSource {
   id: string;
   name: string;
-  dice_per_unit: number | Record<string, number>;
-  unit: string;
-  max_units: number | null;
+  /** A source counted in units gives these three; one whose dice a rule states gives `dice` instead. */
+  dice_per_unit?: number | Record<string, number>;
+  unit?: string;
+  max_units?: number | null;
+  dice?: string;
   spends?: string;
 }
 
@@ -405,6 +407,18 @@ const BONUS_WORDING: Record<string, { unit?: [string, string]; addsTo: string; w
     when: 'The Squad has the ambush in that Skirmish, and the attacked Foe has not yet acted in it.',
     see: ['skirmishes'],
   },
+  momentum: {
+    addsTo: 'A strike or a Break Attention this turn against the Titan you flew relative to, for Bite. Your next dodge this round, for Brace.',
+    when: 'You are in a Titan Engagement and hold the Momentum to spend.',
+    spends: '1 Momentum per die',
+    see: ['fighting-titans'],
+  },
+  'terrain-trait': {
+    addsTo: "A mounted soldier's Break Attention, which is the only Terrain Trait that gives dice.",
+    when: 'The fight is at the Open Anchor Rating.',
+    spends: 'Nothing',
+    see: ['fighting-titans'],
+  },
 };
 
 export function bonusDiceSources(): CoreTableData {
@@ -418,7 +432,8 @@ export function bonusDiceSources(): CoreTableData {
         rows: doc.sources.map((s) => {
           const w = wording(BONUS_WORDING, s.id, 'Bonus Dice sources');
           let dice: string;
-          if (typeof s.dice_per_unit === 'object') {
+          if (s.dice !== undefined) dice = capitalise(s.dice);
+          else if (typeof s.dice_per_unit === 'object') {
             // A source whose dice depend on a named step, such as Circumstances.
             const steps = new Map(circumstances.steps.map((step) => [step.id, step.name]));
             dice = orList.format(
@@ -430,7 +445,8 @@ export function bonusDiceSources(): CoreTableData {
                   return `${n} at ${name}`;
                 }),
             );
-          } else if (s.unit === 'roll' || s.max_units === 1) dice = String(s.dice_per_unit);
+          } else if (s.dice_per_unit === undefined) throw new Error(`Bonus Dice sources: "${s.id}" states no dice.`);
+          else if (s.unit === 'roll' || s.max_units === 1) dice = String(s.dice_per_unit);
           else if (w.unit) dice = `${s.dice_per_unit} per ${w.unit[0]}${s.max_units ? `, up to ${s.max_units} ${w.unit[1]}` : ''}`;
           else throw new Error(`Bonus Dice sources: "${s.id}" has a unit with no player wording.`);
           const spends = w.spends ?? (s.spends === 'nothing' ? 'Nothing' : null);

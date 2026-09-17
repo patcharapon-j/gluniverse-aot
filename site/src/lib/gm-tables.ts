@@ -166,6 +166,10 @@ function trackerKey(line: keyof Tracker, field: string): string {
 
 const TRACKER_WORDING: Record<string, { name: string; text: string }> = {
   'engagement_line/anchor-rating': { name: 'Anchor Rating', text: 'The ground, which decides the Position steps ODM Gear allows.' },
+  'engagement_line/anchors-left': {
+    name: 'Anchors left',
+    text: 'How many the ground still holds, of what the Anchor Rating gave. Public, never restored, and whatever is left is every soldier’s Momentum cap.',
+  },
   'engagement_line/round-number': { name: 'Round', text: 'Which round the fight is in.' },
   'engagement_line/retreat-clock-filled-segments-of': { name: 'Retreat clock', text: 'Filled segments of its length, such as 2 of 8. Public.' },
   'engagement_line/whether-the-titan-engagement-is': {

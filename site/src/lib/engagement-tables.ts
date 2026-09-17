@@ -97,12 +97,13 @@ interface RawStep {
   on_foot: boolean;
   mounted: boolean;
   odm: boolean;
-  fly_roll?: { needs: number; failure_ends_at: string };
 }
 interface RawRating {
   id: string;
   name: string;
   meaning: string;
+  anchors: number;
+  terrain_trait: string;
   steps: RawStep[];
 }
 
@@ -120,8 +121,8 @@ export function positionStepsTable(): CoreTableData {
   const T = 'Position steps';
   return {
     caption: 'Position steps by Anchor Rating',
-    note: 'Two Positions joined by a row are one Position step apart, whichever kinds of move can make it. A step can be made either way.',
-    columns: ['Position step', 'On foot', 'Mounted', 'ODM', 'Fly roll'],
+    note: 'Two Positions joined by a row are one Position step apart, whichever kinds of move can make it. A step can be made either way. No step asks for a roll of its own: every ODM move is a Flight, and a move that crosses two steps spends Momentum on Carry.',
+    columns: ['Position step', 'On foot', 'Mounted', 'ODM'],
     see: false,
     groups: doc.ratings.map((rating) => ({
       heading: `${rating.name}: ${wording(RATING_WORDING, rating.id, T)}`,
@@ -131,12 +132,76 @@ export function positionStepsTable(): CoreTableData {
           step.on_foot ? 'Yes' : 'No',
           step.mounted ? 'Yes' : 'No',
           step.odm ? 'Yes' : 'No',
-          step.fly_roll
-            ? `Needs ${step.fly_roll.needs}. On a failure the move ends at ${position(step.fly_roll.failure_ends_at, T)}.`
-            : 'None',
         ] as Cell[],
       })),
     })),
+  };
+}
+
+// ---------------------------------------------------------------- Anchors, Terrain Traits, Momentum
+
+interface RawSpend {
+  id: string;
+  cost: number;
+  effect: string;
+  giant_forest?: string;
+}
+
+/** What the ground gives a soldier on the wires, one line per rating. */
+const TERRAIN_WORDING: Record<string, string> = {
+  open: 'A mounted soldier’s Break Attention gains 1 Bonus Die. The plain is the horse’s.',
+  sparse: 'The first Anchor wrecked in the fight is not lost. One good tree survives.',
+  wooded: 'None. This is the plain baseline every other rating is read against.',
+  urban: 'A soldier at Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them.',
+  'giant-forest': 'The first step a Flight Carries costs no Momentum. The Corps fights best here.',
+};
+
+export function anchorsTable(): CoreTableData {
+  const doc = parse(anchorText) as { ratings: RawRating[] };
+  const T = 'Anchors';
+  return {
+    caption: 'Anchors and Terrain Traits by Anchor Rating',
+    note: 'The Anchors are the fight’s own pool, public and never restored. However many are left is every soldier’s Momentum cap.',
+    columns: ['Anchor Rating', 'Anchors', 'Terrain Trait'],
+    see: false,
+    groups: [
+      {
+        rows: doc.ratings.map((rating) => ({
+          cells: [rating.name, String(rating.anchors), wording(TERRAIN_WORDING, rating.id, T)] as Cell[],
+        })),
+      },
+    ],
+  };
+}
+
+/** What each point of Momentum buys, in the order the table lists it. */
+const SPEND_WORDING: Record<string, { name: string; effect: string }> = {
+  carry: {
+    name: 'Carry',
+    effect: 'One more Position step on this move, along steps your kind of move could make, relative to the same Titan. You may Carry more than once on one move.',
+  },
+  bite: { name: 'Bite', effect: '1 Bonus Die on a strike or a Break Attention you take this turn against the Titan you flew relative to.' },
+  brace: { name: 'Brace', effect: '1 Bonus Die on your next dodge this round.' },
+  quiet: { name: 'Quiet', effect: 'You set no mark this turn, the loudest mark a Flight with no successes would set included. A mark already set is not cleared.' },
+  'clean-line': { name: 'Clean line', effect: 'You make no Gas Roll for this round.' },
+};
+
+export function momentumTable(): CoreTableData {
+  const doc = parse(anchorText) as { momentum: { spends: { list: RawSpend[] } } };
+  const T = 'Momentum';
+  return {
+    caption: 'What you spend Momentum on',
+    note: 'Any amount at any point in your own turn. Carry is spent as part of the move it extends; every other spend is declared before the roll it names.',
+    columns: ['Spend', 'Cost', 'What it buys'],
+    see: false,
+    groups: [
+      {
+        rows: doc.momentum.spends.list.map((spend) => {
+          const w = wording(SPEND_WORDING, spend.id, T);
+          return { cells: [w.name, String(spend.cost), spend.giant_forest ? { text: w.effect, note: 'At Giant Forest the first step a Flight Carries costs nothing.' } : w.effect] as Cell[] };
+        }),
+      },
+    ],
   };
 }
 
@@ -229,6 +294,7 @@ const EFFECT_NAMES: Record<string, string> = {
   'knock-loose': 'a knock loose',
   'critical-injury': 'a Critical Injury',
   grab: 'a Grab',
+  wreck: 'a wreck',
 };
 
 /** What each effect does to a soldier the behavior lands on. */
@@ -239,6 +305,7 @@ const EFFECT_WORDING: Record<string, string> = {
   'knock-loose': 'If you are airborne, or hold On Body or Blind Spot relative to it, you fall. A mounted soldier is not affected. The fall is the same whatever the Net Successes.',
   grab: "Its hand closes on you. The Grab is the same whatever the Net Successes.",
   telegraph: 'Its next move is revealed to every soldier. It happens whether the behavior landed or whiffed.',
+  wreck: 'Nothing, to you. The fight loses 1 Anchor, so every soldier’s Momentum cap drops. It happens whether the behavior landed or whiffed, because it is the Titan going through the place rather than a blow at a person.',
 };
 
 /** The limit each tier carries beyond the effects it may use. */
@@ -335,7 +402,10 @@ const TEST_WORDING: Record<string, { name: string; meaning: string }> = {
 const FLAG_WORDING: Record<string, { name: string; set: string }> = {
   'hooked-by-strike': { name: 'Hooked in by a strike', set: 'You make a Nape strike against it, whatever the result.' },
   'just-hurt': { name: 'Just hurt it', set: 'You make a Body Part strike against it with at least 1 success.' },
-  loudest: { name: 'Loudest', set: 'You take Draw Attention against it, or a Fear Roll result sets it for you. Never from Distant.' },
+  loudest: {
+    name: 'Loudest',
+    set: 'You take Draw Attention against it, never from Distant, or a Fear Roll result sets it for you. A Flight with no successes sets it from any Position, Distant included, and so may a mounted charge. Momentum spent on Quiet stops it.',
+  },
 };
 
 const attentionDoc = () =>
@@ -818,6 +888,8 @@ export function squadTacticsTable(): CoreTableData {
 export const ENGAGEMENT_TABLES = {
   positions: positionsTable,
   'position-steps': positionStepsTable,
+  anchors: anchorsTable,
+  momentum: momentumTable,
   'titan-sizes': titanSizesTable,
   'titan-attack-dice': titanAttackDiceTable,
   'behavior-tiers': behaviorTiersTable,
@@ -867,7 +939,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   end: {
     title: 'End the round.',
     icon: 'ph:hourglass',
-    text: 'Work through the four end steps below, then begin the next round at its Wings step.',
+    text: 'Work through the five end steps below, then begin the next round at its Wings step.',
   },
   'gas-rolls': {
     title: 'Gas Rolls.',
@@ -884,6 +956,12 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
     icon: 'ph:clock-countdown',
     text: 'Every Background Titan’s clock fills 1 segment, and full clocks resolve. Then the retreat clock fills 1 segment, and if it is full the fight becomes a retreat.',
     exit: { kind: 'stop', label: 'In a retreat', text: 'No Background clock fills and the retreat clock does not fill.' },
+  },
+  momentum: {
+    title: 'Momentum.',
+    icon: 'ph:wind',
+    text: 'Everyone who made no ODM move this round loses all their Momentum. Anyone who flew keeps what they hold, up to the Anchors left.',
+    exit: { kind: 'stop', label: 'Keep flying', text: 'A round spent standing still costs you everything you were carrying.' },
   },
   'round-ends': {
     title: 'Round ends.',
@@ -911,7 +989,7 @@ export function roundSteps(): { round: RoundStep[]; end: RoundStep[] } {
 /** The Positions and their step rows, for the Positions map drawing. */
 export function positionsMap(): {
   positions: { id: string; name: string; icon: string }[];
-  ratings: { id: string; name: string; steps: { from: string; to: string; kinds: string[]; fly: string | null }[] }[];
+  ratings: { id: string; name: string; anchors: number; steps: { from: string; to: string; kinds: string[] }[] }[];
 } {
   const doc = parse(anchorText) as { ratings: RawRating[] };
   const T = 'Positions map';
@@ -920,11 +998,11 @@ export function positionsMap(): {
     ratings: doc.ratings.map((r) => ({
       id: r.id,
       name: r.name,
+      anchors: r.anchors,
       steps: r.steps.map((s) => ({
         from: s.between[0],
         to: s.between[1],
         kinds: [s.on_foot && 'On foot', s.mounted && 'Mounted', s.odm && 'ODM'].filter((k): k is string => Boolean(k)),
-        fly: s.fly_roll ? `Fly roll, needs ${s.fly_roll.needs}; a failure ends at ${position(s.fly_roll.failure_ends_at, T)}` : null,
       })),
     })),
   };
