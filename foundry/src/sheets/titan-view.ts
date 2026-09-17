@@ -5,7 +5,7 @@
  * Hidden values are left out of the view itself, not just hidden by CSS.
  */
 import { SYSTEM_ID } from '../config.ts';
-import { isGrounded, meetsBodyParts, publicFacts, type BodyPart, type TitanFacts } from '../rules/titan.ts';
+import { isGrounded, meetsBodyParts, publicFacts, type BehaviorRow, type BodyPart, type TitanFacts } from '../rules/titan.ts';
 import { titanRegions } from './figure.ts';
 import { icon } from './soldier-view.ts';
 
@@ -38,6 +38,8 @@ export interface EntryView {
   text: string;
   canHappen: boolean;
   grab: boolean;
+  /** The stored entry, for the GM's table editor. */
+  row: BehaviorRow;
 }
 
 export interface TitanView {
@@ -109,6 +111,7 @@ export function entryView(e: any, all: any[], parts: readonly BodyPart[]): Entry
   const kinds = (e.body_parts_used as string[]).map((k) => t(`WOF.BodyPartKind.${k}`));
   const positions = e.position_requirement as string[];
   return {
+    row: e as BehaviorRow,
     id: e.id,
     name: e.name,
     results: [...e.results],

@@ -15,7 +15,22 @@
   import { titanFigure, titanPartSpot } from '../figure.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import { icon } from '../soldier-view.ts';
-  import { cyclePart, fillRegen, rollNextBehavior, setField, setOpenings, setPartProgress, stepBackRegen, strikePart } from '../titan-ops.ts';
+  import { INJURY_LOCATIONS, INJURY_TYPES, POSITIONS } from '../../models/fields.ts';
+  import { blankEffect, freeResults, partsUsedCounts, partsUsedList, PART_KINDS, readResults, TITAN_EFFECTS, TITAN_TARGETS, TITAN_TIERS, type BehaviorRow } from '../../rules/titan.ts';
+  import {
+    addBehaviorEntry,
+    copyBehaviorTable,
+    cyclePart,
+    fillRegen,
+    removeBehaviorEntry,
+    rollNextBehavior,
+    setBehaviorEntry,
+    setField,
+    setOpenings,
+    setPartProgress,
+    stepBackRegen,
+    strikePart,
+  } from '../titan-ops.ts';
   import type { EntryView, PartView, TitanView } from '../titan-view.ts';
   import Dots from './Dots.svelte';
   import RegenClock from './RegenClock.svelte';
@@ -50,6 +65,63 @@
   let peek = $state(false);
   let regenNote = $state('');
   let rollNote = $state('');
+  /** The id of the Behavior Table entry whose form is open, or none. */
+  let editing = $state('');
+
+  /** The system's own Titans, whose Behavior Table a Titan written by hand can start from. */
+  const tableSources = CONFIG.WOF.titans as { id: string; name: string }[];
+  const freeLine = $derived(freeResults(view.entries.map((e) => e.row)));
+  // Every table needs the entry the Titan falls back on when nothing else can happen.
+  const needsThrash = $derived(view.entries.length > 0 && !view.entries.some((e) => e.tier === 'thrash'));
+
+  const setEntry = (index: number, patch: Partial<BehaviorRow>) => setBehaviorEntry(actor, index, patch);
+
+  /** One effect of an entry, changed, added, or dropped in place. */
+  function setEffects(index: number, effects: Record<string, unknown>[]) {
+    return setEntry(index, { effects });
+  }
+
+  function togglePosition(index: number, row: BehaviorRow, position: string, on: boolean) {
+    const kept = row.position_requirement.filter((p) => p !== position);
+    // An entry with no Position left could never happen, so the last one stays.
+    const next = on ? [...kept, position] : kept;
+    return setEntry(index, { position_requirement: next.length ? POSITIONS.filter((p) => next.includes(p)) : row.position_requirement });
+  }
+
+  function setPartsUsed(index: number, row: BehaviorRow, kind: string, n: number) {
+    const counts = partsUsedCounts(row.body_parts_used);
+    counts[kind] = Math.max(0, Math.min(4, Math.round(n)));
+    return setEntry(index, { body_parts_used: partsUsedList(counts) });
+  }
+
+  async function copyTable(select: HTMLSelectElement) {
+    const id = select.value;
+    select.value = '';
+    if (!id) return;
+    const held = view.entries.length;
+    if (held && !(await foundry.applications.api.DialogV2.confirm({ window: { title: t('WOF.TitanSheet.entry.copy') }, content: `<p>${t('WOF.TitanSheet.entry.copyWarn', { n: held })}</p>` }))) return;
+    if (await copyBehaviorTable(actor, id)) {
+      await tick();
+      reveal(body?.querySelector('.behave'));
+    }
+  }
+
+  /** Removing an entry loses what the GM wrote, so it is asked for first. */
+  async function dropEntry(index: number, name: string) {
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: t('WOF.TitanSheet.entry.remove') },
+      content: `<p>${t('WOF.TitanSheet.entry.removeWarn', { name })}</p>`,
+    });
+    if (ok) await removeBehaviorEntry(actor, index);
+  }
+
+  async function addEntry() {
+    await addBehaviorEntry(actor);
+    await tick();
+    const last = body?.querySelector<HTMLElement>('.behave li:last-child');
+    reveal(last);
+    last?.scrollIntoView({ block: 'nearest' });
+  }
 
   const stateLabel = (s: string) => t(`WOF.BodyPartState.${s}`);
   const figure = $derived(
@@ -262,10 +334,26 @@
     <div class="body" bind:this={body} id="{sheet.id}-panel" role="tabpanel" aria-labelledby="{sheet.id}-tab-{tab}">
       {#if tab === 'behavior' && view.full}
         <section class="panel">
-          <Sec n="1" title={t('WOF.Actor.Titan.FIELDS.behavior_table.label')} hint={t('WOF.TitanSheet.behaviorHint')} />
+          <Sec n="1" title={t('WOF.Actor.Titan.FIELDS.behavior_table.label')} hint={t('WOF.TitanSheet.behaviorHint')}>
+            {#snippet actions()}
+              {#if !ro}
+                <select class="tcopy" aria-label={t('WOF.TitanSheet.entry.copyLabel')} onchange={(ev) => copyTable(ev.currentTarget)}>
+                  <option value="">{t('WOF.TitanSheet.entry.copy')}</option>
+                  {#each tableSources as x (x.id)}<option value={x.id}>{x.name}</option>{/each}
+                </select>
+                <button class="mini" type="button" use:tooltip={t('WOF.TitanSheet.entry.addTip')} onclick={addEntry}>{t('WOF.TitanSheet.entry.add')}</button>
+              {/if}
+            {/snippet}
+          </Sec>
+          {#if !view.entries.length}
+            <p class="empty">{t(ro ? 'WOF.TitanSheet.entry.noneRead' : 'WOF.TitanSheet.entry.none')}</p>
+          {:else if !ro && freeLine.length}
+            <p class="note">{t('WOF.TitanSheet.entry.free', { list: freeLine.join(', ') })}</p>
+          {/if}
+          {#if needsThrash}<p class="note red">{t('WOF.TitanSheet.entry.noThrash')}</p>{/if}
           <ul class="behave">
-            {#each view.entries as e (e.id)}
-              <li class:next={e.id === view.next.entryId} class:prev={e.id === view.previous?.id} class:blocked={!e.canHappen}>
+            {#each view.entries as e, i (e.id)}
+              <li class:next={e.id === view.next.entryId} class:prev={e.id === view.previous?.id} class:blocked={!e.canHappen} class:editing={editing === e.id}>
                 <span class="d">{e.resultLabel}</span>
                 <div>
                   <strong>{e.name}</strong>
@@ -280,6 +368,122 @@
                     <div><dt>{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.body_parts_used.label')}</dt><dd>{e.bodyParts}</dd></div>
                     <div><dt>{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.fallback.label')}</dt><dd>{e.fallback}</dd></div>
                   </dl>
+                  {#if !ro}
+                    <div class="eacts">
+                      <button type="button" class="mini" aria-expanded={editing === e.id} onclick={() => (editing = editing === e.id ? '' : e.id)}>
+                        {t(editing === e.id ? 'WOF.TitanSheet.entry.close' : 'WOF.TitanSheet.entry.edit')}
+                      </button>
+                      <button type="button" class="mini" use:tooltip={t('WOF.TitanSheet.entry.removeTip')} onclick={() => dropEntry(i, e.name)}>{t('WOF.TitanSheet.entry.remove')}</button>
+                    </div>
+                  {/if}
+                  {#if editing === e.id && !ro}
+                    {@const row = e.row}
+                    {@const used = partsUsedCounts(row.body_parts_used)}
+                    <div class="eedit">
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.name.label')}</span>
+                      <input type="text" aria-label={t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.name.label')} value={row.name} onchange={(ev) => setEntry(i, { name: ev.currentTarget.value.trim() || row.name })} />
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.results.label')}</span>
+                      <input type="text" class="short" aria-label={t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.results.label')} value={row.results.join(', ')} use:tooltip={t('WOF.TitanSheet.entry.resultsTip')} onchange={(ev) => setEntry(i, { results: readResults(ev.currentTarget.value) })} />
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.tier.label')}</span>
+                      <select aria-label={t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.tier.label')} value={row.tier} onchange={(ev) => setEntry(i, { tier: ev.currentTarget.value })}>
+                        {#each TITAN_TIERS as x (x)}<option value={x}>{t(`WOF.Tier.${x}`)}</option>{/each}
+                      </select>
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.attack_dice.label')}</span>
+                      <input
+                        type="number"
+                        class="short"
+                        min="0"
+                        aria-label={t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.attack_dice.label')}
+                        value={row.attack_dice ?? ''}
+                        use:tooltip={t('WOF.TitanSheet.entry.diceTip')}
+                        onchange={(ev) => setEntry(i, { attack_dice: ev.currentTarget.value === '' ? null : Math.max(0, Math.round(Number(ev.currentTarget.value) || 0)) })}
+                      />
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.targets.label')}</span>
+                      <select aria-label={t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.targets.label')} value={row.targets} onchange={(ev) => setEntry(i, { targets: ev.currentTarget.value })}>
+                        {#each TITAN_TARGETS as x (x)}<option value={x}>{t(`WOF.Targets.${x}`)}</option>{/each}
+                      </select>
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.position_requirement.label')}</span>
+                      <span class="epos">
+                        {#each POSITIONS as pos (pos)}
+                          <label class="check">
+                            <input type="checkbox" checked={row.position_requirement.includes(pos)} onchange={(ev) => togglePosition(i, row, pos, ev.currentTarget.checked)} />
+                            {t(`WOF.Position.${pos}`)}
+                          </label>
+                        {/each}
+                      </span>
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.body_parts_used.label')}</span>
+                      <span class="epos">
+                        {#each PART_KINDS as kind (kind)}
+                          <label class="check num">
+                            {t(`WOF.BodyPartKind.${kind}`)}
+                            <input type="number" min="0" max="4" value={used[kind]} onchange={(ev) => setPartsUsed(i, row, kind, Number(ev.currentTarget.value))} />
+                          </label>
+                        {/each}
+                      </span>
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.fallback.label')}</span>
+                      <select aria-label={t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.fallback.label')} value={row.fallback} use:tooltip={t('WOF.TitanSheet.entry.fallbackTip')} onchange={(ev) => setEntry(i, { fallback: ev.currentTarget.value })}>
+                        <option value="none">{t('WOF.Sheet.none')}</option>
+                        {#each view.entries.filter((x) => x.id !== e.id) as x (x.id)}<option value={x.id}>{x.name}</option>{/each}
+                      </select>
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.effects.label')}</span>
+                      <span class="efx">
+                        {#each row.effects as effect, k (k)}
+                          <span class="efx-chip">
+                            <b>{t(`WOF.TitanSheet.effect.${effect.type}`)}</b>
+                            {#if effect.type === 'stress'}
+                              <input
+                                type="number"
+                                min="1"
+                                value={Number(effect.amount ?? 1)}
+                                aria-label={t('WOF.TitanSheet.effect.amount')}
+                                onchange={(ev) => setEffects(i, row.effects.map((x, j) => (j === k ? { ...x, amount: Math.max(1, Math.round(Number(ev.currentTarget.value) || 1)) } : x)))}
+                              />
+                            {:else if effect.type === 'critical-injury'}
+                              <select
+                                value={String(effect.injury_type ?? 'crush')}
+                                aria-label={t('WOF.Item.CriticalInjury.FIELDS.injury_type.label')}
+                                onchange={(ev) => setEffects(i, row.effects.map((x, j) => (j === k ? { ...x, injury_type: ev.currentTarget.value } : x)))}
+                              >
+                                {#each INJURY_TYPES as x (x)}<option value={x}>{t(`WOF.InjuryType.${x}`)}</option>{/each}
+                              </select>
+                              <select
+                                value={String(effect.injury_location ?? 'rolled')}
+                                aria-label={t('WOF.TitanSheet.effect.where')}
+                                onchange={(ev) => setEffects(i, row.effects.map((x, j) => (j === k ? { ...x, injury_location: ev.currentTarget.value } : x)))}
+                              >
+                                <option value="rolled">{t('WOF.TitanEffect.rolledLocation')}</option>
+                                {#each INJURY_LOCATIONS as x (x)}<option value={x}>{t(`WOF.InjuryLocation.${x}`)}</option>{/each}
+                              </select>
+                              <label class="check">
+                                <input
+                                  type="checkbox"
+                                  checked={!!effect.cannot_be_lethal}
+                                  onchange={(ev) => setEffects(i, row.effects.map((x, j) => (j === k ? { ...x, cannot_be_lethal: ev.currentTarget.checked } : x)))}
+                                />
+                                {t('WOF.TitanSheet.effect.notLethal')}
+                              </label>
+                            {/if}
+                            <button type="button" class="x" aria-label={t('WOF.TitanSheet.effect.drop')} onclick={() => setEffects(i, row.effects.filter((_, j) => j !== k))}>×</button>
+                          </span>
+                        {/each}
+                        <select aria-label={t('WOF.TitanSheet.effect.add')} onchange={(ev) => { const type = ev.currentTarget.value; ev.currentTarget.value = ''; if (type) setEffects(i, [...row.effects, blankEffect(type)]); }}>
+                          <option value="">{t('WOF.TitanSheet.effect.add')}</option>
+                          {#each TITAN_EFFECTS as x (x)}<option value={x}>{t(`WOF.TitanSheet.effect.${x}`)}</option>{/each}
+                        </select>
+                      </span>
+
+                      <span class="lbl">{t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.text.label')}</span>
+                      <textarea rows="3" aria-label={t('WOF.Actor.Titan.FIELDS.behavior_table.entries.element.text.label')} value={row.text} onchange={(ev) => setEntry(i, { text: ev.currentTarget.value.trim() })}></textarea>
+                    </div>
+                  {/if}
                 </div>
                 <span class="tier {e.tier}">
                   {#if e.tierIcon}<img class="ic s16" src={e.tierIcon} alt="" />{/if}

@@ -80,6 +80,41 @@ export function inkIn(els: Element[]): void {
   );
 }
 
+/** Dice landing on the paper: each one drops in and settles, staggered down the row. */
+export function tumbleIn(els: Element[], delay = 0): void {
+  fx(els, { opacity: [0, 1], scale: [0.35, 1], rotate: [-100, 0], duration: MOTION.weighty, ease: MOTION.settle, delay: stagger(MOTION.stagger, { start: delay }) });
+}
+
+/** A die that counts, marked once the pool has landed. */
+export function popMark(els: Element[], delay = 0): void {
+  fx(els, { scale: [1.35, 1], duration: MOTION.base, ease: MOTION.settle, delay: stagger(MOTION.stagger, { start: delay }) });
+}
+
+/**
+ * A whole number climbing to the value the element already reads. Only Full motion counts: Reduced
+ * and Off leave the text as it was drawn, and a backstop writes the value even if the tab sleeps
+ * before the animation ends.
+ */
+export function countUp(el: Element | null | undefined, delay = 0, duration = MOTION.weighty): void {
+  if (!(el instanceof HTMLElement) || motionMode() !== 'full') return;
+  const to = Number(el.textContent);
+  if (!Number.isInteger(to) || to <= 0) return;
+  const box = { n: 0 };
+  const write = (v: number) => (el.textContent = String(v));
+  write(0);
+  animate(box as never, {
+    n: to,
+    duration,
+    delay,
+    ease: MOTION.ease,
+    onUpdate: () => write(Math.round(box.n)),
+    onComplete: () => write(to),
+  } as never);
+  window.setTimeout(() => {
+    if (el.isConnected && Number(el.textContent) !== to) write(to);
+  }, delay + duration + MOTION.weighty);
+}
+
 /** Track boxes being cleared: a small lift back onto the paper. */
 export function inkOut(els: Element[]): void {
   fx(els, { scale: [0.86, 1], opacity: [0.55, 1], duration: MOTION.base, ease: MOTION.settle, delay: stagger(MOTION.stagger) });
