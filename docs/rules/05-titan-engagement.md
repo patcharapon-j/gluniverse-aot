@@ -90,14 +90,15 @@ A condition that would slow or blind a Titan reaches the table only through the 
 
 `engagement-flow.yaml` (`starting`) lists the steps in order:
 
-1. The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any Background Titans with their clock lengths, and the length of its retreat clock. The GM's framing may name what that rule leaves unnamed, except the retreat clock's length (*Framing*, below). Anything neither names comes from `engagement-setup.yaml`. The Anchor Rating brings the Titan Engagement's Anchors and its Terrain Trait with it, whichever names the rating, and neither is rolled (section 5.2). The retreat clock starts empty (section 5.10).
-2. The Focus Titan is labelled A.
-3. Its Body Parts start Intact, it has no Openings, its Regeneration clock is empty, and its hidden Next Behavior is rolled.
-4. Soldiers and horses are placed (`positions.yaml`, `placement`).
-5. The Titan evaluates its Attention Ladder, with no cards dealt. If a rung picks out one soldier, that soldier holds its Attention from setup: the Straggler's victim, placed at In Reach while every other soldier is at Distant, is picked out this way (Chapter 7, section 7.1). Otherwise nothing holds it, and its first card turns it; when every soldier starts at the same Position, as at Distant by default, a Squad of two or more starts that way (section 5.6; decision batch 4b, 4b-6).
-6. Soldiers make the Fear Rolls for a first Titan Engagement and for an Abnormal (Chapter 3, section 3.12).
-7. The Squad's Squad Tactics become unused.
-8. Round 1 begins.
+1. The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any Background Titans with their clock lengths, and the length of its retreat clock. The GM's framing may name what that rule leaves unnamed, except the retreat clock's length (*Framing*, below). Anything neither names comes from `engagement-setup.yaml`. The Anchor Rating brings its Terrain Trait with it, whichever names the rating (section 5.2). The retreat clock starts empty (section 5.10).
+2. The Titan Engagement's Anchors are the Anchor Rating's, and every soldier's Momentum is 0 (section 5.2). Nothing is rolled.
+3. The Focus Titan is labelled A.
+4. Its Body Parts start Intact, it has no Openings, its Regeneration clock is empty, and its hidden Next Behavior is rolled.
+5. Soldiers and horses are placed (`positions.yaml`, `placement`).
+6. The Titan evaluates its Attention Ladder, with no cards dealt. If a rung picks out one soldier, that soldier holds its Attention from setup: the Straggler's victim, placed at In Reach while every other soldier is at Distant, is picked out this way (Chapter 7, section 7.1). Otherwise nothing holds it, and its first card turns it; when every soldier starts at the same Position, as at Distant by default, a Squad of two or more starts that way (section 5.6; decision batch 4b, 4b-6).
+7. Soldiers make the Fear Rolls for a first Titan Engagement and for an Abnormal (Chapter 3, section 3.12).
+8. The Squad's Squad Tactics become unused.
+9. Round 1 begins.
 
 ### Who takes part, and where they start
 
@@ -201,7 +202,7 @@ Two Positions joined by a step row are one Position step apart, whatever kinds o
 
 No step row calls for a roll of its own. Every ODM move is a **Flight** and is rolled (*Flight*, below), and a move that crosses more than one step does it by spending Momentum on Carry (*Momentum*, below). The soldier is airborne after any ODM move, as Chapter 4 states (section 4.2).
 
-Each rating also gives the Titan Engagement a pool of **Anchors** and one **Terrain Trait**, in the second table below (*Anchors* and *Terrain Traits*, below).
+Each rating also gives the Titan Engagement a pool of **Anchors** and one **Terrain Trait**, in the second table below (*Anchors* and *Terrain Traits*).
 
 <!-- BEGIN RENDERED: position-steps from data/engagement/anchor-ratings.yaml -->
 | Anchor Rating | Position step (either way) | On foot | Mounted | ODM |
@@ -261,7 +262,7 @@ A **move** changes the soldier's Position relative to one named Focus Titan by o
 
 ### Flight
 
-**Every ODM move is a Flight** (`positions.yaml`, `moves`, `flight`). The soldier makes a roll for `fly` with their own ODM Gear as its gear item, and the roll decides what the flight was worth, never whether it happened:
+**Every ODM move is a Flight** (`positions.yaml`, `moves`, `flight`). The soldier makes a roll for `fly` with their own ODM Gear as its gear item, and the roll decides what the Flight was worth, never whether it happened:
 
 - **The step happens whatever the roll gives.** A Flight needs nothing, so it never leaves a soldier short of the step an ODM move has always made.
 - **Each success gives the soldier 1 Momentum,** up to their cap (*Momentum*, below). Momentum above the cap is not gained.
@@ -314,7 +315,7 @@ Each Anchor Rating carries one **Terrain Trait**, printed in the table above (`r
 
 ### The mounted charge
 
-A mounted move that makes the **Distant to In Reach** step may also set the loudest flag on that Focus Titan (`mounted_charge`), and no other move sets a flag. The rider must not be Grabbed or carried. It spends nothing beyond the move, it is never rolled, and it is not ODM use, so it costs no gas.
+A mounted move that makes the **Distant to In Reach** step may also set the loudest flag on that Focus Titan (`mounted_charge`). Apart from the charge, the only move that sets a flag is a Flight that scores no successes (*Flight*, above). The rider must not be Grabbed or carried. It spends nothing beyond the move, it is never rolled, and it is not ODM use, so it costs no gas.
 
 **At the Open rating only,** a mounted move may make that step twice, in either order, so a rider can come in and get out again in one move. It is one move and one charge: the loudest flag is set at most once.
 
@@ -626,7 +627,7 @@ To evaluate the ladder (`evaluation`):
 **Flags** are public. Each lasts until the end of the Titan's next card that resolves a behavior, and clears at that card's Next step (`flag_duration`; section 5.5; ADR-0024, limit 2, and ADR-0010, as amended in decision batch 3e). A card that resolves nothing leaves every flag standing: each card of a decoy's hold, the last one included, which evaluates the ladder with the flags; a card that comes up while the Titan holds a Grabbed soldier; and a card with no one holding its Attention (OQ-81 and OQ-111, as revised in decision batch 3e). So a flag is always read by the card that acts. The flags are:
 - **hooked-by-strike:** set by any Nape strike against the Titan, whatever its result (ADR-0010);
 - **just-hurt:** set by a Body Part strike with at least 1 success;
-- **loudest:** set by Draw Attention, or by a Fear Roll result's loudest flag (Chapter 3, section 3.9), neither from Distant; by a Flight with no successes, on the Focus Titan the move named and from any Position, Distant included; and by a mounted charge (section 5.2). Momentum spent on Quiet stops a flag the soldier would set that turn. While a soldier holds this flag they also count, for this Titan's ladder, as meeting every rung any other candidate meets except hooked into its body (step 2 below).
+- **loudest:** set by Draw Attention, or by a Fear Roll result's loudest flag (Chapter 3, section 3.9), neither from Distant; by a Flight with no successes, on the Focus Titan the move named and from any Position, Distant included; and by a mounted charge (section 5.2). Momentum spent on Quiet stops a flag the soldier would set that turn. While a soldier holds this flag they also count, for this Titan's ladder, as meeting every rung any other candidate meets except hooked into its body (*The loudest match*, step 2 of the evaluation above).
 
 **Down and carried soldiers** are candidates but meet only the rows marked `down_can_meet`, which on the standard ladder is only nearest, met by their Position like anyone else's. On the standard ladder, a Titan turns to a Down soldier only when no one is closer, hooked in, hurting it, or louder (decision batch 3e, 3e-6; decision batch 4, 4-13). An Abnormal ladder that names current-holder also keeps a Down holder who is not at Distant (*Abnormal ladders*, below). This settles the question Chapter 3 left to this chapter.
 
@@ -1013,7 +1014,7 @@ When no soldier is standing, a **returner** decides how soon it ends. A returner
 - If no soldier holds a Position at all, or no returner exists, it ends at once.
 - Otherwise the tracker records the round and play goes on. It ends at the round-ends step of the next round if still no soldier is standing, or at once if the last returner is gone. If a soldier stands again first, as when a returner comes back, the record is erased.
 
-If it ends by the second test while a Titan lives, every soldier still holding a Position, each one Down or, past the stay limit, unable to move (above), **dies**, left to the Titans. These deaths have no witnesses and cause no Fear Roll, but they count for Grief. Their left items are not shared out: they leave play with the field (Chapter 4, section 4.11; decision batch 5, OQ-131). The end frees no Pinned soldier: whether or not a Titan lives, every soldier still Pinned when it ends by the second test dies, left under the body, the same death counted for Grief (decision batch 8, 8-21; OQ-157). With no Focus Titan alive, the others go through the end steps as after any kill. Then Chapter 3's end steps run, reading the Positions soldiers held when it ended and each soldier's last Position relative to a Focus Titan that died (section 5.2), and after the last of them Chapter 4 clears every Position record (decision batch 5, OQ-122). The GM never ends a Titan Engagement: only these tests do (ADR-0024; the list in Chapter 1, section 1.1, item 6).
+If it ends by the second test while a Titan lives, every soldier still holding a Position, each one Down or, past the stay limit, unable to move (above), **dies**, left to the Titans. These deaths have no witnesses and cause no Fear Roll, but they count for Grief. Their left items are not shared out: they leave play with the field (Chapter 4, section 4.11; decision batch 5, OQ-131). The end frees no Pinned soldier: whether or not a Titan lives, every soldier still Pinned when it ends by the second test dies, left under the body, the same death counted for Grief (decision batch 8, 8-21; OQ-157). With no Focus Titan alive, the others go through the end steps as after any kill. Then Chapter 3's end steps run, reading the Positions soldiers held when it ended and each soldier's last Position relative to a Focus Titan that died (section 5.2), and after the last of them Chapter 4 clears every Position record, with which the Titan Engagement's Anchors and every soldier's Momentum are cleared (section 5.2; decision batch 5, OQ-122). The GM never ends a Titan Engagement: only these tests do (ADR-0024; the list in Chapter 1, section 1.1, item 6).
 
 **A Titan Engagement always ends** (`always_ends`): by a kill, by no soldier standing, or by the retreat its retreat clock forces. The retreat's forced moves take every standing soldier out, no one returns during it, and once no standing soldier holds a Position the ending tests end it at once (decision batch 5, OQ-126). After the retreat's first rounds, the stay limit closes the moves toward and beside a comrade Pinned under a corpse in every retreat, and beside every comrade while no Focus Titan is alive (section 5.10), so every standing soldier walks out from beside the corpse, even under a Titan that entered during the run-on. A limb-pinned soldier left alone is still standing, and the rounds go on for them. Corpse heat crosses off one of their Health boxes at the start of each of their turns, and they cannot treat themselves, so they go Down unless they free themselves first, which, with no Focus Titan alive, ends the Titan Engagement by the first test. Once no one stands, the second test ends it, and every soldier still Pinned dies under the body (decision batch 8, 8-21, 8-32, and 8-36; OQ-163). A soldier whom a lost-limb grade forbids every move does not keep it running past the stay limit, whether or not a Focus Titan is alive, since a Titan whose entries never reach them is no clock (decision batch 8, 8-34 and 8-36; OQ-165; above). The Squad may still leave earlier by choice.
 

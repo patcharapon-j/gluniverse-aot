@@ -94,7 +94,11 @@ retreat:
       text: >-
         Every soldier who holds a Position and is not Down, Grabbed, or carried cannot decline their
         move. Each move they make must be one of these, the soldier's choice among those they can
-        make:
+        make. A retreat narrows the soldier's own move and does not replace it, so an ODM move made
+        under a retreat is a Flight like any other: it is rolled, each success is 1 Momentum, and no
+        successes sets the loudest flag (data/engagement/positions.yaml, moves, flight; decision
+        batch 10, 10-5, OQ-186). A Fear Roll result's forced step is not the soldier's move and is
+        never a Flight (data/engagement/positions.yaml, moves, forced_step):
           1. Toward distant: one step along a shortest chain of steps their move can make from
              their Position to distant (data/engagement/anchor-ratings.yaml), relative to the Focus Titan with the earliest label they do not hold distant from; once they hold distant relative to every Focus Titan, relative to the corpse with the earliest label they do not hold distant from (decision batch 8, 8-20).
           2. Leave: if they hold distant relative to every Focus Titan, leave the Titan Engagement

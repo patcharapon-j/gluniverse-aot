@@ -184,7 +184,12 @@ moves:
     step toward distant). It is a change of Position a rule names, not the soldier's own move: it
     spends nothing, it happens even on a turn spent in advance (decision batch 8, 8-13), and it never
     meets a Drive's own-move trigger (data/character/enlistment.yaml, drive_rules, trigger_tests,
-    own_state).
+    own_state). It is a step of the kind the soldier's move makes, on foot, mounted, or ODM, and it
+    is never a Flight: a Flight is the soldier's own ODM move (flight), and a forced step is not one.
+    So it is not rolled, gives no Momentum, and sets no loudest flag, whichever kind of step it is.
+    An ODM forced step is still ODM use, so it makes that round's Gas Roll
+    (data/gear/odm-gear.yaml, odm_use), and the soldier is airborne after it, as after any ODM move
+    (decision batch 10, 10-5, OQ-186).
   odm_use_named_by_this_chapter: >-
     None. ODM use is only what Chapter 4 lists (data/gear/odm-gear.yaml, odm_use). A Flight is a
     roll with ODM Gear as its gear item as well as an ODM move, so it is ODM use twice over under

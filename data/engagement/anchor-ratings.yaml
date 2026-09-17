@@ -209,7 +209,10 @@ grounded_titan:
 mounted_charge:
   what: >-
     A mounted move that makes the distant to in-reach step may also set the loudest flag on that
-    Focus Titan (data/engagement/attention.yaml, flags, loudest). No other move sets a flag.
+    Focus Titan (data/engagement/attention.yaml, flags, loudest). It is the only move that sets a
+    flag by the soldier's choice: a Flight sets the loudest flag only when it gives no successes
+    (data/engagement/positions.yaml, moves, flight, no_successes), which is a failure and not a
+    capability, and no move on foot sets one at all.
   who: A mounted soldier whose move makes that step, in either direction, and who is not Grabbed or carried.
   spends: Nothing beyond the move itself. It is not an action and is never rolled.
   open_double_step: >-

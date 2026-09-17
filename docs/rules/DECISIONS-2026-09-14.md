@@ -3689,7 +3689,7 @@ One new ADR: ADR-0024 *The GM rules where the rules are silent; procedures stay 
 
 ## Batch 10: ODM movement, the environment, Draw Attention, and the blade swap
 
-Rulings on the owner's direction of 2026-09-17, recorded in `docs/playtest/feedback/round-2/OWNER-DECISIONS.md` (binding), on the research in that folder (`odm-movement-feel.md`, `flatness-audit.md`, `design-proposals.md`, `unified-design.md`), and on the two probes in `tools/probes/round-2/` (`swing.py`, `gear_die.py`). Made 2026-09-17. Four items, OQ-182 to OQ-185.
+Rulings on the owner's direction of 2026-09-17, recorded in `docs/playtest/feedback/round-2/OWNER-DECISIONS.md` (binding), on the research in that folder (`odm-movement-feel.md`, `flatness-audit.md`, `design-proposals.md`, `unified-design.md`), and on the two probes in `tools/probes/round-2/` (`swing.py`, `gear_die.py`). Made 2026-09-17. Five items, OQ-182 to OQ-186; 10-5 was raised by the packet drafter while applying 10-1 and decided the same day.
 
 The direction, in the owner's words: the ODM gear "is quite a set piece" in the source "but in the game the move moment just happens", and "I want odm movement and environment to be more prominent. Dynamic and fun to play." The owner also asked for the rest of the rules to be swept for the same problem, liked all three designs offered rather than one, and accepted the Draw Attention and mounted fixes as proposed.
 
@@ -3709,6 +3709,7 @@ No new ADR, and no ADR amended. ADR-0010 is preserved as written and is the boun
 | 10-2 | OQ-183 | A mounted Distant to In Reach step may charge, setting the loudest flag, and at Open may be made twice | none | 5.2 |
 | 10-3 | OQ-184 | The loudest flag matches every rung but hooked into its body | none | 5.6 |
 | 10-4 | OQ-185 | Swap Blade Set spends the move in a Titan Engagement | none | 4.4 |
+| 10-5 | OQ-186 | A retreat's move is a Flight; a Fear Roll's forced step never is | none | 5.2, 5.10 |
 
 ### 10-1: Flight, Momentum, and Anchors (OQ-182)
 
@@ -3754,4 +3755,17 @@ No new ADR, and no ADR amended. ADR-0010 is preserved as written and is the boun
 
 **Files.** `data/gear/blade-sets.yaml` (`swap.in_titan_engagement`), `data/character/action-catalog.yaml` (`swap-blade-set`).
 
-**Out of scope:** the simulator rerun (scheduled, not run in this batch); the Gear Die package (10-4, deferred); a Talent for Draw Attention (10-3, deferred).
+### 10-5: Whether a forced step and a retreat's move are Flights (OQ-186)
+
+Raised by the packet drafter while applying 10-1, and decided the same day.
+
+**Decision.** They differ, and each follows the text its own rule already carries.
+
+- **A move under a retreat is a Flight.** `retreat` `moves` reads "cannot decline their move. Each move they make must be one of these": a retreat narrows the soldier's own move and does not replace it. So an ODM move made under a retreat is rolled like any other, each success is 1 Momentum, and no successes sets the loudest flag.
+- **A Fear Roll's forced step is never a Flight.** `forced_step` already reads "a change of Position a rule names, not the soldier's own move"; it spends nothing, it happens even on a turn spent in advance, and it never meets a Drive's own-move trigger. It is not rolled, gives no Momentum, and sets no loudest flag, whichever kind of step it is. An ODM forced step is still ODM use, so it makes that round's Gas Roll, and the soldier is airborne after it as after any ODM move.
+
+**Why.** Momentum is the reward for choosing to fly. A soldier flung back by fear has chosen nothing, so paying them Momentum for it would reward panicking, and rolling there adds dice to the one part of a turn the player does not control. A soldier under a retreat is still choosing, from a narrowed list, so nothing about their move changes but its destination.
+
+**Files.** `data/engagement/positions.yaml` (`moves`, `forced_step`), `data/engagement/background-titans.yaml` (`retreat`, `moves`).
+
+**Out of scope:** the simulator rerun (scheduled, not run in this batch); the Gear Die package (10-4, deferred).
