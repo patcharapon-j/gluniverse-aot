@@ -193,17 +193,20 @@
 .wof-sheet .crest img { width: 48px; height: 48px; border: 0; filter: drop-shadow(1px 1px 0 rgba(36, 31, 27, .35)); }
 
 /* ── Vitals strip ───────────────────────────────────────────────────── */
-/* Two bands: the body (Health, Stress, Resolve) above, the kit that keeps it alive (Gas, Blade
-   Sets) below, each of those given half the strip so its rig can be read at a glance. */
+/* One band of five: the body (Health, Stress, Resolve) beside the kit that keeps it alive (Gas,
+   Blade Sets). The rigs take the wider columns, since each carries a drawing as well as a readout;
+   the strip folds back into two bands once the window is too narrow for that (below). */
 .wof-sheet .vitals {
-  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .62fr) minmax(0, 1.46fr) minmax(0, 1.6fr);
   margin: var(--s3) var(--gr) 0 var(--gl); border: 1px solid var(--ink2); flex: 0 0 auto;
   background: linear-gradient(var(--paper-hi), var(--paper-lo)); box-shadow: 2px 2px 0 var(--ink);
 }
-.wof-sheet .vit { padding: var(--s2) var(--s3); display: flex; flex-direction: column; gap: var(--s1); min-width: 0; grid-column: span 2; }
+.wof-sheet .vit { padding: var(--s2) var(--s3); display: flex; flex-direction: column; gap: var(--s1); min-width: 0; }
 .wof-sheet .vit + .vit { border-left: 1px solid var(--rule); }
-.wof-sheet .vit.gasv, .wof-sheet .vit.bladev { grid-column: span 3; border-top: 1px solid var(--ink2); }
-.wof-sheet .vit.gasv { border-left: 0; }
+/* The body vitals are shorter than the rigs beside them: their readout rides the middle of the
+   cell, with the caption kept at the top of the row. */
+.wof-sheet:not(.compact) .vit:not(.gasv, .bladev) .vhead { margin-bottom: auto; }
+.wof-sheet:not(.compact) .vit:not(.gasv, .bladev) > :last-child:not(.vhead) { margin-bottom: auto; }
 .wof-sheet .vhead { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
 .wof-sheet .vhead .lbl { display: inline-flex; align-items: center; gap: var(--s1); }
 /* Held Critical Injuries and Stress Responses, by name only, under their vital */
@@ -636,6 +639,21 @@
 .wof-sheet .notes.entry-first prose-mirror { overflow: visible; }
 .wof-sheet .notes.entry-first prose-mirror .editor-content { position: static; min-height: 0; height: auto; overflow: visible; }
 
+/* No room beside the drawing for the readout: the gauge drops under its rig, which keeps all five
+   vitals on the one row a while longer. */
+@container wofsheet (max-width: 1150px) {
+  .wof-sheet .rig { flex-wrap: wrap; }
+  .wof-sheet .rig .gauge { flex: 1 0 100%; flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 2px var(--s3); }
+}
+/* Too narrow for five: back to two bands, the body above and the kit below. */
+@container wofsheet (max-width: 900px) {
+  .wof-sheet .vitals { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .wof-sheet .vit { grid-column: span 2; }
+  .wof-sheet .vit.gasv, .wof-sheet .vit.bladev { grid-column: span 3; border-top: 1px solid var(--ink2); }
+  .wof-sheet .vit.gasv { border-left: 0; }
+  .wof-sheet .rig { flex-wrap: nowrap; }
+  .wof-sheet .rig .gauge { flex: 1 1 auto; flex-direction: column; align-items: stretch; justify-content: center; gap: var(--s1); }
+}
 /* ── Narrow ─────────────────────────────────────────────────────────── */
 @container wofsheet (max-width: 760px) {
   .wof-sheet .vitals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
