@@ -145,12 +145,12 @@
 
 /* ── Header ─────────────────────────────────────────────────────────── */
 .wof-sheet .hdr {
-  display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; gap: var(--s3); align-items: center;
-  margin: 0 var(--gr) 0 var(--gl); padding: var(--s3) 0 var(--s2); border-bottom: 2px solid var(--ink); position: relative; flex: 0 0 auto;
+  display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: var(--s3); align-items: center;
+  margin: 0 var(--gr) 0 var(--gl); padding: var(--s2) 0; border-bottom: 2px solid var(--ink); position: relative; flex: 0 0 auto;
 }
 .wof-sheet .hdr::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 1px; background: var(--ink); }
 .wof-sheet .plate {
-  width: 88px; height: 112px; position: relative; margin: 0; padding: 4px 4px 16px; transform: rotate(-1.5deg);
+  width: 76px; height: 96px; position: relative; margin: 0; padding: 3px 3px 14px; transform: rotate(-1.5deg);
   background: var(--paper-hi); border: 1px solid rgba(36, 31, 27, .4); box-shadow: 1.5px 2px 0 rgba(36, 31, 27, .3), 0 6px 12px rgba(60, 40, 20, .2);
 }
 .wof-sheet .plate img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; filter: sepia(.16) contrast(1.03); border: 1px solid rgba(36, 31, 27, .55); cursor: pointer; }
@@ -174,6 +174,15 @@
 .wof-sheet .meta button.link { color: var(--ink); border-bottom: 1px dotted var(--ink3); font: var(--t-sm)/1.2 var(--fb); }
 .wof-sheet .meta input, .wof-sheet .meta select { height: 20px; font-size: var(--t-sm); width: auto; min-width: 72px; max-width: 160px; background: transparent; }
 .wof-sheet .meta input[type=number] { width: 40px; min-width: 40px; }
+/* One-line file line: the six fields share a single row, and the free-text ones give up width
+   first so the fixed captions stay readable (they wrap again in a narrow window, below). */
+.wof-sheet .meta.line { flex-wrap: nowrap; gap: var(--s2); line-height: 1.3; letter-spacing: .04em; }
+.wof-sheet .meta.line > span, .wof-sheet .meta.line > label { gap: 3px; min-width: 0; white-space: nowrap; }
+.wof-sheet .meta.line > label.grow { flex: 1 1 56px; }
+.wof-sheet .meta.line b, .wof-sheet .meta.line button.link { min-width: 0; max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wof-sheet .meta.line input, .wof-sheet .meta.line select { height: 18px; min-width: 0; max-width: none; padding: 0 2px; }
+.wof-sheet .meta.line > label.grow input, .wof-sheet .meta.line > label.grow select { flex: 1 1 56px; }
+.wof-sheet .meta.line input[type=number] { flex: 0 0 32px; width: 32px; min-width: 32px; }
 .wof-sheet .tags { display: flex; flex-wrap: wrap; gap: var(--s1); }
 .wof-sheet .tag { display: inline-flex; align-items: center; gap: var(--s1); font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; padding: 3px 6px; border: 1px dashed var(--ink3); color: var(--ink2); white-space: nowrap; }
 .wof-sheet .tag.ok { border: 1px solid var(--green); color: var(--green); background: rgba(63, 97, 70, .07); }
@@ -639,6 +648,10 @@
   .wof-sheet .wm { grid-template-columns: 176px minmax(0, 1fr); }
   .wof-sheet .wm > :last-child { grid-column: 1 / -1; }
   .wof-sheet .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Too narrow for one file line: it wraps rather than squeezing the fields to nothing. */
+  .wof-sheet .meta.line { flex-wrap: wrap; column-gap: var(--s3); }
+  .wof-sheet .meta.line > label.grow { flex: 0 1 auto; }
+  .wof-sheet .meta.line > label.grow input, .wof-sheet .meta.line > label.grow select { flex: 0 1 auto; min-width: 72px; max-width: 160px; }
 }
 @container wofsheet (max-width: 560px) {
   .wof-sheet { --gl: 28px; --gr: 10px; }
@@ -659,8 +672,8 @@
 /* Compact cards: no binder eyelets, a narrower gutter */
 .wof-sheet.compact { --gl: 16px; --gr: 16px; }
 .wof-sheet.compact::after { display: none; }
-.wof-sheet.compact .hdr { grid-template-columns: 72px minmax(0, 1fr); }
-.wof-sheet.compact .plate { width: 72px; height: 92px; padding: 3px 3px 14px; }
+.wof-sheet.compact .hdr { grid-template-columns: 68px minmax(0, 1fr); }
+.wof-sheet.compact .plate { width: 68px; height: 88px; padding: 3px 3px 13px; }
 .wof-sheet.compact input.name { font-size: var(--t-xl); }
 .wof-sheet .mini.tiny { min-height: 20px; padding: 0 6px; }
 .wof-sheet input.short { width: 40px; min-width: 40px; text-align: center; }
