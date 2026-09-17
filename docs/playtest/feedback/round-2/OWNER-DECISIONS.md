@@ -9,18 +9,24 @@ Given 2026-09-17, on Artifact Version 3. Nothing is applied yet. When fixing sta
 | 3 | Sweep | "Check ALL part of the rule to see any similar issue exist." | `flatness-audit.md` |
 | 4 | Three designs | "Propose three possible design to make the odm movement, flying etc more dynamic", plus fix Draw Attention, blade sets, environment, and the mounted step. | `design-proposals.md` |
 | 5 | Gear Dice | "Let make it that gear dice is also rerolled on push." Analysed and measured; it works, but not for blades, and it breaks the Jam test as written. | `design-proposals.md`, fix 4 |
+| 6 | All three designs | "I actually like all a b and c." Merged into one mechanism: C supplies the roll, B the currency, A the cap. | `unified-design.md` |
+| 7 | Draw Attention, mounted | "Other two fix make sense." **Accepted by the owner.** | `design-proposals.md`, fixes 1 and 2 |
 
 ## Open for the owner
 
 These need the owner's answer before a decider can record a batch.
 
-1. **Which movement design.** A (Anchors: the field is a resource the Titan destroys), B (Momentum: keep flying or lose it), or C (Approach Roll: every flight is rolled and its successes spent). Recommendation is A now and B next, since they compose. See `design-proposals.md`.
-2. **Anchors as a Squad-wide pool**, if A is taken. Open 0 to Giant Forest 5, spent by any soldier, destroyed by the Titan and never restored. Accept the shape, or prefer a per-soldier budget?
-3. **How far the retune may go.** The new move is gated so it can first be measured as a sensitivity row. If the kill-round target has moved, is the design's own budget the value that gets tuned, or may the Titans be retuned instead?
-4. **Gear Dice on a Push.** Reading A (re-roll 2 to 5, keep 6, lock 1, the Stress Die's own pattern) takes the Jam test from 26.3% to 53.1% against a bar of a third, and still does not make blades run out inside a fight. Take it for the Blade Set only, take it everywhere with a wear cap and issued ODM Gear 3, or set a new Jam bar deliberately?
-5. **The blade swap.** Making blades bite inside a fight needs the swap to cost the move, not a higher ruin rate. Do it?
-6. **Draw Attention.** The proposed fix (`design-proposals.md`, fix 1) lets the loudest flag match every rung except hooked into its body, which is exactly the room ADR-0010 leaves. Take it, or take the XS packet-only wording fix instead?
-7. **Mounted movement.** The proposed fix (`design-proposals.md`, fix 2) is the charge (a mounted Distant to In Reach step may set the loudest flag) plus a double step at Open. Take both, one, or neither?
+1. **The merged design** (`unified-design.md`). Flight (every ODM move is rolled, the step always happens), Momentum (each success, lost the moment you stop flying), Anchors as everyone's Momentum cap, wrecked by the Titan. Accept the merge, or keep the three separate and pick one?
+2. **Bite.** Momentum spent for a Bonus Die on a strike is the piece that shortens the fight and moves the kill-round target. Keep it and let the Anchor counts absorb it, or cut it and keep Momentum to movement and defence only?
+3. **Table time.** The merge adds roughly a third more dice pools to a Titan Engagement (about +1 to +1.5 a round against 3.57). Acceptable for the first playtest, or is Flight only rolled when a soldier reaches for more than one step?
+4. **Anchor counts.** Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3. Accept as the starting values for the retune?
+5. **Blade swap** (`unified-design.md`, the Gear Dice question). Swap Blade Set spends the move in a Titan Engagement. This is the recommendation and it needs no tuned value to change. Do it?
+6. **The Gear Die package.** Re-roll 2 to 5, keep 6, lock 1, plus a wear cap of 1 per Pushed roll, plus issued ODM Gear rising to rating 3. Measured at 24.2% on the Jam test against a bar of a third. Recommended **at the post-playtest retune**, not now. Agreed, or do you want it sooner?
+
+## Accepted by the owner
+
+- **Draw Attention** (`design-proposals.md`, fix 1): while a soldier holds the loudest flag they also meet every rung any other candidate meets except hooked into its body, plus a Talent so it stops being the only Titan Engagement action with none.
+- **Mounted movement** (`design-proposals.md`, fix 2): the charge (a mounted Distant to In Reach step may set the loudest flag), and at Open a mounted move may make that step twice.
 
 ## Corrected
 
