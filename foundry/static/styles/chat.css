@@ -4,7 +4,7 @@
  * windows; the 10px text floor and the 4px spacing scale hold here as on the sheets.
  */
 
-.chat-message.wof-card-msg, .wof-pick {
+.chat-message.wof-card-msg, .wof-pick, .wof-chatbar {
   --paper: #ece2cb; --paper-hi: #f4ecd8; --paper-lo: #e2d5b8;
   --ink: #241f1b; --ink2: #4f463d; --ink3: #665b4f; --rule: rgba(36, 31, 27, .24);
   --red: #8e2323; --red-hi: #a83030; --red-lo: #5f1717;
@@ -78,6 +78,8 @@
 .wof-card .die.hit::after { content: ""; position: absolute; inset: -3px; border: 2px solid var(--brass); border-radius: 3px; box-shadow: 0 0 0 1px rgba(110, 83, 37, .4); }
 .wof-card .die.stress.hit::after, .wof-card .die.titan.hit::after { border-radius: 50%; }
 .wof-card .die.miss svg { opacity: .62; }
+/* A kind's blank face keeps its number legible. */
+.wof-card .die.miss:not(.plain) svg { opacity: .82; }
 .wof-card .die.stress.one svg, .wof-card .die.gear.one svg { opacity: 1; }
 .wof-card .die.stress.one::after { content: ""; position: absolute; inset: -3px; border: 2px dashed var(--red); border-radius: 50%; }
 .wof-card .die.locked::before { content: ""; position: absolute; right: -3px; bottom: -3px; width: 9px; height: 9px; z-index: 1; background: var(--ink); clip-path: polygon(0 40%, 20% 40%, 20% 20%, 50% 0, 80% 20%, 80% 40%, 100% 40%, 100% 100%, 0 100%); }
@@ -191,3 +193,44 @@
 .wof-pick .wof-field > span { font: var(--t-xs)/1.2 var(--fl); letter-spacing: .12em; text-transform: uppercase; }
 .wof-pick .wof-check { display: flex; align-items: center; gap: var(--s2); margin: var(--s1) 0; }
 .wof-pick .hint { font: italic var(--t-sm)/1.4 var(--fb); margin: 0 0 var(--s2); }
+
+/* ── Dice-pool bar above the chat input ──────────────────────────────── */
+.wof-chatbar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--s1) var(--s2); padding: var(--s1) var(--s2);
+  background: var(--paper); color: var(--ink); border: 1px solid #000; box-shadow: 0 2px 6px rgba(0, 0, 0, .4);
+  font: var(--t-xs)/1 var(--fl); pointer-events: all;
+}
+.wof-chatbar .cb-kinds { display: flex; align-items: center; gap: var(--s1); flex: 1 1 auto; min-width: 0; }
+.wof-chatbar .cb-kind { display: flex; align-items: center; gap: 1px; padding: 1px; border: 1px dotted transparent; }
+.wof-chatbar .cb-kind.set { border-color: var(--ink3); background: var(--paper-hi); }
+.wof-chatbar button {
+  all: unset; box-sizing: border-box; display: inline-grid; place-items: center; cursor: pointer; color: var(--ink);
+  transition: transform .12s var(--ease), box-shadow .12s var(--ease), opacity .12s var(--ease);
+}
+.wof-chatbar button:disabled { opacity: .35; cursor: default; }
+.wof-chatbar button:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.wof-chatbar .cb-step { width: 14px; height: 22px; font: 700 var(--t-md)/1 var(--fd); color: var(--ink2); }
+.wof-chatbar .cb-step:hover:not(:disabled) { color: var(--red); }
+.wof-chatbar .cb-die { position: relative; width: 26px; height: 26px; }
+.wof-chatbar .cb-die img { width: 24px; height: 24px; border: 0; mix-blend-mode: multiply; }
+.wof-chatbar .cb-die:hover:not(:disabled) { transform: translateY(-1px); }
+.wof-chatbar .cb-n {
+  position: absolute; right: -3px; bottom: -3px; min-width: 14px; height: 14px; padding: 0 2px; display: grid; place-items: center;
+  font: 700 var(--t-xs)/1 var(--fd); font-variant-numeric: lining-nums tabular-nums; color: var(--paper-hi); background: var(--ink); border-radius: 7px;
+}
+.wof-chatbar .cb-kind:not(.set) .cb-n { background: var(--paper-lo); color: var(--ink3); }
+.wof-chatbar .cb-kind[data-kind="stress"].set .cb-n { background: var(--red); }
+.wof-chatbar .cb-acts { display: flex; align-items: center; gap: var(--s1); margin-left: auto; }
+.wof-chatbar .cb-roll {
+  min-height: 24px; padding: 0 var(--s2); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+  font: var(--t-xs)/1 var(--fl); color: var(--paper-hi); border: 1px solid var(--red-lo);
+  background: linear-gradient(var(--red-hi), var(--red)); box-shadow: 1.5px 1.5px 0 var(--red-lo);
+}
+.wof-chatbar .cb-roll:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 2.5px 2.5px 0 var(--red-lo); }
+.wof-chatbar .cb-roll:active:not(:disabled) { transform: translate(1px, 1px); box-shadow: none; }
+.wof-chatbar .cb-reset { width: 22px; height: 24px; font-size: var(--t-sm); color: var(--ink2); border: 1px solid var(--ink3); background: var(--paper-hi); }
+.wof-chatbar .cb-reset:hover:not(:disabled) { color: var(--red); }
+
+@media (prefers-reduced-motion: reduce) {
+  .wof-chatbar button { transition: none; }
+}

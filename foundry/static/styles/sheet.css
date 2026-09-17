@@ -193,26 +193,65 @@
 .wof-sheet .vit + .vit { border-left: 1px solid var(--rule); }
 .wof-sheet .vhead { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
 .wof-sheet .vhead .lbl { display: inline-flex; align-items: center; gap: var(--s1); }
+/* Held Critical Injuries and Stress Responses, by name only, under their vital */
+.wof-sheet .vchips { display: flex; flex-wrap: wrap; gap: 3px; margin: 2px 0 0; padding: 0; list-style: none; width: 0; min-width: 100%; }
+.wof-sheet .vchips li { margin: 0; min-width: 0; max-width: 100%; }
+.wof-sheet .vchip { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; padding: 1px 5px 1px 2px; border: 1px solid var(--red); background: rgba(142, 35, 35, .08); color: var(--red); font: 600 var(--t-xs)/1.3 var(--fb); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wof-sheet .vchip img { width: 14px; height: 14px; flex: 0 0 auto; border: 0; mix-blend-mode: multiply; }
+.wof-sheet .vchip.treated { border-color: var(--green); color: var(--green); background: rgba(63, 97, 70, .08); }
+.wof-sheet button.vchip:hover, .wof-sheet .vchip:focus-visible { background: rgba(142, 35, 35, .18); }
+.wof-sheet .vchip.mind { border-color: var(--ink2); color: var(--ink); background: rgba(36, 31, 27, .06); padding-left: 4px; }
+.wof-sheet .vchip.mind i { font-size: 10px; color: var(--ink2); }
+.wof-sheet .vchip small { font: var(--t-xs)/1 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); margin-left: 2px; }
 .wof-sheet .big { font: 900 var(--t-num)/.9 var(--fd); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
 .wof-sheet .big small { font: 600 var(--t-md) var(--fd); color: var(--ink3); }
 .wof-sheet .big.red { color: var(--red); }
 .wof-sheet .vrow { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
 .wof-sheet .boxes { display: flex; gap: var(--s1); align-items: center; flex-wrap: wrap; }
-.wof-sheet .hbox { width: 16px; height: 20px; position: relative; border: 1.5px solid var(--ink2); background: var(--paper-hi); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6); flex: 0 0 auto; }
-.wof-sheet .hbox.held { background: var(--red); border-color: var(--red-lo); }
-.wof-sheet .hbox.damaged { background: rgba(36, 31, 27, .05); }
-.wof-sheet .hbox.damaged::before { content: ""; position: absolute; left: 50%; top: 50%; width: 1.5px; height: 24px; background: var(--red); transform: translate(-50%, -50%) rotate(40deg); }
-.wof-sheet .hbox.crossed { background: rgba(36, 31, 27, .08); cursor: help; }
-.wof-sheet .hbox.crossed::before, .wof-sheet .hbox.crossed::after { content: ""; position: absolute; left: 50%; top: 50%; width: 1.5px; height: 24px; background: var(--ink); transform: translate(-50%, -50%) rotate(40deg); }
-.wof-sheet .hbox.crossed::after { transform: translate(-50%, -50%) rotate(-40deg); }
-.wof-sheet .hbox:hover:not(:disabled):not(.crossed) { border-color: var(--red); }
+/* Track boxes (Health, Stress): square, inked on the paper. Held and marked boxes are red stamps; a
+   box an untreated Critical Injury crosses off is barred dark with the injury's glyph. */
+.wof-sheet .track-row { --box: 20px; --status: #D6402F; gap: 5px; padding: 1px 0 3px; }
+.wof-sheet .track-row.lg { --box: 24px; gap: 6px; }
+.wof-sheet .hbox, .wof-sheet .sbox {
+  flex: 0 0 auto; position: relative; width: var(--box, 20px); height: var(--box, 20px); min-height: 0; margin: 0; padding: 0;
+  display: grid; place-items: center; line-height: 0; cursor: pointer; border-radius: 1px 2px 1px 2px;
+  border: 1.5px solid var(--ink2); outline: 1px solid rgba(36, 31, 27, .14); outline-offset: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .55), transparent 55%), var(--paper-hi);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5), inset 1px 1px 2px rgba(36, 31, 27, .14);
+  transform: rotate(var(--tilt, 0deg)); transition: border-color .12s, background-color .12s, filter .12s;
+}
+.wof-sheet .hbox:nth-child(3n+2), .wof-sheet .sbox:nth-child(3n+2) { --tilt: .6deg; }
+.wof-sheet .hbox:nth-child(3n), .wof-sheet .sbox:nth-child(3n) { --tilt: -.5deg; }
+.wof-sheet .hbox .ink, .wof-sheet .sbox .ink { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.wof-sheet .hbox .ink path, .wof-sheet .sbox .ink path { fill: none; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+/* Held Health: a red stamp, grain and a pressed edge */
+.wof-sheet .hbox.held, .wof-sheet .sbox.on { border-color: var(--red-lo); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .4), 0 1px 0 rgba(36, 31, 27, .16); }
+.wof-sheet .hbox.held::before, .wof-sheet .sbox.on::before {
+  content: ""; position: absolute; inset: 1.5px; border-radius: 1px;
+  background: radial-gradient(circle at 30% 26%, var(--red-hi), var(--red) 55%, var(--red-lo));
+  -webkit-mask-image: var(--ink-grain); mask-image: var(--ink-grain); -webkit-mask-size: 48px; mask-size: 48px;
+}
+/* Health lost: the box keeps a faded red ghost under an inked slash */
+.wof-sheet .hbox.damaged { background: linear-gradient(135deg, rgba(142, 35, 35, .1), rgba(142, 35, 35, .03)), var(--paper-hi); border-color: var(--ink3); }
+.wof-sheet .hbox.damaged .ink path { stroke: var(--ink); stroke-width: 2.6; filter: drop-shadow(.5px .5px 0 rgba(142, 35, 35, .55)); }
+.wof-sheet .hbox.damaged:not(:has(.ink))::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2px; height: 130%; background: var(--ink); transform: translate(-50%, -50%) rotate(42deg); }
+/* Blocked by an untreated Critical Injury: barred ink, a status-red edge and the injury glyph */
+.wof-sheet .hbox.crossed {
+  cursor: help; opacity: 1; border-color: var(--ink); outline-color: rgba(214, 64, 47, .55);
+  background: repeating-linear-gradient(-45deg, rgba(214, 64, 47, .0) 0 3px, rgba(214, 64, 47, .35) 3px 4.5px), repeating-linear-gradient(45deg, transparent 0 3px, rgba(244, 236, 216, .12) 3px 4px), linear-gradient(160deg, var(--iron-hi), var(--ink));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .5), inset 0 -3px 0 var(--status);
+}
+.wof-sheet .hbox.crossed .glyph { position: relative; width: 66%; height: 66%; box-sizing: border-box; padding: 1px; border: 1px solid var(--status); border-radius: 2px; object-fit: contain; background: var(--paper-hi); box-shadow: 0 0 0 1px rgba(0, 0, 0, .55), 0 1px 2px rgba(0, 0, 0, .6); transform: rotate(-4deg); }
+.wof-sheet .hbox.crossed i.glyph { display: grid; place-items: center; font-size: calc(var(--box) * .42); line-height: 1; color: var(--status); }
+.wof-sheet .hbox.crossed:hover { outline-color: var(--status); }
 .wof-sheet .hbox.clean { background: var(--paper-hi); }
-.wof-sheet .sbox { width: 12px; height: 16px; border: 1.5px solid var(--ink2); background: var(--paper-hi); position: relative; flex: 0 0 auto; cursor: pointer; }
-.wof-sheet .sbox.on { background: var(--red); border-color: var(--red-lo); border-radius: 2px; }
-.wof-sheet .sbox.min { box-shadow: 0 3px 0 -1px var(--ink); }
-.wof-sheet .track { display: flex; gap: var(--s1); flex-wrap: wrap; align-items: flex-end; }
-.wof-sheet .track .sbox { width: 18px; height: 24px; }
-.wof-sheet .track .sbox.on::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: rgba(244, 236, 216, .55); }
+/* Stress: marked boxes are red stamps with a paper cross cut through; the Scar floor is inked under the box */
+.wof-sheet .sbox.on .ink path { stroke: var(--paper-hi); stroke-width: 2; opacity: .8; }
+.wof-sheet .sbox.min { border-bottom-width: 3px; border-bottom-color: var(--ink); }
+.wof-sheet .sbox.min::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 3px; height: 3px; background: var(--ink); transform: translateX(-50%) rotate(45deg); }
+.wof-sheet .hbox:hover:not(:disabled):not(.crossed), .wof-sheet .sbox:hover:not(:disabled) { border-color: var(--red); filter: brightness(1.05); }
+.wof-sheet .hbox:focus-visible, .wof-sheet .sbox:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.wof-sheet .hbox:disabled:not(.crossed), .wof-sheet .sbox:disabled { cursor: default; }
 .wof-sheet .down { display: inline-flex; align-items: center; gap: var(--s1); }
 .wof-sheet .down .stamp { padding: 1px 6px; transform: rotate(-3deg); }
 .wof-sheet .down .stamp.no { color: var(--green); border-color: var(--green); }
@@ -281,6 +320,14 @@
 .wof-sheet .stat .what { display: block; font: italic var(--t-xs)/1.35 var(--fb); color: var(--ink3); margin-top: 2px; }
 .wof-sheet .stat .dots { margin: var(--s1) 0 2px; }
 .wof-sheet .stat .key { transform: rotate(4deg); font-size: var(--t-xs); padding: 0 4px; border-width: 1.5px; }
+/* An attribute card rolls that attribute alone: the icon and the name are the roll buttons. */
+.wof-sheet .stat .attr-roll.ic-btn { position: relative; display: block; width: 36px; height: 36px; border-radius: 2px; }
+.wof-sheet .stat .attr-roll .hint { position: absolute; right: -4px; bottom: -4px; font-size: 11px; color: var(--paper-hi); background: var(--sc, var(--ink2)); border: 1px solid var(--ink); padding: 2px; border-radius: 2px; opacity: 0; transform: scale(.7); transition: opacity .12s, transform .12s; }
+.wof-sheet .stat .attr-roll.nm-btn { letter-spacing: inherit; text-transform: inherit; border-bottom: 1px dotted transparent; }
+.wof-sheet .stat:has(.attr-roll:hover), .wof-sheet .stat:has(.attr-roll:focus-visible) { background: linear-gradient(170deg, var(--paper-hi), rgba(142, 35, 35, .1)); }
+.wof-sheet .stat .attr-roll:hover .ic, .wof-sheet .stat .attr-roll:focus-visible .ic { filter: drop-shadow(0 0 2px rgba(142, 35, 35, .55)); }
+.wof-sheet .stat:has(.attr-roll:hover) .attr-roll .hint, .wof-sheet .stat .attr-roll:focus-visible .hint { opacity: 1; transform: none; }
+.wof-sheet .stat:has(.attr-roll:hover) .attr-roll.nm-btn { color: var(--red); border-bottom-color: var(--red); }
 .wof-sheet .s-strength { --sc: var(--str); } .wof-sheet .s-agility { --sc: var(--agi); } .wof-sheet .s-wits { --sc: var(--wit); }
 .wof-sheet .s-perception { --sc: var(--per); } .wof-sheet .s-instinct { --sc: var(--ins); } .wof-sheet .s-empathy { --sc: var(--emp); }
 
@@ -373,7 +420,7 @@
 .wof-sheet .figwrap { position: relative; margin: 0 auto; }
 .wof-sheet .figwrap svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .wof-sheet .figbox figcaption { display: flex; justify-content: space-between; margin-top: var(--s1); font: var(--t-xs)/1.2 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
-.wof-sheet .soldierfig { width: 112px; height: 320px; }
+.wof-sheet .soldierfig { width: 140px; height: 389px; }
 .wof-sheet .gore { flex-wrap: wrap; display: flex; align-items: center; justify-content: space-between; gap: var(--s1); margin-top: var(--s2); }
 .wof-sheet .seg { display: inline-flex; border: 1px solid var(--ink2); }
 .wof-sheet .seg button { padding: 2px var(--s1); font: var(--t-xs)/1.2 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); min-height: 20px; }
@@ -421,18 +468,31 @@
 .wof-sheet .flags { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3); }
 .wof-sheet .warnline { display: flex; align-items: center; gap: var(--s2); padding: var(--s1) var(--s2); border-left: 3px solid var(--amber-line); background: rgba(176, 132, 47, .1); font: var(--t-sm)/1.4 var(--fb); color: var(--amber); margin-top: var(--s1); }
 
-/* Figure (adapted from the owner's Titan World body diagram) */
-.wof-sheet .fig .skin { fill: #e6c7a3; stroke: #3a2a20; stroke-width: .85; }
-.wof-sheet .fig .hair { fill: #3b2a1e; stroke: #241a12; stroke-width: .8; }
-.wof-sheet .fig .shirt { fill: #f2ead8; stroke: #3a2a20; stroke-width: .85; }
-.wof-sheet .fig .jacket { fill: #8a6440; stroke: #2a1c12; stroke-width: .9; }
-.wof-sheet .fig .trousers { fill: #e9dfc8; stroke: #3a2a20; stroke-width: .85; }
-.wof-sheet .fig .boot { fill: #4a3222; stroke: #1e140c; stroke-width: .9; }
-.wof-sheet .fig .strap { fill: #4a3526; } .wof-sheet .fig .belt { fill: #3a2819; }
-.wof-sheet .fig .brass { fill: #c59a4c; stroke: #6e5325; stroke-width: .5; }
-.wof-sheet .fig .metal { fill: #8d949a; stroke: #2a2e31; stroke-width: .6; }
-.wof-sheet .fig .patch { fill: #f2ead8; stroke: #2f4a6e; stroke-width: .9; }
-.wof-sheet .fig .line { fill: none; stroke: #2a1c12; stroke-width: .8; stroke-linecap: round; opacity: .72; }
+/* Figure: the owner's Titan World painted studies, cut into regions (figure.ts) */
+.wof-sheet .soldierfig .figstamp { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%) rotate(-12deg); padding: 2px 8px; font-size: var(--t-lg); background: rgba(244, 236, 216, .82); pointer-events: none; z-index: 1; }
+.wof-sheet .soldierfig .figstamp.kia { color: var(--red); border-color: var(--red); letter-spacing: .2em; }
+.wof-sheet .fig .body-render { pointer-events: none; }
+.wof-sheet .fig .fig-base { filter: drop-shadow(1px 2px 1px rgba(36, 31, 27, .28)); }
+.wof-sheet .fig.dead .fig-base { filter: grayscale(1) brightness(.88) contrast(1.05); }
+.wof-sheet .fig.down .fig-base { filter: saturate(.55) brightness(.94) drop-shadow(1px 2px 1px rgba(36, 31, 27, .28)); }
+.wof-sheet .fig .wound-symbol { display: none; }
+.wof-sheet .fig .wound-decal { overflow: hidden; }
+.wof-sheet .fig .wound-detail { filter: drop-shadow(.3px .7px .55px rgba(26, 3, 3, .33)); }
+.wof-sheet .fig .s-minor .wound-detail { opacity: .88; }
+.wof-sheet .fig .decal-blunt { mix-blend-mode: multiply; }
+.wof-sheet .fig .dressing-pad rect { fill: #f7f2e7; stroke: #b3a791; stroke-width: .6; }
+.wof-sheet .fig .dressing-pad path { fill: none; stroke: #d8cfbd; stroke-width: .4; }
+.wof-sheet .fig .char, .wof-sheet .fig .crush-fill { mix-blend-mode: multiply; }
+.wof-sheet .fig .crush-fill { fill: #3a0c1c; opacity: .55; }
+.wof-sheet .fig .char-fill { fill: #150c08; stroke: #050302; stroke-width: .6; opacity: .92; }
+.wof-sheet .fig .blood.coat { fill: #6a0a0a; opacity: .86; mix-blend-mode: multiply; }
+.wof-sheet .fig .rib { fill: none; stroke: #eadbc2; stroke-width: 1.3; stroke-linecap: round; }
+.wof-sheet .fig .cave { fill: #2a0d08; }
+.wof-sheet .fig .ember { fill: none; stroke: #ff7a2a; stroke-width: 1; stroke-linecap: round; }
+.wof-sheet .fig .bite path { fill: none; stroke: #5a1a14; stroke-width: 1.2; stroke-linecap: round; }
+.wof-sheet .fig .bite .fang { stroke-width: 1.5; }
+.wof-sheet .fig .bite.s-major path { stroke: #7a0d0d; stroke-width: 1.8; }
+.wof-sheet .fig .bite.s-crippling path { stroke: #3a0303; stroke-width: 2.4; }
 .wof-sheet .fig .bruise, .wof-sheet .fig .scorch, .wof-sheet .fig .stain { mix-blend-mode: multiply; }
 .wof-sheet .fig .blood { fill: #7e0f0f; }
 .wof-sheet .fig .blood.thin, .wof-sheet .fig .blood.run { fill: none; stroke: #760c0c; stroke-width: 1.35; stroke-linecap: round; }
@@ -463,8 +523,11 @@
 /* Gore: a per-viewer setting */
 .wof-sheet[data-gore=low] .fig .fig-visceral { display: none; }
 .wof-sheet[data-gore=low] .fig .fig-clinical { display: inline; }
+/* standard: the subdued symbols in place of the painted decals, and no spatter, pools or drips */
+.wof-sheet[data-gore=standard] .fig .wound-detail { display: none; }
+.wof-sheet[data-gore=standard] .fig .wound-symbol { display: inline; }
 .wof-sheet[data-gore=standard] .fig .spatter, .wof-sheet[data-gore=standard] .fig .gloss, .wof-sheet[data-gore=standard] .fig .pool,
-.wof-sheet[data-gore=standard] .fig .bone { display: none; }
+.wof-sheet[data-gore=standard] .fig .drip, .wof-sheet[data-gore=standard] .fig .bone { display: none; }
 .wof-sheet[data-gore=standard] .fig .blood, .wof-sheet[data-gore=standard] .fig .gash { opacity: .6; }
 .wof-sheet[data-gore=standard] .fig .stain { opacity: .45; }
 @keyframes wof-drip { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
@@ -672,14 +735,7 @@
   .wof-sheet .attrlist { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* The inked Titan */
-.wof-sheet .fig .tskin { fill: #d99d85; stroke: #4a2418; stroke-width: .9; }
-.wof-sheet .fig .muscle { fill: none; stroke: #9a3a30; stroke-width: 1.7; stroke-linecap: round; opacity: .72; }
-.wof-sheet .fig .mouth { fill: #3a0e0a; stroke: #4a2418; stroke-width: .8; }
-.wof-sheet .fig .teeth { fill: none; stroke: #f4ecd8; stroke-width: 1.7; }
-.wof-sheet .fig .eye { fill: #f4ecd8; stroke: #4a2418; stroke-width: .8; }
-.wof-sheet .fig .pupil { fill: #1a0c08; }
-.wof-sheet .fig .tline { fill: none; stroke: #6a3020; stroke-width: .8; opacity: .7; }
+/* The painted Titan */
 .wof-sheet .fig .tblood { fill: none; stroke: #9a1c14; stroke-width: 1.6; stroke-linecap: round; }
 .wof-sheet .fig .socket { fill: #1a0303; }
 .wof-sheet .fig .flesh { fill: #8e1a14; stroke: #3a0505; stroke-width: .7; }
@@ -691,7 +747,7 @@
 .wof-sheet .fig .rg, .wof-sheet .fig .hang, .wof-sheet .fig .puff { transform-box: view-box; }
 .wof-sheet .fig .lost { display: none; }
 .wof-sheet[data-gore=low] .fig .lost { display: inline; }
-.wof-sheet[data-gore=low] .fig .lost path { fill: none; stroke: #7a6f62; stroke-width: 1; stroke-dasharray: 3 2; }
+.wof-sheet[data-gore=low] .fig .lost .body-render { opacity: .14; }
 .wof-sheet[data-gore=low] .fig .hang { transform: none !important; }
 .wof-sheet[data-gore=standard] .fig .lying, .wof-sheet[data-gore=standard] .fig .g-only { display: none; }
 .wof-sheet[data-gore=standard] .fig .flesh, .wof-sheet[data-gore=standard] .fig .tblood { opacity: .6; }

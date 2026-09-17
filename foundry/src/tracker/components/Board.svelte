@@ -73,16 +73,20 @@
 <svelte:window onclick={(e) => { if (menu && !(e.target as HTMLElement).closest('.pop, .pc')) menu = null; }} />
 
 <div class="wof-board" bind:this={host}>
+  {#if v || isGM}
   <div class="tabs" role="tablist" aria-label={t('board.kind')}>
     <button role="tab" type="button" aria-selected={v?.mode !== 'skirmish'} disabled={!!v && v.mode !== 'titan'} onclick={() => !v && act('setup', { mode: 'titan' })}><span class="n">A</span><span>{t('board.tabTitan')}</span></button>
     <button role="tab" type="button" aria-selected={v?.mode === 'skirmish'} disabled={!!v && v.mode !== 'skirmish'} onclick={() => !v && act('setup', { mode: 'skirmish' })}><span class="n">B</span><span>{t('skirmish')}</span></button>
   </div>
+  {/if}
   {#if !v}
+    {#if isGM}
     <div class="spread empty">
       <div class="page left paper"><div class="body"><p class="note">{t('idle')}</p>
-        {#if isGM}<p><button type="button" class="mini red" onclick={() => act('setup', { mode: 'titan' })}>{t('act.newTitan')}</button> <button type="button" class="mini" onclick={() => act('setup', { mode: 'skirmish' })}>{t('act.newSkirmish')}</button></p>{/if}
+        <p><button type="button" class="mini red" onclick={() => act('setup', { mode: 'titan' })}>{t('act.newTitan')}</button> <button type="button" class="mini" onclick={() => act('setup', { mode: 'skirmish' })}>{t('act.newSkirmish')}</button></p>
       </div></div>
     </div>
+    {/if}
   {:else}
     <div class="spread" role="tabpanel">
       <div class="paper page left"><div class="body">

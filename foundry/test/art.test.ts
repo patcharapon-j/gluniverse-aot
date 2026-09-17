@@ -103,3 +103,24 @@ describe('token statuses bound to the model', () => {
     expect(statusBinding('foe', 'engaged')).toEqual({ kind: 'manual' });
   });
 });
+
+describe('chat card die icons', () => {
+  const t = (key: string, data?: Record<string, unknown>) => (data ? `${key}:${JSON.stringify(data)}` : key);
+
+  it('draws a kind die with the same face art as its Dice So Nice die', async () => {
+    const { dieIcon } = await import('../src/dice/card.ts');
+    for (const p of KIND_PRESETS) {
+      const kind = ({ db: 'base', dg: 'gear', ds: 'stress', dt: 'titan' } as const)[p.type];
+      const { labels } = presetFaces(p);
+      for (let face = 1; face <= 6; face++) {
+        const html = dieIcon(t, kind, face);
+        expect(html).toContain(p.colorset.background);
+        if (p.faces[face]) expect(html).toContain(`href="${labels[face - 1]}"`);
+        else expect(html).toMatch(new RegExp(`<text[^>]*>${face}</text>`));
+        expect(html).toContain(`&quot;face&quot;:${face}}`);
+      }
+    }
+    expect(dieIcon(t, 'gear', 1, { locked: true })).toMatch(/class="die gear miss one locked"/);
+    expect(dieIcon(t, 'base', 3, { plain: true })).not.toContain('<image');
+  });
+});

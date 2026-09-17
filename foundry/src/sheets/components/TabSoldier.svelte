@@ -43,6 +43,16 @@
     }
   }
 
+  /** An ad hoc roll on an attribute alone: its Base Dice, plus Stress Dice (rolls_called_by_attribute). */
+  async function rollAttribute(id: string, el: HTMLElement) {
+    fx(el.closest('.stat'), { scale: [0.97, 1], duration: MOTION.base, ease: MOTION.settle });
+    const message = await rollAction(actor, '', { bonus: ss.bonus, attributeAlone: id as any });
+    if (message && ss.bonus) {
+      ss.bonus = 0;
+      sheet.render();
+    }
+  }
+
   const talentMenu = (id: string, used: boolean, hasLimit: boolean) => () => [
     { label: t('WOF.Sheet.menu.open'), icon: 'fa-solid fa-book-open', onClick: () => openItem(actor, id) },
     { label: t(used ? 'WOF.Sheet.talent.markReady' : 'WOF.Sheet.talent.markUsed'), icon: 'fa-solid fa-check', visible: view.editable && hasLimit, onClick: () => setItem(actor, id, { 'system.used': !used }) },
@@ -57,10 +67,14 @@
       <div class="stats">
         {#each attributes as a (a.id)}
           {@const v = s.attributes[a.id]}
+          {@const rollTip = t('WOF.Sheet.soldier.rollAttr', { attr: t(`WOF.Attribute.${a.id}`), dice: v })}
           <div class="stat s-{a.id}">
-            <img class="ic" src={icon(`attr-${a.id}`)} alt="" />
+            <button type="button" class="attr-roll ic-btn" aria-label={t('WOF.Sheet.soldier.rollAttrLabel', { attr: t(`WOF.Attribute.${a.id}`) })} use:tooltip={rollTip} onclick={(e) => rollAttribute(a.id, e.currentTarget)}>
+              <img class="ic" src={icon(`attr-${a.id}`)} alt="" />
+              <i class="fa-solid fa-dice-d6 hint" aria-hidden="true"></i>
+            </button>
             <div>
-              <span class="nm">{t(`WOF.Attribute.${a.id}`)}{#if view.keyAttribute === a.id}<span class="stamp key" use:tooltip={t('WOF.Sheet.soldier.keyTip', { max: view.attributeMax[a.id] })}>{t('WOF.Sheet.soldier.key')}</span>{/if}</span>
+              <span class="nm"><button type="button" class="attr-roll nm-btn" tabindex="-1" aria-hidden="true" use:tooltip={rollTip} onclick={(e) => rollAttribute(a.id, e.currentTarget)}>{t(`WOF.Attribute.${a.id}`)}</button>{#if view.keyAttribute === a.id}<span class="stamp key" use:tooltip={t('WOF.Sheet.soldier.keyTip', { max: view.attributeMax[a.id] })}>{t('WOF.Sheet.soldier.key')}</span>{/if}</span>
               <Pips
                 value={v}
                 max={view.attributeMax[a.id]}

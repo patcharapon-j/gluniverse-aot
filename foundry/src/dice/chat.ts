@@ -9,7 +9,8 @@ import { renderCard, type Card, type CardViewer } from './card.ts';
 import { cardOf, ownSoldiers, readyTalent, t } from './post.ts';
 
 function actorSync(uuid: string): any {
-  return foundry.utils.fromUuidSync(uuid, { strict: false });
+  // An ad hoc pool from the chat bar may have no actor.
+  return uuid ? foundry.utils.fromUuidSync(uuid, { strict: false }) : null;
 }
 
 function viewerFor(message: any, card: Card): CardViewer {

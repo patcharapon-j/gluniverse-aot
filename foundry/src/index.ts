@@ -7,8 +7,10 @@
  * effects bound to the model, and default art.
  * 3: the Lifepath wizard.
  * 4: the Titan Engagement tracker (HUD strip, board, token badges, round-end automation).
+ * The dice-pool bar above the chat input.
  */
 import { buildSystemConfig, SYSTEM_ID } from './config.ts';
+import { registerChatBar } from './chat-bar/index.ts';
 import { callRoll } from './dice/call.ts';
 import { pushRunner } from './dice/card-actions.ts';
 import { registerChat } from './dice/chat.ts';
@@ -48,6 +50,7 @@ Hooks.once('init', () => {
   registerDiceSoNice();
   registerProxy(pushRunner);
   registerChat();
+  registerChatBar();
   registerFonts();
   registerSettings();
   registerSheets();

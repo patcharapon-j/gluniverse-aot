@@ -9,7 +9,7 @@ import { registerSettingsMenu } from './settings-menu.ts';
 import { registerCampaignSettings } from './lifepath/campaign.ts';
 import { TRACKER_CATEGORIES, type TrackerCategory } from './rules/engagement/round.ts';
 
-export const viewer = $state({ motion: 'full' as MotionMode, gore: 'standard' as GoreLevel, reducedByOS: false });
+export const viewer = $state({ motion: 'full' as MotionMode, gore: 'graphic' as GoreLevel, reducedByOS: false });
 
 /** The motion mode in force: the setting, with the OS reduced-motion preference capping Full at Reduced. */
 export function motionMode(): MotionMode {
@@ -79,7 +79,7 @@ export function registerSettings(): void {
     config: true,
     type: String,
     choices: { low: 'WOF.Settings.gore.low', standard: 'WOF.Settings.gore.standard', graphic: 'WOF.Settings.gore.graphic' },
-    default: 'standard',
+    default: 'graphic',
     onChange: (v: GoreLevel) => (viewer.gore = v),
   });
 }

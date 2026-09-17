@@ -88,6 +88,11 @@ export function defineDice(): void {
   WofRollClass = WofRollImpl;
 }
 
+/** Marks every result of a roll hidden, so Dice So Nice never shows it (its chat hook or showForRoll). */
+export function hideDice(roll: any): void {
+  for (const die of roll.dice) for (const r of die.results) r.hidden = true;
+}
+
 /** Shows a roll with Dice So Nice when it is installed; resolves at once otherwise. */
 export async function showDice(roll: any, whisper: string[] | null = null, blind = false): Promise<void> {
   const dice3d = (game as any).dice3d;

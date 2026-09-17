@@ -6,6 +6,7 @@
  * the Stress Response line, and the "Applied" line with Undo.
  */
 import { actionIcon, entryIcon, iconPath } from '../art.ts';
+import { faceLabel, kindPreset } from './kinds.ts';
 import { attackResult, finalSuccesses, rawSuccesses, undoButton, type DiceFaces, type DieKind, type Op } from '../rules/roll.ts';
 
 export const FLAG = 'card';
@@ -77,6 +78,8 @@ export interface ActionCard extends CardBase {
   call: string | null;
   /** What the roll is made against in the running engagement. */
   target?: RollTarget | null;
+  /** Titan Dice in an ad hoc pool (the chat bar): kept as rolled, successes on 5 and 6. */
+  titan?: number[];
 }
 
 export interface TableCard extends CardBase {
@@ -218,40 +221,49 @@ const PIPS: Record<number, [number, number][]> = {
   6: [[7, 6.5], [17, 6.5], [7, 12], [17, 12], [7, 17.5], [17, 17.5]],
 };
 
-const DIE: Record<DieKind, { shape: string; pip: string }> = {
-  base: {
-    shape: '<rect x="1" y="1" width="22" height="22" rx="3" fill="#f1e8d4" stroke="#4f463d" stroke-width="1.4"/><rect x="2.5" y="2.5" width="19" height="4" rx="1.5" fill="#fff" opacity=".5"/>',
-    pip: '#241f1b',
-  },
-  gear: {
-    shape: '<path d="M6 1h12l5 5v12l-5 5H6l-5-5V6z" fill="#5d646b" stroke="#1f2225" stroke-width="1.4"/><path d="M6.5 2.5h11l1.5 1.5h-14z" fill="#aeb6bd" opacity=".7"/>',
-    pip: '#e9edf0',
-  },
-  stress: {
-    shape: '<rect x="1" y="1" width="22" height="22" rx="6" fill="#8e2323" stroke="#4a0f0f" stroke-width="1.4"/><path d="M5 5q3-2.5 8-2.5" stroke="#d27a6a" stroke-width="1.4" fill="none" opacity=".7"/>',
-    pip: '#f4ecd8',
-  },
-  titan: {
-    shape: '<path d="M12 1.5c6.5 0 10.5 3.5 10.5 10.5S18 22.5 12 22.5 1.5 18.5 1.5 12 5.5 1.5 12 1.5z" fill="#d49a86" stroke="#6b2a22" stroke-width="1.4"/><path d="M6 17q2 2 4 1M15 5q2 0 3 2" stroke="#9c5a4a" stroke-width="1" fill="none"/>',
-    pip: '#4a0f0f',
-  },
+/** The plain D6 (table and Lifepath rolls), drawn with pips as Dice So Nice's standard d6 is. */
+const PLAIN = {
+  shape: '<rect x="1" y="1" width="22" height="22" rx="3" fill="#f1e8d4" stroke="#4f463d" stroke-width="1.4"/><rect x="2.5" y="2.5" width="19" height="4" rx="1.5" fill="#fff" opacity=".5"/>',
+  pip: '#241f1b',
 };
 
-/** One die as an inline SVG icon: its kind by shape and material, its face by pips, success lit, a Stress 1 cracked, a pushed Gear 1 locked. */
+/** Each kind's tile, in its Dice So Nice body colour (src/dice/kinds.ts), with a darker rim and a highlight. */
+const TILE: Record<DieKind, string> = {
+  base: `<rect x="1" y="1" width="22" height="22" rx="3" fill="${kindPreset('base').colorset.background}" stroke="#4f463d" stroke-width="1.4"/><rect x="2.5" y="2.5" width="19" height="3" rx="1.5" fill="#fff" opacity=".45"/>`,
+  gear: `<path d="M6 1h12l5 5v12l-5 5H6l-5-5V6z" fill="${kindPreset('gear').colorset.background}" stroke="#1f2225" stroke-width="1.4"/><path d="M6.5 2.5h11l1.5 1.5h-14z" fill="#aeb6bd" opacity=".6"/>`,
+  stress: `<rect x="1" y="1" width="22" height="22" rx="6" fill="${kindPreset('stress').colorset.background}" stroke="#4a0f0f" stroke-width="1.4"/><path d="M5 5q3-2.5 8-2.5" stroke="#d27a6a" stroke-width="1.4" fill="none" opacity=".7"/>`,
+  titan: `<rect x="1" y="1" width="22" height="22" rx="8" fill="${kindPreset('titan').colorset.background}" stroke="#6b2a22" stroke-width="1.4"/><path d="M6 18q2 1.6 4 .8M15 4.6q2 0 3 1.8" stroke="#9c5a4a" stroke-width="1" fill="none" opacity=".7"/>`,
+};
+
+/** A face as the 3D die shows it: its label art, or, on a blank face, the number small in the kind's ink. */
+function faceArt(kind: DieKind, face: number): string {
+  const label = faceLabel(kind, face);
+  if (label) return `<image href="${esc(label)}" x="2" y="2" width="20" height="20" preserveAspectRatio="xMidYMid meet"/>`;
+  const ink = kindPreset(kind).colorset.foreground;
+  return `<text x="12" y="12.5" text-anchor="middle" dominant-baseline="central" fill="${ink}" opacity=".78" style="font:700 10px var(--fd, Georgia, serif)">${face}</text>`;
+}
+
+/**
+ * One die as an inline SVG icon. A kind's die wears the same face art as its Dice So Nice die, on a
+ * tile in its body colour, with the face value in its label and tooltip; a plain D6 shows pips.
+ * Success is lit, a Stress 1 ringed, a pushed Gear 1 locked.
+ */
 export function dieIcon(t: T, kind: DieKind, face: number, flags: { locked?: boolean; fresh?: boolean; plain?: boolean; quiet?: boolean } = {}): string {
-  const d = DIE[kind];
   const hit = !flags.plain && (kind === 'titan' ? face >= 5 : face === 6);
   // A passive roll's Stress Die 1 does nothing (dice-pool.yaml, passive-roll), so it is not marked.
   const s1 = !flags.plain && !flags.quiet && face === 1 && kind === 'stress';
-  const one = s1 ? '<path d="M4 20 L10 13 L8 11 L14 6" stroke="#f4ecd8" stroke-width="1.8" fill="none"/>' : '';
-  const pips = s1 ? '' : (PIPS[face] ?? []).map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${face === 1 ? 2.8 : 2.1}" fill="${d.pip}"/>`).join('');
-  const bits = [t(`WOF.Roll.die.${kind}`), t('WOF.Roll.aria.face', { face })];
+  const art = flags.plain
+    ? PLAIN.shape + (PIPS[face] ?? []).map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${face === 1 ? 2.8 : 2.1}" fill="${PLAIN.pip}"/>`).join('')
+    : TILE[kind] + faceArt(kind, face);
+  const bits = [flags.plain ? 'D6' : t(`WOF.Roll.die.${kind}`), t('WOF.Roll.aria.face', { face })];
   if (hit) bits.push(t('WOF.Roll.aria.success'));
   if (s1) bits.push(t('WOF.Roll.aria.stressOne'));
   if (flags.locked) bits.push(t('WOF.Roll.aria.locked'));
   if (flags.fresh) bits.push(t('WOF.Roll.aria.fresh'));
-  const cls = ['die', kind, hit ? 'hit' : 'miss', face === 1 && !flags.quiet ? 'one' : '', flags.locked ? 'locked' : '', flags.fresh ? 'fresh' : ''].filter(Boolean).join(' ');
-  return `<span class="${cls}" role="img" aria-label="${esc(bits.join(', '))}"><svg viewBox="0 0 24 24" aria-hidden="true">${d.shape}${pips}${one}</svg></span>`;
+  const label = esc(bits.join(', '));
+  const one = !flags.plain && face === 1 && !flags.quiet && (kind === 'gear' || kind === 'stress');
+  const cls = ['die', flags.plain ? 'plain' : kind, hit ? 'hit' : 'miss', one ? 'one' : '', flags.locked ? 'locked' : '', flags.fresh ? 'fresh' : ''].filter(Boolean).join(' ');
+  return `<span class="${cls}" role="img" aria-label="${label}" data-tooltip="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${art}</svg></span>`;
 }
 
 function dots(groups: [string, number][], label: string, why = ''): string {
@@ -300,7 +312,8 @@ function responseLine(t: T, r: ResponseRoll | null, v: CardViewer): string {
 }
 
 export function successesOf(c: ActionCard): number {
-  return finalSuccesses(rawSuccesses(c.dice), c.response?.effects ?? []);
+  const titan = (c.titan ?? []).filter((f) => f >= 5).length;
+  return finalSuccesses(rawSuccesses(c.dice) + titan, c.response?.effects ?? []);
 }
 
 /** The result line beside the big count. */
@@ -336,6 +349,7 @@ function actionCard(t: T, c: ActionCard, v: CardViewer, deathRows: { id: string;
       ['dx', p.removed.bonus + p.removed.talent + p.removed.attribute],
       ['dg', c.dice.gear.length],
       ['ds', c.dice.stress.length],
+      ['dtn', c.titan?.length ?? 0],
     ],
     t('WOF.Sheet.aria.pool', { base: c.dice.base.length, gear: c.dice.gear.length, stress: c.dice.stress.length }),
     p.why,
@@ -349,6 +363,7 @@ function actionCard(t: T, c: ActionCard, v: CardViewer, deathRows: { id: string;
     c.dice.base.length ? drow('base', 'die-base', t('WOF.Roll.die.baseDice'), c.dice.base.map((f) => dieIcon(t, 'base', f)).join('')) : '',
     c.dice.gear.length ? drow('gear', 'die-gear', `${t('WOF.Roll.die.gearDice')}: ${p.gear?.name ?? ''}`, c.dice.gear.map((f) => dieIcon(t, 'gear', f, { locked: f === 1 && c.pushes > 0 })).join('')) : '',
     c.dice.stress.length ? drow('stress', 'die-stress', t('WOF.Roll.die.stressDice'), c.dice.stress.map((f, i) => dieIcon(t, 'stress', f, { fresh: i === c.fresh, quiet: !c.responses })).join('')) : '',
+    c.titan?.length ? drow('titan', 'die-titan-attack', t('WOF.Roll.die.titanDice'), c.titan.map((f) => dieIcon(t, 'titan', f)).join('')) : '',
   ].join('');
   const out = outcomeText(t, c, s, deathRows);
   const stakes = c.stakes ? `<p class="stakes"><b>${esc(t('WOF.Roll.stakes'))}</b>${esc(c.stakes.text)}</p>` : '';
@@ -375,7 +390,7 @@ function actionCard(t: T, c: ActionCard, v: CardViewer, deathRows: { id: string;
     if (push || cover) acts = `<div class="rc-a">${push}${cover}${note}</div>`;
   }
   const newGlyph = newStress ? ` data-fresh="1"` : '';
-  const glyph = c.entry ? entryIcon({ id: c.entry, attribute: c.attribute }) : undefined;
+  const glyph = c.entry ? entryIcon({ id: c.entry, attribute: c.attribute }) : icon('die-base');
   return `${header(t, { img: c.img, name: c.name, time: c.time, who: c.actorName, glyph }, glyphs, v.isGM, flags)}
 <div class="rc-b"${newGlyph}>
   <div class="dice">${rows}</div>

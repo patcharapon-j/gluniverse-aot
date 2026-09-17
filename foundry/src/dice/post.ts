@@ -8,7 +8,7 @@ import type { ActorPool } from './actor-pool.ts';
 import { ops } from './apply.ts';
 import { FLAG, plainSummary, successesOf, type ActionCard, type Card, type ResponseRoll } from './card.ts';
 import { writeCard } from './proxy.ts';
-import { showDice } from './terms.ts';
+import { hideDice } from './terms.ts';
 
 export const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
@@ -62,9 +62,10 @@ function responseEnds(): string {
  * lasting rows already held (data/mind/stress-responses.yaml). Returns the roll, the card's line,
  * and the ops its row leaves (the lasting result held, Everything Slips' Stress).
  */
-export async function rollResponse(ap: ActorPool, stress: number, opts: { show?: boolean } = {}): Promise<{ roll: any; response: ResponseRoll; ops: Op[] }> {
+export async function rollResponse(ap: ActorPool, stress: number): Promise<{ roll: any; response: ResponseRoll; ops: Op[] }> {
   const roll = await new foundry.dice.Roll('1d6').evaluate();
-  if (opts.show) await showDice(roll);
+  // The table D6 is never shown as a 3D die: Dice So Nice skips hidden results (src/dice/dsn-rules.ts).
+  hideDice(roll);
   const d6 = roll.total as number;
   const bonus = holds(ap, 'iron-nerve') ? 1 : 0;
   const total = tableTotal(d6, stress, ap.resolve, bonus);

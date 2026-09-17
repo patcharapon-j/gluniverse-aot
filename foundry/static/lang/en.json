@@ -1105,10 +1105,13 @@
       "health": {
         "boxes": "Health boxes",
         "crossedTip": "Crossed off by an untreated Critical Injury. Treating it gives the box back.",
+        "blockedTip": "Blocked by {name} ({where}), untreated. Treating it gives the box back.",
+        "injuries": "Critical Injuries",
         "box": {
           "clean": "Health box {n}, held",
           "damaged": "Health box {n}, lost to damage",
-          "crossed": "Health box {n}, crossed off by a Critical Injury"
+          "crossed": "Health box {n}, crossed off by a Critical Injury",
+          "blocked": "Health box {n}, blocked by {name}"
         }
       },
       "stress": {
@@ -1116,7 +1119,9 @@
         "lower": "Lower Stress",
         "raise": "Raise Stress",
         "boxes": "Stress boxes, one Stress Die each",
-        "box": "Stress box {n}"
+        "box": "Stress box {n}",
+        "responses": "Stress Responses",
+        "lasting": "lasting"
       },
       "resolve": {
         "short": "{base} + Scars {scars} − Grief {grief}",
@@ -1163,7 +1168,9 @@
         "driveUsed": "Drive used",
         "key": "Key",
         "keyTip": "The key attribute of the Specialty can reach {max}.",
-        "keyLine": "{attr}, up to {max}"
+        "keyLine": "{attr}, up to {max}",
+        "rollAttr": "Roll {attr}: {dice} Base Dice, plus a Stress Die for each point of Stress",
+        "rollAttrLabel": "Roll {attr}"
       },
       "talent": {
         "dice": "Dice",
@@ -1274,7 +1281,8 @@
         "caption": "Fig. 1, front",
         "sides": "R · L",
         "aria": "Soldier body diagram: {list}",
-        "ariaNone": "Soldier body diagram, no Critical Injuries"
+        "ariaNone": "Soldier body diagram, no Critical Injuries",
+        "kia": "KIA"
       },
       "injury": {
         "treated": "Treated",
@@ -1568,6 +1576,17 @@
       "spent": "Spent",
       "worn-out": "Worn out",
       "none": "No change"
+    },
+    "ChatBar": {
+      "label": "Dice pool",
+      "roll": "Roll",
+      "rollN": "Roll {n}",
+      "reset": "Reset the pool",
+      "add": "Add one to {kind}",
+      "remove": "Take one from {kind}",
+      "hint": "Click to add one, right-click to take one away.",
+      "empty": "Set some dice in the pool first.",
+      "cardName": "Dice Pool"
     },
     "Roll": {
       "die": {

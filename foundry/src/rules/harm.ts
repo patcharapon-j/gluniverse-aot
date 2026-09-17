@@ -4,6 +4,8 @@
  * data/gear/odm-gear.yaml (change_canister).
  */
 
+import type { HealthBox } from './derived.ts';
+
 export type InjuryType = 'crush' | 'bite' | 'burn' | 'cut' | 'pierce';
 export type Side = 'left' | 'right';
 
@@ -98,6 +100,22 @@ export function healthLostAfterClick(boxIndex: number, healthRating: number, cro
   const pos = boxIndex - crossed; // 0-based among the non-crossed boxes
   const next = pos < lost ? pos : pos + 1;
   return Math.min(Math.max(next, 0), maxLost);
+}
+
+/** One Health box as the sheet draws it, with the untreated Critical Injury that crosses it off. */
+export interface HealthCell<T> {
+  state: HealthBox;
+  blocker: T | null;
+}
+
+/**
+ * Pairs the Health row with the injuries that block it. Each untreated Critical Injury crosses off
+ * one box, up to Health, in the order the injuries are held; the crossed boxes lead the row.
+ */
+export function healthCells<T extends { treated: boolean }>(boxes: readonly HealthBox[], injuries: readonly T[]): HealthCell<T>[] {
+  const untreated = injuries.filter((w) => !w.treated);
+  let n = 0;
+  return boxes.map((state) => ({ state, blocker: state === 'crossed' ? (untreated[n++] ?? null) : null }));
 }
 
 /** Stress boxes clicked: filling box i sets Stress to i + 1; clicking the last filled box clears it. Never below the minimum. */

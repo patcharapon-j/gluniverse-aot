@@ -4,7 +4,7 @@
  * called roll, and the Gas Roll a Fear result calls for. Each reads the card from its message,
  * changes the documents, and saves the same message again.
  */
-import { applyPush, pushBlock, pushStress, rerollCounts, responseDue, wearOutcome, wearPoints, WEAR_TALENTS, type Op } from '../rules/roll.ts';
+import { applyPush, pushBlock, pushRollCounts, pushStress, responseDue, wearOutcome, wearPoints, WEAR_TALENTS, type Op } from '../rules/roll.ts';
 import { actorPool } from './actor-pool.ts';
 import { applyNew, cardAction, dropOps, ops } from './apply.ts';
 import type { ActionCard, AttackCard, CallCard, FoeAttackCard, TableCard } from './card.ts';
@@ -32,7 +32,7 @@ async function once<T>(message: any, fn: () => Promise<T>): Promise<T | undefine
   }
 }
 
-const actorOf = (card: { actor: string }) => foundry.utils.fromUuid(card.actor);
+const actorOf = async (card: { actor: string }): Promise<any> => (card.actor ? foundry.utils.fromUuid(card.actor) : null);
 
 /** The reason text a card shows under a blocked Push. */
 export function pushBlockText(block: string | null): string | null {
@@ -100,9 +100,10 @@ async function pushCard(message: any): Promise<ActionCard | null> {
     if (used) fresh.push(used);
   }
 
-  // Roll only the dice the Push picks up, so Dice So Nice shows just those.
-  const counts = rerollCounts(card.dice);
-  const roll = await WofRoll().rollPool({ base: counts.base, stress: counts.stress + (covered ? 0 : 1) });
+  // Roll only the dice the Push picks up, so Dice So Nice shows just those. The GM's client shows
+  // them for a proxied Push too; saveCard marks the rolls as shown, so Dice So Nice's own update
+  // hook does not show them (or the whole card) a second time.
+  const roll = await WofRoll().rollPool(pushRollCounts(card.dice, covered));
   await showDice(roll, message.whisper?.length ? message.whisper : null, message.blind);
   const pushed = applyPush(card.dice, { base: roll.facesOf('base'), stress: roll.facesOf('stress') }, !covered);
   card.dice = pushed.dice;
@@ -117,7 +118,7 @@ async function pushCard(message: any): Promise<ActionCard | null> {
   // A Stress Die 1 after the Push: one Stress Response, with the Stress after the Push.
   if (responseDue(card.dice, !!card.response, card.responses)) {
     const stressNow = actor.system.derived.stress_effective + (covered ? 0 : pushStress(false, ap.heldEffects));
-    const r = await rollResponse(ap, stressNow, { show: true });
+    const r = await rollResponse(ap, stressNow);
     rolls.push(r.roll);
     card.response = r.response;
     fresh.push(...r.ops);
@@ -192,7 +193,7 @@ export function gallows(message: any) {
     if (!readyTalent(ap, 'gallows-humour')) return;
     card.ops = await dropOps(card.ops, (o) => !!o.response, message.id);
     // The held list no longer has the first result, so the table is read as it stood before it.
-    const again = await rollResponse(actorPool(actor), card.response.stress, { show: true });
+    const again = await rollResponse(actorPool(actor), card.response.stress);
     const used = usedTalentOp(ap, 'gallows-humour', 'stressResponse');
     card.response = { ...again.response, rerolled: true };
     card.ops = [...card.ops, ...(await applyNew([...again.ops, ...(used ? [used] : [])], message.id))];

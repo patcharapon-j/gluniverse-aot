@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { dsnHookAnimates } from '../src/dice/dsn-rules.ts';
 import { previewPool } from '../src/rules/pool.ts';
 import {
   applyPush,
@@ -14,6 +15,7 @@ import {
   nextStates,
   numValue,
   pushBlock,
+  pushRollCounts,
   pushStress,
   rawSuccesses,
   rerollCounts,
@@ -261,5 +263,24 @@ describe('applied changes and Undo (ADR-0026)', () => {
     const on = { stress: true, wear: false, stressResponse: true, gas: true, fear: true };
     expect(initialState('stress', on)).toBe('done');
     expect(initialState('wear', on)).toBe('pending');
+  });
+});
+
+describe('what Dice So Nice shows for a Push', () => {
+  it('rolls only the non-6 base and Stress dice, plus the new Stress Die', () => {
+    const d = { base: [6, 2, 6, 1], gear: [1, 6], stress: [3, 6] };
+    expect(pushRollCounts(d, false)).toEqual({ base: 2, stress: 2 });
+    expect(pushRollCounts(d, true)).toEqual({ base: 2, stress: 1 });
+    expect(pushRollCounts({ base: [6], gear: [], stress: [] }, false)).toEqual({ base: 0, stress: 1 });
+  });
+
+  it('keeps the chat hook from showing dice the system showed itself', () => {
+    const roll = (n: number, hidden = false) => ({ dice: [{ results: Array.from({ length: n }, () => ({ hidden })) }] });
+    // A new card: Dice So Nice shows it.
+    expect(dsnHookAnimates([roll(5)], 0)).toBe(true);
+    // A Pushed card: the pool and the Push roll are both marked shown.
+    expect(dsnHookAnimates([roll(5), roll(3)], 2)).toBe(false);
+    // A card with only hidden dice shows nothing.
+    expect(dsnHookAnimates([roll(1, true)], 0)).toBe(false);
   });
 });
