@@ -2140,7 +2140,9 @@
         "play": "Play",
         "playShort": "P",
         "end": "End",
-        "endShort": "E"
+        "endShort": "E",
+        "closing": "Engagement end",
+        "closingShort": "X"
       },
       "hint": {
         "setup": "Setting up",
@@ -2148,7 +2150,8 @@
         "deal": "The GM deals",
         "swap": "Swap cards",
         "play": "Cards come up",
-        "end": "Round end"
+        "end": "Round end",
+        "closing": "The engagement has ended. Its end steps run on the board, in order."
       },
       "act": {
         "newTitan": "Titan Engagement",
@@ -2175,7 +2178,9 @@
         "return": "Return",
         "drawAttention": "Draw Attention",
         "fallBack": "Fall Back: {name} to In Reach of {label}",
-        "foeAct": "Act"
+        "foeAct": "Act",
+        "close": "Close the engagement",
+        "stamp": "Stamp"
       },
       "chip": {
         "card": "{name}, card {card}",
@@ -2209,7 +2214,9 @@
         "pickSecond": "Picked. Pick a second card, or the same one again to drop it.",
         "wingsOpen": "Wings step. Put each Squadmate on a player character's Wing, or on none, on the board.",
         "wingsKept": "Wings step. Wings stand this round: nothing since the last Wings step lets them change.",
-        "end": "Round end. The checklist runs on the board, in order."
+        "end": "Round end. The checklist runs on the board, in order.",
+        "closing": "End steps: the table resolves the stamped ones, then the GM stamps them.",
+        "closed": "Every end step is stamped. Close the engagement to clear the Positions."
       },
       "now": {
         "soldier": "Now {card}: {name}",
@@ -2362,7 +2369,27 @@
         "stopped": "Stopped: retreat",
         "lost": "Unspent moves and actions are lost",
         "brokenDetail": "A broken group's Foes leave",
-        "endingDetail": "Foes gone, the Squad leaves, or no one stands"
+        "endingDetail": "Foes gone, the Squad leaves, or no one stands",
+        "turns": "Turns and pending results",
+        "stress-relief": "Stress relief",
+        "lasting-stress-responses": "Lasting Stress Responses end",
+        "turn-limits": "Turn limits",
+        "aftermath-rolls": "Aftermath rolls",
+        "death-rolls": "Death Rolls",
+        "care-window": "Care window",
+        "grief": "Grief",
+        "retirement-and-promotion": "Retirement and promotion",
+        "detail": {
+          "turns": "Pending forced moves and strikes are cancelled",
+          "stress-relief": "Every soldier who took part loses Stress",
+          "lasting-stress-responses": "Responses gained in the engagement end",
+          "turn-limits": "Lethal injuries with a turn limit now last the engagement",
+          "aftermath-rolls": "One aftermath roll per patient, from a treater the players choose",
+          "death-rolls": "Each untreated lethal injury still limited causes a Death Roll",
+          "care-window": "The Squad treats its wounded",
+          "grief": "Grief for the engagement's deaths",
+          "retirement-and-promotion": "Five Scars retire; left items are shared out; promotion"
+        }
       },
       "end": {
         "gasFor": "Gas Rolls for {who}.",
@@ -2445,9 +2472,10 @@
         "byNoFocus": "No Focus Titan is alive and no soldier is Pinned.",
         "byNoStanding": "No soldier who holds a Position is standing.",
         "title": "The Titan Engagement ends",
-        "steps": "Resolve the end steps now: Stress relief, injuries, and what the Squad carries.",
+        "steps": "The end steps follow on the board, in order.",
         "skirmishTitle": "The Skirmish ends",
-        "skirmishSteps": "Resolve the Skirmish's end steps."
+        "stepsOpen": "Stamp every end step first.",
+        "closed": "The engagement is closed. Positions are cleared."
       },
       "foe": {
         "out": "{name} takes no turn",
@@ -2588,7 +2616,9 @@
         "done": "Done",
         "skipped": "Skipped",
         "menuTitle": "{name} toward {label}",
-        "current": "Here now"
+        "current": "Here now",
+        "engagementEnd": "Engagement end",
+        "manual": "The table resolves this step; stamp it when done."
       },
       "setup": {
         "titleTitan": "Begin a Titan Engagement",
@@ -2629,6 +2659,18 @@
           "high": "high",
           "extreme": "extreme"
         }
+      },
+      "close": {
+        "turns": "Pending results cancelled: {who}.",
+        "relief": "Stress lowered by {n}: {who}.",
+        "responses": "Lasting Stress Responses ended: {who}.",
+        "limits": "Now limited to the engagement: {list}.",
+        "aftermath": "Aftermath rolls for: {list}. Roll Treat Injury from the sheet.",
+        "deathRolls": "Death Rolls for: {list}. Roll them from the sheet; these deaths cause no Fear Roll.",
+        "care": "Hold the care window: treat from the sheets.",
+        "grief": "Grief gained: {who}.",
+        "retire": "Retiring with five Scars: {who}. A soldier who lost both arms or both legs retires too.",
+        "promotion": "Share out left items and dropped Blade Sets, then promote replacements for the dead and retired."
       }
     }
   }

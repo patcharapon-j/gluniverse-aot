@@ -160,6 +160,7 @@ export async function act(action: string, data: Record<string, any> = {}): Promi
       case 'sheet':
         return void game.actors.get(data.actor)?.sheet?.render(true);
       case 'end':
+      case 'close':
         return await endEngagement(combat);
     }
   } catch (err) {

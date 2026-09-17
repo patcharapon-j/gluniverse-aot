@@ -3,7 +3,9 @@
  * tracker, steam and fall rolls, the engagement-end steps, forced retreat moves, and the HUD fade.
  */
 import { describe, expect, it } from 'vitest';
+import { CLOSING_CHECKS, engagementLimited, griefGains, keptResponses, relievedStress, retiring, turnLimitsToChange } from '../src/rules/engagement/closing.ts';
 import { fearPlan, type FearSoldier } from '../src/rules/engagement/fear.ts';
+import { autoChecks, closingLog, endComplete, roundBlock, TRACKER_CATEGORIES, type TrackerCategory } from '../src/rules/engagement/round.ts';
 import { checkTrackerRequest, type TrackerWorld } from '../src/rules/engagement/guard.ts';
 import { damageSoldier, fallBand, fallDamage, fallLands, referenceLabel, steamDamage, steamRollers } from '../src/rules/engagement/harm-rolls.ts';
 import { emptyFlags, type SoldierState, type TitanRow } from '../src/rules/engagement/types.ts';
@@ -136,5 +138,55 @@ describe('steam and fall rolls (titan-harm.yaml, steam; falls.yaml)', () => {
     expect(checkTrackerRequest(w(['mine']), { act: 'let-go', combat: 'c', soldier: 'mine', titan: 'tA' })).toBeNull();
     expect(checkTrackerRequest(w([]), { act: 'let-go', combat: 'c', soldier: 'mine', titan: 'tA' })).toMatch(/owner/);
     expect(checkTrackerRequest(w(['far']), { act: 'let-go', combat: 'c', soldier: 'far', titan: 'tA' })).toMatch(/notClose/);
+  });
+});
+
+describe('the engagement-end steps (engagement-end.yaml)', () => {
+  const on = Object.fromEntries(TRACKER_CATEGORIES.map((c) => [c, true])) as Record<TrackerCategory, boolean>;
+
+  it('lists the data steps in order', () => {
+    expect(CLOSING_CHECKS).toEqual(tables.engagementEnd.steps.map((x) => x.id));
+    expect(E.closing.relief).toEqual({ titan: 1, skirmish: 1 });
+    expect(E.closing.griefMax).toBe(3);
+  });
+
+  it('runs the automatic steps and stops before a step the table resolves, then goes on once it is stamped', () => {
+    const log = closingLog();
+    expect(autoChecks(log, on)).toEqual([0, 1, 2, 3]);
+    const done = log.map((e, i) => (i < 4 ? { ...e, state: 'done' as const } : e));
+    expect(autoChecks(done, on)).toEqual([]);
+    const stamped = done.map((e, i) => (i < 7 ? { ...e, state: 'done' as const } : e));
+    expect(autoChecks(stamped, on)).toEqual([7, 8]);
+    expect(endComplete({ endLog: stamped.map((e) => ({ ...e, state: 'done' as const })) })).toBe(true);
+    expect(roundBlock({ mode: 'titan', step: 'closing', round: 3, wingsSet: true, wingsOpen: false, reassign: [], endLog: stamped }, 'next-round')).toBe('wrongStep');
+  });
+
+  it('lowers Stress to no less than the minimum, and ends only the responses gained in the engagement', () => {
+    expect(relievedStress(3, 0, 1)).toBe(2);
+    expect(relievedStress(1, 1, 1)).toBe(1);
+    expect(keptResponses([{ ends: 'titan-engagement-end' }, { ends: 'day' }])).toEqual([{ ends: 'day' }]);
+  });
+
+  it('turns lethal turn limits into engagement limits, and lists the untreated limited ones for aftermath and Death Rolls', () => {
+    const items = [
+      { id: 'a', lethal: true, treated: false, limit: 'turn' as const },
+      { id: 'b', lethal: true, treated: true, limit: 'engagement' as const },
+      { id: 'c', lethal: false, treated: false, limit: 'turn' as const },
+      { id: 'd', lethal: true, treated: false, limit: 'day' as const },
+      { id: 'e', lethal: true, treated: false, limit: 'engagement' as const },
+    ];
+    expect(turnLimitsToChange(items)).toEqual(['a']);
+    expect(engagementLimited(items)).toEqual(['a', 'e']);
+  });
+
+  it('gives 1 Grief for all the deaths, 1 more per dead soldier a Drive named, the Numb Scar 1 more per death, to at most 3', () => {
+    const g = (id: string, extra = {}) => ({ id, alive: true, grief: 0, driveNamed: '', numb: false, ...extra });
+    const soldiers = [g('d1', { alive: false }), g('d2', { alive: false }), g('plain'), g('named', { driveNamed: 'd1' }), g('numb', { numb: true }), g('full', { grief: 3 })];
+    expect(griefGains(soldiers, 3)).toEqual({ plain: 1, named: 2, numb: 3 });
+    expect(griefGains([g('alone')], 3)).toEqual({});
+  });
+
+  it('retires the living with five Scars once', () => {
+    expect(retiring([{ id: 'a', alive: true, scars: 5, retiring: false }, { id: 'b', alive: true, scars: 5, retiring: true }, { id: 'c', alive: false, scars: 6, retiring: false }, { id: 'd', alive: true, scars: 4, retiring: false }])).toEqual(['a']);
   });
 });

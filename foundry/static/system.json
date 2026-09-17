@@ -5,6 +5,9 @@
   "version": "0.1.0",
   "compatibility": { "minimum": "14", "verified": "14" },
   "authors": [{ "name": "Patcharapon Joksamut" }],
+  "url": "https://github.com/patcharapon-j/gluniverse-aot",
+  "manifest": "https://github.com/patcharapon-j/gluniverse-aot/releases/latest/download/system.json",
+  "download": "https://github.com/patcharapon-j/gluniverse-aot/releases/download/v0.1.0/wings-of-freedom.zip",
   "background": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp",
   "media": [
     { "type": "setup", "url": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp", "thumbnail": "systems/wings-of-freedom/assets/plates/setup-sortie-dawn.webp" },

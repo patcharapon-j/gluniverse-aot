@@ -37,7 +37,7 @@ export function defineCombatModels() {
     static defineSchema() {
       return {
         mode: k.choice(['titan', 'skirmish'], 'titan'),
-        step: k.choice(['setup', 'wings', 'deal', 'swap', 'play', 'end'], 'setup'),
+        step: k.choice(['setup', 'wings', 'deal', 'swap', 'play', 'end', 'closing'], 'setup'),
         anchor: k.str('wooded'),
         soldiers: strings(),
         titans: new f.ArrayField(

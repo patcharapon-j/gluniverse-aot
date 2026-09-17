@@ -5,6 +5,7 @@
  * data/skirmish/skirmish.yaml: rounds, grit; ADR-0026). Pure and unit tested.
  */
 import { fillRegeneration, type BodyPart, type RegenerationResult } from '../titan.ts';
+import { CLOSING_CHECKS, MANUAL_CLOSING, type ClosingCheck } from './closing.ts';
 import type { Mode, Step } from './types.ts';
 
 // ---------------------------------------------------------------- steps
@@ -12,7 +13,7 @@ import type { Mode, Step } from './types.ts';
 export const TITAN_STEPS: readonly Step[] = ['wings', 'deal', 'swap', 'play', 'end'];
 export const SKIRMISH_STEPS: readonly Step[] = ['deal', 'play', 'end'];
 
-export type EndCheck = 'gas-rolls' | 'regeneration' | 'background-clocks' | 'retreat-clock' | 'round-ends' | 'broken-leave' | 'ending';
+export type EndCheck = 'gas-rolls' | 'regeneration' | 'background-clocks' | 'retreat-clock' | 'round-ends' | 'broken-leave' | 'ending' | ClosingCheck;
 
 /** The round-end checklist (end_steps; the background-clocks step's retreat clock is its own check). */
 export const TITAN_CHECKS: readonly EndCheck[] = ['gas-rolls', 'regeneration', 'background-clocks', 'retreat-clock', 'round-ends'];
@@ -126,12 +127,19 @@ export function autoChecks(log: readonly EndEntry[], enabled: Record<TrackerCate
     const e = log[i];
     if (e.state === 'done' || e.state === 'skipped') continue;
     if (e.state === 'undone') break;
+    if (isManual(e.check)) break;
     const cat = checkCategory(e.check);
     if (cat && !enabled[cat]) break;
     out.push(i);
   }
   return out;
 }
+
+/** A check the table resolves and the GM stamps: the automation stops before it. */
+export const isManual = (check: EndCheck) => (MANUAL_CLOSING as readonly string[]).includes(check);
+
+/** The engagement-end checklist (engagement-end.yaml, steps). */
+export const closingLog = (): EndEntry[] => CLOSING_CHECKS.map((check) => ({ check, state: 'waiting', ops: [], lines: [] }));
 
 /** Undoing a check first undoes every later check that ran, in reverse order. */
 export function undoOrder(log: readonly EndEntry[], index: number): number[] {

@@ -8,7 +8,7 @@ export type Position = 'distant' | 'in-reach' | 'on-body' | 'blind-spot';
 export const POSITION_IDS: readonly Position[] = ['distant', 'in-reach', 'on-body', 'blind-spot'];
 
 export type Mode = 'titan' | 'skirmish';
-export type Step = 'setup' | 'wings' | 'deal' | 'swap' | 'play' | 'end';
+export type Step = 'setup' | 'wings' | 'deal' | 'swap' | 'play' | 'end' | 'closing';
 
 /** One soldier or Squadmate taking part. */
 export interface SoldierState {

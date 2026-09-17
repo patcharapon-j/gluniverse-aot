@@ -12,6 +12,8 @@ import { comparisonLabel, entering, focusLabels, holdsAPosition, isClose, leaveB
 import {
   autoChecks,
   checkCategory,
+  closingLog,
+  endComplete,
   gasRollsDue,
   nextCheck,
   noteWingEvent,
@@ -30,6 +32,7 @@ import {
   type WingEvent,
 } from '../rules/engagement/round.ts';
 import { planTitanDeath } from '../rules/engagement/titan-death.ts';
+import { engagementLimited, griefGains, keptResponses, relievedStress, retiring, turnLimitsToChange, type InjuryState } from '../rules/engagement/closing.ts';
 import { steamRollers } from '../rules/engagement/harm-rolls.ts';
 import { foeCandidates, groupBroken, skirmishEnding, rollFightWeapon } from '../rules/engagement/skirmish.ts';
 import { emptyFlags, type Position, type Snapshot, type SoldierState } from '../rules/engagement/types.ts';
@@ -936,12 +939,109 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
       rec.line(tr('end.brokenLeave', { n: leaving.length }));
       return;
     }
+    case 'turns':
+    case 'stress-relief':
+    case 'lasting-stress-responses':
+    case 'turn-limits':
+    case 'aftermath-rolls':
+    case 'death-rolls':
+    case 'care-window':
+    case 'grief':
+    case 'retirement-and-promotion':
+      return closingCheck(combat, check, rec);
     case 'ending': {
       const foes = skirmishFoes(combat).map((f: any) => ({ id: f.id, label: 0, health: 0, lost: 0, out: !!f.actor?.system.out || sys.skirmish.left.includes(f.id), heldBy: null, fightWeapon: '', shootWeapon: null, loaded: false }));
       const engaged = (id: string) => (sys.skirmish.engaged as any[]).some((e) => e.soldier === id);
       const holds = (id: string) => (sys.skirmish.holds as any[]).some((h) => h.soldier === id);
       const end = skirmishEnding(foes, snap.soldiers, engaged, holds);
       rec.line(end.foesGone ? tr('end.foesGone') : end.noSoldierStanding ? tr('end.noneStanding') : end.squadMayLeave ? tr('end.mayLeave') : tr('end.goesOn'));
+      return;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- the engagement-end steps (engagement-end.yaml)
+
+const injuriesOf = (actor: any): (InjuryState & { name: string })[] =>
+  [...actor.items]
+    .filter((i: any) => i.type === 'critical-injury')
+    .map((i: any) => ({ id: i.id, name: i.name, lethal: !!i.system.row_data.lethal, treated: !!i.system.treated, limit: i.system.time_limit ?? null }));
+
+async function closingCheck(combat: any, check: EndEntry['check'], rec: Recorder): Promise<void> {
+  const actors = soldierActors(combat);
+  const living = actors.filter((a) => !a.statuses?.has?.('dead'));
+  const list = (ids: string[]) => ids.map(nameOf).join(', ') || tr('none');
+  switch (check) {
+    case 'turns': {
+      const cleared = living.filter((a) => (a.system.toObject().pending_fear_results ?? []).length);
+      for (const a of cleared) rec.set(a, 'system.pending_fear_results', []);
+      rec.line(tr('close.turns', { who: list(cleared.map((a) => a.id)) }));
+      return;
+    }
+    case 'stress-relief': {
+      const amount = E().closing.relief[combat.system.mode === 'skirmish' ? 'skirmish' : 'titan'];
+      for (const a of living) {
+        const d = a.system.derived;
+        rec.set(a, 'system.stress', relievedStress(d.stress_effective, d.minimum_stress, amount));
+      }
+      rec.line(tr('close.relief', { n: amount, who: list(living.map((a) => a.id)) }));
+      return;
+    }
+    case 'lasting-stress-responses': {
+      const ended: string[] = [];
+      for (const a of living) {
+        const all = a.system.toObject().lasting_stress_responses as { row: string; ends: string }[];
+        const kept = keptResponses(all);
+        if (kept.length === all.length) continue;
+        rec.set(a, 'system.lasting_stress_responses', kept);
+        ended.push(a.id);
+      }
+      rec.line(tr('close.responses', { who: list(ended) }));
+      return;
+    }
+    case 'turn-limits': {
+      const changed: string[] = [];
+      for (const a of living) {
+        for (const id of turnLimitsToChange(injuriesOf(a))) {
+          rec.set(a.items.get(id), 'system.time_limit', 'engagement');
+          changed.push(`${a.name}: ${a.items.get(id).name}`);
+        }
+      }
+      rec.line(tr('close.limits', { list: changed.join('; ') || tr('none') }));
+      return;
+    }
+    case 'aftermath-rolls':
+    case 'death-rolls': {
+      const due = living.flatMap((a) => {
+        const inj = injuriesOf(a);
+        return engagementLimited(inj).map((id) => `${a.name}: ${inj.find((i) => i.id === id)!.name}`);
+      });
+      rec.line(tr(check === 'death-rolls' ? 'close.deathRolls' : 'close.aftermath', { list: due.join('; ') || tr('none') }));
+      return;
+    }
+    case 'care-window':
+      rec.line(tr('close.care'));
+      return;
+    case 'grief': {
+      const gains = griefGains(
+        actors.map((a) => ({
+          id: a.id,
+          alive: !a.statuses?.has?.('dead'),
+          grief: a.system.grief ?? 0,
+          driveNamed: a.system.drive_named_comrade ?? '',
+          numb: (a.system.scars ?? []).some((x: any) => x.row === 'numb'),
+        })),
+        E().closing.griefMax,
+      );
+      for (const [id, grief] of Object.entries(gains)) rec.set(game.actors.get(id), 'system.grief', grief);
+      rec.line(tr('close.grief', { who: list(Object.keys(gains)) }));
+      return;
+    }
+    case 'retirement-and-promotion': {
+      const out = retiring(actors.map((a) => ({ id: a.id, alive: !a.statuses?.has?.('dead'), scars: (a.system.scars ?? []).length, retiring: !!a.system.retiring })));
+      for (const id of out) rec.set(game.actors.get(id), 'system.retiring', true);
+      rec.line(tr('close.retire', { who: list(out) }));
+      rec.line(tr('close.promotion'));
       return;
     }
   }
@@ -979,10 +1079,15 @@ export function endingState(snap: Snapshot): EndingState {
   return { noFocusTitan: !anyFocus && !pinned, noSoldierStanding: !standing };
 }
 
-/** Ends the engagement when a test is met: the owed Gas Rolls, then every record cleared (engagement-flow.yaml, ending, then). */
+/**
+ * Ends the engagement when a test is met (engagement-flow.yaml, ending): the owed Gas Rolls, then the
+ * engagement-end steps as a stamped checklist (engagement-end.yaml). Positions stay recorded until the
+ * last step (positions_read); closeEngagement then clears them and removes the engagement.
+ */
 export async function endEngagement(combat: any): Promise<void> {
   if (!isGM()) return;
   const sys = plain(combat);
+  if (sys.step === 'closing') return closeEngagement(combat);
   if (sys.mode === 'titan') {
     const snap = snapshot(combat);
     const test = endingState(snap);
@@ -991,11 +1096,23 @@ export async function endEngagement(combat: any): Promise<void> {
       return;
     }
     if (sys.step !== 'end') for (const id of gasRollsDue(sys.odmUsed, (x) => !!snap.soldiers.find((s) => s.id === x)?.alive)) await rollGas(game.actors.get(id), { silent: true });
-    for (const a of soldierActors(combat)) await a.update({ ...positionsPatch({}, false), 'system.airborne': false });
     await postNote({ title: tr('ending.title'), lines: [tr(test.noFocusTitan ? 'ending.byNoFocus' : 'ending.byNoStanding'), tr('ending.steps')], round: combat.round });
   } else {
-    await postNote({ title: tr('ending.skirmishTitle'), lines: [tr('ending.skirmishSteps')], round: combat.round });
+    await postNote({ title: tr('ending.skirmishTitle'), lines: [tr('ending.steps')], round: combat.round });
   }
+  await combat.update({ turn: null, 'system.step': 'closing', 'system.endLog': closingLog() }, { turnEvents: false });
+  await runEnd(combat);
+}
+
+/** After the last engagement-end step: every Position record cleared, and the engagement removed. */
+export async function closeEngagement(combat: any): Promise<void> {
+  if (!isGM() || combat.system.step !== 'closing') return;
+  if (!endComplete(roundCore(combat))) {
+    ui.notifications.warn(tr('ending.stepsOpen'));
+    return;
+  }
+  if (combat.system.mode === 'titan') for (const a of soldierActors(combat)) await a.update({ ...positionsPatch({}, false), 'system.airborne': false });
+  await postNote({ title: tr('ending.closed'), lines: [], round: combat.round });
   await writeSystem(combat, { ended: true });
   await combat.delete();
 }

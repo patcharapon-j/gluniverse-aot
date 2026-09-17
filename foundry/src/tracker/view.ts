@@ -8,7 +8,7 @@ import { evaluateLadder } from '../rules/engagement/attention.ts';
 import { tieCard } from '../rules/engagement/cards.ts';
 import { grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { comparisonLabel, isClose, leaveBlock, letGoBlock, moveOptions, returnBlock, stepsApart, stepRows } from '../rules/engagement/positions.ts';
-import { checksOf, endComplete, nextCheck, stayLimitLeft, stepsOf, wingsEditable, type EndEntry } from '../rules/engagement/round.ts';
+import { checksOf, endComplete, isManual, nextCheck, stayLimitLeft, stepsOf, wingsEditable, type EndEntry } from '../rules/engagement/round.ts';
 import { foeTurn } from '../rules/engagement/skirmish.ts';
 import { drawAttentionBlock } from '../rules/engagement/attention.ts';
 import type { Position, Snapshot, SoldierState, TitanRow } from '../rules/engagement/types.ts';
@@ -140,6 +140,8 @@ export interface CheckView {
   /** This client may apply or skip the check now (the active GM, with no step under way). */
   canRun: boolean;
   canUndo: boolean;
+  /** The table resolves it; the GM stamps it. */
+  manual: boolean;
 }
 
 export interface FoeView {
@@ -192,6 +194,8 @@ export interface TrackerView {
   foeDice: string;
   ambush: string;
   canEnd: boolean;
+  /** The engagement has ended and its end steps run (engagement-end.yaml). */
+  closing: boolean;
 }
 
 const nm = (snap: Snapshot, id: string) => snap.soldiers.find((s) => s.id === id)?.name ?? '?';
@@ -324,11 +328,13 @@ export function buildView(): TrackerView | null {
   // ---- steps and the primary action
   const order5 = ['wings', 'deal', 'swap', 'play', 'end'];
   const mine = stepsOf(snap.mode) as string[];
-  const cur = order5.indexOf(sys.step);
+  const closing = sys.step === 'closing';
+  const checking = sys.step === 'end' || closing;
+  const cur = closing ? order5.length : order5.indexOf(sys.step);
   const steps = order5.map((id, i) => ({ id, label: tr(`step.${id}`), short: tr(`step.${id}Short`), state: !mine.includes(id) ? 'off' : i < cur ? 'done' : i === cur ? 'on' : '' }));
   const log = combat.system.toObject().endLog as EndEntry[];
   const nc = nextCheck(log);
-  const endFree = sys.step === 'end' && !!game.user.isActiveGM && !endLock.held(combat.id);
+  const endFree = checking && !!game.user.isActiveGM && !endLock.held(combat.id);
   const enabled = trackerApply();
   const checks: CheckView[] = (log.length ? log : checksOf(snap.mode).map((check) => ({ check, state: 'waiting', ops: [], lines: [] }) as EndEntry)).map((e, index) => {
     const cat = checkCategoryOf(e.check);
@@ -337,14 +343,15 @@ export function buildView(): TrackerView | null {
       label: tr(`check.${e.check}`),
       detail: checkDetail(combat, snap, e.check),
       lines: e.lines ?? [],
-      state: sys.step === 'end' ? e.state : 'waiting',
-      next: sys.step === 'end' && index === nc,
+      state: checking ? e.state : 'waiting',
+      next: checking && index === nc,
       off: !!cat && !enabled[cat],
+      manual: isManual(e.check),
       canRun: endFree && index === nc,
       canUndo: endFree && e.state === 'done',
     };
   });
-  const allStamped = sys.step === 'end' && endComplete(roundCore(combat));
+  const allStamped = checking && endComplete(roundCore(combat));
   let primary: TrackerView['primary'] = null;
   if (isGM) {
     if (sys.step === 'wings') primary = { action: 'keep-wings', label: tr('act.keepWings') };
@@ -352,6 +359,7 @@ export function buildView(): TrackerView | null {
     else if (sys.step === 'swap') primary = { action: 'begin-play', label: tr('act.beginPlay') };
     else if (sys.step === 'play') primary = { action: 'next-card', label: tr('act.nextCard') };
     else if (sys.step === 'end') primary = allStamped ? { action: 'next-round', label: tr('act.nextRound', { n: combat.round + 1 }) } : nc >= 0 && endFree ? { action: 'apply-check', label: tr('act.applyCheck') } : null;
+    else if (closing) primary = allStamped ? { action: 'close', label: tr('act.close') } : nc >= 0 && endFree ? { action: 'apply-check', label: tr('act.applyCheck') } : null;
   } else if (sys.step === 'play' && current?.isOwner && current.system.kind !== 'titan') primary = { action: 'next-card', label: tr('act.endTurn') };
   const hint = tr(`hint.${sys.step}`);
 
@@ -360,6 +368,7 @@ export function buildView(): TrackerView | null {
   if (sys.step === 'swap') cue = { warn: false, text: tr('cue.swap') };
   else if (sys.step === 'wings') cue = { warn: false, text: wingsEditable(roundCore(combat)) ? tr('cue.wingsOpen') : tr('cue.wingsKept') };
   else if (sys.step === 'end' && !allStamped) cue = { warn: true, text: tr('cue.end') };
+  else if (closing) cue = { warn: !allStamped, text: tr(allStamped ? 'cue.closed' : 'cue.closing') };
   else if (sys.step === 'play' && sys.swaps.length) cue = { warn: false, text: tr('cue.swapMade', { list: swapLines(snap, sys.swaps).join('; ') }) };
   const proposal = sys.proposal
     ? {
@@ -479,7 +488,8 @@ export function buildView(): TrackerView | null {
     grit,
     foeDice,
     ambush: tr(`sk.ambush.${sys.skirmish.ambush}`),
-    canEnd: isGM && (snap.mode === 'skirmish' || endingMet),
+    canEnd: isGM && !closing && (snap.mode === 'skirmish' || endingMet),
+    closing,
   };
 }
 
@@ -647,6 +657,8 @@ function checkDetail(combat: any, snap: Snapshot, check: string): string {
       return tr('check.brokenDetail');
     case 'ending':
       return tr('check.endingDetail');
+    default:
+      return tr(`check.detail.${check}`);
   }
   return '';
 }

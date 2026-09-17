@@ -301,7 +301,7 @@
         {/if}
       </div></div>
       <div class="checks">
-        <div class="ttl"><span class="lbl">{t('board.roundEnd')}</span><strong>{t('board.checklist')}</strong><span class="note">{v.step === 'end' ? (v.allStamped ? t('board.allStamped') : t('board.inOrder')) : t('board.afterLast')}</span></div>
+        <div class="ttl"><span class="lbl">{v.closing ? t('board.engagementEnd') : t('board.roundEnd')}</span><strong>{t('board.checklist')}</strong><span class="note">{v.step === 'end' || v.closing ? (v.allStamped ? t('board.allStamped') : t('board.inOrder')) : t('board.afterLast')}</span></div>
         {#each v.checks as ck (ck.index)}
           <div class="ck" class:done={ck.state === 'done' || ck.state === 'skipped'} class:next={ck.next}>
             <span class="box">{ck.state === 'done' ? '✓' : ck.state === 'skipped' ? '–' : ck.index + 1}</span>
@@ -310,7 +310,7 @@
             {#if ck.canRun}
               <span class="ckacts">
                 {#if ck.off}<em class="note">{t('board.notApplied')}</em>{/if}
-                <button type="button" class="mini red" onclick={() => act('check-apply', { index: ck.index })}>{t('act.apply')}</button>
+                <button type="button" class="mini red" title={ck.manual ? t('board.manual') : ''} onclick={() => act('check-apply', { index: ck.index })}>{ck.manual ? t('act.stamp') : t('act.apply')}</button>
                 <button type="button" class="mini" onclick={() => act('check-skip', { index: ck.index })}>{t('act.skip')}</button>
               </span>
             {/if}
@@ -318,7 +318,7 @@
             <span class="stamp dst">{ck.state === 'skipped' ? t('board.skipped') : t('board.done')}</span>
           </div>
         {/each}
-        <div class="go">{#if v.allStamped && isGM}<button type="button" class="mini red" onclick={() => act('next-round')}>{t('act.nextRound', { n: v.round + 1 })}</button>{/if}</div>
+        <div class="go">{#if v.allStamped && isGM}{#if v.closing}<button type="button" class="mini red" onclick={() => act('close')}>{t('act.close')}</button>{:else}<button type="button" class="mini red" onclick={() => act('next-round')}>{t('act.nextRound', { n: v.round + 1 })}</button>{/if}{/if}</div>
       </div>
     </div>
   {/if}
