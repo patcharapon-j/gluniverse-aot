@@ -8,7 +8,7 @@ import { evaluateLadder, chooseEntry, entryTargets } from '../rules/engagement/a
 import { dealBlock, dealCards, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
 import { countTurn, release } from '../rules/engagement/grab.ts';
 import { coreOf, grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
-import { comparisonLabel, corpsePosition, entering, focusLabels, holdsAPosition, isClose, leaveBlock, letGoBlock, moveOptions, nextLabel, returnBlock, returning, withPosition, type MoveKind } from '../rules/engagement/positions.ts';
+import { comparisonLabel, entering, focusLabels, holdsAPosition, isClose, leaveBlock, letGoBlock, moveOptions, nextLabel, returnBlock, returning, withPosition, type MoveKind } from '../rules/engagement/positions.ts';
 import {
   autoChecks,
   checkCategory,
@@ -29,6 +29,7 @@ import {
   type TrackerCategory,
   type WingEvent,
 } from '../rules/engagement/round.ts';
+import { planTitanDeath } from '../rules/engagement/titan-death.ts';
 import { foeCandidates, groupBroken, skirmishEnding, rollFightWeapon } from '../rules/engagement/skirmish.ts';
 import { emptyFlags, type Position, type Snapshot, type SoldierState } from '../rules/engagement/types.ts';
 import { isGrounded, nextBehaviorFor, type BodyPart } from '../rules/titan.ts';
@@ -705,16 +706,21 @@ export async function titanDies(combat: any, key: string, rec: Recorder): Promis
   const actor = titanActor(combat, key);
   if (!row || !actor || row.status !== 'focus') return;
   const snap = snapshot(combat);
-  const label = row.label;
-  const held = row.grab?.soldier ?? null;
-  rec.line(tr('death.relief', { who: snap.soldiers.filter((s) => holdsAPosition(s, snap.titans)).map((s) => s.name).join(', ') }));
-  if (held) rec.line(tr(row.grab.lifted ? 'death.freedFalls' : 'death.freed', { name: nameOf(held) }));
-  const steam = snap.soldiers.filter((s) => s.alive && (isClose(s.positions[label]) || s.id === held)).map((s) => s.name);
-  if (steam.length) rec.line(tr('death.steam', { who: steam.join(', ') }));
-  if (!isGrounded(partsOf(actor))) {
-    const path = snap.soldiers.filter((s) => s.alive && (isClose(s.positions[label]) || s.id === held)).map((s) => s.name);
-    if (path.length) rec.line(tr('death.fall', { who: path.join(', ') }));
-  }
+  const turns = combat.turns ?? [];
+  const plan = planTitanDeath({
+    soldiers: snap.soldiers,
+    titans: snap.titans,
+    key,
+    cards: [...combat.combatants].filter((c: any) => c.system.kind === 'titan').map((c: any) => ({ id: c.id, titan: c.system.titan, order: turns.includes(c) ? turns.indexOf(c) : null })),
+    turn: combat.turn ?? null,
+    grounded: isGrounded(partsOf(actor)),
+  });
+  if (!plan) return;
+  const names = (ids: string[]) => ids.map(nameOf).join(', ');
+  rec.line(tr('death.relief', { who: names(plan.relief) }));
+  if (plan.freed) rec.line(tr(row.grab.lifted ? 'death.freedFalls' : 'death.freed', { name: nameOf(plan.freed) }));
+  if (plan.steam.length) rec.line(tr('death.steam', { who: names(plan.steam) }));
+  if (plan.fall.length) rec.line(tr('death.fall', { who: names(plan.fall) }));
   rec.set(actor, 'system.corpse', true);
   rec.set(actor, 'system.openings', 0);
   rec.set(actor, 'system.openings_by', []);
@@ -722,20 +728,9 @@ export async function titanDies(combat: any, key: string, rec: Recorder): Promis
   rec.set(actor, 'system.attention_holder', '');
   rec.set(actor, 'system.next_behavior', { entry: '', revealed: false });
   rec.set(combat, 'system.titans', rows.map((r) => (r.key === key ? { ...r, status: 'corpse', grab: null, decoy: null, flags: emptyFlags(), pending: '' } : r)));
-  for (const s of snap.soldiers) {
-    const a = game.actors.get(s.id);
-    const positions = { ...s.positions };
-    if (s.id === held) delete positions[label];
-    else if (positions[label] !== undefined) positions[label] = corpsePosition(positions[label])!;
-    recordPositions(rec, a, positions);
-  }
+  for (const [id, positions] of Object.entries(plan.positions)) recordPositions(rec, game.actors.get(id), positions);
   // The remaining cards of this round are removed.
-  const current = combat.combatant;
-  for (const c of combat.combatants) {
-    if (c.system.kind !== 'titan' || c.system.titan !== key) continue;
-    if (c === current) continue;
-    rec.set(c, 'initiative', null);
-  }
+  for (const id of plan.clearCards) rec.set(combat.combatants.get(id), 'initiative', null);
   await wingEvent(combat, { kind: 'titan' }, rec);
   const after = rows.map((r) => (r.key === key ? { ...r, status: 'corpse' } : r));
   const anyFocus = after.some((r) => r.status === 'focus');

@@ -55,6 +55,7 @@ import {
   spendOpenings,
   type PartContext,
 } from '../src/rules/engagement/strikes.ts';
+import { planTitanDeath, type DeathCard } from '../src/rules/engagement/titan-death.ts';
 import { emptyFlags, type AnchorRating, type Position, type Snapshot, type SoldierState, type TitanRow } from '../src/rules/engagement/types.ts';
 import type { BodyPart } from '../src/rules/titan.ts';
 import { engagementConfig } from '../tools/config-data.ts';
@@ -776,5 +777,55 @@ describe('tracker requests (the GM proxy guard)', () => {
     expect(checkTrackerRequest(w(['a'], ['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Held/);
     expect(checkTrackerRequest({ ...w(['a']), snapshot: () => ({ ...sk, soldiers: [soldier('a', { down: true })] }) }, { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Down/);
     expect(checkTrackerRequest(world(snap({ step: 'play' }), ['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Skirmish/);
+  });
+});
+
+// ------------------------------------------------------------------ a Titan's death
+
+describe('a Focus Titan dies (titan-harm.yaml, titan_death)', () => {
+  const grab = { soldier: 'g', counted: 1, lifted: true, arm: 'left-arm' };
+  const soldiers = [
+    soldier('a', { positions: { A: 'blind-spot', B: 'distant' } }),
+    soldier('b', { positions: { A: 'on-body', B: 'in-reach' } }),
+    soldier('c', { positions: { A: 'distant', B: 'distant' } }),
+    soldier('g', { positions: { A: 'on-body', B: 'distant' } }),
+    soldier('x', { positions: { B: 'distant' } }),
+  ];
+  const titans = [titan('A', { grab }), titan('B')];
+  // Turn order this round: tA's card 2, a, tB, tA's card 9 (current: a), tA's card 14.
+  const cards: DeathCard[] = [
+    { id: 'A1', titan: 'tA', order: 0 },
+    { id: 'B1', titan: 'tB', order: 2 },
+    { id: 'A2', titan: 'tA', order: 3 },
+    { id: 'A3', titan: 'tA', order: 4 },
+    { id: 'A4', titan: 'tA', order: null },
+  ];
+  const plan = planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 1, grounded: false })!;
+
+  it('removes only its cards after the current one, so the turn does not move', () => {
+    expect(plan.clearCards).toEqual(['A2', 'A3']);
+    expect(planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 3, grounded: false })!.clearCards).toEqual(['A3']);
+    expect(planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: null, grounded: false })!.clearCards).toEqual(['A1', 'A2', 'A3']);
+  });
+
+  it('turns each Position into a Position relative to the corpse', () => {
+    expect(plan.positions.a).toEqual({ A: 'in-reach', B: 'distant' });
+    expect(plan.positions.b).toEqual({ A: 'in-reach', B: 'in-reach' });
+    expect(plan.positions.c).toEqual({ A: 'distant', B: 'distant' });
+    expect(plan.positions.x).toEqual({ B: 'distant' });
+  });
+
+  it('frees the Grabbed soldier into the steam and the fall', () => {
+    expect(plan.freed).toBe('g');
+    expect(plan.positions.g.B).toBe('distant');
+    expect(plan.steam).toEqual(['a', 'b', 'g']);
+    expect(plan.fall).toEqual(['a', 'b', 'g']);
+    expect(planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 1, grounded: true })!.fall).toEqual([]);
+    expect(plan.relief).toEqual(['a', 'b', 'c', 'g', 'x']);
+  });
+
+  it('does nothing for a corpse or an unknown Titan', () => {
+    expect(planTitanDeath({ soldiers, titans: [titan('A', { status: 'corpse' })], key: 'tA', cards, turn: 1, grounded: false })).toBeNull();
+    expect(planTitanDeath({ soldiers, titans, key: 'tZ', cards, turn: 1, grounded: false })).toBeNull();
   });
 });
