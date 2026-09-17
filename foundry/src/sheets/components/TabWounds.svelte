@@ -199,7 +199,7 @@
   <div>
     <div class="block">
       <Sec n="3" title={t('WOF.Derived.stress')} hint={t('WOF.Sheet.wounds.stressHint')} />
-      <StressTrack count={stressCells} value={d.stress_effective} minimum={d.minimum_stress} disabled={ro} size="lg" onbox={(i) => clickStressBox(actor, i)} />
+      <StressTrack count={stressCells} max={36} value={d.stress_effective} minimum={d.minimum_stress} disabled={ro} size="lg" onbox={(i) => clickStressBox(actor, i)} />
       <p class="note" style="margin-top:4px">{t('WOF.Sheet.wounds.stressNote', { min: d.minimum_stress, scars: s.scars.length })}</p>
     </div>
 

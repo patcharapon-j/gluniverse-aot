@@ -20,12 +20,101 @@ export interface BodyPart {
   progress: number;
 }
 
+/** titan-format.yaml, entry_fields.tier: what an entry does to the soldier holding the Attention. */
+export const TITAN_TIERS = ['terrorize', 'control', 'kill', 'thrash'] as const;
+/** titan-harm.yaml: the Body Part kinds a Titan is built from. */
+export const PART_KINDS = ['eyes', 'arm', 'leg'] as const;
+/** titan-format.yaml, entry_fields.targets. */
+export const TITAN_TARGETS = ['holder', 'holder-and-position'] as const;
+/** titan-format.yaml, entry_fields.effects: what a landed entry causes. */
+export const TITAN_EFFECTS = ['stress', 'critical-injury', 'knock-loose', 'grab', 'telegraph'] as const;
+
 export interface BehaviorEntry {
   id: string;
   name: string;
   results: number[];
   tier: string;
   body_parts_used: string[];
+}
+
+/** A Behavior Table entry as a Titan keeps it (titan-format.yaml, entry_fields). */
+export interface BehaviorRow extends BehaviorEntry {
+  targets: string;
+  position_requirement: string[];
+  attack_dice: number | null;
+  effects: Record<string, unknown>[];
+  fallback: string;
+  text: string;
+}
+
+/** The D6 results a GM typed, read as whole numbers 1 to 6, in order and without repeats. */
+export function readResults(typed: string): number[] {
+  const out = new Set<number>();
+  for (const part of String(typed).split(/[^0-9]+/)) {
+    const n = Number(part);
+    if (Number.isInteger(n) && n >= 1 && n <= 6) out.add(n);
+  }
+  return [...out].sort((a, b) => a - b);
+}
+
+/** The D6 results no entry of the table has claimed. */
+export function freeResults(entries: readonly { results: readonly number[] }[]): number[] {
+  const taken = new Set(entries.flatMap((e) => [...e.results]));
+  return [1, 2, 3, 4, 5, 6].filter((n) => !taken.has(n));
+}
+
+/** An id no entry of the table uses. */
+export function freeEntryId(entries: readonly { id: string }[]): string {
+  const taken = new Set(entries.map((e) => e.id));
+  for (let n = entries.length + 1; ; n++) {
+    const id = `behavior-${n}`;
+    if (!taken.has(id)) return id;
+  }
+}
+
+/** titan-format.yaml, entry_fields.position_requirement. */
+const POSITION_IDS = ['distant', 'in-reach', 'on-body', 'blind-spot'] as const;
+
+/** A new entry for a table being written: the free results, no Body Parts needed, Thrash beneath it. */
+export function blankEntry(entries: readonly BehaviorRow[], name: string): BehaviorRow {
+  const free = freeResults(entries);
+  return {
+    id: freeEntryId(entries),
+    name,
+    results: free.length ? [free[0]] : [],
+    tier: 'terrorize',
+    targets: 'holder',
+    position_requirement: [...POSITION_IDS],
+    body_parts_used: [],
+    attack_dice: null,
+    effects: [],
+    fallback: entries.some((e) => e.tier === 'thrash') ? 'thrash' : 'none',
+    text: '',
+  };
+}
+
+/** The table without an entry: the entries that fell back to it thrash instead. */
+export function withoutEntry(entries: readonly BehaviorRow[], id: string): BehaviorRow[] {
+  return entries.filter((e) => e.id !== id).map((e) => (e.fallback === id ? { ...e, fallback: 'thrash' } : e));
+}
+
+/** body_parts_used as how many of each kind the entry needs (a kind listed twice needs two). */
+export function partsUsedCounts(list: readonly string[]): Record<string, number> {
+  const out: Record<string, number> = Object.fromEntries(PART_KINDS.map((k) => [k, 0]));
+  for (const k of list) out[k] = (out[k] ?? 0) + 1;
+  return out;
+}
+
+/** The counts written back as the stored list, in the Body Part kinds' own order. */
+export function partsUsedList(counts: Record<string, number>): string[] {
+  return PART_KINDS.flatMap((k) => Array.from({ length: Math.max(0, Math.round(counts[k] ?? 0)) }, () => k as string));
+}
+
+/** A blank effect of the kind the GM picked, with the fields that kind carries. */
+export function blankEffect(type: string): Record<string, unknown> {
+  if (type === 'stress') return { type, amount: 1 };
+  if (type === 'critical-injury') return { type, injury_location: 'rolled', injury_type: 'crush', cannot_be_lethal: false };
+  return { type };
 }
 
 const rank = (s: PartState) => PART_STATES.indexOf(s);

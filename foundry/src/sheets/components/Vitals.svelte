@@ -27,6 +27,8 @@
   const inHandles = $derived(blades.find((g) => g.inHandles) ?? null);
   const carried = $derived(blades.filter((g) => !g.inHandles));
   const discipline = $derived(view.talents.find((x) => x.talentId === 'blade-discipline') ?? null);
+  // The strip's track wraps at eight boxes a row (sheet.css, --track-cols) and tallies the rest.
+  const STRIP_BOXES = 24;
   const stressBoxes = $derived(Math.max(6, d.stress_effective + 1));
   const bestSpare = $derived(s.spare_canisters.length ? s.spare_canisters.indexOf(Math.max(...s.spare_canisters)) : -1);
 
@@ -121,7 +123,7 @@
         <button type="button" disabled={ro} aria-label={t('WOF.Sheet.stress.raise')} onclick={() => onStress(stepStress(actor, 1), true)}>+</button>
       </span>
     </div>
-    <StressTrack count={stressBoxes} value={d.stress_effective} minimum={d.minimum_stress} disabled={ro} onbox={(i) => onStress(clickStressBox(actor, i), i >= d.stress_effective)} />
+    <StressTrack count={stressBoxes} max={STRIP_BOXES} value={d.stress_effective} minimum={d.minimum_stress} disabled={ro} onbox={(i) => onStress(clickStressBox(actor, i), i >= d.stress_effective)} />
     {#if view.responses.length}
       <ul class="vchips" aria-label={t('WOF.Sheet.stress.responses')}>
         {#each view.responses as r (r.index)}

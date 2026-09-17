@@ -6,6 +6,7 @@
 import { actorPool } from './actor-pool.ts';
 import { answer, cover, currentPushBlock, dodge, foeReact, gasFromFear, gallows, opsAction, push, pushBlockText, shrug } from './card-actions.ts';
 import { renderCard, type Card, type CardViewer } from './card.ts';
+import { armCard, CardMotion, cardSignature, playCard, whenShown } from './card-motion.ts';
 import { cardOf, ownSoldiers, readyTalent, t } from './post.ts';
 
 function actorSync(uuid: string): any {
@@ -58,6 +59,7 @@ const ACTIONS: Record<string, (m: any, button: HTMLButtonElement) => unknown> = 
 };
 
 export function registerChat(): void {
+  const motion = new CardMotion();
   Hooks.on('renderChatMessageHTML', (message: any, html: HTMLElement) => {
     const card = cardOf(message);
     if (!card || card.v !== 1 || !message.isContentVisible) return;
@@ -66,6 +68,13 @@ export function registerChat(): void {
     html.classList.add('wof-card-msg');
     const deathRows = CONFIG.WOF.deathRoll.outcomes;
     content.innerHTML = renderCard(t, card, viewerFor(message, card), deathRows);
+    // A redraw the viewer has seen before plays nothing; a new roll deals its dice in.
+    const plan = motion.plan(message.id, cardSignature(card), Number(message.timestamp ?? 0), Date.now());
+    if (plan !== 'none') {
+      const drawn = content.querySelector<HTMLElement>('.wof-card');
+      armCard(drawn, plan);
+      whenShown(html, () => playCard(drawn, plan));
+    }
     content.addEventListener('click', (event) => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-wof-act]');
       if (!button || button.disabled) return;

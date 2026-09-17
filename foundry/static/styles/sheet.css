@@ -185,7 +185,7 @@
 
 /* ── Vitals strip ───────────────────────────────────────────────────── */
 .wof-sheet .vitals {
-  display: grid; grid-template-columns: auto auto auto minmax(0, 1fr) minmax(0, 1.15fr);
+  display: grid; grid-template-columns: minmax(0, auto) minmax(0, auto) minmax(0, auto) minmax(0, 1fr) minmax(0, 1.15fr);
   margin: var(--s3) var(--gr) 0 var(--gl); border: 1px solid var(--ink2); flex: 0 0 auto;
   background: linear-gradient(var(--paper-hi), var(--paper-lo)); box-shadow: 2px 2px 0 var(--ink);
 }
@@ -210,8 +210,20 @@
 .wof-sheet .boxes { display: flex; gap: var(--s1); align-items: center; flex-wrap: wrap; }
 /* Track boxes (Health, Stress): square, inked on the paper. Held and marked boxes are red stamps; a
    box an untreated Critical Injury crosses off is barred dark with the injury's glyph. */
-.wof-sheet .track-row { --box: 20px; --status: #D6402F; gap: 5px; padding: 1px 0 3px; }
-.wof-sheet .track-row.lg { --box: 24px; gap: 6px; }
+/* A track wraps at --track-cols boxes a row, and its max-width caps what the column asks for, so a
+   long Stress track lays out in rows instead of stretching the strip past the paper. */
+.wof-sheet .track-row {
+  --box: 20px; --bgap: 5px; --track-cols: 8; --status: #D6402F;
+  gap: var(--bgap); padding: 1px 0 3px; align-content: flex-start;
+  max-width: calc(var(--track-cols) * var(--box) + (var(--track-cols) - 1) * var(--bgap));
+}
+.wof-sheet .track-row.lg { --box: 24px; --bgap: 6px; --track-cols: 12; }
+/* Stress past the last box drawn: the rest counted on one tally chip. */
+.wof-sheet .sover {
+  flex: 0 0 auto; display: inline-grid; place-items: center; min-width: var(--box); height: var(--box); padding: 0 3px;
+  font: 700 var(--t-xs)/1 var(--fd); font-variant-numeric: lining-nums tabular-nums; color: var(--paper-hi);
+  background: var(--red); border: 1.5px solid var(--red-lo); border-radius: 1px 2px 1px 2px; transform: rotate(-1.5deg);
+}
 .wof-sheet .hbox, .wof-sheet .sbox {
   flex: 0 0 auto; position: relative; width: var(--box, 20px); height: var(--box, 20px); min-height: 0; margin: 0; padding: 0;
   display: grid; place-items: center; line-height: 0; cursor: pointer; border-radius: 1px 2px 1px 2px;
@@ -258,7 +270,7 @@
 .wof-sheet .w3 { display: flex; align-items: center; gap: var(--s2); min-width: 0; }
 .wof-sheet .w3 .still, .wof-sheet .w3 .w3d { flex: 0 0 auto; display: block; }
 .wof-sheet .w3 .still svg { display: block; }
-.wof-sheet .w3 .wtxt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.wof-sheet .w3 .wtxt { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
 .wof-sheet .w3 .val { font: 700 var(--t-lg)/1 var(--fd); }
 .wof-sheet .w3 .val small { font: 600 var(--t-sm) var(--fd); color: var(--ink3); }
 
@@ -604,6 +616,14 @@
 .wof-sheet .attr .nm { display: flex; align-items: center; gap: var(--s1); font: var(--t-xs)/1.2 var(--fl); letter-spacing: .12em; text-transform: uppercase; }
 .wof-sheet .attr .key { transform: rotate(4deg); padding: 0 3px; border-width: 1.5px; }
 .wof-sheet .attr b { font: 900 var(--t-lg)/1 var(--fd); text-align: right; }
+/* The compact attribute row rolls its attribute alone, as the Soldier stat block does. */
+.wof-sheet .attr .attr-roll.ic-btn { position: relative; display: block; width: 24px; height: 24px; border-radius: 2px; }
+.wof-sheet .attr .attr-roll .hint { position: absolute; right: -4px; bottom: -4px; font-size: 9px; color: var(--paper-hi); background: var(--sc, var(--ink2)); border: 1px solid var(--ink); padding: 1px; border-radius: 2px; opacity: 0; transform: scale(.7); transition: opacity .12s, transform .12s; }
+.wof-sheet .attr .attr-roll.nm-btn { letter-spacing: inherit; text-transform: inherit; border-bottom: 1px dotted transparent; }
+.wof-sheet .attr:has(.attr-roll:hover), .wof-sheet .attr:has(.attr-roll:focus-visible) { background: linear-gradient(170deg, var(--paper-hi), rgba(142, 35, 35, .1)); }
+.wof-sheet .attr .attr-roll:hover .ic, .wof-sheet .attr .attr-roll:focus-visible .ic { filter: drop-shadow(0 0 2px rgba(142, 35, 35, .55)); }
+.wof-sheet .attr:has(.attr-roll:hover) .attr-roll .hint, .wof-sheet .attr .attr-roll:focus-visible .hint { opacity: 1; transform: none; }
+.wof-sheet .attr:has(.attr-roll:hover) .attr-roll.nm-btn { color: var(--red); border-bottom-color: var(--red); }
 .wof-sheet .grief.sm { gap: var(--s1); }
 .wof-sheet .grief.sm button { width: 16px; height: 16px; }
 .wof-sheet b.num { font: 900 var(--t-lg)/1 var(--fd); }
@@ -684,6 +704,25 @@
 .wof-sheet dl.erow > div { display: inline-flex; align-items: baseline; gap: var(--s1); }
 .wof-sheet dl.erow dt { font: var(--t-xs)/1.5 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin: 0; }
 .wof-sheet dl.erow dd { margin: 0; font: var(--t-sm)/1.5 var(--fb); }
+/* The GM's Behavior Table editor: the entry's own form, opened under the entry it writes. */
+.wof-sheet .behave li.editing { background: rgba(47, 74, 110, .06); }
+.wof-sheet .eacts { display: flex; gap: var(--s1); margin-top: var(--s1); }
+.wof-sheet .eedit {
+  display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: var(--s1) var(--s2); align-items: center;
+  margin: var(--s2) 0 var(--s1); padding: var(--s2); border: 1px dashed var(--ink3); background: rgba(244, 236, 216, .5);
+}
+.wof-sheet .eedit > .lbl { align-self: center; }
+.wof-sheet .eedit input.short { width: 72px; }
+.wof-sheet .eedit textarea { min-height: 52px; resize: vertical; }
+.wof-sheet .epos { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); align-items: center; }
+.wof-sheet .epos label.check { gap: var(--s1); }
+.wof-sheet .epos label.check.num input { width: 40px; }
+.wof-sheet .efx { display: flex; flex-wrap: wrap; gap: var(--s1); align-items: center; }
+.wof-sheet .efx-chip { display: inline-flex; align-items: center; gap: var(--s1); padding: 1px 3px 1px 5px; border: 1px solid var(--ink3); background: var(--paper-hi); }
+.wof-sheet .efx-chip b { font: var(--t-xs)/1.4 var(--fl); letter-spacing: .08em; text-transform: uppercase; font-weight: 400; }
+.wof-sheet .efx-chip input[type=number] { width: 36px; }
+.wof-sheet .efx-chip .x { padding: 0 3px; color: var(--red); font: 700 var(--t-md)/1 var(--fd); }
+.wof-sheet .sec-act .tcopy { max-width: 132px; font-size: var(--t-xs); }
 .wof-sheet .tier { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 3px; font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; padding: 3px 5px; border: 1px solid var(--ink3); white-space: nowrap; }
 .wof-sheet .tier .ic { mix-blend-mode: multiply; }
 .wof-sheet .tier.kill { border-color: var(--red); color: var(--red); }

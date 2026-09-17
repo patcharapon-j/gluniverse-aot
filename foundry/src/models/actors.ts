@@ -6,11 +6,8 @@
  */
 import config from '../wof-config.ts';
 import { deriveSoldier, foeCurrentHealth, type Attributes, type CarriedGear, type SoldierDerived } from '../rules/derived.ts';
+import { PART_KINDS, PART_STATES, TITAN_TARGETS, TITAN_TIERS } from '../rules/titan.ts';
 import { fieldKit, POSITIONS, RANKS } from './fields.ts';
-
-const TITAN_TIERS = ['terrorize', 'control', 'kill', 'thrash'];
-const BODY_PART_KINDS = ['eyes', 'arm', 'leg'];
-const BODY_PART_STATES = ['intact', 'wounded', 'broken'];
 
 /** The embedded Items a soldier's derived values read. */
 function soldierInputs(system: any, actor: any, strongBack: boolean) {
@@ -176,9 +173,9 @@ export function defineActorModels() {
         body_parts: new f.ArrayField(
           new f.SchemaField({
             id: k.str(),
-            kind: k.choice(BODY_PART_KINDS, 'arm'),
+            kind: k.choice(PART_KINDS, 'arm'),
             toughness: k.int(2, { min: 1 }),
-            state: k.choice(BODY_PART_STATES, 'intact'),
+            state: k.choice(PART_STATES, 'intact'),
             progress: k.nonNeg(),
           }),
         ),
@@ -190,9 +187,9 @@ export function defineActorModels() {
               name: k.str(),
               results: new f.ArrayField(k.int(1, { min: 1, max: 6 })),
               tier: k.choice(TITAN_TIERS, 'terrorize'),
-              targets: k.choice(['holder', 'holder-and-position'], 'holder'),
+              targets: k.choice(TITAN_TARGETS, 'holder'),
               position_requirement: new f.ArrayField(k.choice(POSITIONS, 'distant')),
-              body_parts_used: new f.ArrayField(k.choice(BODY_PART_KINDS, 'arm')),
+              body_parts_used: new f.ArrayField(k.choice(PART_KINDS, 'arm')),
               attack_dice: k.nullableInt({ min: 0 }),
               effects: new f.ArrayField(effectField()),
               fallback: k.str('thrash'),

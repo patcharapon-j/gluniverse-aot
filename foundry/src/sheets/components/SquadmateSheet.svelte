@@ -4,8 +4,9 @@
    * one card, reusing the Soldier sheet's vitals strip, Wounds & Mind tab, and Kit ledger.
    */
   import { tick } from 'svelte';
-  import { jolt, pulse, reveal } from '../../motion/fx.ts';
+  import { fx, jolt, pulse, reveal } from '../../motion/fx.ts';
   import { MOTION } from '../../motion/tokens.ts';
+  import { rollAction } from '../../dice/roll-action.ts';
   import { motionMode, viewer } from '../../settings.svelte.ts';
   import { contextMenu, dragItem, proseMirror, tooltip } from '../actions.ts';
   import { setSheetContext, t } from '../context.ts';
@@ -56,6 +57,15 @@
     const tabs = paper?.querySelector<HTMLElement>('.tabs');
     if (paper && tabs && paper.scrollTop > tabs.offsetTop) paper.scrollTo({ top: tabs.offsetTop - 8 });
     reveal(body?.firstElementChild);
+  }
+
+  /**
+   * An ad hoc roll on an attribute alone, as on the Soldier sheet: the Squadmate's fixed dice for
+   * the attribute, plus its Stress Dice (action-catalog.yaml, the rolls called by attribute).
+   */
+  async function rollAttribute(id: string, el: HTMLElement) {
+    fx(el.closest('.attr'), { scale: [0.97, 1], duration: MOTION.base, ease: MOTION.settle });
+    await rollAction(actor, '', { attributeAlone: id as never });
   }
 
   async function toggleTreated(id: string, treated: boolean) {
@@ -136,9 +146,13 @@
           <div class="attrlist">
             {#each attributes as a (a.id)}
               {@const v = s.attributes[a.id]}
+              {@const rollTip = t('WOF.Sheet.soldier.rollAttr', { attr: t(`WOF.Attribute.${a.id}`), dice: v })}
               <div class="attr s-{a.id}">
-                <img class="ic" src={icon(`attr-${a.id}`)} alt="" />
-                <span class="nm">{t(`WOF.Attribute.${a.id}`)}{#if view.keyAttribute === a.id}<span class="stamp key">{t('WOF.Sheet.soldier.key')}</span>{/if}</span>
+                <button type="button" class="attr-roll ic-btn" aria-label={t('WOF.Sheet.soldier.rollAttrLabel', { attr: t(`WOF.Attribute.${a.id}`) })} use:tooltip={rollTip} onclick={(e) => rollAttribute(a.id, e.currentTarget)}>
+                  <img class="ic" src={icon(`attr-${a.id}`)} alt="" />
+                  <i class="fa-solid fa-dice-d6 hint" aria-hidden="true"></i>
+                </button>
+                <span class="nm"><button type="button" class="attr-roll nm-btn" tabindex="-1" aria-hidden="true" use:tooltip={rollTip} onclick={(e) => rollAttribute(a.id, e.currentTarget)}>{t(`WOF.Attribute.${a.id}`)}</button>{#if view.keyAttribute === a.id}<span class="stamp key">{t('WOF.Sheet.soldier.key')}</span>{/if}</span>
                 <Dots groups={[{ cls: 'da', n: v }, { cls: 'da o', n: Math.max(0, view.attributeMax[a.id] - v) }]} label={t('WOF.Sheet.aria.rating', { label: t(`WOF.Attribute.${a.id}`), value: v, max: view.attributeMax[a.id] })} />
                 <b>{v}</b>
               </div>

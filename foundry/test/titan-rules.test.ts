@@ -1,15 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import {
+  blankEffect,
+  blankEntry,
   cycleState,
   fillRegeneration,
+  freeEntryId,
+  freeResults,
   isGrounded,
   meetsBodyParts,
   mostDamaged,
   nextBehaviorFor,
+  partsUsedCounts,
+  partsUsedList,
   publicFacts,
+  readResults,
   regenerate,
   strikeSuccesses,
+  withoutEntry,
   withProgress,
+  type BehaviorRow,
   type BodyPart,
   type PartState,
 } from '../src/rules/titan.ts';
@@ -130,5 +139,70 @@ describe('what players see (data/engagement/read.yaml)', () => {
     expect(publicFacts(false, none)).toEqual({ toughness: true, nape_depth: true, regeneration_clock: true, attention_ladder: true });
     expect(publicFacts(true, none)).toEqual(none);
     expect(publicFacts(true, { ...none, nape_depth: true }).nape_depth).toBe(true);
+  });
+});
+
+describe('writing a Behavior Table by hand (titan-format.yaml, entry_fields)', () => {
+  const row = (over: Partial<BehaviorRow>): BehaviorRow => ({
+    id: 'a',
+    name: 'A',
+    results: [1],
+    tier: 'terrorize',
+    targets: 'holder',
+    position_requirement: ['distant'],
+    body_parts_used: [],
+    attack_dice: null,
+    effects: [],
+    fallback: 'thrash',
+    text: '',
+    ...over,
+  });
+
+  it('reads the D6 results a GM typed, and drops what a D6 cannot roll', () => {
+    expect(readResults('1, 2')).toEqual([1, 2]);
+    expect(readResults('3 and 5')).toEqual([3, 5]);
+    expect(readResults('6, 6, 2')).toEqual([2, 6]);
+    expect(readResults('0, 7, nine')).toEqual([]);
+    expect(readResults('')).toEqual([]);
+  });
+
+  it('knows which results the table has left, and gives a new entry the first of them', () => {
+    const table = [row({ id: 'a', results: [1, 2] }), row({ id: 'b', results: [4] })];
+    expect(freeResults(table)).toEqual([3, 5, 6]);
+    const fresh = blankEntry(table, 'New behavior');
+    expect(fresh.results).toEqual([3]);
+    expect(fresh.id).not.toBe('a');
+    expect(freeResults([...table, fresh])).toEqual([5, 6]);
+    // A full table still adds an entry, with no result of its own until the GM types one.
+    expect(blankEntry([row({ results: [1, 2, 3, 4, 5, 6] })], 'New behavior').results).toEqual([]);
+  });
+
+  it('never reuses an entry id, whatever the table already holds', () => {
+    expect(freeEntryId([])).toBe('behavior-1');
+    expect(freeEntryId([row({ id: 'behavior-1' }), row({ id: 'behavior-2' })])).toBe('behavior-3');
+    expect(freeEntryId([row({ id: 'behavior-3' })])).toBe('behavior-2');
+  });
+
+  it('lets an entry go, and the entries that fell back to it thrash instead', () => {
+    const table = [row({ id: 'swat' }), row({ id: 'bite', fallback: 'swat' }), row({ id: 'thrash', tier: 'thrash', fallback: 'none' })];
+    const left = withoutEntry(table, 'swat');
+    expect(left.map((e) => e.id)).toEqual(['bite', 'thrash']);
+    expect(left[0].fallback).toBe('thrash');
+    expect(left[1].fallback).toBe('none');
+  });
+
+  it('counts the Body Parts an entry needs, and writes the counts back in the kinds’ own order', () => {
+    expect(partsUsedCounts(['arm', 'arm', 'eyes'])).toEqual({ eyes: 1, arm: 2, leg: 0 });
+    expect(partsUsedList({ eyes: 1, arm: 2, leg: 0 })).toEqual(['eyes', 'arm', 'arm']);
+    expect(partsUsedList(partsUsedCounts([]))).toEqual([]);
+    // Two arms needed, one Broken: the entry cannot happen.
+    const two = { body_parts_used: partsUsedList({ eyes: 0, arm: 2, leg: 0 }) };
+    expect(meetsBodyParts(two, partsOf({ 'left-arm': 'broken' }))).toBe(false);
+  });
+
+  it('gives each effect the fields its kind carries', () => {
+    expect(blankEffect('stress')).toEqual({ type: 'stress', amount: 1 });
+    expect(blankEffect('critical-injury')).toEqual({ type: 'critical-injury', injury_location: 'rolled', injury_type: 'crush', cannot_be_lethal: false });
+    expect(blankEffect('grab')).toEqual({ type: 'grab' });
   });
 });
