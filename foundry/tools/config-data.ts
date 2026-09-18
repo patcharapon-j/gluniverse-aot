@@ -138,15 +138,37 @@ export function lifepathTables(t: Tables, site: SiteWording): LpTables {
     if (!e || !e.attribute || e.attribute === 'from_performance_attributes') throw new Error(`The Exam entry "${id}" has no attribute.`);
     return e.attribute;
   };
-  const trials = t.graduationExam.order.map((id) => {
-    const tr = t.graduationExam.trials.find((x) => x.id === id);
-    if (!tr) throw new Error(`data/character/graduation-exam.yaml orders the missing Trial "${id}".`);
-    const choices = (tr.entry ? [{ entry: tr.entry, gear_item: tr.gear_item ?? null }] : (tr.entry_choice ?? [])).map((c) => ({ entry: c.entry, gear: c.gear_item, dice: c.gear_item ? (examDice.get(c.gear_item) ?? 0) : 0 }));
-    const merit = bands(tr.merit);
-    const paying = merit.filter((b) => b.value > 0).map((b) => b.min ?? 0);
-    return { id: tr.id, name: tr.name, description: tr.description, choices, needs: tr.needs ?? Math.min(...paying), push: tr.push, help: tr.help !== 'none', merit };
+  const stages = t.graduationExam.order.map((id) => {
+    const st = t.graduationExam.stages.find((x) => x.id === id);
+    if (!st) throw new Error(`data/character/graduation-exam.yaml orders the missing Stage "${id}".`);
+    const trials = [...st.trials]
+      .sort((a, b) => a.result - b.result)
+      .map((tr) => ({
+        id: tr.id,
+        result: tr.result,
+        name: tr.name,
+        description: tr.description,
+        choices: (tr.entry ? [{ entry: tr.entry, gear_item: tr.gear_item ?? null }] : (tr.entry_choice ?? [])).map((c) => ({
+          entry: c.entry,
+          gear: c.gear_item,
+          dice: c.gear_item ? (examDice.get(c.gear_item) ?? 0) : 0,
+        })),
+      }));
+    return { id: st.id, name: st.name, description: st.description, needs: st.needs, push: st.push, help: st.help !== 'none', merit: bands(st.merit), trials };
   });
-  const entryAttributes = Object.fromEntries(trials.flatMap((x) => x.choices.map((c) => [c.entry, entryAttr(c.entry)])));
+  const examConditions = [...t.graduationExam.conditions_table.rows]
+    .sort((a, b) => a.result - b.result)
+    .map((r) => ({
+      result: r.result,
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      needs: r.needs_change ?? 0,
+      noGear: !!r.no_gear_dice,
+      bonus: r.bonus_dice ?? 0,
+      extraPushes: r.extra_pushes ?? 0,
+    }));
+  const entryAttributes = Object.fromEntries(stages.flatMap((st) => st.trials.flatMap((x) => x.choices.map((c) => [c.entry, entryAttr(c.entry)]))));
   const templates = new Map(t.squadmates.templates.map((m) => [m.id, m.attributes]));
   const choiceProcedures = (option: string): Procedure[] => ['lifepath', ...(option.includes('template-build') ? ['template-build' as const] : []), ...(option.includes('free-build') ? ['free-build' as const] : [])];
   const built = t.attributes.creation.built;
@@ -188,7 +210,7 @@ export function lifepathTables(t: Tables, site: SiteWording): LpTables {
     }),
     performanceMerit: bands(t.trainingYears.performance_roll.merit_from_successes),
     classRank: t.classRank.rows.map((r) => ({ min: r.merit_min, max: r.merit_max, rank: r.class_rank, top10: r.top_10 })),
-    exam: { trials, responseCost: 1 },
+    exam: { stages, conditions: examConditions, responseCost: 1 },
     talents: t.talents.talents.map((x) => ({ id: x.id, name: x.name, type: x.type, maxLevel: x.max_level ?? 1, names: x.names, conditional: Object.keys(x.condition ?? {}), specialties: x.specialties })),
     specialties: t.specialties.specialties.map((sp) => {
       const tmpl = templates.get(sp.squadmate_template);
@@ -533,7 +555,11 @@ export function sweepConfigText(config: WofConfig, t: Tables): number {
   for (const o of lp.origins) [o.description, ...o.havens, o.canonTie?.link, o.condition].forEach((x) => check(`The Origin "${o.name}"`, x));
   for (const r of lp.enlistment) [r.reason, r.drive.trigger].forEach((x) => check(`The Drive "${r.drive.name}"`, x));
   for (const y of lp.years) [y.title, y.subtitle, ...y.events.flatMap((e) => [e.name, e.description])].forEach((x) => check(`The Training Year "${y.title}"`, x));
-  for (const tr of lp.exam.trials) [tr.name, tr.description, ...tr.choices.map((c) => c.gear)].forEach((x) => check(`The Trial "${tr.name}"`, x));
+  for (const st of lp.exam.stages) {
+    [st.name, st.description].forEach((x) => check(`The Exam Stage "${st.name}"`, x));
+    for (const tr of st.trials) [tr.name, tr.description, ...tr.choices.map((c) => c.gear)].forEach((x) => check(`The Trial "${tr.name}"`, x));
+  }
+  for (const c of lp.exam.conditions) [c.name, c.description].forEach((x) => check(`The exam condition "${c.name}"`, x));
   for (const sp of lp.specialties) check(`The Specialty "${sp.name}"`, sp.summary);
   for (const [where, x] of wordingTexts(config.lifepathPage)) check(where, x);
   return n;

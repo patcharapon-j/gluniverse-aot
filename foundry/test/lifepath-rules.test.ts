@@ -24,7 +24,10 @@ import {
   standardIssue,
   swapOptions,
   templateAttributes,
+  specialtyTalentOptions,
+  trialBands,
   trialMerit,
+  trialNeeds,
   trialPool,
   type LpTables,
 } from '../src/rules/lifepath.ts';
@@ -136,24 +139,40 @@ describe('Talents at creation', () => {
     expect(canGain(t, { 'iron-nerve': 1 }, 'iron-nerve')).toBe(false);
   });
 
-  it("offers an event's two Talents, or the curriculum when neither can gain", () => {
+  it("offers an event's own Talents and the year's whole curriculum beside them", () => {
     const year = t.years[0];
-    const inspection = year.events[0]; // Iron Nerve (rule) or Long Haul
-    expect(eventTalentOptions(t, {}, inspection, year)).toEqual({ options: ['iron-nerve', 'long-haul'], fallback: 'none' });
-    expect(eventTalentOptions(t, { 'iron-nerve': 1 }, inspection, year)).toEqual({ options: ['long-haul'], fallback: 'none' });
-    const both = eventTalentOptions(t, { 'iron-nerve': 1, 'long-haul': 2 }, inspection, year);
-    expect(both.fallback).toBe('both-capped');
-    expect(both.options).toEqual(year.curriculum.filter((id) => !['iron-nerve', 'long-haul'].includes(id)));
+    const inspection = year.events[0]; // Iron Nerve (rule), Long Haul, or Steady Heart
+    const open = eventTalentOptions(t, {}, inspection, year);
+    expect(open.event).toEqual(inspection.talents);
+    expect(open.options.slice(0, inspection.talents.length)).toEqual(inspection.talents);
+    expect(open.options).toEqual(expect.arrayContaining(year.curriculum));
+    expect(open.options.length).toBeGreaterThanOrEqual(year.curriculum.length);
+    expect(open.fallback).toBe('none');
+    // A capped Talent drops off both lists; the rest of the year is still open.
+    const some = eventTalentOptions(t, { 'iron-nerve': 1 }, inspection, year);
+    expect(some.options).not.toContain('iron-nerve');
+    expect(some.event).toEqual(['long-haul', 'steady-heart']);
+    expect(some.fallback).toBe('none');
   });
 
-  it('lets the Cadet leave a Talent that names only dormant entries for the curriculum', () => {
+  it('opens every Talent when neither the event nor the curriculum can gain a level', () => {
     const year = t.years[0];
-    const event = year.events[0];
-    const dormant = { ...t, dormant: [...talentNames('long-haul')] };
-    const r = eventTalentOptions(dormant, { 'iron-nerve': 1 }, event, year);
-    expect(r.fallback).toBe('dormant');
-    expect(r.options[0]).toBe('long-haul');
-    expect(r.options).toEqual(expect.arrayContaining(year.curriculum.filter((id) => id !== 'iron-nerve')));
+    const inspection = year.events[0];
+    const capped: Record<string, number> = {};
+    for (const id of [...inspection.talents, ...year.curriculum]) capped[id] = 2;
+    const all = eventTalentOptions(t, capped, inspection, year);
+    expect(all.fallback).toBe('all-capped');
+    expect(all.options).toContain('clean-cut');
+    expect(all.options).not.toContain('long-haul');
+  });
+
+  it("offers the Specialty's list and the general list at Graduation", () => {
+    const slayer = t.specialties.find((x) => x.id === 'slayer')!;
+    const g = specialtyTalentOptions(t, {}, slayer);
+    expect(g.specialty).toEqual(slayer.talents);
+    expect(g.general).toEqual(t.general);
+    expect(g.options.length).toBe(slayer.talents.length + t.general.length);
+    expect(specialtyTalentOptions(t, { 'clean-cut': 2, 'iron-nerve': 1 }, slayer).options).toEqual(expect.not.arrayContaining(['clean-cut', 'iron-nerve']));
   });
 
   it('keeps a built soldier to one Talent at level 2', () => {
@@ -165,34 +184,63 @@ describe('Talents at creation', () => {
   });
 });
 
-function talentNames(id: string): string[] {
-  return t.talents.find((x) => x.id === id)!.names;
-}
-
 describe('the Graduation Exam', () => {
-  const [balance, dummy, field] = t.exam.trials;
+  const [individual, titan, squad] = t.exam.stages;
+  const fair = t.exam.conditions.find((c) => c.id === 'a-fair-run')!;
+  const rain = t.exam.conditions.find((c) => c.id === 'driving-rain')!;
+  const worn = t.exam.conditions.find((c) => c.id === 'worn-training-gear')!;
+  const twice = t.exam.conditions.find((c) => c.id === 'best-of-two')!;
+  const short = t.exam.conditions.find((c) => c.id === 'a-short-course')!;
+  const balance = individual.trials.find((x) => x.id === 'odm-balance-test')!;
+  const dummy = titan.trials.find((x) => x.id === 'titan-dummy-course')!;
+  const field = squad.trials.find((x) => x.id === 'the-squad-field-exercise')!;
   const levels = { 'clean-cut': 1, 'titan-reader': 1, 'hunters-eye': 1, 'ground-work': 2, 'field-medicine': 1, 'sure-hands': 1 };
   const a = A(4, 3, 2, 4, 2, 3);
 
+  it('gives every Stage six Trials, one per tens die, and six conditions', () => {
+    expect(t.exam.stages.length).toBe(3);
+    for (const st of t.exam.stages) expect(st.trials.map((x) => x.result)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(t.exam.conditions.map((c) => c.result)).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
   it('builds each Trial pool from the attribute, a dice Talent, Help, exam issue, and Exam Stress', () => {
-    expect(trialPool(t, a, levels, balance, balance.choices[0], { helped: true, stress: 0, hunterEye: false })).toMatchObject({ attribute: 'agility', base: 3, talent: null, bonus: 0, gear: 1, stress: 0, maxPushes: 0 });
+    expect(trialPool(t, a, levels, individual, fair, balance.choices[0], { helped: true, stress: 0, hunterEye: false })).toMatchObject({ attribute: 'agility', base: 3, talent: null, bonus: 0, gear: 1, stress: 0, maxPushes: 0 });
     // Ground Work is conditional (a grounded Titan): Clean Cut counts, Ground Work never does.
-    expect(trialPool(t, a, levels, dummy, dummy.choices[0], { helped: false, stress: 0, hunterEye: false })).toMatchObject({ base: 5, talent: { id: 'clean-cut', dice: 1 }, gear: 1 });
+    expect(trialPool(t, a, levels, titan, fair, dummy.choices[0], { helped: false, stress: 0, hunterEye: false })).toMatchObject({ base: 5, talent: { id: 'clean-cut', dice: 1 }, gear: 1 });
     const read = field.choices.find((c) => c.entry === 'read')!;
-    expect(trialPool(t, a, levels, field, read, { helped: true, stress: 1, hunterEye: false })).toMatchObject({ attribute: 'instinct', base: 2 + 1 + 1, gear: 0, stress: 1, maxPushes: 1 });
-    expect(trialPool(t, a, levels, field, read, { helped: false, stress: 0, hunterEye: true })).toMatchObject({ attribute: 'perception', base: 4 + 1 });
+    expect(trialPool(t, a, levels, squad, fair, read, { helped: true, stress: 1, hunterEye: false })).toMatchObject({ attribute: 'instinct', base: 2 + 1 + 1, gear: 0, stress: 1, maxPushes: 1 });
+    expect(trialPool(t, a, levels, squad, fair, read, { helped: false, stress: 0, hunterEye: true })).toMatchObject({ attribute: 'perception', base: 4 + 1 });
     const treat = field.choices.find((c) => c.entry === 'treat-injury')!;
-    expect(trialPool(t, a, levels, field, treat, { helped: false, stress: 0, hunterEye: false })).toMatchObject({ attribute: 'wits', gear: 1, maxPushes: 2 });
+    expect(trialPool(t, a, levels, squad, fair, treat, { helped: false, stress: 0, hunterEye: false })).toMatchObject({ attribute: 'wits', gear: 1, maxPushes: 2 });
+  });
+
+  it("applies the Trial's condition to the pool", () => {
+    // Worn training gear takes the Gear Dice; run it twice adds a Bonus Die and one more Push.
+    expect(trialPool(t, a, levels, individual, worn, balance.choices[0], { helped: false, stress: 0, hunterEye: false })).toMatchObject({ gear: 0, bonus: 0, maxPushes: 0 });
+    expect(trialPool(t, a, levels, individual, twice, balance.choices[0], { helped: false, stress: 0, hunterEye: false })).toMatchObject({ gear: 1, bonus: 1, maxPushes: 1 });
+    expect(trialPool(t, a, levels, squad, twice, field.choices[0], { helped: false, stress: 0, hunterEye: false })).toMatchObject({ bonus: 1, maxPushes: 2 });
+  });
+
+  it('moves the successes needed and the Merit bands together', () => {
+    expect(trialNeeds(individual, fair)).toBe(2);
+    expect(trialNeeds(individual, rain)).toBe(3);
+    expect(trialNeeds(individual, short)).toBe(1);
+    expect(trialNeeds(squad, rain)).toBe(4);
+    expect([0, 1, 2, 3].map((n) => trialMerit(t, individual, rain, n, false))).toEqual([0, 0, 0, 1]);
+    expect([0, 1, 2].map((n) => trialMerit(t, individual, short, n, false))).toEqual([0, 1, 1]);
+    // The lowest band always keeps an open bottom, so no result falls outside the table.
+    expect(trialBands(individual, rain)[0].min).toBeNull();
   });
 
   it('pays Merit at its threshold and charges 1 for a Stress Response', () => {
-    expect([0, 1, 2, 5].map((n) => trialMerit(t, balance, n, false))).toEqual([0, 0, 1, 1]);
-    expect(field.needs).toBe(3);
-    expect([2, 3].map((n) => trialMerit(t, field, n, false))).toEqual([0, 1]);
-    expect(trialMerit(t, field, 2, true)).toBe(-1);
-    expect(trialMerit(t, field, 3, true)).toBe(0);
-    expect(balance.push).toBe(false);
-    expect(field.push && field.help).toBe(true);
+    expect([0, 1, 2, 5].map((n) => trialMerit(t, individual, fair, n, false))).toEqual([0, 0, 1, 1]);
+    expect(squad.needs).toBe(3);
+    expect([2, 3].map((n) => trialMerit(t, squad, fair, n, false))).toEqual([0, 1]);
+    expect(trialMerit(t, squad, fair, 2, true)).toBe(-1);
+    expect(trialMerit(t, squad, fair, 3, true)).toBe(0);
+    expect(individual.push).toBe(false);
+    expect(titan.push).toBe(false);
+    expect(squad.push && squad.help).toBe(true);
   });
 });
 

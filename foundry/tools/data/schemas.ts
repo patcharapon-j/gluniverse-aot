@@ -187,8 +187,8 @@ export const originRow = z.strictObject({
   name: text,
   description: text,
   attributes: z.array(attributeId).length(2),
-  talent_choice: z.array(id).length(2),
-  haven_choice: z.array(text).length(2),
+  talent_choice: z.array(id).min(3).max(6),
+  haven_choice: z.array(text).min(2).max(4),
   canon_tie: z.strictObject({ character: text, link: text }).nullable(),
   condition: z.strictObject({ campaign_year_min: z.number().int() }).nullable(),
 });
@@ -232,7 +232,7 @@ export const trainingEvent = z.strictObject({
   name: text,
   description: text,
   attribute: attributeId,
-  talent_choice: z.array(id).length(2),
+  talent_choice: z.array(id).min(2).max(4),
   merit_change: z.number().int(),
 });
 
@@ -241,7 +241,7 @@ const meritBand = z.strictObject({ successes_min: z.number().int().min(0), succe
 export const trainingYearsFile = z.looseObject({
   id: z.literal('training-years'),
   event_roll: z.literal('D66'),
-  talent_cap: z.looseObject({ max_level_at_creation: z.literal(2), if_both_capped: text, if_only_dormant_can_gain: text }),
+  talent_cap: z.looseObject({ max_level_at_creation: z.literal(2), curriculum_always_open: text, if_all_capped: text, if_only_dormant_can_gain: text }),
   performance_roll: z.looseObject({
     attribute: z.string().startsWith('the higher of'),
     push_allowed: z.literal(false),
@@ -255,7 +255,7 @@ export const trainingYearsFile = z.looseObject({
         id: z.enum(['year-1', 'year-2', 'year-3']),
         name: text,
         performance_attributes: z.array(attributeId).length(2),
-        curriculum: z.array(id).min(1),
+        curriculum: z.array(id).min(6),
         events: z.array(trainingEvent).min(1),
       }),
     )
@@ -272,20 +272,43 @@ export const classRankFile = z.looseObject({
 
 // ---------------------------------------------------------------- character/graduation-exam.yaml
 
+const examEntryChoice = z.strictObject({ entry: id, gear_item: text.nullable() });
+
 const examTrial = z.strictObject({
+  result: z.number().int().min(1).max(6),
   id,
   name: text,
   description: text,
   entry: id.optional(),
-  gear_item: text.optional(),
-  entry_choice: z.array(z.strictObject({ entry: id, gear_item: text.nullable() })).optional(),
-  needs: z.number().int().min(1).optional(),
+  gear_item: text.nullable().optional(),
+  entry_choice: z.array(examEntryChoice).min(2).optional(),
+});
+
+const examStage = z.strictObject({
+  id,
+  order: z.number().int().min(1).max(3),
+  name: text,
+  description: text,
+  needs: z.number().int().min(1),
   push: z.boolean(),
   help: text,
   cover: text.optional(),
   rolled_state: z.looseObject({ id, forbids: z.array(id) }).optional(),
   merit: z.array(meritBand).min(1),
   squad_bonus: z.literal('none').optional(),
+  trials: z.array(examTrial).length(6),
+});
+
+/** One row of the exam conditions table. Every effect field is optional; a row with none changes nothing. */
+const examCondition = z.strictObject({
+  result: z.number().int().min(1).max(6),
+  id,
+  name: text,
+  description: text,
+  needs_change: z.number().int().optional(),
+  no_gear_dice: z.literal(true).optional(),
+  bonus_dice: z.number().int().min(1).optional(),
+  extra_pushes: z.number().int().min(1).optional(),
 });
 
 export const graduationExamFile = z.looseObject({
@@ -298,7 +321,9 @@ export const graduationExamFile = z.looseObject({
     stress_responses: z.string().regex(/costs the Cadet 1 Merit/),
   }),
   order: z.array(id).length(3),
-  trials: z.array(examTrial).length(3),
+  board: z.looseObject({ roll: z.literal('D66'), reads: z.string().regex(/tens die names the Stage's Trial/) }),
+  conditions_table: z.looseObject({ roll: z.literal('D6'), applies_to: text, rows: z.array(examCondition).length(6) }),
+  stages: z.array(examStage).length(3),
 });
 
 // ---------------------------------------------------------------- character/squadmates.yaml

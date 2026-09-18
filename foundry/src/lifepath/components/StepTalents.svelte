@@ -20,10 +20,20 @@
   const slots = $derived(tables.rules.built.anyLevels);
 
   const specialtyOptions = $derived(
-    (specialty?.talents ?? []).map((id) => {
+    [...(specialty?.talents ?? []), ...tables.general.filter((id) => !(specialty?.talents ?? []).includes(id))].map((id) => {
       const x = talentInfo(tables, id);
       const open = !!bt?.specialtyOptions.includes(id);
-      return { id, title: x.name, sub: x.names, meta: t(`WOF.Lifepath.talentType.${x.type}`), icon: x.icon, disabled: !open, note: t('WOF.Lifepath.talents.cannot') };
+      const own = (specialty?.talents ?? []).includes(id);
+      return {
+        id,
+        title: x.name,
+        sub: x.names,
+        meta: t(`WOF.Lifepath.talentType.${x.type}`),
+        icon: x.icon,
+        badge: own ? undefined : t('WOF.Lifepath.grad.generalBadge'),
+        disabled: !open,
+        note: t('WOF.Lifepath.talents.cannot'),
+      };
     }),
   );
   const levelOf = (id: string) => (bt?.afterOrigin[id] ?? 0) + (s.grad.talent === id ? 1 : 0) + any.filter((x) => x === id).length;
@@ -44,7 +54,7 @@
 
 <div class="lp-block">
   <h4 class="lp-q">{t('WOF.Lifepath.talents.fromList', { name: specialty?.name ?? '' })}</h4>
-  <Pick options={specialtyOptions} value={s.grad.talent} label={t('WOF.Lifepath.talents.fromList', { name: specialty?.name ?? '' })} disabled={ro} onpick={(id) => act.choose('grad.talent', id)} />
+  <Pick options={specialtyOptions} value={s.grad.talent} label={t('WOF.Lifepath.talents.fromList', { name: specialty?.name ?? '' })} disabled={ro} cols={3} onpick={(id) => act.choose('grad.talent', id)} />
 </div>
 
 <div class="lp-block">

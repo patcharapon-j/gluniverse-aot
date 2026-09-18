@@ -84,7 +84,7 @@
     <h5 class="lp-q">{t('WOF.Lifepath.origin.talent')}</h5>
     <Pick options={talentOptions} value={s.origin.talent} label={t('WOF.Lifepath.origin.talent')} locked={r.locks.has('origin.talent')} disabled={ro} onpick={(id) => act.choose('origin.talent', id)} />
     <h5 class="lp-q">{t('WOF.Lifepath.origin.haven')}</h5>
-    <Pick options={havenOptions} value={s.origin.haven} label={t('WOF.Lifepath.origin.haven')} disabled={ro} onpick={(id) => act.choose('origin.haven', id)} />
+    <Pick options={havenOptions} value={s.origin.haven} label={t('WOF.Lifepath.origin.haven')} disabled={ro} cols={1} onpick={(id) => act.choose('origin.haven', id)} />
     {#if row.canonTie}
       <h5 class="lp-q">{t('WOF.Lifepath.origin.canonTie')}</h5>
       <label class="check lp-tie">

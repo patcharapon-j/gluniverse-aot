@@ -10,6 +10,7 @@
   import type { StepId } from '../../rules/lifepath-state.ts';
   import type { WizardView } from '../wizard-app.ts';
   import FileSummary from './FileSummary.svelte';
+  import GmBar from './GmBar.svelte';
   import { stampDown } from './motion.ts';
   import StepAttributes from './StepAttributes.svelte';
   import StepCampaign from './StepCampaign.svelte';
@@ -98,6 +99,7 @@
   <div class="lp-grid">
     <StepRail {view} />
     <section class="lp-main" bind:this={main} aria-label={t(`WOF.Lifepath.step.${step}`)}>
+      {#if view.isGM}<GmBar {view} {sheet} />{/if}
       <div class="lp-page" data-step={step}>
         {#if step === 'campaign'}<StepCampaign {view} {n} />
         {:else if step === 'origin'}<StepOrigin {view} {n} />

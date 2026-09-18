@@ -308,23 +308,44 @@ export function classRankTable(): CoreTableData {
 // ---------------------------------------------------------------- Graduation Exam
 
 interface RawTrial {
+  result: number;
   id: string;
   name: string;
   description: string;
   entry?: string;
   gear_item?: string | null;
   entry_choice?: { entry: string; gear_item: string | null }[];
+}
+interface RawStage {
+  id: string;
+  order: number;
+  name: string;
+  description: string;
+  needs: number;
   push: boolean;
   help: string;
   merit: RawBand[];
+  trials: RawTrial[];
+}
+interface RawCondition {
+  result: number;
+  id: string;
+  name: string;
+  description: string;
+  needs_change?: number;
+  no_gear_dice?: true;
+  bonus_dice?: number;
+  extra_pushes?: number;
 }
 interface RawExam {
   conditions: { exam_issue: { item: string; counts_as: string; gear_dice: number }[] };
   order: string[];
-  trials: RawTrial[];
+  board: { reads: string };
+  conditions_table: { rows: RawCondition[] };
+  stages: RawStage[];
 }
 
-const TRIAL_HELP_WORDING: Record<string, string> = {
+const STAGE_HELP_WORDING: Record<string, string> = {
   'squad-field-exercise': 'One helper: the next Cadet in the roll order. The first roller Helps the last.',
 };
 const EXAM_ITEM_WORDING: Record<string, string> = {
@@ -332,25 +353,63 @@ const EXAM_ITEM_WORDING: Record<string, string> = {
   'blade-set': 'A Blade Set',
   'medical-kit': 'A medical kit',
   'tool-kit': 'A tool kit',
+  horse: 'A horse',
+  musket: 'A musket',
 };
+
+const T = 'Graduation Exam';
+
+/** The Stages in their order, with the Trial the board's tens die can name in each. */
+function stagesInOrder(doc: RawExam): RawStage[] {
+  return doc.order.map((id) => {
+    const st = doc.stages.find((x) => x.id === id);
+    if (!st) throw new Error(`${T}: no Stage "${id}".`);
+    return st;
+  });
+}
+
+export function examStagesTable(): CoreTableData {
+  const doc = parse(examText) as RawExam;
+  return {
+    caption: 'The three Stages',
+    note: 'Every Cadet finishes a Stage before the next begins. Each Stage rolls D66 for the Trial it runs and the condition it is run under.',
+    columns: ['Order', 'Stage', 'Successes needed', 'Push', 'Help', 'Merit'],
+    see: false,
+    groups: [
+      {
+        rows: stagesInOrder(doc).map((st, i) => {
+          const help = st.help === 'none' ? 'None' : STAGE_HELP_WORDING[st.id];
+          if (!help) throw new Error(`${T}: the Help on "${st.id}" has no player wording.`);
+          return {
+            cells: [
+              String(i + 1),
+              { text: st.name, note: st.description.trim() },
+              String(st.needs),
+              yesNo(st.push),
+              help,
+              st.merit.map((b) => `${successes(b)}: ${b.merit} Merit`).join('; '),
+            ],
+          };
+        }),
+      },
+    ],
+  };
+}
 
 export function examTrialsTable(): CoreTableData {
   const doc = parse(examText) as RawExam;
-  const T = 'Graduation Exam';
-  const byId = new Map(doc.trials.map((t) => [t.id, t]));
-  if (doc.order.length !== doc.trials.length) throw new Error(`${T}: the Trial order and the Trials disagree.`);
   const gearWords = (item: string | null | undefined) => (item ? capitalise(item) : 'No gear');
   return {
-    caption: 'The three Trials',
-    note: 'Every Cadet finishes a Trial before the next begins.',
-    columns: ['Order', 'Trial', 'Roll for', 'Gear item', 'Push', 'Help', 'Merit'],
+    caption: 'The Trials, by Stage',
+    note: "The tens die of the Stage's D66 names its Trial.",
+    columns: ['D6', 'Trial', 'Roll for', 'Gear item'],
     see: false,
     roll: true,
-    groups: [
-      {
-        rows: doc.order.map((id, i) => {
-          const t = byId.get(id);
-          if (!t) throw new Error(`${T}: no Trial "${id}".`);
+    groups: stagesInOrder(doc).map((st) => ({
+      heading: st.name,
+      rows: [...st.trials]
+        .sort((a, b) => a.result - b.result)
+        .map((t) => {
           let roll: Cell;
           let gear: Cell;
           if (t.entry) {
@@ -360,14 +419,35 @@ export function examTrialsTable(): CoreTableData {
             roll = { options: t.entry_choice.map((c) => `${entry(c.entry, T)}, ${c.gear_item ? `with ${c.gear_item}` : 'no gear'}`) };
             gear = 'With the roll chosen';
           } else {
-            throw new Error(`${T}: "${id}" names no roll.`);
+            throw new Error(`${T}: "${t.id}" names no roll.`);
           }
-          const help = t.help === 'none' ? 'None' : TRIAL_HELP_WORDING[t.id];
-          if (!help) throw new Error(`${T}: the Help on "${id}" has no player wording.`);
-          return {
-            cells: [String(i + 1), { text: t.name, note: t.description.trim() }, roll, gear, yesNo(t.push), help, t.merit.map((b) => `${successes(b)}: ${b.merit} Merit`).join('; ')],
-          };
+          return { cells: [String(t.result), { text: t.name, note: t.description.trim() }, roll, gear] };
         }),
+    })),
+  };
+}
+
+export function examConditionsTable(): CoreTableData {
+  const doc = parse(examText) as RawExam;
+  const effect = (r: RawCondition): string => {
+    const parts: string[] = [];
+    if (r.needs_change) parts.push(`The Trial needs ${Math.abs(r.needs_change)} ${r.needs_change > 0 ? 'more' : 'fewer'} success, and pays its Merit ${Math.abs(r.needs_change)} success ${r.needs_change > 0 ? 'later' : 'earlier'}.`);
+    if (r.no_gear_dice) parts.push('The exam issue gives no Gear Dice.');
+    if (r.bonus_dice) parts.push(`Every roll in the Trial takes ${r.bonus_dice} Bonus ${r.bonus_dice === 1 ? 'Die' : 'Dice'}.`);
+    if (r.extra_pushes) parts.push(`The Trial can be Pushed ${r.extra_pushes} more ${r.extra_pushes === 1 ? 'time' : 'times'} than its Stage allows.`);
+    return parts.join(' ') || 'Nothing changes.';
+  };
+  return {
+    caption: 'Exam conditions',
+    note: "The units die of the Stage's D66 names the condition, which applies to every Cadet's roll in that Trial.",
+    columns: ['D6', 'Condition', 'What changes'],
+    see: false,
+    roll: true,
+    groups: [
+      {
+        rows: [...(parse(examText) as RawExam).conditions_table.rows]
+          .sort((a, b) => a.result - b.result)
+          .map((r) => ({ cells: [String(r.result), { text: r.name, note: r.description.trim() }, effect(r)] })),
       },
     ],
   };
@@ -391,8 +471,6 @@ export function examIssueTable(): CoreTableData {
     ],
   };
 }
-
-// ---------------------------------------------------------------- Specialties
 
 export function specialtiesTable(): CoreTableData {
   const T = 'Specialties';
@@ -523,7 +601,9 @@ export const CHARACTER_TABLES = {
   'training-year-3': trainingEvents('year-3'),
   'performance-merit': performanceMeritTable,
   'class-rank': classRankTable,
+  'exam-stages': examStagesTable,
   'exam-trials': examTrialsTable,
+  'exam-conditions': examConditionsTable,
   'exam-issue': examIssueTable,
   specialties: specialtiesTable,
   'squadmate-templates': squadmateTemplatesTable,

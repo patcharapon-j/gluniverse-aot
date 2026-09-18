@@ -21,11 +21,22 @@
   const specialties = $derived(
     tables.specialties.map((x) => ({ id: x.id, title: x.name, sub: x.summary, meta: t('WOF.Lifepath.grad.keyAttr', { a: attrName(x.key) }), icon: specialtyIcon(x.id) })),
   );
+  // The Specialty's own list, then the general list beside it (lifepath.yaml, step graduation).
   const talentOptions = $derived(
-    (g?.specialty?.talents ?? []).map((id) => {
+    [...(g?.specialty?.talents ?? []), ...tables.general.filter((id) => !(g?.specialty?.talents ?? []).includes(id))].map((id) => {
       const x = talentInfo(tables, id);
-      const open = g!.talentOptions.includes(id);
-      return { id, title: x.name, sub: x.names, meta: t(`WOF.Lifepath.talentType.${x.type}`), icon: x.icon, disabled: !open, note: t('WOF.Lifepath.year.capped') };
+      const own = (g?.specialty?.talents ?? []).includes(id);
+      const open = !!g?.talentOptions.includes(id);
+      return {
+        id,
+        title: x.name,
+        sub: x.names,
+        meta: t(`WOF.Lifepath.talentType.${x.type}`),
+        icon: x.icon,
+        badge: own ? undefined : t('WOF.Lifepath.grad.generalBadge'),
+        disabled: !open,
+        note: t('WOF.Lifepath.year.capped'),
+      };
     }),
   );
   const floorLeft = $derived(g ? g.floor.points - s.grad.floor.length : 0);
@@ -92,7 +103,8 @@
 
     <div class="lp-block">
       <h4 class="lp-q"><img class="ic s24" src={iconPath('talent-dice')} alt="" />{t('WOF.Lifepath.grad.talent', { name: g.specialty.name })}</h4>
-      <Pick options={talentOptions} value={s.grad.talent} label={t('WOF.Lifepath.grad.talent', { name: g.specialty.name })} disabled={ro || !g.after} cols={2} onpick={(id) => act.choose('grad.talent', id)} />
+      <p class="note">{t('WOF.Lifepath.grad.talentHint', { name: g.specialty.name, n: talentOptions.filter((x) => !x.disabled).length })}</p>
+      <Pick options={talentOptions} value={s.grad.talent} label={t('WOF.Lifepath.grad.talent', { name: g.specialty.name })} disabled={ro || !g.after} cols={3} onpick={(id) => act.choose('grad.talent', id)} />
     </div>
   {/if}
 {/if}

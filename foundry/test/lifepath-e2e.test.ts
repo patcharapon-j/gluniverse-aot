@@ -12,6 +12,7 @@ import {
   finalChecks,
   markFinished,
   pushNeeds,
+  recordBoard,
   recordD66,
   recordOrder,
   recordPerformance,
@@ -58,8 +59,8 @@ function autoLifepath(seed: number, exam: boolean, alone: boolean): { state: Lif
           return confirmStep(s, step, t, o);
         case 'origin': {
           if (!r.origin?.row) return recordD66(s, 'origin', { tens: d6(), units: d6() }, t, o);
-          if (!s.origin.talent) return setChoice(s, 'origin.talent', r.origin.row.talents[seed % 2], t, o);
-          if (!s.origin.haven) return setChoice(s, 'origin.haven', r.origin.row.havens[0], t, o);
+          if (!s.origin.talent) return setChoice(s, 'origin.talent', r.origin.row.talents[seed % r.origin.row.talents.length], t, o);
+          if (!s.origin.haven) return setChoice(s, 'origin.haven', r.origin.row.havens[seed % r.origin.row.havens.length], t, o);
           return confirmStep(s, step, t, o);
         }
         case 'enlist': {
@@ -85,7 +86,7 @@ function autoLifepath(seed: number, exam: boolean, alone: boolean): { state: Lif
           if (k < 0) {
             // Push the squad field exercise once when the rules allow it.
             const d = r.trials[2];
-            if (d.push === null && pushes === 0) {
+            if (d.push === null && (d.pool?.maxPushes ?? 0) > 0 && pushes === 0) {
               const covered = !alone && seed % 3 === 0;
               const need = pushNeeds(s, 2, covered)!;
               pushes++;
@@ -94,10 +95,12 @@ function autoLifepath(seed: number, exam: boolean, alone: boolean): { state: Lif
             return confirmStep(s, step, t, o);
           }
           const ts = s.trials[k];
+          if (!ts.board) return recordBoard(s, k, { tens: d6(), units: d6() }, t, o);
+          const trial = r.trials[k].trial!;
           if (!alone && !ts.order.length) return recordOrder(s, k, d6(), t, o);
-          if (!ts.entry) return setChoice(s, `trials.${k}.entry`, t.exam.trials[k].choices[seed % t.exam.trials[k].choices.length].entry, t, o);
-          if (k === 2 && !alone && !ts.helped) return setChoice(s, `trials.${k}.helped`, true, t, o);
-          if (k === 2 && !alone && ts.coverStress === 0 && seed % 4 === 0) return setChoice(s, `trials.${k}.coverStress`, 1, t, o);
+          if (!ts.entry) return setChoice(s, `trials.${k}.entry`, trial.choices[seed % trial.choices.length].entry, t, o);
+          if (r.trials[k].stage.help && !alone && !ts.helped) return setChoice(s, `trials.${k}.helped`, true, t, o);
+          if (r.trials[k].stage.help && !alone && ts.coverStress === 0 && seed % 4 === 0) return setChoice(s, `trials.${k}.coverStress`, 1, t, o);
           const p = r.trials[k].pool!;
           return recordTrial(s, k, { base: faces(p.base, d6), gear: faces(p.gear, d6), stress: faces(p.stress, d6) }, t, o);
         }
@@ -240,8 +243,8 @@ describe('a soldier built by rolling', () => {
       for (const [k, x] of r.trials.entries()) {
         const tr = state.trials[k];
         const hits = [...tr.dice!.base, ...tr.dice!.gear, ...tr.dice!.stress].filter((f) => f === 6).length;
-        expect(x.merit).toBe((hits >= x.trial.needs ? 1 : 0) - (tr.response ? 1 : 0));
-        if (k < 2) expect(tr.covers).toEqual([]);
+        expect(x.merit).toBe((hits >= x.needs ? 1 : 0) - (tr.response ? 1 : 0));
+        if (!x.stage.push && (x.condition?.extraPushes ?? 0) === 0) expect(tr.covers).toEqual([]);
       }
     }
     expect(pushed).toBeGreaterThan(0);

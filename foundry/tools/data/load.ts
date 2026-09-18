@@ -133,17 +133,44 @@ function crossCheck(t: Tables): void {
   for (const x of t.specialties.general.talents) if (!talents.has(x)) fail(FILES.specialties[0], `the general list names the missing Talent "${x}"`);
   for (const o of t.origins.rows) {
     for (const x of o.talent_choice) if (!talents.has(x)) fail(FILES.origins[0], `"${o.id}" offers the missing Talent "${x}"`);
+    if (new Set(o.talent_choice).size !== o.talent_choice.length) fail(FILES.origins[0], `"${o.id}" offers the same Talent twice`);
+    if (new Set(o.haven_choice).size !== o.haven_choice.length) fail(FILES.origins[0], `"${o.id}" offers the same Haven twice`);
   }
   for (const y of t.trainingYears.years) {
     for (const x of y.curriculum) if (!talents.has(x)) fail(FILES.trainingYears[0], `${y.id} lists the missing curriculum Talent "${x}"`);
-    for (const e of y.events) for (const x of e.talent_choice) if (!talents.has(x)) fail(FILES.trainingYears[0], `the event "${e.name}" offers the missing Talent "${x}"`);
+    if (new Set(y.curriculum).size !== y.curriculum.length) fail(FILES.trainingYears[0], `${y.id} lists the same curriculum Talent twice`);
+    for (const e of y.events) {
+      for (const x of e.talent_choice) if (!talents.has(x)) fail(FILES.trainingYears[0], `the event "${e.name}" offers the missing Talent "${x}"`);
+      if (new Set(e.talent_choice).size !== e.talent_choice.length) fail(FILES.trainingYears[0], `the event "${e.name}" offers the same Talent twice`);
+    }
   }
   for (const r of t.enlistment.rows) for (const a of r.drive.acts ?? []) if (a !== 'push' && !actions.has(a)) fail(FILES.enlistment[0], `the Drive "${r.drive.id}" names the act "${a}", which is not an Action Catalog entry`);
-  for (const tr of t.graduationExam.trials) {
+  {
     const exam = new Set(t.graduationExam.conditions.exam_issue.map((i) => i.item));
-    for (const c of [...(tr.entry ? [{ entry: tr.entry, gear_item: tr.gear_item ?? null }] : []), ...(tr.entry_choice ?? [])]) {
-      if (!actions.has(c.entry)) fail(FILES.graduationExam[0], `the Trial "${tr.id}" names the missing entry "${c.entry}"`);
-      if (c.gear_item && !exam.has(c.gear_item)) fail(FILES.graduationExam[0], `the Trial "${tr.id}" names "${c.gear_item}", which is not exam issue`);
+    const stages = new Set(t.graduationExam.stages.map((st) => st.id));
+    for (const id of t.graduationExam.order) if (!stages.has(id)) fail(FILES.graduationExam[0], `order names the missing Stage "${id}"`);
+    for (const id of stages) if (!t.graduationExam.order.includes(id)) fail(FILES.graduationExam[0], `the Stage "${id}" is not in order`);
+    const seenTrial = new Set<string>();
+    for (const st of t.graduationExam.stages) {
+      const results = st.trials.map((tr) => tr.result).sort((a, b) => a - b);
+      if (results.join() !== '1,2,3,4,5,6') fail(FILES.graduationExam[0], `the Stage "${st.id}" does not cover every D6 result once`);
+      for (const tr of st.trials) {
+        if (seenTrial.has(tr.id)) fail(FILES.graduationExam[0], `two Trials share the id "${tr.id}"`);
+        seenTrial.add(tr.id);
+        const choices = tr.entry ? [{ entry: tr.entry, gear_item: tr.gear_item ?? null }] : (tr.entry_choice ?? []);
+        if (!choices.length) fail(FILES.graduationExam[0], `the Trial "${tr.id}" has neither an entry nor entry choices`);
+        if (tr.entry && tr.entry_choice) fail(FILES.graduationExam[0], `the Trial "${tr.id}" has both an entry and entry choices`);
+        for (const c of choices) {
+          if (!actions.has(c.entry)) fail(FILES.graduationExam[0], `the Trial "${tr.id}" names the missing entry "${c.entry}"`);
+          if (c.gear_item && !exam.has(c.gear_item)) fail(FILES.graduationExam[0], `the Trial "${tr.id}" names "${c.gear_item}", which is not exam issue`);
+        }
+      }
+    }
+    const conds = t.graduationExam.conditions_table.rows.map((r) => r.result).sort((a, b) => a - b);
+    if (conds.join() !== '1,2,3,4,5,6') fail(FILES.graduationExam[0], 'the conditions table does not cover every D6 result once');
+    const items = new Set(t.gearItems.items.map((i) => i.id));
+    for (const i of t.graduationExam.conditions.exam_issue) {
+      if (!items.has(i.counts_as as never)) fail(FILES.graduationExam[0], `the exam issue "${i.item}" counts as "${i.counts_as}", which data/gear/items.yaml does not list`);
     }
   }
   for (const [file, table] of [[FILES.origins[0], t.origins.rows], [FILES.enlistment[0], t.enlistment.rows], ...t.trainingYears.years.map((y) => [FILES.trainingYears[0], y.events] as const)] as const) {

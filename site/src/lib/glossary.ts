@@ -31,7 +31,7 @@ const RAW: { term: string; chapter: ChapterId; definition: string; aliases?: str
   { term: 'Fear Roll', chapter: 'wounds-and-fear', aliases: ['Fear Rolls'], definition: 'A roll forced by a horrifying event, such as a comrade Grabbed by a Titan. The dice never cause one.' },
   { term: 'Foe', chapter: 'skirmishes', aliases: ['Foes'], definition: 'A person, or a band of people, the Squad fights in a Skirmish.' },
   { term: 'Grabbed', chapter: 'fighting-titans', definition: "Gripped in a Titan's hand. You cannot Help, Cover, or make a Reaction, and the Titan devours you unless you get free in time." },
-  { term: 'Graduation Exam', chapter: 'making-your-soldier', definition: "The optional played prologue of three Trials that helps decide each Cadet's Class Rank." },
+  { term: 'Graduation Exam', chapter: 'making-your-soldier', definition: "The optional played prologue of three Stages, each rolling one Trial and the condition it is run under, that helps decide each Cadet's Class Rank." },
   { term: 'Grief', chapter: 'wounds-and-fear', definition: 'The weight a soldier carries after a comrade dies. Each point lowers Resolve by 1 until it is dealt with during Downtime.' },
   { term: 'Haven', chapter: 'making-your-soldier', definition: 'What a soldier has to return to. During Downtime it lets them lower Stress and Grief.' },
   { term: 'Jam', chapter: 'gear-and-odm', aliases: ['Jams', 'Jammed'], definition: 'ODM Gear worn down to 0. It stops working and drops an airborne soldier.' },
@@ -96,7 +96,7 @@ const RAW: { term: string; chapter: ChapterId; definition: string; aliases?: str
   { term: 'Standard Issue', chapter: 'gear-and-odm', definition: "The gear every soldier receives on joining the Squad and whenever a rule issues it: ODM Gear, gas canisters, Blade Sets, a horse, and a Medic's medical kit or an Engineer's tool kit." },
   { term: 'Template Build', chapter: 'making-your-soldier', definition: "Making a soldier from a Specialty's Squadmate template ratings, then choosing an Origin, a Drive, and Talents. Only when the campaign allows it." },
   { term: 'Training Year', chapter: 'making-your-soldier', aliases: ['Training Years'], definition: 'One of the three Lifepath steps spent in the Training Corps, each with an event and a performance roll.' },
-  { term: 'Trial', chapter: 'making-your-soldier', aliases: ['Trials'], definition: 'One of the three tests of the Graduation Exam: the ODM balance test, the Titan dummy course, and the squad field exercise.' },
+  { term: 'Trial', chapter: 'making-your-soldier', aliases: ['Trials'], definition: "One test of the Graduation Exam, rolled from the six its Stage lists on the tens die of that Stage's D66." },
   { term: 'Waypoint', chapter: 'expeditions-and-downtime', aliases: ['Waypoints'], definition: 'A named stopping point on an Expedition route, such as a forest, an abandoned town, or a supply depot.' },
   {
     term: 'Called roll', chapter: 'rules-of-play',

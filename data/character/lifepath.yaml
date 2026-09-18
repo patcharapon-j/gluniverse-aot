@@ -15,9 +15,10 @@ group_choices: >-
   The highest roll decides, and choices tied for highest roll again. This covers running the
   Graduation Exam, the Campaign Year, how many starting Squadmates the Squad takes when fewer
   than the rule gives are proposed (data/character/squadmates.yaml, starting_squad,
-  fewer_allowed), and the templates of starting Squadmates. The order of Cadets in a Trial
-  is rolled, not chosen (data/character/graduation-exam.yaml, roll_order_within_a_trial).
-  The campaign_choice below is the GM's, not a shared choice.
+  fewer_allowed), and the templates of starting Squadmates. The order of Cadets in a Trial and
+  the Exam's own board are rolled, not chosen (data/character/graduation-exam.yaml,
+  roll_order_within_a_trial and board). The campaign_choice below is the GM's, not a shared
+  choice.
 
 # ------------------------------------------------------------------ procedures
 # The three ways to create a player character (decision batch 7, 7-1; OQ-135). The Lifepath
@@ -65,9 +66,9 @@ campaign_choice:
 talent_levels_at_creation:
   total: 5
   sources:
-    - {source: origin, levels: 1}
-    - {source: training-year-event, levels: 3}   # one per Training Year
-    - {source: specialty, levels: 1}
+    - {source: origin, levels: 1}                # one of the Origin row's four Talents
+    - {source: training-year-event, levels: 3}   # one per Training Year, from the event or the curriculum
+    - {source: specialty, levels: 1}             # the Specialty's list or the general list
 
 # The Lifepath's steps (procedures: lifepath).
 steps:
@@ -89,7 +90,7 @@ steps:
     does: >-
       Set every attribute to 2. Roll D66 on the Origin table, rolling again if the current
       Campaign Year does not meet the row's condition. Add 1 to each of the row's two attributes. Take level 1 in one
-      of the row's two Talents. Record one of the row's two Havens. The player may record the
+      of the row's four Talents. Record one of the row's three Havens. The player may record the
       row's Canon Tie, if it has one.
 
   - id: why-you-enlisted
@@ -104,8 +105,9 @@ steps:
     table: data/character/training-years.yaml (year-1)
     does: >-
       Roll D66 on the year's events. Add 1 to the event's attribute, gain 1 level in one of
-      the event's two Talents, and add the event's merit_change to Merit. Then make the
-      year's performance roll and add the Merit it earns.
+      the event's three Talents or in any Talent on the year's curriculum list
+      (data/character/training-years.yaml, talent_cap), and add the event's merit_change to
+      Merit. Then make the year's performance roll and add the Merit it earns.
 
   - id: training-year-2
     order: 4
@@ -118,7 +120,8 @@ steps:
     does: >-
       As training-year-1, using year-3. If the players voted at step campaign-year to run the
       Graduation Exam (data/character/graduation-exam.yaml), the Exam replaces this year's
-      performance roll.
+      performance roll. The Exam's board is rolled once for the whole class before its first
+      Trial (board in that file).
 
   - id: graduation
     order: 6
@@ -128,7 +131,8 @@ steps:
       (3) apply the swap and then the floor (creation.graduation in
       data/character/attributes.yaml); (4) if the Class Rank is Top 10,
       record that the graduate declined the Military Police and add 1 to the key attribute,
-      up to 6; (5) gain 1 level in one Talent on the Specialty's list.
+      up to 6; (5) gain 1 level in one Talent on the Specialty's list or on the general list
+      (data/character/specialties.yaml, general).
 
   - id: finish
     order: 7
@@ -156,8 +160,8 @@ built_steps:
   talent_levels:
     total: 5
     sources:
-      - {source: origin, levels: 1}              # one of the chosen Origin row's two Talents
-      - {source: specialty, levels: 1}           # one Talent on the Specialty's list
+      - {source: origin, levels: 1}              # one of the chosen Origin row's four Talents
+      - {source: specialty, levels: 1}           # the Specialty's list or the general list
       - {source: any-talent, levels: 3}          # any Talents, one level at a time
     max_level: 2                                 # talent_cap.max_level_at_creation in data/character/training-years.yaml
     max_talents_at_level_2: 1
@@ -186,8 +190,8 @@ built_steps:
       table: data/character/origins.yaml
       does: >-
         Choose an Origin row whose condition the current Campaign Year meets. Record one of
-        the row's two Havens, and its Canon Tie if the row has one and the player wants it.
-        Gain level 1 in one of the row's two Talents. The row's attributes add nothing.
+        the row's three Havens, and its Canon Tie if the row has one and the player wants it.
+        Gain level 1 in one of the row's four Talents. The row's attributes add nothing.
     - id: drive
       order: 4
       table: data/character/enlistment.yaml
@@ -203,8 +207,9 @@ built_steps:
       order: 6
       tables: [data/character/specialties.yaml, data/character/talents.yaml]
       does: >-
-        Gain 1 level in one Talent on the Specialty's list, then 3 levels in any Talents,
-        within talent_levels above.
+        Gain 1 level in one Talent on the Specialty's list or on the general list
+        (data/character/specialties.yaml), then 3 levels in any Talents, within talent_levels
+        above.
     - id: no-merit
       order: 7
       table: data/character/class-rank.yaml (built_and_promoted)

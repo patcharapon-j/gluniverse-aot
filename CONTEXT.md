@@ -88,10 +88,18 @@ The character creation procedure in which the player chooses one of the two 18-p
 _Avoid_: point buy, manual build, custom build
 
 **Graduation Exam**:
-The optional played prologue of three Trials whose Merit replaces the third Training Year's performance roll and so helps decide each Cadet's Class Rank.
+The optional played prologue of three Stages whose Merit replaces the third Training Year's performance roll and so helps decide each Cadet's Class Rank.
+
+**Stage**:
+One of the Graduation Exam's three parts: the individual assessment, the Titan test, and the squad field exercise. Each Stage rolls one D66 for the whole class, the tens die naming the Trial it runs and the units die the condition it is run under.
+_Avoid_: round, phase
 
 **Trial**:
-One of the three tests of the Graduation Exam: the ODM balance test, the Titan dummy course, and the squad field exercise.
+The one test a Stage of the Graduation Exam runs, rolled from the six that Stage lists.
+
+**Exam condition**:
+The circumstance a Stage's Trial is run under, rolled on the units die of that Stage's D66 and applying to every Cadet's roll in that Trial.
+_Avoid_: modifier, complication
 
 **Class Rank**:
 A graduate's final standing in their class, or none for a built or promoted soldier. The Top 10 are offered a place in the Military Police.

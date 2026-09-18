@@ -3801,3 +3801,56 @@ Average wear a Pushed roll deals under the cap is 0.278 points at rating 1, 0.47
 **Files.** `data/core/dice-pool.yaml` (`die_types`, `gear`), `data/gear/items.yaml` (`rating_rules.wear`), `data/gear/standard-issue.yaml` (`by_funding.odm_gear_rating`), `data/character/action-catalog.yaml` (`shoot`), `data/engagement/tuning.yaml` (stale marker, `jam_test.model`), `docs/rules/01-core-rules.md` (sections 1.5 and the worked example), `docs/rules/04-gear.md` (sections 4.1, 4.2, 4.9), `CONTEXT.md`, `foundry/src/rules/roll.ts`, `foundry/src/rules/lifepath-state.ts`, `site/src/lib/dice-rules.ts`, `site/src/lib/gear-tables.ts`, and the site chapters that state the rule.
 
 **Out of scope:** the simulator rerun itself, and the Funding rules, which are still unwritten (Funding is 3 until they exist).
+
+---
+
+## Batch 12: the Lifepath's Talent choices and the Graduation Exam's Stages
+
+Rulings on the owner's instruction of 2026-09-18: the Talent options at each Lifepath step are too narrow and duplicate across a four-player party, and the Graduation Exam should be more dynamic and more fun. Made 2026-09-18. Two items, OQ-188 and OQ-189. Nothing in this batch changes how many Talent levels a soldier gains, what a Talent does, or any attribute number.
+
+### Summary table
+
+| Item | Source | Decision (one line) | ADR change | Glossary change | Chapter impact |
+|---|---|---|---|---|---|
+| 12-1 | Owner (OQ-188) | Origin rows offer four Talents and three Havens; each Training Year event offers three, with that year's ten-Talent curriculum always open beside them; Graduation's one level goes to the Specialty's list or the general list | none | none | Ch2 2.3.1, 2.3.3, 2.3.4, 2.10, 2.11; `origins.yaml`, `training-years.yaml`, `lifepath.yaml`, `squadmates.yaml` |
+| 12-2 | Owner (OQ-189) | The Exam runs three Stages, each rolling D66 for one of its six Trials and one of six conditions; the exam issue gains a horse and a musket | none | new **Stage**, **Exam condition**; **Graduation Exam**, **Trial** reworded | Ch2 2.4; `graduation-exam.yaml`, `lifepath.yaml` |
+
+### 12-1: The Lifepath's Talent choices (OQ-188)
+
+**Decision.** Each rolled step widens, and the year's curriculum stops being a fallback:
+
+- **Origin** (`origins.yaml`): every row offers **four** Talents, up from two, and **three** Havens, up from two. The two attribute points, the Canon Tie, and the year condition are unchanged.
+- **Training Years** (`training-years.yaml`): every event offers **three** Talents, up from two, and every year's `curriculum` lists **ten**, up from six. The Cadet takes their level in one of the event's three **or** in any Talent on that year's curriculum, whether or not the event's own three can gain one (`talent_cap.curriculum_always_open`). Every Training Year therefore offers at least twelve.
+- **Graduation** (`lifepath.yaml`, step `graduation`): the one Specialty level goes to a Talent on the Specialty's list **or** on the general list of twelve, which is 20 Talents to choose between, or 21 for a Leader. `built_steps.talents` reads the same for a built soldier, and a promoted Squadmate follows the same tables (`squadmates.yaml`, `promotion`).
+
+**The fallbacks.** `if_both_capped` and the dormant-Talent fallback are replaced by one rule, `if_all_capped`: if no Talent on either list can gain a level, the Cadet takes 1 level in any Talent that can. The dormant case can no longer arise, because the curriculum is always open beside the event's own Talents, but the rule stays for entries later rules add (OQ-33).
+
+**Why.** Two options per step is one coin flip per step. Four players rolling twelve Origin rows and three event tables of twelve collide constantly, and the collision falls on the one part of a soldier that is meant to be theirs. Widening the lists is the cheapest fix that changes no number: the Lifepath still gives exactly 5 Talent levels, still caps every Talent at 2 at creation, and still holds a rule Talent to its `max_level`.
+
+**Measurement.** None needed. ADR-0014's targets are measured on the reference builds, whose Talents are fixed by `squadmates.yaml`, and no other roll a target measures carries Talent dice (OQ-70, OQ-94). The simulator is not rerun.
+
+**Files.** `data/character/origins.yaml`, `data/character/training-years.yaml`, `data/character/lifepath.yaml`, `data/character/squadmates.yaml`, `docs/rules/02-character-creation.md` (2.3.1, 2.3.3, 2.3.4, 2.10, 2.11), `foundry/tools/data/schemas.ts`, `foundry/tools/data/load.ts`, `foundry/src/rules/lifepath.ts`, `foundry/src/rules/lifepath-state.ts`, the wizard's Origin, Year, Graduation, and Talents steps, `site/src/content/rules/making-your-soldier.mdx`, `site/src/pages/compendium/origins.astro`, `site/src/pages/compendium/specialties.astro`.
+
+### 12-2: The Graduation Exam's Stages, Trials, and conditions (OQ-189)
+
+**Decision.** The Exam keeps its shape — three Trials, run in order, each paying at most 1 Merit, the first two solo and the third the squad exercise — and gains a board:
+
+- **Three Stages** (`stages`), in the order `individual-assessment`, `titan-test`, `squad-field-exercise`. A Stage carries the `needs`, `push`, `help`, and `merit` the old Trials carried: 2 successes and no Push for the first two, 3 successes with a Push and cycle Help for the third.
+- **Six Trials per Stage**, one per result of a D6. The first two Stages give each Trial one graded entry and its exam issue item; the third gives each Trial its own list of six entries to pick from.
+- **One D66 per Stage** (`board`), rolled once for the whole class before the Exam's first Trial: the tens die names the Trial, the units die the condition. It is rolled, not chosen, exactly as the order within a Trial is, so `group_choices` does not reach it.
+- **Six conditions** (`conditions_table`), applying to every Cadet's roll in that Stage's Trial: driving rain (1 more success needed), worn training gear (no Gear Dice), a fair run (nothing), an instructor walking it with you (1 Bonus Die), running it twice (1 Bonus Die and one more Push), and a short course (1 fewer success needed). A condition that changes the successes needed moves every bound of the Trial's Merit rows by the same amount.
+- **Exam issue** gains a training horse and a training musket, both Gear Dice 1, so a Rider and a Hunter have a Trial their gear reaches.
+
+**Why the first two Stages keep one entry each.** Measured: letting a Cadet pick their entry in all three Stages lets them roll their best attribute three times, which ties Exam Merit to the Merit the Cadet already has and raised the Top 10 share about a point on its own. The variety comes from the six Trials and six conditions instead, which no player chooses.
+
+**Measurement.** `tools/probes/lifepath-exam/exam.py`, which reads the tables and rolls whole Lifepaths from them. Against the same Cadets: the Year 3 performance roll pays about **0.584** Merit; the expanded Exam pays **0.484 to 0.527** for 1 to 6 Cadets, a delta of -0.06 to -0.10, and moves the Top 10 share by **-0.21 to +0.12** points. Both OQ-22 targets hold. The three fixed Trials it replaces paid 0.354 to 0.401 under the same model, a delta of -0.18 to -0.23, and cost 0.9 to 1.2 points of Top 10 share, so the expanded Exam is much the closer of the two to the roll it replaces. That model rolls Lifepaths, where the payout model behind OQ-22's 0.583 and 0.612 used reference pools; the two are not the same measurement, and this schedule was tuned against the first.
+
+**What the conditions table is for.** It carries the tuning. Its six rows are worth about **+0.19** Merit across a whole Exam, which is what brings a Stage schedule of 2, 2, and 3 successes back to parity. Each row was measured on its own, and the table balances a heavy bane (driving rain, about -0.45 Merit over an Exam) against a heavy boon (a short course, about +1.13), with two small boons, one small bane, and one row that changes nothing between them.
+
+**A fix carried with it.** The wizard now carries Exam Stress from one Trial into the next, which `conditions.stress` has always required and the code did not do.
+
+**ADR.** None.
+
+**Files.** `data/character/graduation-exam.yaml`, `data/character/lifepath.yaml`, `CONTEXT.md`, `docs/rules/02-character-creation.md` (2.4), `tools/render/render.py`, `tools/probes/lifepath-exam/exam.py`, `foundry/tools/data/schemas.ts`, `foundry/tools/data/load.ts`, `foundry/tools/config-data.ts`, `foundry/src/rules/lifepath.ts`, `foundry/src/rules/lifepath-state.ts`, `foundry/src/lifepath/` (the wizard, its campaign settings, and the Exam step), `site/src/lib/character-tables.ts`, `site/src/lib/glossary.ts`, `site/src/content/rules/making-your-soldier.mdx`.
+
+**Out of scope:** the Foundry system's GM overrides on a Lifepath file, which are a tool and not a rule (ADR-0024). The rules still give the GM no part in the Lifepath.

@@ -382,27 +382,78 @@ def merit_rule(rows):
 
 
 def b_exam():
+    """The three Stages, in their order, with the Help and Merit each one runs on."""
     d = load(EXAM)
-    trials = {t["id"]: t for t in d["trials"]}
+    stages = {st["id"]: st for st in d["stages"]}
     rows = []
-    for i, tid in enumerate(d["order"], 1):
-        t = trials[tid]
-        if "entry" in t:
-            entry, gear = entry_name(t["entry"], False), t["gear_item"] or "none"
-        else:
-            entry, gear = "one of the entry choices below", "listed with each choice"
-        help_ = "none" if t["help"] == "none" else "fixed by the Trial's roll order (see the list below)"
-        rows.append([i, t["name"], entry, gear, yes_no(t["push"]), help_, merit_rule(t["merit"])])
-    out = table(["Order", "Trial", "Action Catalog entry", "Gear item", "Can be Pushed", "Help", "Merit"], rows)
-    for t in d["trials"]:
-        if "entry_choice" in t:
-            choices = []
-            for c in t["entry_choice"]:
-                expect_keys(c, {"entry", "gear_item"}, f"{EXAM} entry_choice")
-                choices.append([entry_name(c["entry"], False), c["gear_item"] or "none"])
-            out += (f"\n\n**{t['name']}: entry choices** (each needs {t['needs']} successes)\n\n" +
-                    table(["Entry", "Gear item"], choices))
-    return out
+    for i, sid in enumerate(d["order"], 1):
+        st = stages.get(sid)
+        if st is None:
+            raise RenderError(f"{EXAM}: order names the missing Stage {sid}")
+        help_ = "none" if st["help"] == "none" else "fixed by the Trial's roll order (see below)"
+        rows.append([i, st["name"], st["needs"], yes_no(st["push"]), help_, merit_rule(st["merit"])])
+    return table(["Order", "Stage", "Successes needed", "Can be Pushed", "Help", "Merit"], rows)
+
+
+def b_exam_trials():
+    """Each Stage's six Trials, named by the tens die of that Stage's D66."""
+    d = load(EXAM)
+    stages = {st["id"]: st for st in d["stages"]}
+    out = []
+    for sid in d["order"]:
+        st = stages[sid]
+        rows = []
+        for t in sorted(st["trials"], key=lambda x: x["result"]):
+            expect_keys(t, {"result", "id", "name", "description", "entry", "gear_item", "entry_choice"},
+                        f"{EXAM} {t.get('id')}", required=("result", "id", "name", "description"))
+            if "entry" in t:
+                entry, gear = entry_name(t["entry"], False), t.get("gear_item") or "none"
+            elif "entry_choice" in t:
+                choices = []
+                for c in t["entry_choice"]:
+                    expect_keys(c, {"entry", "gear_item"}, f"{EXAM} entry_choice")
+                    choices.append(f"{entry_name(c['entry'], False)} ({c['gear_item'] or 'no gear'})")
+                entry, gear = "; ".join(choices), "listed with each roll"
+            else:
+                raise RenderError(f"{EXAM}: the Trial {t['id']} names no entry")
+            rows.append([t["result"], t["name"], entry, gear, t["description"]])
+        out.append(f"**{st['name']}: its Trials (the tens die)**\n\n" +
+                   table(["D6", "Trial", "Action Catalog entry", "Gear item", "Description"], rows))
+    return "\n\n".join(out)
+
+
+def b_exam_conditions():
+    """The condition the units die of a Stage's D66 names, which the whole class runs that Trial under."""
+    d = load(EXAM)
+    rows = []
+    for r in sorted(d["conditions_table"]["rows"], key=lambda x: x["result"]):
+        expect_keys(r, {"result", "id", "name", "description", "needs_change", "no_gear_dice", "bonus_dice", "extra_pushes"},
+                    f"{EXAM} condition {r.get('id')}", required=("result", "id", "name", "description"))
+        parts = []
+        if r.get("needs_change"):
+            n = abs(r["needs_change"])
+            way = "more" if r["needs_change"] > 0 else "fewer"
+            when = "later" if r["needs_change"] > 0 else "earlier"
+            parts.append(f"The Trial needs {n} {way} success, and pays its Merit {n} success {when}.")
+        if r.get("no_gear_dice"):
+            parts.append("The exam issue gives no Gear Dice.")
+        if r.get("bonus_dice"):
+            n = r["bonus_dice"]
+            parts.append(f"Every roll in the Trial takes {n} Bonus {'Die' if n == 1 else 'Dice'}.")
+        if r.get("extra_pushes"):
+            n = r["extra_pushes"]
+            parts.append(f"The Trial can be Pushed {n} more {'time' if n == 1 else 'times'} than its Stage allows.")
+        rows.append([r["result"], r["name"], " ".join(parts) or "Nothing changes.", r["description"]])
+    return ("**Exam conditions (the units die)**\n\n" +
+            table(["D6", "Condition", "What changes", "Description"], rows))
+
+
+def b_exam_issue():
+    rows = []
+    for x in load(EXAM)["conditions"]["exam_issue"]:
+        expect_keys(x, {"item", "counts_as", "gear_dice"}, f"{EXAM} exam_issue")
+        rows.append([x["item"], x["counts_as"], x["gear_dice"]])
+    return table(["Exam issue", "Counts as", "Gear Dice"], rows)
 
 
 def b_specialties():
@@ -1355,7 +1406,10 @@ for _y in ("year-1", "year-2", "year-3"):
     block(f"training-year-events {_y}", CH2, TY, lambda y=_y: b_year(y))
 block("performance-merit", CH2, TY, b_merit)
 block("class-rank", CH2, CR, b_class_rank)
-block("graduation-exam-trials", CH2, EXAM, b_exam)
+block("graduation-exam-stages", CH2, EXAM, b_exam)
+block("graduation-exam-trials", CH2, EXAM, b_exam_trials)
+block("graduation-exam-conditions", CH2, EXAM, b_exam_conditions)
+block("graduation-exam-issue", CH2, EXAM, b_exam_issue)
 block("specialties", CH2, SPEC, b_specialties)
 block("squadmate-templates", CH2, SQ, b_templates)
 block("squadmate-rules", CH2, SQ, b_squadmate_rules)

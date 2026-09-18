@@ -78,15 +78,36 @@ export interface LpTrialChoice {
 }
 export interface LpTrial {
   id: string;
+  /** The tens die of its Stage's D66 board roll. */
+  result: number;
   name: string;
   description: string;
   choices: LpTrialChoice[];
-  /** Successes that earn Merit. */
+}
+/** One row of the exam conditions table, named by the units die of a Stage's board roll. */
+export interface LpCondition {
+  result: number;
+  id: string;
+  name: string;
+  description: string;
+  /** Change to the successes the Trial needs, and to every bound of its Merit bands. */
+  needs: number;
+  noGear: boolean;
+  bonus: number;
+  extraPushes: number;
+}
+export interface LpStage {
+  id: string;
+  name: string;
+  description: string;
+  /** Successes that earn Merit, before the condition. */
   needs: number;
   push: boolean;
-  /** The Trial allows Help (the squad field exercise). */
+  /** The Stage allows Help (the squad field exercise). */
   help: boolean;
   merit: Band[];
+  /** The Stage's six Trials, one per tens die result. */
+  trials: LpTrial[];
 }
 export interface LpSpecialty {
   id: string;
@@ -124,7 +145,7 @@ export interface LpTables {
   years: LpYear[];
   performanceMerit: Band[];
   classRank: LpRank[];
-  exam: { trials: LpTrial[]; responseCost: number };
+  exam: { stages: LpStage[]; conditions: LpCondition[]; responseCost: number };
   talents: LpTalent[];
   specialties: LpSpecialty[];
   general: string[];
@@ -252,15 +273,28 @@ export const namesOnlyDormant = (t: LpTables, id: string): boolean => {
 
 /**
  * The Talents an event lets the Cadet take a level in (training-years.yaml, talent_cap): the event's
- * two when they can gain; the year's curriculum when neither can; either when the only one that can
- * names only dormant entries.
+ * own three and the year's whole curriculum list, which is open whether or not the event's own can
+ * gain. `event` marks the three the event itself offers, so the wizard can show them first. When no
+ * Talent on either list can gain a level, any Talent that can is open instead (if_all_capped).
  */
-export function eventTalentOptions(t: LpTables, levels: Levels, event: LpEvent, year: LpYear): { options: string[]; fallback: 'none' | 'both-capped' | 'dormant' } {
-  const gainable = event.talents.filter((id) => canGain(t, levels, id));
-  const curriculum = year.curriculum.filter((id) => canGain(t, levels, id));
-  if (!gainable.length) return { options: curriculum, fallback: 'both-capped' };
-  if (gainable.length === 1 && namesOnlyDormant(t, gainable[0])) return { options: [...new Set([...gainable, ...curriculum])], fallback: 'dormant' };
-  return { options: gainable, fallback: 'none' };
+export function eventTalentOptions(
+  t: LpTables,
+  levels: Levels,
+  event: LpEvent,
+  year: LpYear,
+): { options: string[]; event: string[]; curriculum: string[]; fallback: 'none' | 'all-capped' } {
+  const fromEvent = event.talents.filter((id) => canGain(t, levels, id));
+  const curriculum = year.curriculum.filter((id) => canGain(t, levels, id) && !fromEvent.includes(id));
+  if (fromEvent.length || curriculum.length) return { options: [...fromEvent, ...curriculum], event: fromEvent, curriculum, fallback: 'none' };
+  const any = t.talents.map((x) => x.id).filter((id) => canGain(t, levels, id));
+  return { options: any, event: [], curriculum: [], fallback: 'all-capped' };
+}
+
+/** The Talents Graduation offers: the Specialty's list and the general list (lifepath.yaml, step graduation). */
+export function specialtyTalentOptions(t: LpTables, levels: Levels, specialty: LpSpecialty): { options: string[]; specialty: string[]; general: string[] } {
+  const own = specialty.talents.filter((id) => canGain(t, levels, id));
+  const general = t.general.filter((id) => canGain(t, levels, id) && !own.includes(id));
+  return { options: [...own, ...general], specialty: own, general };
 }
 
 /** Built Talent limits (built_steps.talent_levels): one more level, none above 2, at most one at 2, rule Talents at their max. */
@@ -287,13 +321,37 @@ export interface TrialPool {
   maxPushes: number;
 }
 
+/** The successes a Trial needs once its condition is counted, never below 1. */
+export const trialNeeds = (stage: LpStage, cond: LpCondition | null): number => Math.max(1, stage.needs + (cond?.needs ?? 0));
+
+/**
+ * The Stage's Merit bands moved by the condition's change to the successes needed
+ * (graduation-exam.yaml, conditions_table.applies_to). The lowest band keeps an open bottom, so
+ * every result still falls in a band.
+ */
+export function trialBands(stage: LpStage, cond: LpCondition | null): Band[] {
+  const shift = trialNeeds(stage, cond) - stage.needs;
+  const moved = stage.merit.map((b) => ({ min: b.min === null ? null : b.min + shift, max: b.max === null ? null : b.max + shift, value: b.value }));
+  const lowest = moved.reduce((a, b) => ((a.min ?? -Infinity) <= (b.min ?? -Infinity) ? a : b), moved[0]);
+  return moved.map((b) => (b === lowest ? { ...b, min: null } : b));
+}
+
 /**
  * A Trial roll's pool (graduation-exam.yaml, conditions.pools): the entry's attribute (Perception on a
  * Read with Hunter's Eye, when the Cadet uses it), the best held dice Talent that names the entry
- * without a condition, one Bonus Die from Help where the Trial allows it, the exam issue item's Gear
- * Dice, and the Stress Dice of the Exam Stress. Sure Hands allows a second Push on Treat Injury.
+ * without a condition, one Bonus Die from Help where the Stage allows it and any the Trial's
+ * condition adds, the exam issue item's Gear Dice unless the condition takes them, and the Stress
+ * Dice of the Exam Stress. Sure Hands allows a second Push on Treat Injury.
  */
-export function trialPool(t: LpTables, attrs: Attributes, levels: Levels, trial: LpTrial, choice: LpTrialChoice, opts: { helped: boolean; stress: number; hunterEye: boolean }): TrialPool {
+export function trialPool(
+  t: LpTables,
+  attrs: Attributes,
+  levels: Levels,
+  stage: LpStage,
+  cond: LpCondition | null,
+  choice: LpTrialChoice,
+  opts: { helped: boolean; stress: number; hunterEye: boolean },
+): TrialPool {
   const base = t.entryAttributes[choice.entry];
   const useEye = opts.hunterEye && choice.entry === 'read' && (levels['hunters-eye'] ?? 0) > 0;
   const attribute: AttributeId = useEye ? 'perception' : base;
@@ -303,14 +361,17 @@ export function trialPool(t: LpTables, attrs: Attributes, levels: Levels, trial:
     if (x.type !== 'dice' || lv <= 0 || !x.names.includes(choice.entry) || x.conditional.includes(choice.entry)) continue;
     if (!talent || lv > talent.dice) talent = { id: x.id, name: x.name, dice: lv };
   }
-  const bonus = trial.help && opts.helped ? 1 : 0;
+  const bonus = (stage.help && opts.helped ? 1 : 0) + (cond?.bonus ?? 0);
   const attributeDice = attrs[attribute];
-  const maxPushes = trial.push ? (choice.entry === 'treat-injury' && (levels['sure-hands'] ?? 0) > 0 ? 2 : 1) : 0;
-  return { attribute, attributeDice, talent, bonus, base: attributeDice + (talent?.dice ?? 0) + bonus, gear: choice.dice, stress: Math.max(0, opts.stress), maxPushes };
+  let maxPushes = (stage.push ? 1 : 0) + (cond?.extraPushes ?? 0);
+  if (maxPushes > 0 && choice.entry === 'treat-injury' && (levels['sure-hands'] ?? 0) > 0) maxPushes += 1;
+  const gear = cond?.noGear ? 0 : choice.dice;
+  return { attribute, attributeDice, talent, bonus, base: attributeDice + (talent?.dice ?? 0) + bonus, gear, stress: Math.max(0, opts.stress), maxPushes };
 }
 
 /** A Trial's Merit: its band for the successes, less the Stress Response cost when its roll caused one. */
-export const trialMerit = (t: LpTables, trial: LpTrial, successes: number, response: boolean): number => band(trial.merit, successes) - (response ? t.exam.responseCost : 0);
+export const trialMerit = (t: LpTables, stage: LpStage, cond: LpCondition | null, successes: number, response: boolean): number =>
+  band(trialBands(stage, cond), successes) - (response ? t.exam.responseCost : 0);
 
 // ---------------------------------------------------------------- the builds
 
