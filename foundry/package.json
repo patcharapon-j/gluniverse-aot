@@ -2,7 +2,7 @@
   "name": "wings-of-freedom-foundry",
   "private": true,
   "type": "module",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Wings of Freedom, the Foundry VTT v14 system (ADR-0025).",
   "engines": {
     "node": ">=22.12"
