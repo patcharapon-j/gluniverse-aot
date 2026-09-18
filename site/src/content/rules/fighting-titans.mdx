@@ -6,39 +6,39 @@ order: 5
 tab: Titans
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "08b7bf455d7d385faedf5a8dd7116eb25b062336"
+    sha: "e645a7168e73ff8bec021240781efe73655eca69"
   - path: docs/rules/06-standard-titans.md
-    sha: "7648f7b102a054d9615d9982bd53f169d2605139"
+    sha: "85b11f59f9291c70668a96582005fdeaeea05a49"
   - path: data/engagement/positions.yaml
-    sha: "8710f756e086e577c5a20e36c42aa8da732104c5"
+    sha: "4eac4e97d240d727a024183dc8bb5b95d55158cb"
   - path: data/engagement/anchor-ratings.yaml
-    sha: "58c764314a0d63fe5a03040dcfa63df615829585"
+    sha: "435c03b33fab67afc94c2b444c20dbed52ec1b0e"
   - path: data/engagement/round.yaml
-    sha: "e03cf49bfa0f41b2b3b50c3fa5f107d490f6d1e0"
+    sha: "49d3a172e4a7ca7e0bbbaa7f5d74c9e3887b40d7"
   - path: data/engagement/size-classes.yaml
     sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
   - path: data/engagement/titan-format.yaml
-    sha: "187dce87e7845a259230955719b9ea2b63900e5f"
+    sha: "26070cd3777b81d2fe28e4de4932383531bf1719"
   - path: data/engagement/behavior-procedure.yaml
     sha: "64aea8898bffe969c1ef291ad04dbe163f63c5a4"
   - path: data/engagement/attention.yaml
-    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
+    sha: "3d64d61249c17643e00e10197041a9dc0cd9b798"
   - path: data/engagement/titan-harm.yaml
-    sha: "1ceaf068ccaa41d90e42df94483dba0334200786"
+    sha: "286457b6cca7e728c54919581b96ed55c24dbe45"
   - path: data/engagement/read.yaml
     sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/grab.yaml
     sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
   - path: data/engagement/engagement-flow.yaml
-    sha: "cfe5b9f455be8feab4a6245b0dc7f4ec2b9eb369"
+    sha: "dd549bbcb21ddd5fa1867a9f32e7cc945c82d771"
   - path: data/engagement/background-titans.yaml
-    sha: "73866d452b9e21debfa69cf2cd76a007112e7613"
+    sha: "709277b23e0e35b3f79f193636fbd1e70bc64798"
   - path: data/engagement/squad-tactics.yaml
     sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
   - path: data/harm/effect-types.yaml
     sha: "09be8cce7c8f1b04b114c49c0e31106a5729cc3d"
   - path: data/character/action-catalog.yaml
-    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+    sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
 import BoxPair from '~/components/BoxPair.astro';
@@ -76,7 +76,7 @@ import plate from '~/assets/plates/plate-fighting-titans.webp';
 
 <ChapterContents items={[
   { id: 'how-a-titan-fight-works', title: 'How a Titan Fight Works', note: 'Starting, the round, the cards' },
-  { id: 'positions-and-moves', title: 'Positions and Moves', note: 'Four Positions, steps, falls, corpses' },
+  { id: 'positions-and-moves', title: 'Positions and Moves', note: 'Four Positions, the Flight, Momentum, Anchors' },
   { id: 'reading-a-titan', title: 'Reading a Titan', note: 'Stat blocks and Behavior Tables' },
   { id: 'when-a-titan-acts', title: 'When a Titan Acts', note: 'A card resolving, and the dodge' },
   { id: 'attention', title: 'Attention', note: 'The ladder, marks, decoys' },
@@ -98,11 +98,12 @@ A <GlossaryTerm term="Titan Engagement" /> is a scene in which your Squad confro
 The GM frames the fight, names the ground, and says which Titans are there. Then:
 
 1. **Who takes part.** The soldiers the rule that begins the fight names. If it names none, every living soldier of the Squad.
-2. **Where you start.** Everyone holds <GlossaryTerm term="Position">Distant</GlossaryTerm> relative to Focus Titan A, unless the rule that begins the fight places named soldiers elsewhere. Mounted soldiers stay mounted, dismounted soldiers stay dismounted, and no one is airborne. A dismounted soldier's horse holds Distant. A starting Position is placed by a rule and not by your own move, so it never meets a <GlossaryTerm term="Drive">Drive's</GlossaryTerm> Position trigger until your own move changes it.
-3. **The Titan.** Its <GlossaryTerm term="Body Part">Body Parts</GlossaryTerm> are Intact, it carries no <GlossaryTerm term="Opening">Openings</GlossaryTerm>, its <GlossaryTerm term="Regeneration" /> clock is empty, and its <GlossaryTerm term="Next Behavior" /> is already rolled and hidden.
-4. **It looks for someone.** It reads its <GlossaryTerm term="Attention Ladder" />. With no cards dealt and everyone at the same Position, nothing holds its <GlossaryTerm term="Attention" /> unless a rung picks out one soldier, and its first card turns it.
-5. **Fear.** Make the <GlossaryTerm term="Fear Roll">Fear Rolls</GlossaryTerm> for a first Titan Engagement and for an <GlossaryTerm term="Abnormal" />.
-6. **The Squad's <GlossaryTerm term="Squad Tactic">Squad Tactics</GlossaryTerm> become unused,** and round 1 begins.
+2. **The ground.** The <GlossaryTerm term="Anchor Rating" /> gives the fight its pool of <GlossaryTerm term="Anchor">Anchors</GlossaryTerm>, which is every soldier's Momentum cap, and the <GlossaryTerm term="Terrain Trait" /> that comes with it. Nothing is rolled for either, and every soldier's <GlossaryTerm term="Momentum" /> starts at 0.
+3. **Where you start.** Everyone holds <GlossaryTerm term="Position">Distant</GlossaryTerm> relative to Focus Titan A, unless the rule that begins the fight places named soldiers elsewhere. Mounted soldiers stay mounted, dismounted soldiers stay dismounted, and no one is airborne. A dismounted soldier's horse holds Distant. A starting Position is placed by a rule and not by your own move, so it never meets a <GlossaryTerm term="Drive">Drive's</GlossaryTerm> Position trigger until your own move changes it.
+4. **The Titan.** Its <GlossaryTerm term="Body Part">Body Parts</GlossaryTerm> are Intact, it carries no <GlossaryTerm term="Opening">Openings</GlossaryTerm>, its <GlossaryTerm term="Regeneration" /> clock is empty, and its <GlossaryTerm term="Next Behavior" /> is already rolled and hidden.
+5. **It looks for someone.** It reads its <GlossaryTerm term="Attention Ladder" />. With no cards dealt and everyone at the same Position, nothing holds its <GlossaryTerm term="Attention" /> unless a rung picks out one soldier, and its first card turns it.
+6. **Fear.** Make the <GlossaryTerm term="Fear Roll">Fear Rolls</GlossaryTerm> for a first Titan Engagement and for an <GlossaryTerm term="Abnormal" />.
+7. **The Squad's <GlossaryTerm term="Squad Tactic">Squad Tactics</GlossaryTerm> become unused,** and round 1 begins.
 
 </Subsection>
 
@@ -152,18 +153,58 @@ You hold a Position relative to **each** Focus Titan, and relative to each corps
 
 <CoreTable table="position-steps" />
 
-<MarginNote>A Fly roll is a roll with your own ODM Gear, so it is ODM use and counts toward your <GlossaryTerm term="Gas Roll" />. Success or failure, the move was an ODM move, so you end it airborne: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
+<MarginNote>A Flight is a roll with your own ODM Gear, so it is ODM use and counts toward your <GlossaryTerm term="Gas Roll" />. However it falls, the move was an ODM move, so you end it airborne: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
 
 <Subsection title="What a move can do" id="what-a-move-can-do">
 
 A move changes your Position relative to **one named Focus Titan** by one step your kind of move can make, or changes no Position, as when you land or mount where you already stand. It can include one mount or dismount. A move is the only way you change your own Position; every other change comes from a rule that names it, such as a fall, a <GlossaryTerm term="Grabbed">Grab</GlossaryTerm>, Fall Back, or a Fear Roll result.
 
-- **Mounted,** you make a mounted step, or an ODM move that dismounts you first.
+- **On your lines,** every ODM move is a <GlossaryTerm term="Flight" />, and you cross more than one step only by spending <GlossaryTerm term="Momentum" /> on Carry.
+- **Mounted,** you make a mounted step, or an ODM move that dismounts you first. A mounted step between Distant and In Reach may be a **charge**.
 - **<GlossaryTerm term="Down" />,** your move can only make the step from In Reach to Distant, on foot, and only while you are not Grabbed and not carried.
 - **Grabbed or carried,** your move changes nothing.
 - **<GlossaryTerm term="Pinned" />,** your move changes nothing, and no rule moves you.
 - **Letting go.** At On Body or Blind Spot, not Grabbed and not carried, you may use your move to let go. You fall from that height. It is how a soldier with a <GlossaryTerm term="Jam">Jammed</GlossaryTerm> or empty harness gets off a Titan.
-- **A forced step.** A Fear Roll result can move you one step at the start of your next turn, toward Distant or toward the nearest comrade. It is a result, not your move: it spends nothing, it happens even on a turn spent in advance, and no step is made for a soldier who is Down, Grabbed, or carried, or who has no such step to make. It never makes you leave or let go.
+- **A forced step.** A Fear Roll result can move you one step at the start of your next turn, toward Distant or toward the nearest comrade. It is a result, not your move: it spends nothing, it happens even on a turn spent in advance, and no step is made for a soldier who is Down, Grabbed, or carried, or who has no such step to make. It never makes you leave or let go. **It is never a Flight,** whichever kind of step it is, so it is not rolled, earns no Momentum, and marks nobody loudest. An ODM one is still ODM use, so it counts toward your Gas Roll and leaves you airborne.
+
+</Subsection>
+
+<Subsection title="The Flight" id="the-flight">
+
+**Every ODM move you make in a fight is a Flight.** Roll Fly with your own ODM Gear, as a Flight needs no successes at all.
+
+- **The step happens whatever the roll gives.** Flying is never slower or less certain than it was before the dice were asked for. What the roll decides is what the flight was *worth*.
+- **Each success is 1 Momentum,** up to the Anchors left. Nothing above that cap is gained.
+- **No successes and you come in loud.** You are marked loudest on the Titan you flew relative to, from any Position, Distant included. That is the one mark a soldier can set from Distant, because it is not a shout: it is the sound of a bad landing.
+- **It is your own roll like any other.** Circumstances, <GlossaryTerm term="Stress Dice" />, and the Talents that name Fly all reach it, and it can be Helped, Pushed, and Covered. A Pushed Flight wears the harness and makes that round's Gas Roll three dice.
+- **Letting go is not a Flight,** and neither is a move on foot, a mounted step, or being carried. A soldier whose harness is Jammed or dry makes no ODM move, so they make no Flight.
+
+<TryRollButton pool={{ base: 4, gear: 2, stress: 1 }} label="Try a Flight" />
+
+</Subsection>
+
+<Subsection title="Momentum" id="momentum">
+
+**Momentum** is speed you are carrying. It sits in the open on your sheet, from 0 up to the Anchors left, and **you lose all of it at the end of any round in which you made no ODM move.** Keep flying, or arrive on foot with nothing in hand.
+
+<CoreTable table="momentum" />
+
+You spend any amount at any point in your own turn, by your own choice. Nobody else spends it, and the GM never grants, spends, or takes a point of it.
+
+</Subsection>
+
+<Subsection title="Anchors and the Terrain Trait" id="anchors">
+
+The Anchor Rating gives the fight a public pool of **Anchors**: the trees, roofs, and beams worth firing a line into. **However many are left is every soldier's Momentum cap.**
+
+<CoreTable table="anchors" />
+
+- **They are never restored.** Nothing in a fight puts one back.
+- **A Titan wrecks them.** A Behavior Table entry with a wreck effect destroys 1, whether the behavior landed or whiffed, and a Focus Titan whose body comes down destroys 1 where it lands. They never fall below 0.
+- **When they fall, every cap falls with them,** and anyone holding more Momentum than the new cap loses the excess at once.
+- **At 0 Anchors nobody holds Momentum,** and none can be gained. Flights are still rolled and still make their step, and **no step row changes**: however flat the Titan has beaten the place, the route to the Nape is still open.
+
+Each rating also carries one **Terrain Trait**, printed in the table above. Wooded has none, and is the plain ground every other rating is read against.
 
 </Subsection>
 
@@ -259,7 +300,7 @@ Each row of a table gives the D6 result, the behavior's name and tier, and:
 - **Holder's Position:** the Position the holder must be at for the entry to happen. "Any" means all four.
 - **Body Parts used:** the kinds it needs unbroken. An entry that uses a leg needs both, so a grounded Titan cannot resolve it.
 - **Attack Dice:** how many <GlossaryTerm term="Titan Dice" /> it rolls.
-- **Effects,** in order, each naming its location, its type, and whether it can be lethal.
+- **Effects,** in order, each naming its location, its type, and whether it can be lethal. A wreck effect names nobody: it takes an Anchor off the field.
 - **Fallback:** what happens instead when the holder's Position does not fit.
 - **Grab:** marked on the one entry whose effects include a Grab.
 
@@ -395,13 +436,14 @@ Attention changes only at these moments, and between them the holder does not ch
 Read it like this:
 
 1. **Find the highest rung any candidate meets.** Those who meet it are tied. When that rung is nearest, only the candidates at the closest Position are tied.
-2. **If that rung is hooked into its body** and anyone tied there is marked hooked in by a strike, only they stay tied. A Nape striker who fell short draws the Titan before a soldier who is only On Body.
-3. **Narrow by each lower rung in turn.** At the nearest rung, keep the tied soldiers at the closest Position any of them holds.
-4. **Still tied?** The current holder keeps it. Since nearest has already narrowed the tie, that happens only between soldiers at the same distance.
-5. **Otherwise the lowest card this round takes it,** a Squadmate on a <GlossaryTerm term="Wing" /> counting just after its player character. This step is skipped when no cards have been dealt this round, and at an end step.
-6. **Otherwise nothing holds its Attention** until its next card, which reads the ladder again with that round's cards.
+2. **Add everyone marked loudest.** Unless the highest rung met is hooked into its body, every soldier marked loudest joins the tied set, whatever Position they hold. A soldier who came in loud from Distant is in it. This is the only step that adds anybody.
+3. **If that rung is hooked into its body** and anyone tied there is marked hooked in by a strike, only they stay tied. A Nape striker who fell short draws the Titan before a soldier who is only On Body.
+4. **Narrow by each lower rung in turn.** At the nearest rung, keep the tied soldiers at the closest Position any of them holds.
+5. **Still tied?** The current holder keeps it. Since nearest has already narrowed the tie, that happens only between soldiers at the same distance.
+6. **Otherwise the lowest card this round takes it,** a Squadmate on a <GlossaryTerm term="Wing" /> counting just after its player character. This step is skipped when no cards have been dealt this round, and at an end step.
+7. **Otherwise nothing holds its Attention** until its next card, which reads the ladder again with that round's cards.
 
-An Abnormal may use its own ladder. Every ladder begins with hooked into its body and ends with nearest, so nothing, noise included, turns a Titan off a blade at its Nape or a soldier On Body.
+An Abnormal may use its own ladder. Every ladder begins with hooked into its body and ends with nearest, so nothing, noise included, turns a Titan off a blade at its Nape or a soldier On Body. Everything below that line a shout can match.
 
 </Subsection>
 
@@ -413,11 +455,15 @@ A mark lasts until the end of that Titan's **next card that resolves a behavior*
 
 </Subsection>
 
-<MarginNote>A shout from beyond its reach is not what turns it. From Distant, use a flare.</MarginNote>
+<MarginNote>A shout from beyond its reach is not what turns it. From Distant, use a flare, or come in badly: a Flight that earns nothing is loud enough from anywhere.</MarginNote>
 
 <Subsection title="Draw Attention" id="draw-attention">
 
-**Draw Attention** is an unrolled action against one Focus Titan, for a soldier who holds a Position other than Distant relative to it and is not Grabbed. It spends your action and marks you loudest. A Fear Roll result can set the same mark with no action, under the same Position requirement, and it lasts and is read exactly the same way.
+**Draw Attention** is an unrolled action against one Focus Titan, for a soldier who holds a Position other than Distant relative to it and is not Grabbed. It spends your action, or your move instead with Shout Them Off, and marks you loudest. A Fear Roll result can set the same mark with no action, under the same Position requirement, and it lasts and is read exactly the same way.
+
+**What the shout is worth.** While you are marked loudest you meet every rung any other candidate meets, except hooked into its body. So the shout takes the Titan off any comrade who is not hooked into its body and not On Body, whatever they did to earn it, and it never takes it off a blade at the Nape. That is the whole of the trade: you can buy a comrade out of anything but the cut they are already making.
+
+A Flight with no successes sets the same mark, and so may a mounted charge. Momentum spent on Quiet keeps it off you for that turn.
 
 </Subsection>
 
@@ -537,6 +583,7 @@ Only a Nape strike that reaches the Nape Depth kills a Titan. In order:
 
 A Focus Titan's body comes down on the soldiers under it when it dies and when it becomes grounded. It rolls no Attack Dice, and no Reaction answers it.
 
+- **The ground goes with it.** The fight loses 1 Anchor where the body lands, resolved with the fall and before the Leap Clear rolls, whether or not anyone is under it.
 - **The path** is every soldier at On Body or Blind Spot relative to it. An airborne soldier swings clear with no roll and keeps their Position. In Reach and Distant are outside the path, and so is a soldier Grabbed in another Titan's hand, and one this Titan holds at its grounding, who stays Grabbed. A soldier its death freed from its hand is in the path, at On Body.
 - **<GlossaryTerm term="Leap Clear" />.** Each soldier in the path who is not airborne, Down, or carried rolls Agility with Gear Dice from ODM Gear, or from the horse while mounted, needing **1 success**. It is not an action and not a Reaction, so it spends no turn. Comrades at the same Position may Help, each spending their action, and it can be Pushed. A success clears you to In Reach relative to the Titan. A failure pins you.
 - **Down or carried.** A Down soldier in the path is pinned with no roll. A carried soldier follows their carrier: if the carrier clears, both hold In Reach; if the carrier is Pinned, carrying ends and both are Pinned, each with their own Critical Injury and their own pinning Body Part.
@@ -582,7 +629,7 @@ The Squad fights Focus Titan A, a Medium Titan, at Wooded. Its left leg is Broke
 
 Three successes against a Nape Depth of 4. Her three successes become 3 Openings created by Mila, Jonas's Opening is spent, and her strike marks her hooked in by a strike. The Gear Die did not show 1, so nothing wears.
 
-**Jonas's card.** He no longer holds Attention, because the Titan's card turned to Mila. He moves from In Reach to Blind Spot, a Wooded step, and declares 4 Bonus Dice, the cap: 2 of Mila's Openings and 2 for the grounded Titan. Strength 3 and 4 Bonus Dice make 7 base dice, with 1 Gear Die and 2 Stress Dice.
+**Jonas's card.** He no longer holds Attention, because the Titan's card turned to Mila. He moves from In Reach to Blind Spot, a Wooded step, and because it is an ODM move it is a Flight: his Fly roll gives 2 successes, so he lands with 2 Momentum, which is the cap at Wooded. He does not need to spend it. He declares 4 Bonus Dice, the cap: 2 of Mila's Openings and 2 for the grounded Titan. Strength 3 and 4 Bonus Dice make 7 base dice, with 1 Gear Die and 2 Stress Dice.
 
 <PoolRows rows={[{ label: 'The cut', pool: 'base:6,6,6,2,4,1,5|gear:6|stress:3,2', successes: 4 }]} />
 
@@ -721,7 +768,7 @@ Every Titan Engagement also carries a **retreat clock**, which starts empty and 
 At most two Focus Titans are ever in play. The fight becomes a **retreat** when the retreat clock fills, or when a Background Titan's clock fills while two Focus Titans are alive, in which case that Titan does not enter.
 
 - **Nothing more arrives.** No Background clock fills again, the retreat clock does not fill, and no Titan enters. Each living Focus Titan's Regeneration clock still fills.
-- **Moves are forced.** Every soldier who holds a Position and is not Down, Grabbed, or carried must use each move on one of these, their choice:
+- **Moves are forced.** Every soldier who holds a Position and is not Down, Grabbed, or carried must use each move on one of these, their choice. A retreat narrows your own move rather than replacing it, so an ODM move made under one is a Flight like any other: rolled, worth 1 Momentum a success, and loud when it earns none.
   1. a step along a shortest chain toward Distant, relative to the earliest-labelled Focus Titan they are not yet Distant from, and once Distant from every Focus Titan, toward Distant relative to the earliest-labelled corpse they are not yet Distant from;
   2. leaving, once they hold Distant relative to every Focus Titan and every corpse;
   3. a step that brings them fewer Position steps from a Down, Grabbed, or Pinned comrade who is not carried;
@@ -756,6 +803,8 @@ A Titan Engagement has two ending tests, checked once the event that made one tr
 If it ends by the second test **while a Titan lives**, every soldier still holding a Position dies, left to the Titans. Those deaths have no witnesses and cause no Fear Roll, but they count for Grief, and their left items leave play with the ground they lie on. The end frees no Pinned soldier: whether or not a Titan lives, every soldier still Pinned when it ends by the second test dies under the body. With no Focus Titan alive, everyone else goes through the steps that follow any kill.
 
 **A Titan Engagement always ends:** by a kill, by no soldier standing, or by the retreat its retreat clock forces. Your Squad may still leave earlier by choice.
+
+**What the end clears.** After the last of the steps that follow a fight, every soldier's Momentum becomes 0 and the fight's Anchors are cleared along with the Position records. No step reads either, and neither is carried into the next fight.
 
 </Subsection>
 

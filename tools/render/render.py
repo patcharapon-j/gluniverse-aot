@@ -894,19 +894,22 @@ def b_interim_setup():
 
 
 def b_position_steps():
-    rows = []
+    """The step rows, and the Anchors and Terrain Trait each rating gives (decision batch 10, OQ-182)."""
+    steps, field = [], []
     for rt in load(ANCH)["ratings"]:
+        expect_keys(rt, {"id", "name", "meaning", "anchors", "terrain_trait", "steps"},
+                    f"{ANCH} {rt['id']} rating")
         for s in rt["steps"]:
-            expect_keys(s, {"between", "on_foot", "mounted", "odm", "fly_roll"}, f"{ANCH} {rt['id']} step")
+            expect_keys(s, {"between", "on_foot", "mounted", "odm"}, f"{ANCH} {rt['id']} step")
             a, b = s["between"]
-            fly = "none"
-            if s.get("fly_roll"):
-                expect_keys(s["fly_roll"], {"needs", "failure_ends_at"}, f"{ANCH} {rt['id']} fly_roll")
-                fly = (f"needs {s['fly_roll']['needs']}; on a failure the move ends at "
-                       f"{position_name(s['fly_roll']['failure_ends_at'])}")
-            rows.append([rt["name"], f"{position_name(a)} to {position_name(b)}", yes_no(s["on_foot"]),
-                         yes_no(s["mounted"]), yes_no(s["odm"]), fly])
-    return table(["Anchor Rating", "Position step (either way)", "On foot", "Mounted", "ODM", "Fly roll"], rows)
+            steps.append([rt["name"], f"{position_name(a)} to {position_name(b)}", yes_no(s["on_foot"]),
+                          yes_no(s["mounted"]), yes_no(s["odm"])])
+        trait = folded(rt["terrain_trait"])
+        trait = re.sub(r"\s*\((?:data/[^()]*|[a-z][a-z0-9_-]*(?:, [a-z][a-z0-9_-]*)*)\)", "", trait)
+        field.append([rt["name"], str(rt["anchors"]), "none" if trait == "none" else trait])
+    return (table(["Anchor Rating", "Position step (either way)", "On foot", "Mounted", "ODM"], steps) +
+            "\n\n**Anchors and Terrain Traits**\n\n" +
+            table(["Anchor Rating", "Anchors", "Terrain Trait"], field))
 
 
 # ------------------------------------------------------------------ Chapter 7

@@ -6,27 +6,27 @@ order: 2
 tab: Titans
 sources:
   - path: docs/rules/06-standard-titans.md
-    sha: "7648f7b102a054d9615d9982bd53f169d2605139"
+    sha: "85b11f59f9291c70668a96582005fdeaeea05a49"
   - path: docs/rules/05-titan-engagement.md
-    sha: "08b7bf455d7d385faedf5a8dd7116eb25b062336"
+    sha: "e645a7168e73ff8bec021240781efe73655eca69"
   - path: data/titans/index.yaml
     sha: "c64683a5b889e6cf9fb38cbc30c21bcba54c6952"
   - path: data/titans/standard-small.yaml
-    sha: "236a4bdd97435bdf511f4b56914efcbd5f708e6f"
+    sha: "9f1d82024a34a9d6a2251d868fe266dd92b459d4"
   - path: data/titans/standard-medium.yaml
-    sha: "eca681ebf4f1039abddd064b7a7846411a149a6e"
+    sha: "c4dca388c13b75772f5744697a112c8eded389d1"
   - path: data/titans/standard-large.yaml
-    sha: "9fcfb493e21e973cfab9ac4d8e34eb03e441869f"
+    sha: "baac6162d8b133470fc07c3caeab40f3b55c6678"
   - path: data/titans/sprinting-abnormal.yaml
-    sha: "ae63f4fb9819f241f9f365487c3b267849df05cd"
+    sha: "7611ea9d0bb50e7a483b99709ee46c68c4163923"
   - path: data/engagement/size-classes.yaml
     sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
   - path: data/engagement/attention.yaml
-    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
+    sha: "3d64d61249c17643e00e10197041a9dc0cd9b798"
   - path: data/engagement/read.yaml
     sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/engagement-setup.yaml
-    sha: "b84e5d55db3cec0b3c771fe616a9c9c356be6121"
+    sha: "deeac6163448a03a1fac606c19d143b609949d18"
 ---
 
 import AbnormalLadder from '~/components/AbnormalLadder.astro';
@@ -69,6 +69,8 @@ When an Abnormal starts a fight as a Focus Titan, or becomes one, every soldier 
 Each record below gives the Titan's Size Class, its **Tempo** (cards a round), its **Nape Depth** (successes one Nape strike needs), its **Regeneration clock** in segments, its **Heave rating** (the heave count that frees everyone its body pins), its Body Parts in order with their Toughness, and the Attention Ladder it uses. The order of the Body Parts is not decoration: it breaks Regeneration ties and decides which arm Grabs.
 
 Under each record sits the Behavior Table, and under that the columns you run a card from: the targets, the Positions the Attention holder must hold, the Body Parts the entry needs unbroken, and what the entry falls back to when the holder stands somewhere it cannot reach.
+
+**The heavy entry on every table wrecks an Anchor.** Like a telegraph, a wreck lands whether the behavior landed or whiffed, because it is the Titan going through the treeline rather than a blow at a person. Lower the fight's Anchors by 1 and say so, and remember that every soldier's Momentum cap has just dropped with it. A Titan's own body coming down wrecks one more where it lands.
 
 <RuleBox title="Bars, and what lifts them" icon="ph:eye-slash">
 
@@ -161,7 +163,7 @@ Four things are under bars on its record above: the Toughness of each Body Part,
 <Subsection title="What its ladder means at the table" id="abnormal-ladder-at-the-table">
 
 - **A blade at its Nape or a soldier On Body turns it first,** as on every ladder. A striker who falls short draws its next behavior, whoever else is shouting.
-- **Then noise,** but only while nobody is hooked into it, and only from a soldier who is not at Distant, since that is the only place Draw Attention can be taken from.
+- **Then noise,** but only while nobody is hooked into it. A soldier marked loudest matches every rung below hooked into its body, so the shout reaches past its quarry and past whoever is nearest. Draw Attention is still never taken from Distant, though a Flight that earned nothing marks a soldier loudest from anywhere.
 - **Then whoever it is already running down.** Its holder keeps it while they are On Body, In Reach, or at Blind Spot, Down or not, until a Nape strike, a soldier On Body, or noise turns it. A holder who gets away to Distant is no longer its quarry, so a rider who rides clear has led it off.
 - **Only then whoever is nearest.** It has no rung for soldiers in its reach and none for soldiers who have just hurt it, so the cutters at its legs draw it only when it is running nobody down and they are the nearest.
 - **A fight against it begins with nothing holding its Attention.** Everyone starts at Distant with no cards dealt, no rung picks one of them out, and no card can break the tie, so its first card turns it to whoever has come closest, or to the lowest card when nobody has moved.

@@ -40,6 +40,8 @@
   const handlesFull = $derived(view.gear.some((g) => g.subtype === 'blade-set' && g.inHandles));
   const loadCells = $derived(Math.max(d.carrying_limit, d.items_carried));
   const setGas = (n: number) => setField(actor, 'system.gas_rating', s.gas_rating === n ? n - 1 : n);
+  // Momentum: held from 0 upward, capped in play by the Anchors left (data/gear/sheet-fields.yaml, momentum).
+  const setMomentum = (n: number) => setField(actor, 'system.momentum', Math.max(0, n));
   const setSpare = (i: number, n: number) => {
     const list = [...s.spare_canisters];
     list[i] = Math.max(1, list[i] === n && n > 1 ? n - 1 : n);
@@ -165,6 +167,13 @@
             </span>
           {:else}<span class="empty">{t('WOF.Sheet.gas.noSpare')}</span>{/each}
           <button type="button" class="mini" disabled={ro} onclick={() => setSpares(actor, [...s.spare_canisters, view.fullGas])}>{t('WOF.Sheet.kit.addSpare')}</button>
+        </span>
+        <span class="lbl">{t('WOF.Actor.Base.FIELDS.momentum.label')}</span>
+        <span class="canister">
+          <button type="button" class="mini" disabled={ro || s.momentum <= 0} aria-label={t('WOF.Sheet.momentum.spend')} onclick={() => setMomentum(s.momentum - 1)}>−</button>
+          <b>{s.momentum}</b>
+          <button type="button" class="mini" disabled={ro} aria-label={t('WOF.Sheet.momentum.gain')} onclick={() => setMomentum(s.momentum + 1)}>+</button>
+          <span class="empty">{t('WOF.Sheet.momentum.hint')}</span>
         </span>
       </div>
     </div>

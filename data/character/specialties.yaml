@@ -26,9 +26,11 @@ rules:
     The list limits only the Talent level granted at Graduation or at a build's Talents step. The XP rules (not yet
     written) state whether the list matters when buying Talents.
   list_size: >-
-    Each Specialty's list holds eight Talents: at least three dice Talents, one of them with a
-    condition, at least three rule Talents, and at least two that name a Leg, Night Camp,
-    Requisition, or Skirmish roll or trigger. A Talent may sit on two Specialty lists, and at most
+    Each Specialty's list holds at least eight Talents: at least three dice Talents, one of them
+    with a condition, at least three rule Talents, and at least two that name a Leg, Night Camp,
+    Requisition, or Skirmish roll or trigger. Every list holds eight but the Leader's, which holds
+    nine (decision batch 10, OQ-184: Shout Them Off, so that Draw Attention is no longer the one
+    Titan Engagement action no Talent names). A Talent may sit on two Specialty lists, and at most
     four do; Well-Kept Rig sits on the Flier's and the Engineer's lists (decision batch 7, 7-2;
     OQ-28 (c) as revised; OQ-136).
   general_list: >-
@@ -69,7 +71,7 @@ specialties:
     name: Leader
     key_attribute: empathy
     summary: The voice that keeps soldiers in the fight. Leaders Rally, steady nerves, take on others' Stress, and talk armed people down.
-    talents: [steady-voice, silver-tongue, stand-down, unshaken-command, carrying-voice, shoulder-the-load, put-in-a-word, campfire-talk]
+    talents: [steady-voice, silver-tongue, stand-down, unshaken-command, shout-them-off, carrying-voice, shoulder-the-load, put-in-a-word, campfire-talk]
     squadmate_template: leader
 
   - id: medic

@@ -1,5 +1,8 @@
-# The Talent list: 83 Talents, the nine Specialty lists of eight and the general list of twelve
-# (decision batch 7, 7-2; OQ-136). The lists themselves are in data/character/specialties.yaml.
+# The Talent list: 84 Talents, the nine Specialty lists and the general list of twelve
+# (decision batch 7, 7-2; OQ-136). Every Specialty's list holds eight but the Leader's, which holds
+# nine: decision batch 10 (OQ-184) added Shout Them Off so that Draw Attention is no longer the one
+# Titan Engagement action no Talent names, and the fixed list size went with it.
+# The lists themselves are in data/character/specialties.yaml.
 # Source of truth under ADR-0012. docs/rules/02-character-creation.md (section 2.7 and Appendix 2A)
 # references this file and renders its tables from it (tools/render/render.py).
 # Every Talent names the Action Catalog entries it applies to (data/character/action-catalog.yaml)
@@ -9,7 +12,7 @@ id: talents
 name: Talents
 chapter: 02-character-creation
 adrs: [ADR-0006, ADR-0011, ADR-0014, ADR-0016, ADR-0024]
-decided: [OQ-20, OQ-26, OQ-28, OQ-33, OQ-34, OQ-36, OQ-136]
+decided: [OQ-20, OQ-26, OQ-28, OQ-33, OQ-34, OQ-36, OQ-136, OQ-184]
 
 talent_rules:
   levels:
@@ -677,6 +680,19 @@ talents:
     limit: once_per_titan_engagement
     rules: [03-harm-and-mind, 05-titan-engagement]
     specialties: [leader]
+
+  - id: shout-them-off
+    name: Shout Them Off
+    description: "Pulling a Titan onto yourself with a bellow, without breaking stride."
+    type: rule
+    max_level: 1
+    names: [draw-attention]
+    trigger: You declare draw-attention in a Titan Engagement.
+    effect: You may spend your move on it instead of your action.
+    limit: once_per_titan_engagement   # ADR-0016, Talent guardrail 8
+    rules: [05-titan-engagement]
+    specialties: [leader]
+    decided: [OQ-184]
 
   - id: carrying-voice
     name: Carrying Voice

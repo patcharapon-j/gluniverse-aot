@@ -47,6 +47,7 @@ export function soldierState(actor: any): SoldierState {
     airborne: !!src.airborne,
     odmHad: !!odm && odm.system.current > 0 && src.gas_rating > 0,
     positions,
+    momentum: src.momentum ?? 0,
     untreated: items.filter((i: any) => i.type === 'critical-injury' && !i.system.treated).length,
   };
 }
@@ -102,6 +103,10 @@ export function snapshot(combat: any): Snapshot {
     step: sys.step,
     round: combat.round,
     anchor: ratingOf(sys.anchor),
+    anchors: sys.anchors?.left ?? 0,
+    wrecks: sys.anchors?.wrecks ?? 0,
+    odmUsed: [...(sys.odmUsed ?? [])],
+    movesSpent: [...(sys.movesSpent ?? [])],
     soldiers: soldierActors(combat).map(soldierState),
     titans: (sys.titans as any[]).map((r) => titanRow(combat, r)),
     wings: wingsOf(combat),

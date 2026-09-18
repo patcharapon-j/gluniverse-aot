@@ -241,6 +241,10 @@ falling_titan:
   titan_harm: >-
     The falling body is Titan harm that no Behavior Table entry deals: it rolls no Attack Dice, no
     Reaction answers it, and the pin's Critical Injury takes no net success rider (ADR-0019).
+  wrecks_an_anchor: >-
+    The Titan Engagement loses 1 Anchor where the body lands, resolved with the fall and before the
+    Leap Clear rolls (data/engagement/anchor-ratings.yaml, anchors, wrecking). It happens whether
+    or not any soldier is in the path, and never below 0 (decision batch 10, OQ-182).
   path:
     in_it: Every soldier who holds On Body or Blind Spot relative to the falling Titan.
     airborne: >-

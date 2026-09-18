@@ -881,6 +881,8 @@ Chapter 5 states when a Titan Engagement ends (section 5.11, `data/engagement/en
 
 The steps are resolved outside the Titan Engagement. No soldier retires, and no promotion happens, before step 9.
 
+**Momentum and Anchors.** No step above reads either. Every soldier's Momentum becomes 0 and the Titan Engagement's Anchors are cleared with the Position records, after the last step above (`momentum_and_anchors`; Chapter 5, section 5.2). A Skirmish has neither.
+
 **Pinned soldiers.** A Titan Engagement does not end by its no-Focus-Titan test while a soldier lies Pinned: the rounds go on until the last Pinned soldier is freed or dies (Chapter 5, section 5.11; decision batch 8, 8-9). Its end frees no one: only the no-soldier-standing test can end it while a soldier is Pinned, and then every Pinned soldier dies, left under the body, whether or not a Focus Titan is alive, as a soldier left to the Titans does, counted for Grief (decision batch 8, 8-21; OQ-157).
 
 **A Skirmish** ends with the same steps, with "Skirmish" in place of "Titan Engagement" (`procedures`, `skirmish`; Chapter 7, section 7.4): the soldiers who took part stand in for those who held a Position, its Stress relief is the end of a Skirmish's 1, every soldier who took part counts as holding the patient's Position for aftermath rolls, and its care window's scope is every soldier who took part.

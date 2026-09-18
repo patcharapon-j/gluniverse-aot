@@ -134,7 +134,7 @@ export async function act(action: string, data: Record<string, any> = {}): Promi
       case 'engage':
         return void (await ask({ act: 'engage', combat: combat.id, soldier: data.soldier, foe: data.foe }));
       case 'move':
-        return void (await movePosition(combat, { actor: game.actors.get(data.soldier), key: data.key, to: data.to, way: data.way }));
+        return void (await movePosition(combat, { actor: game.actors.get(data.soldier), key: data.key, to: data.to, way: data.way, carry: data.carry, charge: data.charge, kind: data.kind }));
       case 'leave':
         return void (await leave(combat, game.actors.get(data.soldier)));
       case 'return':

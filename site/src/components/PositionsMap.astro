@@ -55,7 +55,7 @@ const arcs = steps.filter((s) => s.span > 1).sort((x, y) => x.from - y.from);
 
   <p class="sr">
     At {drawn.name}, the steps along the line are: {along.map((s) => `${lane[s.from].name} to ${lane[s.to].name}, by ${s.kinds.join(' or ')}`).join('; ')}.
-    {arcs.length > 0 && ` Steps that skip a Position: ${arcs.map((s) => `${lane[s.from].name} to ${lane[s.to].name}, by ${s.kinds.join(' or ')}${s.fly ? `, ${s.fly}` : ''}`).join('; ')}.`}
+    {arcs.length > 0 && ` Steps that skip a Position: ${arcs.map((s) => `${lane[s.from].name} to ${lane[s.to].name}, by ${s.kinds.join(' or ')}`).join('; ')}.`}
   </p>
 
   {arcs.length > 0 && (
@@ -64,14 +64,13 @@ const arcs = steps.filter((s) => s.span > 1).sort((x, y) => x.from - y.from);
         <li>
           <b>{lane[s.from].name} to {lane[s.to].name}</b>
           <span class="kinds">{s.kinds.join(' · ')}</span>
-          {s.fly && <span class="fly">{s.fly}</span>}
         </li>
       ))}
     </ul>
   )}
 
   <p class="foot">
-    Drawn at <b>{drawn.name}</b>. Every Anchor Rating has its own step rows, in the table below. A Titan grounded by a Broken leg lets every step joining In Reach, On Body, and Blind Spot be made on foot, and none mounted.
+    Drawn at <b>{drawn.name}</b>, which holds {drawn.anchors} Anchors. Every Anchor Rating has its own step rows and its own Anchors, in the tables below. Every ODM move along one of these is a Flight, and a move that crosses two steps spends Momentum on Carry. A Titan grounded by a Broken leg lets every step joining In Reach, On Body, and Blind Spot be made on foot, and none mounted.
   </p>
 
   <figcaption class="titleblock" id="fig-positions-caption"><span>{fig}</span><span>Positions and the moves between them</span></figcaption>
@@ -156,11 +155,6 @@ const arcs = steps.filter((s) => s.span > 1).sort((x, y) => x.from - y.from);
   .arcs b::before {
     content: "→ ";
     color: var(--seal);
-  }
-  .fly {
-    font-size: var(--fs-sm);
-    line-height: 1.4;
-    color: var(--ink-3);
   }
   .foot {
     margin: 18px 0 26px;

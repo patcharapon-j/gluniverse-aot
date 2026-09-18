@@ -472,7 +472,7 @@ export function gasRollFlow(): FlowStep[] {
       exit: {
         kind: 'stop',
         label: 'Not ODM use',
-        text: 'Holding a Position without moving, airborne or not; a roll made with a Blade Set, a horse, or a kit, every Nape strike included; and being carried. No use, no roll.',
+        text: 'Holding a Position without moving, airborne or not; a mounted charge; a roll made with a Blade Set, a horse, or a kit, every Nape strike included; and being carried. No use, no roll.',
       },
     },
     {
@@ -751,7 +751,7 @@ function gearRuleChecks(): void {
   if (odmDoc.rolls_it_rates.length !== (itemsDoc.items.find((i) => i.id === 'odm-gear')?.gear_dice_for ?? []).length) {
     throw new Error('Gear: the entries ODM Gear rates no longer match its item row.');
   }
-  if (odmDoc.odm_use.not_odm_use.length !== 3) throw new Error('Gear: what is not ODM use has changed; the Gas Roll drawing lists three.');
+  if (odmDoc.odm_use.not_odm_use.length !== 4) throw new Error('Gear: what is not ODM use has changed; the Gas Roll drawing lists four.');
   if (fallsDoc.procedure.length !== 5) throw new Error('Gear: the fall procedure no longer has five steps.');
 }
 

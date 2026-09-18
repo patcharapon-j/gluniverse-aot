@@ -1,0 +1,31 @@
+Gear Die faces when a Pushed roll is final
+
+rule                              P(shows 1, wears)  P(shows 6, success)
+today, never re-rolled                        16.7%                16.7%
+A re-roll 2-5, keep 6, lock 1                 27.8%                27.8%
+B re-roll all but 6                           13.9%                30.6%
+
+Blade Set ruined by one Pushed strike (issued rating 1, so one point ruins it)
+
+rule                              per Pushed strike  Pushed strikes per ruin
+today, never re-rolled                        16.7%                     6.00
+A re-roll 2-5, keep 6, lock 1                 27.8%                     3.60
+B re-roll all but 6                           13.9%                     7.20
+
+Jam test proxy: 3 Pushed dodges, ODM Gear Dice each time.
+Bar is no more than 33.3%; the worst cell measured today is 28.3%.
+
+rule                               ODM Gear 2   ODM Gear 3
+today, never re-rolled                 26.3%        17.8% 
+A re-roll 2-5, keep 6, lock 1          53.1%!       47.7%!
+B re-roll all but 6                    19.8%        11.8% 
+
+Gear Dice added to a Pushed roll's successes (ODM Gear 2)
+
+rule                               E[successes from gear]
+today, never re-rolled                              0.333
+A re-roll 2-5, keep 6, lock 1                       0.556
+B re-roll all but 6                                 0.611
+
+Issued ODM Gear rating by Funding (data/gear/standard-issue.yaml): [1, 1, 2, 2, 2, 3]
+Gear Die today: [] re-rolled on a Push.

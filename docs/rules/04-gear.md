@@ -117,7 +117,7 @@ In a Titan Engagement, a Nape strike, and a Body Part strike made from On Body o
 
 ### ODM moves
 
-- An **ODM move** is a move a soldier makes on their own ODM Gear. Chapter 5 states which Position changes need an ODM move at each Anchor Rating, and which can be made on foot or mounted (section 5.2, `data/engagement/anchor-ratings.yaml`; `odm_moves`).
+- An **ODM move** is a move a soldier makes on their own ODM Gear, and every ODM move is a **Flight**: it is rolled for `fly`, its step happens whatever the roll gives, each success is 1 Momentum, and no successes sets the loudest flag (`odm_moves`; Chapter 5, section 5.2). Chapter 5 states which Position changes need an ODM move at each Anchor Rating, which can be made on foot or mounted, and what Momentum buys.
 - An ODM move needs ODM Gear that counts as had, so a soldier who is Jammed or has run dry cannot make one.
 - A mounted soldier's ODM move dismounts them before its change of Position (section 4.5).
 - While Overloaded, an ODM move also spends the soldier's action, and cannot be made once that action is spent (section 4.7).
@@ -131,7 +131,9 @@ A soldier **uses ODM Gear** in a round if, during that round, they do any of the
 - make a roll whose gear item is their ODM Gear, such as a dodge made with it;
 - take an act that a Chapter 5 rule names as ODM use (section 5.2, `data/engagement/positions.yaml`, `moves`, `odm_use_named_by_this_chapter`).
 
-Holding a Position without moving is not ODM use, even while airborne. Neither is a roll made with a Blade Set, a horse, or a kit, including every Nape strike, nor being carried.
+A Flight is ODM use twice over, an ODM move and a roll whose gear item is the soldier's ODM Gear, and a soldier who used ODM Gear still makes one Gas Roll for the round however many times they used it.
+
+Holding a Position without moving is not ODM use, even while airborne. Neither is a mounted charge (section 4.5, Chapter 5, section 5.2), nor a roll made with a Blade Set, a horse, or a kit, including every Nape strike, nor being carried.
 
 Outside a Titan Engagement there are no rounds. ODM use there makes a Gas Roll only when the rule that calls for it says so, as the Chase rules may. Travel on horseback never spends gas (ADR-0009), and the Graduation Exam makes no Gas Rolls (Chapter 2).
 
@@ -154,7 +156,7 @@ ODM Gear whose current rating reaches 0 **Jams** (`jam`):
 2. The soldier cannot make an ODM move while it is Jammed, so they make no Gas Roll for any later round. The Gas Roll for the round in which it Jammed is still made.
 3. The Gas Rating does not change.
 4. The soldier cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot.
-5. If the soldier is airborne, they fall once the roll that Jammed it is finished (section 4.6).
+5. If the soldier is airborne, they fall once the roll that Jammed it is finished (section 4.6). At the Urban Anchor Rating a soldier who holds Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them (Chapter 5, section 5.2; decision batch 10, OQ-182).
 
 A Jam ends when the current rating rises above 0, through Field Repair (section 4.8) or Standard Issue replacing the Jammed ODM Gear (section 4.9; the interim issue does so only for ODM Gear rated below the Funding row, and a soldier may decline the exchange).
 
@@ -177,6 +179,8 @@ The Gas Roll is the fixed roll `gas-roll` (Chapter 2). Follow `gas_roll`:
 3. **Dice.** Two dice. Three dice if any Pushed roll the soldier made that round had their ODM Gear as its gear item (Chapter 1, section 1.5; OQ-12), however many such rolls there were. A Pushed dodge made with the horse does not by itself make it three (ADR-0019). Light Trigger can make a three-die Gas Roll two dice.
 4. **Read.** Count the dice showing 1. The dice are not added, and a 6 does nothing.
 5. **Effect.** Lower the Gas Rating by 1 for each 1, to a minimum of 0.
+
+**A clean line.** A soldier who spends 1 Momentum on a clean line makes no Gas Roll for that round (Chapter 5, section 5.2; `gas_roll`, `momentum`).
 
 The extra gas a Push costs is the third die of that round's one Gas Roll, never a second roll. A Gas Roll is not an attribute roll: it has no attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice, it takes no Circumstances (Chapter 1, section 1.4a; decision batch 9, 9-2), it cannot be Pushed, Helped, or Covered, and it never causes a Stress Response (Chapter 1, section 1.3). A Squadmate never Pushes, so its Gas Roll is always two dice.
 
@@ -222,6 +226,8 @@ A soldier whose Gas Rating is 0 has **run dry** (`running_dry`):
 >
 > Gas Rating 3 gives medians of 8 rounds with no Push and 6 Pushing every round, the closest whole-number medians to about 9 and about 6. With no Push the canister has emptied by round 8 51.3% of the time and lasts 9 or more rounds 48.7% of the time; its mean is 9.25. Rating 2 gives medians of 5 and 4, short of both halves, and rating 4 gives 11 and 8, over both. In a simulation of 200,000 canisters per case, the reference Rookie, who makes one ODM Gear roll each round with Agility 3, ODM Gear 2 (OQ-72), no dodge Talent (decision batch 2b), and Stress 1 and Pushes only when short, gets a median of 7 rounds (mean 8.24, 10th to 90th percentile 4 to 14) when the roll needs 1 success, Pushing on 27% of rounds, and a median of 7 (mean 7.23, 3 to 12) when it needs 2, Pushing on 60%. At ODM Gear 1 the same soldier gets a median of 7 (mean 8.06, 4 to 14), Pushing on 32%, and a median of 6 (mean 7.10, 3 to 12), Pushing on 66%. Fewer Pushes at ODM Gear 2 only make gas last longer, so the medians above still meet ADR-0014's gas target. As the decisions require, the Pushes that raise the Gas Roll are dodges, Fly, and Break Attention, never strikes, because a strike's gear item is a Blade Set. The spread is wide: about 1 canister in 7 empties by round 4 even without a Push, which is why Standard Issue carries a spare from Funding 2 upward (section 4.9). A strike spends no gas, so a soldier who holds Blind Spot and strikes can go several rounds without a Gas Roll; OQ-60 records gas per round of fighting as a Chapter 5 simulator case.
 
+> **Design note (OQ-182):** Flight pulls on the gas target in both directions at once. Every ODM move is now a roll whose gear item is the soldier's ODM Gear, so a soldier who moves on the wires Pushes more often than the reference Rookie's one ODM Gear roll a round modelled, and Momentum makes soldiers fly more; a point spent on a clean line takes a round's Gas Roll away outright. The full canister's Gas Rating 3, the Gas Roll's two dice and three, and the issue of a spare from Funding 2 upward are ADR-0014 starting values, and the table above was measured before Flight: it stands as the record of the rules it measured and is stale until the rerun (Chapter 5, section 5.13).
+
 ## 4.4 Blade Sets
 
 A **Blade Set** is one pair of ODM blades, and the only unit in which they are carried, counted, passed, and lost. `data/gear/blade-sets.yaml` holds the rule.
@@ -242,8 +248,8 @@ When a Pushed roll whose gear item is the Blade Set in the handles is final, and
 ### The swap
 
 - **Effect:** if the handles are empty, fit one carried Blade Set into them (`swap`).
-- **In a Titan Engagement:** once during each of the soldier's own turns, at any point in that turn, spending neither the move nor the action. A turn spent in advance still happens (Chapter 1, section 1.9), so the soldier can swap during it.
-- **Outside a Titan Engagement:** at any time, as often as the soldier likes.
+- **In a Titan Engagement:** once during each of the soldier's own turns, at any point in that turn, spending the soldier's **move** (decision batch 10, OQ-185). A move can change no Position (Chapter 5, section 5.2), so a soldier who refits stays where they are and still has their action; what a ruined Blade Set costs them is that turn's Flight, and with it the Momentum the Flight would have given. A turn spent in advance still happens (Chapter 1, section 1.9), so the soldier can swap during it, spending that turn's move.
+- **Outside a Titan Engagement:** at any time, as often as the soldier likes, spending nothing.
 - A Down soldier cannot swap. A Squadmate swaps exactly as a player character does.
 
 > **Design note (OQ-63):** The handles, ruin after any remaining point of wear, a swap only into empty handles, and filling the handles when a Titan Engagement begins are this chapter's reading of "a Pushed blade die 1 ruins the set; the swap is free once per turn". OQ-72 changes only ODM Gear: every issued Blade Set stays rated 1, and a Squadmate never ruins one.
@@ -259,6 +265,8 @@ When a Pushed roll whose gear item is the Blade Set in the handles is final, and
 > | Levi-grade: Strength 6, Talent 3, Blade Set 3, Stress 2 | 4 | 54.9% | 24.0% | about 4 |
 >
 > OQ-63 records the rating 2 and 3 figures for Requisition, which grants those sets by Scarcity with no price (Chapter 7, section 7.3).
+
+> **Design note (OQ-185):** Blades could not run out, because the replacement was free: a soldier could ruin a set on a Push and refit it in the same turn at no cost, and raising the ruin rate could never fix that. Spending the move costs exactly the right thing, and it touches no die and no tuned number. A move can change no Position, so a soldier at Blind Spot who wrecks their steel still cuts that turn; what they give up is their Flight, and under Chapter 5's rules losing a Flight means losing Momentum and losing ground. The over-committed Push that wrecks the blades now costs the next move. It does not close ADR-0010's route to the Nape either, since a Nape strike needs a Blade Set in the handles and a soldier can still refit with their move and cut with their action on the same turn. No tuned value moves with it, but the table above was measured before it and before Flight, so those figures are stale until the rerun (Chapter 5, section 5.13).
 
 ## 4.5 Horses
 
@@ -672,6 +680,7 @@ The character sheet (Chapter 2, `record_on_sheet`) and the Squadmate stat block 
 - which of the soldier's items are kept items (section 4.1);
 - whether the soldier is airborne, the comrade they carry, and the comrade carrying them;
 - in a Titan Engagement, the soldier's own Position relative to each living Focus Titan, by its letter, or that they have left, mirroring the positions column of their Squad sheet row (`positions`, added for Chapter 5, section 5.3);
+- in a Titan Engagement, the soldier's Momentum, from 0 to the Anchors left, which is 0 outside one and is cleared when a Titan Engagement ends (`momentum`, added for Chapter 5, section 5.2);
 - after the soldier dies in a Titan Engagement, the Position where their left items lie, with its Focus Titan, and which are still there.
 
 Items carried, the carrying limit, Overloaded, Jammed, and lame are derived from those fields, not stored. The file also lists the invariants: a soldier is never both airborne and mounted, a carried soldier is neither, the carrying and carried-by fields always name each other, a horse records no Position while its soldier is mounted or outside a Titan Engagement, and every recorded Position names its Focus Titan. The Titan Engagement's first Focus Titan is A, the next Titan to become a Focus Titan in it is B, and so on (`focus_titan_label`). Whether a soldier has swapped a Blade Set during their current turn belongs to the turn, not the sheet.

@@ -2,14 +2,20 @@
  * Positions and moves (data/engagement/positions.yaml, data/engagement/anchor-ratings.yaml). Pure and
  * unit tested. Positions are stored by the Titan's label, for a Focus Titan and for a corpse alike.
  */
+import { carryCost } from './momentum.ts';
 import type { AnchorRating, Position, SoldierState, StepRow, TitanRow } from './types.ts';
 
 export type MoveKind = 'onFoot' | 'mounted' | 'odm';
 
-/** One way a step can be made. */
+/** One way a move can reach a Position: its kind, the steps it makes, and the Momentum Carry spends. */
 export interface StepWay {
   kind: MoveKind;
-  fly: { needs: number; failure: Position } | null;
+  /** Position steps the move makes: 1, or more when it spends Momentum on Carry. */
+  steps: number;
+  /** Momentum the way spends on Carry (anchor-ratings.yaml, momentum, spends, carry). */
+  carry: number;
+  /** A mounted move making the distant to in-reach step may also set the loudest flag (mounted_charge). */
+  charge: boolean;
 }
 
 const CLOSE: readonly Position[] = ['on-body', 'blind-spot'];
@@ -33,7 +39,7 @@ export function stepRows(rating: AnchorRating, grounded: boolean): StepRow[] {
     }
   }
   if (rating.id === 'open' && !rows.some((r) => pairIs(r, 'on-body', 'blind-spot'))) {
-    rows.push({ a: 'on-body', b: 'blind-spot', onFoot: true, mounted: false, odm: true, fly: null });
+    rows.push({ a: 'on-body', b: 'blind-spot', onFoot: true, mounted: false, odm: true });
   }
   return rows;
 }
@@ -66,13 +72,23 @@ export function stepsApart(rows: readonly StepRow[], from: Position, to: Positio
   return Infinity;
 }
 
+/** Whether a row can be made by a kind of move (step_fields). */
+const allows = (row: StepRow, kind: MoveKind) => (kind === 'onFoot' ? row.onFoot : kind === 'mounted' ? row.mounted : row.odm);
+
+const isCharge = (row: StepRow) => pairIs(row, 'distant', 'in-reach');
+
 /** The ways a single step can be made, from its row (step_fields). */
 export function waysOf(row: StepRow): StepWay[] {
   const out: StepWay[] = [];
-  if (row.onFoot) out.push({ kind: 'onFoot', fly: null });
-  if (row.mounted) out.push({ kind: 'mounted', fly: null });
-  if (row.odm) out.push({ kind: 'odm', fly: row.fly });
+  if (row.onFoot) out.push({ kind: 'onFoot', steps: 1, carry: 0, charge: false });
+  if (row.mounted) out.push({ kind: 'mounted', steps: 1, carry: 0, charge: isCharge(row) });
+  if (row.odm) out.push({ kind: 'odm', steps: 1, carry: 0, charge: false });
   return out;
+}
+
+/** The fewest steps one kind of move needs to reach a Position, or Infinity (momentum, spends, carry). */
+export function stepsApartBy(rows: readonly StepRow[], from: Position, to: Position, kind: MoveKind): number {
+  return stepsApart(rows.filter((r) => allows(r, kind)), from, to);
 }
 
 export interface MoveContext {
@@ -80,6 +96,8 @@ export interface MoveContext {
   titan: TitanRow;
   grabbed: boolean;
   retreat: boolean;
+  /** The Momentum the soldier can spend on Carry (0 when none is offered). */
+  momentum?: number;
   /** During a retreat, the Positions the forced move may reach relative to this body (retreat.ts, forcedTargets), or null. */
   forced?: readonly Position[] | null;
 }
@@ -109,7 +127,8 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): MoveOption[] {
       if (block) return { to, ways: [], block };
       if (from === undefined) return { to, ways: [], block: 'noPosition' };
       const row = stepBetween(rows, from, to);
-      if (!row) return { to, ways: [], block: 'notOneStep' };
+      const carried = carryWays(s, ctx, rows, from, to);
+      if (!row) return carried.length ? { to, ways: carried, block: null } : { to, ways: [], block: 'notOneStep' };
       if (ctx.forced && !ctx.forced.includes(to)) return { to, ways: [], block: 'forced' };
       let ways = waysOf(row);
       if (s.down) {
@@ -118,9 +137,31 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): MoveOption[] {
       }
       ways = ways.filter((w) => (s.mounted ? w.kind !== 'onFoot' : w.kind !== 'mounted'));
       if (!s.odmHad) ways = ways.filter((w) => w.kind !== 'odm');
-      if (!ways.length) return { to, ways, block: s.mounted ? 'mounted' : row.odm && !s.odmHad ? 'noOdm' : 'kind' };
+      if (!ways.length) return { to, ways: carried, block: carried.length ? null : s.mounted ? 'mounted' : row.odm && !s.odmHad ? 'noOdm' : 'kind' };
       return { to, ways, block: null };
     });
+}
+
+/**
+ * The ways Momentum spent on Carry reaches a Position no single step joins (momentum, spends, carry):
+ * a chain of step rows the soldier's own kind of move could make, one Momentum an extra step, with
+ * the Giant Forest rating's first Carry on a Flight free. A Down soldier Carries nothing.
+ */
+function carryWays(s: SoldierState, ctx: MoveContext, rows: readonly StepRow[], from: Position, to: Position): StepWay[] {
+  const budget = ctx.momentum ?? 0;
+  if (budget <= 0 || s.down) return [];
+  if (ctx.forced && !ctx.forced.includes(to)) return [];
+  const kinds: MoveKind[] = s.mounted ? ['mounted', 'odm'] : ['onFoot', 'odm'];
+  const out: StepWay[] = [];
+  for (const kind of kinds) {
+    if (kind === 'odm' && !s.odmHad) continue;
+    const steps = stepsApartBy(rows, from, to, kind);
+    if (!Number.isFinite(steps) || steps < 2) continue;
+    const carry = carryCost(ctx.rating, steps - 1, kind === 'odm');
+    if (carry > budget) continue;
+    out.push({ kind, steps, carry, charge: false });
+  }
+  return out;
 }
 
 function ownMoveBlock(s: SoldierState, ctx: MoveContext, from: Position | undefined): string | null {
@@ -239,4 +280,37 @@ export function nextLabel(used: readonly string[]): string {
     if (!used.includes(l)) return l;
   }
   return `T${used.length + 1}`;
+}
+
+// ---------------------------------------------------------------- Swap Blade Set (decision batch 10, OQ-185)
+
+export interface SwapContext {
+  /** The soldier is in a Titan Engagement, where the swap spends the move. */
+  inEngagement: boolean;
+  /** A Blade Set is already in the handles. */
+  handlesFull: boolean;
+  /** The soldier carries a Blade Set to fit. */
+  carries: boolean;
+  /** The soldier's move this round is already spent. */
+  moveSpent: boolean;
+  /** The soldier is Grabbed. */
+  grabbed: boolean;
+}
+
+/**
+ * What Swap Blade Set spends (data/gear/blade-sets.yaml, swap): in a Titan Engagement the soldier's
+ * move and never the action, so what a ruined Blade Set costs is that turn's Flight. Outside one it
+ * spends nothing and can be done as often as the soldier likes.
+ */
+export const swapSpends = (inEngagement: boolean): 'move' | 'nothing' => (inEngagement ? 'move' : 'nothing');
+
+/** Why the soldier may not swap Blade Sets now (a key under WOF.Tracker.swapBlades), or null. */
+export function swapBladeSetBlock(s: SoldierState, x: SwapContext): string | null {
+  if (!s.alive) return 'dead';
+  if (s.down) return 'down';
+  if (x.handlesFull) return 'handlesFull';
+  if (!x.carries) return 'noBlades';
+  if (x.inEngagement && x.grabbed) return 'grabbed';
+  if (x.inEngagement && x.moveSpent) return 'moveSpent';
+  return null;
 }

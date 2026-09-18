@@ -83,6 +83,7 @@ behavior_table:
       attack_dice: 6
       effects:
         - {type: knock-loose}
+        - {type: wreck}
       fallback: thrash
       text: It throws itself down and rolls in the dirt to scrape the soldier off its back.
 

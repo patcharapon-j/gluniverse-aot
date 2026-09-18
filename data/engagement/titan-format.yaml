@@ -110,17 +110,17 @@ entry_fields:
 
 tier_rules:
   terrorize:
-    effects_allowed: [stress, telegraph]
+    effects_allowed: [stress, telegraph, wreck]
   control:
-    effects_allowed: [stress, telegraph, knock-loose, critical-injury]
+    effects_allowed: [stress, telegraph, knock-loose, critical-injury, wreck]
     critical_injury: Every critical-injury effect has cannot_be_lethal true.
   kill:
-    effects_allowed: [stress, telegraph, knock-loose, critical-injury, grab]
+    effects_allowed: [stress, telegraph, knock-loose, critical-injury, grab, wreck]
     grab: >-
       An entry with a grab effect has targets holder, lists arm in body_parts_used, and has no
       other harming effect (ADR-0019: the Grab's harm is its crushing Critical Injury).
   thrash:
-    effects_allowed: [stress, knock-loose, critical-injury]
+    effects_allowed: [stress, knock-loose, critical-injury, wreck]
     critical_injury: Every critical-injury effect has cannot_be_lethal true.
     position_requirement: [distant, in-reach, on-body, blind-spot]
     body_parts_used: []
@@ -166,6 +166,13 @@ effect_types:
     effect: >-
       The Grab procedure against the target (data/engagement/grab.yaml, grab_lands). It is the same
       whatever the Net Successes: the Grab takes no rider (grab_lands, rider).
+  - id: wreck
+    fields: {}
+    effect: >-
+      The Titan Engagement loses 1 Anchor (data/engagement/anchor-ratings.yaml, anchors, wrecking).
+      Like telegraph, a wreck effect applies whether the behavior landed or whiffed, and whatever
+      the Net Successes: it is the Titan going through the place, not an attack on a person. It
+      affects no soldier, no horse, and no Position, and it never falls below 0 Anchors.
   - id: telegraph
     fields: {}
     effect: >-

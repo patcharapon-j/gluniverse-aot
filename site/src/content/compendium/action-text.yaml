@@ -15,27 +15,27 @@
 # the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/action-catalog.yaml
-    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+    sha: "9eba542902e16a0011914c52daa225f11e42e671"
   - path: data/engagement/attention.yaml
-    sha: "51ecccc72cffbdb288d5a2fe1aff2f1bda48580b"
+    sha: "3d64d61249c17643e00e10197041a9dc0cd9b798"
   - path: data/engagement/read.yaml
     sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/round.yaml
-    sha: "e03cf49bfa0f41b2b3b50c3fa5f107d490f6d1e0"
+    sha: "49d3a172e4a7ca7e0bbbaa7f5d74c9e3887b40d7"
   - path: data/engagement/squad-tactics.yaml
     sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
   - path: data/engagement/titan-harm.yaml
-    sha: "1ceaf068ccaa41d90e42df94483dba0334200786"
+    sha: "286457b6cca7e728c54919581b96ed55c24dbe45"
   - path: data/engagement/grab.yaml
     sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
   - path: data/gear/carrying.yaml
     sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
   - path: data/gear/horses.yaml
-    sha: "879202de4b48ec13bf78e1e56a8bc461fdf6d72d"
+    sha: "48bd1167d74e56c1e26f8265358876e0052c96e3"
   - path: data/gear/odm-gear.yaml
-    sha: "79daa17608d56b70fc4d1835336f10cb552d7246"
+    sha: "f94d9eb82fea1f7ae58339f7b037d3162e837b11"
   - path: data/gear/blade-sets.yaml
-    sha: "e62aaab8e850513bbce923e7a8b7a66a9d1f5e2e"
+    sha: "2f33a0bf9d8236c8c471881d782878d54e144bbe"
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/gear/field-repair.yaml
@@ -97,7 +97,8 @@ actions:
       - Taken only in a Titan Engagement.
       - You hold a Position other than Distant relative to the Titan, and are not Grabbed.
     does:
-      - You become the loudest, brightest thing on that Titan's Attention Ladder until the end of its next card that resolves a behavior.
+      - You become the loudest, brightest thing on that Titan's Attention Ladder until the end of its next card that resolves a behavior. It spends your action, or your move instead with Shout Them Off.
+      - While you are marked loudest you also meet every rung any other candidate meets, except hooked into its body. So the shout takes the Titan off any comrade who is not hooked in or On Body, and never off a blade at its Nape.
       - Its Attention moves only when it next checks its Attention Ladder. A card that resolves nothing, including the last card of a decoy's hold, leaves you the loudest.
     pages: [fighting-titans]
 
@@ -215,7 +216,8 @@ actions:
     requires:
       - Your handles are empty, you carry a Blade Set, and you are not Down.
     does:
-      - Fit a carried Blade Set into your handles. In a Titan Engagement, once during each of your own turns, spending neither your move nor your action. Outside one, at any time.
+      - Fit a carried Blade Set into your handles. Outside a Titan Engagement, at any time and as often as you like.
+      - In a Titan Engagement it spends your move, once during each of your own turns and at any point in that turn. It never spends your action, so you refit and strike on the same turn. What a ruined set costs you is that turn's Flight, and the Momentum it would have earned.
     pages: [gear-and-odm]
 
   shed-load:
@@ -353,12 +355,15 @@ actions:
 
   fly:
     requires:
-      - Called by a rule, such as a Position change that needs a roll. Not an action.
+      - In a Titan Engagement, made for every ODM move you make, which is a Flight. It is not an action, and it spends nothing beyond the move itself.
+      - Also called by another rule, such as the one that lets you catch yourself in mid-air.
       - Outside a Titan Engagement, also made when the GM calls a roll for an act this entry fits, such as reaching a rooftop.
-    needs: In a Titan Engagement, set by the rule that calls for the roll. Outside one, 1.
+    needs: A Flight needs nothing. A roll another rule calls for needs what that rule states. Outside a Titan Engagement, 1.
     does:
-      - Rolled when a rule calls for it. That rule says what the roll needs and what it does.
-      - "On a called roll it gives what the GM staked before the dice. In a Skirmish it is the one Fly roll there is: it takes its Gear Dice, makes no Gas Roll, never makes you airborne, and leaves you neither Engaged nor Apart."
+      - "A Flight's step happens whatever the roll gives, so flying is never slower than walking the same line. What the roll decides is what the flight was worth: each success is 1 Momentum, up to the Anchors left."
+      - On no successes you come in loud and are marked loudest on the Titan you flew relative to, from any Position, Distant included. Momentum spent on Quiet stops that mark.
+      - A Flight is a roll with your own harness as well as an ODM move, so it leaves you airborne and counts toward the one Gas Roll you make for the round.
+      - "Called by another rule, that rule says what the roll needs and what it does. On a called roll it gives what the GM staked before the dice. In a Skirmish it is the one Fly roll there is: it takes its Gear Dice, makes no Gas Roll, never makes you airborne, and leaves you neither Engaged nor Apart."
     help: >-
       The rule that calls for the roll says who can Help. On a called roll, up to three comrades who are present
       and able to help may Help, as the GM rules, spending nothing unless the GM names a cost of time or position

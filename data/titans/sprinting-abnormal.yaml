@@ -49,6 +49,7 @@ behavior_table:
       attack_dice: 3
       effects:
         - {type: stress, amount: 1}
+        - {type: wreck}
       fallback: thrash
       text: >-
         It runs past on long, pounding legs without slowing, and everyone beside the soldier feels
@@ -93,6 +94,7 @@ behavior_table:
       attack_dice: 3   # below the medium row's control pool of 6 (OQ-103)
       effects:
         - {type: knock-loose}
+        - {type: wreck}
       fallback: thrash
       text: >-
         It flings its whole body forward and rolls over, a slow, heaving roll that scrapes off

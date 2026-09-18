@@ -361,6 +361,8 @@ th{background:var(--tint);font-weight:500}
 <tr><td>Reading from Distant</td><td>2</td><td>Read</td><td>You hold Distant relative to the Focus Titan you Read</td><td>Nothing</td></tr>
 <tr><td>Call It</td><td>2</td><td>Dodge</td><td>A comrade's Read Called the behavior you dodge; the reader's own dodge gains nothing</td><td>Nothing</td></tr>
 <tr><td>Medical supplies</td><td>1 (1 unit at most per roll)</td><td>A Treat Injury roll in a care window; never in a Titan Engagement, never an aftermath roll</td><td>The Squad Supply holds at least 1 medical unit</td><td>1 medical unit of Squad Supply</td></tr>
+<tr><td>Momentum</td><td>1 per point spent</td><td>Bite: a strike or a Break Attention you take this turn against the Focus Titan your Flight named. Brace: your next dodge this round</td><td>You spend <a href="#fight-momentum">Momentum</a> on Bite or on Brace in a Titan Engagement</td><td>1 Momentum per die</td></tr>
+<tr><td>Terrain Trait</td><td>1</td><td>Break Attention</td><td>The Anchor Rating is <b>Open</b> and you are mounted (see <a href="#fight-anchors">Terrain Traits</a>)</td><td>Nothing</td></tr>
 <tr><td>Ambush <span class="tag">Playtest rule</span></td><td>2</td><td>A soldier's Fight or Shoot roll in a Skirmish</td><td>Your Squad has the Ambush in that Skirmish, and the Foe you attack has not yet acted in it</td><td>Nothing</td></tr>
 </tbody></table></div>
 <ul>
@@ -389,7 +391,7 @@ th{background:var(--tint);font-weight:500}
 <h2 id="core-turns">Turns, actions, and Reactions</h2>
 <p>A Titan Engagement runs in rounds. The order of play within a round is in <a href="#fight-round">Fighting Titans</a>.</p>
 <ul>
-<li><b>Your turn</b> is one <b>move</b> and one <b>action</b>. A move changes your Position by one step. An action is Help, one Action Catalog entry marked as an action, taken as that entry is written, an improvised act modelled on one such entry, or a called roll for an act no such entry could model that changes nothing the fight tracks (see <a href="#actions-outside">Actions outside the Catalog</a>). While you are Overloaded, every ODM move spends your action as well (see <a href="#gear-carrying">Carrying</a>).</li>
+<li><b>Your turn</b> is one <b>move</b> and one <b>action</b>. A move changes your Position by one step, or by more when you spend Momentum on Carry. In a Titan Engagement every ODM move is a <a href="#fight-flight">Flight</a> and is rolled. An action is Help, one Action Catalog entry marked as an action, taken as that entry is written, an improvised act modelled on one such entry, or a called roll for an act no such entry could model that changes nothing the fight tracks (see <a href="#actions-outside">Actions outside the Catalog</a>). While you are Overloaded, every ODM move spends your action as well (see <a href="#gear-carrying">Carrying</a>).</li>
 <li>You can spend each once per round, and you cannot save them for a later round. Both refresh at the start of each round, unless they were spent in advance.</li>
 <li><b>Declining.</b> You may decline your move, your action, or both on your turn. Whatever you leave unspent stays available until the round ends, but only for Help (your action) and Reactions (which need both). A move held alone does nothing after your card has passed.</li>
 <li><b>Spending a turn.</b> When a rule spends a turn of yours, such as a Reaction or a Fear Roll result, it spends your earliest turn, starting with this round's, whose move and action are both unspent.</li>
@@ -784,7 +786,7 @@ th{background:var(--tint);font-weight:500}
 <tr><td>Flier</td><td>Agility</td><td>The best on the wires. Fliers reach the hard Positions, dodge what others cannot, catch a falling comrade, and make a canister last.</td><td>Slip Away, Wirework, High Vantage, Light Trigger, Well-Kept Rig, Mid-Air Catch, Lookout Tree, Close Pass</td></tr>
 <tr><td>Hunter</td><td>Perception</td><td>Patient and sharp-eyed. Hunters turn a Titan's head with a decoy, spot danger first, and keep a Night Camp fed.</td><td>Lure, Keen Eyes, Fieldcraft, Musket Drill, Hunter's Eye, Flare Discipline, Forager, Saw It Coming</td></tr>
 <tr><td>Tactician</td><td>Instinct</td><td>Reads the Titan, the field, and the people in it. Tacticians learn a Titan's Next Behavior, put the Squad where it can help, and choose the line of the ride.</td><td>Titan Reader, Judge of Character, Route Finder, Sharp Call, Wide Awareness, Formation Drill, Change the Order, Break Their Nerve</td></tr>
-<tr><td>Leader</td><td>Empathy</td><td>The voice that keeps soldiers in the fight. Leaders Rally, steady nerves, take on others' Stress, and talk armed people down.</td><td>Steady Voice, Silver Tongue, Stand Down, Unshaken Command, Carrying Voice, Shoulder the Load, Put In a Word, Campfire Talk</td></tr>
+<tr><td>Leader</td><td>Empathy</td><td>The voice that keeps soldiers in the fight. Leaders Rally, steady nerves, take on others' Stress, and talk armed people down.</td><td>Steady Voice, Silver Tongue, Stand Down, Unshaken Command, Shout Them Off, Carrying Voice, Shoulder the Load, Put In a Word, Campfire Talk</td></tr>
 <tr><td>Medic</td><td>Wits</td><td>Keeps the injured alive long enough to get them home, and knows where the infirmary keeps its spare kits.</td><td>Field Medicine, Book Learning, Camp Surgeon, Careful Nursing, Sure Hands, Triage, Friends in the Infirmary, Tourniquet</td></tr>
 <tr><td>Engineer</td><td>Wits</td><td>Keeps ODM Gear flying, the supply wagon rolling, and the firearms firing.</td><td>Gearwright, Wagon Master, Know the Stores, Make Do, Quick Refit, Well-Kept Rig, Spare Parts, Gunsmith</td></tr>
 <tr><td>Rider</td><td>Agility</td><td>At home in the saddle. Riders use the horse as a decoy, a shield, and a way to carry the fallen out, and keep the column moving on a Hard Ride.</td><td>Horsemanship, Cavalry Cut, Long Haul, Loose the Horse, Sure Seat, Rescue Ride, Horse Whistle, Hard Rider</td></tr>
@@ -800,7 +802,7 @@ th{background:var(--tint);font-weight:500}
 </ul>
 
 <h2 id="soldier-talents">Talents</h2>
-<p>A <b>Talent</b> is a narrow trained ability that adds dice or bends a rule, but only for the Action Catalog entries it names. There are 83 Talents: 33 dice Talents and 50 rule Talents, listed below by Specialty list with the General list last. A Talent's description only summarizes; its other columns are the rule.</p>
+<p>A <b>Talent</b> is a narrow trained ability that adds dice or bends a rule, but only for the Action Catalog entries it names. There are 84 Talents: 33 dice Talents and 51 rule Talents, listed below by Specialty list with the General list last. A Talent's description only summarizes; its other columns are the rule.</p>
 <h3>Levels</h3>
 <ul>
 <li>Talents run from level 0 to 3. No Talent can be above level 2 at creation.</li>
@@ -913,6 +915,7 @@ th{background:var(--tint);font-weight:500}
 <tr><td>Break Their Nerve <span class="tag">Playtest rule</span></td><td>Size Up</td><td><b>When your Size Up of a Foe group in a Skirmish succeeds</b>, the group's Grit counts as 1 lower for the rest of that Skirmish when testing whether it breaks, to a minimum of 1. What a Parley against it needs does not change. Once per Skirmish.</td></tr>
 <tr><th colspan="3">Leader</th></tr>
 <tr><td>Unshaken Command <span class="tag">Playtest rule</span></td><td>Fear Roll</td><td><b>When, in a Titan Engagement, a comrade who holds your Position or a Position one step from you makes a Fear Roll, and you are not Down</b>, that Fear Roll uses your Resolve in place of the comrade's, if yours is higher. Once per Titan Engagement.</td></tr>
+<tr><td>Shout Them Off</td><td>Draw Attention</td><td><b>When you declare Draw Attention in a Titan Engagement</b>, you may spend your move on it instead of your action. Once per Titan Engagement.</td></tr>
 <tr><td>Carrying Voice</td><td>Rally</td><td><b>When you declare Rally</b>, you may target a comrade one Position step farther from you than Rally allows. In a Skirmish, which has no Positions, you may target any soldier taking part in it.</td></tr>
 <tr><td>Shoulder the Load <span class="tag">Playtest rule</span></td><td>Cover</td><td><b>When you declare that you Cover a comrade's Push in a Titan Engagement</b>, you may be up to two Position steps from the Pushing soldier instead of one. Every other Covering requirement still applies.</td></tr>
 <tr><td>Put In a Word <span class="tag">Playtest rule</span></td><td>Help, Persuade, Recall</td><td><b>When you declare that you Help a comrade's Requisition roll</b>, and you are a player character, the Help does not spend your own Requisition this Downtime, and you may Help even if you have already made your own Requisition roll. Every other Help requirement of that roll still applies. Once per Downtime.</td></tr>
@@ -1095,7 +1098,7 @@ th{background:var(--tint);font-weight:500}
 <tr><td><a href="#fight-nape">Nape strike</a></td><td>action</td><td>Strength, with the Blade Set in your handles; without one you cannot strike</td><td>The Titan's Nape Depth</td><td>You hold Blind Spot, do not hold that Titan's Attention, and are not Grabbed. Your ODM Gear counts as had (not Jammed, Gas Rating above 0) unless the Titan is grounded. No retreat is under way. The strike counts as hooking into the Titan. Kills the Titan, or turns each success into an Opening.</td></tr>
 <tr><td><a href="#fight-body">Body Part strike</a></td><td>action</td><td>Strength, with the Blade Set in your handles; without one you cannot strike</td><td>1; successes add up toward the Body Part's Toughness</td><td>You hold a Position the Body Part can be struck from, the part is not Broken, and you are not Grabbed. From On Body or Blind Spot, your ODM Gear counts as had unless the Titan is grounded. Moves the part toward Broken, creates Openings, and frees a soldier held in a Broken hand. Striking the Body Part that Pins a soldier frees them when it becomes Broken (<a href="#fight-heave">cutting free</a>).</td></tr>
 <tr><td><a href="#fight-break">Break Attention</a></td><td>action</td><td>Perception, with ODM Gear or your horse; a Feint on foot uses none</td><td>1 if you hold the Titan's Attention, otherwise 2; 2 against a Titan holding a Grabbed soldier; 1 more for a Feint; 1 more for each decoy the Titan has fallen for since its last card that resolved a behavior</td><td>Shifts the Titan's Attention onto a decoy. Extra successes create Openings. Frees a Grabbed soldier.</td></tr>
-<tr><td><a href="#fight-draw">Draw Attention</a></td><td>action</td><td>not rolled</td><td>none</td><td>You hold a Position other than Distant and are not Grabbed. You become the loudest or brightest stimulus for that Titan until the end of its next card that resolves a behavior.</td></tr>
+<tr><td><a href="#fight-draw">Draw Attention</a></td><td>action</td><td>not rolled</td><td>none</td><td>You hold a Position other than Distant and are not Grabbed. You become the loudest or brightest stimulus for that Titan until the end of its next card that resolves a behavior, and while you hold that mark you match every rung of its ladder any other candidate meets, except hooked into its body.</td></tr>
 <tr><td><a href="#fight-read">Read</a></td><td>action</td><td>Instinct, no gear</td><td>1; each success reveals one fact or pays toward Call It</td><td>You hold a Position relative to the Titan and are not Grabbed. Reveals facts to the whole Squad.</td></tr>
 <tr><td><a href="#fight-read">Call It</a></td><td>option of a Read</td><td>not rolled</td><td>2 of that Read's successes</td><td>Comrades who dodge the Called behavior gain 2 Bonus Dice.</td></tr>
 <tr><td><a href="#fight-grab">Break Free</a></td><td>action</td><td>Strength, with a Blade Set if you have one</td><td>2, with a 2-die penalty once lifted</td><td>You are Grabbed and not Down, or you hold Pry Loose; it frees the Grabbed soldier. It is taken nowhere else, except against a person's hold (see <a href="#playtest-held">Held</a>).</td></tr>
@@ -1136,7 +1139,7 @@ th{background:var(--tint);font-weight:500}
 <tr><td><a href="#gear-carrying">Pass Item</a></td><td>action</td><td>not rolled</td><td>none</td><td>Give a carried item to a comrade.</td></tr>
 <tr><td><a href="#gear-carrying">Take Item</a></td><td>action</td><td>not rolled</td><td>none</td><td>Take an item from a Down comrade, or from where a dead comrade's items lie.</td></tr>
 <tr><td><a href="#gear-horses">Mount or Dismount</a></td><td>option, part of a move</td><td>not rolled</td><td>none</td><td>Mount or dismount your own horse.</td></tr>
-<tr><td><a href="#gear-blades">Swap Blade Set</a></td><td>option, part of your turn</td><td>not rolled</td><td>none</td><td>Fit a carried Blade Set into empty handles. Spends neither your move nor your action.</td></tr>
+<tr><td><a href="#gear-blades">Swap Blade Set</a></td><td>option, part of your turn</td><td>not rolled</td><td>none</td><td>Fit a carried Blade Set into empty handles. In a Titan Engagement it spends your move and never your action; outside one it spends nothing.</td></tr>
 <tr><td><a href="#gear-carrying">Shed Load</a></td><td>option, part of your turn</td><td>not rolled</td><td>none</td><td>Drop an item, set down a comrade you carry, or stop being carried. Spends neither your move nor your action.</td></tr>
 <tr><td><a href="#gear-supply">Restock Medical Kit</a></td><td>option of a care window</td><td>not rolled</td><td>none</td><td>Spend 1 medical unit of Squad Supply to restore a medical kit.</td></tr>
 </tbody></table></div>
@@ -1145,7 +1148,7 @@ th{background:var(--tint);font-weight:500}
 <caption>Rolls a rule or the GM calls for</caption>
 <thead><tr><th>Entry</th><th>Roll and Gear Dice</th><th>Called by</th><th>Needs</th><th>Help</th></tr></thead>
 <tbody>
-<tr><td>Fly</td><td>Agility, with ODM Gear; without it the roll cannot be made</td><td>A Position step that needs a Fly roll (<a href="#fight-positions">Positions</a>)</td><td>as the step gives</td><td>as the step gives</td></tr>
+<tr><td>Fly</td><td>Agility, with ODM Gear; without it the roll cannot be made</td><td>Every ODM move in a Titan Engagement, which is a <a href="#fight-flight">Flight</a>; and any other rule that calls for it, such as Mid-Air Catch</td><td>A Flight needs nothing: its step happens whatever the roll gives, and each success is 1 Momentum. Another rule's roll needs what that rule states</td><td>A Flight, as that fight's Help; any other roll, as its calling rule states</td></tr>
 <tr><td>Leap Clear</td><td>Agility, with ODM Gear, or your horse while mounted</td><td>The <a href="#fight-falling">Falling Titan</a>, for each soldier in its path who is not airborne, Down, or carried</td><td>1; a success clears you to In Reach, a failure Pins you</td><td>Comrades at your Position, each spending their action. It can be Pushed and spends no turn.</td></tr>
 <tr><td>Ride</td><td>Agility, with your horse while mounted; without it the roll cannot be made</td><td>The Leg roll on a Hard Ride (<a href="#playtest-expeditions">Expeditions</a>)</td><td>1</td><td>Up to 3 comrades on the Expedition who are not Down, spending nothing, each once per Leg</td></tr>
 <tr><td>Spot</td><td>Perception, no gear</td><td>The Leg roll at the Vanguard, Signal Relay, and Rear Guard Formation Posts on a Steady Leg</td><td>1</td><td>As for Ride</td></tr>
@@ -1227,6 +1230,8 @@ th{background:var(--tint);font-weight:500}
 <tr><td>Free a Grabbed soldier</td><td>Body Part strike, Break Attention, Break Free</td></tr>
 <tr><td>Restore a gear item's Gear Dice rating or end a Jam</td><td>Restock Medical Kit, Field Repair, Downtime Action</td></tr>
 <tr><td>Restore a Gas Rating</td><td>Change Canister, Downtime Action</td></tr>
+<tr><td>Gain Momentum</td><td>Fly, on every Flight</td></tr>
+<tr><td>Destroy an Anchor</td><td>A Behavior Table entry with the Wreck effect, and a Titan's body falling</td></tr>
 <tr><td>Pick up and carry a Down comrade, or one the both-legs grade forbids to move</td><td>Lift Comrade</td></tr>
 <tr><td>Give a carried item to a comrade</td><td>Pass Item</td></tr>
 <tr><td>Take an item from a Down comrade or from where a dead comrade's items lie</td><td>Take Item</td></tr>
@@ -1476,7 +1481,7 @@ th{background:var(--tint);font-weight:500}
 <tr><td>Both legs lost</td><td>none</td><td>Fly, Ride, Lift Comrade</td><td>no move of any kind: on foot, mounted, or ODM</td><td>The dodge and Leap Clear, with the rows' penalties, which stack; Heave; a strike at a Titan at In Reach; Read; Rally; Break Attention; Draw Attention; Treat Injury; Field Repair; and being carried by Lift Comrade, with your consent. You travel across a comrade's saddle or in the wagon.</td></tr>
 </tbody></table></div>
 <ul>
-<li><b>Cannot take.</b> You cannot take, make, or use the entry. A roll a rule calls for under it is not made, and whatever needs that roll cannot be done, such as a Position change that needs a Fly roll. A Talent on that entry does nothing for you. A named decoy cannot be named for <a href="#fight-break">Break Attention</a>.</li>
+<li><b>Cannot take.</b> You cannot take, make, or use the entry. A roll a rule calls for under it is not made, and whatever needs that roll cannot be done, such as an ODM move, which is a Flight and is always rolled. A Talent on that entry does nothing for you. A named decoy cannot be named for <a href="#fight-break">Break Attention</a>.</li>
 <li><b>A move that also spends your action</b> works as an Overloaded soldier's ODM move does (see <a href="#gear-carrying">Carrying</a>): you cannot make it if your action is already spent. Outside a Titan Engagement this does nothing unless the procedure under way says so.</li>
 <li><b>A move you cannot make:</b> you hold the Position you are placed at.</li>
 <li><b>No Gear Dice from an item:</b> the entry is still rolled, with Gear Dice from any other item it allows.</li>
@@ -1658,14 +1663,14 @@ th{background:var(--tint);font-weight:500}
 <ul>
 <li><b>Marked as loud.</b> You are marked as loud against the event's Titan, exactly as <a href="#fight-draw">Draw Attention</a> marks you, until the end of that Titan's next card that resolves a behavior. If you hold Distant relative to it, nothing happens.</li>
 <li><b>Comrades nearby gain Stress.</b> Every comrade, player character or Squadmate, who holds your Position or one Position step away, compared relative to the event's Titan, gains that much Stress once. A comrade who has left the Titan Engagement never counts. It is Stress, not a roll, and causes no Fear Roll. It lands with the event's other results, after every rolling soldier's total has been found, so it counts from that comrade's next roll.</li>
-<li><b>A forced step toward Distant.</b> At the start of your next turn, before anything else in it, you move one step toward Distant, as the first option of a <a href="#fight-retreat">retreat</a>: along a shortest chain of steps your move can make to Distant, relative to the Focus Titan with the earliest label you do not hold Distant from. The step happens even when that turn was spent in advance, because it is a result, not your move. It spends nothing and never meets a Drive's own-move trigger. It is a step of the kind your move makes (on foot, mounted, or ODM, with any Fly roll it needs), so an ODM step is ODM use. No step is made if you are Down, Grabbed, Pinned, or carried, have left the Titan Engagement, hold Distant relative to every Focus Titan, or have no step that qualifies. It never makes you leave the Titan Engagement or let go. Until it is made, Rally can clear it.</li>
+<li><b>A forced step toward Distant.</b> At the start of your next turn, before anything else in it, you move one step toward Distant, as the first option of a <a href="#fight-retreat">retreat</a>: along a shortest chain of steps your move can make to Distant, relative to the Focus Titan with the earliest label you do not hold Distant from. The step happens even when that turn was spent in advance, because it is a result, not your move. It spends nothing and never meets a Drive's own-move trigger. It is a step of the kind your move makes, on foot, mounted, or ODM, and it is <b>never a <a href="#fight-flight">Flight</a></b>: a Flight is your own ODM move, and a forced step is not one. So it is not rolled, it gives no Momentum, and it sets no loud mark, whichever kind of step it is. Momentum is the reward for choosing to fly, and a soldier flung back by fear has chosen nothing. An ODM forced step is still ODM use, so it makes that round's Gas Roll, and you are airborne after it as after any ODM move. No step is made if you are Down, Grabbed, Pinned, or carried, have left the Titan Engagement, hold Distant relative to every Focus Titan, or have no step that qualifies. It never makes you leave the Titan Engagement or let go. Until it is made, Rally can clear it.</li>
 <li><b>A forced strike.</b> Your next action must be a Nape strike or a Body Part strike against the event's Titan, with every requirement those actions have. Until you make it, you take no other action except <a href="#gear-blades">Swap Blade Set</a>, so you can refit and strike, and you cannot Help or Cover. If the strike falls short and you are allowed to Push it, you must Push it. Your moves are your own.
 <ul>
 <li>It waits while you are Grabbed, Down, or <a href="#fight-pinned">Pinned</a>. If the event's Titan's body pins your limb, your Body Part strike against the Body Part that pins you is the forced strike.</li>
 <li>A strike whose requirements you do not meet does not end it.</li>
 <li>It ends only when you make the strike, whatever its result; when Rally clears it; when the event's Titan dies; or when the Titan Engagement ends. The ban on Help and Covering lasts exactly as long.</li>
 </ul></li>
-<li><b>Drop the Blade Set.</b> The Blade Set in your handles falls, and your handles are empty. If they were already empty, nothing happens. The set lies at your Position. No one takes it during the Titan Engagement and no rule moves it. When the Titan Engagement ends, it is shared out with the left items (see <a href="#gear-death">Gear</a>). Refit from a carried Blade Set with Swap Blade Set, which spends neither your move nor your action and can be made on a turn spent in advance.</li>
+<li><b>Drop the Blade Set.</b> The Blade Set in your handles falls, and your handles are empty. If they were already empty, nothing happens. The set lies at your Position. No one takes it during the Titan Engagement and no rule moves it. When the Titan Engagement ends, it is shared out with the left items (see <a href="#gear-death">Gear</a>). Refit from a carried Blade Set with Swap Blade Set, which spends your move in a Titan Engagement and can be made on a turn spent in advance.</li>
 <li><b>A Gas Roll at once.</b> If a canister with a Gas Rating above 0 is fitted to your ODM Gear, make a <a href="#gear-gas">Gas Roll</a> on it at once: two dice, whatever you have Pushed this round. Each 1 lowers the Gas Rating by 1, to a minimum of 0. It is not the round's Gas Roll and not ODM use, so it neither replaces nor adds to the round's own Gas Roll. With no canister fitted, or a Gas Rating of 0, nothing happens.</li>
 </ul>
 
@@ -1990,6 +1995,7 @@ th{background:var(--tint);font-weight:500}
 <h3>ODM moves</h3>
 <ul>
 <li>An <b>ODM move</b> is a move you make on your own ODM Gear. The Position steps table in <a href="#fight-positions">Fighting Titans</a> shows which steps need one.</li>
+<li>In a Titan Engagement every ODM move is a <b><a href="#fight-flight">Flight</a></b>: you roll Fly with your ODM Gear, the step happens whatever the roll gives, each success is 1 Momentum, and no successes marks you as loud.</li>
 <li>An ODM move needs working ODM Gear, so you cannot make one while Jammed or dry.</li>
 <li>If you are mounted, an ODM move dismounts you before your Position changes.</li>
 <li>While you are Overloaded, an ODM move also spends your action, and you cannot make one once your action is spent.</li>
@@ -1997,15 +2003,15 @@ th{background:var(--tint);font-weight:500}
 </ul>
 
 <h3>Using ODM Gear</h3>
-<p>You <b>use ODM Gear</b> in a round if, during that round, you make an ODM move, make a roll whose gear item is your ODM Gear (such as a dodge or a Fly roll made with it), or take an act that <a href="#fight-positions">Fighting Titans</a> names as ODM use.</p>
-<p>Holding a Position without moving is not ODM use, even while airborne. Neither is a roll made with a Blade Set, a horse, or a kit (every Nape strike included), nor being carried. Outside a Titan Engagement there are no rounds, and ODM use makes a Gas Roll only when the rule that calls for it says so. Travel on horseback never spends gas, and the Graduation Exam makes no Gas Rolls.</p>
+<p>You <b>use ODM Gear</b> in a round if, during that round, you make an ODM move, make a roll whose gear item is your ODM Gear (such as a dodge or a Fly roll made with it), or take an act that <a href="#fight-positions">Fighting Titans</a> names as ODM use. A <a href="#fight-flight">Flight</a> is both at once, and a soldier who used ODM Gear makes one Gas Roll for the round however many times they used it.</p>
+<p>Holding a Position without moving is not ODM use, even while airborne. Neither is a roll made with a Blade Set, a horse, or a kit (every Nape strike included), nor a mounted charge, nor being carried. Outside a Titan Engagement there are no rounds, and ODM use makes a Gas Roll only when the rule that calls for it says so. Travel on horseback never spends gas, and the Graduation Exam makes no Gas Rolls.</p>
 
 <h3 id="gear-airborne">Airborne</h3>
 <p>You are <b>airborne</b> while you are in the air on your own ODM Gear. Your sheet records it.</p>
 <ul>
 <li><b>You become airborne</b> when you make an ODM move, or when a rule calls for a Fly roll with your ODM Gear and says the roll makes you airborne. If you are mounted, you are dismounted first, with no fall.</li>
 <li><b>You stop being airborne</b> when you make a move that is not an ODM move, fall, become Grabbed, or the Titan Engagement ends (everyone airborne lands with no fall). Outside a Titan Engagement, a rule that made you airborne lands you when its procedure ends, unless it names another point.</li>
-<li><b>You are never airborne</b> while carried by a comrade, while Grabbed, or while mounted.</li>
+<li><b>You are never airborne</b> while carried by a comrade, while Grabbed, or while mounted. At the <b>Urban</b> Anchor Rating you are not airborne while you hold Blind Spot either: you stand anchored to a roof (see <a href="#fight-anchors">Terrain Traits</a>).</li>
 <li>Running out of gas while airborne leaves you airborne.</li>
 </ul>
 <p>The Freedom Drive's trigger is met while you are airborne under this definition, in or outside a Titan Engagement.</p>
@@ -2018,7 +2024,7 @@ th{background:var(--tint);font-weight:500}
 <li>You cannot make an ODM move while it is Jammed, so you make no Gas Roll for any later round. The Gas Roll for the round in which it Jammed is still made.</li>
 <li>Your Gas Rating does not change.</li>
 <li>You cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot, unless the Titan is grounded (see <a href="#fight-grounded">A grounded Titan</a>).</li>
-<li>If you are airborne, you fall once the roll that Jammed it is finished.</li>
+<li>If you are airborne, you fall once the roll that Jammed it is finished. At the <b>Urban</b> Anchor Rating a soldier who holds Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them (see <a href="#fight-anchors">Terrain Traits</a>).</li>
 </ol>
 </div>
 <p>A Jam ends when the current rating rises above 0: through Field Repair, through Maintain Gear, or through Standard Issue replacing the Jammed ODM Gear. The interim issue replaces it only if it is rated below the Funding row, and you may decline the exchange.</p>
@@ -2042,13 +2048,13 @@ th{background:var(--tint);font-weight:500}
 <h4>The Gas Roll</h4>
 <ol>
 <li><b>Who.</b> Every soldier, player character or Squadmate, who used ODM Gear during the round.</li>
-<li><b>When.</b> At the end of the round, once for each such soldier however often they used it. If the Titan Engagement ends partway through a round, that round's Gas Rolls are made at once, before the steps that follow the end of a Titan Engagement.</li>
+<li><b>When.</b> At the end of the round, once for each such soldier however often they used it. A soldier who spends Momentum on a clean line makes none for that round. If the Titan Engagement ends partway through a round, that round's Gas Rolls are made at once, before the steps that follow the end of a Titan Engagement.</li>
 <li><b>Dice.</b> Two dice. Three dice if any Pushed roll you made that round had your ODM Gear as its gear item, however many there were. A Pushed dodge made with your horse does not make it three. Light Trigger can make a three-die Gas Roll two dice.</li>
 <li><b>Read.</b> Count the dice showing 1. The dice are not added, and a 6 does nothing.</li>
 <li><b>Effect.</b> Lower your Gas Rating by 1 for each 1, to a minimum of 0.</li>
 </ol>
 </div>
-<p>A Push never adds a second Gas Roll; its cost is the third die of that round's one roll. The Gas Roll has no attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed, Helped, or Covered, and it never causes a Stress Response. A Squadmate never Pushes, so its Gas Roll is always two dice.</p>
+<p>A Flight is ODM use twice over and still makes one Gas Roll. A Push never adds a second Gas Roll; its cost is the third die of that round's one roll. The Gas Roll has no attribute, Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed, Helped, or Covered, and it never causes a Stress Response. A Squadmate never Pushes, so its Gas Roll is always two dice.</p>
 <p>A Titan's Attack Dice spend no gas. Gas goes only on the Gas Roll, and on a Fear Roll result that calls for one.</p>
 <p><b>When a Fear Roll result calls for a Gas Roll</b> (see <a href="#harm-fear">Fear Rolls</a>), roll two dice at once on the canister fitted to your ODM Gear, whatever you have Pushed this round, and read them as above. With no canister fitted, or at Gas Rating 0, nothing happens. It is not the round's Gas Roll and it is not ODM use, so it neither replaces nor adds to your Gas Roll at the end of the round.</p>
 
@@ -2098,7 +2104,7 @@ th{background:var(--tint);font-weight:500}
 <h3>The swap</h3>
 <ul>
 <li>If your handles are empty, fit one carried Blade Set into them.</li>
-<li><b>In a Titan Engagement:</b> once during each of your own turns, at any point, spending neither your move nor your action. A turn spent in advance still happens, so you can swap during it.</li>
+<li><b>In a Titan Engagement:</b> once during each of your own turns, at any point, spending <b>your move</b> and never your action. A move can change no Position, so you stay where you are and still have your action: what a ruined blade costs you is that turn's <a href="#fight-flight">Flight</a>, and the Momentum it would have given. A turn spent in advance still happens, so you can swap during it, spending that turn's move.</li>
 <li><b>Outside a Titan Engagement:</b> at any time, as often as you like.</li>
 <li>A Down soldier cannot swap. A Squadmate swaps exactly as a player character does.</li>
 </ul>
@@ -2490,7 +2496,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>for each flintlock pistol or musket, its rating, its current rating, and whether it is loaded;</li>
 <li>which of your items are Kept Items, each named by its field and rating, such as "Blade Set carried, rating 2";</li>
 <li>whether you are airborne, the comrade you carry, and the comrade carrying you;</li>
-<li>in a Titan Engagement, your Position relative to each living Focus Titan by its letter, or that you have left;</li>
+<li>in a Titan Engagement, your Position relative to each living Focus Titan by its letter, or that you have left, and the Momentum you hold, which is 0 outside a Titan Engagement and is cleared when one ends;</li>
 <li>after you die in a Titan Engagement, where your left items lie and which are still there.</li>
 </ul>
 <p>Your sheet's harm fields also record each Prosthetic fitted, by kind and side, and how many Blade Sets a Fear Roll result has dropped from your handles in the current Titan Engagement.</p>
@@ -2538,7 +2544,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <div class="box">
 <h4>The start</h4>
 <ol>
-<li>The Focus Titan's Body Parts start Intact, it has no Openings and no previous behavior, its Regeneration clock is empty, and the GM rolls its hidden Next Behavior. The retreat clock starts empty.</li>
+<li>The Focus Titan's Body Parts start Intact, it has no Openings and no previous behavior, its Regeneration clock is empty, and the GM rolls its hidden Next Behavior. The retreat clock starts empty, and the Anchor Rating gives the field its <a href="#fight-anchors">Anchors</a>. Everyone's Momentum is 0.</li>
 <li>Soldiers and horses take their starting Positions.</li>
 <li>The Titan checks its Attention Ladder. No cards are dealt yet, so unless a rung picks out one soldier, a Squad of two or more starts with nothing holding its Attention until its first card.</li>
 <li>Make the Fear Rolls for a first Titan Engagement and for an Abnormal.</li>
@@ -2563,37 +2569,98 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </ul>
 
 <h3>Anchor Ratings and Position steps</h3>
-<p>The <b>Anchor Rating</b> of the battlefield decides which <b>Position steps</b> exist and which kinds of move can make them: <b>on foot</b>, <b>mounted</b>, or <b>ODM</b> (on your own ODM Gear). Two Positions joined by a step are one step apart, whatever kind of move makes it; Help, Covering, Rally, and aftermath rolls count steps this way.</p>
-<p>Some steps need a <b>Fly roll</b>: roll Fly with your ODM Gear. On a success the move ends at the far Position; on a failure it ends where the table says. Either way you are airborne.</p>
+<p>The <b>Anchor Rating</b> of the battlefield decides which <b>Position steps</b> exist and which kinds of move can make them: <b>on foot</b>, <b>mounted</b>, or <b>ODM</b> (on your own ODM Gear). Two Positions joined by a step are one step apart, whatever kind of move makes it; Help, Covering, Rally, and aftermath rolls count steps this way. A step is made in either direction, and no step calls for a roll of its own.</p>
 <div class="table-wrap"><table>
 <caption>Position steps by Anchor Rating</caption>
-<thead><tr><th>Anchor Rating</th><th>Position step (either way)</th><th>On foot</th><th>Mounted</th><th>ODM</th><th>Fly roll</th></tr></thead><tbody>
-<tr><td>Open</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>no</td><td>no</td></tr>
-<tr><td>Open</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Sparse</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>needs 1; on a failure the move ends at On Body</td></tr>
-<tr><td>Wooded</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><td>Wooded</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Wooded</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Wooded</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>Distant to In Reach</td><td>yes</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Urban</td><td>Distant to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>needs 1; on a failure the move ends at In Reach</td></tr>
-<tr><td>Giant Forest</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
-<tr><td>Giant Forest</td><td>Distant to Blind Spot</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
+<thead><tr><th>Anchor Rating</th><th>Position step (either way)</th><th>On foot</th><th>Mounted</th><th>ODM</th></tr></thead><tbody>
+<tr><td>Open</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>no</td></tr>
+<tr><td>Open</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Sparse</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Sparse</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Sparse</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Wooded</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>Distant to In Reach</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Urban</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>Distant to In Reach</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>In Reach to On Body</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>On Body to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Giant Forest</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
 </tbody></table></div>
+<p>No rating reaches Blind Spot from Distant in one step, so a Nape is never less than two steps from the ground. At <b>Open</b> nothing reaches Blind Spot at all while the Titan stands, because there is nothing to anchor to but the Titan.</p>
+
+<h3 id="fight-flight">Flight</h3>
+<p><b>Every ODM move you make in a Titan Engagement is a Flight.</b> Roll <b>Fly</b> with your own ODM Gear. The roll needs nothing: the move's step happens whatever the dice give, so a Flight never leaves you short of the step. What the dice decide is what the flight was worth, and whether you arrived badly.</p>
+<ol>
+<li><b>Name the Focus Titan</b> your move is relative to, and the step you make.</li>
+<li><b>Roll Fly</b> with your ODM Gear. It is a roll like any other: it takes Circumstances, Stress Dice, and the Talents that name Fly, and it can be Helped, Pushed, and Covered.</li>
+<li><b>Each success is 1 <a href="#fight-momentum">Momentum</a></b>, up to your cap. Momentum above the cap is not gained.</li>
+<li><b>On no successes you come in loud:</b> you are marked as loud on that Focus Titan, from whatever Position you hold, Distant included. It is the one way the loud mark is made from Distant.</li>
+<li><b>The step happens,</b> and you are airborne, as after any ODM move.</li>
+</ol>
+<ul>
+<li><b>Gas.</b> A Flight is ODM use twice over: it is an ODM move, and it is a roll whose gear item is your ODM Gear. However many times you use ODM Gear in a round, you make <b>one</b> Gas Roll for it. A Pushed Flight wears your ODM Gear as any Pushed roll with it does, and makes that round's Gas Roll three dice.</li>
+<li><b>No gear, no Flight.</b> While your ODM Gear is Jammed or your Gas Rating is 0 you make no ODM move at all, so you make no Flight.</li>
+<li>A move that is not an ODM move is never a Flight and is never rolled: a step on foot, a mounted step, and letting go.</li>
+</ul>
+
+<h3 id="fight-momentum">Momentum</h3>
+<p><b>Momentum</b> is the speed you carry out of a good Flight. It is public, you record it on your sheet, and it runs from <b>0</b> to the number of <a href="#fight-anchors">Anchors</a> left in the Titan Engagement.</p>
+<ul>
+<li><b>You gain</b> 1 for each success on a Flight, to your cap.</li>
+<li><b>You lose all of it</b> at the end of any round in which you made no ODM move. Keep flying, or it is gone.</li>
+<li>When Anchors are wrecked, every soldier holding more Momentum than the new cap loses the excess at once.</li>
+<li>You hold no Momentum while Down, Grabbed, carried, or Pinned, or once you have left the Titan Engagement, and none is carried out of it.</li>
+</ul>
+<p><b>Spend it</b> at any point in your own turn, any amount at once, 1 for each of these. Carry is spent as part of the move it extends; every other spend is declared before the roll it names.</p>
+<div class="table-wrap"><table>
+<caption>Spending Momentum</caption>
+<thead><tr><th>Spend</th><th>Cost</th><th>What it does</th></tr></thead><tbody>
+<tr><td>Carry</td><td>1</td><td>This move makes one more Position step, along steps your kind of move can make, relative to the same Focus Titan. You may Carry more than once on one move.</td></tr>
+<tr><td>Bite</td><td>1</td><td>1 Bonus Die on a strike or a Break Attention you take this turn against the Focus Titan your Flight named.</td></tr>
+<tr><td>Brace</td><td>1</td><td>1 Bonus Die on your next dodge this round.</td></tr>
+<tr><td>Quiet</td><td>1</td><td>You set no mark this turn, the loud mark a Flight with no successes sets included. A mark already standing is not cleared.</td></tr>
+<tr><td>Clean line</td><td>1</td><td>You make no Gas Roll for this round.</td></tr>
+</tbody></table></div>
+<p>Bite and Brace give <a href="#core-bonus">Bonus Dice</a>, so they are declared with every other source before the roll, and they count against the cap of 4.</p>
+
+<div class="example">
+<h4>Example: a Flight to the Nape</h4>
+<p>The Anchor Rating is Wooded, so the field holds 2 Anchors and nothing has wrecked one yet. Private Mila Kraus holds In Reach on a standard Medium Titan, with Agility 4, Wirework 1, ODM Gear rated 2, and Stress 1. Wooded joins In Reach and Blind Spot by an ODM step, so she takes it with her move.</p>
+<p><b>The Flight.</b> She names the Titan and the step, and rolls Fly: 4 Agility dice, 1 Wirework die, 2 Gear Dice, and 1 Stress Die. The base dice show 6, 3, 6, 2, 4; the Gear Dice show 5 and 1; the Stress Die shows 4. Two successes. She does not Push, so the Gear Die showing 1 wears nothing.</p>
+<p><b>What it gives.</b> The step happens whatever the roll gave, so she holds Blind Spot and is airborne. Her two successes give her 2 Momentum, which is exactly her cap of 2 Anchors.</p>
+<p><b>The spend.</b> She spends 1 on Bite for 1 Bonus Die on her Nape strike this turn, and keeps 1. Had she scored no successes, she would have come in loud instead, and the Titan would have looked straight at her.</p>
+<p><b>At the end of the round</b> she made an ODM move, so she keeps her last point of Momentum, and she makes one Gas Roll of two dice for the round, however much flying she did in it.</p>
+</div>
+
+<h3 id="fight-anchors">Anchors and Terrain Traits</h3>
+<p>The Anchor Rating also gives the Titan Engagement a pool of <b>Anchors</b>: the trees, roofs, and beams a line can bite into. Anchors belong to the battlefield, not to any soldier, and <b>the Anchors left are every soldier's Momentum cap</b>. They are public, and the GM keeps them on the tracker.</p>
+<div class="table-wrap"><table>
+<caption>Anchors and Terrain Traits</caption>
+<thead><tr><th>Anchor Rating</th><th>Anchors</th><th>Terrain Trait</th></tr></thead><tbody>
+<tr><td>Open</td><td>0</td><td>A mounted soldier's Break Attention gains 1 Bonus Die. The plain is the horse's.</td></tr>
+<tr><td>Sparse</td><td>1</td><td>The first Anchor wrecked in the Titan Engagement is not lost. One good tree survives.</td></tr>
+<tr><td>Wooded</td><td>2</td><td>None. The ordinary woodland is the plain baseline.</td></tr>
+<tr><td>Urban</td><td>3</td><td>A soldier who holds Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them.</td></tr>
+<tr><td>Giant Forest</td><td>3</td><td>The first step a Flight Carries costs no Momentum. The Corps fights best here.</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Set at the start</b> from the Anchor Rating. Nothing is rolled for them, and nothing restores one during the Titan Engagement.</li>
+<li><b>Wrecked</b> by a Behavior Table entry with the <b>Wreck</b> effect, which destroys 1 whether the card landed or whiffed, and by a Titan's body falling, which destroys 1 where it lands. Anchors never fall below 0.</li>
+<li><b>At 0 Anchors</b> nobody holds Momentum and none can be gained. Flights are still rolled and still make their step, and no step changes: however flat a Titan beats the ground, the route to its Nape never closes.</li>
+</ul>
 
 <h3>What a move can do</h3>
 <p>A <b>move</b> changes your Position relative to one named Focus Titan or Corpse by one step your kind of move can make, or changes no Position, as when you land or mount where you are. A move can include one mount or dismount. It is the only way you change your own Position; falls, Grabs, Fall Back, and a Fear Roll's forced step are rules that move you.</p>
 <ul>
-<li><b>Mounted:</b> you make a mounted step, or an ODM move that dismounts you first.</li>
+<li><b>An ODM move is a <a href="#fight-flight">Flight</a>,</b> and it crosses more than one step only by spending Momentum on Carry.</li>
+<li><b>Mounted:</b> you make a mounted step, or an ODM move that dismounts you first, which is a Flight.</li>
+<li><b>A mounted charge.</b> A mounted move that makes the Distant to In Reach step may also mark you as loud on that Focus Titan. It is never rolled, spends nothing beyond the move, and is not ODM use. At the <b>Open</b> rating a mounted move may make that step twice, in either order, so a rider comes in and gets out again in one move; it is still one charge, and it marks you loud at most once.</li>
+<li><b>Swapping a Blade Set</b> spends your move in a Titan Engagement (see <a href="#gear-blades">Blade Sets</a>). A move can change no Position, so you refit and still strike on that turn; what a ruined blade costs you is that turn's Flight, and the Momentum it would have given.</li>
 <li><b>Down:</b> you can make only the step from In Reach to Distant, on foot, while not Grabbed, carried, or Pinned.</li>
 <li><b>Grabbed or carried:</b> your move changes nothing.</li>
 <li><b>Pinned:</b> your move changes nothing, and no rule moves you (see <a href="#fight-pinned">Pinned</a>).</li>
@@ -2631,6 +2698,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>Every soldier who used ODM Gear this round makes a Gas Roll. If the Titan Engagement ends mid-round, these Gas Rolls are made at once.</li>
 <li>Each living Focus Titan's Regeneration clock fills 1 segment.</li>
 <li>Each Background Titan's clock fills 1 segment, and full clocks resolve. Then the retreat clock fills 1 segment; if it is full, the Titan Engagement becomes a retreat. During a retreat no Background Titan's clock fills and the retreat clock does not fill; step 2's Regeneration clocks still fill.</li>
+<li>Every soldier who made no ODM move this round loses all their <a href="#fight-momentum">Momentum</a>. A soldier who flew keeps what they hold, to the cap the Anchors left give.</li>
 <li>The round ends. Unspent moves and actions are lost.</li>
 </ol></li>
 </ol>
@@ -2684,7 +2752,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ul>
 <li><b>Targets:</b> the soldier holding the Titan's Attention, or that soldier and everyone else at their Position who is not Grabbed.</li>
 <li><b>Tiers.</b> Low results terrorize (Stress, and perhaps a telegraph), middle results control (falls and Critical Injuries that cannot be lethal), and high results kill (lethal Critical Injuries and the Grab). <b>Thrash</b> is what a Titan does when nothing else fits. It is never rolled, works at any Position, uses no Body Parts, and is never lethal.</li>
-<li><b>Effects:</b> <i>Stress</i> (you gain that much, once, whatever the Net Successes); <i>Critical Injury</i> (a Titan attack at the Injury Location and of the Injury Type listed, lethal or not as listed; see <a href="#fight-dodge">Dodging a Titan</a> for what its Net Successes add); <i>knock loose</i> (if you are airborne, On Body, or at Blind Spot, you fall, whatever the Net Successes; a mounted target is not affected); <i>Grab</i> (see <a href="#fight-grab">The Grab</a>); <i>telegraph</i> (the Titan's new Next Behavior is revealed to every soldier, whether the card landed or whiffed).</li>
+<li><b>Effects:</b> <i>Stress</i> (you gain that much, once, whatever the Net Successes); <i>Critical Injury</i> (a Titan attack at the Injury Location and of the Injury Type listed, lethal or not as listed; see <a href="#fight-dodge">Dodging a Titan</a> for what its Net Successes add); <i>knock loose</i> (if you are airborne, On Body, or at Blind Spot, you fall, whatever the Net Successes; a mounted target is not affected); <i>Grab</i> (see <a href="#fight-grab">The Grab</a>); <i>telegraph</i> (the Titan's new Next Behavior is revealed to every soldier, whether the card landed or whiffed); <i>Wreck</i> (the Titan Engagement loses 1 <a href="#fight-anchors">Anchor</a>, whether the card landed or whiffed, and whatever the Net Successes: it is the Titan going through the place, not an attack on anyone, so it touches no soldier, no horse, and no Position).</li>
 </ul>
 
 <h3 id="fight-dodge">Dodging a Titan</h3>
@@ -2731,6 +2799,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Nearest:</b> at the closest Position held by any soldier the Titan can choose, in the order On Body, In Reach, Blind Spot, Distant.</li>
 </ol>
 <ul>
+<li><b>A soldier marked as loud matches the ladder.</b> While you hold the loud mark you also count, for that Titan, as meeting every rung any other candidate meets, except hooked into its body. So a shout, or a flight that came in loud, takes the Titan off any comrade who is not hooked into it or On Body, and never off a blade at its Nape. You are added to the tied set whatever Position you hold, Distant included, and the lower rungs then narrow the set as they always do, the loudest rung keeping you in it.</li>
 <li>A soldier marked as having struck its Nape comes before a soldier who is only On Body.</li>
 <li>Ties are narrowed by each lower rung; the nearest rung keeps the tied soldiers at the closest Position any of them holds. If still tied, the soldier already holding its Attention keeps it. Otherwise the lowest card this round takes it (a Wing Squadmate counts just after its player character), unless no cards have been dealt this round or the ladder is checked at an end step, as when a Background Titan enters. Otherwise nothing holds its Attention until its next card.</li>
 <li><b>Down and carried soldiers</b> meet only the nearest rung. A Titan turns to a Down soldier only when no one is closer, hooked in, hurting it, or louder.</li>
@@ -2743,12 +2812,13 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ul>
 <li><b>Struck its Nape:</b> any Nape strike against it, whatever the result.</li>
 <li><b>Hurt it:</b> a Body Part strike against it with at least 1 success.</li>
-<li><b>Loud:</b> Draw Attention against it, or a Fear Roll result that draws its Attention, such as Scream. Neither marks a soldier at Distant.</li>
+<li><b>Loud:</b> Draw Attention against it, or a Fear Roll result that draws its Attention, such as Scream, neither of which marks a soldier at Distant; a <a href="#fight-flight">Flight</a> that scored no successes, from any Position, Distant included; or a <a href="#fight-positions">mounted charge</a> onto it. Momentum spent on Quiet sets no mark that turn.</li>
 </ul>
 <p>Each mark lasts until the end of that Titan's next card that resolves a behavior, whether that card lands or whiffs. A card that resolves nothing (a card spent by a decoy, a card while it holds a Grabbed soldier, or a card with no one holding its Attention) leaves every mark standing, so the marks are always read by the card that acts.</p>
 
 <h3 id="fight-draw">Draw Attention</h3>
-<p><b>When you take Draw Attention</b> against a Focus Titan, you shout, wave, or flash steel to make yourself the loudest or brightest thing it can see. You must hold a Position other than Distant relative to it and not be Grabbed. It is not rolled. You are marked as loud until the end of its next card that resolves a behavior.</p>
+<p><b>When you take Draw Attention</b> against a Focus Titan, you shout, wave, or flash steel to make yourself the loudest or brightest thing it can see. You must hold a Position other than Distant relative to it and not be Grabbed. It is not rolled. It spends your action (Shout Them Off lets you spend your move instead). You are marked as loud until the end of its next card that resolves a behavior.</p>
+<p>While you hold that mark you match every rung of its ladder that any other candidate meets, except hooked into its body. The shout takes the Titan off any comrade who is not hooked into it or On Body, and it never takes it off a comrade with a blade at its Nape. It moves Attention only when the Titan next reads its ladder.</p>
 
 <h2 id="fight-break">Break Attention and decoys</h2>
 <p><b>When you take Break Attention</b>, you put a decoy in the Titan's eyes: a flare, your horse, your thrown cloak, or your own Feint across its face. Roll Perception with Gear Dice from your ODM Gear or your horse (a Feint on foot uses none). You can take it if you hold a Position relative to the Titan, are not Grabbed, and meet the requirement of the decoy you name, while no decoy already holds that Titan's Attention.</p>
@@ -2880,6 +2950,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>when a Focus Titan dies,</b> unless it was already grounded;</li>
 <li><b>when a living Focus Titan becomes grounded</b> by a Broken leg.</li>
 </ul>
+<p><b>It wrecks an Anchor.</b> The Titan Engagement loses 1 <a href="#fight-anchors">Anchor</a> where the body lands, resolved with the fall and before any Leap Clear. It happens whether or not anyone stands in the path, and Anchors never fall below 0.</p>
 <h3>The path</h3>
 <ul>
 <li><b>In the path:</b> every soldier who holds On Body or Blind Spot relative to the falling Titan.</li>
@@ -3048,7 +3119,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p>The Titan Engagement becomes a <b>retreat</b> when the retreat clock is full, or when a Background Titan's clock fills while two Focus Titans are alive. From then on, no Background Titan's clock fills, the retreat clock does not fill, and no Titan enters. Each Focus Titan's Regeneration clock still fills. The GM records the round in which the retreat began.</p>
 <div class="box">
 <h4>Forced moves</h4>
-<p>Every soldier who holds a Position and is not Down, Grabbed, or carried cannot decline their move, and must use each move on one of these, their choice:</p>
+<p>Every soldier who holds a Position and is not Down, Grabbed, or carried cannot decline their move, and must use each move on one of these, their choice. A retreat narrows your own move rather than replacing it, so an ODM move made under a retreat is a <a href="#fight-flight">Flight</a> like any other: it is rolled, each success is 1 Momentum, and no successes marks you as loud. A Fear Roll's forced step is not your move and is never a Flight.</p>
 <ol>
 <li>A step along a shortest chain of steps toward Distant, relative to the earliest-labelled Focus Titan they are not yet Distant from; once Distant from every Focus Titan, relative to the earliest-labelled Corpse they are not yet Distant from.</li>
 <li>Leaving, once Distant from every Focus Titan and every Corpse.</li>
@@ -3747,6 +3818,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>One Reaction per Titan per round</b>, spending your earliest turn whose move and action are unspent. It cancels against each of that Titan's cards, separately.</li>
 <li><b>Critical Injury:</b> +1 to the roll per Net Success beyond the first. Never for the Grab's crush, a fall, damage, or a Stress gain.</li>
 <li><b>Knock loose:</b> a target airborne, On Body, or at Blind Spot falls. A mounted target is not affected.</li>
+<li><b>Wreck:</b> the fight loses 1 Anchor, whether the card landed or whiffed.</li>
 </ul>
 </div>
 
@@ -3757,8 +3829,20 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Deal</b> cards 1 to 20: one per player character, one per Squadmate on no Wing, and Tempo cards per Focus Titan.</li>
 <li><b>Swap:</b> both at the same Position or one step apart, or both have left; neither Down nor Grabbed; once each.</li>
 <li><b>Play</b> lowest first. Your turn is one move and one action, in either order. A Wing Squadmate acts right after its player character.</li>
-<li><b>End:</b> Gas Rolls; Regeneration +1; Background clocks +1, then the retreat clock +1 (neither during a retreat).</li>
+<li><b>End:</b> Gas Rolls; Regeneration +1; Background clocks +1, then the retreat clock +1 (neither during a retreat); everyone who made no ODM move loses all their Momentum.</li>
 </ol>
+</div>
+
+<div>
+<h3>Flight and Momentum</h3>
+<ul>
+<li><b>Flight:</b> every ODM move is a Fly roll with your own ODM Gear. It needs nothing, and the step happens whatever the dice give. Each success is <b>1 Momentum</b>, to your cap. <b>No successes:</b> you come in loud, from any Position, Distant included. It is ODM use, and still one Gas Roll for the round.</li>
+<li><b>Momentum:</b> public, on your sheet, 0 to the Anchors left. Lost in full at the end of any round in which you made no ODM move.</li>
+<li><b>Spend 1 each, any amount, in your turn:</b> <b>Carry</b> (one more step on this move); <b>Bite</b> (1 Bonus Die on a strike or Break Attention this turn against that Titan); <b>Brace</b> (1 Bonus Die on your next dodge this round); <b>Quiet</b> (no mark this turn); <b>Clean line</b> (no Gas Roll this round).</li>
+<li><b>Anchors:</b> Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3. A Wreck effect or a falling Titan destroys 1, and nothing restores one. At 0 nobody holds Momentum, and every Position step stays open.</li>
+<li><b>Terrain Traits:</b> Open, a mounted Break Attention gains 1 Bonus Die; Sparse, the first Anchor wrecked is not lost; Wooded, none; Urban, Blind Spot is a roof and not airborne, so a Jam does not drop you; Giant Forest, a Flight's first Carry is free.</li>
+<li><b>Mounted charge:</b> a mounted Distant to In Reach step may mark you loud; at Open it may be made twice in one move.</li>
+</ul>
 </div>
 
 <div>
@@ -3796,10 +3880,11 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>Hooked in: On Body, or struck its Nape (struck first).</li>
 <li>In Reach.</li>
 <li>Just hurt it (a Body Part strike with a success).</li>
-<li>Loudest: Draw Attention, Scream (never from Distant).</li>
+<li>Loudest: Draw Attention or Scream (never from Distant); a Flight with no successes or a mounted charge (from any Position).</li>
 <li>Nearest: On Body, In Reach, Blind Spot, Distant.</li>
 </ol>
 <ul>
+<li><b>Marked as loud</b> also meets every rung any other candidate meets, except hooked in.</li>
 <li><b>Ties:</b> narrow by each lower rung; then the current holder keeps it; then the lowest card this round (not before the deal or at an end step); otherwise nothing holds it until its next card.</li>
 <li>Marks last until the end of its next card that resolves a behavior. Down or carried soldiers meet only the nearest rung.</li>
 </ul>
@@ -3831,8 +3916,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <h3>Gear and falls</h3>
 <ul>
 <li><b>Gas Roll</b> after ODM use: 2 dice, 3 after a Pushed roll made with ODM Gear; each 1 lowers the Gas Rating by 1. A full canister is 3.</li>
-<li><b>Jam</b> (ODM Gear at 0; you fall if airborne) or <b>dry</b> (Gas Rating 0): no ODM move, Nape strike, or strike from On Body or Blind Spot, unless the Titan is grounded.</li>
-<li><b>Blade Set:</b> any wear from a Pushed roll ruins it. Swap in a carried one once in your turn, spending nothing.</li>
+<li><b>Jam</b> (ODM Gear at 0; you fall if airborne, but never from Blind Spot at Urban) or <b>dry</b> (Gas Rating 0): no ODM move, Nape strike, or strike from On Body or Blind Spot, unless the Titan is grounded.</li>
+<li><b>Blade Set:</b> any wear from a Pushed roll ruins it. Swap in a carried one once in your turn: in a Titan Engagement the swap spends your move, so you refit and still strike, and lose that turn's Flight.</li>
 <li><b>Carry:</b> Strength + 4 items. More is <b>Overloaded</b>: every ODM move also spends your action.</li>
 <li><b>Falls:</b> D6 + band. Low +0: Distant, In Reach, and every fall from a horse, which is never raised. High +2: On Body, Blind Spot; you land In Reach. Giant Forest or a Large Titan raises the band one step, to extreme +4 at most. Damage: 2 or less, 0; 3 or 4, 1; 5 or 6, 2; 7 or 8, 3; 9 or more, 4. A fall a called roll's stakes name is low or high, never extreme, inside a Titan Engagement as outside one, and no height step raises it.</li>
 </ul>
@@ -3982,7 +4067,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>Roll D6 for the Anchor Rating.</li>
 <li>Roll D6 for the Focus Titan's Size Class. The Focus Titan is the standard Titan of that class. On Medium, roll D6 again: on a 6 the Focus Titan is the Sprinting Abnormal instead.</li>
 <li>Roll D6 for Background Titans and their clock lengths. Then, for each Background Titan, in the order the clocks are listed, roll D6 on the Size Class table. Each is the standard Titan of the class it rolls; never make the Abnormal roll for one.</li>
-<li>The retreat clock has 8 segments. Nothing is rolled for it.</li>
+<li>The retreat clock has 8 segments, and the Anchor Rating gives the field its Anchors (Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3). Nothing is rolled for either.</li>
 </ol>
 <div class="table-wrap"><table>
 <caption>Anchor Rating (D6)</caption>
@@ -4039,7 +4124,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <div class="box">
 <h4>Starting the fight</h4>
 <ol>
-<li>Note the Anchor Rating, the Focus Titan, each Background Titan with its clock length, and the retreat clock. The retreat clock starts empty.</li>
+<li>Note the Anchor Rating, the Focus Titan, each Background Titan with its clock length, and the retreat clock. The retreat clock starts empty, and the rating's <a href="#fight-anchors">Anchors</a> go on the engagement line. No soldier holds Momentum yet.</li>
 <li>Label the Focus Titan A.</li>
 <li>Its Body Parts start Intact with a count of 0, it has no Openings and no previous behavior, and its Regeneration clock is empty. Roll its Next Behavior out of sight.</li>
 <li>Every soldier who takes part holds Distant relative to A, unless the starting rule names other Positions. Mounted soldiers stay mounted and dismounted soldiers stay dismounted, and no one is airborne. Each dismounted soldier's horse holds Distant, recorded with A.</li>
@@ -4053,17 +4138,17 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <h2 id="gm-tracker">The tracker</h2>
 <p>Keep one line for the Titan Engagement, one row for each Focus Titan, one row for each Corpse, and one row for each Background Titan. Everything on the tracker is public except an unrevealed Next Behavior and the values an Abnormal keeps hidden.</p>
 <ul>
-<li><b>Engagement line:</b> the Anchor Rating; the round; the retreat clock's filled segments out of its length; whether a retreat is under way, and the round it began (the retreat's stay limit counts from it); the Squad Tactics and which are used; whose cloaks are thrown; and the round in which no soldier was left standing, while the ending waits.</li>
+<li><b>Engagement line:</b> the Anchor Rating; the Anchors left of the number it started with, which is every soldier's Momentum cap; the round; the retreat clock's filled segments out of its length; whether a retreat is under way, and the round it began (the retreat's stay limit counts from it); the Squad Tactics and which are used; whose cloaks are thrown; and the round in which no soldier was left standing, while the ending waits.</li>
 <li><b>Focus Titan row:</b> its label, Size Class, and stat block; its cards this round; the Attention holder, or the decoy holding it and how many cards its hold has left, or nothing; the Next Behavior (face down), the previous behavior, and any Call It on the Next Behavior; each Body Part's state and count; Openings and who created each; the Regeneration clock (only its filled segments for an Abnormal whose clock length no Read has revealed); decoys in a row; any Grabbed soldier, with countdown turns and whether lifted; the marks standing on soldiers; its Heave count out of its Heave rating; and each soldier its body pins, by limb with the pinning Body Part (or none), or by the body.</li>
 <li><b>Corpse row:</b> when a Focus Titan dies, its row stays for its Corpse, marked Corpse: each Body Part's state and count, which never regenerate; its Heave count out of its Heave rating; and each soldier it pins.</li>
 <li><b>Background Titan row:</b> its Size Class, its stat block, and its clock.</li>
 </ul>
-<p class="dice">Wooded | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut (used), Fall Back | Cloaks: - | No one standing since: -</p>
+<p class="dice">Wooded | Anchors 1/2 | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut (used), Fall Back | Cloaks: - | No one standing since: -</p>
 <p class="dice">A Medium | cards 4 | Att: Jonas | Next: [hidden] | Prev: Bite | Eyes I0 LA W1 RA I0 LL B0 RL I1 | Op 2 (Mila, Mila) | Regen 1/3 | Decoys 0 | Grab: - | Marks: Mila struck its Nape | Heave 0/3 | Pins: -</p>
 <p class="dice">A Corpse | Eyes I0 LA I0 RA I0 LL B0 RL W1 | Heave 1/3 | Pins: Mila (right arm, RA), Jonas (body)</p>
 <p class="dice">Background 1 Small | clock 4/6</p>
 <p class="small"><b>Reading the rows.</b> <b>Att</b> is the Attention holder, or the decoy with the cards its hold has left (Att: flare, 1 left). <b>Next</b> and <b>Prev</b> are the Next Behavior and the previous behavior. Each Body Part (Eyes; LA and RA for the arms; LL and RL for the legs) shows I, W, or B for Intact, Wounded, or Broken, then its count. <b>Op</b> is the Openings, with who created each. <b>Regen</b> is the Regeneration clock's filled segments of its length. <b>Decoys</b> is decoys in a row. <b>Grab</b> is a Grabbed soldier, with countdown turns and whether lifted. <b>Marks</b> are the marks standing on soldiers. <b>Heave</b> is the Heave count of the Heave rating. <b>Pins</b> lists each Pinned soldier with the pinned limb and the pinning Body Part, or "body" for a body pin.</p>
-<p>Update it after the deal, after each Titan card, after each strike or Break Attention, after each counted turn of a Grabbed soldier, after each fall of a Titan's body and each Heave, and at the end steps. Players track everything else on their sheets: Positions relative to each Focus Titan and each Corpse, mounted, airborne, carried and carrying, Pinned, turns and actions spent in advance, Stress, Stress Responses, Critical Injuries, Health, gear, and Gas Rating. The positions column of the Squad sheet is the record you read the Attention Ladder from.</p>
+<p>Update it after the deal, after each Titan card, after each strike or Break Attention, after each counted turn of a Grabbed soldier, after each fall of a Titan's body and each Heave, and at the end steps. Update the Anchors whenever a Wreck effect resolves or a Titan's body falls. Players track everything else on their sheets: Positions relative to each Focus Titan and each Corpse, Momentum, mounted, airborne, carried and carrying, Pinned, turns and actions spent in advance, Stress, Stress Responses, Critical Injuries, Health, gear, and Gas Rating. The positions column of the Squad sheet is the record you read the Attention Ladder from.</p>
 <p>Roll together any rolls that do not depend on each other: the end-step Gas Rolls, and the Fear Rolls every witness makes for one event.</p>
 
 <h2 id="gm-legend">How to read a stat block and a Behavior Table</h2>
@@ -4098,7 +4183,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <tr><td>Grab (crush: Crush)</td><td>The Grab procedure (see <a href="#gm-grab">Running a Grab</a>). Its crush is a Crush Critical Injury. The same whatever the Net Successes.</td></tr>
 <tr><td>Telegraph</td><td>The Next Behavior rolled after this card is revealed to every soldier, whether the card landed or whiffed.</td></tr>
 </tbody></table></div>
-<p><b>Tiers.</b> A terrorize entry inflicts only Stress and may telegraph. A control entry adds falls and Critical Injuries that cannot be lethal. A kill entry adds lethal Critical Injuries and the Grab. Thrash works at any Position, uses no Body Parts, rolls its Size Class's control pool, and inflicts nothing lethal.</p>
+<p><b>Tiers.</b> Any tier may wreck an Anchor. A terrorize entry inflicts only Stress and may telegraph. A control entry adds falls and Critical Injuries that cannot be lethal. A kill entry adds lethal Critical Injuries and the Grab. Thrash works at any Position, uses no Body Parts, rolls its Size Class's control pool, and inflicts nothing lethal.</p>
 
 <h2 id="gm-next">Rolling the Next Behavior</h2>
 <p>A Focus Titan always has a hidden Next Behavior. Roll it:</p>
@@ -4130,7 +4215,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Choose.</b> Take the Next Behavior's entry. If the Titan lacks the Body Parts it uses, the behavior is Thrash. If the holder does not meet its Position requirement, it becomes its fallback. If the fallback repeats the previous behavior or fails either test, the behavior is Thrash. Thrash can always happen, and it is the only entry that can follow itself.</li>
 <li><b>Roll and announce.</b> Announce the behavior's name, tier, and targets. Roll its Attack Dice as Titan Dice in the open and announce the successes: the card's Severity, the same for every target.</li>
 <li><b>Reactions.</b> On Severity 0 the card whiffs against every target, a target who cannot make a Reaction included, and no one dodges. Otherwise each target, knowing the Severity, chooses whether to dodge, or cancels with a dodge already made against this Titan this round. Each dodge success cancels one of the card's successes, separately for this card. The card lands on a target on 1 or more Net Successes and whiffs on 0. A target who makes no Reaction, or cannot make one, cancels nothing: every success is net against them. A Call It on this behavior adds its Bonus Dice to a dodge made against this card, never to an earlier dodge compared against it (see <a href="#fight-dodge">Dodging a Titan</a>).</li>
-<li><b>Effects.</b> For each target it lands on, apply the effects in order, targets in card order, a Wing Squadmate just after its player character. Only a Critical Injury reads the Net Successes. A telegraph applies whether the card landed or whiffed. A target who dies receives none of the card's later effects; every other target still does.</li>
+<li><b>Effects.</b> For each target it lands on, apply the effects in order, targets in card order, a Wing Squadmate just after its player character. Only a Critical Injury reads the Net Successes. A telegraph and a Wreck apply whether the card landed or whiffed, and a Wreck applies even where the entry landed on no one. A target who dies receives none of the card's later effects; every other target still does.</li>
 <li><b>Next.</b> A card that whiffed has still resolved a behavior. The behavior becomes the previous behavior, decoys in a row returns to 0, every mark for this Titan clears, and you roll the new Next Behavior. If the behavior had a telegraph effect, reveal the new Next Behavior. It stays revealed until a card resolves it or a decoy's card spends it.</li>
 </ol>
 </div>
@@ -4303,7 +4388,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <tr><td>1</td><td>Gape</td><td>Terrorize</td><td>holder</td><td>Any</td><td>none</td><td>3</td><td>Stress +1</td><td>Thrash</td><td>no</td></tr>
 <tr><td>2</td><td>Lurch Closer</td><td>Terrorize</td><td>holder</td><td>Distant, In Reach</td><td>none</td><td>3</td><td>Stress +1; Telegraph</td><td>Thrash</td><td>no</td></tr>
 <tr><td>3</td><td>Clutch at the Legs</td><td>Control</td><td>holder</td><td>In Reach</td><td>arm</td><td>6</td><td>Crush Critical Injury (leg, side rolled, cannot be lethal)</td><td>Thrash</td><td>no</td></tr>
-<tr><td>4</td><td>Scrabble</td><td>Control</td><td>holder</td><td>On Body, Blind Spot</td><td>none</td><td>6</td><td>Knock loose (fall: Crush)</td><td>Thrash</td><td>no</td></tr>
+<tr><td>4</td><td>Scrabble</td><td>Control</td><td>holder</td><td>On Body, Blind Spot</td><td>none</td><td>6</td><td>Knock loose (fall: Crush); Wreck</td><td>Thrash</td><td>no</td></tr>
 <tr><td>5</td><td>Bite</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>none</td><td>6</td><td>Bite Critical Injury (leg, side rolled, can be lethal)</td><td>Thrash</td><td>no</td></tr>
 <tr><td>6</td><td>Grab</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>arm</td><td>6</td><td>Grab (crush: Crush)</td><td>Thrash</td><td>yes</td></tr>
 <tr><td>never rolled</td><td>Thrash</td><td>Thrash</td><td>holder</td><td>Any</td><td>none</td><td>6</td><td>Knock loose (fall: Crush)</td><td>none</td><td>no</td></tr>
@@ -4338,7 +4423,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <thead><tr><th>D6</th><th>Behavior</th><th>Tier</th><th>Targets</th><th>Holder's Position</th><th>Body Parts used</th><th>Attack Dice</th><th>Effects</th><th>Fallback</th><th>Grab</th></tr></thead><tbody>
 <tr><td>1</td><td>Fixed Grin</td><td>Terrorize</td><td>holder</td><td>Any</td><td>eyes</td><td>3</td><td>Stress +1; Telegraph</td><td>Thrash</td><td>no</td></tr>
 <tr><td>2</td><td>Snap Short</td><td>Terrorize</td><td>holder</td><td>In Reach, On Body</td><td>none</td><td>3</td><td>Stress +1</td><td>Thrash</td><td>no</td></tr>
-<tr><td>3</td><td>Swat</td><td>Control</td><td>holder</td><td>In Reach, On Body</td><td>arm</td><td>6</td><td>Crush Critical Injury (rolled location, cannot be lethal)</td><td>Thrash</td><td>no</td></tr>
+<tr><td>3</td><td>Swat</td><td>Control</td><td>holder</td><td>In Reach, On Body</td><td>arm</td><td>6</td><td>Crush Critical Injury (rolled location, cannot be lethal); Wreck</td><td>Thrash</td><td>no</td></tr>
 <tr><td>4</td><td>Shake Off</td><td>Control</td><td>holder</td><td>On Body, Blind Spot</td><td>none</td><td>6</td><td>Knock loose (fall: Crush)</td><td>Thrash</td><td>no</td></tr>
 <tr><td>5</td><td>Bite</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>none</td><td>9</td><td>Bite Critical Injury (torso, can be lethal)</td><td>Thrash</td><td>no</td></tr>
 <tr><td>6</td><td>Grab</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>arm</td><td>9</td><td>Grab (crush: Crush)</td><td>Thrash</td><td>yes</td></tr>
@@ -4373,8 +4458,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <caption>Standard Large Titan: Behavior Table</caption>
 <thead><tr><th>D6</th><th>Behavior</th><th>Tier</th><th>Targets</th><th>Holder's Position</th><th>Body Parts used</th><th>Attack Dice</th><th>Effects</th><th>Fallback</th><th>Grab</th></tr></thead><tbody>
 <tr><td>1</td><td>Loom</td><td>Terrorize</td><td>holder</td><td>Any</td><td>none</td><td>6</td><td>Stress +1; Telegraph</td><td>Thrash</td><td>no</td></tr>
-<tr><td>2</td><td>Heavy Tread</td><td>Terrorize</td><td>holder and everyone at their Position</td><td>Distant, In Reach</td><td>both legs</td><td>6</td><td>Stress +1</td><td>Thrash</td><td>no</td></tr>
-<tr><td>3</td><td>Crush</td><td>Control</td><td>holder</td><td>In Reach</td><td>none</td><td>9</td><td>Crush Critical Injury (leg, side rolled, cannot be lethal)</td><td>Thrash</td><td>no</td></tr>
+<tr><td>2</td><td>Heavy Tread</td><td>Terrorize</td><td>holder and everyone at their Position</td><td>Distant, In Reach</td><td>both legs</td><td>6</td><td>Stress +1; Wreck</td><td>Thrash</td><td>no</td></tr>
+<tr><td>3</td><td>Crush</td><td>Control</td><td>holder</td><td>In Reach</td><td>none</td><td>9</td><td>Crush Critical Injury (leg, side rolled, cannot be lethal); Wreck</td><td>Thrash</td><td>no</td></tr>
 <tr><td>4</td><td>Shrug Off</td><td>Control</td><td>holder</td><td>On Body, Blind Spot</td><td>none</td><td>9</td><td>Knock loose (fall: Crush)</td><td>Thrash</td><td>no</td></tr>
 <tr><td>5</td><td>Bite</td><td>Kill</td><td>holder</td><td>On Body</td><td>none</td><td>12</td><td>Bite Critical Injury (torso, can be lethal)</td><td>Crush</td><td>no</td></tr>
 <tr><td>6</td><td>Grab</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>arm</td><td>12</td><td>Grab (crush: Crush)</td><td>Thrash</td><td>yes</td></tr>
@@ -4407,10 +4492,10 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <div class="table-wrap"><table>
 <caption>Sprinting Abnormal: Behavior Table</caption>
 <thead><tr><th>D6</th><th>Behavior</th><th>Tier</th><th>Targets</th><th>Holder's Position</th><th>Body Parts used</th><th>Attack Dice</th><th>Effects</th><th>Fallback</th><th>Grab</th></tr></thead><tbody>
-<tr><td>1</td><td>Run Past</td><td>Terrorize</td><td>holder and everyone at their Position</td><td>Distant, In Reach</td><td>both legs</td><td>3</td><td>Stress +1</td><td>Thrash</td><td>no</td></tr>
+<tr><td>1</td><td>Run Past</td><td>Terrorize</td><td>holder and everyone at their Position</td><td>Distant, In Reach</td><td>both legs</td><td>3</td><td>Stress +1; Wreck</td><td>Thrash</td><td>no</td></tr>
 <tr><td>2</td><td>Veer</td><td>Terrorize</td><td>holder</td><td>Any</td><td>none</td><td>3</td><td>Stress +1; Telegraph</td><td>Thrash</td><td>no</td></tr>
 <tr><td>3</td><td>Trample</td><td>Control</td><td>holder</td><td>Distant, In Reach</td><td>both legs</td><td>6</td><td>Crush Critical Injury (leg, side rolled, cannot be lethal)</td><td>Thrash</td><td>no</td></tr>
-<tr><td>4</td><td>Pitch Headlong</td><td>Control</td><td>holder</td><td>On Body, Blind Spot</td><td>none</td><td>3</td><td>Knock loose (fall: Crush)</td><td>Thrash</td><td>no</td></tr>
+<tr><td>4</td><td>Pitch Headlong</td><td>Control</td><td>holder</td><td>On Body, Blind Spot</td><td>none</td><td>3</td><td>Knock loose (fall: Crush); Wreck</td><td>Thrash</td><td>no</td></tr>
 <tr><td>5</td><td>Grab</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>arm</td><td>6</td><td>Grab (crush: Crush)</td><td>Thrash</td><td>yes</td></tr>
 <tr><td>6</td><td>Headlong Lunge</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>both legs</td><td>6</td><td>Crush Critical Injury (rolled location, can be lethal)</td><td>Pitch Headlong</td><td>no</td></tr>
 <tr><td>never rolled</td><td>Thrash</td><td>Thrash</td><td>holder</td><td>Any</td><td>none</td><td>6</td><td>Knock loose (fall: Crush)</td><td>none</td><td>no</td></tr>
@@ -4555,6 +4640,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Thrash</dt><dd>The default behavior every Behavior Table falls back to when no other entry can happen.</dd>
 <dt>Next Behavior</dt><dd>A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden until it happens or is Read. Reading it reveals its Attack Dice.</dd>
 <dt>Telegraph</dt><dd>A behavior that announces what the Titan's next card will do.</dd>
+<dt>Wreck</dt><dd>A Behavior Table effect that destroys 1 of the battlefield's Anchors, whether the card landed or whiffed. A Titan's body falling destroys 1 as well.</dd>
 <dt>Grabbed</dt><dd>Gripped in a Titan's hand, unable to Help, Cover, or make a Reaction. The Titan lifts the soldier after their next turn and devours them after the turn after that, unless they get free.</dd>
 <dt>Attention</dt><dd>The one soldier or decoy a Titan is fixed on at any moment, which its Behavior Table acts against; nothing holds it when no rung, its holder, or the cards pick one out, as at the start of a Titan Engagement. A soldier holding Attention cannot strike the Nape.</dd>
 <dt>Attention Ladder</dt><dd>The ranked stimuli a Focus Titan turns its Attention toward each time it acts. The standard order is: hooked into its body, nearest person in reach, just hurt it (until the end of its next card that resolves a behavior), loudest or brightest, nearest (the closest Position). Abnormals have their own ladder.</dd>
@@ -4583,7 +4669,11 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <h2>Field</h2>
 <dl class="glossary">
 <dt>ODM Gear</dt><dd>The gas-powered grappling harness soldiers use to fly between anchor points and reach a Titan's Nape.</dd>
-<dt>Anchor Rating</dt><dd>How well a battlefield holds ODM Gear anchors: Open, Sparse, Wooded, Urban, or Giant Forest. It decides which Position changes ODM Gear allows.</dd>
+<dt>Anchor Rating</dt><dd>How well a battlefield holds ODM Gear anchors: Open, Sparse, Wooded, Urban, or Giant Forest. It decides which Position changes ODM Gear allows, how many Anchors the field holds, and its Terrain Trait.</dd>
+<dt>Anchors</dt><dd>The battlefield's own pool, set by the Anchor Rating and held by the Titan Engagement rather than by any soldier: Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3. The Anchors left are every soldier's Momentum cap. A Wreck effect and a falling Titan each destroy 1, nothing restores one, and no Position step ever closes, however few are left.</dd>
+<dt>Terrain Trait</dt><dd>The one printed line each Anchor Rating adds beyond its steps and its Anchors, such as the Urban roof that keeps a soldier at Blind Spot from being dropped by a Jam.</dd>
+<dt>Flight</dt><dd>Every ODM move made in a Titan Engagement: a Fly roll with the soldier's own ODM Gear that needs nothing, since its step happens whatever the roll gives. Each success is 1 Momentum, and no successes marks the soldier as loud from any Position.</dd>
+<dt>Momentum</dt><dd>The public points a soldier gains from a Flight's successes, from 0 to the Anchors left, lost in full at the end of any round in which they made no ODM move. Spent 1 at a time on Carry, Bite, Brace, Quiet, or a clean line.</dd>
 <dt>Jam</dt><dd>ODM Gear worn down to 0, which stops working and drops an airborne soldier.</dd>
 <dt>Blade Set</dt><dd>A matched pair of ODM swords, the unit in which they are carried, counted, and lost.</dd>
 <dt>Gas Rating</dt><dd>The gas left in a soldier's current canister, which drops as Gas Rolls turn up 1s.</dd>
@@ -4733,6 +4823,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <caption>In a Titan Engagement</caption>
 <tbody>
 <tr><th>Position relative to A</th><td></td><th>Position relative to B</th><td></td></tr>
+<tr><th>Momentum held, 0 to the Anchors left</th><td colspan="3"></td></tr>
 <tr><th>Left the Titan Engagement</th><td></td><th>Airborne</th><td></td></tr>
 <tr><th>Carrying</th><td></td><th>Carried by</th><td></td></tr>
 <tr><th>Pinned: under which Titan, and whether it is a Corpse; the limb and side, or the body; the pinning Body Part</th><td colspan="3"></td></tr>
@@ -4811,9 +4902,9 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <h2>GM tracker</h2>
 <div class="table-wrap"><table class="log">
 <caption>Engagement line</caption>
-<thead><tr><th>Anchor Rating</th><th>Round</th><th>Retreat clock, filled of its length</th><th>Retreat, and the round it began</th><th>Squad Tactics, and which are used</th><th>Cloaks thrown</th><th>No one standing since round</th></tr></thead>
+<thead><tr><th>Anchor Rating</th><th>Anchors left, of the number it started with</th><th>Round</th><th>Retreat clock, filled of its length</th><th>Retreat, and the round it began</th><th>Squad Tactics, and which are used</th><th>Cloaks thrown</th><th>No one standing since round</th></tr></thead>
 <tbody>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody></table></div>
 <div class="table-wrap"><table class="form">
 <caption>Focus Titans</caption>

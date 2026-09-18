@@ -4,6 +4,8 @@
  * never touch a document.
  */
 
+import type { TerrainTrait } from './momentum.ts';
+
 export type Position = 'distant' | 'in-reach' | 'on-body' | 'blind-spot';
 export const POSITION_IDS: readonly Position[] = ['distant', 'in-reach', 'on-body', 'blind-spot'];
 
@@ -30,6 +32,8 @@ export interface SoldierState {
   odmHad: boolean;
   /** Position by Focus Titan (or corpse) label. */
   positions: Record<string, Position>;
+  /** Momentum held, 0 to the Anchors left (anchor-ratings.yaml, momentum). */
+  momentum: number;
   /** Untreated Critical Injuries held (the most-harmed test). */
   untreated: number;
 }
@@ -85,12 +89,15 @@ export interface StepRow {
   onFoot: boolean;
   mounted: boolean;
   odm: boolean;
-  fly: { needs: number; failure: Position } | null;
 }
 
 export interface AnchorRating {
   id: string;
   name: string;
+  /** The Anchors the field starts with (anchor-ratings.yaml, ratings, anchors). */
+  anchors: number;
+  /** The rating's Terrain Trait (momentum.ts, TERRAIN_TRAITS). */
+  trait: TerrainTrait;
   steps: StepRow[];
 }
 
@@ -101,6 +108,14 @@ export interface Snapshot {
   step: Step;
   round: number;
   anchor: AnchorRating | null;
+  /** The Anchors left, which is every soldier's Momentum cap (anchor-ratings.yaml, anchors). */
+  anchors: number;
+  /** Anchors wrecked so far, for the Sparse Terrain Trait's first-wreck grace. */
+  wrecks: number;
+  /** Soldiers who made an ODM move this round (odm-gear.yaml, odm_use). */
+  odmUsed: string[];
+  /** Soldiers whose move is spent this round (blade-sets.yaml, swap). */
+  movesSpent: string[];
   soldiers: SoldierState[];
   titans: TitanRow[];
   /** Squadmate id to player character id. */

@@ -6,7 +6,7 @@ id: round
 name: The Round
 chapter: 05-titan-engagement
 adrs: [ADR-0001, ADR-0010, ADR-0014, ADR-0015, ADR-0019, ADR-0024]
-decided: [OQ-77, OQ-90, OQ-97, OQ-119, OQ-126, OQ-163]
+decided: [OQ-77, OQ-90, OQ-97, OQ-119, OQ-126, OQ-163, OQ-182]
 
 initiative_cards:
   set: >-
@@ -70,6 +70,11 @@ end_steps:
       no Background Titan's clock fills and the retreat clock does not fill; the regeneration step
       still fills every living Focus Titan's Regeneration clock (data/engagement/background-titans.yaml,
       ticks, stopped; decision batch 6, OQ-134).
+  - id: momentum
+    text: >-
+      Every soldier who made no ODM move this round loses all their Momentum
+      (data/engagement/anchor-ratings.yaml, momentum, lost). A soldier who flew keeps what they
+      hold, to the cap the Anchors left give.
   - id: round-ends
     text: >-
       Every move and action left unspent is lost (Chapter 1, section 1.9), and every effect that
@@ -127,6 +132,7 @@ gm_tracker:
   engagement_line:
     fields:
       - Anchor Rating
+      - Anchors left (data/engagement/anchor-ratings.yaml, anchors), which is every soldier's Momentum cap
       - round number
       - retreat clock, filled segments of its length (data/engagement/background-titans.yaml, retreat_clock)
       - >-
@@ -136,7 +142,7 @@ gm_tracker:
       - Squad Tactics the Squad holds, and which have been used this Titan Engagement
       - which soldiers have thrown their cloak
       - the round in which no soldier was left standing, while the ending waits (data/engagement/engagement-flow.yaml, ending)
-    example: "Wooded | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut (used), Fall Back | Cloaks: - | No one standing since: -"
+    example: "Wooded | Anchors 1/2 | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut (used), Fall Back | Cloaks: - | No one standing since: -"
   focus_titan_row:
     fields:
       - label (A, B, and so on)

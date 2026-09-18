@@ -4,6 +4,7 @@
  * (Action Catalog entries, Specialties, gear items) keep them.
  */
 import data from './wof-config.ts';
+import { TERRAIN_TRAITS } from './rules/engagement/momentum.ts';
 
 export const SYSTEM_ID = 'wings-of-freedom';
 
@@ -32,6 +33,9 @@ export function buildSystemConfig() {
         prosthetic: 'WOF.GearSubtype.prosthetic',
       },
       bodyPartStates: { intact: 'WOF.BodyPartState.intact', wounded: 'WOF.BodyPartState.wounded', broken: 'WOF.BodyPartState.broken' },
+      // The Anchor Ratings' Terrain Traits and the Momentum spends (data/engagement/anchor-ratings.yaml).
+      terrainTraits: Object.fromEntries([...new Set(Object.values(TERRAIN_TRAITS))].map((x) => [x, `WOF.TerrainTrait.${x}`])),
+      momentumSpends: Object.fromEntries(data.engagement.momentum.spends.map((x) => [x.id, `WOF.MomentumSpend.${x.id}`])),
     },
   });
 }

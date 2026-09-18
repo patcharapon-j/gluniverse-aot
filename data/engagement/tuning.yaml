@@ -16,6 +16,17 @@ decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127
 # (docs/reviews/simulator-report.md, decision batch 8, 8-14 and 8-31), in which every target, band, and
 # bar limit is Met and no fight reached the safety cap.
 
+# Decision batch 10 (OQ-182 to OQ-185) changed how a move works: every ODM move is a Flight, each
+# success is 1 Momentum, Anchors cap it and the Titan wrecks them, the loudest flag matches every
+# rung but hooked into its body, a mounted step may charge, and Swap Blade Set spends the move.
+# EVERY FIGURE IN THIS FILE AND IN docs/reviews/simulator-report.md IS STALE UNTIL THAT RERUN.
+# The rerun is a retune, not a sensitivity row, because Flight replaces the move rather than sitting
+# beside it. It must answer: prepared_squad_kill with Bite measured separately as the first thing to
+# cut; the PC Critical Injury and death targets, which OQ-182's failed-Flight flag, OQ-183's charge
+# and OQ-184's matching flag feed together; the wreck rate per table and Size Class; and
+# families.route_check with Anchors at 0, which must confirm ADR-0010's legal route still holds.
+# Round time is expected to rise by about 1 to 1.5 dice pools a round against the 3.57 measured here.
+
 # ------------------------------------------------------------------ starting values
 starting_values:
   note: >-
@@ -34,7 +45,7 @@ starting_values:
     - file: data/core/bonus-dice-sources.yaml
       keys: [read-from-distant.dice_per_unit, call-it.dice_per_unit]
     - file: data/engagement/anchor-ratings.yaml
-      keys: [fly_roll needs on every step row]
+      keys: [anchors on every rating, terrain_trait on every rating, the Momentum spend list]
     - file: data/engagement/background-titans.yaml
       keys: [ticks]
     - file: data/engagement/engagement-setup.yaml

@@ -9,6 +9,7 @@ import { dealBlock, dealCards, skirmishHolders, tieCard, titanHolders } from '..
 import { countTurn, release } from '../rules/engagement/grab.ts';
 import { coreOf, grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { comparisonLabel, entering, focusLabels, holdsAPosition, isClose, leaveBlock, letGoBlock, moveOptions, nextLabel, returnBlock, returning, withPosition, type MoveKind } from '../rules/engagement/positions.ts';
+import { changeEffects, chargeBlock, chargeDoubleStep, flightResult, momentumCap, momentumEnd, startingAnchors, trimToCap, wreckAnchor } from '../rules/engagement/momentum.ts';
 import {
   autoChecks,
   checkCategory,
@@ -45,7 +46,7 @@ import { fearRolls, trackerDeaths } from './fear.ts';
 import { rollFall, rollSteam } from './harm.ts';
 import { postNote, tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
-import { E, cardsOf, forcedFor, grabbedBy, partsOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
+import { E, cardsOf, forcedFor, grabbedBy, partsOf, ratingOf, snapshot, soldierActors, soldierState, titanActor, titanRow, titanToken, wingsOf } from './snapshot.ts';
 
 const rng = () => (CONFIG.Dice?.randomUniform ? CONFIG.Dice.randomUniform() : Math.random());
 const d6 = () => Math.floor(rng() * 6) + 1;
@@ -142,6 +143,8 @@ export async function startEngagement(choice: SetupChoice): Promise<any> {
     titans: [],
     background: choice.background.map((b) => ({ ...b, filled: 0, entered: 0 })),
     retreat: { length: E().setup.retreatClock, filled: 0, active: false, began: 0 },
+    // engagement-setup.yaml, steps, anchors: the rating sets the pool and nothing is rolled.
+    anchors: { left: startingAnchors(ratingOf(choice.anchor)).anchors, wrecks: 0 },
     tactics: { held: choice.tactics, used: [] },
   };
   if (mode === 'titan' && choice.focus) system.titans = [titanRowData(choice.focus, 'A', 1)];
@@ -337,6 +340,8 @@ async function nextRound(combat: any): Promise<void> {
       'system.swaps': [],
       'system.proposal': null,
       'system.odmUsed': [],
+      'system.movesSpent': [],
+      'system.cleanLine': [],
       'system.titans': titans,
       'system.skirmish': skirmish,
     },
@@ -527,7 +532,8 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
     targets,
   });
   const telegraph = (full?.effects ?? []).some((e: any) => e.type === 'telegraph');
-  const titans = (plain(combat).titans as any[]).map((t) => (t.key === key ? { ...t, pending: JSON.stringify({ entry: entry.id, message: '', telegraph, behavior: message?.id ?? '' }) } : t));
+  const wrecksAnchor = (full?.effects ?? []).some((e: any) => e.type === 'wreck');
+  const titans = (plain(combat).titans as any[]).map((t) => (t.key === key ? { ...t, pending: JSON.stringify({ entry: entry.id, message: '', telegraph, wreck: wrecksAnchor, behavior: message?.id ?? '' }) } : t));
   await writeSystem(combat, { titans });
   await postNote({ title, lines: [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), tr('note.behaviorWaits')], titan: true, round: combat.round });
 }
@@ -556,6 +562,9 @@ async function titanCardEnd(combat: any, combatant: any): Promise<void> {
   }
   // resolving_a_card, next: the previous behavior, decoys in a row 0, flags cleared, a new Next Behavior.
   const rec = new Recorder();
+  // A wreck effect applies whether the behavior landed or whiffed, as telegraph does
+  // (titan-format.yaml, effect_types, wreck).
+  if (pending.wreck) wreck(combat, rec);
   rec.set(actor, 'system.previous_behavior', pending.entry);
   const next = await rollNext(actor, pending.entry, rec, pending.telegraph);
   rec.set(combat, 'system.titans', (after.titans as any[]).map((t) => (t.key === key ? { ...t, pending: '', decoysInRow: 0, flags: emptyFlags() } : t)));
@@ -574,6 +583,17 @@ export interface MoveRequest {
   to: Position;
   /** The way the soldier's own move is made, or a change a rule names. */
   way: MoveKind | 'rule' | 'letGo';
+  /** Momentum the move spends on Carry (anchor-ratings.yaml, momentum, spends, carry). */
+  carry?: number;
+  /** A mounted move that makes the distant to in-reach step sets the loudest flag (mounted_charge). */
+  charge?: boolean;
+  /**
+   * With way 'rule', the kind of step a rule's forced change of Position makes (positions.yaml,
+   * moves, forced_step). An ODM forced step is ODM use and leaves the soldier airborne, but it is
+   * not the soldier's own move, so it is never a Flight: nothing is rolled, no Momentum is gained,
+   * and no loudest flag is set.
+   */
+  kind?: MoveKind;
 }
 
 /** A change of Position (positions.yaml, moves). Returns false when the rules refuse it. */
@@ -585,6 +605,8 @@ export async function movePosition(combat: any, req: MoveRequest): Promise<boole
   const grabbed = grabbedIn(snap)(s.id);
   if (req.way === 'rule') {
     if (!isGM()) return false;
+    await applyPosition(combat, req.actor, s, t.label, req.to, 'rule', { kind: req.kind });
+    return true;
   } else if (req.way === 'letGo') {
     const why = letGoBlock(s, t.label, grabbed);
     if (why) return warn(`move.${why}`);
@@ -593,15 +615,27 @@ export async function movePosition(combat: any, req: MoveRequest): Promise<boole
     const { extViaGM } = await import('../dice/proxy.ts');
     await extViaGM('tracker', { act: 'let-go', combat: combat.id, soldier: s.id, titan: t.key });
     return true;
+  } else if (req.charge && req.to === s.positions[t.label] && chargeDoubleStep(snap.anchor)) {
+    // mounted_charge, open_double_step: at Open a mounted move may make the Distant to In Reach step
+    // twice, so the rider comes in and gets out again. One move and one charge: the flag is set once.
+    const why = chargeBlock(s, snap.anchor, s.positions[t.label], grabbed);
+    if (why) return warn(`move.${why}`);
+    await markMoveSpent(combat, req.actor.id);
+    await markLoud(combat, t.label, req.actor.id);
+    await postNote({ title: tr('note.moved', { name: req.actor.name }), lines: [tr('note.chargeDouble', { label: t.label })], round: combat.round });
+    return true;
   } else {
-    const opt = moveOptions(s, { rating: snap.anchor, titan: t, grabbed, retreat: snap.retreat, forced: forcedFor(combat, snap, s, t.label) }).find((o) => o.to === req.to);
+    const opt = moveOptions(s, { rating: snap.anchor, titan: t, grabbed, retreat: snap.retreat, momentum: s.momentum, forced: forcedFor(combat, snap, s, t.label) }).find((o) => o.to === req.to);
     if (!opt || opt.block) return warn(`move.${opt?.block ?? 'notOneStep'}`);
     const way = opt.ways.find((w) => w.kind === req.way);
     if (!way) return warn('move.kind');
-    if (way.fly) return flyMove(combat, req, s, t.label, way.fly);
+    if (way.carry > s.momentum) return warn('move.noMomentum');
+    // Every ODM move is a Flight: rolled for fly, and its step happens whatever the roll gives.
+    if (way.kind === 'odm') return flight(combat, { ...req, carry: way.carry }, s, t.label);
+    if (req.charge && chargeBlock(s, snap.anchor, s.positions[t.label], grabbed)) return warn('move.chargeReach');
+    await applyPosition(combat, req.actor, s, t.label, req.to, req.way, { carry: way.carry, charge: !!req.charge && way.charge });
+    return true;
   }
-  await applyPosition(combat, req.actor, s, t.label, req.to, req.way);
-  return true;
 }
 
 /** Letting go (positions.yaml, moves, letting_go): the soldier falls and holds In Reach. */
@@ -622,30 +656,111 @@ function warn(key: string): false {
   return false;
 }
 
-async function flyMove(combat: any, req: MoveRequest, s: SoldierState, label: string, fly: { needs: number; failure: Position }): Promise<boolean> {
+/**
+ * A Flight (positions.yaml, moves, flight): every ODM move rolls for fly with the soldier's own ODM
+ * Gear. The step happens whatever the roll gives, each success is 1 Momentum to the cap, and no
+ * successes sets the loudest flag on the Focus Titan the move named, from any Position.
+ */
+async function flight(combat: any, req: MoveRequest, s: SoldierState, label: string): Promise<boolean> {
   const { rollAction } = await import('../dice/roll-action.ts');
   const { successesOf } = await import('../dice/card.ts');
   const message = await rollAction(req.actor, 'fly', {});
   const card = message?.getFlag(SYSTEM_ID, 'card');
-  if (!card) return false;
-  const to = successesOf(card) >= fly.needs ? req.to : fly.failure;
-  await applyPosition(combat, req.actor, s, label, to, 'odm');
+  // The move is the soldier's whether or not the roll was made; with no card nothing is gained.
+  const successes = card ? successesOf(card) : 0;
+  const snap = snapshot(combat);
+  const flown = flightResult(successes, s.momentum, snap.anchors);
+  await applyPosition(combat, req.actor, s, label, req.to, 'odm', { carry: req.carry ?? 0, flight: { successes, ...flown } });
   return true;
 }
 
-async function applyPosition(combat: any, actor: any, s: SoldierState, label: string, to: Position, way: MoveRequest['way']): Promise<void> {
+interface MoveExtras {
+  carry?: number;
+  charge?: boolean;
+  /** With way 'rule', the kind of step the rule's forced change makes (moves, forced_step). */
+  kind?: MoveKind;
+  flight?: { successes: number; momentum: number; gained: number; loud: boolean };
+}
+
+async function applyPosition(combat: any, actor: any, s: SoldierState, label: string, to: Position, way: MoveRequest['way'], extra: MoveExtras = {}): Promise<void> {
   const snap = snapshot(combat);
   const positions = withPosition(s.positions, label, to, focusLabels(snap.titans));
   const patch: Record<string, unknown> = positionsPatch(positions);
-  if (way === 'odm') patch['system.airborne'] = true;
-  if (way === 'onFoot') patch['system.airborne'] = false;
+  // A forced step is a step of the kind the soldier's move makes, so it leaves them airborne as an
+  // ODM move does, and is ODM use; it is never a Flight (positions.yaml, moves, forced_step).
+  const kind: MoveKind | null = way === 'rule' ? (extra.kind ?? null) : way === 'letGo' ? null : way;
+  const how = changeEffects(way === 'rule' ? 'rule' : way === 'letGo' ? 'rule' : 'move', kind);
+  if (how.airborne) patch['system.airborne'] = true;
+  if (kind === 'onFoot') patch['system.airborne'] = false;
+  const spent = Math.max(0, extra.carry ?? 0);
+  const held = extra.flight ? extra.flight.momentum : s.momentum;
+  const after = Math.max(0, Math.min(held - spent, momentumCap(snap.anchors)));
+  if (after !== s.momentum) patch['system.momentum'] = after;
   await actor.update(patch);
   // A carried comrade changes Position with their carrier (carrying.yaml).
   const carried = s.carrying ? game.actors.get(s.carrying) : null;
   if (carried && isGM()) await carried.update(positionsPatch(positions));
-  if (way === 'odm') await markOdm(combat, actor.id);
-  const kind = way === 'rule' ? tr('move.byRule') : tr(`move.way.${way}`);
-  await postNote({ title: tr('note.moved', { name: actor.name }), lines: [tr('note.movedLine', { label, from: tr(`pos.${s.positions[label] ?? 'none'}`), to: tr(`pos.${to}`), kind })], round: combat.round });
+  if (how.odmUse) await markOdm(combat, actor.id);
+  if (way !== 'rule' && way !== 'letGo') await markMoveSpent(combat, actor.id);
+  if (extra.flight?.loud || extra.charge) await markLoud(combat, label, actor.id);
+  const wayText = way === 'rule' ? tr('move.byRule') : tr(`move.way.${way}`);
+  const lines = [tr('note.movedLine', { label, from: tr(`pos.${s.positions[label] ?? 'none'}`), to: tr(`pos.${to}`), kind: wayText })];
+  if (extra.flight) {
+    lines.push(extra.flight.gained ? tr('note.flightMomentum', { n: extra.flight.gained, held: after }) : tr('note.flightNone'));
+    if (extra.flight.loud) lines.push(tr('note.flightLoud', { label }));
+  }
+  if (spent) lines.push(tr('note.carry', { n: spent }));
+  if (extra.charge) lines.push(tr('note.charge', { label }));
+  await postNote({ title: tr('note.moved', { name: actor.name }), lines, round: combat.round });
+}
+
+/**
+ * The loudest flag a Flight with no successes or a mounted charge sets (attention.yaml, flags,
+ * loudest), by the Titan's label and from any Position, Distant included.
+ */
+export async function markLoud(combat: any, label: string, soldierId: string): Promise<void> {
+  const row = (plain(combat).titans as any[]).find((t) => t.label === label);
+  if (!row || row.status !== 'focus') return;
+  if (!isGM()) {
+    const { extViaGM } = await import('../dice/proxy.ts');
+    await extViaGM('tracker', { act: 'loud-move', combat: combat.id, soldier: soldierId, titan: row.key });
+    return;
+  }
+  await setLoud(combat, soldierId, row.key);
+}
+
+/** A soldier's move this round is spent (blade-sets.yaml, swap; positions.yaml, moves). */
+export async function markMoveSpent(combat: any, soldierId: string): Promise<void> {
+  if (!isGM()) {
+    const { extViaGM } = await import('../dice/proxy.ts');
+    await extViaGM('tracker', { act: 'move-spent', combat: combat.id, soldier: soldierId });
+    return;
+  }
+  const spent = plain(combat).movesSpent as string[];
+  if (!spent.includes(soldierId)) await writeSystem(combat, { movesSpent: [...spent, soldierId] });
+}
+
+/**
+ * A wreck (anchor-ratings.yaml, anchors, wrecking): the Titan Engagement loses 1 Anchor, never below
+ * 0, unless the Sparse Terrain Trait keeps the first one. Every soldier over the new cap loses the
+ * excess at once.
+ */
+export function wreck(combat: any, rec: Recorder): void {
+  const sys = plain(combat);
+  const rating = ratingOf(sys.anchor);
+  const before = { anchors: sys.anchors?.left ?? 0, wrecks: sys.anchors?.wrecks ?? 0 };
+  const after = wreckAnchor(before, rating);
+  rec.set(combat, 'system.anchors', { left: after.anchors, wrecks: after.wrecks });
+  if (after.ignored) {
+    rec.line(tr('end.wreckIgnored'));
+    return;
+  }
+  rec.line(tr('end.wrecked', { n: after.anchors }));
+  const snap = snapshot(combat);
+  for (const [id, value] of Object.entries(trimToCap(snap.soldiers, after.anchors))) {
+    rec.set(game.actors.get(id), 'system.momentum', value);
+    rec.line(tr('end.momentumTrim', { name: nameOf(id), n: value }));
+  }
 }
 
 export async function markOdm(combat: any, soldierId: string): Promise<void> {
@@ -761,6 +876,9 @@ export async function titanDies(combat: any, key: string, rec: Recorder): Promis
     if (row.grab.lifted) await rollFall(combat, game.actors.get(plan.freed), { positions: { ...snap.soldiers.find((x) => x.id === plan.freed)?.positions, [row.label]: 'on-body' }, causing: row.label }, rec);
   }
   if (plan.steam.length) await rollSteam(combat, plan.steam, rec);
+  // The falling body destroys 1 Anchor where it lands, whether or not anyone is in the path
+  // (titan-harm.yaml, falling_titan, wrecks_an_anchor). A Titan already grounded does not fall.
+  if (!isGrounded(partsOf(actor))) wreck(combat, rec);
   if (plan.fall.length) rec.line(tr('death.fall', { who: names(plan.fall) }));
   rec.set(actor, 'system.corpse', true);
   rec.set(actor, 'system.openings', 0);
@@ -854,7 +972,7 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
   const snap = snapshot(combat);
   switch (check) {
     case 'gas-rolls': {
-      const due = gasRollsDue(sys.odmUsed, (id) => !!snap.soldiers.find((s) => s.id === id)?.alive);
+      const due = gasRollsDue(sys.odmUsed, (id) => !!snap.soldiers.find((s) => s.id === id)?.alive, sys.cleanLine ?? []);
       for (const id of due) {
         const actor = game.actors.get(id);
         const message = actor ? await rollGas(actor, { silent: true }) : null;
@@ -925,6 +1043,15 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
       const next = planRetreat(retreat, combat.round);
       rec.set(combat, 'system.retreat', next);
       rec.line(next.active ? tr('end.retreatBegins') : tr('end.retreatLine', { filled: next.filled, length: next.length }));
+      return;
+    }
+    // momentum (round.yaml, end_steps, momentum): everyone who made no ODM move loses all of it.
+    case 'momentum': {
+      const lost = momentumEnd(snap.soldiers, sys.odmUsed ?? [], (id) => grabbedBy(snap, id) !== null);
+      const held = snap.soldiers.filter((x) => x.momentum > 0 && !(x.id in lost));
+      for (const id of Object.keys(lost)) rec.set(game.actors.get(id), 'system.momentum', 0);
+      rec.line(Object.keys(lost).length ? tr('end.momentumLost', { who: Object.keys(lost).map(nameOf).join(', ') }) : tr('end.momentumNone'));
+      if (held.length) rec.line(tr('end.momentumKept', { who: held.map((x) => `${x.name} ${x.momentum}`).join(', '), cap: momentumCap(snap.anchors) }));
       return;
     }
     case 'round-ends':
@@ -1118,7 +1245,8 @@ export async function closeEngagement(combat: any): Promise<void> {
     ui.notifications.warn(tr('ending.stepsOpen'));
     return;
   }
-  if (combat.system.mode === 'titan') for (const a of soldierActors(combat)) await a.update({ ...positionsPatch({}, false), 'system.airborne': false });
+  // Momentum is 0 outside a Titan Engagement and is cleared when one ends (sheet-fields.yaml, momentum).
+  if (combat.system.mode === 'titan') for (const a of soldierActors(combat)) await a.update({ ...positionsPatch({}, false), 'system.airborne': false, 'system.momentum': 0 });
   await postNote({ title: tr('ending.closed'), lines: [], round: combat.round });
   await writeSystem(combat, { ended: true });
   await combat.delete();
@@ -1151,7 +1279,11 @@ export async function performRequest(combat: any, req: any, user: any): Promise<
       await wingEvent(combat, { kind: 'left', soldier: req.soldier });
       return true;
     case 'loud':
+    case 'loud-move':
       return setLoud(combat, req.soldier, req.titan);
+    case 'move-spent':
+      await markMoveSpent(combat, req.soldier);
+      return true;
     case 'fall-back':
       return fallBack(combat, req.soldier, req.titan);
     case 'let-go': {

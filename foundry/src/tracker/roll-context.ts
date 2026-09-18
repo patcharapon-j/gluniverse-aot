@@ -4,6 +4,7 @@
  */
 import { breakFreeNeeds } from '../rules/engagement/grab.ts';
 import { grabbedIn } from '../rules/engagement/guard.ts';
+import { terrainBreakAttentionDice } from '../rules/engagement/momentum.ts';
 import { bodyPartStrikeBlock, breakAttentionBlock, breakAttentionNeeds, napeStrikeBlock, spendableOpenings, type DecoyId } from '../rules/engagement/strikes.ts';
 import { currentEngagement } from './combat.ts';
 import { tr } from './notes.ts';
@@ -94,7 +95,10 @@ function titanOption(combat: any, snap: any, s: any, t: any, entryId: string, gr
         needs: breakAttentionNeeds(t, s.id, d.id as DecoyId, E().breakAttention.needs),
       }));
       const open = decoys.filter((d) => !d.block);
-      return { ...base, decoys, block: open.length ? null : decoys[0].block, needs: open[0]?.needs ?? null };
+      // The Open rating's Terrain Trait: a mounted soldier's Break Attention gains 1 Bonus Die
+      // (anchor-ratings.yaml, ratings, open, terrain_trait; bonus-dice-sources.yaml, terrain-trait).
+      const terrain = terrainBreakAttentionDice(snap.anchor, s.mounted);
+      return { ...base, decoys, block: open.length ? null : decoys[0].block, needs: open[0]?.needs ?? null, bonus: terrain };
     }
     case 'break-free': {
       if (t.grab?.soldier === s.id) {

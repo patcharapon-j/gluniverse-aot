@@ -29,6 +29,22 @@ describe('the live data/', () => {
     expect(c.attentionLadders[0].rungs).toEqual(['hooked-into-its-body', 'nearest-person-in-reach', 'just-hurt-it', 'loudest-or-brightest', 'nearest']);
     expect(c.weapons.find((w) => w.id === 'sabre')).toBeTruthy();
   });
+
+  it('carries the Flight, Momentum, and Anchor rows the tracker reads (decision batch 10)', () => {
+    const c = buildTestConfig(t);
+    // The Fly entry is made for every ODM move and its successes are tracked as Momentum.
+    const fly = c.actionCatalog.find((e) => e.id === 'fly')!;
+    expect(fly.changes).toContain('momentum-gain');
+    expect(fly.needsCount).toBeNull();
+    expect(c.trackedValues.map((v) => v.id)).toEqual(expect.arrayContaining(['momentum-gain', 'anchor-wreck']));
+    // The two new Bonus Dice sources.
+    expect(t.bonusDice.sources.map((x) => x.id)).toEqual(expect.arrayContaining(['momentum', 'terrain-trait']));
+    // The round's momentum end step, and the wreck effect type.
+    expect(c.engagement.endSteps).toEqual(['gas-rolls', 'regeneration', 'background-clocks', 'momentum', 'round-ends']);
+    expect(t.titanFormat.effect_types.map((x) => x.id)).toContain('wreck');
+    // No step row asks for a Fly roll of its own any more.
+    expect(c.engagement.ratings.every((r) => r.steps.every((x) => !('fly' in x)))).toBe(true);
+  });
 });
 
 describe('a changed shape fails loudly', () => {

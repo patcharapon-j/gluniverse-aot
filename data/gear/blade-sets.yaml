@@ -5,7 +5,7 @@ id: blade-sets
 name: Blade Sets
 chapter: 04-gear
 adrs: [ADR-0004, ADR-0006]
-decided: [OQ-63]
+decided: [OQ-63, OQ-185]
 
 item: blade-set   # data/gear/items.yaml
 unit: >-
@@ -38,9 +38,13 @@ wear:
 swap:
   effect: If the soldier's handles are empty, fit one carried Blade Set into them.
   in_titan_engagement: >-
-    Once during each of the soldier's own turns, at any point in that turn, spending neither the
-    move nor the action. A turn spent in advance still happens (Chapter 1, section 1.9), so the
-    soldier can swap during it.
+    Once during each of the soldier's own turns, at any point in that turn, spending the soldier's
+    move (decision batch 10, OQ-185). A move can change no Position
+    (data/engagement/positions.yaml, moves, what_a_move_does), so a soldier who swaps stays where
+    they are and still has their action: what a ruined Blade Set costs is the turn's Flight, and
+    with it the Momentum that Flight would have given
+    (data/engagement/anchor-ratings.yaml, momentum). A turn spent in advance still happens
+    (Chapter 1, section 1.9), so the soldier can swap during it, spending that turn's move.
   outside_titan_engagement: At any time, as often as the soldier likes.
   not_while: [down]
   not_an_action: true

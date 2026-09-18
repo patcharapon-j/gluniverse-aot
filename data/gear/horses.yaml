@@ -60,11 +60,17 @@ mounted:
   within_a_move: >-
     A move can include one mount or one dismount, made at the Position the soldier holds before
     or after that move's change of Position. A mounted soldier's ODM move dismounts before its
-    change of Position. The Position changes a mounted soldier can make are in
-    data/engagement/anchor-ratings.yaml (move_kinds, ratings).
+    change of Position, and is a Flight (data/engagement/positions.yaml, moves, flight). The
+    Position changes a mounted soldier can make are in data/engagement/anchor-ratings.yaml
+    (move_kinds, ratings).
+  charge: >-
+    A mounted move that makes the distant to in-reach step may also set the loudest flag on that
+    Focus Titan, and at the Open rating may make that step twice
+    (data/engagement/anchor-ratings.yaml, mounted_charge). It is never rolled, spends nothing
+    beyond the move, and is not ODM use (decision batch 10, OQ-183).
   becoming_airborne: >-
-    A mounted soldier whom a rule makes airborne, by an ODM move or by a Fly roll whose calling
-    rule makes them airborne (data/gear/odm-gear.yaml, airborne), is dismounted first, with no
+    A mounted soldier whom a rule makes airborne, by an ODM move, which is a Flight, or by a Fly
+    roll whose calling rule makes them airborne (data/gear/odm-gear.yaml, airborne), is dismounted first, with no
     fall. In a Titan Engagement the horse stays at the Position the soldier held.
   forced_dismount:
     - id: lame

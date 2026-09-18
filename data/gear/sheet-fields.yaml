@@ -66,6 +66,11 @@ fields:
       of the soldier's Squad sheet row, which is the record the Attention Ladder is read from
       (data/engagement/round.yaml, gm_tracker, titan_card_checklist). Empty outside a Titan
       Engagement. Added for Chapter 5 (OQ-90 item 14; OQ-97).
+  - id: momentum
+    text: >-
+      Momentum held, from 0 to the Anchors left in the Titan Engagement
+      (data/engagement/anchor-ratings.yaml, momentum). 0 outside a Titan Engagement, and cleared
+      when one ends.
   - id: airborne
     records: true or false (data/gear/odm-gear.yaml, airborne)
   - id: focus_titan_label

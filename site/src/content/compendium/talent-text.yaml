@@ -8,9 +8,9 @@
 # record the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/talents.yaml
-    sha: "f0098aff13c59294571cb504ecc0dbabf24903f1"
+    sha: "4d63533a7910acc0dcb8bb0ee1f5e6e5b0340c4b"
   - path: data/character/action-catalog.yaml
-    sha: "518c8797bb23b8ce29c698147fdd6400a5ac7edc"
+    sha: "9eba542902e16a0011914c52daa225f11e42e671"
   - path: data/engagement/read.yaml
     sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/grab.yaml
@@ -113,6 +113,9 @@ talents:
   unshaken-command:
     trigger: In a Titan Engagement, a comrade who holds your Position or a Position one step from you makes a Fear Roll, and you are not Down.
     effect: That Fear Roll uses your Resolve in place of the comrade's, if yours is higher.
+  shout-them-off:
+    trigger: You declare Draw Attention in a Titan Engagement.
+    effect: You may spend your move on it instead of your action, so the shout and a blade can fall in the same turn. Once per Titan Engagement.
   carrying-voice:
     trigger: You declare Rally.
     effect: >-

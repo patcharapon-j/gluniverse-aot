@@ -485,6 +485,8 @@ function effectText(entry: RawBehavior): string {
         return 'Knocks the soldier loose.';
       case 'grab':
         return 'Seizes the soldier.';
+      case 'wreck':
+        return 'Wrecks 1 Anchor, landed or whiffed.';
       case 'critical-injury': {
         const kind = INJURY_KIND[e.injury_type ?? ''];
         const where = INJURY_WHERE[e.injury_location ?? ''];

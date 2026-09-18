@@ -59,6 +59,8 @@ export function defineCombatModels() {
           new f.SchemaField({ name: k.str(), titan: k.str(), actor: k.str(), length: k.int(6, { min: 1 }), filled: k.nonNeg(), entered: k.nonNeg() }),
         ),
         retreat: new f.SchemaField({ length: k.int(8, { min: 1 }), filled: k.nonNeg(), active: k.bool(), began: k.nonNeg() }),
+        // The Anchors left and how many wreckings the field has seen (anchor-ratings.yaml, anchors).
+        anchors: new f.SchemaField({ left: k.nonNeg(), wrecks: k.nonNeg() }),
         wings: new f.ArrayField(new f.SchemaField({ mate: k.str(), pc: k.str() })),
         wingsSet: k.bool(),
         wingsOpen: k.bool(),
@@ -66,6 +68,9 @@ export function defineCombatModels() {
         swaps: new f.ArrayField(new f.SchemaField({ a: k.str(), b: k.str(), cardA: k.nonNeg(), cardB: k.nonNeg() })),
         proposal: nullableSchema({ a: k.str(), b: k.str(), by: k.str() }),
         odmUsed: strings(),
+        // Soldiers whose move this round is spent (blade-sets.yaml, swap), and who bought a clean line.
+        movesSpent: strings(),
+        cleanLine: strings(),
         tactics: new f.SchemaField({ held: strings(), used: strings() }),
         cloaks: strings(),
         noOneStanding: k.nonNeg(),

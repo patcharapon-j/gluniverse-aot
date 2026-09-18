@@ -6,7 +6,7 @@ id: positions
 name: Positions and Moves
 chapter: 05-titan-engagement
 adrs: [ADR-0009, ADR-0010, ADR-0019, ADR-0024]
-decided: [OQ-74, OQ-75, OQ-76, OQ-146]
+decided: [OQ-74, OQ-75, OQ-76, OQ-146, OQ-182, OQ-183]
 
 # ------------------------------------------------------------------ the Positions
 positions:
@@ -115,7 +115,39 @@ moves:
     that the Anchor Rating allows for that kind of move, or changes no Position. A move can include
     one mount or one dismount (data/gear/horses.yaml, mounted, within_a_move). A move is the only
     way a soldier changes their own Position; every other change of Position comes from a rule
-    that names it.
+    that names it. An ODM move is a Flight and crosses more steps only by spending Momentum on
+    Carry (flight; data/engagement/anchor-ratings.yaml, momentum, spends, carry). A mounted move
+    that makes the distant to in-reach step may charge, and at the Open rating may make that step
+    twice (data/engagement/anchor-ratings.yaml, mounted_charge).
+
+  # ---------------------------------------------------------------- Flight (decision batch 10, OQ-182)
+  flight:
+    what: >-
+      Every ODM move is a Flight. The soldier makes a roll for fly
+      (data/character/action-catalog.yaml) with their own ODM Gear as its gear item. The roll needs
+      nothing: the move's step happens whatever the roll gives, so a Flight never leaves a soldier
+      short of the step an ODM move has always made.
+    successes: >-
+      Each success gives the soldier 1 Momentum, to their cap
+      (data/engagement/anchor-ratings.yaml, momentum). Momentum above the cap is not gained.
+    no_successes: >-
+      The soldier comes in loud: they set the loudest flag on the Focus Titan the move named
+      (data/engagement/attention.yaml, flags, loudest), wherever they hold a Position, Distant
+      included. Quiet stops it (data/engagement/anchor-ratings.yaml, momentum, spends, quiet).
+    airborne: The soldier is airborne after the Flight, as after any ODM move (data/gear/odm-gear.yaml, airborne).
+    odm_use: >-
+      A Flight is ODM use twice over: it is an ODM move, and it is a roll whose gear item is the
+      soldier's ODM Gear (data/gear/odm-gear.yaml, odm_use). It makes one Gas Roll for the round,
+      as any number of uses in a round does.
+    rolled_as: >-
+      A soldier's roll like any other: it takes Circumstances (data/core/circumstances.yaml,
+      in_titan_engagement), Stress Dice, and the Talents that name fly, and it can be Helped,
+      Pushed, and Covered as Chapter 1 states. A Pushed Flight wears the ODM Gear as any Pushed
+      roll with that gear item does, and makes that round's Gas Roll three dice.
+    not_made_by: >-
+      A move that is not an ODM move. A soldier whose ODM Gear counts as not had makes no ODM move
+      at all (data/gear/items.yaml, odm-gear, counts_as_not_had), so they make no Flight.
+    decided: [OQ-182]
   tracked_value: position-change   # data/character/action-catalog.yaml; a move is not a Catalog entry
   kinds: data/engagement/anchor-ratings.yaml (move_kinds, ratings)
   mounted_soldier: >-
@@ -140,7 +172,8 @@ moves:
     what: >-
       Instead of any other move, the soldier may use their move to let go. They fall, a fall a
       rule names (data/gear/falls.yaml, triggers, rule-named), with the band Chapter 4's height
-      steps give for the Position they held. It is not an ODM move and not ODM use.
+      steps give for the Position they held. It is not an ODM move and not ODM use, so it is not a
+      Flight and is never rolled.
     use: >-
       It is the only change of Position a soldier at on-body or blind-spot can make without an
       ODM move, unless the Titan is grounded (data/engagement/anchor-ratings.yaml, grounded_titan).
@@ -151,10 +184,16 @@ moves:
     step toward distant). It is a change of Position a rule names, not the soldier's own move: it
     spends nothing, it happens even on a turn spent in advance (decision batch 8, 8-13), and it never
     meets a Drive's own-move trigger (data/character/enlistment.yaml, drive_rules, trigger_tests,
-    own_state).
+    own_state). It is a step of the kind the soldier's move makes, on foot, mounted, or ODM, and it
+    is never a Flight: a Flight is the soldier's own ODM move (flight), and a forced step is not one.
+    So it is not rolled, gives no Momentum, and sets no loudest flag, whichever kind of step it is.
+    An ODM forced step is still ODM use, so it makes that round's Gas Roll
+    (data/gear/odm-gear.yaml, odm_use), and the soldier is airborne after it, as after any ODM move
+    (decision batch 10, 10-5, OQ-186).
   odm_use_named_by_this_chapter: >-
-    None. ODM use is only what Chapter 4 lists (data/gear/odm-gear.yaml, odm_use). A Fly roll a
-    step calls for is a roll with ODM Gear as its gear item, so it is ODM use under that list.
+    None. ODM use is only what Chapter 4 lists (data/gear/odm-gear.yaml, odm_use). A Flight is a
+    roll with ODM Gear as its gear item as well as an ODM move, so it is ODM use twice over under
+    that list and still makes one Gas Roll (flight, odm_use).
 
 # Where a soldier lands (data/gear/falls.yaml, after_the_fall).
 falls_land:

@@ -31,6 +31,8 @@ export interface Pending {
   /** The attack card rolled for it, once the GM has rolled. */
   message: string;
   telegraph: boolean;
+  /** The entry wrecks an Anchor, whether the behavior landed or whiffed (titan-format.yaml, wreck). */
+  wreck?: boolean;
   /** The GM-only card that offers the roll. */
   behavior?: string;
 }
@@ -61,6 +63,7 @@ function reactionsFor(row: any, targets: readonly string[]): BehaviorCard['react
 }
 
 const telegraphs = (entry: any): boolean => (entry?.effects ?? []).some((e: any) => e.type === 'telegraph');
+const wrecks = (entry: any): boolean => (entry?.effects ?? []).some((e: any) => e.type === 'wreck');
 
 export interface BehaviorPost {
   combat: any;
@@ -252,7 +255,7 @@ async function resolveBehavior(message: any, card: BehaviorCard, choice: TitanRo
   }
 
   // What the Titan's card ends on: the entry it resolved, and the attack card to work out, if any.
-  const pending: Pending = { entry: entry.id, message: attack?.id ?? '', telegraph: telegraphs(entry), behavior: message.id };
+  const pending: Pending = { entry: entry.id, message: attack?.id ?? '', telegraph: telegraphs(entry), wreck: wrecks(entry), behavior: message.id };
   await combat.update({
     'system.titans': (combat.system.toObject().titans as any[]).map((r) => (r.key === card.key ? { ...r, pending: JSON.stringify(pending) } : r)),
   });

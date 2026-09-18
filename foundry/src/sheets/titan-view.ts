@@ -98,6 +98,8 @@ function effectLine(e: Record<string, any>): string {
       return t('WOF.TitanEffect.knockLoose');
     case 'grab':
       return t('WOF.TitanEffect.grab');
+    case 'wreck':
+      return t('WOF.TitanEffect.wreck');
     case 'telegraph':
       return t('WOF.TitanEffect.telegraph');
     default:
