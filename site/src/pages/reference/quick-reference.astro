@@ -35,7 +35,7 @@ const SECTIONS = [
   { id: 'stress', title: 'Stress and Fear', note: 'Gains, losses, and both tables' },
   { id: 'help', title: 'Bonus Dice and Help', note: 'Every source, and the cap of 4' },
   { id: 'the-round', title: 'The Round', note: 'Cards, turns, attack and Reaction' },
-  { id: 'positions', title: 'Positions and Moves', note: 'Four Positions, and the steps' },
+  { id: 'positions', title: 'Positions and Moves', note: 'Positions, the Flight, Momentum, Anchors' },
   { id: 'titans', title: 'Titans and the Grab', note: 'Cutting one down, and getting out' },
   { id: 'harm', title: 'Harm, Down, and Death', note: 'Boxes, time limits, the end steps' },
   { id: 'gear', title: 'Gear and Gas', note: 'Wear, the Gas Roll, falls, carrying' },
@@ -206,6 +206,26 @@ const SECTIONS = [
         <li><b>A move changes one named Titan's Position by one step</b> — the only way you change your own.</li>
         <li><b>Close to one, loose from the other.</b> Coming to On Body or Blind Spot on one makes any other's In Reach.</li>
         <li><b>A fall from the body</b> lands you In Reach. From further out, your Position holds.</li>
+      </ul>
+
+      <Subsection title="The Flight" id="the-flight">
+        <ul>
+          <li><b>Every ODM move in a fight is a Flight:</b> roll Fly on your own harness, needing no successes.</li>
+          <li><b>The step happens whatever the dice say.</b> The roll decides what it was <em>worth</em>.</li>
+          <li><b>Each success is 1 Momentum,</b> up to the Anchors left. <b>No successes and you are marked loudest</b>, from any Position — Distant included.</li>
+          <li><b>Not Flights:</b> letting go, a step on foot, a mounted step, being carried, and a Fear Roll's forced step. A move made under a <em>retreat</em> is one.</li>
+        </ul>
+      </Subsection>
+
+      <CoreTable table="momentum" />
+
+      <CoreTable table="anchors" />
+
+      <ul>
+        <li><b>Momentum is capped by the Anchors left,</b> and you <b>lose all of it at the end of any round you made no ODM move in</b>. You spend it in your own turn; the GM never grants, spends, or takes a point.</li>
+        <li><b>Anchors are never restored.</b> A wreck destroys 1, landed or whiffed; a falling body destroys 1 where it lands. Caps fall with them.</li>
+        <li><b>At 0 Anchors nobody holds Momentum</b> — but Flights still fly and <b>no step row changes</b>.</li>
+        <li><b>The mounted charge:</b> a mounted step between Distant and In Reach may mark you loudest. Never rolled, not ODM use — and at Open it may be made <b>twice in one move</b>.</li>
       </ul>
 
       <SectionHead id="titans" eyebrow="8">Titans and the Grab</SectionHead>
