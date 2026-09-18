@@ -1,0 +1,319 @@
+---
+/**
+ * The digital GM screen: a play aid for running a Titan Engagement at the table.
+ * It states no rule of its own. Every number, Body Part, behavior, and clock length
+ * comes from the shared tables through lib/gm-screen, so it cannot drift from a chapter,
+ * and the procedures it automates — the Next Behavior roll, the fallback, Titan Dice —
+ * are the ones on Running a Titan Fight, applied exactly as written.
+ */
+import '~/styles/rules.css';
+import GmLayout from '~/layouts/GmLayout.astro';
+import RestrictedBand from '~/components/RestrictedBand.astro';
+import { gmTabs } from '~/lib/chapters';
+import {
+  ANCHOR_RATINGS,
+  END_STEPS,
+  LADDER_STEPS,
+  NEVER_YOURS,
+  POSITION_LIST,
+  RETREAT_CLOCK,
+  ROUND_STEPS,
+  TITANS,
+} from '~/lib/gm-screen';
+
+const tabs = await gmTabs();
+const data = { titans: TITANS, ratings: ANCHOR_RATINGS, positions: POSITION_LIST, retreatClock: RETREAT_CLOCK };
+---
+<GmLayout title="GM Screen" description="A live screen for running a Titan Engagement: trackers, clocks, the hidden Next Behavior, and Titan Dice." tabs={tabs}>
+  <section class="sheet sheet--carbon screen" aria-labelledby="page-title">
+    <RestrictedBand />
+    <div class="runhead lbl"><span>Part V · GM's Guide</span><span>Screen</span></div>
+    <header class="rules-head">
+      <p class="lbl eyebrow">At the table</p>
+      <h1 class="h1" id="page-title">GM Screen</h1>
+      <p class="lede carbon">One page to run a fight from. It keeps the tracker, rolls the Next Behavior out of the squad's sight, and throws Titan Dice in the open. It decides nothing you would not.</p>
+    </header>
+
+    <script type="application/json" id="screen-data" set:html={JSON.stringify(data)} />
+
+    <div class="rules-body">
+      <noscript><p><b>This screen needs JavaScript.</b> The same tables, unrolled, are on <a href="/gm/running-a-titan-fight/">Running a Titan Fight</a> and <a href="/gm/titans/">Titans</a>.</p></noscript>
+
+      <div class="scr" data-screen hidden>
+
+        <!-- ------------------------------------------------ the bar -->
+        <div class="scr-bar wide">
+          <div class="scr-round">
+            <span class="lbl">Round</span>
+            <button type="button" data-round="-1" aria-label="Previous round">−</button>
+            <b data-round-n>1</b>
+            <button type="button" data-round="1" aria-label="Next round">+</button>
+          </div>
+          <div class="scr-ground">
+            <label class="lbl" for="scr-rating">Ground</label>
+            <select id="scr-rating" data-rating></select>
+            <span class="scr-anchors">
+              <span class="lbl">Anchors</span>
+              <button type="button" data-anchor="-1" aria-label="One Anchor fewer">−</button>
+              <b data-anchor-n>0</b>
+              <button type="button" data-anchor="1" aria-label="One Anchor more">+</button>
+            </span>
+          </div>
+          <div class="scr-retreat">
+            <span class="lbl">Retreat clock</span>
+            <span class="pips" data-retreat></span>
+            <span class="scr-flag" data-retreat-flag hidden>RETREAT</span>
+          </div>
+          <button type="button" class="scr-reset" data-reset>New fight</button>
+        </div>
+
+        <p class="scr-trait" data-trait></p>
+
+        <!-- ------------------------------------------------ Titans -->
+        <div class="scr-titans" data-titans></div>
+        <button type="button" class="scr-add" data-add-titan>+ Focus Titan B</button>
+
+        <!-- ------------------------------------------------ clocks -->
+        <section class="scr-card wide" aria-labelledby="scr-bg">
+          <h2 class="lbl" id="scr-bg">Background Titans</h2>
+          <div data-bg-clocks class="scr-clocks"></div>
+          <div class="scr-row">
+            <button type="button" data-add-clock="4">+ clock of 4</button>
+            <button type="button" data-add-clock="6">+ clock of 6</button>
+            <button type="button" data-add-clock="8">+ clock of 8</button>
+          </div>
+          <p class="scr-hint">Each fills 1 a round, and 1 more per flare spent on a Break Attention. A flare never fills the retreat clock.</p>
+        </section>
+
+        <!-- ------------------------------------------------ squad -->
+        <section class="scr-card wide" aria-labelledby="scr-squad">
+          <h2 class="lbl" id="scr-squad">The Squad</h2>
+          <table class="scr-table" data-squad-table>
+            <thead>
+              <tr>
+                <th scope="col">Soldier</th>
+                <th scope="col">Card</th>
+                <th scope="col">Stress</th>
+                <th scope="col" data-pos-a>Position · A</th>
+                <th scope="col" data-pos-b hidden>Position · B</th>
+                <th scope="col">State</th>
+                <th scope="col"><span class="sr-only">Remove</span></th>
+              </tr>
+            </thead>
+            <tbody data-squad></tbody>
+          </table>
+          <form class="scr-row" data-add-soldier>
+            <input type="text" name="name" placeholder="Name" aria-label="Soldier's name" required />
+            <button type="submit">Add soldier</button>
+          </form>
+        </section>
+
+        <!-- ------------------------------------------------ the round -->
+        <div class="scr-two wide">
+          <section class="scr-card" aria-labelledby="scr-steps">
+            <h2 class="lbl" id="scr-steps">The round</h2>
+            <ol class="scr-check" data-steps>
+              {ROUND_STEPS.map((s) => (
+                <li><label><input type="checkbox" data-step={s.id} /> {s.text}</label></li>
+              ))}
+            </ol>
+          </section>
+          <section class="scr-card" aria-labelledby="scr-end">
+            <h2 class="lbl" id="scr-end">End steps, in order</h2>
+            <ol class="scr-check" data-ends>
+              {END_STEPS.map((s) => (
+                <li><label><input type="checkbox" data-end={s.id} /> {s.text}</label></li>
+              ))}
+            </ol>
+          </section>
+        </div>
+
+        <!-- ------------------------------------------------ reference -->
+        <div class="scr-two wide">
+          <details class="scr-card">
+            <summary class="lbl">Reading the Attention Ladder</summary>
+            <ol class="scr-ol">{LADDER_STEPS.map((t) => <li>{t}</li>)}</ol>
+          </details>
+          <details class="scr-card">
+            <summary class="lbl">Never yours to move</summary>
+            <ul class="scr-ul">{NEVER_YOURS.map((t) => <li>{t}</li>)}</ul>
+          </details>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</GmLayout>
+
+<script>
+  import { mountScreen } from '~/scripts/gm-screen/controller';
+  mountScreen();
+</script>
+
+<style is:global>
+  /* The screen builds most of its DOM at runtime, so these rules are global and
+     kept off the rest of the site by the .screen wrapper. */
+  .screen .rules-body { max-width: none; }
+  .screen .scr { display: grid; gap: 14px; }
+  .screen .scr-bar,
+  .screen .scr-card,
+  .screen .scr-titan {
+    border: 1px solid var(--rule);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 12px;
+  }
+  .screen .scr-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 22px;
+  }
+  .screen .scr-bar .lbl { color: var(--ink-2); }
+  .screen .scr-round,
+  .screen .scr-ground,
+  .screen .scr-retreat,
+  .screen .scr-anchors { display: flex; align-items: center; gap: 6px; }
+  .screen .scr-round b,
+  .screen .scr-anchors b {
+    font-family: var(--f-type);
+    font-size: 1.05rem;
+    min-width: 1.4em;
+    text-align: center;
+  }
+  .screen .scr button,
+  .screen .scr select,
+  .screen .scr input[type='text'] {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid var(--rule);
+    padding: 3px 8px;
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .screen .scr input[type='text'],
+  .screen .scr select { cursor: auto; }
+  .screen .scr button:hover { border-color: currentColor; }
+  .screen .scr-reset { margin-left: auto; }
+  .screen .scr-trait { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); font-style: italic; }
+  .screen .scr-flag {
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.16em;
+    border: 1px solid currentColor;
+    padding: 1px 6px;
+    color: var(--corps);
+    white-space: nowrap;
+  }
+  .screen .pips { display: inline-flex; gap: 3px; }
+  .screen .pips button {
+    width: 15px;
+    height: 15px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--ink-2);
+  }
+  .screen .pips button[aria-pressed='true'] { background: var(--corps); border-color: var(--corps); }
+
+  .screen .scr-titans { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(23rem, 1fr)); }
+  .screen .scr-titan h3 {
+    margin: 0 0 6px;
+    font-family: var(--f-type);
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+  }
+  .screen .scr-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin: 8px 0;
+    font-size: var(--fs-sm);
+  }
+  .screen .scr-stats span { display: inline-flex; align-items: baseline; gap: 5px; }
+  .screen .scr-stats b { font-variant-numeric: tabular-nums; }
+  .screen .scr-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+  .screen .scr-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+  .screen .scr-table th,
+  .screen .scr-table td {
+    text-align: left;
+    padding: 4px 6px;
+    border-top: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  .screen .scr-table td button { padding: 1px 6px; }
+  .screen .scr-table thead th {
+    border-top: 0;
+    border-bottom: 1px solid var(--ink-2);
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    font-weight: 700;
+  }
+  .screen .scr-part-state {
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .screen .scr-part-state[data-state='wounded'] { color: var(--corps); }
+  .screen .scr-part-state[data-state='broken'] { color: var(--corps); font-weight: 700; }
+  .screen .scr-next { margin-top: 10px; border-top: 1px solid var(--rule); padding-top: 8px; }
+  .screen .scr-next-card {
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    border: 1px dashed var(--ink-2);
+    font-size: var(--fs-sm);
+    line-height: 1.45;
+  }
+  .screen .scr-next-card b { font-family: var(--f-type); letter-spacing: 0.04em; }
+  .screen .scr-next-card button { margin-top: 6px; }
+  .screen .scr-hidden { color: var(--ink-2); font-style: italic; }
+  .screen .scr-dice { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .screen .scr-die {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--ink-2);
+    font-family: var(--f-type);
+    font-size: var(--fs-sm);
+  }
+  .screen .scr-die[data-hit='true'] {
+    border-color: var(--corps);
+    border-width: 2px;
+    color: var(--corps);
+    font-weight: 700;
+  }
+  .screen .scr-sev {
+    margin: 6px 0 0;
+    font-family: var(--f-type);
+    letter-spacing: 0.08em;
+    color: var(--corps);
+  }
+  .screen .scr-clocks { display: grid; gap: 8px; }
+  .screen .scr-clock { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-sm); }
+  .screen .scr-two { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
+  .screen .scr-check,
+  .screen .scr-ol,
+  .screen .scr-ul { margin: 8px 0 0; padding-left: 1.3em; font-size: var(--fs-sm); }
+  .screen .scr-check li + li,
+  .screen .scr-ol li + li,
+  .screen .scr-ul li + li { margin-top: 5px; }
+  .screen .scr-hint { margin: 8px 0 0; font-size: var(--fs-sm); color: var(--ink-2); }
+  .screen .scr-add { justify-self: start; }
+  .screen details.scr-card summary { cursor: pointer; }
+  .screen .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  @media (max-width: 620px) {
+    .screen .scr-bar { gap: 8px 14px; }
+    .screen .scr-reset { margin-left: 0; }
+    .screen .scr-table { font-size: var(--fs-2xs); }
+  }
+</style>

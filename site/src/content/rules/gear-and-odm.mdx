@@ -34,18 +34,15 @@ import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
 import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import IconKey from '~/components/IconKey.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import TryRollButton from '~/components/TryRollButton.astro';
 import { carryingLimit, fallFlow, gasNumbers, gasRollFlow, issueSteps, repairNumbers, wearFlow } from '~/lib/gear-tables';
 import plate from '~/assets/plates/plate-gear-and-odm.webp';
 import canister from '~/assets/plates/vignette-ink-odm-canister.webp';
@@ -121,8 +118,6 @@ It needs **{repair.needs} success**, and each success raises the current rating 
 
 <SectionHead id="odm-gear-and-gas" eyebrow="Section 2">ODM Gear and Gas</SectionHead>
 
-<FieldQuote cite="Instructor's saying, Training Corps">Gas is time. Spend it like you only have some.</FieldQuote>
-
 <GlossaryTerm term="ODM Gear" /> supplies Gear Dice to four entries: **the dodge, Break Attention, Fly, and <GlossaryTerm term="Leap Clear" />**. Strikes and Break Free take theirs from the <GlossaryTerm term="Blade Set" /> in your handles, never from the harness.
 
 <BoxPair>
@@ -190,25 +185,6 @@ Both make the harness count as not had — no ODM move, no strike from the body,
 
 </Subsection>
 
-<FieldReport id="example-jam" title="A Jam at On Body">
-
-Jonas dodges at On Body with a harness already worn to 1: 3 base, 1 Gear, 1 Stress.
-
-<PoolRows rows={[
-  { label: 'The dodge', pool: 'base:6,2,4|gear:1l|stress:3', successes: 1 },
-  { label: 'After the Push', pool: 'base:6k,6,5|gear:1l|stress:3,2', successes: 2 },
-]} />
-
-Two successes cancel the card — then the wear lands. The Gear Die shows 1 on a Pushed roll, so the harness drops to 0 and **Jams**. He is airborne, so he falls: D6 4, +2 for the high band, **2 damage**. At the round's end he still makes a three-dice Gas Roll, and two 1s take him from 3 gas to 1.
-
-<TryRollButton pool={{ base: 3, gear: 1, stress: 1 }} label="Try Jonas's dodge" />
-
-Next round a Squadmate repairs the harness with Wits 4 and no kit. One 6, and the Jam ends.
-
-<TryRollButton pool={{ base: 4 }} label="Try the repair" />
-
-</FieldReport>
-
 <SectionHead id="blades" eyebrow="Section 3">Blades</SectionHead>
 
 A **Blade Set** is one pair of ODM blades — the only unit in which blades are carried, counted, passed, and lost. Your handles hold **at most one**, and only that set gives Gear Dice or counts as had for a strike, Break Free, Block, or Fight. **Empty handles, no Nape strike.** The set in your handles counts as no item; every other counts as 1.
@@ -224,8 +200,6 @@ A Fear Roll can drop the set in your handles. It lies at your Position, nobody p
 </Subsection>
 
 <SectionHead id="horses" eyebrow="Section 4">Horses</SectionHead>
-
-<FieldQuote cite="From a Cadet's diary">They tell you the horse is issued to you. Nobody tells you it will know your whistle before you know its name.</FieldQuote>
 
 Your horse is the one your sheet records, and **you can mount only your own**.
 
@@ -258,8 +232,6 @@ Mounted, you may take a dodge's or a Break Attention's dice from your harness in
 </Subsection>
 
 <SectionHead id="falling" eyebrow="Section 5">Falling</SectionHead>
-
-<FieldQuote cite="Survey Corps manual, on the ground">The ground has killed more of us than the hands have. It simply gets less credit.</FieldQuote>
 
 A fall inflicts **damage**, and is never a Titan attack.
 
@@ -333,8 +305,6 @@ A dead soldier's **ODM Gear, horse, and fitted prosthetics leave play.** Everyth
 </Subsection>
 
 <SectionHead id="standard-issue" eyebrow="Section 7">Standard Issue and Squad Supply</SectionHead>
-
-<FieldQuote cite="Survey Corps manual, on the stores">The Corps gives you what the Corps has. What it has is decided in a room you will never see.</FieldQuote>
 
 <Subsection title="Standard Issue" id="what-you-are-issued">
 

@@ -24,23 +24,19 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
-
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
 import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import IconKey from '~/components/IconKey.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import TryRollButton from '~/components/TryRollButton.astro';
 import {
   dayFlow,
   downtimeDays,
@@ -201,25 +197,7 @@ When a Leg or a camp must spend rations the Squad does not hold, **it spends eve
 
 </RuleBox>
 
-<FieldReport id="example-hard-ride" title="A Hard Ride into the dark">
-
-Elise takes the Lead on a Deep Leg under a Hard Ride order: Agility 3, horse rated 2, Stress 2, and Tomas Helping.
-
-<PoolRows rows={[
-  { label: 'The Ride', pool: 'base:4,2,6,5|gear:3,1l|stress:2,6', successes: 2 },
-]} />
-
-Two successes. The Squad arrives, pays 1 ration doubled to 2, and the spare success takes 1 off the hazard — which still stands at **+3** before the GM's D6 is thrown: Deep +2, two nights camped +2, Hard Ride +1, Center Post −1, her success −1.
-
-She did not Push, so the Gear Die showing 1 wears nothing. Had she Pushed, the horse would have paid.
-
-<TryRollButton pool={{ base: 4, gear: 2, stress: 2 }} label="Try Elise's Leg roll" />
-
-</FieldReport>
-
 <SectionHead id="downtime" eyebrow="Section 2">Downtime</SectionHead>
-
-<FieldQuote cite="A quartermaster's clerk, on the returning column">They come back thinner than they went out. We count the horses first, because the horses are easier to count.</FieldQuote>
 
 **Downtime** runs from the gate that ends an Expedition until the next one begins. It spans **{days} days**, which pass at the infirmary; nothing else in it takes days. Every soldier in the Squad takes part.
 
@@ -302,29 +280,6 @@ It arrives at the after-actions step — before prosthetics are fitted, so a lim
 <CoreTable table="requisition-list" />
 
 </Subsection>
-
-<FieldReport id="example-requisition" title="The fourth ask of the week">
-
-The ledger stands at 2, and Rook wants a Limited Blade Set: 2 for Scarcity plus 2 for the ledger is **4**.
-
-First Neve reads the clerk in the storehouse doorway with **Size Up**, spending nobody's action.
-
-<PoolRows rows={[
-  { label: 'Size Up', pool: 'base:2,6,3|stress:4', successes: 1 },
-]} />
-
-One success — the ledger counts 1 lower for everyone, so Rook needs 3. He rolls **Persuade** at Easy for the Garrison captain's letter he is carrying.
-
-<PoolRows rows={[
-  { label: 'Persuade', pool: 'base:6,3,2,5,4|stress:6,3', successes: 2 },
-  { label: 'After the Push', pool: 'base:6k,5,2,6,3|stress:6k,4', successes: 3 },
-]} />
-
-Two, one short. He Pushes, Elise Covers, and a third 6 lands. Command signs — and the ledger rises to 3 for everyone else asking today.
-
-<TryRollButton pool={{ base: 5, stress: 2 }} label="Try Rook's Requisition" />
-
-</FieldReport>
 
 <SectionHead id="every-roll" eyebrow="Reference">Every roll</SectionHead>
 

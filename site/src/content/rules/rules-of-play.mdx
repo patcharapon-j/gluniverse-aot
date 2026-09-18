@@ -23,18 +23,15 @@ import CoreTable from '~/components/CoreTable.astro';
 import DiceKey from '~/components/DiceKey.astro';
 import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import PoolBuild from '~/components/PoolBuild.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import PushSteps from '~/components/PushSteps.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import TryRollButton from '~/components/TryRollButton.astro';
 import { exceptionText } from '~/lib/core-tables';
 
 <FieldQuote cite="Instructor's saying, Training Corps">Count your sixes, not your chances. The dice have already decided.</FieldQuote>
@@ -64,17 +61,17 @@ Build a pool of six-sided dice, roll it, count the sixes. Every roll in the game
 
 <Subsection title="Dice" id="dice">
 
-**Every 6 is a success.** <GlossaryTerm term="Titan Dice" /> alone succeed on 5 or 6; they sit in no pool and never take Bonus Dice, Help, or a Push.
+**Every 6 is a success.** <GlossaryTerm term="Titan Dice" /> alone succeed on 5 or 6, sit in no pool, and never take Bonus Dice, Help, or a Push.
 
 <DiceKey />
 
-Give <GlossaryTerm term="base dice" />, <GlossaryTerm term="Gear Dice" />, and <GlossaryTerm term="Stress Dice" /> their own colours, so a Push keeps them apart. Bonus Dice are base dice. **D6** is one die, **xD6** is x dice added up, **D66** is two dice read as tens and ones.
+Give <GlossaryTerm term="base dice" />, <GlossaryTerm term="Gear Dice" />, and <GlossaryTerm term="Stress Dice" /> their own colours, so a Push keeps them apart, and count Bonus Dice as base dice. **D6** is one die, **xD6** is x dice added up, **D66** two dice read as tens and ones.
 
 </Subsection>
 
 <Subsection title="Attribute rolls" id="attribute-rolls">
 
-A roll is an **attribute roll** if its rule names an attribute: actions, <GlossaryTerm term="Reactions" />, <GlossaryTerm term="Death Roll">Death Rolls</GlossaryTerm>, <GlossaryTerm term="Called roll">called rolls</GlossaryTerm>. Only these use a pool, count successes, and Push. Every other roll — a <GlossaryTerm term="Gas Roll" />, a roll on a table — takes exactly the dice its rule states.
+A roll is an **attribute roll** if its rule names an attribute: actions, <GlossaryTerm term="Reactions" />, <GlossaryTerm term="Death Roll">Death Rolls</GlossaryTerm>, <GlossaryTerm term="Called roll">called rolls</GlossaryTerm>. Only these use a pool, count successes, and Push — everything else takes exactly the dice its rule states.
 
 </Subsection>
 
@@ -91,7 +88,7 @@ A roll is an **attribute roll** if its rule names an attribute: actions, <Glossa
   ['Stress Dice', 'Always, but for the rolls in the table below.'],
 ]} />
 
-A **bare attribute** roll takes no Talent and no Gear Dice; a tool that helps you counts toward the Circumstances instead.
+A **bare attribute** roll takes no Talent and no Gear Dice — a tool that helps you counts toward the Circumstances instead.
 
 </Subsection>
 
@@ -101,21 +98,11 @@ A **bare attribute** roll takes no Talent and no Gear Dice; a tool that helps yo
 
 <Subsection title="Counting successes" id="counting-successes">
 
-- **A roll needs 1 success** unless its rule names a number. A <GlossaryTerm term="Nape" /> strike needs the Titan's <GlossaryTerm term="Nape Depth" />. Neither the GM nor the Circumstances ever move that number.
-- **Each success is used once.** The one exception is a Reaction, whose successes cancel against several attacks by the same enemy in a round.
+- **A roll needs 1 success** unless its rule names a number — a <GlossaryTerm term="Nape" /> strike needs the Titan's <GlossaryTerm term="Nape Depth" />. Neither the GM nor the Circumstances ever move it.
+- **Each success is used once,** but for a Reaction's, which cancel against several attacks by the same enemy in a round.
 - A failure does only what the rule or the stake says. Silence means nothing happens.
 
 </Subsection>
-
-<FieldReport id="example-liesel" title="Liesel builds a Nape strike">
-
-Strength 3, Clean Cut level 2 (+2), one <GlossaryTerm term="Opening" /> (+1), Blade Set 2, Stress 1, Standard.
-
-<PoolRows rows={[{ label: 'The roll', pool: 'base:6,2,6,4,1,3|gear:6,1|stress:5', successes: 3 }]} />
-
-<TryRollButton pool={{ base: 6, gear: 2, stress: 1 }} label="Try Liesel's roll" />
-
-</FieldReport>
 
 <SectionHead id="circumstances" eyebrow="Section 2">Circumstances</SectionHead>
 
@@ -123,12 +110,11 @@ One step of a seven-step ladder, named by the GM. Name none and the roll is Stan
 
 <CoreTable table="circumstances" />
 
-- **One step per roll.** Rain, dark, and a snapped strap are one judgment, not three. Steps never add.
-- **Named with the stakes,** before Bonus Dice, so <GlossaryTerm term="Help" /> can answer a minus step.
-- **Plus steps are Bonus Dice** under the cap of 4. **Minus steps are penalties:** base dice only, after the cap, stacking with everything else you carry — never below **1 base die**.
-- **Fixed once named.** No Talent, Push, or <GlossaryTerm term="Cover" /> moves it. A Reaction takes the step in force when the attacker's card comes up.
+- **One step per roll,** named with the stakes and before Bonus Dice, so <GlossaryTerm term="Help" /> can answer a minus step. Rain, dark, and a snapped strap are one judgment, not three.
+- **Plus steps are Bonus Dice** under the cap of 4. **Minus steps are penalties:** base dice only, after the cap, and never below **1 base die**.
+- **Fixed once named.** No Talent, Push, or <GlossaryTerm term="Cover" /> moves it, and a Reaction takes the step in force when the attacker's card comes up.
 - **Dice change, needs never do.** Nape Depth 4 at Hard still wants 4 successes, from one die fewer.
-- **Reaches** every attribute roll a soldier or <GlossaryTerm term="Squadmate" /> makes. **Never reaches** Titan Dice, a Foe's dice, or the Death Roll.
+- **Reaches** every attribute roll a soldier or <GlossaryTerm term="Squadmate" /> makes. **Never** Titan Dice, a Foe's dice, or the Death Roll.
 
 <MarginNote stamp="Read twice">Routine and Effortless mostly serve a soldier carrying penalties: injured, doing something simple, and keeping their dice.</MarginNote>
 
@@ -136,9 +122,9 @@ One step of a seven-step ladder, named by the GM. Name none and the roll is Stan
 
 <RuleBox title="In a Titan Engagement" icon="ph:cloud-rain">
 
-Standard is the assumption. <GlossaryTerm term="Anchor Rating" />, <GlossaryTerm term="Position">Positions</GlossaryTerm>, Openings, and your own penalties already price the fight. Name a step only for what no rule prices: rain, smoke, full dark, ice, a gale.
+Standard is the assumption: <GlossaryTerm term="Anchor Rating" />, <GlossaryTerm term="Position">Positions</GlossaryTerm>, Openings, and your own penalties already price the fight. Name a step only for what no rule prices — rain, smoke, full dark, ice, a gale.
 
-It reaches every roll a soldier makes and never the Titan. A Titan mired to the knee makes the dodge against it Easy — it loses no Attack Dice of its own.
+It reaches every roll a soldier makes and **never the Titan**. A Titan mired to the knee makes the dodge against it Easy, and loses no Attack Dice of its own.
 
 </RuleBox>
 
@@ -179,7 +165,7 @@ It reaches every roll a soldier makes and never the Titan. A Titan mired to the 
   },
 ]} />
 
-**One act, one roll.** A single outcome for several soldiers is one roll by one of them, the rest Helping. Stress, damage, and falls land on the roller; time and position land on the situation.
+**One act, one roll.** A single outcome for several soldiers is one roll by one of them, the rest Helping. Stress, damage, and falls land on the roller; time and position on the situation.
 
 </Subsection>
 
@@ -226,32 +212,15 @@ Circumstances is the **one** thing a ruling names. Applied exactly as written:
 
 {exceptionText('passive-roll')}
 
-The GM builds your pool as it stands and keeps the step to themselves. You learn the result only through what you notice, and failing means only that you did not. Say you are looking, and it becomes an ordinary called roll.
+The GM builds your pool as it stands and keeps the step to themselves. You learn the result only through what you notice, and failing means only that you did not notice. Say you are looking, and it becomes an ordinary called roll.
 
 </Subsection>
 
 <Subsection title="Trying again" id="trying-again">
 
-In a fight, try again on a later turn for that turn's action. Outside one, only when something has changed — a new approach, a better tool, another soldier, time spent — and the GM prices that change before the new roll. One attempt each per changed situation.
+In a fight, try again on a later turn for that turn's action. Outside one, only when something has changed — a new approach, a better tool, another soldier, time spent — and the GM prices that change first. One attempt each per changed situation.
 
 </Subsection>
-
-<FieldReport id="example-mila-shed" title="Mila talks her way into the shed">
-
-A locked shed, a half-asleep sergeant with the key, no rule for talking him round. The GM calls **Persuade** at **Hard**, staked on time and position: fail and a runner goes to the Squad's officer.
-
-Empathy 3, no Talent, no gear, Stress 1. Oskar Helps (+1), cancelling the Hard step.
-
-<PoolRows rows={[
-  { label: 'First roll', pool: 'base:5,2,4|stress:3', successes: 0 },
-  { label: 'After the Push', pool: 'base:6,1,3|stress:2,5', successes: 1 },
-]} />
-
-Nothing, and no Stress Die on 1 — so she Pushes, and the shed opens. Had that failed too, the runner would have gone and nothing worse.
-
-<TryRollButton pool={{ base: 3, stress: 1 }} label="Try Mila's roll" />
-
-</FieldReport>
 
 <SectionHead id="pushing-your-luck" eyebrow="Section 4">Pushing Your Luck</SectionHead>
 
@@ -263,7 +232,7 @@ A Push trades <GlossaryTerm term="Stress" />, and sometimes gear, for a second c
 <PushSteps fig="Fig. 3" />
 </Subsection>
 
-Bonus Dice re-roll like any base die. A Gear Die showing 1 stays locked. However many Stress Dice come up 1, you suffer **one** <GlossaryTerm term="Stress Response" />.
+Bonus Dice re-roll like any base die, and a Gear Die showing 1 stays locked. However many Stress Dice come up 1, you suffer **one** <GlossaryTerm term="Stress Response" />.
 
 <BoxPair>
 <RuleBox variant="stop" title="You cannot Push when" icon="ph:prohibit">
@@ -309,32 +278,15 @@ To Cover is to take the Stress of a comrade's Push — declared after the Push, 
 
 </Subsection>
 
-<FieldReport id="example-greta" title="Greta Pushes at the Nape">
-
-5 base, 2 Gear, 1 Stress. One 6 — short of the Nape Depth.
-
-<PoolRows rows={[
-  { label: 'First roll', pool: 'base:6,3,2,4,1|gear:5,1|stress:3', successes: 1 },
-  { label: 'After the Push', pool: 'base:6k,6,4,2,5|gear:5l,1lx|stress:6,3n', successes: 3 },
-]} />
-
-Gear Dice keep their faces. Two more 6s: three successes. The Gear Die on 1 wears her Blade Set, and any wear ruins one.
-
-<TryRollButton pool={{ base: 5, gear: 2, stress: 1 }} label="Try Greta's roll" />
-
-</FieldReport>
-
 <SectionHead id="stress" eyebrow="Section 5">Stress</SectionHead>
 
-<FieldQuote cite="From a Cadet's diary">My hands stopped shaking on the third Titan. I think that is worse.</FieldQuote>
-
-Mounting fear and adrenaline: it makes you more capable and more likely to break. Every attribute roll takes Stress Dice equal to your Stress. A **6** succeeds like any die; a **1** sets off a Stress Response. Stress carries between fights, <GlossaryTerm term="Expeditions" />, and sessions.
+Mounting fear and adrenaline: it makes you more capable and more likely to break. Every attribute roll takes Stress Dice equal to your Stress — a **6** succeeds like any die, a **1** sets off a Stress Response. It carries between fights, <GlossaryTerm term="Expeditions" />, and sessions.
 
 <InkVignette caption="A soldier on a rooftop grips her handles in shaking hands as a Titan's shadow crosses the street below." label="A soldier steadying her hands on a rooftop" art="guide-rules-of-play-stress" />
 
 <Subsection title="Minimum Stress" id="minimum-stress">
 
-Your minimum Stress is your number of <GlossaryTerm term="Scars" />, and no loss goes below it. Gain a Scar under that line and your Stress rises to meet it at once. Each Scar also raises <GlossaryTerm term="Resolve" /> by 1. **Five Scars and you retire.**
+Your minimum Stress is your number of <GlossaryTerm term="Scars" />, and no loss goes below it — gain one under that line and your Stress rises to meet it at once. Each Scar also raises <GlossaryTerm term="Resolve" /> by 1. **Five Scars and you retire.**
 
 </Subsection>
 
@@ -347,9 +299,9 @@ Only a trigger on this table moves Stress — never the GM's discretion, but for
 <CoreTable table="stress-changes" />
 
 - **Both at once.** A Nape kill that also ends the fight sets off both losses in full.
-- **Holding a Position** is the test for being in the fight. The end-of-fight loss goes to everyone who held one at any point, retreat included; the kill loss only to those holding one at the moment of the kill.
+- **Holding a Position** is the test for being in the fight. The end-of-fight loss goes to everyone who held one at any point, retreat included; the kill loss only to those holding one at the kill.
 - A comrade's <GlossaryTerm term="Rally" /> clears your Stress Response without lowering your Stress.
-- A Stress Die on 1 gives at most **one** Stress Response per roll. The dice never trigger a **Fear Roll**: only the closed list of horrors in Wounds & Fear does.
+- **One Stress Response per roll at most,** and **the dice never trigger a Fear Roll** — only the closed list of horrors in Wounds & Fear does.
 
 </Subsection>
 
@@ -366,7 +318,7 @@ Only a trigger on this table moves Stress — never the GM's discretion, but for
 
 <Subsection title="Help" id="help">
 
-A comrade adds **1 die**, up to **3 comrades** per roll. A comrade is any other soldier in the <GlossaryTerm term="Squad" />, player or Squadmate. Helpers never roll, so they take no Stress and no Stress Response.
+A comrade adds **1 die**, up to **3 comrades** per roll — any other soldier in the <GlossaryTerm term="Squad" />, player or Squadmate. Helpers never roll, so they take no Stress and no Stress Response.
 
 <FactTable caption="Who can Help, and what it costs" columns={['Where', 'Who qualifies', 'What it spends']} rows={[
   ['Titan Engagement', 'Same Position or one step away, action unspent.', 'Their action, usable outside their own turn. Their turn keeps only its move.'],
@@ -383,7 +335,7 @@ In every case: not Down, declared before the roll, no state forbidding it, and a
 
 <Subsection title="Turns and actions" id="turns-and-actions">
 
-Each round you get one **turn**: one **move** and one **action**. A move changes your Position by a step. An action is Help, a Catalog entry, an <a href="#improvised-acts">improvised act</a>, or a called roll. <a href="/guide/fighting-titans/">Fighting Titans</a> sets the order of play.
+One **turn** a round: one **move**, one **action**. A move changes your Position by a step; an action is Help, a Catalog entry, an <a href="#improvised-acts">improvised act</a>, or a called roll. <a href="/guide/fighting-titans/">Fighting Titans</a> sets the order of play.
 
 - **Once per round, never banked.** Decline them and they stay only for Help and Reactions — and a Reaction needs both. Whatever is held is lost at the round's end.
 - **A turn spent in advance** — by a Reaction or a result — is your earliest turn with both parts free. It arrives already spent: no Help, no Reaction, nothing held.
@@ -406,7 +358,7 @@ An act no entry could model, changing nothing the fight tracks, is a <a href="#c
 
 <Subsection title="Reactions" id="reactions">
 
-A **Reaction** is a dodge or block made outside your turn, when a Titan or Foe acts against you. It is an ordinary attribute roll and **spends one whole turn** — this round's if both parts are free, otherwise your next free one.
+A **Reaction** is a dodge or block made outside your turn, when a Titan or Foe acts against you. An ordinary attribute roll that **spends one whole turn** — this round's if both parts are free, otherwise your next free one.
 
 - **One Reaction per enemy per round,** covering every attack that enemy makes against you.
 - **None against an attack that scored 0,** so you keep it for a later card.
@@ -473,23 +425,3 @@ A landed attack deals its weapon's damage, **+1** per Net Success beyond the fir
 </RuleBox>
 </BoxPair>
 
-<FieldReport id="example-mila" title="Mila dodges, Oskar Covers" eyebrow="Example of play">
-
-A Titan sweeps at Mila. Six Attack Dice in the open: the 5 and the 6 land. **Severity 2.**
-
-<PoolRows rows={[{ label: "Titan's attack", pool: 'titan:5,2,6,1,3,4', successes: 2 }]} />
-
-She dodges with a full turn — Agility 4, ODM 2, Stress 1, Oskar Helping. One success, one short.
-
-<PoolRows rows={[
-  { label: 'First roll', pool: 'base:6,4,3,1,2|gear:1,5|stress:3', successes: 1 },
-  { label: 'After the Push', pool: 'base:6k,6,2,5,1|gear:1lx,5l|stress:1x', successes: 2 },
-]} />
-
-Oskar Covers, taking the Stress. Her new Stress Die comes up **1**: one Stress Response, resolved before the cancel. Two cancel two, and the attack whiffs. The Gear Die on 1 wears her ODM Gear, and the Pushed ODM roll makes her Gas Roll three dice.
-
-**Later that round** the same Titan swings for 1 success. Mila rolls nothing new — her two successes cancel it. Had it scored 3, one would have landed.
-
-<TryRollButton pool={{ base: 5, gear: 2, stress: 1 }} label="Try Mila's dodge" />
-
-</FieldReport>

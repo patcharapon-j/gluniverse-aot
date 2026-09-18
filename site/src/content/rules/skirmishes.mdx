@@ -24,18 +24,15 @@ import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import GrappleStates from '~/components/GrappleStates.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import TryRollButton from '~/components/TryRollButton.astro';
 import { attackSteps, endingTests, foeAtZero, moves, ranges, roundSteps, startingSteps } from '~/lib/skirmish-tables';
 import plate from '~/assets/plates/plate-skirmishes.webp';
 
@@ -79,8 +76,6 @@ A rule that names a Skirmish starts one — the Night table's prowlers row, a Mi
 
 <SectionHead id="engaged-and-apart" eyebrow="Section 2">Engaged and Apart</SectionHead>
 
-<FieldQuote cite="Instructor's saying, Training Corps">Close enough to touch, or not. There is no third place in an alley.</FieldQuote>
-
 You are **Engaged** with a Foe or **Apart** from it, held separately for each: Engaged with the one in front of you, Apart from the two by the wagon.
 
 <ul>
@@ -110,20 +105,6 @@ Your move does one of these, and may include one mount or dismount.
 A start may hand the <GlossaryTerm term="Ambush" /> to the Foes. Otherwise the GM rules whether the Squad can approach unseen at all — and if it can, one soldier rolls **Sneak** against the group's **Watch**. No Help, no Cover, Push allowed, never retried. Fail and neither side has it.
 
 <CoreTable table="skirmish-ambush" />
-
-<FieldReport id="example-ambush" title="The lane behind the depot">
-
-With the Ambush, Rike shoots a prowler who has not yet acted: Agility 4 and 2 Bonus Dice, a pistol rated 2, Stress 1.
-
-<PoolRows rows={[{ label: 'The shot', pool: 'base:6,3,6,2,4,1|gear:6,5|stress:4', successes: 3 }]} />
-
-The target rolls **no Guard**, so all three are <GlossaryTerm term="Net Successes" />: the pistol's 2, plus 1 each for the second and third, is **4 Pierce**. More than the prowler's Health — out of the Skirmish, and dead, because it was Pierce.
-
-Her pistol is now empty until someone spends a Shot to Reload it. She has never killed a person before, so the <GlossaryTerm term="Fear Roll" /> comes as the kill resolves.
-
-<TryRollButton pool={{ base: 6, gear: 2, stress: 1 }} label="Try Rike's shot" />
-
-</FieldReport>
 
 <SectionHead id="rounds-and-turns" eyebrow="Section 4">Rounds and Turns</SectionHead>
 
@@ -158,8 +139,6 @@ An act no allowed entry could model, changing nothing the Skirmish tracks — no
 </BoxPair>
 
 <SectionHead id="attacks-and-reactions" eyebrow="Section 6">Attacks and Reactions</SectionHead>
-
-<FieldQuote cite="Survey Corps manual, on the guard">He is watching your edge. That is the one thing a Titan never does.</FieldQuote>
 
 An attack here has the same shape as a Titan's. **People differ in three ways only:** they can be blocked, they answer your attack with **Guard**, and their harm is damage that grows with each Net Success beyond the first — so half a Reaction is worth having.
 
@@ -196,24 +175,6 @@ At 0 it is **out of the Skirmish**: dead if the damage was {zero.killed}, out co
 
 </Subsection>
 
-<FieldReport id="example-exchange" title="An exchange in the doorway">
-
-Jost cuts at a Foe in the doorway — Strength 3, Blade Set 2, Stress 2. The Foe's numbers stay with the GM; what reaches Jost is an open roll and a number said aloud.
-
-<PoolRows rows={[{ label: 'The cut', pool: 'base:6,4,2|gear:6,3|stress:6,5', successes: 3 }]} />
-
-**<GlossaryTerm term="Severity" /> 3.** The Guard cancels one, leaving 2 Net Successes: the blades' 2, +1 for the second, is **3 Cut**.
-
-Then the Foe cuts back at Severity 2, and Jost Blocks.
-
-<PoolRows rows={[{ label: 'The Block', pool: 'base:6,1,3|gear:5,2|stress:4,2', successes: 1 }]} />
-
-One cancelled, one through. The sabre deals 2 with nothing added. **Half a Block is still half the harm.**
-
-<TryRollButton pool={{ base: 3, gear: 2, stress: 2 }} label="Try Jost's Block" />
-
-</FieldReport>
-
 <SectionHead id="weapons" eyebrow="Section 7">Weapons</SectionHead>
 
 <CoreTable table="skirmish-weapons" />
@@ -242,18 +203,6 @@ With **no Skirmish under way**, each soldier may make one Parley with a group th
 
 </Subsection>
 
-<FieldReport id="example-parley" title="Working out what a Parley needs">
-
-Parley value 2, two Foes already out: 2 + 1 − 2 = 1, and Surrender adds 1. **She needs 2.** Empathy 3 and two comrades Helping make 5 base dice.
-
-<PoolRows rows={[{ label: 'The ask', pool: 'base:6,3,2,5,4|stress:6,1', successes: 2 }]} />
-
-Two, and the group lays down its arms. The Stress Die showing 1 still sets off her <GlossaryTerm term="Stress Response" /> — **a success never spares you that**.
-
-<TryRollButton pool={{ base: 5, stress: 2 }} label="Try Nadja's Parley" />
-
-</FieldReport>
-
 <Subsection title="Size Up" id="size-up">
 
 Once per Foe group per Skirmish, for the whole Squad: an Instinct action needing 1 success, never Helped, Covered, or retried.
@@ -265,8 +214,6 @@ Each Foe then does what was stated. **Only something that happens after the Size
 </Subsection>
 
 <SectionHead id="ending-a-skirmish" eyebrow="Section 10">Ending a Skirmish</SectionHead>
-
-<FieldQuote cite="Survey Corps manual, on the aftermath">Count them, bind them, and get off the road. Nothing out here waits for you to finish.</FieldQuote>
 
 <Subsection title="When a group breaks" id="when-a-group-breaks">
 

@@ -40,7 +40,6 @@ import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
 import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import HarmTrack from '~/components/HarmTrack.astro';
 import IconKey from '~/components/IconKey.astro';
@@ -48,7 +47,6 @@ import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import MindPaths from '~/components/MindPaths.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
@@ -90,11 +88,9 @@ export const TYPE_NOTES = {
 
 <SectionHead id="health-and-harm" eyebrow="Section 1">Health and Harm</SectionHead>
 
-<FieldQuote cite="Instructor's saying, Training Corps">It does not wear you down. It takes a piece and you go on without it.</FieldQuote>
-
 <Subsection title="The row of boxes" id="the-row-of-boxes">
 
-**<GlossaryTerm term="Health" />** is half of Strength plus Agility, rounded up. Attributes never rise, so Health never changes. Keep it as a row of boxes, each clean, marked by damage, or crossed off.
+**<GlossaryTerm term="Health" />** is half of Strength plus Agility, rounded up, and it never changes. Keep it as a row of boxes, each clean, marked by damage, or crossed off.
 
 - **Each untreated <GlossaryTerm term="Critical Injury" /> crosses off one box.** Hold more than your Health and the extras cross off nothing.
 - **Health lost** is what damage has marked.
@@ -110,15 +106,15 @@ Health is small on purpose, because a <GlossaryTerm term="Titan attack" /> goes 
 
 <CoreTable table="harm-kinds" />
 
-**With no clean box,** a Critical Injury crosses off one marked by damage and your Health lost falls by 1. **Crossing off your last box** puts you Down and inflicts no further Critical Injury — only damage that brings you to 0, or damage taken at 0, gives one.
+**With no clean box,** a Critical Injury crosses off one marked by damage and your Health lost falls by 1. **Crossing off your last box** puts you Down and gives no further Critical Injury — only damage that brings you to 0, or is taken at 0, does that.
 
 </Subsection>
 
 <Subsection title="Titan attacks go around Health" id="titan-attacks">
 
-A **Titan attack** is the harm a <GlossaryTerm term="Behavior Table" /> entry inflicts when a card resolves against you. **It is always a Critical Injury and never damage,** whatever your Health, and no entry names death.
+The harm a <GlossaryTerm term="Behavior Table" /> entry inflicts when a card resolves against you. **It is always a Critical Injury and never damage,** whatever your Health, and no entry names death.
 
-Each entry lists its <GlossaryTerm term="Injury Location" /> (fixed or rolled), its <GlossaryTerm term="Injury Type" /> — Bite for a Titan's bite, Crush for everything else — and whether it can be lethal. It lands on **1 or more <GlossaryTerm term="Net Successes" />**; a soldier who cannot react cancels nothing.
+Each entry lists its <GlossaryTerm term="Injury Location" /> (fixed or rolled), its <GlossaryTerm term="Injury Type" /> — Bite for a Titan's bite, Crush for everything else — and whether it can be lethal. It lands on **1 or more <GlossaryTerm term="Net Successes" />**, and a soldier who cannot react cancels nothing.
 
 <FactTable caption="Harm a Titan's body deals that is not a Titan attack" note="None rolls Attack Dice, none can be reacted to, and none takes the Net Success rider." columns={['Source', 'What it does']} rows={[
   ['The Grab\'s crush', 'A torso Crush Critical Injury that cannot be lethal.'],
@@ -136,9 +132,9 @@ So a soldier with no Health lost at all can be Down, or dying, from Titan attack
 
 <Subsection title="Harm the GM names" id="harm-a-ruling-names">
 
-A called roll's <GlossaryTerm term="Stakes">stakes</GlossaryTerm> can name harm, and only two kinds: **damage of 1 to 3** of its source's Injury Type, or **a fall**, low or high but never extreme. The GM states your current Health aloud with it, so the table knows beforehand whether failing puts you Down.
+A called roll's <GlossaryTerm term="Stakes">stakes</GlossaryTerm> can name only two harms: **damage of 1 to 3** of its source's Injury Type, or **a fall**, low or high but never extreme. The GM states your current Health aloud with it, so the table knows beforehand whether failing puts you Down. Never 4 damage or more — that is a musket's, and a musket is rolled.
 
-Never 4 damage or more — that is a musket's, and a musket is rolled. **No ruling ever hands out a Critical Injury, death, a <GlossaryTerm term="Death Roll" />, a <GlossaryTerm term="Scar" />, or <GlossaryTerm term="Grief" /> directly,** names a location, a row, or a time limit, or opens or closes a <GlossaryTerm term="Care window">care window</GlossaryTerm>.
+**No ruling ever hands out a Critical Injury, death, a <GlossaryTerm term="Death Roll" />, a <GlossaryTerm term="Scar" />, or <GlossaryTerm term="Grief" />,** names a location, a row, or a time limit, or opens a <GlossaryTerm term="Care window">care window</GlossaryTerm>.
 
 </Subsection>
 
@@ -150,13 +146,11 @@ Every row in this chapter names its effects from one closed list, so each has ex
 
 <CoreTable table="harm-effects" />
 
-**Penalties add up** — Critical Injuries, lasting Stress Responses, Scars, <GlossaryTerm term="Circumstances" /> alike — and never take base dice below 1 or touch <GlossaryTerm term="Gear Dice" /> or <GlossaryTerm term="Stress Dice" />. **No row here damages gear,** and none causes a <GlossaryTerm term="Fear Roll" /> or any roll by a comrade.
+**Penalties add up** — Critical Injuries, lasting Stress Responses, Scars, <GlossaryTerm term="Circumstances" /> alike — and never take base dice below 1 or touch <GlossaryTerm term="Gear Dice" /> or <GlossaryTerm term="Stress Dice" />. **No row here damages gear** or causes a <GlossaryTerm term="Fear Roll" />.
 
 </Subsection>
 
 <SectionHead id="critical-injuries" eyebrow="Section 2">Critical Injuries</SectionHead>
-
-<FieldQuote cite="From a Cadet's diary">The surgeon asked which arm. I could not tell him.</FieldQuote>
 
 A lasting wound tied to a location and a type. Its row says whether it puts you Down, whether it can kill and how fast, what it does while you hold it, and how long it takes to heal.
 
@@ -164,7 +158,7 @@ A lasting wound tied to a location and a type. Its row says whether it puts you 
 
 <CoreTable table="injury-types" />
 
-The type picks the row's name and applies its rider; everything else on the row is the same for every type. **No row here wounds the mind** — that is the second half of this chapter.
+The type picks the row's name and its rider; the rest of the row is the same for every type. **No row here wounds the mind** — that is the second half of this chapter.
 
 <StepFlow id="fig-injury" fig="Fig. 2" title="Gaining a Critical Injury" steps={criticalInjurySteps()} />
 
@@ -172,7 +166,7 @@ The type picks the row's name and applies its rider; everything else on the row 
 
 <Subsection title="The four tables" id="the-four-tables">
 
-One arm table for both arms, one leg table for both legs. Every table's first and last rows are open-ended, so every total finds a row however much <GlossaryTerm term="Worsening">worsening</GlossaryTerm> it carries. Instant death sits above what 2D6 alone can reach, so **a first wound at a location kills outright only when Net Successes lift the total.**
+One arm table for both arms, one leg table for both legs, each open-ended at both ends so every total finds a row however much <GlossaryTerm term="Worsening">worsening</GlossaryTerm> it carries. Instant death sits above what 2D6 alone reaches, so **a first wound at a location kills outright only when Net Successes lift the total.**
 
 <CoreTable table="injuries-arm" />
 
@@ -190,9 +184,9 @@ One arm table for both arms, one leg table for both legs. Every table's first an
 
 <Subsection title="Holding and treating" id="holding-and-treating">
 
-You **hold** a Critical Injury from the moment you gain it until it heals, and every held one counts toward worsening whether treated or not. Arm and leg wounds are held **at a side**; a row with permanent effects is gained at most once per side, and those effects go on counting after it heals.
+You **hold** a wound from the moment you gain it until it heals, and every held one counts toward worsening, treated or not. Arm and leg wounds are held **at a side**, and a row with permanent effects is gained at most once per side.
 
-A successful <GlossaryTerm term="Treat Injury" /> makes it **treated**, which does exactly three things: stabilizes a lethal one, ends a Down row's hold, and gives back the Health box. It never removes the row's effects, never shortens its healing time, and never stops it counting toward worsening.
+A successful <GlossaryTerm term="Treat Injury" /> makes it **treated**, which does exactly three things: stabilizes a lethal one, ends a Down row's hold, and gives back the Health box. It never removes the row's effects, shortens its healing, or stops its worsening.
 
 </Subsection>
 
@@ -203,7 +197,7 @@ A successful <GlossaryTerm term="Treat Injury" /> makes it **treated**, which do
   { icon: 'body-leg', label: 'A leg', note: 'One makes the ground slow. Both end movement of every kind.' },
 ]} />
 
-A side is lost on the **13 or more** row of the arm or leg table, and stays lost after the wound heals — a later roll of that row there uses its repeat row, so a limb is never lost twice. The grade applies for as long as you live, on top of the row's own effects and stacking with everything else: two lost legs dodge, Fly, and Ride at a **4-die penalty**.
+A side is lost on the **13 or more** row of the arm or leg table, and stays lost after the wound heals — a later roll there uses its repeat row, so a limb is never lost twice. The grade applies for as long as you live, stacking with everything else: two lost legs dodge, Fly, and Ride at a **4-die penalty**.
 
 <CoreTable table="lost-limbs" />
 
@@ -212,13 +206,11 @@ A side is lost on the **13 or more** row of the arm or leg table, and stays lost
 - **No Gear Dice from an item** still rolls the entry with any other item it allows: both arms lost still takes the horse's dice on a mounted dodge.
 - **Medical Retirement** is open, at the player's choice, to anyone who has lost both arms or both legs.
 
-**Prosthetics.** A gear item, requisitioned at Limited Scarcity and fitted during a <GlossaryTerm term="Downtime" /> once that side's wound has healed — one per side, no roll, permanent. Your grade is then read against sides lost **less prosthetics of that kind**, so one lost arm with a prosthetic meets no grade. The row's own permanent effects stay regardless. A <GlossaryTerm term="Prosthetic" /> gives no dice and is never a weapon.
+**Prosthetics** are requisitioned at Limited Scarcity and fitted during a <GlossaryTerm term="Downtime" /> once that side's wound has healed — one per side, no roll, permanent. Your grade is then read against sides lost **less prosthetics of that kind**, so one lost arm with a prosthetic meets no grade. The row's own effects stay, and a <GlossaryTerm term="Prosthetic" /> gives no dice and is never a weapon.
 
 </Subsection>
 
 <SectionHead id="down-and-dying" eyebrow="Section 3">Down and Dying</SectionHead>
-
-<FieldQuote cite="A Squad Leader, on the ride back">Count them on the horses, not on the ground. The ground lies.</FieldQuote>
 
 <Subsection title="Down" id="down">
 
@@ -244,9 +236,9 @@ You are **Down** while your current Health is 0, or while you hold an untreated 
 </RuleBox>
 </BoxPair>
 
-**Down ends the moment** your current Health is above 0 and no untreated Down row holds you. Only three things do that: treating or healing a Critical Injury, a revive, and a day passing.
+**Down ends the moment** your current Health is above 0 and no untreated Down row holds you — which only treating or healing a wound, a revive, or a day passing brings about.
 
-**Turns are never given back.** Going Down costs you any action of this round's turn you still held, and a turn that begins while you are Down has its move only. Ending Down restores nothing already spent.
+**Turns are never given back.** Going Down costs any action of this round's turn you still held, a turn that begins while you are Down has its move only, and ending Down restores nothing already spent.
 
 </Subsection>
 
@@ -256,7 +248,7 @@ A lethal Critical Injury carries a time limit, and each time it runs out you mak
 
 <CoreTable table="time-limits" />
 
-Away from a fight there are no turns, so a turn or end-of-fight limit runs out **once**, right after the care window for that harm — and a limit you survive out there becomes a **daily** one.
+Away from a fight there are no turns, so a turn or end-of-fight limit runs out **once**, right after that harm's care window — and a limit you survive out there becomes **daily**.
 
 <FactTable caption="The Death Roll" columns={['', '']} rows={[
   ['Pool', 'Strength, plus one Talent that names the Death Roll, minus that wound\'s Death Roll penalty.'],
@@ -275,13 +267,11 @@ Away from a fight there are no turns, so a turn or end-of-fight limit runs out *
 
 <Subsection title="Dying" id="dying">
 
-You die from a failed Death Roll, an instant-death row, or any rule that names death. A dead soldier leaves play, is replaced by promotion or a new character when the procedure ends, and every <GlossaryTerm term="Drive" /> that named them can never trigger again. The death is a Fear Roll trigger and it gives Grief.
+You die from a failed Death Roll, an instant-death row, or any rule that names death. A dead soldier leaves play, is replaced by promotion or a new character when the procedure ends, and every <GlossaryTerm term="Drive" /> that named them can never trigger again. The death is a Fear Roll trigger, and it gives Grief.
 
 </Subsection>
 
 <SectionHead id="treating-wounds" eyebrow="Section 4">Treating Wounds</SectionHead>
-
-<FieldQuote cite="Survey Corps manual, on field medicine">Stop the bleeding, name the wound, write the time. Everything else waits for the wall.</FieldQuote>
 
 **Treat Injury** is a Wits action taking Gear Dice from a medical kit — Wits alone without one. Declare one use and one patient before rolling.
 
@@ -295,29 +285,17 @@ You die from a failed Death Roll, an instant-death row, or any rule that names d
   ['Talents', 'Field Medicine adds dice, Sure Hands allows a second Push, Careful Nursing halves a comrade\'s remaining healing time.'],
 ]} />
 
-**In a fight** it is an action, and in a Titan Engagement the patient must hold your Position. It can be Helped, Pushed, and Covered, and a failure can be tried again on a later turn.
+**In a fight** it is an action, and in a Titan Engagement the patient must hold your Position. Helped, Pushed, and Covered as usual, and retried on a later turn.
 
 <MarginNote>Medical kits, restocking, and the medical Squad Supply that buys a Bonus Die: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
 
-<FieldReport id="example-treat" title="Two dice and a lung">
-
-Oskar holds an untreated Punctured Lung — lethal when the fight ends. Mila declares treat on it: Wits 2, a medical kit rated 1, Stress 1.
-
-<PoolRows rows={[{ label: 'The treatment', pool: 'base:6,3|gear:4|stress:2', successes: 1 }]} />
-
-One success is all it needs. The lung is stabilized — no Death Roll at the end of the fight — but it keeps its penalty, its 14 days, and its worsening. His Health box comes back.
-
-<TryRollButton pool={{ base: 2, gear: 1, stress: 1 }} label="Try Mila's treatment" />
-
-</FieldReport>
-
 <Subsection title="Care windows" id="care-windows">
 
-Away from a fight, Treat Injury is rolled only in a **care window** — or as an **aftermath roll** when a fight ends. Each window has a scope: the soldiers who take part.
+Away from a fight, Treat Injury is rolled only in a **care window** — or as an **aftermath roll** when a fight ends. Each window has a scope: whoever takes part.
 
 <CoreTable table="care-windows" />
 
-Every living soldier in the scope who is not Down may make **one roll**, for any use and patient the window allows, with no Position requirement. **Help** comes from someone in the scope who has not yet rolled or Helped, and spends their own roll; **Covering** is open to anyone who could Help, even one who has rolled, and spends nothing. The players choose the order. **A failed roll waits for a later window.**
+Everyone in the scope who is not Down makes **one roll**, for any use and patient the window allows, with no Position requirement. **Help** comes from someone who has not yet rolled or Helped, and spends their own roll; **Covering** is open to anyone who could Help and spends nothing. **A failed roll waits for a later window.**
 
 </Subsection>
 
@@ -336,7 +314,7 @@ When a fight ends, each dying soldier gets **one** chance before the end-of-figh
 
 <Subsection title="Healing time" id="healing-time">
 
-Healing is counted in **days**. A day passes at each Night Camp, on each of Downtime's seven infirmary days, and otherwise at the start of each session. **No day passes inside a Titan Engagement.**
+Healing is counted in **days**, which pass at each Night Camp, on each of Downtime's seven infirmary days, and otherwise at the start of a session. **No day passes inside a Titan Engagement.**
 
 Each time a day passes, in this order:
 
@@ -351,15 +329,13 @@ Each time a day passes, in this order:
 
 <SectionHead id="stress-responses-and-rally" eyebrow="Section 5">Stress Responses and Rally</SectionHead>
 
-<FieldQuote cite="From a Cadet's diary">I heard the order. I could not make my hands agree to it.</FieldQuote>
-
 **<GlossaryTerm term="Resolve" />** is half of Instinct plus Empathy, rounded up, **+1 per Scar** and **−1 per point of Grief**. It counts against both rolls below and has no floor — enough Grief and it goes negative, raising both totals.
 
 <MindPaths fig="Fig. 3" />
 
 <Subsection title="The Stress Response" id="the-stress-response">
 
-Only a Stress Die showing **1** causes one, and a roll never causes more than one. Resolve it after counting successes and before the roll takes effect: roll **D6 + Stress − Resolve**. No pool, no Push, no Help, no Circumstances.
+Only a Stress Die showing **1** causes one, and never more than one per roll. Resolve it after counting successes and before the roll takes effect: **D6 + Stress − Resolve**, with no pool, Push, Help, or Circumstances.
 
 <CoreTable table="stress-responses" />
 
@@ -386,15 +362,13 @@ An Empathy action that talks a comrade back. **It never lowers Stress.**
 
 <SectionHead id="fear" eyebrow="Section 6">Fear</SectionHead>
 
-<FieldQuote cite="A Squad Leader, after the gate">Half the squad saw it happen. That is the part I have to lead tomorrow.</FieldQuote>
-
-A **Fear Roll** comes only from a horrifying event on this closed list. **The dice never cause one.** Roll **D6 + Stress − Resolve** and read the row: no pool, no Push, no Help, no Stress Response.
+Only a horrifying event on this closed list causes one — **the dice never do**. Roll **D6 + Stress − Resolve** and read the row: no pool, Push, Help, or Stress Response.
 
 <CoreTable table="fear-triggers" />
 
 <CoreTable table="fear-rolls" />
 
-Every row is instant, and they escalate: **0 or less** costs nothing; **1–2** cost Stress, a penalty, or a Gas Roll; **3–4** spend your next action; **5–6** spend your next turn; **7 or more** spend it and give a Scar; **8 or more** spend the next two. From 6 up they also forbid Reactions until that turn has been spent, so a card then lands on 1 or more successes.
+Every row is instant, and they escalate: **0 or less** costs nothing; **1–2** cost Stress, a penalty, or a Gas Roll; **3–4** your next action; **5–6** your next turn; **7+** that turn and a Scar; **8+** the next two. From 6 up they also forbid Reactions until that turn is spent.
 
 <Subsection title="Limits and the snapshot" id="fear-limits">
 
@@ -406,7 +380,7 @@ Every row is instant, and they escalate: **0 or less** costs nothing; **1–2** 
 
 <Subsection title="The GM's own trigger" id="the-gms-trigger">
 
-One row is the GM's to read, and it is read rarely: an event at least as horrifying as a listed trigger, and not one a listed trigger already covers. **Never inside a Titan Engagement,** where the list alone governs, and never for an outcome a called roll staked. At most one such roll in a scene.
+One row is the GM's, read rarely: an event at least as horrifying as a listed trigger, and not one a listed trigger already covers. **Never inside a Titan Engagement,** and never for an outcome a called roll staked. At most one a scene.
 
 </Subsection>
 
@@ -424,13 +398,11 @@ A Fear Roll's **result** is every effect of its row: Stress to you or to comrade
 
 <SectionHead id="scars-and-grief" eyebrow="Section 7">Scars and Grief</SectionHead>
 
-<FieldQuote cite="Survey Corps manual, on veterans">The steady ones are not the ones who felt nothing. They are the ones who found where to put it.</FieldQuote>
-
 <Subsection title="Scars" id="gaining-a-scar">
 
-A Scar comes from **two things and nothing else**: a Fear Roll row with a Scar taking effect, and a lethal Critical Injury stabilized while you live. Each wound gives one at most once.
+**Two things and nothing else** give a Scar: a Fear Roll row with a Scar taking effect, and a lethal wound stabilized while you live — once per wound at most. Roll D66, again if you hold that Scar already, and **no rule ever removes one**.
 
-Roll D66 — again if you hold that Scar already. **No rule ever removes one.** Every Scar raises your **minimum Stress by 1** (your Stress rising to meet it at once) and your **Resolve by 1**, so a veteran always rolls Stress Dice and always resists better than a recruit. You hold at most {scarMaximum()}.
+Every Scar raises your **minimum Stress by 1** — your Stress rising to meet it at once — and your **Resolve by 1**, so a veteran always rolls Stress Dice and always resists better than a recruit. You hold at most {scarMaximum()}.
 
 <CoreTable table="scars" />
 
@@ -442,7 +414,7 @@ Roll D66 — again if you hold that Scar already. **No rule ever removes one.** 
 
 **Five Scars and you must retire.** A soldier who has lost both arms or both legs **may**, at the player's choice — offered when the procedure ends and again at every Downtime, and declining is never final.
 
-**<GlossaryTerm term="Retirement" /> never interrupts a procedure:** it happens at the last step of the fight, the day, or the care window it fell due in. Until then the soldier plays as normal. They leave as an instructor or a Squad contact, replaced like any loss, and every Drive that named them can never trigger again. **Retirement gives no Grief and is no Fear Roll trigger.**
+**<GlossaryTerm term="Retirement" /> never interrupts a procedure:** it happens at the last step of the fight, day, or care window it fell due in, and until then the soldier plays as normal. They leave as an instructor or a Squad contact, replaced like any loss, and every Drive that named them can never trigger again. **It gives no Grief and is no Fear Roll trigger.**
 
 </Subsection>
 
@@ -464,13 +436,11 @@ Retirement, promotion, and a Squadmate leaving the Pool give no Grief.
 
 <SectionHead id="after-the-fight" eyebrow="Section 8">After the Fight</SectionHead>
 
-<FieldQuote cite="A Squad Leader, on the order of things">Nobody is dead until we have counted. Nobody goes home until we have counted twice.</FieldQuote>
-
 <CoreTable table="engagement-end" />
 
 <Subsection title="Soldiers who left, and soldiers still Pinned" id="left-and-pinned">
 
-A soldier who left a fight still under way holds no Position, but is still in it for every rule in this chapter: their turns keep coming, so time limits keep running out, and every step above reaches them at the end. For treatment and Rally, **two soldiers who have both left count as sharing a Position** — and neither ever counts as near a soldier still in the fight.
+A soldier who left a fight still under way holds no Position but is still in it for every rule here: their turns keep coming, so time limits keep running out, and every step above reaches them at the end. For treatment and Rally, **two who have both left count as sharing a Position** — and neither ever counts as near a soldier still fighting.
 
 **A fight does not end while a soldier lies Pinned.** Its end frees nobody, and anyone still Pinned when it ends with nobody standing dies under the body, counted for Grief.
 
@@ -482,18 +452,3 @@ A <GlossaryTerm term="Squadmate" /> uses every rule here, with three differences
 
 </RuleBox>
 
-<FieldReport id="example-bad-round" title="A bad round, and the hour after it">
-
-Oskar has Health 3 and Resolve 3. A Titan's card lands on him with 1 Net Success: torso, and 2D6 shows 11 — a **Punctured Lung**, lethal when the fight ends. The wound crosses off a box: current Health 2.
-
-<TryRollButton pool={{ base: 2 }} pushable={false} label="Try the 2D6 wound roll" />
-
-A later card lands on his head for a **Head Blow**: Down until treated, current Health 1, no Reactions, no Fear Rolls. Mila treats it — the box returns and Down ends, though the turn his dodge spent stays spent.
-
-**The fight ends** with a Nape kill, and both their Stress falls to 0. The lung is still lethal, so Oskar gets one aftermath roll; Mila takes it and fails, using up his attempt. His Death Roll — Strength 3, no penalty — turns up a 6. He lives, and the limit becomes daily.
-
-<TryRollButton pool={{ base: 3 }} pushable={false} label="Try Oskar's Death Roll" />
-
-In the care window all three roll on the lung and all three miss. There will be another window before his next Death Roll — and if someone stabilizes it then, the box comes back and **Oskar gains a Scar for surviving it**.
-
-</FieldReport>

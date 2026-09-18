@@ -21,7 +21,6 @@ sources:
 import ChapterContents from '~/components/ChapterContents.astro';
 import CommanderNote from '~/components/CommanderNote.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GmTable from '~/components/GmTable.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
@@ -46,8 +45,6 @@ The Squad always reaches the next Waypoint. What it costs to get there is the ro
 ]} />
 
 <SectionHead id="writing-the-brief" eyebrow="Section 1">Writing the Brief</SectionHead>
-
-<FieldQuote cite="Survey Corps manual, on orders">A route is written once. After that it is only ridden.</FieldQuote>
 
 You write the Brief as Command, before the Expedition. Its route names the **Waypoints in order** with their kinds and the Depot; each Leg's **Distance Band** and **Formation Post**; the **days a Hard Ride is ordered**; and the **Abnormal** the two Abnormal rows mean.
 
@@ -116,8 +113,6 @@ Your step reaches the Leg roll, the camp roll, the Straggler's Endure, and every
 
 <SectionHead id="the-leg-hazard" eyebrow="Section 3">The Leg Hazard Table</SectionHead>
 
-<FieldQuote cite="A Squad Leader's notebook, recovered">Roll it where they can see it. They will believe the quiet ones after that.</FieldQuote>
-
 <GmTable table="leg-hazard-modifiers" />
 
 <GmTable table="leg-hazards" />
@@ -166,8 +161,6 @@ Between Legs you may frame a scene at a Waypoint: an abandoned town searched, su
 
 <SectionHead id="the-night-camp" eyebrow="Section 5">The Night Camp</SectionHead>
 
-<FieldQuote cite="Survey Corps manual, on camps">Titans do not walk at night. Say that to them slowly, and watch them count the exceptions.</FieldQuote>
-
 1. **The camp roll:** Survive, by one soldier not Down, for 1 success. Up to 3 may Help for nothing; Push and Cover allowed; never retried. Nobody able? It fails.
 2. **Rations:** spend 1, or meet hunger.
 3. **Camp Relief:** a successful roll with no hunger takes **1 Stress** off everyone.
@@ -192,18 +185,6 @@ The Squad falls back overnight to where the day's last Leg started, and the camp
 A camp already standing where that Leg started falls back no further: it breaks off where it is and the queued Leg waits for morning.
 
 </Subsection>
-
-<FieldReport id="example-night-at-far" title="A night at Far">
-
-Second day, a forest Waypoint at Far, 4 rations in hand.
-
-**The camp roll** fails: Oskar's Survive finds no 6, and neither does his Push, even Covered. They spend a ration and hold 3 — no hunger, but a failed roll gives no Camp Relief.
-
-**The night hazard** shows 5, plus 1 for Far and 1 for the failed roll. **7 is Prowlers,** and at Far that is a Skirmish: three Bandits with the Ambush, carrying firebrands.
-
-The rest of the night runs from <a href="/gm/foes-and-skirmishes/">Foes and Skirmishes</a>. When it ends, the camp picks up at its last step and the day passes.
-
-</FieldReport>
 
 <CommanderNote title="What the tables will do to a campaign">
 

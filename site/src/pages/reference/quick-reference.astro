@@ -54,7 +54,7 @@ const SECTIONS = [
     <header class="rules-head">
       <p class="lbl eyebrow">Reference</p>
       <h1 class="h1" id="page-title">Quick Reference</h1>
-      <p class="lede">Every procedure, ladder, and table you reach for mid-fight, on one sheet. The chapter beside each carries the rule in full.</p>
+      <p class="lede">Every procedure, ladder, and table you reach for mid-fight, on one sheet.</p>
     </header>
     <div class="rules-body">
 
@@ -77,7 +77,7 @@ const SECTIONS = [
 
       <SectionHead id="the-roll" eyebrow="1">The Roll</SectionHead>
 
-      <p>Build a pool, roll it, count the sixes. <b>Every 6 is a success.</b> Titan Dice alone succeed on a <b>5 or 6</b>, sit in no pool, and never Push.</p>
+      <p>Build a pool, roll it, count the sixes. <b>Every 6 is a success</b> — Titan Dice alone on a <b>5 or 6</b>.</p>
 
       <DiceKey />
 
@@ -92,20 +92,20 @@ const SECTIONS = [
           <li><b>Apply the effect,</b> or the one staked cost.</li>
           <li><b>Apply wear</b> from Gear Dice showing 1, if the roll was Pushed.</li>
         </ol>
-        <p><b>Each success is used once</b> — except a Reaction's, which cancel against several attacks by the same enemy in a round.</p>
+        <p><b>Each success is used once</b> — except a Reaction's.</p>
       </Subsection>
 
       <CoreTable table="roll-exceptions" />
 
       <Subsection title="Called rolls" id="called-rolls">
-        <p>No rule, in doubt, and a cost for failing — all three. Named before the dice: the entry or attribute, the Circumstances, the stakes. <b>It needs 1 success</b>, can be Helped, Covered, and Pushed, and nothing changes once the dice fall.</p>
-        <p><b>In a fight it is the last resort:</b> an act is first a Catalog entry, then an improvised act, and a called roll only if it changes nothing the fight tracks. It spends your action and never stands in for a Reaction.</p>
-        <p id="passive-rolls"><b>A passive roll</b> is made for you out of sight, outside a fight. No stakes, no Help, no Push — you learn the result only through what you notice.</p>
+        <p>No rule, in doubt, and a cost for failing — all three. Named before the dice: the entry or attribute, the step, the stakes. <b>It needs 1 success</b>, and nothing changes once the dice fall.</p>
+        <p><b>In a fight it is the last resort,</b> after a Catalog entry and an improvised act, and only if it changes nothing the fight tracks. It never stands in for a Reaction.</p>
+        <p id="passive-rolls"><b>A passive roll</b> is made for you out of sight, outside a fight — no stakes, no Help, no Push.</p>
       </Subsection>
 
       <CoreTable table="called-roll-costs" />
 
-      <p><b>Never staked:</b> a Critical Injury, a Death Roll, a Scar, Grief, a Fear Roll, Stress relief, healing, a care window, or any Titan, Foe, or table result. The GM states your current Health with any stake naming damage or a fall.</p>
+      <p><b>Never staked:</b> a Critical Injury, Death Roll, Scar, Grief, Fear Roll, Stress relief, healing, a care window, or any Titan, Foe, or table result.</p>
 
       <SectionHead id="circumstances" eyebrow="2">Circumstances</SectionHead>
 
@@ -113,10 +113,9 @@ const SECTIONS = [
 
       <ul>
         <li><b>One step per roll,</b> named with the stakes and before Bonus Dice.</li>
-        <li><b>Plus steps are Bonus Dice</b> under the cap of 4. <b>Minus steps are penalties</b> after the cap, base dice only, never below 1 base die.</li>
-        <li><b>Needs never change.</b> Nape Depth 4 at Hard still wants 4 successes, from one die fewer.</li>
-        <li><b>Fixed once named.</b> A Reaction takes the step in force when the attacker's card came up.</li>
-        <li><b>Standard in a fight,</b> unless something no rule prices moves it. <b>It never reaches the Titan.</b></li>
+        <li><b>Plus steps are Bonus Dice</b> under the cap of 4; <b>minus steps are penalties</b> after it, base dice only, never below 1.</li>
+        <li><b>Needs never change,</b> and the step is fixed once named.</li>
+        <li><b>Standard in a fight,</b> and <b>it never reaches the Titan.</b></li>
       </ul>
 
       <SectionHead id="pushing-your-luck" eyebrow="3">Push and Cover</SectionHead>
@@ -140,8 +139,8 @@ const SECTIONS = [
       </BoxPair>
 
       <Subsection title="Covering" id="covering">
-        <p>A player character who is not Down, not Pushing, and at the same Position or one step away takes the Stress instead — declared after the Push, before any re-roll, one Coverer only, and refusable.</p>
-        <p><b>The Coverer gains 1 Stress;</b> the Pusher gains none and adds no new Stress Die. Everything else stands: their Stress Dice still roll, a 1 is still <em>their</em> Stress Response, their gear still wears. Not an action, and a Squadmate never Covers.</p>
+        <p>A player character who is not Down, not Pushing, and one step away or nearer takes the Stress instead — declared after the Push, before any re-roll, one Coverer only, and refusable.</p>
+        <p><b>The Coverer gains 1 Stress;</b> the Pusher gains none and adds no Stress Die. Everything else stands: a 1 is still <em>their</em> Stress Response, their gear still wears. Not an action, and a Squadmate never Covers.</p>
       </Subsection>
 
       <SectionHead id="stress" eyebrow="4">Stress and Fear</SectionHead>
@@ -160,7 +159,7 @@ const SECTIONS = [
 
       <CoreTable table="fear-rolls" />
 
-      <p>One per soldier per event, rolled once the event resolves, every total read from Stress, Resolve, and Scars <em>as they stood then</em>. A Down soldier makes none. A Drive shrugs off the whole result, once a session.</p>
+      <p>One per soldier per event, every total read from Stress, Resolve, and Scars <em>as they stood then</em>. A Down soldier makes none, and a Drive shrugs off the whole result once a session.</p>
 
       <SectionHead id="help" eyebrow="5">Bonus Dice and Help</SectionHead>
 
@@ -168,10 +167,9 @@ const SECTIONS = [
 
       <ul>
         <li><b>Listed sources only,</b> declared before the dice and never added later.</li>
-        <li><b>Cap of 4</b> from all sources. Over it you choose, and what you leave out is not spent.</li>
-        <li><b>They are base dice:</b> a Push re-rolls them, and a 1 does nothing.</li>
-        <li><b>Help</b> adds 1 die, from up to 3 comrades. Helpers never roll, so they take no Stress Response.</li>
-        <li><b>What it spends:</b> in a Titan Engagement, the helper's action, from your Position or one step away. In a Skirmish, their action, Engaged or Apart. Elsewhere, whatever the calling rule says.</li>
+        <li><b>Cap of 4.</b> Over it you choose, and what you leave out is not spent.</li>
+        <li><b>Help</b> adds 1 die, from up to 3 comrades who never roll and take no Stress Response.</li>
+        <li><b>It spends the helper's action</b> in a fight, from one step away or nearer. Elsewhere, whatever the calling rule says.</li>
       </ul>
 
       <SectionHead id="the-round" eyebrow="6">The Round</SectionHead>
@@ -179,20 +177,18 @@ const SECTIONS = [
       <RoundDiagram fig="Fig. 4" />
 
       <ul>
-        <li><b>One move and one action,</b> in either order, and the move is never split around the action.</li>
-        <li><b>A Reaction spends a whole turn</b> — your earliest with both parts unspent.</li>
-        <li><b>Once per round, never banked.</b> What you decline stays only for Help and Reactions, and a Reaction needs both parts.</li>
-        <li><b>A turn spent in advance</b> arrives already spent: no Help, nothing held.</li>
+        <li><b>One move and one action,</b> in either order, never split.</li>
+        <li><b>A Reaction spends a whole turn</b> — your earliest with both parts unspent — and one spent in advance arrives already spent.</li>
+        <li><b>Once per round, never banked.</b> What you decline stays only for Help and Reactions.</li>
         <li><b>Not actions:</b> Reactions, Pushing, Covering, declaring Bonus Dice, spending Openings.</li>
       </ul>
 
       <Subsection title="Attack and Reaction" note="One procedure for every attack" id="attack-and-reaction">
         <ol>
-          <li><b>The attack rolls and finishes first.</b> Its successes are the <b>Severity</b>, announced to every target. A Titan or Foe never Pushes.</li>
-          <li><b>Each target decides,</b> knowing the Severity, at the step fixed when the card came up. The reacting side Pushes last.</li>
-          <li><b>Each Reaction success cancels one.</b> What is left is that target's <b>Net Successes</b>.</li>
-          <li><b>It lands on 1 or more.</b> On 0 it whiffs against that target.</li>
-          <li><b>No Reaction cancels nothing.</b> An attack that scored 0 whiffs against everyone and draws no Reaction.</li>
+          <li><b>The attack rolls and finishes first.</b> Its successes are the <b>Severity</b>. A Titan or Foe never Pushes.</li>
+          <li><b>Each target decides,</b> knowing the Severity, and the reacting side Pushes last.</li>
+          <li><b>Each Reaction success cancels one.</b> What is left is that target's <b>Net Successes</b>, and it lands on 1 or more.</li>
+          <li><b>No Reaction cancels nothing,</b> and an attack that scored 0 whiffs against everyone.</li>
         </ol>
         <p><b>One Reaction per enemy per round,</b> cancelling against every later attack that enemy makes on you, never used up. <b>Titans cannot be blocked</b> — a dodge is the only answer.</p>
       </Subsection>
@@ -207,10 +203,9 @@ const SECTIONS = [
 
       <ul>
         <li><b>One Position per Focus Titan and per corpse.</b> Holding one is the test for being in the fight.</li>
-        <li><b>A move changes one named Titan's Position by one step</b> — the only way you change your own — and may include one mount or dismount.</li>
-        <li><b>Letting go</b> spends your move and drops you from that height.</li>
-        <li><b>Close to one, loose from the other.</b> Coming to On Body or Blind Spot on one Titan makes any other's In Reach.</li>
-        <li><b>A fall from On Body or Blind Spot</b> lands you In Reach. From further out, your Position holds.</li>
+        <li><b>A move changes one named Titan's Position by one step</b> — the only way you change your own.</li>
+        <li><b>Close to one, loose from the other.</b> Coming to On Body or Blind Spot on one makes any other's In Reach.</li>
+        <li><b>A fall from the body</b> lands you In Reach. From further out, your Position holds.</li>
       </ul>
 
       <SectionHead id="titans" eyebrow="8">Titans and the Grab</SectionHead>
@@ -229,11 +224,11 @@ const SECTIONS = [
 
       <Subsection title="Cutting it down" id="cutting">
         <ul>
-          <li><b>A Body Part strike</b> adds each success to the part's count. At its Toughness the part moves one state toward Broken and the count resets; each success past Broken makes 1 Opening.</li>
+          <li><b>A Body Part strike</b> adds each success to the part's count; at its Toughness the part moves one state toward Broken and the count resets.</li>
           <li><b>A Nape strike</b> needs Blind Spot, not holding its Attention, not Grabbed, working ODM Gear unless grounded, and no retreat. <b>Reach the Nape Depth and it dies; fall short and each success becomes 1 Opening.</b></li>
-          <li><b>Openings</b> wait on the Titan for a comrade — <b>never for the soldier who made them</b> — and each is 1 Bonus Die on a Nape strike.</li>
+          <li><b>Openings</b> wait for a comrade — <b>never for the soldier who made them</b> — at 1 Bonus Die each.</li>
           <li><b>A grounded Titan</b> gives Nape strikes 2 Bonus Dice, needs no working ODM Gear, and puts the close steps on foot.</li>
-          <li><b>Regeneration</b> fills 1 a round. Full: Openings erased, counts to 0, the most damaged part one state toward Intact, steam on everyone On Body if a part moved, clock empty.</li>
+          <li><b>Regeneration</b> fills 1 a round. Full: Openings erased, counts to 0, the most damaged part one state toward Intact, steam on everyone On Body, clock empty.</li>
         </ul>
       </Subsection>
 
@@ -249,7 +244,7 @@ const SECTIONS = [
 
       <CoreTable table="harm-kinds" />
 
-      <p><b>A Titan attack is always a Critical Injury and never damage,</b> +1 to its roll per Net Success beyond the first. Steam, a falling Titan, and corpse heat are <em>not</em> Titan attacks — no Attack Dice, no Reaction. The four injury tables are in <a href="/guide/wounds-and-fear/#the-four-tables">Wounds &amp; Fear</a>.</p>
+      <p><b>A Titan attack is always a Critical Injury and never damage,</b> +1 to its roll per Net Success beyond the first. Steam, a falling Titan, and corpse heat are <em>not</em> Titan attacks. The four injury tables are in <a href="/guide/wounds-and-fear/#the-four-tables">Wounds &amp; Fear</a>.</p>
 
       <CoreTable table="injury-location" />
 
@@ -264,7 +259,7 @@ const SECTIONS = [
 
       <CoreTable table="time-limits" />
 
-      <p><b>The Death Roll:</b> Strength, plus one Talent that names it, minus that wound's penalty. No Stress Dice, Help, Push, Circumstances, or gear. It needs 1 success, one roll per wound — and <b>the first failure kills you</b>.</p>
+      <p><b>The Death Roll:</b> Strength, plus one Talent that names it, minus that wound's penalty — and nothing else. One roll per wound, 1 success, and <b>the first failure kills you</b>.</p>
 
       <CoreTable table="death-roll-outcomes" />
 
@@ -274,7 +269,7 @@ const SECTIONS = [
 
       <SectionHead id="gear" eyebrow="10">Gear and Gas</SectionHead>
 
-      <p>An item's <b>Gear Dice are its current rating</b>, from one item per roll, chosen first. <b>An item at 0 counts as not had</b> for every Catalog entry.</p>
+      <p>An item's <b>Gear Dice are its current rating</b>, one item per roll. <b>At 0 it counts as not had.</b></p>
 
       <StepFlow id="fig-wear" fig="Fig. 8" title="From a Push to a Jam" steps={wearFlow()} />
 
@@ -299,10 +294,10 @@ const SECTIONS = [
       <StepFlow id="fig-skirmish-attack" fig="Fig. 11" title="An attack and its answer" steps={attackSteps()} />
 
       <ul>
-        <li><b>Block</b> is Strength with a Blade Set, and answers a Fight attack only. <b>Dodge</b> is Agility with ODM Gear or the horse, and answers a Fight attack or a shot.</li>
-        <li><b>Damage is the weapon's, +1 per Net Success beyond the first</b> — so half a Reaction is worth having. A Grapple deals none.</li>
+        <li><b>Block</b> (Strength, Blade Set) answers a Fight attack only. <b>Dodge</b> (Agility, ODM or horse) answers a Fight attack or a shot.</li>
+        <li><b>Damage is the weapon's, +1 per Net Success beyond the first</b> — so half a Reaction is worth having.</li>
         <li><b>A Foe at 0 Health is out.</b> Foes have no Critical Injuries, no Stress, and no Down state.</li>
-        <li><b>A group breaks</b> when its Foes out reach its Grit, at the latest. A Size Up is how you learn the number.</li>
+        <li><b>A group breaks</b> when its Foes out reach its Grit, at the latest.</li>
       </ul>
 
       <CoreTable table="skirmish-actions" />

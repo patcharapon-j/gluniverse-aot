@@ -41,20 +41,16 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
-
-import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
 import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import GrabCountdown from '~/components/GrabCountdown.astro';
 import IconKey from '~/components/IconKey.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import PositionsMap from '~/components/PositionsMap.astro';
 import RoundDiagram from '~/components/RoundDiagram.astro';
 import RuleBox from '~/components/RuleBox.astro';
@@ -91,18 +87,17 @@ import plate from '~/assets/plates/plate-fighting-titans.webp';
 
 <SectionHead id="how-a-titan-fight-works" eyebrow="Section 1">How a Titan Fight Works</SectionHead>
 
-A <GlossaryTerm term="Titan Engagement" /> runs in rounds until the Titans are dead or you are out. A Titan tracked in full is a <GlossaryTerm term="Focus Titan" />, labelled A then B — **at most two at once**. Anything else closing in is a <GlossaryTerm term="Background Titan" />: a clock everyone can see.
+A <GlossaryTerm term="Titan Engagement" /> runs in rounds until the Titans are dead or you are out. A Titan tracked in full is a <GlossaryTerm term="Focus Titan" />, labelled A then B — **two at most**. Anything else closing in is a <GlossaryTerm term="Background Titan" />: a clock everyone can see.
 
 <Subsection title="How one starts" id="how-one-starts">
 
 <FactTable caption="Setting up a fight" columns={['', '']} rows={[
-  ['Who', 'Whoever the rule that begins the fight names, or else every living soldier.'],
-  ['The ground', 'The <b>Anchor Rating</b> sets the pool of Anchors — every soldier\'s Momentum cap — and the Terrain Trait. Nothing is rolled. Momentum starts at 0.'],
-  ['Where', 'Everyone at <b>Distant</b> from Focus Titan A, mounted or not as they were, nobody airborne. A starting Position is placed by a rule, so it trips no Drive.'],
-  ['The Titan', 'Body Parts Intact, no Openings, empty Regeneration clock, Next Behavior already rolled and hidden.'],
-  ['First look', 'It reads its Attention Ladder. With everyone at one Position, usually nothing holds it until its first card.'],
-  ['Fear', 'Roll for a first Titan Engagement, and for an Abnormal.'],
-  ['Then', 'Squad Tactics become unused, and round 1 begins.'],
+  ['Who', 'Whoever the starting rule names, else every living soldier.'],
+  ['The ground', 'The <b>Anchor Rating</b> sets the Anchors — every Momentum cap — and the Terrain Trait. Nothing is rolled, and Momentum starts at 0.'],
+  ['Where', 'Everyone <b>Distant</b> from Focus Titan A, mounted as they were, nobody airborne.'],
+  ['The Titan', 'Parts Intact, no Openings, clock empty, Next Behavior rolled and hidden.'],
+  ['First look', 'It reads its ladder — usually nothing holds it until its first card.'],
+  ['Then', 'Fear Rolls for a first fight and for an Abnormal, Squad Tactics unused, round 1.'],
 ]} />
 
 </Subsection>
@@ -113,13 +108,13 @@ A <GlossaryTerm term="Titan Engagement" /> runs in rounds until the Titans are d
 
 <MarginNote>Turns, actions, and Reactions: <a href="/guide/rules-of-play/#turns-actions-and-reactions">The Rules of Play</a>.</MarginNote>
 
-On your card you take one move and one action, in either order, never splitting the move around the action. A <GlossaryTerm term="Reaction" /> spends a whole turn — which is how the soldier holding Attention runs out of turns, and why comrades Help and swap with them.
+One move and one action on your card, in either order, never split. **A <GlossaryTerm term="Reaction" /> spends a whole turn** — which is how the soldier holding Attention runs out of time, and why comrades Help and swap with them.
 
 <RuleBox title="Something the rules do not cover" icon="ph:question">
 
-An <GlossaryTerm term="Improvised act">improvised act</GlossaryTerm> does only what the entry the GM names for it does: a wagon rolled across its path is a <GlossaryTerm term="Break Attention" /> <GlossaryTerm term="Decoy">decoy</GlossaryTerm>, a lantern swung in its face is <GlossaryTerm term="Draw Attention" />, a chimney dropped on a leg is a <GlossaryTerm term="Body Part strike" />, a dive behind a stack is a move or nothing. One modelled on the <GlossaryTerm term="Nape strike" /> falls short whatever it rolls.
+An <GlossaryTerm term="Improvised act">improvised act</GlossaryTerm> does only what the entry the GM names for it does. A wagon rolled across its path is a <GlossaryTerm term="Break Attention" /> <GlossaryTerm term="Decoy">decoy</GlossaryTerm>; a lantern in its face is <GlossaryTerm term="Draw Attention" />; a chimney on a leg is a <GlossaryTerm term="Body Part strike" />; a dive behind a stack is a move, or nothing. One modelled on the <GlossaryTerm term="Nape strike" /> falls short whatever it rolls.
 
-Fights are at Standard <GlossaryTerm term="Circumstances" /> unless something no rule prices — rain, smoke, ice — moves them, and the step never reaches the Titan.
+Fights run at Standard <GlossaryTerm term="Circumstances" /> unless something no rule prices moves them, and the step never reaches the Titan.
 
 </RuleBox>
 
@@ -129,7 +124,7 @@ Fights are at Standard <GlossaryTerm term="Circumstances" /> unless something no
 
 <CoreTable table="positions" />
 
-You hold a Position relative to **each** Focus Titan and each corpse. Holding one is the test for being in the fight.
+**One Position per Focus Titan and per corpse.** Holding one is the test for being in the fight.
 
 <CoreTable table="position-steps" />
 
@@ -137,7 +132,7 @@ You hold a Position relative to **each** Focus Titan and each corpse. Holding on
 
 <Subsection title="What a move can do" id="what-a-move-can-do">
 
-A move changes your Position relative to **one named Titan** by one step, or changes nothing. It may include one mount or dismount. **A move is the only way you change your own Position** — everything else comes from a rule that names it: a fall, a Grab, Fall Back, a Fear Roll result.
+A move changes one named Titan's Position by one step, or nothing, and may include one mount or dismount. **It is the only way you change your own Position** — everything else comes from a rule that names it.
 
 <FactTable compact columns={['State', 'Your move']} rows={[
   ['On your lines', 'Every ODM move is a <b>Flight</b>. More than one step only by spending Momentum on Carry.'],
@@ -147,7 +142,7 @@ A move changes your Position relative to **one named Titan** by one step, or cha
   ['On Body or Blind Spot', 'You may <b>let go</b> and fall from that height — how a <GlossaryTerm term="Jam">Jammed</GlossaryTerm> soldier gets off.'],
 ]} />
 
-**A forced step** from a Fear Roll is a result, not your move: it spends nothing, happens even on a spent turn, and is **never a Flight** — unrolled, no Momentum, marking nobody. It never makes you leave or let go.
+**A forced step** from a Fear Roll is a result, not your move: it spends nothing, happens even on a spent turn, and is **never a Flight** — unrolled, no Momentum, marking nobody.
 
 </Subsection>
 
@@ -158,8 +153,7 @@ A move changes your Position relative to **one named Titan** by one step, or cha
 - **The step happens whatever the dice say.** What the roll decides is what the flight was *worth*.
 - **Each success is 1 <GlossaryTerm term="Momentum" />,** up to the Anchors left.
 - **No successes and you come in loud:** marked loudest from any Position, Distant included. Not a shout — the sound of a bad landing.
-- It is your own roll, so Circumstances, Talents, Help, and the Push all reach it.
-- Letting go, a step on foot, a mounted step, and being carried are **not** Flights.
+- It is your own roll, so Circumstances, Talents, Help, and the Push all reach it. Letting go, a step on foot, a mounted step, and being carried are **not** Flights.
 
 <TryRollButton pool={{ base: 4, gear: 2, stress: 1 }} label="Try a Flight" />
 
@@ -167,11 +161,11 @@ A move changes your Position relative to **one named Titan** by one step, or cha
 
 <Subsection title="Momentum and Anchors" id="momentum">
 
-**Momentum** is speed you are carrying, from 0 up to the Anchors left. **You lose all of it at the end of any round in which you made no ODM move.** You spend it at any point in your own turn, and nobody else — the GM included — ever grants, spends, or takes a point.
+**Momentum** is speed you are carrying, from 0 up to the Anchors left. **Lose all of it at the end of any round you made no ODM move in.** You spend it in your own turn, and nobody else — the GM included — ever grants, spends, or takes a point.
 
 <CoreTable table="momentum" />
 
-The Anchor Rating gives the fight a public pool of **Anchors**: the trees, roofs, and beams worth firing a line into. **However many are left is every soldier's Momentum cap.**
+**Anchors** are the trees, roofs, and beams worth firing a line into, a public pool the Anchor Rating sets. **However many are left is every soldier's Momentum cap.**
 
 <CoreTable table="anchors" />
 
@@ -179,13 +173,13 @@ The Anchor Rating gives the fight a public pool of **Anchors**: the trees, roofs
 - **When they fall, every cap falls with them,** and anyone over the new cap loses the excess at once.
 - **At 0, nobody holds Momentum** — but Flights still fly, and **no step row changes.** However flat the place has been beaten, the route to the Nape stays open.
 
-Each rating carries one **Terrain Trait**. Wooded has none, and is the plain ground the others are read against.
+Each rating carries one **Terrain Trait**. Wooded has none, and is the plain ground the rest are read against.
 
 </Subsection>
 
 <Subsection title="Comparing two soldiers" id="comparing-positions">
 
-Help, Covering, Treat Injury, Rally, and the rest ask whether two soldiers share a Position or stand one step apart. Compare relative to **the Titan the act is made against** — or, for a <GlossaryTerm term="Heave" /> or a pinning part, **that body**; failing both, the earliest-labelled living Titan, or the corpse that died last.
+Help, Covering, Treat Injury, Rally, and the rest ask whether two soldiers share a Position or stand one step apart. Compare relative to **the Titan the act is made against** — for a <GlossaryTerm term="Heave" /> or a pinning part, **that body**; failing both, the earliest-labelled living Titan.
 
 </Subsection>
 
@@ -199,11 +193,11 @@ A fall is read relative to the Focus Titan you hold the closest Position to; on 
 
 <Subsection title="Two Titans, and corpses" id="two-focus-titans">
 
-A second Focus Titan arrives from outside, so everyone starts Distant from it. A move changes one Position only.
+A second Focus Titan arrives from outside, so everyone starts Distant from it, and a move still changes one Position only.
 
-**The close rule.** Come to hold On Body or Blind Spot on one Titan and your On Body or Blind Spot on any other becomes In Reach. **Nobody is ever hooked into two Titans at once.**
+**The close rule.** Come to On Body or Blind Spot on one Titan and any other's becomes In Reach. **Nobody is ever hooked into two Titans at once.**
 
-When a Titan dies its Positions end, and the one you held becomes your Position relative to its **corpse** — On Body and Blind Spot reading In Reach. A corpse counts as grounded and its Positions count for every rule that reads one, but it holds no Attention, plays no cards, and is no fall's reference. Only a Heave and a strike on a pinning part are made against it.
+When a Titan dies its Positions end, and the one you held becomes your Position on its **corpse** — On Body and Blind Spot reading In Reach. A corpse counts as grounded and its Positions count for every rule that reads one, but it holds no Attention, plays no cards, and is no fall's reference. Only a Heave and a strike on a pinning part reach it.
 
 A horse moves only with its rider, and no ladder or behavior ever picks one.
 
@@ -249,13 +243,13 @@ Titans take no turns. Each acts from a **D6 <GlossaryTerm term="Behavior Table" 
 
 <CoreTable table="behavior-tiers" />
 
-Each row gives its D6 result, name and tier, **targets**, the **holder's Position** it requires, the **Body Parts** it needs unbroken, its **Attack Dice**, its **effects** in order, and its **fallback** for when the Position does not fit.
+Each row gives its D6 result, name and tier, **targets**, the **holder's Position** it requires, the **Body Parts** it needs unbroken, its **Attack Dice**, its **effects** in order, and its **fallback**.
 
 <CoreTable table="titan-attack-dice" />
 
 <MarginNote stamp="Read twice">A Titan never Pushes and never reacts. Everything it does is one open roll, and it stands.</MarginNote>
 
-**Titan Dice** succeed on **5 or 6**, rolled in the open in a colour no pool uses. They never take Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances. Their successes are that card's <GlossaryTerm term="Severity" />, the same for every target.
+**Titan Dice** succeed on **5 or 6**, rolled in the open in a colour no pool uses, and never take Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances. Their successes are that card's <GlossaryTerm term="Severity" />, the same for every target.
 
 <CoreTable table="behavior-effects" />
 
@@ -265,7 +259,7 @@ No entry names death. A Titan kills you only through a lethal <GlossaryTerm term
 
 <SectionHead id="when-a-titan-acts" eyebrow="Section 4">When a Titan Acts</SectionHead>
 
-Every Focus Titan always holds a **Next Behavior**, rolled out of sight and never changed. You learn it when its card resolves it, when a telegraph shows it, or when a Read buys it.
+Every Focus Titan holds a hidden **Next Behavior**, rolled out of sight and never changed. You learn it when a card resolves it, a telegraph shows it, or a Read buys it.
 
 <StepFlow id="fig-card" fig="Fig. 3" title="A Titan's card resolves" steps={[
   {
@@ -320,45 +314,40 @@ Every Focus Titan always holds a **Next Behavior**, rolled out of sight and neve
 
 <Subsection title="Dodging a Titan" id="dodging-a-titan">
 
-Titans cannot be blocked, so the only Reaction is a **dodge**: Agility, with Gear Dice from <GlossaryTerm term="ODM Gear" /> or your horse while mounted.
+Titans cannot be blocked, so the only Reaction is a **dodge**: Agility, on <GlossaryTerm term="ODM Gear" /> or your horse while mounted.
 
 - **You decide after the roll,** knowing the Severity — whether to dodge, and whether to <GlossaryTerm term="Push" />.
-- **One per Titan per round.** Its successes cancel against every later card that Titan plays at you, each separately, without being used up.
-- **It spends your earliest wholly unspent turn.** A dodge against a Grab can have that turn given back when the Grab lands.
-- A <GlossaryTerm term="Call It">Called</GlossaryTerm> behavior gives every target but the reader **2 Bonus Dice**.
-- **Down or Grabbed, you cancel nothing.**
+- **One per Titan per round,** cancelling against every later card it plays at you, never used up.
+- **It spends your earliest wholly unspent turn,** and a dodge against a Grab can have that turn given back.
+- A <GlossaryTerm term="Call It">Called</GlossaryTerm> behavior gives every target but the reader **2 Bonus Dice**. **Down or Grabbed, you cancel nothing.**
 
 </Subsection>
 
 <SectionHead id="attention" eyebrow="Section 5">Attention</SectionHead>
 
-<FieldQuote cite="A Squad Leader, to a new recruit">While it is watching you, you are not cutting. That is the trade. Make it worth something.</FieldQuote>
-
-A Titan's **Attention** is held by one soldier, by a decoy, or by nothing, and who holds it is public. **The soldier holding it cannot make a Nape strike against that Titan.**
+A Titan's **Attention** is held by one soldier, a decoy, or nothing, and who holds it is public. **Whoever holds it cannot make a Nape strike against that Titan.**
 
 <Subsection title="When it changes" id="when-attention-changes">
 
 Only at these moments — between them the holder does not change, whatever anyone does:
 
-- the Titan becomes a Focus Titan;
-- one of its cards comes up (but not a card inside a decoy's hold, nor one while it holds a Grabbed soldier);
-- a Break Attention places a decoy;
-- its Grab lands;
+- the Titan becomes a Focus Titan, or one of its cards comes up — but not a card inside a decoy's hold, nor one while it holds a Grabbed soldier;
+- a Break Attention places a decoy, or its Grab lands;
 - the holder dies, leaves, is freed, is Grabbed by another Titan, or stops holding a Position.
 
 </Subsection>
 
 <Subsection title="The ladder" id="the-ladder">
 
-**Candidates** are the living soldiers holding a Position relative to it — never one who has left, one held by another Titan, or a horse.
+**Candidates** are living soldiers holding a Position relative to it — never one who has left, one held by another Titan, or a horse.
 
 <CoreTable table="attention-ladder" />
 
 1. **Find the highest rung anyone meets.** Those who meet it are tied.
-2. **Add everyone marked loudest** — from any Position — unless that rung is *hooked into its body*.
-3. **If it is hooked into its body,** and anyone tied is marked *hooked in by a strike*, only they stay. A Nape striker who fell short outdraws a soldier who is merely On Body.
+2. **Add everyone marked loudest,** from any Position — unless that rung is *hooked into its body*.
+3. **At that rung,** anyone marked *hooked in by a strike* keeps it alone: a Nape striker who fell short outdraws a soldier merely On Body.
 4. **Narrow by each lower rung,** then by closest Position.
-5. **Still tied:** the current holder keeps it. Otherwise the **lowest card this round** takes it. Otherwise **nothing** holds it until the next card.
+5. **Still tied:** the current holder keeps it, else the **lowest card this round**, else **nothing** until the next card.
 
 Every ladder begins with *hooked into its body* and ends with *nearest*, so nothing — noise included — turns a Titan off a blade at its Nape. Everything below that line a shout can match.
 
@@ -376,9 +365,9 @@ A mark lasts until the end of that Titan's **next card that resolves a behavior*
 
 <Subsection title="Draw Attention" id="draw-attention">
 
-An unrolled action against one Titan, for a soldier not at Distant and not Grabbed. It spends your action — or your move, with Shout Them Off — and marks you **loudest**.
+An unrolled action against one Titan, for a soldier not at Distant and not Grabbed. It spends your action — your move with Shout Them Off — and marks you **loudest**.
 
-**What the shout buys.** While marked loudest you meet every rung any other candidate meets, except *hooked into its body*. So it takes the Titan off any comrade who is not hooked in, and never off a blade at the Nape. That is the trade: you can buy a comrade out of anything but the cut they are already making.
+**What the shout buys.** Marked loudest, you meet every rung any other candidate meets except *hooked into its body*. So it takes the Titan off any comrade who is not hooked in, and **never off a blade at the Nape**. That is the trade: you can buy a comrade out of anything but the cut they are already making.
 
 A Flight with no successes sets the same mark, and so may a mounted charge. Momentum spent on Quiet keeps it off you.
 
@@ -388,13 +377,13 @@ A Flight with no successes sets the same mark, and so may a mounted charge. Mome
 
 <Subsection title="Break Attention and decoys" id="break-attention">
 
-A Perception action, with Gear Dice from ODM Gear or the horse — none for a Feint on foot. You need a Position relative to the Titan, no Grab on you, and no decoy already holding it.
+A Perception action on ODM Gear or the horse — no dice for a Feint on foot. You need a Position relative to the Titan, no Grab on you, and no decoy already holding it.
 
 <CoreTable table="break-attention-needs" />
 
-**On a success** the decoy holds its Attention for as many of its next cards as its Tempo — one round of cards, however the deal falls. Each resolves nothing and spends the Next Behavior; only the last ends the hold and reads the ladder. Each success beyond the need makes 1 Opening, and a soldier it holds is freed.
+**On a success** the decoy holds its Attention for as many of its next cards as its Tempo — one round of cards, however the deal falls. Each resolves nothing and spends the Next Behavior; only the last ends the hold and reads the ladder. Every success beyond the need makes 1 Opening, and a soldier it holds is freed.
 
-**Decoys in a row** counts the decoys placed since its last card that resolved a behavior. It returns to 0 when one does. **A Titan fooled twice before it acts comes back fixated.**
+**Decoys in a row** counts those placed since its last card that resolved a behavior, returning to 0 when one does. **A Titan fooled twice before it acts comes back fixated.**
 
 <CoreTable table="decoys" />
 
@@ -415,9 +404,9 @@ Titans have no Health. You take one apart a Body Part at a time, and you kill it
 
 <CoreTable table="body-parts" />
 
-A **Body Part strike** needs the Position its kind names, a part not yet Broken, no Grab on you, and working ODM Gear from On Body or Blind Spot unless the Titan is grounded.
+A **Body Part strike** needs the Position its kind names, a part not yet Broken, no Grab on you, and working ODM Gear from the body unless the Titan is grounded.
 
-Each success adds 1 to the part's **count**; at its <GlossaryTerm term="Toughness" /> the part moves one state — Intact, Wounded, Broken — and the count resets. Past Broken, each success makes 1 Opening. Any success marks you as having just hurt it.
+Each success adds 1 to the part's **count**; at its <GlossaryTerm term="Toughness" /> the part moves one state — Intact, Wounded, Broken — and the count resets. Past Broken, each success makes 1 Opening, and any success marks you as having just hurt it.
 
 **A Broken leg grounds it.** While grounded, Nape strikes gain **2 Bonus Dice**, no strike needs working ODM Gear, every part can be struck from In Reach inward (bar an arm holding someone), and close steps are on foot. Grounding brings its body down on whoever is under it; standing again frees everyone it pins.
 
@@ -427,11 +416,11 @@ Each success adds 1 to the part's **count**; at its <GlossaryTerm term="Toughnes
 
 <Subsection title="The Nape strike and Openings" id="the-nape-strike">
 
-A **Nape strike** is Strength with Gear Dice from a <GlossaryTerm term="Blade Set" />. It needs **Blind Spot**, you **not holding its Attention** and not Grabbed, **working ODM Gear** unless it is grounded, and **no retreat under way**.
+A **Nape strike** is Strength on a <GlossaryTerm term="Blade Set" />, needing **Blind Spot**, **not holding its Attention**, not Grabbed, **working ODM Gear** unless it is grounded, and **no retreat under way**.
 
 **Reach the Nape Depth and it dies. Fall short and each success becomes 1 Opening.** Every Nape strike marks you *hooked in by a strike* whatever it rolls, so a striker who falls short draws the next behavior.
 
-An **Opening** is a public token on the Titan recording who made it. A Nape striker spends them as Bonus Dice, 1 die each — but **never one you made yourself**. It waits on the Titan for a comrade, even if you die or leave. Regeneration and death erase them.
+An **Opening** is a public token recording who made it, worth 1 Bonus Die to a Nape striker — but **never to the soldier who made it**. It waits on the Titan for a comrade, even if you die or leave, and Regeneration and death erase them.
 
 </Subsection>
 
@@ -459,7 +448,7 @@ Only a Nape strike reaching the Nape Depth kills a Titan. Then, in order:
 
 <CoreTable table="steam" />
 
-A body comes down on death and on grounding, costing the fight **1 Anchor** where it lands. Everyone at On Body or Blind Spot is in its path; an airborne soldier swings clear untouched. The rest roll **<GlossaryTerm term="Leap Clear" />** — Agility, 1 success, no turn spent, Help allowed. Success clears you to In Reach; failure, or being Down or carried, pins you.
+A body comes down on death and on grounding, costing the fight **1 Anchor** where it lands. Everyone at On Body or Blind Spot is in its path, and an airborne soldier swings clear untouched. The rest roll **<GlossaryTerm term="Leap Clear" />** — Agility, 1 success, no turn spent, Help allowed. Success clears you to In Reach; failure, or being Down or carried, pins you.
 
 </Subsection>
 
@@ -477,48 +466,29 @@ Three ways out, and no others: a **Heave** (Strength, no gear, from In Reach or 
 
 </Subsection>
 
-<FieldReport id="example-nape-kill" title="A Nape kill on a grounded Titan">
-
-Mila strikes with 8 base dice — Strength 4, Clean Cut 1, a comrade's Opening, and 2 for the grounded Titan.
-
-<PoolRows rows={[
-  { label: 'First roll', pool: 'base:6,6,3,2,5,1,4,2|gear:3|stress:4', successes: 2 },
-  { label: 'After the Push', pool: 'base:6k,6k,6,2,3,5,4,1|gear:3l|stress:3,2', successes: 3 },
-]} />
-
-Three against a Nape Depth of 4. Short — so her three successes become **3 Openings for Jonas**, and she is marked hooked in. He flies to Blind Spot, takes two of them and the grounded Titan's two, and cuts.
-
-<PoolRows rows={[{ label: "Jonas's cut", pool: 'base:6,6,6,2,4,1,5|gear:6|stress:3,2', successes: 4 }]} />
-
-<TryRollButton pool={{ base: 7, gear: 1, stress: 2 }} label="Try Jonas's cut" />
-
-</FieldReport>
-
 <SectionHead id="read-and-call-it" eyebrow="Section 7">Read and Call It</SectionHead>
 
-A **Read** is an Instinct action against one Focus Titan, no gear, needing **1 success**. Reading from **Distant** gains **2 Bonus Dice**.
+A **Read** is an Instinct action against one Focus Titan, no gear, needing **1 success** — and **2 Bonus Dice** from Distant.
 
 <CoreTable table="read-facts" />
 
-A standard Titan's numbers are already public, so its Next Behavior is the only thing a Read can learn about it. So is everything else you can simply see: Body Part states and counts, filled clock segments, Openings, who holds Attention, the previous behavior, Background clocks, the state of a Grab.
+A standard Titan's numbers are already public, so its Next Behavior is the only thing a Read can buy about it — as is everything you can simply see: part states and counts, filled clock segments, Openings, who holds Attention, Background clocks.
 
 <Subsection title="Call It" id="call-it">
 
-An option of a Read that revealed the Next Behavior. It costs **2 of that Read's successes** — 1 with Sharp Call — and gives every target **other than the reader 2 Bonus Dice** on a dodge against that card, fallback and Thrash included.
+An option of a Read that revealed the Next Behavior, costing **2 of that Read's successes** — 1 with Sharp Call. Every target **other than the reader** gains **2 Bonus Dice** on a dodge against that card, fallback and Thrash included.
 
-A behavior can be Called once. It gives the reader nothing, and nothing to a target who cancels with an earlier dodge. It ends when the card is done, when a decoy spends the behavior, or when the Titan dies.
+Called once per behavior. It gives the reader nothing, and nothing to a target cancelling with an earlier dodge, and it ends when the card is done, a decoy spends the behavior, or the Titan dies.
 
 </Subsection>
 
 <SectionHead id="the-grab" eyebrow="Section 8">The Grab</SectionHead>
 
-<FieldQuote cite="From a Cadet's diary">Two turns. I counted them both and I have never stopped counting them.</FieldQuote>
-
 <GrabCountdown fig="Fig. 4" />
 
 <Subsection title="Grabbed" id="grabbed">
 
-Held in the hand of the Titan whose Grab landed. It **forbids Help, Covering, and Reactions** — you can still Push. You hold On Body, stop being airborne, are dismounted with no fall, and stop carrying anyone. Your move does nothing and your only action is Break Free. You hold that Titan's Attention and no other can choose you. Going Down does not end it.
+Held in the hand of the Titan whose Grab landed. It **forbids Help, Covering, and Reactions** — you can still Push. You hold On Body, stop being airborne, are dismounted with no fall, and stop carrying anyone. Your move does nothing, your only action is Break Free, and you hold that Titan's Attention while no other can choose you. Going Down does not end it.
 
 </Subsection>
 
@@ -534,14 +504,14 @@ It lands on **1 or more Net Successes** and takes no rider. The first unbroken a
 
 <Subsection title="The countdown" id="the-countdown">
 
-It counts **your own turns** after the Grab lands — spent turns and turns taken while Down included. The Grab spends the action of the first counted turn.
+It counts **your own turns** after the Grab lands, spent turns and turns taken while Down included, and it spends the action of the first counted turn.
 
 - **End of the first counted turn:** you are **lifted**. It harms nothing, but Break Free gets harder and fewer comrades can reach the hand.
 - **End of the second:** the Titan **devours** you. You die, and every witness makes a Fear Roll.
 
-Neither is a behavior: no Attack Dice, and no Reaction answers either. While it holds a living soldier, each of its cards resolves nothing. If the Grabbed soldier dies by any rule, the Grab ends at once and its next card can act again.
+Neither is a behavior: no Attack Dice, no Reaction. While it holds a living soldier each of its cards resolves nothing — and if that soldier dies by any rule, the Grab ends at once and its next card can act again.
 
-A **witness**, for a Grab or a death, is every soldier who is alive, holds a Position, and is not the victim. Down witnesses and soldiers who have left make no roll, and one event gives each soldier at most one Fear Roll.
+A **witness**, for a Grab or a death, is every living soldier holding a Position who is not the victim. Down witnesses and leavers make none, and one event gives each soldier at most one Fear Roll.
 
 </Subsection>
 
@@ -549,42 +519,29 @@ A **witness**, for a Grab or a death, is every soldier who is alive, holds a Pos
 
 <CoreTable table="grab-escapes" />
 
-Break Free is Strength with Blade Set Gear Dice. A strike on the holding arm from On Body or Blind Spot needs working ODM Gear unless the Titan is grounded. **Grounding never widens the reach in that table** — only Clear the Hand does.
+Break Free is Strength on a Blade Set, and a strike on the holding arm from the body needs working ODM Gear unless the Titan is grounded. **Grounding never widens the reach in that table** — only Clear the Hand does.
 
-Once freed: **before the lift** you hold In Reach with no fall; **after the lift** you fall from On Body's height and land In Reach. Either way the arm returns to normal, and nothing holds the Titan's Attention until its next card.
+Once freed, the arm returns to normal and nothing holds the Titan's Attention until its next card. **Before the lift** you hold In Reach with no fall; **after it** you fall from On Body's height and land In Reach.
 
 </Subsection>
-
-<FieldReport id="example-called-grab" title="A Grab, seen coming">
-
-Sela Reads from Distant and rolls two successes: one reveals the Next Behavior — its Grab — and both together Call It.
-
-<PoolRows rows={[{ label: 'The Read', pool: 'base:6,2,6,4,3|stress:5', successes: 2 }]} />
-
-The card turns on Otto for Severity 3. Even with Sela's 2 Bonus Dice his dodge leaves 1 Net Success, so **the Grab lands anyway** — but his dodge had already spent next round's turn, so the Grab spends that turn's action and leaves his second counted turn free.
-
-<TryRollButton pool={{ base: 6, gear: 2, stress: 1 }} label="Try Otto's dodge" />
-
-</FieldReport>
 
 <SectionHead id="retreat-and-ending-the-fight" eyebrow="Section 9">Retreat and Ending the Fight</SectionHead>
 
 <Subsection title="Clocks closing in" id="clocks-closing-in">
 
-A **Background Titan** is a public clock with nobody holding a Position relative to it. It fills 1 segment at the end of each round, and 1 more for each flare spent on a Break Attention.
+A **Background Titan** is a public clock with nobody holding a Position relative to it. It fills 1 segment a round, and 1 more per flare spent on a Break Attention.
 
-Full, with fewer than two Focus Titans alive, it **enters**: next label, clean, everyone Distant. Soldiers make the Fear Roll for a second Focus Titan or an Abnormal, and it takes cards from the next round.
+Full, with fewer than two Focus Titans alive, it **enters**: next label, clean, everyone Distant, with the Fear Roll for a second Focus Titan or an Abnormal, taking cards from the next round.
 
-Every fight also carries a **retreat clock**, filling 1 a round after the Background clocks. A flare never fills it. When it is full, the fight becomes a retreat.
+Every fight also carries a **retreat clock**, filling 1 a round after the Background clocks and never by a flare. Full, the fight becomes a retreat.
 
 </Subsection>
 
 <Subsection title="The retreat" id="the-retreat">
 
-The fight becomes a **retreat** when the retreat clock fills, or when a Background clock fills while two Focus Titans are alive — in which case that Titan does not enter.
+The fight becomes a **retreat** when the retreat clock fills, or when a Background clock fills while two Focus Titans are alive — and that Titan then never enters.
 
-- **Nothing more arrives.** Only Regeneration clocks keep filling.
-- **Moves are forced.** Everyone holding a Position, not Down, Grabbed, or carried, must spend each move on one of these:
+**Nothing more arrives:** only Regeneration keeps filling. **Moves are forced** — everyone holding a Position, not Down, Grabbed, or carried, spends each move on one of these:
 
 <FactTable compact caption="Forced moves, your choice" columns={['#', 'The move']} roll rows={[
   ['1', 'A step toward Distant from the earliest-labelled Focus Titan you are not yet Distant from — then from the earliest corpse.'],
@@ -593,9 +550,9 @@ The fight becomes a **retreat** when the retreat clock fills, or when a Backgrou
   ['4', '<b>Staying put</b> at such a comrade\'s Position — but only if you already took an action for them earlier this turn.'],
 ]} />
 
-- **The stay limit.** Options 3 and 4 last as many rounds as the retreat clock has segments, then become 1 or 2. While a Focus Titan is alive, a Down or Grabbed comrade has no such limit.
-- **Order.** Move before action — except a stay-move, which follows the action taken for that comrade, and a move on a Lift Comrade turn, so you can lift and carry out in one.
-- **No Nape strike during a retreat,** and **no return** while one is under way. Everything else is still taken.
+**The stay limit.** Options 3 and 4 last as many rounds as the retreat clock has segments, then become 1 or 2. While a Focus Titan is alive, a Down or Grabbed comrade has no such limit.
+
+**Order.** Move before action — except a stay-move, which follows the action taken for that comrade, and a move on a Lift Comrade turn, so you can lift and carry out in one. **No Nape strike during a retreat,** and **no return** while one is under way.
 
 </Subsection>
 
@@ -626,7 +583,7 @@ Afterwards every soldier's Momentum becomes 0, and the Anchors and Position reco
 
 <SectionHead id="squad-tactics" eyebrow="Section 10">Squad Tactics</SectionHead>
 
-A **Squad Tactic** belongs to the Squad. You hold **two**, chosen together before your first Titan Engagement, each usable **once per Titan Engagement**. Using one is an option, not an action, and it is spent the moment it is declared.
+A **Squad Tactic** belongs to the Squad. You hold **two**, chosen together before your first fight, each usable **once per fight**. Using one is an option, not an action, and it is spent the moment it is declared.
 
 <IconKey title="The four tactics" items={[
   { icon: 'tactic-hook-and-cut', label: 'Hook and Cut', note: 'A decoy, then a cut.' },

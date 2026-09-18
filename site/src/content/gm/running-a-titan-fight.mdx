@@ -29,8 +29,8 @@ sources:
 
 import ChapterContents from '~/components/ChapterContents.astro';
 import CommanderNote from '~/components/CommanderNote.astro';
+import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GmTable from '~/components/GmTable.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
@@ -56,55 +56,18 @@ A Titan fight runs itself once it is set up. Your work is the setup, one tracker
 
 Your judgment is part of the rules, and it works in one direction: **you rule before the dice, never after.** Once they fall, every die and table result stands. The players never have to wonder whether the fight is real.
 
-<Subsection title="When to call a roll" id="when-to-call-a-roll">
+<a href="/guide/rules-of-play/#when-the-gm-calls-a-roll">The Rules of Play</a> carries the procedure — the three tests, the ladder, the closed menu of stakes, and the long list a ruling never touches. This is how to use it well.
 
-**All three, or no dice:** no rule covers the act, the outcome is in doubt, and failure costs something.
+<FactTable caption="Three things you name, and one you do not" columns={['', '']} rows={[
+  ['The roll', 'Only when no rule covers the act, the outcome is in doubt, <em>and</em> failure costs something. Otherwise say it happens, or that it cannot be done — now, before anyone reaches for a die. <b>A called roll always needs 1 success.</b>'],
+  ['The step', 'One, weighing the whole moment. Rain, dark, and a snapped strap are one judgment, not three. <b>Standard is the assumption in a fight</b>; name another only for what no rule prices. It reaches the soldiers\' pools and never the Titan.'],
+  ['The stakes', 'One cost, out loud, before the dice — and <b>state the soldier\'s current Health</b> with any stake naming damage or a fall. A failure should move the story on: "the window closes, and the patrol is on the stair" is a stake; "nothing happens" is a stop.'],
+  ['Never yours', 'Behavior Tables, the Attention Ladder, Attack Dice, the Reaction procedure, the clocks, the retreat, a Titan\'s numbers, and every die once it is rolled.'],
+]} />
 
-- Failure would change nothing, or they have the time, tools, and training? It simply happens. Say so and move on.
-- It cannot be done? Say so **now**, before anyone reaches for a die.
-- **A called roll always needs 1 success.** You never raise that.
-
-Call them sparingly. A roll is a moment with something at stake; calling one for everything turns a scene into a queue.
-
-</Subsection>
-
-<Subsection title="Choosing the step" note="Circumstances" id="choosing-the-step">
-
-Weigh the whole moment and name **one step**. Rain, dark, and a snapped strap are one judgment, not three. Name it with the stakes, before Bonus Dice, so Help can answer a minus step.
-
-- **Standard is the assumption in a fight.** Positions, Openings, a grounded Titan, and the soldiers' own penalties already price it. Name another step only for what no rule prices.
-- **It reaches the soldiers' pools only.** A Titan mired to the knee makes the dodge against it Easy — it loses no Attack Dice.
-- **A step never changes what a roll needs.**
-
-</Subsection>
-
-<MarginNote stamp="Read twice">Routine and Effortless are for a soldier carrying penalties. An injured soldier doing something simple keeps their dice.</MarginNote>
-
-<Subsection title="Setting the stakes" id="setting-the-stakes">
-
-One cost, out loud, before the dice — and a failed roll costs that and nothing else, however many times it was Pushed.
-
-- **State the soldier's current Health** with any stake naming damage or a fall. Someone near the bottom should know it before they choose.
-- **A failure moves the story on.** "The window closes, and the patrol is on the stair" is a stake. "Nothing happens" is a stop.
-- **Success can give** the act, information, a better position, an ordinary object, or found Squad Supply within its caps — never a gear item, Stress relief, healing, a Commendation, a Research Point, or Faction Standing.
-
-</Subsection>
+Call rolls sparingly. A roll is a moment with something at stake, and calling one for everything turns a scene into a queue. **Inside a fight a called roll is the last resort:** an act is first a Catalog entry, then an improvised act, and a called roll only when it changes nothing the fight tracks.
 
 <InkVignette caption="A Squad Leader calls the step and the price before the dice leave the hand." label="A soldier's hand holding back a second soldier at the edge of a rooftop" art="gm-running-a-titan-fight-call" />
-
-<RuleBox variant="stop" title="What a ruling never touches in a fight" icon="ph:prohibit">
-
-Applied as written, whatever the night wants:
-
-- Behavior Tables, the Attention Ladder, Attack Dice, and the Reaction procedure;
-- that only a Nape strike kills, the size of Openings, Steam, the falling Titan, Corpse Heat, the Grab countdown, Regeneration;
-- the clocks, the retreat's forced moves, and the two tests that end a fight;
-- a standard Titan's numbers, and which of an Abnormal's a Read reveals;
-- and every die, once it is rolled.
-
-Inside a fight a called roll is the **last** resort: an act is first a Catalog entry, then an improvised act, and a called roll only when it changes nothing the fight tracks. The full list is on <a href="/guide/rules-of-play/">The Rules of Play</a>.
-
-</RuleBox>
 
 <SectionHead id="setting-up-the-fight" eyebrow="Section 2">Setting Up the Fight</SectionHead>
 
@@ -142,8 +105,6 @@ Roll each part in the table's order, skipping whatever is already named. **On a 
 
 <SectionHead id="what-you-track" eyebrow="Section 3">What You Track</SectionHead>
 
-<FieldQuote cite="A Squad Leader's notebook, recovered">One page. If it is not on the page, it is not in the fight.</FieldQuote>
-
 One tracker: an Engagement line, a row per Focus Titan, a row per Background Titan, and a row left behind for each corpse. The players keep the rest — and their Positions sit in one place, the positions column of the Squad sheet. **Read the ladder straight off that column.**
 
 <GmTable table="gm-tracker" />
@@ -159,8 +120,6 @@ One tracker: an Engagement line, a row per Focus Titan, a row per Background Tit
 </Subsection>
 
 <SectionHead id="the-next-behavior" eyebrow="Section 4">Rolling the Next Behavior</SectionHead>
-
-<FieldQuote cite="Instructor's saying, Training Corps">It has already decided. You have not.</FieldQuote>
 
 The one roll the players never see. Roll it where they cannot and record it face down — **once**: no re-roll, no second thought, no change of row.
 
@@ -215,19 +174,7 @@ Roll a new one when the Titan becomes a Focus Titan, after each card that resolv
 
 </Subsection>
 
-<FieldReport id="example-medium-card" title="A card on the Medium Titan">
-
-Round 2. No Grab, no decoy, and the ladder gives Attention to Oskar, who struck the Nape last turn and fell short at Blind Spot.
-
-The face-down Next Behavior is **Grab** — which wants In Reach or On Body. Oskar is at Blind Spot, so the card falls back to **Thrash**.
-
-Announce it, roll the Attack Dice in the open: two successes. Oskar's dodge cancels one, and the last knocks him loose. Then the bookkeeping — Thrash becomes the previous behavior, decoys in a row to 0, marks cleared, a new Next Behavior face down. Oskar falls.
-
-</FieldReport>
-
 <SectionHead id="background-titans" eyebrow="Section 5">Background Titans and the Retreat</SectionHead>
-
-<FieldQuote cite="Survey Corps manual">Titans come to a fight that lasts. That is the whole of the lesson.</FieldQuote>
 
 A **Background Titan** is not a Titan in play. It is a closing clock — public, with nobody holding a Position relative to it.
 

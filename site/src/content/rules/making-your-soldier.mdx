@@ -31,23 +31,19 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
-
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
 import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import TryRollButton from '~/components/TryRollButton.astro';
 import plateSoldier from '~/assets/plates/plate-making-your-soldier.webp';
 
 <FieldQuote cite="Instructor's saying, Training Corps">Three years to make a soldier. One afternoon beyond the Walls to find out whether we did.</FieldQuote>
@@ -104,8 +100,6 @@ Attributes are rated **2 to 5**, and only your Specialty's key attribute can rea
 </Subsection>
 
 <SectionHead id="the-lifepath" eyebrow="Section 2">The Lifepath</SectionHead>
-
-<FieldQuote cite="From a Cadet's diary">They asked where I came from on the first morning. By the third winter nobody asked, and I understood why.</FieldQuote>
 
 The Lifepath takes a <GlossaryTerm term="Cadet" /> from <GlossaryTerm term="Origin" /> through three <GlossaryTerm term="Training Years" /> to Graduation. Build your soldiers together — the Exam and the starting Squad involve everyone at once.
 
@@ -262,23 +256,7 @@ Once everyone is done: create <a href="#the-starting-squad">starting Squadmates<
 
 <MarginNote>Gear, ratings, and Standard Issue: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
 
-<FieldReport id="example-mira" title="Mira rolls her Lifepath">
-
-**Origin 25, Wall Rose Farm:** Strength and Perception to 3, Horsemanship 1, the family farm as her Haven. **Enlisted 42:** Strength to 4, Drive *Shield the Walls*. Three years take Perception to 4, Strength to 5, and Empathy to 3, adding Keen Eyes 1, Clean Cut 1, and Silver Tongue 1, for Merit 5.
-
-<PoolRows rows={[{ label: 'First Year performance roll', pool: 'base:6,4,2,1', successes: 1 }]} />
-
-**Graduation.** Merit 5 is Class Rank 25 — not Top 10. She takes Slayer, whose key attribute Strength already holds her best rating, so nothing swaps, and her Specialty level raises Clean Cut to 2. As a Tactician her Instinct 2 would have swapped with that 5.
-
-**Finished:** 18 points, 5 Talent levels, Health 4, Resolve 3. Her Nape strike rolls 7 base dice — but her dodge rolls Agility 2 alone, because Horsemanship only helps a dodge made mounted.
-
-<TryRollButton pool={{ base: 7 }} label="Try her Nape strike's base dice" />
-
-</FieldReport>
-
 <SectionHead id="the-graduation-exam" eyebrow="Section 3">The Graduation Exam</SectionHead>
-
-<FieldQuote cite="Chalked on a Training Corps barracks door">The dummies do not bleed. Cut them as if they will get up again.</FieldQuote>
 
 An optional prologue: three <GlossaryTerm term="Trials" /> played out after every Cadet's third-year event and before Graduation. Their Merit replaces the third performance roll, so it helps set each <GlossaryTerm term="Class Rank" />. **Built soldiers take no Trial** and earn no Exam Merit, whatever the vote.
 
@@ -309,24 +287,7 @@ The ODM balance test and the Titan dummy course cannot be Pushed, Helped, or Cov
 
 </Subsection>
 
-<FieldReport id="example-anka" title="Anka at the squad field exercise">
-
-Anka picks Read: Instinct 3, Titan Reader 1, and Carla's Help. Two successes, one short.
-
-<PoolRows rows={[
-  { label: 'First roll', pool: 'base:6,3,6,1,4', successes: 2 },
-  { label: 'After the Push', pool: 'base:6k,5,6k,6,2', successes: 3 },
-]} />
-
-She Pushes, and Bruno — who has not yet rolled — Covers, taking the Stress that will follow him into his own roll. A third 6: **1 Merit**.
-
-<TryRollButton pool={{ base: 5 }} label="Try Anka's Read" />
-
-</FieldReport>
-
 <SectionHead id="drives" eyebrow="Section 4">Drives</SectionHead>
-
-<FieldQuote cite="From a Cadet's diary">I wrote my reason inside my boot. I read it every time my hands shook.</FieldQuote>
 
 A Drive is what keeps a soldier fighting. When its trigger is met, it lets you **shrug off one <GlossaryTerm term="Fear Roll" /> result per session** — the result simply does not take effect. Every Drive is a Why You Enlisted row, written as a trigger beginning "When I ...".
 
@@ -357,8 +318,6 @@ A named comrade is any other living soldier in the Squad, chosen when the Drive 
 </Subsection>
 
 <SectionHead id="specialties-and-talents" eyebrow="Section 5">Specialties and Talents</SectionHead>
-
-<FieldQuote cite="Training Corps instructor, Graduation Day">Your Specialty is what you do best. It is never what you are allowed to do.</FieldQuote>
 
 <MarginNote>Every Specialty and every Talent in full: <a href="/compendium/specialties/">Compendium, Specialties</a> and <a href="/compendium/talents/">Talents</a>.</MarginNote>
 
@@ -489,19 +448,7 @@ A supply wagon rolled past a Titan is Break Attention. A lantern swung from a ro
 
 </Subsection>
 
-<FieldReport id="example-improvising" title="Three acts, three answers">
-
-- **A torn cloak.** Jonas binds a comrade's Critical Injury. The value is treating one, the entry is Treat Injury, and with no medical kit he rolls Wits 3 alone.
-- **A shout.** Mid-fight, he shouts a warning. No entry is a shout, so the GM models it on **Help**: his action, Help's Position, unrolled, 1 die to the comrade's dodge. Call It is an option, so it can never be the model.
-- **A prayer.** He prays to steady himself. The only entry that lowers your own Stress is Downtime Action, so the steps find nothing: the prayer happens, with no roll and no effect. **Stress relief comes only from a written trigger.**
-
-<TryRollButton pool={{ base: 3 }} label="Try Jonas's Treat Injury" />
-
-</FieldReport>
-
 <SectionHead id="squadmates" eyebrow="Section 7">Squadmates</SectionHead>
-
-<FieldQuote cite="A Squad Leader, to a new Private">Learn their names before the gate opens. You will not have time after.</FieldQuote>
 
 A <GlossaryTerm term="Squadmate" /> is a named soldier who rides with you. Any player can direct one, Titans target it like anyone else, and it can be promoted into a player character. Those serving now are the <GlossaryTerm term="Squad Pool" />.
 
@@ -591,12 +538,3 @@ Only the Lifepath gives a key attribute of 5 or 6, a Top 10 Class Rank, or a pla
 </RuleBox>
 </BoxPair>
 
-<FieldReport id="example-tomas" title="Tomas takes the Free Build">
-
-Slayer, shape 4·4·3·3·2·2: Strength 4, Agility 4, Perception 3, Instinct 3, Wits 2, Empathy 2. Origin **Underground City** for Grip Breaker 1 and the friends still living below; Drive **Duty**. Talents: Clean Cut from the list, raised to 2, then Hamstringer 1 and Field Medicine 1 — five levels, one at level 2.
-
-Health 4, Resolve 3, Class Rank none, Private. His Nape strike rolls 6 base dice.
-
-<TryRollButton pool={{ base: 6 }} label="Try his Nape strike's base dice" />
-
-</FieldReport>
