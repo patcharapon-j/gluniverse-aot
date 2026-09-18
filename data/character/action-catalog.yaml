@@ -557,7 +557,7 @@ entries:
       section 7.4)
     changes: [foe-harm]
     notes: >-
-      A firearm supplies its Gear Dice, a Pushed Gear Die showing 1 wears it, and at current rating 0 it
+      A firearm supplies its Gear Dice, a Pushed roll whose Gear Dice show any 1 wears it by 1 point, and at current rating 0 it
       cannot be fired until Field Repair or Maintain Gear restores it (decision batch 8, 8-12). The roll
       empties the firearm (data/gear/items.yaml, flintlock-pistol, loaded). A fired flare spends 1 flare
       and no shot, and takes no Gear Dice (decision batch 8, 8-7).

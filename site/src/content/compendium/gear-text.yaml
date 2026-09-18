@@ -17,7 +17,7 @@
 # record the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/gear/items.yaml
-    sha: "a4422fa6230a092d786f8e3d3c3fd02849a96b57"
+    sha: "6ddd7b203621fb85bf84aef77f3592a81edcb07d"
   - path: data/gear/odm-gear.yaml
     sha: "f94d9eb82fea1f7ae58339f7b037d3162e837b11"
   - path: data/gear/blade-sets.yaml
@@ -31,11 +31,11 @@ sources:
   - path: data/gear/field-repair.yaml
     sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
   - path: data/gear/standard-issue.yaml
-    sha: "a00dcfbd22cef064a4fad26f7b9156291fc41be5"
+    sha: "fa268aa8dc3313948979989f1023ae172fdc5c72"
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/character/action-catalog.yaml
-    sha: "9eba542902e16a0011914c52daa225f11e42e671"
+    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
 
 items:
   odm-gear:

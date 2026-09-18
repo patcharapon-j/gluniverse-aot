@@ -19,11 +19,11 @@ die_types:
   - id: gear
     name: Gear Die
     success_faces: [6]
-    push_re_rolls_faces: []                 # a Push never re-rolls a Gear Die
-    push_keeps_faces: [1, 2, 3, 4, 5, 6]
-    locked_faces: [1]                       # stays in the pool showing 1
-    on_one: wear_1_if_roll_pushed           # each 1 showing when the roll is final
-    decided: [OQ-01]
+    push_re_rolls_faces: [2, 3, 4, 5]       # the Stress Die's pattern (decision batch 11)
+    push_keeps_faces: [1, 6]
+    locked_faces: [1]                       # a 1 stays in the pool showing 1 and is never re-rolled
+    on_one: wear_1_per_pushed_roll          # at most 1 point, however many 1s show (data/gear/items.yaml, wear)
+    decided: [OQ-01, OQ-187]
   - id: stress
     name: Stress Die
     success_faces: [6]

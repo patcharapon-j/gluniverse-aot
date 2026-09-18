@@ -8,7 +8,7 @@ id: tuning
 name: Chapter 5 Tuning Figures and Simulator Starting Values
 chapter: 05-titan-engagement
 adrs: [ADR-0014, ADR-0015, ADR-0019]
-decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127, OQ-145]
+decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127, OQ-145, OQ-187]
 
 # The probe figures below were measured with each Behavior Table entry's fixed need of dodge successes,
 # before Attack Dice replaced it at 3 dice per point (decision batch 8, 8-1), and stand as that record.
@@ -26,6 +26,16 @@ decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127
 # and OQ-184's matching flag feed together; the wreck rate per table and Size Class; and
 # families.route_check with Anchors at 0, which must confirm ADR-0010's legal route still holds.
 # Round time is expected to rise by about 1 to 1.5 dice pools a round against the 3.57 measured here.
+
+# Decision batch 11 (OQ-187) changed the Push's gear economy: a Gear Die showing 2 to 5 is re-rolled,
+# a 6 is kept and a 1 is locked; a Pushed roll wears its gear item by at most 1 point, however many
+# of its Gear Dice show 1; and Standard Issue issues ODM Gear rated 3 from Funding 3 up. The Jam test
+# reads the wear rule and the issued rating directly, so IT IS STALE UNTIL THE SAME RERUN, along with
+# every figure that a Pushed roll's gear feeds. The exact arithmetic on the Jam test's three-Pushed-
+# dodge proxy (tools/probes/round-2/gear_die.out) puts the package at 24.2% against the bar of a
+# third, where today's rule reads 17.8% at rating 3 and 26.3% at the rating 2 it replaces; the rerun
+# must confirm that on the full model, and must re-read the reference builds, whose Rookie now
+# carries ODM Gear 3 (ADR-0014, builds).
 
 # ------------------------------------------------------------------ starting values
 starting_values:
@@ -195,7 +205,7 @@ builds:
     scars: 0
     minimum_stress: 0
     stress_when_a_fight_begins: 1
-    item_ratings: {odm_gear: 2, horse: 2, every_other_item: 1}
+    item_ratings: {odm_gear: 3, horse: 2, every_other_item: 1}   # odm_gear raised from 2 by decision batch 11 (OQ-187); the horse ladder is unchanged
     talent_level: 1
   veteran:
     attributes: {strength: 5, agility: 3, wits: 2, every_other_attribute: 3}
@@ -1005,12 +1015,14 @@ jam_test:
     deals, with every card at the kill pool reported as an upper bound (OQ-96).
   probe: tools/probes/chapter-05/simple.py (jam_fight)
   model: >-
-    The reference Rookie (Agility 3, ODM Gear 2, no dodge Talent, Stress 1 when the fight begins)
+    The reference Rookie (Agility 3, ODM Gear 2 when these figures were measured, ODM Gear 3 after
+    decision batch 11, no dodge Talent, Stress 1 when the fight begins)
     holds the Attention of every Titan in the cell for three rounds. Each Titan is dealt its Tempo in
     cards. The Rookie makes one dodge against each Titan each round, Pushing when short of the first
     card's fixed need, and the dodge is compared with that Titan's other card. Stress rises, Stress
-    Responses apply, and Gear Dice showing 1 on a Pushed roll wear the ODM Gear; the fight counts as
-    Jammed when the rating reaches 0. Help gives the same number of dice to every dodge, and Covered
+    Responses apply, and a Pushed roll whose Gear Dice show any 1 wears the ODM Gear by 1 point
+    (batch 11's cap; these figures were measured under the older rule, 1 point per Gear Die showing
+    1, with Gear Dice never re-rolled); the fight counts as Jammed when the rating reaches 0. Help gives the same number of dice to every dodge, and Covered
     columns Cover every Push. Turn debt never removes a dodge, because a Reaction can always spend a
     later turn. 60,000 fights per cell.
   tiers:

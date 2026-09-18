@@ -3772,3 +3772,16 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Why:** Momentum is the reward for choosing to fly. A soldier flung back by fear has chosen nothing, so giving them Momentum for it would pay them for panicking, and rolling at that moment adds dice to the one part of the turn the player does not control. A soldier under a retreat is still choosing, from a narrowed list, so nothing about their move changes but its destination.
 - **ADR:** none. Both readings follow the text each rule already carries.
 - **Simulator case:** folded into OQ-182's rerun. The retreat is modelled (`retreat_clock`, the stay limit) and forced moves are modelled through the Fear rows, so the engine must carry the split rather than treating both alike.
+
+### OQ-187: The Gear Die package
+
+- **Type:** Design change (owner instruction, 2026-09-18: take the package deferred by 10-4 now)
+- **Arose in:** `docs/playtest/feedback/round-2/unified-design.md`, *The Gear Die re-roll*; `design-proposals.md`, fix 4; OQ-185's *Not taken now*. `data/core/dice-pool.yaml`; `data/gear/items.yaml`; `data/gear/standard-issue.yaml`.
+- **Related:** OQ-01, OQ-72, OQ-185, OQ-12.
+- **Question:** Batch 10 deferred the owner's Gear Die re-roll because reading A alone takes the Jam test from 26.3% to 53.1% against a bar of a third, and a higher issued rating makes it worse rather than better. Only one combination tested stayed under the bar. Is it taken, and as what?
+- **Options:** (a) Leave the Gear Die as it was. (b) Reading A alone. (c) A plus a wear cap of 1 point per Pushed roll plus issued ODM Gear at rating 3. (d) A for the Blade Set only.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 11*, 11-1)
+- **Decision:** (c), taken whole. A Push re-rolls a Gear Die showing 2 to 5, keeps a 6, and locks a 1; a Pushed roll wears its gear item by at most 1 point, however many of its Gear Dice show 1; and `by_funding.odm_gear_rating` reads 1, 1, 3, 3, 3, 3. Measured at **24.2%** against the bar of a third (`tools/probes/round-2/gear_die.out`). The cap is what makes the package work: it breaks the link between a higher rating and faster wear, so rating 3 is at last worth more than it costs.
+- **Costs recorded:** the issued ODM ladder flattens from Funding 3 up, and the horse keeps the 1, 1, 2, 2, 2, 3 ladder, so decision batch 2b's parity between a mounted dodge and an ODM one ends.
+- **ADR:** amends ADR-0004. A Push still costs Stress and gear; its gear cost is now 1 point per Pushed roll, and Gear Dice are no longer the one part of the pool a Push leaves alone.
+- **Simulator case:** required, as a retune in the same rerun as OQ-182 to OQ-186. It must re-read the Jam test on the full model, the reference builds (the Rookie's ODM Gear is now 3), gas, the Blade Set ruin rate, and the PC Critical Injury and death targets.

@@ -5,10 +5,11 @@ id: standard-issue
 name: Standard Issue
 chapter: 04-gear
 adrs: [ADR-0014, ADR-0024]
-decided: [OQ-59, OQ-72, OQ-93, OQ-141, OQ-148]
+decided: [OQ-59, OQ-72, OQ-93, OQ-141, OQ-148, OQ-187]
 # Revised by decision batch 2b (docs/rules/DECISIONS-2026-09-14.md, Batch 2b): by_funding.horse_rating
 # (Major 2), and receiving.steps odm-gear, horse, and decline and interim_issue.differences (Minor 5).
 # Revised by decision batch 3 (OQ-93): interim_issue.differences (the horse step) and why_narrow.
+# Revised by decision batch 11 (OQ-187): by_funding.odm_gear_rating rises to 3 from Funding 3 up.
 
 funding:
   meaning: The Survey Corps' Funding, 1 to 6, picks the row of by_funding.
@@ -49,9 +50,10 @@ not_received: >-
   the Squad receive, including an interim issue that waits until after that promotion.
 
 # One row per Funding. blade_sets counts every Blade Set, including the one fitted into the handles.
-# odm_gear_rating is 2 from Funding 3 to 5 and 3 at Funding 6 (OQ-72): ADR-0014's Rookie has ODM Gear 2.
-# horse_rating follows the same ladder, 1, 1, 2, 2, 2, 3 (decision batch 2b): ADR-0014's Rookie has a
-# horse rated 2, so a mounted dodge has the same pool with either item and differs only in its cost.
+# odm_gear_rating is 1 at Funding 1 and 2 and 3 from Funding 3 up (OQ-72, OQ-187): the Gear Die now
+# re-rolls on a Push, so ADR-0014's Rookie carries ODM Gear 3 to hold the Jam test under its bar
+# (decision batch 11). horse_rating keeps the older ladder, 1, 1, 2, 2, 2, 3 (decision batch 2b), so
+# from Funding 3 a mounted dodge rolls one Gear Die fewer than an ODM one and risks a cheaper item.
 by_funding:
   - funding: 1
     odm_gear_rating: 1
@@ -64,17 +66,17 @@ by_funding:
     blade_sets: 2
     horse_rating: 1
   - funding: 3
-    odm_gear_rating: 2
+    odm_gear_rating: 3
     spare_canisters: 1
     blade_sets: 3
     horse_rating: 2
   - funding: 4
-    odm_gear_rating: 2
+    odm_gear_rating: 3
     spare_canisters: 1
     blade_sets: 4
     horse_rating: 2
   - funding: 5
-    odm_gear_rating: 2
+    odm_gear_rating: 3
     spare_canisters: 2
     blade_sets: 4
     horse_rating: 2

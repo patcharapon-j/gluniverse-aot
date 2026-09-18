@@ -16,9 +16,10 @@ rating_rules:
     its rating. Its Gear Dice are its current rating (Chapter 1, section 1.3, step 6). The rating
     never changes; only the current rating does.
   wear: >-
-    When a Pushed roll is final, each Gear Die showing 1 wears the item that supplied it by 1
-    point (Chapter 1, section 1.5; OQ-01). A rule Talent that ignores wear (Well-Kept Rig,
-    Blade Discipline, Sure Seat) removes points before they apply. Each point left lowers the
+    When a Pushed roll is final, an item whose Gear Dice show one or more 1s wears by 1 point:
+    one point per Pushed roll, however many of its Gear Dice show 1 (Chapter 1, section 1.5;
+    OQ-01, OQ-187; decision batch 11). A rule or Talent that ignores wear (Well-Kept Rig,
+    Blade Discipline, Sure Seat) removes that point before it applies. Each point left lowers the
     current rating by 1, never below 0, unless the item's wear row says otherwise.
   unpushed_rolls: A roll that was not Pushed never wears an item.
   at_zero: >-

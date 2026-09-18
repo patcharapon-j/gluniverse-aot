@@ -12,7 +12,7 @@ Page: `site/src/content/rules/rules-of-play.mdx` (route `/guide/rules-of-play/`)
 - Pool holds base, Gear, Stress Dice; distinct colours; Bonus Dice are base dice. C 56
 - Every 6 is a success on any kind. C 57; DP 15, 21, 29
 - Titan Dice: in no pool, succeed on 5 or 6, never Push, never take Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances. C 57, 363
-- Die kinds, Push behaviour, and 1s (DiceKey): base 1 nothing, rolled again unless 6; Gear never rolled again, 1 wears if Pushed; Stress rolled again unless 6, 1 is a Stress Response. DP 13-32
+- Die kinds, Push behaviour, and 1s (DiceKey): base 1 nothing, rolled again unless 6; Gear rolled again on 2 to 5, a 1 locked and wearing 1 point per Pushed roll; Stress rolled again unless 6, 1 is a Stress Response. DP 13-32
 - Attribute roll = rule names an attribute; rolled actions, Reactions, Death Rolls (Strength), called rolls, and called attribute rolls. Only these use a pool, count successes, can be Pushed. C 62
 - Other rolls (Gas Roll, table) roll stated dice, add nothing, take no Circumstances, cannot be Pushed. C 64
 - Pool = attribute + one Talent + Bonus Dice + Gear Dice + Stress Dice, less penalties, in order: name the roll and its Circumstances, attribute, Talent, Bonus, penalties, Gear, Stress. C 68-81; DP 36-124
@@ -79,7 +79,7 @@ Page: `site/src/content/rules/rules-of-play.mdx` (route `/guide/rules-of-play/`)
 - Push trades Stress (and wear) for a second chance; allowed after failure or success. C 138
 - Cannot Push: Stress Die 1 on the roll or after an earlier Push; rule forbids (Death Roll, first two Trials); a passive roll; not an attribute roll; already Pushed the allowed number (once unless a Talent); a held state or result forbids (Down). C 142-149; `data/harm/down.yaml` 23
 - No ruling forbids or forces a Push; extra Pushes follow the same procedure; a Stress Die 1 after any Push rules out more. C 49, 151
-- Push steps (Fig. 3): roll, Stress Die 1 means Stress Response and no Push; decide, one comrade may Cover before any die is rolled again; gain 1 Stress and add 1 Stress Die, or the Covering soldier gains it and no die is added; roll again base and Stress Dice not showing 6 plus the new die, 6s stay, Gear Dice never rolled again; Stress Die 1 now means a Stress Response. C 157-162; SC 21-27
+- Push steps (Fig. 3): roll, Stress Die 1 means Stress Response and no Push; decide, one comrade may Cover before any die is rolled again; gain 1 Stress and add 1 Stress Die, or the Covering soldier gains it and no die is added; roll again every die not showing 6 but a Gear Die showing 1, plus the new die, 6s stay; Stress Die 1 now means a Stress Response. C 157-162; SC 21-27
 - Bonus Dice rolled again unless 6; Gear Die 1 stays locked. C 160; DP 24
 - One Stress Response per roll, however many 1s or Pushes. C 164
 - Gas: Pushed roll with ODM Gear makes that round's Gas Roll three dice; three however many; not if the Gas Roll was already made; Pushed ODM dodge counts; Pushed mounted horse dodge wears the horse and does not by itself make it three. C 174

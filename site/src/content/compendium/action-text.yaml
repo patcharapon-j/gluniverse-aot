@@ -15,7 +15,7 @@
 # the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/action-catalog.yaml
-    sha: "9eba542902e16a0011914c52daa225f11e42e671"
+    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
   - path: data/engagement/attention.yaml
     sha: "3d64d61249c17643e00e10197041a9dc0cd9b798"
   - path: data/engagement/read.yaml
@@ -45,7 +45,7 @@ sources:
   - path: data/campaign/downtime.yaml
     sha: "d5e2091e7d41e0f0eefdad38f71f584c856dfce3"
   - path: data/core/dice-pool.yaml
-    sha: "6469a403a81cf26738be5251ec88670160059d3f"
+    sha: "86d4fef8eb35845f1244a80790254cbd6a2b4bc6"
 
 actions:
   # ---------------------------------------------------------------- Titan Engagement actions
@@ -294,7 +294,7 @@ actions:
       - Never a musket against a Foe you are Engaged with. Not while you are Held or hold a Foe.
     needs: 1 Net Success after the Foe's Guard cancels.
     does:
-      - A firearm gives its Gear Dice. A Pushed Gear Die showing 1 wears it, and at current rating 0 it cannot be fired until Field Repair or Maintain Gear restores it. The roll empties the firearm.
+      - A firearm gives its Gear Dice. A Pushed roll whose Gear Dice show any 1 wears it by 1 point, and at current rating 0 it cannot be fired until Field Repair or Maintain Gear restores it. The roll empties the firearm.
       - A fired flare spends 1 flare and no shot, and takes no Gear Dice.
     help: In a Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether Engaged or Apart.
     pages: [skirmishes, gear-and-odm]

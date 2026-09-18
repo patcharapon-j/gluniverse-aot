@@ -105,7 +105,7 @@ async function pushCard(message: any): Promise<ActionCard | null> {
   // hook does not show them (or the whole card) a second time.
   const roll = await WofRoll().rollPool(pushRollCounts(card.dice, covered));
   await showDice(roll, message.whisper?.length ? message.whisper : null, message.blind);
-  const pushed = applyPush(card.dice, { base: roll.facesOf('base'), stress: roll.facesOf('stress') }, !covered);
+  const pushed = applyPush(card.dice, { base: roll.facesOf('base'), stress: roll.facesOf('stress'), gear: roll.facesOf('gear') }, !covered);
   card.dice = pushed.dice;
   card.fresh = pushed.fresh;
   card.pushes += 1;
@@ -124,7 +124,7 @@ async function pushCard(message: any): Promise<ActionCard | null> {
     fresh.push(...r.ops);
   }
 
-  // Wear: each Gear Die showing 1 once the roll is Pushed, once (data/gear/items.yaml, wear).
+  // Wear: 1 point once the roll is Pushed and any Gear Die shows 1, once (data/gear/items.yaml, wear).
   const gear = card.pool.gear;
   if (!second && gear?.id) {
     const points = wearPoints(card.dice.gear, true);

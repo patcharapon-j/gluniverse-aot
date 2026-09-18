@@ -3769,3 +3769,35 @@ Raised by the packet drafter while applying 10-1, and decided the same day.
 **Files.** `data/engagement/positions.yaml` (`moves`, `forced_step`), `data/engagement/background-titans.yaml` (`retreat`, `moves`).
 
 **Out of scope:** the simulator rerun (scheduled, not run in this batch); the Gear Die package (10-4, deferred).
+
+## Batch 11: the Gear Die package
+
+The owner's answer to 10-4's deferral, given 2026-09-18: take the Gear Die package now, in the same change as the site audit. It is the one combination 10-4 tested that stays under the Jam test's bar, and it is taken whole, because no part of it holds on its own. One item, OQ-187. Measured on exact arithmetic in `tools/probes/round-2/gear_die.out` (`gear_die.py`), no sampling.
+
+### 11-1: The Gear Die package (OQ-187)
+
+**Decision.** Three changes, taken together and only together.
+
+- **A Push rolls Gear Dice.** A Gear Die showing 2, 3, 4, or 5 is picked up and rolled again with the rest of the pool. A 6 stays. **A 1 is locked:** it stays in the pool showing 1 and is never re-rolled. This is the Stress Die's own pattern, which is where the proposal came from.
+- **A Pushed roll wears its gear item by at most 1 point.** When a Pushed roll is final, an item whose Gear Dice show one or more 1s wears by 1 point: one point per Pushed roll, whether one of its Gear Dice shows a 1 or all three. The wear-ignoring Talents (Well-Kept Rig, Blade Discipline, Sure Seat) each remove that one point, so where they apply the Pushed roll now wears nothing at all.
+- **Issued ODM Gear rises to rating 3 from Funding 3 up.** `by_funding.odm_gear_rating` reads 1, 1, 3, 3, 3, 3. Funding 1 and 2 are unchanged. ADR-0014's reference Rookie now carries ODM Gear rated 3.
+
+**Why.** A Gear Die's 1 and its 6 both move from 16.7% to 27.8%, so the Push gets 67% better and 67% more dangerous at once, which is what ADR-0004 asks a Push to be. Uncapped, that breaks a hard target: the Jam test's three-Pushed-dodge proxy goes from 26.3% to 53.1% at ODM Gear 2 against a bar of no more than a third, and a Jammed soldier cannot Nape strike at all. Raising the rating alone does not rescue it, because a higher rating rolls more Gear Dice (47.7% at rating 3). The cap breaks that link: wear stops scaling with the rating, so a higher rating is at last worth more than it costs, and the package reads **24.2%** at rating 3 against the bar of a third. Every other combination tested is either over the bar or leaves the Push where it was:
+
+| | ODM Gear 2 | ODM Gear 3 |
+|---|---|---|
+| Before batch 11 | 26.3% | 17.8% |
+| Re-roll alone | 53.1% | 47.7% |
+| Re-roll with the wear cap | 46.8% | **24.2%** |
+
+Average wear a Pushed roll deals under the cap is 0.278 points at rating 1, 0.478 at rating 2, and 0.623 at rating 3, against 0.167, 0.306, and 0.421 for the same faces before the change.
+
+**What it costs.** The issued ladder flattens: ODM Gear is rated 3 at every Funding from 3 up, so Funding no longer separates a well-equipped Corps from a rich one on the harness. The horse keeps the older ladder (1, 1, 2, 2, 2, 3), so decision batch 2b's parity between a mounted dodge and an ODM one ends: from Funding 3 a mounted dodge rolls one Gear Die fewer and risks the cheaper item, which is now the choice the two offer rather than a pure choice of cost. Both are recorded, not hidden; neither is retuned here, because the rerun below is what would judge them.
+
+**Simulator.** Required, and it is a retune, not a sensitivity row: the package touches every Pushed roll with a gear item in the game. `data/engagement/tuning.yaml` and `docs/reviews/simulator-report.md` are marked stale for it alongside batch 10's, and the two are measured in the same rerun. It must re-read the Jam test on the full model against the 24.2% the proxy gives, the reference builds (the Rookie's ODM Gear is now 3), gas (a Pushed ODM roll still makes the round's Gas Roll three dice, and the package changes how often a soldier Pushes), the Blade Set ruin rate, and the PC Critical Injury and death targets that a stronger Push feeds from both sides.
+
+**ADR.** This amends ADR-0004: a Push still costs Stress and gear, but its gear cost is now one point per Pushed roll rather than one per Gear Die showing 1, and Gear Dice are no longer the one part of the pool a Push leaves alone.
+
+**Files.** `data/core/dice-pool.yaml` (`die_types`, `gear`), `data/gear/items.yaml` (`rating_rules.wear`), `data/gear/standard-issue.yaml` (`by_funding.odm_gear_rating`), `data/character/action-catalog.yaml` (`shoot`), `data/engagement/tuning.yaml` (stale marker, `jam_test.model`), `docs/rules/01-core-rules.md` (sections 1.5 and the worked example), `docs/rules/04-gear.md` (sections 4.1, 4.2, 4.9), `CONTEXT.md`, `foundry/src/rules/roll.ts`, `foundry/src/rules/lifepath-state.ts`, `site/src/lib/dice-rules.ts`, `site/src/lib/gear-tables.ts`, and the site chapters that state the rule.
+
+**Out of scope:** the simulator rerun itself, and the Funding rules, which are still unwritten (Funding is 3 until they exist).

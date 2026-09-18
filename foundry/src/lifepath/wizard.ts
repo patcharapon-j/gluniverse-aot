@@ -265,8 +265,8 @@ export function lifepathActions(actor: any) {
         const need = pushNeeds(s, k, covered);
         const r = replay(s, tb(), o());
         if (!need || r.trials[k].push !== null) return s;
-        const roll = await WofRoll().rollPool({ base: need.base, stress: need.stress });
-        const next = recordPush(s, k, covered, { base: roll.facesOf('base'), stress: roll.facesOf('stress') }, tb(), o());
+        const roll = await WofRoll().rollPool({ base: need.base, stress: need.stress, gear: need.gear });
+        const next = recordPush(s, k, covered, { base: roll.facesOf('base'), stress: roll.facesOf('stress'), gear: roll.facesOf('gear') }, tb(), o());
         if (next === s) return s;
         const message = game.messages.get(s.trials[k].message);
         if (message) {

@@ -6,7 +6,7 @@ order: 2
 tab: Soldier
 sources:
   - path: docs/rules/02-character-creation.md
-    sha: "ea19f0314260869a0e0d0917f353f3da9fdc6a18"
+    sha: "3f3e80a8b39660283d5404ee2343983408dfdcf2"
   - path: data/character/attributes.yaml
     sha: "a096bb9f1ef8eb9690180527a6d22807d2db3b04"
   - path: data/character/lifepath.yaml
@@ -28,7 +28,7 @@ sources:
   - path: data/character/talents.yaml
     sha: "4d63533a7910acc0dcb8bb0ee1f5e6e5b0340c4b"
   - path: data/character/action-catalog.yaml
-    sha: "9eba542902e16a0011914c52daa225f11e42e671"
+    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -145,11 +145,11 @@ The Lifepath takes a <GlossaryTerm term="Cadet" /> from <GlossaryTerm term="Orig
 
 <Subsection title="Before you roll" id="before-the-lifepath">
 
-Record the <GlossaryTerm term="Campaign Year" /> (845 to 850) if the campaign has none, and vote on whether to run the <GlossaryTerm term="Graduation Exam" />. At session zero the GM also records, once and for good, whether the campaign allows the Template Build, the Free Build, or both — so one table can mix rolled and built soldiers.
+Record the <GlossaryTerm term="Campaign Year" /> (845 to 850) if the campaign has none, and vote on whether to run the <GlossaryTerm term="Graduation Exam" />. At session zero the GM also records, once and for good, whether the campaign allows the Template Build, the Free Build, or both, so one table can mix rolled and built soldiers.
 
 **The GM plays no part in the Lifepath** beyond reading tables with you. Every result comes from a roll, a row, or a choice the row offers.
 
-**Shared choices** — the Exam vote, the Campaign Year, how many Squadmates to start with and their templates — are settled by a D6 roll-off between the proposals when players disagree, highest taking it.
+**Shared choices** (the Exam vote, the Campaign Year, how many Squadmates to start with and their templates) are settled by a D6 roll-off between the proposals when players disagree, highest taking it.
 
 </Subsection>
 
@@ -161,7 +161,7 @@ Record the <GlossaryTerm term="Campaign Year" /> (845 to 850) if the campaign ha
 
 <Subsection title="Origin" note="Step 1" id="origin">
 
-Set every attribute to **2**, then roll D66 — re-rolling a row whose condition the Campaign Year does not meet. Add 1 to each of its **two attributes**, take level 1 in one of its **two Talents**, and record one of its **two Havens**: what you have to return to, and what Visit Haven uses to lower your Stress and Grief. A row's <GlossaryTerm term="Canon Tie" /> is optional and changes nothing in play.
+Set every attribute to **2**, then roll D66 on the Origin table, re-rolling a row whose condition the Campaign Year does not meet. Add 1 to each of its **two attributes**, take level 1 in one of its **two Talents**, and record one of its **two Havens**: what you have to return to, and what Visit Haven uses to lower your Stress and Grief. A row's <GlossaryTerm term="Canon Tie" /> is optional and changes nothing in play.
 
 <CoreTable table="origins" />
 
@@ -169,7 +169,7 @@ Set every attribute to **2**, then roll D66 — re-rolling a row whose condition
 
 <Subsection title="Why You Enlisted" note="Step 2" id="why-you-enlisted">
 
-Roll D66, add 1 to that row's attribute, and record that row's <GlossaryTerm term="Drive" /> — or any other row's. A Drive needing a named comrade names one when the Squad forms.
+Roll D66, add 1 to that row's attribute, and record that row's <GlossaryTerm term="Drive" />, or any other row's. A Drive needing a named comrade names one when the Squad forms.
 
 <CoreTable table="why-you-enlisted" />
 
@@ -189,7 +189,8 @@ Each year: roll D66 on its events for **+1 attribute, 1 Talent level, and Merit*
 
 **No Talent above level 2 at creation,** and no rule Talent above its maximum.
 
-If neither of an event's Talents can take the level, take it in any Talent on that year's curriculum that can.
+- If neither of an event's Talents can take the level, take it in any Talent on that year's curriculum that can.
+- If the only one that can take it names only entries no rule calls for, take that level or one in any curriculum Talent that can.
 
 </RuleBox>
 </BoxPair>
@@ -210,7 +211,7 @@ A Lifepath soldier gains exactly **5 Talent levels**: 1 Origin, 3 events, 1 Spec
 
 <Subsection title="The performance roll" id="the-performance-roll">
 
-The higher of the year's two performance attributes — **alone**. No Talent dice, Bonus Dice, Gear Dice, or Stress Dice, no Push, no Help, and never a second attempt.
+The higher of the year's two performance attributes, **alone**. No Talent dice, Bonus Dice, Gear Dice, or Stress Dice, no Push, no Help, and never a second attempt.
 
 <CoreTable table="performance-merit" />
 
@@ -253,7 +254,7 @@ If the players voted for the Exam, it replaces the third year's performance roll
   },
 ]} />
 
-Class Rank has no other effect. Because nothing adds points, every new Lifepath soldier has **18 attribute points** — 19 with a Top 10.
+Class Rank has no other effect. Because nothing adds points, every new Lifepath soldier has **18 attribute points**, or 19 with a Top 10.
 
 <CoreTable table="class-rank" />
 
@@ -261,7 +262,7 @@ Class Rank has no other effect. Because nothing adds points, every new Lifepath 
 
 <Subsection title="Finishing and joining the Squad" id="finishing">
 
-Record derived values, Rank Private, no harm, and <GlossaryTerm term="Standard Issue" /> — plus a medical kit for a Medic and a tool kit for an Engineer. Name your soldier. A built soldier finishes the same way.
+Record derived values, Rank Private, no harm, and <GlossaryTerm term="Standard Issue" />, plus a medical kit for a Medic and a tool kit for an Engineer. Name your soldier. A built soldier finishes the same way.
 
 Once everyone is done: create <a href="#the-starting-squad">starting Squadmates</a>, then each Drive that needs one names its comrade.
 
@@ -277,11 +278,20 @@ An optional prologue: three <GlossaryTerm term="Trials" /> played out after ever
 
 <FinePrint title="the Exam's conditions and its three Trials">
 
+<Subsection title="Using the Exam" id="using-the-exam">
+
+- **The vote.** Taken before the Lifepath begins. If the players run the Exam, every Cadet created at the same time takes it; a replacement character decides before rolling their own Lifepath and takes it alone.
+- **When.** After every Cadet has applied their third year's event, before Graduation.
+- **What it replaces.** The Merit from all three Trials, after Stress Response costs, replaces the third performance roll. The third year's event still happens, with its attribute point, Talent level, and Merit.
+- **Built soldiers take no Exam.** They take no Trial and earn no Exam Merit, whatever the vote. Only Cadets rolling the Lifepath count in each Trial's roll order and in the squad field exercise's Help.
+
+</Subsection>
+
 <Subsection title="How the Exam is played" id="how-the-exam-is-played">
 
 <FactTable caption="Exam conditions" columns={['', '']} rows={[
   ['Not a fight', 'No rounds, turns, Positions, Attention, Gas Rolls, or Titans. Requirements needing any of those do not apply, and the listed exam issue item always satisfies the gear requirement.'],
-  ['Pools', 'Full pools — attribute, one dice Talent, exam issue Gear Dice, Stress Dice. Bonus Dice only from Help in the squad field exercise.'],
+  ['Pools', 'Full pools: attribute, one dice Talent, exam issue Gear Dice, Stress Dice. Bonus Dice only from Help in the squad field exercise.'],
   ['Circumstances', 'None. The Exam is creation, played before the campaign begins.'],
   ['Stress', 'Everyone starts at 0, carries what they gain between Trials, and returns to 0 when the Exam ends.'],
   ['A Stress Response', 'Costs that Trial <b>1 Merit</b> instead of being rolled on the Wounds &amp; Fear table, and still blocks a Push.'],
@@ -298,7 +308,7 @@ An optional prologue: three <GlossaryTerm term="Trials" /> played out after ever
 
 The ODM balance test and the Titan dummy course cannot be Pushed, Helped, or Covered.
 
-**The squad field exercise** lets each Cadet pick one of six rolls and need **3 successes** for 1 Merit. It can be Pushed, and **Help is fixed**: each Cadet Helps exactly one roll — the one after them in the order, the first Helping the last. Any Cadet who could Help may **Cover** a Push until they have made their own roll. Merit comes only from your own roll.
+**The squad field exercise** lets each Cadet pick one of six rolls and need **3 successes** for 1 Merit. It can be Pushed, and **Help is fixed**: each Cadet Helps exactly one roll, the one after them in the order, the first Helping the last. Any Cadet who could Help may **Cover** a Push until they have made their own roll. Merit comes only from your own roll.
 
 </Subsection>
 
@@ -332,7 +342,7 @@ Every trigger is met by something you did, or where you put yourself.
 
 A named comrade is any other living soldier in the Squad, chosen when the Drive is recorded. If there is nobody to name, record a Drive that needs none instead.
 
-**If your named comrade dies, retires, or leaves, the Drive can never trigger again** — promotion does not count as leaving. At the start of the next session, pick a new Drive from any row. No attribute point comes with it.
+**If your named comrade dies, retires, or leaves, the Drive can never trigger again.** Promotion does not count as leaving. At the start of the next session, pick a new Drive from any row. No attribute point comes with it.
 
 </Subsection>
 
@@ -529,7 +539,7 @@ In a Titan Engagement a Squadmate can ride one player character's <GlossaryTerm 
 
 <Subsection title="The starting Squad" id="the-starting-squad">
 
-The Squad aims for **6 soldiers**, so you start with **6 minus the number of player characters** Squadmates — four players, two Squadmates. Choose each one's template and name it.
+The Squad aims for **6 soldiers**, so you start with **6 minus the number of player characters** Squadmates: four players, two Squadmates. Choose each one's template and name it.
 
 **Fewer is allowed,** down to none, and costs two things: fights run about three times deadlier for player characters, and a player whose character dies with no living Squadmate has nobody to promote.
 
@@ -558,8 +568,8 @@ Both builds run the same way and differ only at step 3.
 
 1. **Campaign Year,** if the campaign has none. No Exam, whatever the vote.
 2. **Specialty.** One of the nine.
-3. **Attributes.** **Template Build:** your Specialty's <a href="#the-stat-block">Squadmate template</a> ratings, unchanged — the ratings only, not its Talent. **Free Build:** one of two shapes, **4·3·3·3·3·2** or **4·4·3·3·2·2**, placed in any order that puts a 4 on the key attribute. Either way: 18 points, nothing below 2 or above 4, and no swap, floor, or Top 10 bonus.
-4. **Origin.** Choose a row the Campaign Year allows. Take a Haven, its Canon Tie if you want it, and **1 Talent level** — but none of its attribute points.
+3. **Attributes.** **Template Build:** your Specialty's <a href="#the-stat-block">Squadmate template</a> ratings, unchanged: the ratings only, not its Talent. **Free Build:** one of two shapes, **4·3·3·3·3·2** or **4·4·3·3·2·2**, placed in any order that puts a 4 on the key attribute. Either way: 18 points, nothing below 2 or above 4, and no swap, floor, or Top 10 bonus.
+4. **Origin.** Choose a row the Campaign Year allows. Take a Haven, its Canon Tie if you want it, and **1 Talent level**, but none of its attribute points.
 5. **Drive.** Any row's, with no attribute point.
 6. **Training Years, for the story.** Name one event row per year if you like. They give nothing.
 7. **Talents.** 1 level from your Specialty's list, then 3 in any Talents.
@@ -578,7 +588,7 @@ Both builds run the same way and differ only at step 3.
 </RuleBox>
 <RuleBox variant="stop" title="What only the Lifepath reaches" icon="ph:prohibit">
 
-A built soldier always has 18 points and a key attribute of 4. A Free Build with 2s on both Strength and Agility has **Health 2** — two untreated Critical Injuries and they are Down, and a Squad of four such soldiers loses about four times as many soldiers a fight.
+A built soldier always has 18 points and a key attribute of 4. A Free Build with 2s on both Strength and Agility has **Health 2**: two untreated Critical Injuries and they are Down, and a Squad of four such soldiers loses about four times as many soldiers a fight.
 
 Only the Lifepath gives a key attribute of 5 or 6, a Top 10 Class Rank, or a place in the Exam. A player who wants that chance rolls.
 

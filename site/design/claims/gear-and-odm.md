@@ -12,7 +12,7 @@ Page: `site/src/content/rules/gear-and-odm.mdx` (route `/guide/gear-and-odm/`), 
 - Every item except a gas canister and a prosthetic is rated; the rating runs 1 to 3 and is set when the item is received; it never changes. C 47-49; IT `rating_rules.rating`, item rows `rated`
 - Current rating runs from 0 to the rating, and it is the item's Gear Dice. C 47-48; IT `rating_rules.rating`
 - A roll takes Gear Dice from at most one item, chosen before the roll when more than one qualifies. C 48; IT `rating_rules.one_item_per_roll` (checked in code)
-- Wear: when a Pushed roll is final, each Gear Die showing 1 wears the item that supplied it by 1 point; Gear Dice are never re-rolled, so these are the first roll's 1s; a roll that was not Pushed wears nothing. C 54; IT `rating_rules.wear`, `unpushed_rolls` (Fig. 1)
+- Wear: when a Pushed roll is final, an item whose Gear Dice show any 1 wears by 1 point, one point per Pushed roll; a Push rolls a Gear Die showing 2 to 5 again and locks a 1; a roll that was not Pushed wears nothing. C 54; IT `rating_rules.wear`, `unpushed_rolls` (Fig. 1)
 - A rule Talent that ignores wear (Well-Kept Rig, Blade Discipline, Sure Seat) removes points before they apply. C 55; IT `rating_rules.wear` (Fig. 1)
 - Each point left lowers the current rating by 1, never below 0; a Blade Set is ruined by any wear instead. C 56; IT `rating_rules.wear`, `blade-set.wear` (Fig. 1)
 - No ruling wears an item; a called roll's stakes may lose a carried item, never a point of wear. C 54; SS `gm`

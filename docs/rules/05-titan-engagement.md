@@ -1177,7 +1177,7 @@ Talent dice apply to the Nape strike, Body Part strike, Break Free, and Treat In
 
 ### The Jam test
 
-> **Design note:** The Attention holder is the reference Rookie with Agility 3, ODM Gear 2, no dodge Talent, and Stress 1 at the start. They dodge each Titan once a round for three rounds, with Stress Responses, Push wear, and turn debt (`jam_test`). Every support pattern is tried: Help of 0 to 3 dice on every dodge, and Covering on every Push or on none. Behaviors come from the reference table by the Behavior Table procedure. The worst pattern Jams in these shares of fights:
+> **Design note:** The Attention holder is the reference Rookie with Agility 3, ODM Gear 2 (the issue before decision batch 11 raised it to 3, and the wear rule these figures assume is the one that batch replaced), no dodge Talent, and Stress 1 at the start. They dodge each Titan once a round for three rounds, with Stress Responses, Push wear, and turn debt (`jam_test`). Every support pattern is tried: Help of 0 to 3 dice on every dodge, and Covering on every Push or on none. Behaviors come from the reference table by the Behavior Table procedure. The worst pattern Jams in these shares of fights:
 >
 > | Size Class | One Titan | Two Titans |
 > |---|---|---|
@@ -1264,7 +1264,7 @@ The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The exa
 - **The engagement line** reads `Wooded | Anchors 2/2 | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut, Fall Back | Cloaks: - | No one standing since: -`. Nothing has wrecked an Anchor, so every soldier's Momentum cap is 2.
 - **The tracker row** reads `A Medium | cards 9 | Att: Jonas | Next: [hidden] | Prev: Roar | Eyes I0 LA I0 RA I0 LL B0 RL W1 | Op 1 (Jonas) | Regen 2/3 | Decoys 0 | Grab: - | Flags: -`.
 - **The left leg is Broken,** so the Titan is grounded. Jonas created its one Opening with a success beyond Breaking the leg last round.
-- **Private Mila Brandt** holds Blind Spot, with Strength 4, Clean Cut 1, Blade Set 1, Agility 3, ODM Gear 2, and Stress 1.
+- **Private Mila Brandt** holds Blind Spot, with Strength 4, Clean Cut 1, Blade Set 1, Agility 3, ODM Gear 3, and Stress 1.
 - **Private Jonas Keller** holds In Reach and Attention, with Strength 3, Blade Set 1, and Stress 2.
 - **Ilse,** a Squadmate on Jonas's Wing, holds In Reach.
 
@@ -1274,18 +1274,18 @@ The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The exa
 - **Bonus Dice.** She declares 3: Jonas's Opening (she did not create it) and 2 for the grounded Titan.
 - **Pool.** Strength 4, Clean Cut 1, and 3 Bonus Dice make 8 base dice, plus 1 Gear Die and 1 Stress Die.
 - **First roll.** The base dice show 6, 6, 3, 2, 5, 1, 4, and 2, the Gear Die shows 3, and the Stress Die 4. That is 2 successes against Nape Depth 4.
-- **The Push.** No Stress Die shows 1, so she Pushes and her Stress rises to 2. The six base dice not showing 6 show 6, 2, 3, 5, 4, and 1, and her two Stress Dice show 3 and 2. That makes 3 successes, still short.
+- **The Push.** No Stress Die shows 1, so she Pushes and her Stress rises to 2. The six base dice not showing 6 show 6, 2, 3, 5, 4, and 1, her Gear Die showing 3 rolls again and shows 2, and her two Stress Dice show 3 and 2. That makes 3 successes, still short.
 - **Result.** Her 3 successes become 3 Openings created by Mila, and Jonas's Opening is spent. The strike sets her hooked-by-strike flag. The Gear Die did not show 1, so nothing wears.
 
 **Card 9: Focus Titan A.**
 - **Attention.** No Grab holds it and no decoy holds its Attention, so it evaluates the ladder. Mila holds the hooked-by-strike flag, the top rung; Jonas at In Reach meets only the second. Mila takes Attention. The flags stay until this card's Next step.
 - **The behavior.** The Next Behavior is revealed as Swat, a control entry needing In Reach or On Body. Mila is at Blind Spot, so it takes its fallback, Thrash: 6 Attack Dice, knock-loose.
 - **The roll.** The GM rolls six Titan Dice in the open: 6, 2, 5, 3, 1, and 4. That is 2 successes, so the Thrash's Severity is 2.
-- **Mila's dodge.** Her turn this round is spent, so the dodge spends her round 4 turn. Agility 3, ODM Gear 2, and Stress 2 make 7 dice. The base dice show 6, 3, and 1, the Gear Dice 6 and 4, and the Stress Dice 5 and 2. Her two successes cancel the Thrash's two, leaving no Net Successes, so it whiffs against her and she does not fall.
+- **Mila's dodge.** Her turn this round is spent, so the dodge spends her round 4 turn. Agility 3, ODM Gear 3, and Stress 2 make 8 dice. The base dice show 6, 3, and 1, the Gear Dice 6, 4, and 2, and the Stress Dice 5 and 2. Her two successes cancel the Thrash's two, leaving no Net Successes, so it whiffs against her and she does not fall.
 - **Next.** Thrash becomes the previous behavior, Mila's flag clears, and the GM rolls the new Next Behavior out of sight.
 
 **Card 11: Jonas.** Jonas no longer holds Attention.
-- **His move** is an ODM move from In Reach to Blind Spot, a Wooded step, and every ODM move is a Flight. He rolls for Fly: Agility 3, ODM Gear 2, and Stress 2 make 3 base dice, 2 Gear Dice, and 2 Stress Dice. The base dice show 6, 4, and 2, the Gear Dice 3 and 5, and the Stress Dice 4 and 2. The step happens whatever the roll gives, and the one success gives him 1 Momentum, under the cap of 2.
+- **His move** is an ODM move from In Reach to Blind Spot, a Wooded step, and every ODM move is a Flight. He rolls for Fly: Agility 3, ODM Gear 3, and Stress 2 make 3 base dice, 3 Gear Dice, and 2 Stress Dice. The base dice show 6, 4, and 2, the Gear Dice 3, 5, and 2, and the Stress Dice 4 and 2. The step happens whatever the roll gives, and the one success gives him 1 Momentum, under the cap of 2.
 - **Bonus Dice.** He declares 4, the cap: 2 of Mila's Openings and 2 for the grounded Titan. His Momentum would buy a Bite, but the cap is full, so he keeps it.
 - **Pool.** Strength 3 and 4 Bonus Dice make 7 base dice, plus 1 Gear Die and 2 Stress Dice.
 - **The roll.** The base dice show 6, 6, 6, 2, 4, 1, and 5, the Gear Die 6, and the Stress Dice 3 and 2. That is 4 successes: the Nape Depth.

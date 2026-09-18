@@ -162,7 +162,7 @@ A soldier's steadiness, half of Instinct plus Empathy, rounded up, plus 1 per Sc
 _Avoid_: willpower, sanity
 
 **Gear Dice**:
-Dice contributed by equipment. When a Pushed roll is final, each Gear Die showing 1 wears that equipment down by 1.
+Dice contributed by equipment. A Push rolls a Gear Die showing 2 to 5 again, keeps a 6, and locks a 1. When a Pushed roll is final, any 1 showing wears that equipment down by 1 point, one point per roll.
 
 **Help**:
 Adding 1 die to a comrade's roll, up to 3 helpers. In a Titan Engagement it spends the helper's action and needs the same Position or one step away; in a Skirmish it spends the helper's action and needs a comrade taking part who is not Down; outside both, the rule that calls for the roll states who can Help and what it spends, and on a called roll the GM rules who is present and able, with Help spending nothing unless the GM names a cost of time or position, which falls when Help is declared.

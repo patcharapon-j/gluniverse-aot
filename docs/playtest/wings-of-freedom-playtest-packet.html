@@ -268,7 +268,7 @@ th{background:var(--tint);font-weight:500}
 </ul>
 
 <h2 id="core-push">Pushing</h2>
-<p><b>When you Push</b>, you re-roll every base die and Stress Die that is not showing a 6, and you pay for it with Stress. You can Push a roll that failed or one that succeeded.</p>
+<p><b>When you Push</b>, you re-roll every die that is not showing a 6, except a Gear Die showing 1, and you pay for it with Stress. You can Push a roll that failed or one that succeeded.</p>
 <p>You cannot Push if any of these is true:</p>
 <ul>
 <li>Any Stress Die showed a 1, on the roll or after an earlier Push of it.</li>
@@ -285,7 +285,7 @@ th{background:var(--tint);font-weight:500}
 <li><b>Roll</b> the pool. If any Stress Die shows a 1, you suffer one Stress Response and cannot Push. Go to <i>Finishing a roll</i>.</li>
 <li><b>Decide.</b> You may Push. Before any die is re-rolled, one comrade who is able may offer to <a href="#core-cover">Cover</a> it.</li>
 <li><b>Gain Stress.</b> Gain 1 Stress and add 1 new Stress Die to the pool. If the Push is Covered, the Covering soldier gains the Stress instead, and no new Stress Die is added.</li>
-<li><b>Re-roll</b> every base die and every Stress Die not showing a 6, with any new Stress Die. Dice showing 6 stay. <b>Gear Dice are never re-rolled:</b> each stays as it landed, 1s included.</li>
+<li><b>Re-roll</b> every base die and every Stress Die not showing a 6, with any new Stress Die, and every Gear Die showing 2, 3, 4, or 5. Dice showing 6 stay. <b>A Gear Die showing 1 is locked:</b> it stays showing 1 and is never re-rolled.</li>
 <li><b>Check.</b> If any Stress Die now shows a 1, you suffer one Stress Response.</li>
 </ol>
 <p><b>One Stress Response per roll.</b> However many Stress Dice show 1, and however many Pushes a Talent allows, a roll causes at most one Stress Response.</p>
@@ -294,7 +294,7 @@ th{background:var(--tint);font-weight:500}
 <p><b>What a 1 means.</b></p>
 <ul>
 <li><b>Base die:</b> nothing.</li>
-<li><b>Gear Die:</b> if the roll was Pushed, each Gear Die showing 1 when the roll is final wears the item that supplied it by 1. A roll that was not Pushed wears nothing, whatever its Gear Dice show. What wear does is in <a href="#gear-items">Gear</a>.</li>
+<li><b>Gear Die:</b> if the roll was Pushed and any Gear Die shows 1 when the roll is final, the item that supplied it wears by 1 &mdash; one point per Pushed roll, whether one Gear Die shows a 1 or all three. A roll that was not Pushed wears nothing, whatever its Gear Dice show. What wear does is in <a href="#gear-items">Gear</a>.</li>
 <li><b>Stress Die:</b> a Stress Response.</li>
 </ul>
 
@@ -432,9 +432,9 @@ th{background:var(--tint);font-weight:500}
 
 <div class="example">
 <h4>Example: a Pushed dodge</h4>
-<p>A Medium Titan's card resolves Swat against Private Hanne Roth. The GM rolls its 6 Attack Dice as Titan Dice in the open: 5, 2, 6, 1, 3, 4. The 5 and the 6 are successes, so the Severity is 2. Hanne dodges. Her card has not come up this round, so the dodge spends this round's turn. Hanne has Agility 3, ODM Gear rated 2, and Stress 1. Private Dieter Lang holds her Position with his action unspent, so he Helps.</p>
-<p><b>Pool:</b> 3 + 1 = 4 base dice, 2 Gear Dice, 1 Stress Die. She rolls base 6, 5, 2, 1; Gear 1, 4; Stress 3. One success cancels one of Swat's two, so Swat would land with 1 Net Success. No Stress Die shows 1, so she Pushes. Dieter offers to Cover, and she accepts: he gains 1 Stress, and Hanne adds no Stress Die.</p>
-<p><b>Re-roll:</b> the three base dice not showing 6 come up 6, 3, 2, and the Stress Die comes up 4. Two successes cancel both of Swat's: 0 Net Successes, so Swat whiffs against her. The roll was Pushed and a Gear Die shows 1, so her ODM Gear wears from 2 to 1, and her Gas Roll this round is three dice. Dieter spent his action Helping, so when his card comes up he has only his move.</p>
+<p>A Medium Titan's card resolves Swat against Private Hanne Roth. The GM rolls its 6 Attack Dice as Titan Dice in the open: 5, 2, 6, 1, 3, 4. The 5 and the 6 are successes, so the Severity is 2. Hanne dodges. Her card has not come up this round, so the dodge spends this round's turn. Hanne has Agility 3, ODM Gear rated 3, and Stress 1. Private Dieter Lang holds her Position with his action unspent, so he Helps.</p>
+<p><b>Pool:</b> 3 + 1 = 4 base dice, 3 Gear Dice, 1 Stress Die. She rolls base 6, 5, 2, 1; Gear 1, 4, 2; Stress 3. One success cancels one of Swat's two, so Swat would land with 1 Net Success. No Stress Die shows 1, so she Pushes. Dieter offers to Cover, and she accepts: he gains 1 Stress, and Hanne adds no Stress Die.</p>
+<p><b>Re-roll:</b> the three base dice not showing 6 come up 6, 3, 2, her two Gear Dice showing 4 and 2 come up 5 and 3, and the Stress Die comes up 4. Her Gear Die showing 1 was locked and stays. Two successes cancel both of Swat's: 0 Net Successes, so Swat whiffs against her. The roll was Pushed and a Gear Die shows 1, so her ODM Gear wears by 1 point, from 3 to 2, and her Gas Roll this round is three dice. Dieter spent his action Helping, so when his card comes up he has only his move.</p>
 <p><b>Later that round,</b> the same Titan's next card targets Hanne and scores 3 successes. She rolls nothing new: her two successes cancel two, and the card lands with 1 Net Success.</p>
 </div>
 </section>
@@ -1968,7 +1968,7 @@ th{background:var(--tint);font-weight:500}
 
 <h3>Wear</h3>
 <ul>
-<li><b>When a Pushed roll is final,</b> each Gear Die showing 1 wears the item that supplied it by 1 point. A roll that was not Pushed never wears anything. No ruling wears an item: a called roll's stakes may lose a carried item, never a point of wear.</li>
+<li><b>When a Pushed roll is final,</b> an item whose Gear Dice show one or more 1s wears by 1 point &mdash; one point per Pushed roll, however many of its Gear Dice show 1. A roll that was not Pushed never wears anything. No ruling wears an item: a called roll's stakes may lose a carried item, never a point of wear.</li>
 <li>A Talent that ignores wear, such as Well-Kept Rig, Blade Discipline, or Sure Seat, removes points before they apply.</li>
 <li>Each point left lowers the current rating by 1, never below 0. A Blade Set is the exception: any wear ruins it (see <a href="#gear-blades">Blade Sets</a>).</li>
 </ul>
@@ -2032,7 +2032,7 @@ th{background:var(--tint);font-weight:500}
 
 <div class="example">
 <h4>Example: a Jam at On Body</h4>
-<p>Jonas is airborne at On Body on a Medium Titan, at Anchor Rating Wooded. His ODM Gear is rated 2 but worn to 1, and his Stress is 1. A behavior targets him. The Titan rolls its Attack Dice and scores Severity 2.</p>
+<p>Jonas is airborne at On Body on a Medium Titan, at Anchor Rating Wooded. His ODM Gear is rated 3 but worn to 1, and his Stress is 1. A behavior targets him. The Titan rolls its Attack Dice and scores Severity 2.</p>
 <p>Jonas dodges with his ODM Gear: Agility 3, 1 Gear Die, and 1 Stress Die. The base dice show 6, 2, and 4, the Gear Die shows 1, and the Stress Die shows 3. That is one success. No Stress Die shows 1, so he Pushes, and his Stress rises to 2. The re-rolled base dice show 6 and 5, and the two Stress Dice show 3 and 2. His two successes cancel both of the attack's: 0 Net Successes, and it does not land.</p>
 <p>The Pushed roll is final with a Gear Die showing 1, so his ODM Gear takes 1 wear, drops to 0, and Jams. He falls. On Body is high, and neither Wooded nor a Medium Titan raises it. The D6 shows 4, plus 2 makes 6: a hard landing, 2 damage. At the end of the round he made a Pushed roll with his ODM Gear, so his Gas Roll is three dice: 1, 1, and 5. His Gas Rating drops from 3 to 1.</p>
 </div>
@@ -2350,9 +2350,9 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <thead><tr><th>Funding</th><th>ODM Gear rating</th><th>Spare canisters</th><th>Blade Sets, counting the one in the handles</th><th>Horse rating</th></tr></thead><tbody>
 <tr><td>1</td><td>1</td><td>0</td><td>2</td><td>1</td></tr>
 <tr><td>2</td><td>1</td><td>1</td><td>2</td><td>1</td></tr>
-<tr><td>3 (used in this playtest)</td><td>2</td><td>1</td><td>3</td><td>2</td></tr>
-<tr><td>4</td><td>2</td><td>1</td><td>4</td><td>2</td></tr>
-<tr><td>5</td><td>2</td><td>2</td><td>4</td><td>2</td></tr>
+<tr><td>3 (used in this playtest)</td><td>3</td><td>1</td><td>3</td><td>2</td></tr>
+<tr><td>4</td><td>3</td><td>1</td><td>4</td><td>2</td></tr>
+<tr><td>5</td><td>3</td><td>2</td><td>4</td><td>2</td></tr>
 <tr><td>6</td><td>3</td><td>2</td><td>5</td><td>3</td></tr>
 </tbody></table></div>
 <div class="table-wrap"><table>
@@ -2630,8 +2630,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 
 <div class="example">
 <h4>Example: a Flight to the Nape</h4>
-<p>The Anchor Rating is Wooded, so the field holds 2 Anchors and nothing has wrecked one yet. Private Mila Kraus holds In Reach on a standard Medium Titan, with Agility 4, Wirework 1, ODM Gear rated 2, and Stress 1. Wooded joins In Reach and Blind Spot by an ODM step, so she takes it with her move.</p>
-<p><b>The Flight.</b> She names the Titan and the step, and rolls Fly: 4 Agility dice, 1 Wirework die, 2 Gear Dice, and 1 Stress Die. The base dice show 6, 3, 6, 2, 4; the Gear Dice show 5 and 1; the Stress Die shows 4. Two successes. She does not Push, so the Gear Die showing 1 wears nothing.</p>
+<p>The Anchor Rating is Wooded, so the field holds 2 Anchors and nothing has wrecked one yet. Private Mila Kraus holds In Reach on a standard Medium Titan, with Agility 4, Wirework 1, ODM Gear rated 3, and Stress 1. Wooded joins In Reach and Blind Spot by an ODM step, so she takes it with her move.</p>
+<p><b>The Flight.</b> She names the Titan and the step, and rolls Fly: 4 Agility dice, 1 Wirework die, 3 Gear Dice, and 1 Stress Die. The base dice show 6, 3, 6, 2, 4; the Gear Dice show 5, 1, and 2; the Stress Die shows 4. Two successes. She does not Push, so the Gear Die showing 1 wears nothing.</p>
 <p><b>What it gives.</b> The step happens whatever the roll gave, so she holds Blind Spot and is airborne. Her two successes give her 2 Momentum, which is exactly her cap of 2 Anchors.</p>
 <p><b>The spend.</b> She spends 1 on Bite for 1 Bonus Die on her Nape strike this turn, and keeps 1. Had she scored no successes, she would have come in loud instead, and the Titan would have looked straight at her.</p>
 <p><b>At the end of the round</b> she made an ODM move, so she keeps her last point of Momentum, and she makes one Gas Roll of two dice for the round, however much flying she did in it.</p>
@@ -2771,9 +2771,9 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 
 <div class="example">
 <h4>Example: dodging a Bite</h4>
-<p>Private Jonas Keller holds In Reach and a standard Medium Titan's Attention, with Agility 3, ODM Gear 2, and Stress 1. The Titan's card resolves Bite: kill tier, 9 Attack Dice, a torso Critical Injury of Injury Type Bite that can be lethal.</p>
+<p>Private Jonas Keller holds In Reach and a standard Medium Titan's Attention, with Agility 3, ODM Gear 3, and Stress 1. The Titan's card resolves Bite: kill tier, 9 Attack Dice, a torso Critical Injury of Injury Type Bite that can be lethal.</p>
 <p><b>The roll.</b> The GM rolls nine Titan Dice in the open: 6, 5, 5, 4, 3, 3, 2, 1, 1. Severity 3.</p>
-<p><b>The dodge.</b> Jonas's turn this round is unspent, so his dodge spends it. He rolls 3 base dice, 2 Gear Dice, and 1 Stress Die: base 6, 4, 2; Gear 3, 2; Stress 5. One success. No Stress Die shows 1, so he Pushes: Stress 2. The base dice 4 and 2 come up 5 and 3, the Stress Die comes up 3, and his new Stress Die shows 2. Still one success.</p>
+<p><b>The dodge.</b> Jonas's turn this round is unspent, so his dodge spends it. He rolls 3 base dice, 3 Gear Dice, and 1 Stress Die: base 6, 4, 2; Gear 3, 2, 4; Stress 5. One success. No Stress Die shows 1, so he Pushes: Stress 2. The base dice 4 and 2 come up 5 and 3, the three Gear Dice come up 4, 5, and 3, the Stress Die comes up 3, and his new Stress Die shows 2. Still one success, and no Gear Die shows 1, so nothing wears.</p>
 <p><b>The result.</b> His 1 success cancels 1 of the Bite's 3, leaving 2 Net Successes: the Bite lands. Its 2D6 shows 6, and the second Net Success adds 1: a total of 7, Squeezed Between the Teeth, a 1-die penalty on Fly, Dodge, and Break Free. He dodged with ODM Gear, so he makes a Gas Roll at the end of the round.</p>
 <p>Against a Tempo 2 Titan, his 1 success would cancel against its second card this round too, with no new roll.</p>
 </div>
@@ -2853,7 +2853,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <div class="example">
 <h4>Example: breaking Attention with a Feint</h4>
 <p>Round 2 against a standard Medium Titan (Tempo 1), at Wooded. The Titan's card 5 has already come up and resolved Snap Short against Private Hanne Roth, who holds In Reach and its Attention. Snap Short rolls 3 Attack Dice; the GM rolled 5, 3, 1, Severity 1. Hanne chose not to dodge, so its 1 success was net: it landed, and she gained 1 Stress, going to Stress 2.</p>
-<p><b>Card 8: Hanne.</b> She takes Break Attention and names a Feint: she is at In Reach with working ODM Gear. She needs 1 (she holds Attention), +1 for the Feint, +0 decoys in a row (the Titan's last card resolved a behavior): 2 successes. Perception 3, ODM Gear 2, and Stress 2 give 3 base dice, 2 Gear Dice, and 2 Stress Dice. She rolls base 6, 3, 1; Gear 6, 2; Stress 4, 5. Two successes. Her Feint holds the Titan's Attention for its next card, and its decoys in a row is now 1. She made a roll with ODM Gear, so she makes a Gas Roll at the end of the round.</p>
+<p><b>Card 8: Hanne.</b> She takes Break Attention and names a Feint: she is at In Reach with working ODM Gear. She needs 1 (she holds Attention), +1 for the Feint, +0 decoys in a row (the Titan's last card resolved a behavior): 2 successes. Perception 3, ODM Gear 3, and Stress 2 give 3 base dice, 3 Gear Dice, and 2 Stress Dice. She rolls base 6, 3, 1; Gear 6, 2, 3; Stress 4, 5. Two successes. Her Feint holds the Titan's Attention for its next card, and its decoys in a row is now 1. She made a roll with ODM Gear, so she makes a Gas Roll at the end of the round.</p>
 <p><b>Round 3.</b> Hanne draws 3 and the Titan draws 11. On card 3 the Feint still holds, so Hanne makes an ODM move to Blind Spot and takes a Nape strike: she does not hold the Titan's Attention. She falls short with 2 successes, which become 2 Openings her comrades can spend, and she is marked as having struck its Nape.</p>
 <p><b>Card 11: the Titan.</b> The Feint's hold ends on this card, which resolves nothing and uses up the Next Behavior. The Titan checks its ladder: Hanne is on the top rung. She holds its Attention, and her mark still stands, so the Titan's next card that resolves a behavior will come for her at Blind Spot. Until then, a second Break Attention against it needs 1 more success for the decoy already in a row.</p>
 </div>
@@ -3038,9 +3038,9 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 
 <div class="example">
 <h4>Example: under the Falling Titan</h4>
-<p>Round 4 against a standard Medium Titan (Heave rating 3) at Wooded. Private Kurt Adler holds On Body with his action spent and is not airborne, with Agility 3, ODM Gear 2, and Stress 2. Private Dieter Lang and Private Hanne Roth hold In Reach.</p>
+<p>Round 4 against a standard Medium Titan (Heave rating 3) at Wooded. Private Kurt Adler holds On Body with his action spent and is not airborne, with Agility 3, ODM Gear 3, and Stress 2. Private Dieter Lang and Private Hanne Roth hold In Reach.</p>
 <p><b>Card 7: Dieter</b> strikes the Wounded right leg with a count of 1 and scores 1 success. The leg Breaks, the Titan is grounded, and its body comes down.</p>
-<p><b>Leap Clear.</b> Kurt is in the path. He rolls 3 base dice, 2 Gear Dice, and 2 Stress Dice: base 5, 3, 1; Gear 4, 2; Stress 3, 2. No success, and no Stress Die shows 1, so he Pushes: Stress 3. The base dice come up 4, 2, 5, the Stress Dice 4 and 5, and his new Stress Die shows 2. Still no success: he is Pinned.</p>
+<p><b>Leap Clear.</b> Kurt is in the path. He rolls 3 base dice, 3 Gear Dice, and 2 Stress Dice: base 5, 3, 1; Gear 4, 2, 3; Stress 3, 2. No success, and no Stress Die shows 1, so he Pushes: Stress 3. The base dice come up 4, 2, 5, the three Gear Dice come up 5, 3, and 2, the Stress Dice 4 and 5, and his new Stress Die shows 2. Still no success, and no Gear Die shows 1, so nothing wears: he is Pinned.</p>
 <p><b>The pin.</b> The Injury Location D6 shows 4, his right leg: a limb pin. The 2D6 on the leg table shows 7: Wrenched Knee, a 1-die penalty on Fly, Ride, and Dodge. The Titan's right leg is Broken, so its left leg pins him instead. Kurt holds In Reach relative to the Titan.</p>
 <p><b>Card 12: Hanne</b> Heaves. Dieter's action is spent, so no one Helps. Strength 4 and Stress 1 give 4 base dice and 1 Stress Die: 6, 6, 3, 2; Stress 4. Two successes: the Heave count is 2 of 3.</p>
 <p><b>Round 5.</b> Dieter draws 2, Kurt 6, and Hanne 9. On card 2 Dieter, who does not hold its Attention, walks to Blind Spot, a step the grounded Titan allows on foot, and his Nape strike reaches its Nape Depth. The Titan dies. Dieter is at Blind Spot, so he rolls on the steam table: a 4, 1 Burn damage. The Titan was already grounded, so it does not fall again. Kurt stays Pinned, now under the Corpse, and the Heave count stays at 2. No Focus Titan is alive, but a soldier is Pinned, so the Titan Engagement runs on.</p>
@@ -3106,8 +3106,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 
 <div class="example">
 <h4>Example: a Grab and a rescue</h4>
-<p>A standard Medium Titan draws card 5, Private Lena Falk draws 9, and Private Ruben Hartmann draws 12. Lena holds In Reach and the Titan's Attention, with Agility 3, ODM Gear 2, and Stress 1. Ruben holds In Reach too, with Resolve 3 and Stress 1.</p>
-<p><b>Card 5.</b> The Next Behavior is Grab: kill tier, 9 Attack Dice. The GM rolls nine Titan Dice in the open: 6, 5, 5, 4, 3, 3, 2, 1, 1. Severity 3. Lena's turn this round is unspent, so her dodge spends it. She rolls base 6, 4, 2; Gear 3, 2; Stress 5: one success. She Pushes to Stress 2: the base dice 4 and 2 come up 6 and 1, the Stress Die comes up 3, and her new Stress Die shows 4. Two successes cancel two of the Grab's three. One Net Success: the Grab lands.</p>
+<p>A standard Medium Titan draws card 5, Private Lena Falk draws 9, and Private Ruben Hartmann draws 12. Lena holds In Reach and the Titan's Attention, with Agility 3, ODM Gear 3, and Stress 1. Ruben holds In Reach too, with Resolve 3 and Stress 1.</p>
+<p><b>Card 5.</b> The Next Behavior is Grab: kill tier, 9 Attack Dice. The GM rolls nine Titan Dice in the open: 6, 5, 5, 4, 3, 3, 2, 1, 1. Severity 3. Lena's turn this round is unspent, so her dodge spends it. She rolls base 6, 4, 2; Gear 3, 2, 4; Stress 5: one success. She Pushes to Stress 2: the base dice 4 and 2 come up 6 and 1, her three Gear Dice come up 2, 5, and 4, the Stress Die comes up 3, and her new Stress Die shows 4. Two successes cancel two of the Grab's three. One Net Success: the Grab lands.</p>
 <p><b>Hold:</b> the left arm, the first unbroken arm, takes her; while it holds her its Toughness is 1. <b>Crush:</b> 2D6 on the torso table shows 7, Deep Bruising: a 1-die penalty on Fly, Dodge, and Break Free. The Grab reads no Net Successes, so nothing adds to the roll. <b>Witnesses:</b> Ruben rolls D6 + Stress 1 &minus; Resolve 3, and the die shows 3: a total of 1, Heart in Your Throat. He gains 1 Stress.</p>
 <p><b>Card 9.</b> Lena's first counted turn. Her dodge already spent it, and the Grab spends its action anyway. At its end she is still Grabbed, so she is lifted. Now the hand can be struck only from On Body or Blind Spot.</p>
 <p><b>Card 12: Ruben.</b> He makes an ODM move to On Body and strikes the holding arm: Strength 3, Blade Set 1, and Stress 2 give 3 base dice, 1 Gear Die, and 2 Stress Dice. He rolls base 6, 6, 2; Gear 4; Stress 3, 5. Two successes: the first moves the arm to Wounded, the second Breaks it. Lena is free. She was lifted, so she falls from On Body's height (a high fall) and lands In Reach. Nothing holds the Titan's Attention until its next card, and Ruben, now On Body and marked as having hurt it, stands on its top rung.</p>
@@ -3804,7 +3804,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Called roll:</b> before you build the pool, the GM names the entry (or an attribute alone), the Circumstances, and the stakes. Needs 1. Once rolled, nothing about it changes. Stakes that name damage or a fall come with your current Health said aloud; a fall a ruling names is low or high, never extreme, in a fight as well as outside one. In a Titan Engagement or a Skirmish a called roll is only for an act no entry marked as an action could model that changes nothing the fight tracks: it spends your action, is made on your turn and never in place of a Reaction, its Help is the fight's, success on it never finds Squad Supply, a fall it stakes lands as any fall does, and you can try it again on a later turn.</li>
 <li><b>Circumstances:</b> Effortless +3, Routine +2, Easy +1 (Bonus Dice, under the cap); Standard nothing; Hard &minus;1, Harsh &minus;2, Desperate &minus;3 (penalties after the cap, never below 1 base die). One step per roll, weighing every condition at once; never changes a need. A Reaction takes the step in force when the attacker's card comes up.</li>
 <li><b>Help:</b> +1 die each, 3 helpers at most. In a Titan Engagement: the same Position or one step away, spending the helper's action. In a Skirmish: a comrade taking part who is not Down, Engaged or Apart, spending their action. Outside both: as the calling rule says, or on a called roll as the GM rules, where Help spends nothing unless the GM names a cost of time or position, which falls when the Help is declared. Help on a called roll in a fight is that fight's own Help, at no cost the GM names.</li>
-<li><b>Push:</b> re-roll base and Stress Dice not showing 6; +1 Stress and a new Stress Die, unless a comrade Covers it. Gear Dice stay, and a Pushed Gear Die showing 1 wears its item.</li>
+<li><b>Push:</b> re-roll every die not showing 6 except a Gear Die showing 1; +1 Stress and a new Stress Die, unless a comrade Covers it. A Pushed roll whose Gear Dice show any 1 wears its item by 1 point.</li>
 <li><b>Cover:</b> a player character takes the Push's Stress, and no Stress Die is added. In a Titan Engagement, from the same Position or one step away; outside one, only a player character who could Help that roll. Squadmates never Cover.</li>
 <li><b>Injury Location (D6):</b> 1 left arm, 2 right arm, 3 left leg, 4 right leg, 5 torso, 6 head. No side given: odd left, even right.</li>
 </ul>
@@ -4225,7 +4225,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <h4>Example: a card that lands, and one that whiffs</h4>
 <p>A standard Medium Titan's card comes up. It holds no Grabbed soldier and no decoy holds it. Its ladder gives its Attention to Private Lena Falk, who holds In Reach. Its Next Behavior is Bite: In Reach meets the entry, and Bite uses no Body Part.</p>
 <p><b>Roll and announce.</b> You announce Bite, a kill entry, against Lena, and roll its 9 Attack Dice in the open: 6, 2, 5, 3, 1, 4, 5, 2, 3. Three dice show 5 or 6: Severity 3.</p>
-<p><b>Reactions.</b> Lena's turn this round is unspent, so her dodge spends it. Agility 3, ODM Gear 2, and Stress 2 give 3 base dice, 2 Gear Dice, and 2 Stress Dice. She rolls base 6, 4, 1; Gear 6, 3; Stress 5, 2. Two successes cancel two of the Bite's three, leaving 1 Net Success. The Bite lands.</p>
+<p><b>Reactions.</b> Lena's turn this round is unspent, so her dodge spends it. Agility 3, ODM Gear 3, and Stress 2 give 3 base dice, 3 Gear Dice, and 2 Stress Dice. She rolls base 6, 4, 1; Gear 6, 3, 2; Stress 5, 2. Two successes cancel two of the Bite's three, leaving 1 Net Success. The Bite lands.</p>
 <p><b>Effects.</b> Lena gains a Bite Critical Injury at the torso, which can be lethal. With 1 Net Success its roll adds nothing. Had she not dodged, all 3 successes would be net, and the roll would add 2.</p>
 <p><b>Next.</b> Bite becomes the previous behavior, decoys in a row returns to 0, the marks clear, and you roll a new Next Behavior out of sight.</p>
 <p><b>Had the dice whiffed.</b> Had no Titan Die shown 5 or 6, the Bite would whiff against Lena, she would make no dodge and keep her turn, and the Next step would still happen in full: Bite the previous behavior, the marks cleared, a new Next Behavior rolled.</p>
@@ -4597,12 +4597,12 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </dl>
 <h2>Rolls and harm</h2>
 <dl class="glossary">
-<dt>Push</dt><dd>Re-rolling base and Stress Dice that did not show a 6, at the cost of 1 Stress, allowed only if no Stress Die showed a 1. 1s on Gear Dice stay and wear that gear.</dd>
+<dt>Push</dt><dd>Re-rolling every die that did not show a 6, except a Gear Die showing 1, at the cost of 1 Stress, allowed only if no Stress Die showed a 1. A 1 on a Gear Die stays and wears that gear by 1 point.</dd>
 <dt>Stress</dt><dd>A soldier's mounting fear and adrenaline, which makes them both more capable and more likely to break.</dd>
 <dt>Stress Dice</dt><dd>Dice added to attribute rolls equal to current Stress, unless the roll explicitly excludes them, which can succeed like any die but can also set off a Stress Response.</dd>
 <dt>Stress Response</dt><dd>The harmful reaction set off when a Stress Die shows a 1.</dd>
 <dt>Resolve</dt><dd>A soldier's steadiness, half of Instinct plus Empathy, rounded up, plus 1 per Scar and minus 1 per point of Grief, which counts against Stress Response and Fear Roll results.</dd>
-<dt>Gear Dice</dt><dd>Dice contributed by equipment. When a Pushed roll is final, each Gear Die showing 1 wears that equipment down by 1.</dd>
+<dt>Gear Dice</dt><dd>Dice contributed by equipment. A Push rolls a Gear Die showing 2 to 5 again, keeps a 6, and locks a 1. When a Pushed roll is final, any 1 showing wears that equipment down by 1 point, one point per roll.</dd>
 <dt>Help</dt><dd>Adding 1 die to a comrade's roll, up to 3 helpers. In a Titan Engagement it spends the helper's action and needs the same Position or one step away; in a Skirmish it spends the helper's action and needs a comrade taking part who is not Down; outside both, the rule that calls for the roll states who can Help and what it spends, and on a called roll the GM rules who is present and able, with Help spending nothing unless the GM names a cost of time or position, which falls when the Help is declared. Help on a called roll in a Titan Engagement or a Skirmish is that fight's own Help, at no cost the GM names.</dd>
 <dt>Bonus Dice</dt><dd>Dice from Help, Openings, and the other sources a rule names, such as Call It, a grounded Titan, the Ambush, or a plus step of Circumstances, which together can add at most 4 to a roll.</dd>
 <dt>Called roll</dt><dd>A roll the GM calls for an act no rule covers, when its outcome is in doubt and failure would cost something. Before the pool is built the GM names its Catalog entry or attribute, its Circumstances, and its Stakes; it needs 1 success, can be Pushed, Covered, and Helped as the GM rules, and its result stands. In a Titan Engagement or a Skirmish it spends the action and is made only for an act no entry marked as an action in that fight could model and that changes nothing the fight tracks; Help on it is then that fight's Help. A passive roll is not a called roll: it is a Spot or Size Up the GM makes out of sight for something the soldier does not know is there, outside a fight, with no stakes, no Push, no Help, and no Stress Response, and failing it means only that the soldier does not notice.</dd>

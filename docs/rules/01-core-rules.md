@@ -157,7 +157,7 @@ This order comes from ADR-0004. Follow it exactly.
 1. **Roll.** Roll the pool. If any Stress Die shows a 1, the soldier suffers one Stress Response and cannot Push. Go to *Finishing a roll*.
 2. **Decide.** The soldier may Push. If they do, one eligible comrade may offer to Cover the Push before any die is re-rolled (see *Covering*).
 3. **Gain Stress.** The soldier gains 1 Stress and adds 1 new Stress Die to the pool. If the Push is Covered, the Covering soldier gains the 1 Stress instead, and no new Stress Die is added.
-4. **Re-roll.** Pick up and roll again every base die and every Stress Die that is not showing a 6, along with any new Stress Die. Dice showing 6 stay as they are. **Gear Dice are not re-rolled.** Every Gear Die stays showing what it rolled, whatever it shows, and a Gear Die showing 1 stays locked in the pool. Bonus Dice are base dice, so they are re-rolled unless they show a 6 (OQ-01).
+4. **Re-roll.** Pick up and roll again every base die and every Stress Die that is not showing a 6, along with any new Stress Die, and every Gear Die showing 2, 3, 4, or 5. Dice showing 6 stay as they are. **A Gear Die showing 1 is locked:** it stays in the pool showing 1 and is never re-rolled. Bonus Dice are base dice, so they are re-rolled unless they show a 6 (OQ-01, OQ-187; decision batch 11).
 
 5. **Check the Stress Dice.** If any Stress Die now shows a 1, the soldier suffers one Stress Response.
 
@@ -166,12 +166,12 @@ This order comes from ADR-0004. Follow it exactly.
 ### What 1s mean
 
 - **Base die 1:** nothing. It is re-rolled on a Push like any base die that isn't showing a 6.
-- **Gear Die 1:** if the roll was Pushed, each Gear Die showing a 1 when the roll is final wears the gear item that supplied it by one point. Since Gear Dice are never re-rolled, these are the 1s from the first roll. A roll that was not Pushed causes no wear, even when Gear Dice show 1. Chapter 4 explains what wear does to each item. For example, ODM Gear worn down to 0 Jams.
+- **Gear Die 1:** if the roll was Pushed and any Gear Die shows a 1 when the roll is final, the gear item that supplied the dice takes **one point of wear**: one point per Pushed roll, whether one Gear Die shows a 1 or all three. A 1 can be there from the first roll, since a Gear Die showing 1 is locked, or from the re-roll of a Gear Die that showed 2 to 5. A roll that was not Pushed causes no wear, even when Gear Dice show 1. Chapter 4 explains what wear does to each item. For example, ODM Gear worn down to 0 Jams.
 - **Stress Die 1:** a Stress Response, as set out in steps 1 and 5, except on a passive roll, where it does nothing (section 1.1, item 5).
 
 ### Pushing and gas
 
-A Pushed roll whose gear item is ODM Gear makes that round's Gas Roll three dice instead of two (Chapter 4). The Gas Roll is three dice however many of that round's rolls were Pushed rolls with ODM Gear, unless that soldier's Gas Roll for the round has already been made (Chapter 4, section 4.3). That includes a Pushed dodge made with ODM Gear, even though a Reaction is not an action. A Pushed dodge made with the horse while mounted (section 1.9) is not such a roll: its Gear Dice showing 1 wear the horse, not ODM Gear, and it does not by itself make the Gas Roll three dice (OQ-12, OQ-25).
+A Pushed roll whose gear item is ODM Gear makes that round's Gas Roll three dice instead of two (Chapter 4). The Gas Roll is three dice however many of that round's rolls were Pushed rolls with ODM Gear, unless that soldier's Gas Roll for the round has already been made (Chapter 4, section 4.3). That includes a Pushed dodge made with ODM Gear, even though a Reaction is not an action. A Pushed dodge made with the horse while mounted (section 1.9) is not such a roll: a 1 showing on its Gear Dice wears the horse, not ODM Gear, and it does not by itself make the Gas Roll three dice (OQ-12, OQ-25).
 
 ### Finishing a roll
 
@@ -376,13 +376,13 @@ A Titan's first card this round resolves a sweeping behavior against Private Mil
   - Base dice: 4 + 1 = 5. Gear Dice: 2. Stress Dice: 1.
 - **Roll.** Base dice show 6, 4, 3, 1, 2. Gear Dice show 1, 5. The Stress Die shows 3. That's one success, one short of cancelling the attack's two. No Stress Die shows a 1, so she can Push.
 - **Push.** Mila Pushes, and Oskar offers to Cover. He gains 1 Stress. Mila gains none and adds no new Stress Die.
-- **Re-roll.** Mila keeps her base 6. She re-rolls the other four base dice (4, 3, 1, 2) and her Stress Die. Both Gear Dice stay as they are, the 1 locked and the 5 unchanged. The re-rolled base dice come up 6, 2, 5, 1, and the Stress Die comes up 1.
+- **Re-roll.** Mila keeps her base 6. She re-rolls the other four base dice (4, 3, 1, 2), her Stress Die, and the Gear Die showing 5; the Gear Die showing 1 is locked and stays. The re-rolled base dice come up 6, 2, 5, 1, the Gear Die comes up 5 again, and the Stress Die comes up 1.
 - **Check.** A Stress Die shows 1, so Mila suffers one Stress Response.
 - **Finish.**
   1. She has two successes (two base 6s).
   2. The Stress Response is resolved on the Chapter 3 table at Mila's Stress of 1.
   3. Unless that result changes the Reaction, her two successes cancel the attack's two. It has no Net Successes, so it whiffs against her.
-  4. Finally, one Gear Die shows a 1 and the roll was Pushed, so her ODM Gear takes one point of wear.
+  4. Finally, a Gear Die shows a 1 and the roll was Pushed, so her ODM Gear takes one point of wear.
 - **Pushing and gas.** The dodge was a Pushed roll using ODM Gear, so Mila's Gas Roll this round is three dice.
 - **The Titan's second card.** Later this round, the same Titan resolves another behavior against Mila, and its Attack Dice score 1 success. She has already made her one Reaction against this Titan this round, so she makes no new roll: her dodge's two successes cancel that one, and it whiffs against her too. Had the roll scored 3 successes, 1 would have been net, and the behavior would have landed on her.
 - **Oskar.** If a card targets Oskar after he has Helped, he can still dodge. His action is spent, so the Reaction spends his whole next turn. He keeps this round's move, which he can still use on his card if it has not yet come. His next turn begins its round with its move and action already spent, so next round he cannot Help anyone.

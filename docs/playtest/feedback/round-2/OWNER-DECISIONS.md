@@ -21,7 +21,7 @@ Every question below was put to the owner and answered. The answers are the batc
 3. **Table time.** Accepted at about +1 to +1.5 dice pools a round against 3.57. Flight is rolled for every ODM move, not only for a reach beyond one step.
 4. **Anchor counts.** Accepted as the starting values: Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3.
 5. **Blade swap.** Taken. Swap Blade Set spends the move in a Titan Engagement (10-4).
-6. **The Gear Die package.** Deferred to the post-playtest retune, as recommended. The owner's instruction was the swap now and the package later.
+6. **The Gear Die package.** ~~Deferred to the post-playtest retune, as recommended.~~ **Taken 2026-09-18**, on the owner's instruction to do it in the same change as the site audit. Applied whole as decision batch 11 (OQ-187): a Push re-rolls a Gear Die showing 2 to 5, keeps a 6, and locks a 1; a Pushed roll wears its gear item by at most 1 point; and issued ODM Gear rises to rating 3 from Funding 3 up. Measured at 24.2% against the Jam test's bar of a third. The simulator rerun batch 10 schedules now covers it too.
 7. **The Talent and the list-size lock.** "Remove the lock. Add the talent." Done: `list_size` reads at least eight, the Leader's list holds nine, the total is 84, the Foundry schema is `min(8)`, and the Talent is **Shout Them Off** (Leader, rule, once per Titan Engagement: you may spend your move on Draw Attention instead of your action). It follows Quick Refit's precedent, because no Talent in the game grants Bonus Dice and a dice Talent is impossible on an entry that is never rolled.
 
 ## Raised while applying, and decided
