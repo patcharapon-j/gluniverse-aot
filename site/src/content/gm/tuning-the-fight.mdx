@@ -27,7 +27,7 @@ import MarginNote from '~/components/MarginNote.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import Subsection from '~/components/Subsection.astro';
-import { RETREAT_CLOCK } from '~/lib/gm-tables';
+import { RETREAT_CLOCK, backgroundClocks } from '~/lib/gm-tables';
 
 <FieldQuote cite="Survey Corps manual, on command">A commander who changes the odds after the order has changed nothing but their own conscience.</FieldQuote>
 
@@ -91,7 +91,7 @@ Everything here is set **before the dice, in the open, and never mid-fight.**
 <FactTable caption="Set before a fight begins" columns={['Lever', 'What it buys']} rows={[
   ['The Titan', 'Small for a quick, sharp scene. Medium for the standard fight. Large when the scene is meant to be <em>survived</em> rather than won. The Sprinting Abnormal when the table should feel the rules have changed.'],
   ['The ground', 'The <b>Anchor Rating</b> changes a fight more than most Titans do. Open ground holds no Anchors at all, so nobody carries Momentum and everyone arrives empty-handed; a Giant Forest holds three, and the Squad crosses two Positions at a time until the place is flattened.'],
-  ['Background Titans', 'None, one, or two, each on 4, 6, or 8 segments. <b>The strongest lever you have, and the easiest to overspend.</b>'],
+  ['Background Titans', `None, one, or two, each on ${backgroundClocks()} segments. <b>The strongest lever you have, and the easiest to overspend.</b>`],
   ['Support', 'Squadmates who Help, a decoy screen, and the Squad Tactics they hold all end fights sooner without making them trivial. Under the strongest support a Medium Titan still takes two or three rounds and still draws blood.'],
 ]} />
 

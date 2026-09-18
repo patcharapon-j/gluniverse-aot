@@ -18,7 +18,7 @@ sources:
   - path: site/src/content/rules/making-your-soldier.mdx
     sha: "05cb561d00b7e04907abeee698757d8a2ebdc05e"
   - path: site/src/content/rules/gear-and-odm.mdx
-    sha: "3dc334f46d03226092ef5451d8e6d6d1f72b3c1d"
+    sha: "c31a6061945271f65a5640bf85ce335857f982a3"
   - path: data/character/action-catalog.yaml
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
   - path: data/gear/items.yaml

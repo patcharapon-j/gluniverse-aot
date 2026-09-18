@@ -49,7 +49,7 @@ interface Setup {
 }
 
 const setup = parse(setupText) as Setup;
-const anchors = parse(anchorText) as { ratings: { id: string; name: string }[] };
+const anchors = parse(anchorText) as { ratings: { id: string; name: string; anchors: number }[] };
 const sizes = parse(sizeText) as { classes: { id: string; name: string; height: string }[] };
 const round = parse(roundText) as { gm_tracker: Tracker };
 const attention = parse(attentionText) as { tests: { id: string; meaning: string }[] };
@@ -78,6 +78,18 @@ function named<T extends { id: string; name: string }>(rows: T[], id: string, wh
 
 /** Segments on the retreat clock of every Titan Engagement this table sets up. */
 export const RETREAT_CLOCK = setup.retreat_clock;
+
+/** "Open 0, Sparse 1, Wooded 2, …": the Anchors each rating gives, never retyped in a chapter. */
+export function anchorCounts(): string {
+  return anchors.ratings.map((r) => `${r.name} ${r.anchors}`).join(', ');
+}
+
+/** "4, 6, or 8": the clock lengths the setup table deals a Background Titan. */
+export function backgroundClocks(): string {
+  const lengths = [...new Set(setup.background_titans.rows.flatMap((r) => r.clocks))].sort((a, b) => a - b);
+  return new Intl.ListFormat('en', { type: 'disjunction' }).format(lengths.map(String));
+}
+
 
 /**
  * How often the setup table makes the Sprinting Abnormal the Focus Titan, in words:
