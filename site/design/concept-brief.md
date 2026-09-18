@@ -37,7 +37,7 @@ A roll that falls short does not have to be the end. You can **Push**: take on S
 1. **Roll.** Roll your pool and count every 6 as a success. If any Stress Die shows a 1, you suffer a Stress Response and cannot Push.
 2. **Decide.** Keep what you rolled, or Push. A comrade nearby may Cover you before any die is rolled again.
 3. **Take the Stress.** Gain 1 Stress and add 1 new Stress Die to your pool. If a comrade Covers you, they gain the Stress instead, and no new Stress Die is added.
-4. **Roll again.** Pick up every base die and Stress Die not showing a 6, plus the new Stress Die, and roll them. Dice showing 6 stay. **Gear Dice are never rolled again**: they keep whatever they showed.
+4. **Roll again.** Pick up every die not showing a 6, except a Gear Die showing 1, plus the new Stress Die, and roll them. Dice showing 6 stay. **A Gear Die showing 1 is locked**: it stays showing 1.
 5. **Check your Stress Dice.** If any Stress Die now shows a 1, you suffer a Stress Response. A roll never causes more than one Stress Response.
 
 **You cannot Push when**

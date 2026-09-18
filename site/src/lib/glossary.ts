@@ -23,7 +23,7 @@ export interface GlossaryEntry {
 
 const RAW: { term: string; chapter: ChapterId; definition: string; aliases?: string[] }[] = [
   { term: 'Action Catalog', chapter: 'making-your-soldier', definition: 'The full list of named actions, Reactions, and rolls a soldier can make. Each entry names its attribute and the gear that can add Gear Dice.' },
-  { term: 'Anchor Rating', chapter: 'fighting-titans', definition: 'How well a battlefield holds ODM Gear anchors, from Open to Giant Forest. It decides which Position changes ODM Gear allows.' },
+  { term: 'Anchor Rating', chapter: 'fighting-titans', definition: 'How well a battlefield holds ODM Gear anchors, from Open to Giant Forest. It sets which Position changes ODM Gear allows, how many Anchors the field holds, and the Terrain Trait in play.' },
   { term: 'Cadet', chapter: 'making-your-soldier', aliases: ['Cadets'], definition: 'A member of the Training Corps who has not yet graduated.' },
   { term: 'Down', chapter: 'wounds-and-fear', definition: 'The state of a soldier at 0 Health, or holding an untreated Critical Injury that says so. A Down soldier can do little more than crawl, and cannot Push, Help, Cover, or make a Reaction.' },
   { term: 'Downtime', chapter: 'expeditions-and-downtime', definition: 'The time the Squad spends inside the Walls between Expeditions.' },

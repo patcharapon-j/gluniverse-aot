@@ -307,13 +307,18 @@ def roll(rng, s, entry, bonus=0, gear=None, push_to=1, cover=None, extra_pen=0, 
         s.stress += extra
         bd = [x if x == SF else ri(1, 6) for x in bd]
         sd = [x if x == SF else ri(1, 6) for x in sd]
+        # A Gear Die showing 2 to 5 is re-rolled; a 1 is locked and a 6 is kept
+        # (data/core/dice-pool.yaml, die_types, gear; decision batch 11, OQ-187).
+        gd = [x if x in (1, SF) else ri(1, 6) for x in gd]
         succ = bd.count(SF) + gd.count(SF) + sd.count(SF)
         sr = responses and 1 in sd
     spend = 0
     if sr:
         lose, zero, spend = stress_response(rng, s)
         succ = 0 if zero else max(0, succ - lose)
-    return Roll(succ, pushed, gd.count(1) if pushed else 0, spend, covered)
+    # Wear is 1 point per Pushed roll, however many Gear Dice show 1
+    # (data/gear/items.yaml, rating_rules, wear; decision batch 11, OQ-187).
+    return Roll(succ, pushed, 1 if pushed and 1 in gd else 0, spend, covered)
 
 
 # ---------------------------------------------------------------------- harm

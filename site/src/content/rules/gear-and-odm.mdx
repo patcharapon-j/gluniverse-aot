@@ -6,9 +6,9 @@ order: 4
 tab: Gear
 sources:
   - path: docs/rules/04-gear.md
-    sha: "1debd022398701f8e717650170714d0d3c02d1e6"
+    sha: "cfa8095ca7ffa34353eb9b3758c3b342207289bb"
   - path: data/gear/items.yaml
-    sha: "a4422fa6230a092d786f8e3d3c3fd02849a96b57"
+    sha: "6ddd7b203621fb85bf84aef77f3592a81edcb07d"
   - path: data/gear/odm-gear.yaml
     sha: "f94d9eb82fea1f7ae58339f7b037d3162e837b11"
   - path: data/gear/blade-sets.yaml
@@ -22,11 +22,11 @@ sources:
   - path: data/gear/field-repair.yaml
     sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
   - path: data/gear/standard-issue.yaml
-    sha: "a00dcfbd22cef064a4fad26f7b9156291fc41be5"
+    sha: "fa268aa8dc3313948979989f1023ae172fdc5c72"
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/character/action-catalog.yaml
-    sha: "9eba542902e16a0011914c52daa225f11e42e671"
+    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -95,7 +95,7 @@ An item at **0 counts as not had** for every Catalog entry and gives no dice. So
 
 **No ruling ever wears an item.** A called roll's stakes can cost you a carried item, never a point of wear.
 
-**Four things restore a rating,** never above the rating: <GlossaryTerm term="Field Repair" /> (ODM Gear, tool kits, firearms), **restocking** a medical kit in a care window, **<GlossaryTerm term="Standard Issue" />** (which replaces rather than mends, and never a firearm), and the **Maintain Gear** Downtime Action, which restores everything you hold.
+<span id="restoring" />**Four things restore a rating,** never above the rating: <GlossaryTerm term="Field Repair" /> (ODM Gear, tool kits, firearms), **restocking** a medical kit in a care window, **<GlossaryTerm term="Standard Issue" />** (which replaces rather than mends, and never a firearm), and the **Maintain Gear** Downtime Action, which restores everything you hold.
 
 </Subsection>
 
@@ -107,7 +107,7 @@ An item at **0 counts as not had** for every Catalog entry and gives no dice. So
 
 <FactTable columns={['', '']} rows={[
   ['Firearms', 'Requisition only, and empty. <b>Loaded or empty is recorded</b> — only Reload loads one, spending 1 unit of shot, and firing empties it. An empty firearm counts as not had. <b>Never used in a Titan Engagement.</b> A pistol is 1 item, a musket 2.'],
-  ['Prosthetics', 'Requisition only, at Limited Scarcity. Not rated: no dice, no wear, never a weapon. Fitted during a <GlossaryTerm term="Downtime" /> once that side\'s wound has healed, permanently, and carried as no item.'],
+  ['<span id="prosthetics">Prosthetics</span>', 'Requisition only, at Limited Scarcity. Not rated: no dice, no wear, never a weapon. Fitted during a <GlossaryTerm term="Downtime" /> once that side\'s wound has healed, permanently, and carried as no item.'],
   ['Kept items', 'What a Requisition gave you. Standard Issue never takes one unless you hand it in; by default you keep it. In every other way it is an ordinary item of its kind.'],
 ]} />
 
@@ -244,7 +244,7 @@ Neither mounting nor dismounting is rolled. **In a Titan Engagement** each happe
 
 <Subsection title="What a horse rates" id="what-a-horse-rates">
 
-<MarginNote>A Funding 3 horse and a Funding 3 harness are both rated 2, so a mounted dodge rolls the same pool either way. What differs is the bill: wear and a fall against gas and a Jam.</MarginNote>
+<MarginNote>A Funding 3 harness is rated 3 and a Funding 3 horse rated 2, so a mounted dodge rolls one die fewer. What it buys: a cheaper item to wear out, and no gas and no Jam.</MarginNote>
 
 It gives Gear Dice to **the dodge, Ride, and Leap Clear** while you are mounted on it, and to **Break Attention** while mounted or while it shares your Position. Otherwise it counts as not had.
 

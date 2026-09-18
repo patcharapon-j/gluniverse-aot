@@ -699,15 +699,15 @@ export function recordTrial(state: LifepathState, k: number, dice: DiceFaces, t:
   return replay(s, t, opts).state;
 }
 
-/** The dice a Push of Trial k rolls: the non-6 base and Stress Dice, plus a new Stress Die unless Covered. */
-export function pushNeeds(state: LifepathState, k: number, covered: boolean): { base: number; stress: number } | null {
+/** The dice a Push of Trial k rolls: the non-6 base and Stress Dice, the Gear Dice showing 2 to 5, plus a new Stress Die unless Covered. */
+export function pushNeeds(state: LifepathState, k: number, covered: boolean): { base: number; stress: number; gear: number } | null {
   const x = state.trials[k];
   if (!x.dice) return null;
   const r = rerollCounts(x.dice);
-  return { base: r.base, stress: r.stress + (covered ? 0 : 1) };
+  return { base: r.base, stress: r.stress + (covered ? 0 : 1), gear: r.gear };
 }
 
-export function recordPush(state: LifepathState, k: number, covered: boolean, rolled: { base: number[]; stress: number[] }, t: LpTables, opts: Parameters<typeof replay>[2] = {}): LifepathState {
+export function recordPush(state: LifepathState, k: number, covered: boolean, rolled: { base: number[]; stress: number[]; gear?: number[] }, t: LpTables, opts: Parameters<typeof replay>[2] = {}): LifepathState {
   const r = replay(state, t, opts);
   const d = r.trials[k];
   const x = r.state.trials[k];

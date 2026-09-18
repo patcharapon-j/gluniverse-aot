@@ -297,7 +297,7 @@ export function attackSteps(): FlowStep[] {
 const WEAPON_NOTES: Record<string, string> = {
   'blade-set': 'The Blade Set in your handles gives the Gear Dice. A Pushed roll whose Gear Die shows 1 ruins it.',
   'bare-hands': 'A Grapple is made with it and deals no damage. Bare hands never kill a Foe. Thrown at a Foe, Engaged or Apart, such an object is a Shoot at this damage with no Gear Dice.',
-  'flintlock-pistol': 'Your own firearm gives its Gear Dice, and a Pushed Gear Die showing 1 wears it.',
+  'flintlock-pistol': 'Your own firearm gives its Gear Dice, and a Pushed roll whose Gear Dice show any 1 wears it by 1 point.',
   musket: 'Reload spends the move as well. A ball that lands at 1 Net Success deals 4, which brings a Rookie at Health 4 to 0: Down, with a Pierce Critical Injury.',
   'fired-flare': 'A flare is a signal first. Fired at a person it is a Shoot roll with no Gear Dice, and fire kills a Foe it brings to 0 Health.',
   sabre: 'A Foe’s blade. In your hands it is an object that is not a gear item.',

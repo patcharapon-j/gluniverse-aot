@@ -89,7 +89,7 @@ function autoLifepath(seed: number, exam: boolean, alone: boolean): { state: Lif
               const covered = !alone && seed % 3 === 0;
               const need = pushNeeds(s, 2, covered)!;
               pushes++;
-              return recordPush(s, 2, covered, { base: faces(need.base, d6), stress: faces(need.stress, d6) }, t, o);
+              return recordPush(s, 2, covered, { base: faces(need.base, d6), stress: faces(need.stress, d6), gear: faces(need.gear, d6) }, t, o);
             }
             return confirmStep(s, step, t, o);
           }
@@ -266,14 +266,14 @@ describe('a soldier built by rolling', () => {
     s = { ...s, trials: s.trials.map((x, k) => (k === 2 ? { ...x, entry: 'rally', dice: null, covers: [], fresh: -1, response: false, coverStress: 0, helped: true } : x)) };
     const pool = replay(s, t, o).trials[2].pool!;
     s = recordTrial(s, 2, { base: [6, ...Array(pool.base - 1).fill(3)], gear: [], stress: [] }, t, o);
-    expect(pushNeeds(s, 2, false)).toEqual({ base: pool.base - 1, stress: 1 });
-    expect(pushNeeds(s, 2, true)).toEqual({ base: pool.base - 1, stress: 0 });
-    const pushed = recordPush(s, 2, false, { base: Array(pool.base - 1).fill(6), stress: [4] }, t, o);
+    expect(pushNeeds(s, 2, false)).toEqual({ base: pool.base - 1, stress: 1, gear: 0 });
+    expect(pushNeeds(s, 2, true)).toEqual({ base: pool.base - 1, stress: 0, gear: 0 });
+    const pushed = recordPush(s, 2, false, { base: Array(pool.base - 1).fill(6), stress: [4], gear: [] }, t, o);
     expect(pushed.trials[2].dice).toEqual({ base: Array(pool.base).fill(6), gear: [], stress: [4] });
     expect(pushed.trials[2].fresh).toBe(0);
     expect(replay(pushed, t, o).trials[2]).toMatchObject({ successes: pool.base, merit: 1, push: 'already-pushed' });
     // No second Push without Sure Hands.
-    expect(recordPush(pushed, 2, true, { base: [], stress: [] }, t, o)).toBe(pushed);
+    expect(recordPush(pushed, 2, true, { base: [], stress: [], gear: [] }, t, o)).toBe(pushed);
   });
 });
 

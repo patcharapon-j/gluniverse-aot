@@ -129,15 +129,22 @@ export interface PushState {
   down: boolean;
 }
 
-/** The dice a Push picks up: base and Stress Dice not showing 6 (dice-pool.yaml, die_types). */
-export function rerollCounts(d: DiceFaces): { base: number; stress: number } {
-  return { base: d.base.filter((f) => f !== 6).length, stress: d.stress.filter((f) => f !== 6).length };
+/**
+ * The dice a Push picks up: base and Stress Dice not showing 6, and Gear Dice showing 2 to 5
+ * (dice-pool.yaml, die_types; decision batch 11). A Gear Die showing 1 is locked and a 6 is kept.
+ */
+export function rerollCounts(d: DiceFaces): { base: number; stress: number; gear: number } {
+  return {
+    base: d.base.filter((f) => f !== 6).length,
+    stress: d.stress.filter((f) => f !== 6).length,
+    gear: d.gear.filter((f) => f !== 1 && f !== 6).length,
+  };
 }
 
-/** The dice a Push rolls, and so the only dice Dice So Nice shows for it: the non-6 base and Stress Dice, plus the new Stress Die unless Covered. */
-export function pushRollCounts(d: DiceFaces, covered: boolean): { base: number; stress: number } {
+/** The dice a Push rolls, and so the only dice Dice So Nice shows for it: the picked-up base, Gear and Stress Dice, plus the new Stress Die unless Covered. */
+export function pushRollCounts(d: DiceFaces, covered: boolean): { base: number; stress: number; gear: number } {
   const r = rerollCounts(d);
-  return { base: r.base, stress: r.stress + (covered ? 0 : 1) };
+  return { base: r.base, stress: r.stress + (covered ? 0 : 1), gear: r.gear };
 }
 
 /** Why a roll cannot be Pushed now, or null (ADR-0004 order: a Stress Die 1 forbids it). */
@@ -147,25 +154,39 @@ export function pushBlock(s: PushState): PushBlock {
   if (s.dice.stress.includes(1)) return 'stress-one';
   if (s.pushes >= s.maxPushes) return 'already-pushed';
   const r = rerollCounts(s.dice);
-  if (r.base + r.stress === 0) return 'nothing';
+  if (r.base + r.stress + r.gear === 0) return 'nothing';
   return null;
 }
 
 /**
- * Applies a Push: the re-rolled faces replace base and Stress Dice not showing 6, in order, and a
- * new Stress Die (unless Covered) is the last of the rolled Stress faces. Gear Dice never change.
+ * Applies a Push: the re-rolled faces replace base and Stress Dice not showing 6 and Gear Dice
+ * showing 2 to 5, in order, and a new Stress Die (unless Covered) is the last of the rolled Stress
+ * faces. A Gear Die showing 1 stays locked and one showing 6 is kept (decision batch 11).
  */
-export function applyPush(d: DiceFaces, rolled: { base: number[]; stress: number[] }, addStressDie: boolean): { dice: DiceFaces; fresh: number } {
+export function applyPush(
+  d: DiceFaces,
+  rolled: { base: number[]; stress: number[]; gear?: number[] },
+  addStressDie: boolean,
+): { dice: DiceFaces; fresh: number } {
   const need = rerollCounts(d);
-  if (rolled.base.length !== need.base || rolled.stress.length !== need.stress + (addStressDie ? 1 : 0)) {
-    throw new Error(`applyPush: expected ${need.base} base and ${need.stress + (addStressDie ? 1 : 0)} Stress faces`);
+  const gearRolled = rolled.gear ?? [];
+  if (
+    rolled.base.length !== need.base ||
+    rolled.stress.length !== need.stress + (addStressDie ? 1 : 0) ||
+    gearRolled.length !== need.gear
+  ) {
+    throw new Error(
+      `applyPush: expected ${need.base} base, ${need.stress + (addStressDie ? 1 : 0)} Stress and ${need.gear} Gear faces`,
+    );
   }
   let bi = 0;
   let si = 0;
+  let gi = 0;
   const base = d.base.map((f) => (f === 6 ? 6 : rolled.base[bi++]));
   const stress = d.stress.map((f) => (f === 6 ? 6 : rolled.stress[si++]));
+  const gear = d.gear.map((f) => (f === 1 || f === 6 ? f : gearRolled[gi++]));
   if (addStressDie) stress.push(rolled.stress[si++]);
-  return { dice: { base, stress, gear: [...d.gear] }, fresh: addStressDie ? stress.length - 1 : -1 };
+  return { dice: { base, stress, gear }, fresh: addStressDie ? stress.length - 1 : -1 };
 }
 
 /** The Stress a Push costs the pusher: 1, plus a held push-stress effect (Wound Tight); nothing when Covered. */
@@ -218,9 +239,12 @@ export function deathOutcome<R extends { id: string; min: number | null; max: nu
 
 // ---------------------------------------------------------------- wear and gas
 
-/** Wear points: each Gear Die showing 1 once the roll was Pushed (data/gear/items.yaml, wear). */
+/**
+ * Wear points: 1 once the roll was Pushed and any Gear Die shows 1, however many do
+ * (data/gear/items.yaml, wear; decision batch 11).
+ */
 export function wearPoints(gear: readonly number[], pushed: boolean): number {
-  return pushed ? countFaces(gear, [1]) : 0;
+  return pushed && gear.includes(1) ? 1 : 0;
 }
 
 export interface WearResult {

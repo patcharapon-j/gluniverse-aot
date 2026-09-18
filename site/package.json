@@ -15,10 +15,11 @@
   "scripts": {
     "dev": "astro dev --port 4321",
     "sync-check": "node scripts/check-sync.mjs",
-    "build": "node scripts/check-sync.mjs && astro build && pagefind --site dist",
+    "build": "node scripts/check-sync.mjs && astro build && pagefind --site dist && node scripts/check-links.mjs",
     "preview": "astro preview --port 4321",
     "check": "astro check",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check-links": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "8.0.1",

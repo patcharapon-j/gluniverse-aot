@@ -111,16 +111,18 @@ describe('the pool at roll time (circumstances.yaml, bonus-dice-sources.yaml)', 
 describe('Push (ADR-0004; stress-changes.yaml)', () => {
   const state = (dice: { base: number[]; gear: number[]; stress: number[] }, extra = {}) => ({ dice, pushes: 0, maxPushes: 1, pushAllowed: true, down: false, ...extra });
 
-  it('re-rolls base and Stress Dice not showing 6, keeps 6s and every Gear Die, and adds the new Stress Die last', () => {
-    const d = { base: [2, 6, 3, 5], gear: [4, 1, 2], stress: [3, 6, 2] };
-    expect(rerollCounts(d)).toEqual({ base: 3, stress: 2 });
-    const out = applyPush(d, { base: [6, 4, 1], stress: [6, 2, 3] }, true);
-    expect(out.dice).toEqual({ base: [6, 6, 4, 1], gear: [4, 1, 2], stress: [6, 6, 2, 3] });
+  it('re-rolls base and Stress Dice not showing 6 and Gear Dice showing 2 to 5, keeps 6s, locks a Gear Die 1, and adds the new Stress Die last', () => {
+    const d = { base: [2, 6, 3, 5], gear: [4, 1, 6], stress: [3, 6, 2] };
+    expect(rerollCounts(d)).toEqual({ base: 3, stress: 2, gear: 1 });
+    const out = applyPush(d, { base: [6, 4, 1], stress: [6, 2, 3], gear: [5] }, true);
+    expect(out.dice).toEqual({ base: [6, 6, 4, 1], gear: [5, 1, 6], stress: [6, 6, 2, 3] });
     expect(out.fresh).toBe(3);
-    const covered = applyPush(d, { base: [1, 1, 1], stress: [1, 1] }, false);
+    const covered = applyPush(d, { base: [1, 1, 1], stress: [1, 1], gear: [2] }, false);
     expect(covered.dice.stress).toHaveLength(3);
     expect(covered.fresh).toBe(-1);
-    expect(() => applyPush(d, { base: [1], stress: [] }, false)).toThrow();
+    expect(() => applyPush(d, { base: [1], stress: [], gear: [] }, false)).toThrow();
+    // Every Gear Die locked or kept: the Push rolls none of them.
+    expect(rerollCounts({ base: [6], gear: [1, 6], stress: [] })).toEqual({ base: 0, stress: 0, gear: 0 });
   });
 
   it('is blocked by a Stress Die 1, by Down, by the roll exceptions, after the Push, and when every die shows 6', () => {
@@ -130,6 +132,8 @@ describe('Push (ADR-0004; stress-changes.yaml)', () => {
     expect(pushBlock(state({ base: [2], gear: [], stress: [] }, { pushes: 1 }))).toBe('already-pushed');
     expect(pushBlock(state({ base: [2], gear: [], stress: [] }, { pushes: 1, maxPushes: 2 }))).toBeNull();
     expect(pushBlock(state({ base: [6, 6], gear: [1], stress: [6] }))).toBe('nothing');
+    // A Gear Die showing 2 to 5 is something to re-roll, so the Push is on.
+    expect(pushBlock(state({ base: [6, 6], gear: [3], stress: [6] }))).toBeNull();
     expect(pushBlock(state({ base: [2], gear: [1], stress: [3] }))).toBeNull();
   });
 
@@ -149,9 +153,11 @@ describe('Push (ADR-0004; stress-changes.yaml)', () => {
     expect(pushStress(true, woundTight.effects)).toBe(0);
   });
 
-  it('wears gear only on a Pushed roll: 1 per Gear Die showing 1, a Blade Set ruined by any wear left', () => {
+  it('wears gear only on a Pushed roll: 1 point however many Gear Dice show 1, a Blade Set ruined by any wear left', () => {
     expect(wearPoints([1, 1, 4], false)).toBe(0);
-    expect(wearPoints([1, 1, 4], true)).toBe(2);
+    expect(wearPoints([1, 1, 4], true)).toBe(1);
+    expect(wearPoints([1, 4, 6], true)).toBe(1);
+    expect(wearPoints([4, 6], true)).toBe(0);
     expect(wearOutcome('odm-gear', 3, 2, 0)).toMatchObject({ after: 1, ruined: false, left: 2 });
     expect(wearOutcome('odm-gear', 1, 2, 0)).toMatchObject({ after: 0 });
     expect(wearOutcome('odm-gear', 3, 2, 1)).toMatchObject({ after: 2, ignored: 1 });
@@ -267,11 +273,12 @@ describe('applied changes and Undo (ADR-0026)', () => {
 });
 
 describe('what Dice So Nice shows for a Push', () => {
-  it('rolls only the non-6 base and Stress dice, plus the new Stress Die', () => {
+  it('rolls only the non-6 base and Stress dice and the Gear Dice showing 2 to 5, plus the new Stress Die', () => {
     const d = { base: [6, 2, 6, 1], gear: [1, 6], stress: [3, 6] };
-    expect(pushRollCounts(d, false)).toEqual({ base: 2, stress: 2 });
-    expect(pushRollCounts(d, true)).toEqual({ base: 2, stress: 1 });
-    expect(pushRollCounts({ base: [6], gear: [], stress: [] }, false)).toEqual({ base: 0, stress: 1 });
+    expect(pushRollCounts(d, false)).toEqual({ base: 2, stress: 2, gear: 0 });
+    expect(pushRollCounts(d, true)).toEqual({ base: 2, stress: 1, gear: 0 });
+    expect(pushRollCounts({ base: [6], gear: [], stress: [] }, false)).toEqual({ base: 0, stress: 1, gear: 0 });
+    expect(pushRollCounts({ base: [6], gear: [2, 5, 1, 6], stress: [] }, true)).toEqual({ base: 0, stress: 0, gear: 2 });
   });
 
   it('keeps the chat hook from showing dice the system showed itself', () => {

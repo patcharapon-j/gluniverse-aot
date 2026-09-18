@@ -35,10 +35,10 @@ const STEPS = [
   },
   {
     title: 'Roll again.',
-    mini: facesHtml('base:6k,?|stress:?|gear:1l'),
+    mini: facesHtml('base:6k,?|stress:?|gear:1l,?'),
     icon: 'roll-push',
-    text: 'Pick up every base die and Stress Die not showing a 6, plus the new Stress Die, and roll them. Dice showing 6 stay.',
-    exit: { kind: 'note', label: 'Gear Dice', text: 'Never rolled again. They keep whatever they showed.' },
+    text: 'Pick up every die not showing a 6, plus the new Stress Die, and roll them. Dice showing 6 stay.',
+    exit: { kind: 'note', label: 'Gear Dice', text: 'A Gear Die showing 1 is locked and stays. The rest roll again like any other die.' },
   },
   {
     title: 'Check your Stress Dice.',

@@ -6,9 +6,9 @@ order: 1
 tab: Titan Fights
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "e645a7168e73ff8bec021240781efe73655eca69"
+    sha: "5c95ad800656daab91067381d47a68bc2f5979fb"
   - path: docs/rules/01-core-rules.md
-    sha: "2495d67ea59ed62935146757841a8c95a2e16808"
+    sha: "32d82c39759da2a5c4b531e0b49da4b194a51e10"
   - path: data/engagement/engagement-flow.yaml
     sha: "dd549bbcb21ddd5fa1867a9f32e7cc945c82d771"
   - path: data/engagement/engagement-setup.yaml
@@ -39,7 +39,7 @@ import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import { RETREAT_CLOCK, abnormalShare } from '~/lib/gm-tables';
+import { RETREAT_CLOCK, abnormalShare, anchorCounts, backgroundClocks } from '~/lib/gm-tables';
 
 <FieldQuote cite="Standing order to Squad Leaders">You do not decide how it ends. You decide what it meets.</FieldQuote>
 
@@ -77,7 +77,7 @@ Call rolls sparingly. A roll is a moment with something at stake, and calling on
 <Subsection title="The order of setup" id="the-order-of-setup">
 
 1. **Take what is named.** The starting rule names the Anchor Rating, the Focus Titan, any Background Titans and their clocks, and the retreat clock's length. Your framing may name whatever it left out — **except the retreat clock**. Anything neither names comes from the setup table.
-2. **Set the Anchors** from the rating: Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3. Nothing is rolled. Whatever is left is every soldier's Momentum cap, and everyone starts at 0. Say the Terrain Trait aloud.
+2. **Set the Anchors** from the rating: {anchorCounts()}. Nothing is rolled. Whatever is left is every soldier's Momentum cap, and everyone starts at 0. Say the Terrain Trait aloud.
 3. **Label the Focus Titan A,** Body Parts Intact, no Openings, clock empty, and roll its hidden Next Behavior.
 4. **Place the soldiers and horses,** then let the Titan read its ladder with no cards dealt. A rung that picks out one soldier gives it Attention from setup; otherwise nothing holds it until its first card.
 5. **Fear Rolls** for a first Titan fight and for an Abnormal. Squad Tactics become unused. Round 1 begins.
@@ -90,7 +90,7 @@ Call rolls sparingly. A roll is a moment with something at stake, and calling on
 
 <Subsection title="What you may frame" id="what-you-may-frame">
 
-Before any setup roll you may name the **Focus Titan** (any on the <a href="/gm/titans/">Titans</a> page), the **Anchor Rating**, and the **Background Titans** — none, one, or two, each on a clock of 4, 6, or 8 segments.
+Before any setup roll you may name the **Focus Titan** (any on the <a href="/gm/titans/">Titans</a> page), the **Anchor Rating**, and the **Background Titans** — none, one, or two, each on a clock of {backgroundClocks()} segments.
 
 **What you name is never rolled,** so no Abnormal roll is made for a Focus Titan you named. What stays closed to you: where the soldiers start, the Anchors the rating gives, the retreat clock's {RETREAT_CLOCK} segments, a setup row once rolled, and the opening Fear Rolls.
 

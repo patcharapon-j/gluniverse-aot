@@ -1,12 +1,16 @@
-"""Round 2 feedback probe: what re-rolling Gear Dice on a Push would do.
+"""Round 2 feedback probe: what re-rolling Gear Dice on a Push does.
 
 Owner proposal: "blade set cannot run out, let make it that gear dice is also rerolled on push".
-Today a Gear Die is never re-rolled (data/core/dice-pool.yaml, die_types, gear): its faces stay,
-a 1 is locked, and each 1 showing when a Pushed roll is final wears the gear by 1.
+Before decision batch 11 a Gear Die was never re-rolled: its faces stayed, a 1 was locked, and
+each 1 showing when a Pushed roll was final wore the gear by 1 point.
 
 Exact binomial arithmetic, no sampling. Two readings of the proposal:
   A  re-roll 2 to 5, keep 6, lock 1   (the Stress Die's pattern, die_types, stress)
   B  re-roll everything but 6         (1s are not locked, so a 1 can escape)
+
+Reading A alone breaks the Jam test, so decision batch 11 took A with wear capped at 1 point per
+Pushed roll and issued ODM Gear raised to rating 3. The capped rows below are what it measures,
+and the rule now in data/core/dice-pool.yaml and data/gear/items.yaml is A with the cap.
 
     uv run --with pyyaml python tools/probes/round-2/gear_die.py
 """
@@ -31,10 +35,20 @@ def at_least(n, k, p):
 
 
 RULES = {
-    "today, never re-rolled": (1 / 6, 1 / 6),
+    "before batch 11, never re-rolled": (1 / 6, 1 / 6),
     "A re-roll 2-5, keep 6, lock 1": (1 / 6 + (4 / 6) * (1 / 6), 1 / 6 + (4 / 6) * (1 / 6)),
     "B re-roll all but 6": ((5 / 6) * (1 / 6), 1 / 6 + (5 / 6) * (1 / 6)),
 }
+
+
+def capped_jam(p1, rating, rounds=JAM_ROUNDS):
+    """Jam odds when a Pushed roll wears at most 1 point, whatever its Gear Dice showed.
+
+    Each Pushed roll wears 1 if any of its `rating` Gear Dice shows a 1, and the item Jams once
+    the wear reaches its rating. (data/gear/items.yaml, rating_rules, wear; decision batch 11.)
+    """
+    per_roll = 1 - (1 - p1) ** rating
+    return at_least(rounds, rating, per_roll)
 
 
 def main():
@@ -59,6 +73,23 @@ def main():
             row += f" {p:11.1%}{'!' if p > JAM_BAR else ' '}"
         print(row)
 
+    print("\nThe same test with wear capped at 1 point per Pushed roll (batch 11's package)\n")
+    print(f"{'rule':32s} {'ODM Gear 2':>12s} {'ODM Gear 3':>12s}")
+    for name, (p1, _) in RULES.items():
+        row = f"{name:32s}"
+        for rating in (2, 3):
+            p = capped_jam(p1, rating)
+            row += f" {p:11.1%}{'!' if p > JAM_BAR else ' '}"
+        print(row)
+
+    print("\nAverage wear a Pushed roll deals, with the cap of 1 point (batch 11's package)\n")
+    print(f"{'rule':32s} {'rating 1':>10s} {'rating 2':>10s} {'rating 3':>10s}")
+    for name, (p1, _) in RULES.items():
+        row = f"{name:32s}"
+        for rating in (1, 2, 3):
+            row += f" {1 - (1 - p1) ** rating:10.3f}"
+        print(row)
+
     print("\nGear Dice added to a Pushed roll's successes (ODM Gear 2)\n")
     print(f"{'rule':32s} {'E[successes from gear]':>24s}")
     for name, (_, p6) in RULES.items():
@@ -66,7 +97,7 @@ def main():
 
     print("\nIssued ODM Gear rating by Funding (data/gear/standard-issue.yaml):",
           [r["odm_gear_rating"] for r in ISSUE["by_funding"]])
-    print("Gear Die today:", DICE["die_types"][1]["push_re_rolls_faces"], "re-rolled on a Push.")
+    print("Gear Die faces a Push re-rolls:", DICE["die_types"][1]["push_re_rolls_faces"])
 
 
 if __name__ == "__main__":

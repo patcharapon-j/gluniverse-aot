@@ -146,12 +146,12 @@ const next = [
 
         <PoolRows rows={[
           { label: 'First roll', pool: 'base:5,3,2,4|gear:1,4|stress:2', successes: 0 },
-          { label: 'After the Push', pool: 'base:6,2,5,3|gear:1l,4l|stress:5,3n', successes: 1 },
+          { label: 'After the Push', pool: 'base:6,2,5,3|gear:1l,3|stress:5,3n', successes: 1 },
         ]} />
 
-        <p>Nothing, and no Stress Die on 1 — so he Pushes: 1 Stress, a new Stress Die, and everything but the 6s rolled again. <b>Gear Dice keep their faces.</b></p>
+        <p>Nothing, and no Stress Die on 1 — so he Pushes: 1 Stress, a new Stress Die, and everything but the 6s rolled again. <b>His Gear Die showing 1 is locked; the other rolls again.</b></p>
 
-        <p>One 6. The harness is mended, his Stress is 2 — and because he Pushed, the Gear Die showing 1 wears his tool kit down a point.</p>
+        <p>One 6. The harness is mended, his Stress is 2 — and because he Pushed, the locked Gear Die showing 1 wears his tool kit down a point. One point, however many had shown 1.</p>
 
         <TryRollButton pool={{ base: 4, gear: 2, stress: 1 }} label="Try Toma's Push" />
 

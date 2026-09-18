@@ -23,7 +23,7 @@ export type DieStatus =
   | 'kept' // a base or Stress Die showing 6, left in place by a Push
   | 'rerolled' // picked up and thrown again by a Push
   | 'new' // the Stress Die a Push added
-  | 'locked' // a Gear Die, never re-rolled by a Push
+  | 'locked' // a Gear Die showing 1, never re-rolled by a Push
   | 'held'; // a Titan Die, never Pushed
 
 export interface Die {
@@ -116,9 +116,14 @@ export function startRoll(pool: Pool, values: Values, options: RollOptions = {})
   };
 }
 
-/** Base and Stress Dice a Push would pick up: every one not showing a 6. */
+/**
+  * Dice a Push picks up: base and Stress Dice not showing 6, and Gear Dice showing 2 to 5
+  * (data/core/dice-pool.yaml, die_types; decision batch 11). A Gear Die showing 1 is locked.
+  */
 export const rerollableDice = (state: RollState): Die[] =>
-  state.dice.filter((d) => (d.kind === 'base' || d.kind === 'stress') && d.value !== 6);
+  state.dice.filter((d) =>
+    d.kind === 'gear' ? d.value !== 1 && d.value !== 6 : (d.kind === 'base' || d.kind === 'stress') && d.value !== 6,
+  );
 
 export type PushBlock = 'forbidden' | 'titan-only' | 'stress-one' | 'limit' | 'cover-nothing';
 export type PushCheck = { allowed: true } | { allowed: false; code: PushBlock; reason: string };
@@ -142,7 +147,7 @@ export function checkPush(state: RollState, { covered = false }: { covered?: boo
     return {
       allowed: false,
       code: 'cover-nothing',
-      reason: 'Every base die and Stress Die already shows 6, so this Push cannot be Covered.',
+      reason: 'Every die a Push would pick up already shows 6, so this Push cannot be Covered.',
     };
   return { allowed: true };
 }
@@ -176,7 +181,7 @@ export function applyPush(state: RollState, plan: PushPlan, values: Values): Rol
   const dice = state.dice.map((d): Die => {
     const value = byId.get(d.id);
     if (value !== undefined) return { ...d, value, status: 'rerolled' };
-    const status: DieStatus = d.kind === 'gear' ? 'locked' : d.kind === 'titan' ? 'held' : 'kept';
+    const status: DieStatus = d.kind === 'gear' && d.value === 1 ? 'locked' : d.kind === 'titan' ? 'held' : 'kept';
     return { ...d, status };
   });
   if (plan.newDieId !== null) dice.push({ id: plan.newDieId, kind: 'stress', value: thrown[thrown.length - 1]!, status: 'new' });
@@ -204,7 +209,7 @@ export interface RollSummary {
   hasTitanDice: boolean;
   stressResponse: boolean;
   pushes: number;
-  /** Wear on the gear item: each Gear Die showing 1, only if the roll was Pushed. */
+  /** Wear on the gear item: 1 point if the roll was Pushed and any Gear Die shows 1. */
   gearWear: number;
   /** Stress the rolling soldier gained from Pushes. */
   stressAdded: number;
@@ -222,7 +227,7 @@ export function summarize(state: RollState): RollSummary {
     hasTitanDice: titan.length > 0,
     stressResponse: state.stressResponse,
     pushes: state.pushes,
-    gearWear: state.pushes > 0 ? state.dice.filter((d) => d.kind === 'gear' && d.value === 1).length : 0,
+    gearWear: state.pushes > 0 && state.dice.some((d) => d.kind === 'gear' && d.value === 1) ? 1 : 0,
     stressAdded: state.pushes - state.coveredPushes,
     coverStress: state.coveredPushes,
   };

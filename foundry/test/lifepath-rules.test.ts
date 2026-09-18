@@ -223,7 +223,7 @@ describe('Standard Issue', () => {
     const plan = standardIssue(issue, 'medic', [], [], { spares: 0, blades: 0, item: false });
     expect(issue.funding).toBe(3);
     expect(plan.create).toEqual([
-      { itemId: 'odm-gear', rating: 2, current: 2 },
+      { itemId: 'odm-gear', rating: 3, current: 3 },
       { itemId: 'blade-set', rating: 1, current: 1, inHandles: true },
       { itemId: 'blade-set', rating: 1, current: 1, inHandles: false },
       { itemId: 'blade-set', rating: 1, current: 1, inHandles: false },
@@ -254,7 +254,7 @@ describe('Standard Issue', () => {
     expect(plan.remove).toEqual(['o1']);
     expect(plan.fit).toEqual(['b1']);
     expect(plan.create).toEqual([
-      { itemId: 'odm-gear', rating: 2, current: 2 },
+      { itemId: 'odm-gear', rating: 3, current: 3 },
       { itemId: 'blade-set', rating: 1, current: 1, inHandles: false },
       { itemId: 'blade-set', rating: 1, current: 1, inHandles: false },
     ]);
@@ -275,9 +275,10 @@ describe('the tables and wording the wizard reads', () => {
 
   it("reads each step's text from Making Your Soldier", () => {
     const w = loadLifepathWording();
-    expect(w.sections.origin[0]).toMatchObject({ kind: 'ol' });
-    expect(w.sections.origin[0].items[1].text).toMatch(/^Roll D66 on the Origin table/);
-    expect(w.sections['the-build-steps'][0].items[2].sub[0]).toMatch(/^\*\*Template Build:\*\*/);
+    expect(w.sections.origin[0]).toMatchObject({ kind: 'p' });
+    expect(w.sections.origin[0].items[0].text).toMatch(/roll D66 on the Origin table/);
+    expect(w.sections['the-build-steps'][1]).toMatchObject({ kind: 'ol' });
+    expect(w.sections['the-build-steps'][1].items[2].text).toMatch(/\*\*Template Build:\*\*/);
     expect(w.boxes['Talent cap'][1].items).toHaveLength(2);
     expect(w.flows['fig-graduation'].map((x) => x.title)).toEqual(['Class Rank', 'Specialty', 'Swap and floor', 'Top 10', 'Specialty Talent']);
     expect(config.lifepathPage.sections.finishing).toEqual(w.sections.finishing);

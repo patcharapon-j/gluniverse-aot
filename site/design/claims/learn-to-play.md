@@ -37,7 +37,7 @@ The diagrams (`PushSteps`, `PositionsMap`, `GrabCountdown`, `DiceKey`, `IconKey`
 - You cannot Push when any Stress Die showed a 1, when the roll's rule forbids it, or when you have already Pushed it: once, unless a Talent allows more. R 346-350
 - A comrade may Cover: the Covering soldier gains the 1 Stress, and the Pushing soldier gains none and adds no new Stress Die. R 388, 400-402
 - The Push adds 1 Stress and 1 new Stress Die, then rolls again every base die and Stress Die not showing a 6. R 334 (`PushSteps`), 337
-- Gear Dice are never rolled again and keep their faces. R 367; DiceKey (`dice-pool.yaml`)
+- A Gear Die showing 1 is locked; one showing 2 to 5 rolls again; a 6 stays. R 367; DiceKey (`dice-pool.yaml`)
 - On a Pushed roll, each Gear Die showing 1 when the roll is final wears its item by one point. R 367
 - Stress carries over between Titan Engagements, Expeditions, and sessions, and changes only through the triggers on the Stress table. R 427, 447
 - Every attribute roll gets Stress Dice equal to current Stress; a Stress Die showing 6 is a success, a Stress Die showing 1 sets off a Stress Response, and a roll causes at most one. R 427, 460
