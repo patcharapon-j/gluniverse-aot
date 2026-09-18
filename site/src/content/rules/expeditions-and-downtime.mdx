@@ -24,21 +24,20 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
+import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import IconKey from '~/components/IconKey.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import TryRollButton from '~/components/TryRollButton.astro';
 import {
   dayFlow,
   downtimeDays,
@@ -72,65 +71,62 @@ export const days = downtimeDays();
 />
 
 <ChapterContents items={[
-  { id: 'expeditions', title: 'Expeditions', note: 'The route, the day, the Leg, the night' },
-  { id: 'downtime', title: 'Downtime', note: 'Seven days, the infirmary, what you do with them' },
-  { id: 'requisition', title: 'Requisition', note: 'Asking Command for what you are not issued' },
+  { id: 'expeditions', title: 'Expeditions', note: 'Route, day, Leg, night' },
+  { id: 'downtime', title: 'Downtime', note: 'Seven days inside the Walls' },
+  { id: 'requisition', title: 'Requisition', note: 'Asking Command for more' },
 ]} />
 
 <SectionHead id="expeditions" eyebrow="Section 1">Expeditions</SectionHead>
 
-An <GlossaryTerm term="Expedition" /> is a Survey Corps operation beyond the Walls, ridden as a chain of <GlossaryTerm term="Leg">Legs</GlossaryTerm> between <GlossaryTerm term="Waypoint">Waypoints</GlossaryTerm>. **You always reach the next Waypoint.** A failed Leg costs more rations and makes what waits there worse, but nothing on these pages stops the ride.
+An <GlossaryTerm term="Expedition" /> is a chain of <GlossaryTerm term="Leg">Legs</GlossaryTerm> between <GlossaryTerm term="Waypoint">Waypoints</GlossaryTerm>. **You always reach the next Waypoint.** A failed Leg costs more rations and makes what waits there worse — nothing here stops the ride.
+
+<FinePrint title="the route's bounds, and what you ride out with">
 
 <Subsection title="The route" id="the-route">
 
-The route is set once, before the Expedition begins, and nothing changes it afterwards. It is the route of the **<GlossaryTerm term="Mission Brief" />**, which the GM writes as Command, and it names:
+Set once, before the Expedition, in the **<GlossaryTerm term="Mission Brief" />** the GM writes as Command, and never changed afterwards. It names the Waypoints in order with their kinds; each Leg's <GlossaryTerm term="Distance Band" /> and <GlossaryTerm term="Formation Post" />; the days Command orders a <GlossaryTerm term="Hard Ride" />; and the <GlossaryTerm term="Abnormal" /> the hazard tables mean.
 
-- **The Waypoints in order,** each with its kind and whether it is a <GlossaryTerm term="Depot">Depot</GlossaryTerm>. The last is a gate of the Walls.
-- **For the Leg that leads to each Waypoint,** its <GlossaryTerm term="Distance Band" /> (Near, Far, or Deep) and its <GlossaryTerm term="Formation Post" />.
-- **The days Command orders a <GlossaryTerm term="Hard Ride" />,** counted from the Expedition's first.
-- **The <GlossaryTerm term="Abnormal" />** the hazard tables name, when it is not the Sprinting Abnormal.
+A Brief holds {bounds.legs} Legs and {bounds.depots} Depot. The first and last Legs are Near, the second and second-to-last Near or Far, and only the ones between can be Deep.
 
-A Brief holds {bounds.legs} Legs and {bounds.depots} Depot, which is never the gate, and no Leg is deeper than its place allows: the first and last are Near, the second and second-to-last are Near or Far, and every Leg between them can be Deep. A Hard Ride is ordered at most once a day, and only as that day's third Leg.
-
-<MarginNote stamp="Read twice">Distance Band, Post, and Pace are the route's, not the moment's. Once you ride out, no call at the table moves them.</MarginNote>
+<MarginNote stamp="Read twice">Distance Band, Post, and Pace belong to the route, not the moment. Once you ride out, no call at the table moves them.</MarginNote>
 
 <CoreTable table="waypoint-kinds" />
 
-- A **Depot** is a Waypoint the Brief marks as one, and it keeps its kind. Arriving there, every soldier receives a full <GlossaryTerm term="Standard Issue" /> together and <GlossaryTerm term="Squad Supply" /> is restocked.
-- Reaching the **gate**, the route's last Waypoint, ends the Expedition at the end of that Leg. No further Leg, no <GlossaryTerm term="Night Camp" />, and <GlossaryTerm term="Downtime" /> begins.
+At a **<GlossaryTerm term="Depot">Depot</GlossaryTerm>**, every soldier receives a full <GlossaryTerm term="Standard Issue" /> and <GlossaryTerm term="Squad Supply" /> is restocked. Reaching the **gate** ends the Expedition and begins <GlossaryTerm term="Downtime" />.
 
 </Subsection>
 
 <Subsection title="What you ride out with" id="before-and-during">
 
-Before the Expedition begins, every soldier receives a full Standard Issue together and Squad Supply is restocked, rations included. From then until the gate:
+A full issue before you leave, and then nothing until the next Depot.
 
-- **Gas is a fight's business.** No <GlossaryTerm term="Gas Roll" /> is made on a Leg or at a Night Camp. Gas is spent only in a <GlossaryTerm term="Titan Engagement" />.
-- **What is used up stays used up.** Canisters, <GlossaryTerm term="Blade Set">Blade Sets</GlossaryTerm>, and Squad Supply come back only through a full Standard Issue, which means the next Depot or the next Expedition. The one exception is the Squad Supply a successful called search finds, within the caps in <a href="/guide/gear-and-odm/#squad-supply">Gear & ODM</a>.
-- **In the saddle.** On a Leg, every soldier who is not <GlossaryTerm term="Down" /> and whose own horse is not <GlossaryTerm term="Lame">lame</GlossaryTerm> is <GlossaryTerm term="Mounted">mounted</GlossaryTerm>. At a Night Camp everyone is dismounted. A Down soldier, and a soldier whose horse is lame, rides in the wagon or across a comrade's saddle and is not mounted.
-- **Everyone living takes part.** A new soldier who joins the Squad during an Expedition joins at the next Waypoint.
-- **Promotion and Retirement** that fall due on a Leg or at a Night Camp happen when that Leg or Night Camp ends, after any fight, care window, or day passing inside it has ended.
-- **Talents and Drives.** A Leg and a Night Camp each have a start and an end, so a <GlossaryTerm term="Talent" /> limited to once per Titan Engagement can also be used once per Leg and once per Night Camp where its trigger can happen, as Sure Seat can on a Hard Ride. A fight that begins inside a Leg or a Night Camp is its own procedure with its own use, and neither use spends the other. A <GlossaryTerm term="Drive">Drive's</GlossaryTerm> turn tests count no Leg roll and no camp roll.
-
-The interim day and the interim issue never happen while an Expedition is under way. The Night Camp's day, the issue before the Expedition, and a Depot's issue take their place.
+- **Gas is a fight's business.** No <GlossaryTerm term="Gas Roll" /> on a Leg or at camp.
+- **What is used up stays used up** — canisters, <GlossaryTerm term="Blade Set">Blade Sets</GlossaryTerm>, supply. The one exception is what a successful called search turns up.
+- **In the saddle.** Everyone not <GlossaryTerm term="Down" /> and whose horse is not <GlossaryTerm term="Lame">lame</GlossaryTerm> rides each Leg; everyone dismounts at camp. The rest ride in the wagon.
+- **A Leg and a Night Camp each have a start and an end,** so a once-per-fight <GlossaryTerm term="Talent" /> can also be used once in each. A <GlossaryTerm term="Drive">Drive's</GlossaryTerm> turn tests count neither.
+- **Promotion and Retirement** wait until the Leg or camp they fell due in has ended.
 
 </Subsection>
 
+</FinePrint>
+
+<FinePrint title="the day, the Posts, and the Leg roll">
+
 <Subsection title="The day" id="the-day">
 
-A day holds two Legs and a Night Camp, and a third Leg when Command orders a Hard Ride.
+Two Legs and a Night Camp — three Legs when Command orders a Hard Ride.
 
 <StepFlow id="fig-day" fig="Fig. 1" title="A day on the route" steps={dayFlow()} />
 
 <CoreTable table="pace" />
 
-Every Leg ridden counts toward the day's Legs, including a Leg ridden again after a retreat, whether the retreat came on a Leg, in a scene at a Waypoint, or at a Night Camp.
+Every Leg ridden counts toward the day's Legs, a Leg ridden again after a retreat included.
 
 </Subsection>
 
 <Subsection title="Formation Posts" id="formation-posts">
 
-The whole Squad rides at one **Formation Post**, the one the route gives this Leg, so the Post changes only at a Waypoint. It names the entry the Leg roll uses on a Steady Leg and what the Leg adds to its hazard.
+The whole Squad rides at one **Post**, the one this Leg's route gives it, so it changes only at a Waypoint. It names the entry the Leg roll uses and what the Leg adds to its hazard.
 
 <CoreTable table="formation-posts" />
 
@@ -140,135 +136,95 @@ The whole Squad rides at one **Formation Post**, the one the route gives this Le
 
 <StepFlow id="fig-leg" fig="Fig. 2" title="One Leg, post to Waypoint" steps={legFlow()} />
 
-**What arriving costs.** On a success, spend {leg.successRations} ration, and the hazard gets {leg.successHazard} for each success beyond the first. On a failure, spend {leg.failureRations} rations, and the hazard gets {leg.failureHazard}. A Hard Ride multiplies the rations by {leg.hardRideMultiplier}. A Squad that holds fewer rations than it must spend meets hunger.
+**What arriving costs.** A success spends {leg.successRations} ration and takes {leg.successHazard} off the hazard for each success beyond the first. A failure spends {leg.failureRations} and adds {leg.failureHazard}. A Hard Ride multiplies the rations by {leg.hardRideMultiplier}.
 
-**Harm** a hazard inflicts outside a Titan Engagement opens the care window <a href="/guide/wounds-and-fear/#care-windows">Wounds & Fear</a> holds after harm away from a fight, with every soldier on the Expedition in its scope.
+<FactTable caption="The Leg roll" columns={['', '']} rows={[
+  ['Who', 'The <b><GlossaryTerm term="Lead" /></b> — one soldier not Down, chosen by the players. On a Hard Ride they must be mounted on their own horse.'],
+  ['Entry', 'The Post\'s entry — Spot, Survive, or Endure. On a Hard Ride it is <b>Ride</b>, on the horse\'s dice, so a Push wears the horse.'],
+  ['Needs', '1 success. Up to 3 comrades may <GlossaryTerm term="Help" />, spending nothing, once each per Leg.'],
+  ['Limits', 'Pushed and Covered as usual, and <b>never tried again</b>.'],
+  ['Nobody to roll?', 'It fails, with no Help and no Push. You still arrive, still spend 2 rations, still add +1.'],
+]} />
 
-**A Titan Engagement** a hazard begins takes its <GlossaryTerm term="Anchor Rating" /> from the kind of the Waypoint this Leg leads to, and with it the <GlossaryTerm term="Anchor">Anchors</GlossaryTerm> the ground holds, and everything the hazard leaves unnamed comes from the usual setup. Every living soldier takes part, mounted or not as they rode. If it becomes a retreat before it ends, the Squad falls back to the Waypoint this Leg started from and rides this Leg again from the beginning, with a new Leg roll and a new hazard.
-
-</Subsection>
-
-<Subsection title="The Leg roll" id="the-leg-roll">
-
-One soldier rides at the head of the formation and reads the ground for everyone.
-
-- **Who rolls.** The **<GlossaryTerm term="Lead" />**: one soldier on the Expedition who is not Down, chosen by the players, with the usual roll-off if they disagree. On a Hard Ride the Lead must be mounted on their own horse.
-- **Entry.** The Post's entry on a Steady Leg: Spot, Survive, or Endure. On a Hard Ride it is Ride, with the horse's <GlossaryTerm term="Gear Dice" />, so a Pushed Hard Ride wears the horse.
-- **It needs 1 success.**
-- **<GlossaryTerm term="Help" />.** Up to 3 comrades on the Expedition who are not Down, spending nothing. Each soldier Helps at most once a Leg.
-- **<GlossaryTerm term="Push">Pushed</GlossaryTerm> and <GlossaryTerm term="Cover">Covered</GlossaryTerm>** as usual, and **never tried again**. A Leg ridden again after a retreat makes a new Leg roll.
-- **With nobody to roll,** as when every living soldier is Down, or when no soldier who is not Down is mounted on their own horse on a Hard Ride, the roll fails, with no Help and no Push. You still reach the Waypoint, the Down ride in the wagon, the Leg still spends its 2 rations and adds its +1, and nothing else changes. A hazard that names the Lead does nothing when there is no Lead.
+**A Titan Engagement a hazard begins** takes its <GlossaryTerm term="Anchor Rating" /> from the Waypoint this Leg leads to, and every living soldier takes part. If it becomes a retreat, the Squad falls back to the Waypoint this Leg started from and rides the Leg again from the beginning, with a fresh roll and a fresh hazard.
 
 </Subsection>
+
+</FinePrint>
 
 <Subsection title="The hazard" id="the-hazard">
 
 <MarginNote>What each total brings is the GM's, read from the Commander's copy and never softened or swapped. What the Squad can do about it is on this page.</MarginNote>
 
-At the end of every Leg the GM rolls that Leg's hazard in the open, and again at every Night Camp. Both are table rolls: no pool, no <GlossaryTerm term="Circumstances" />, no Help, no Push, and never tried again. Where a result lets the players choose, the Squad chooses together, with the usual roll-off.
+The GM rolls the hazard in the open at the end of every Leg, and again at every Night Camp. Both are table rolls: no pool, no <GlossaryTerm term="Circumstances" />, no Help, no Push, never retried.
 
 <CoreTable table="hazard-count" />
 
-Three of those lines are yours. Ride a good Leg and the hazard falls; fail one and it climbs; ride the Signal Relay Post and you can buy 2 of it back with a flare, once a Leg, before the roll.
+**Three of those lines are yours.** Ride a good Leg and the hazard falls; fail one and it climbs; ride the Signal Relay Post and a flare buys 2 of it back, once a Leg, before the roll.
 
-**A roll a hazard calls for,** the Straggler's Endure among them, takes the Circumstances in force when the hazard was rolled: Standard, unless the GM had already named a step for a lasting condition of the Leg that touches it. No step is named or changed for it afterwards, and none for the danger the hazard itself describes. A Titan Engagement or a Skirmish a hazard begins takes its Circumstances as any fight does.
+A roll the hazard calls for takes the Circumstances already in force when it was rolled — never a new step for the danger the hazard describes.
 
 </Subsection>
 
+<FinePrint title="Waypoint scenes, the Straggler, and hunger">
+
 <Subsection title="Scenes at a Waypoint" id="waypoint-scenes">
 
-After a Leg ends at a Waypoint that is not the gate, and before the next Leg or the Night Camp, the GM may frame a scene there: searching an abandoned town, finding survivors, crossing a flooded ford.
+Between Legs the GM may frame a scene: an abandoned town searched, survivors found, a flooded ford crossed. It runs on **<GlossaryTerm term="Called roll">called rolls</GlossaryTerm>**, and a fight can start in one.
 
-- **It runs on <GlossaryTerm term="Called roll">called rolls</GlossaryTerm>,** each with its Circumstances and its <GlossaryTerm term="Stakes">stakes</GlossaryTerm> named before the dice. A successful called search adds Squad Supply only within the caps in <a href="/guide/gear-and-odm/#squad-supply">Gear & ODM</a>, and a scene yields Squad Supply to at most two searches however many places it holds.
-- **A fight can start in it,** a <GlossaryTerm term="Skirmish" /> or a Titan Engagement, as the fiction gives one.
-- **Harm** a called roll's stakes inflict opens the care window held after harm away from a fight, with every soldier on the Expedition in its scope.
-- **A retreat** from a Titan Engagement begun in the scene ends the scene and falls back as a hazard's retreat does: to the Waypoint that Leg started from, riding that Leg again from the beginning. Arriving again does everything arriving does, a Depot's Standard Issue included. The Leg ridden again takes the day's next slot: after the day's first Leg it is the second, at Steady; after the second it is the third only if Command orders a Hard Ride that day, and it is then a Hard Ride. If no slot is left, camp at the Waypoint that Leg started from and ride that Leg again as the next day's first, at Steady.
-- **What it never does.** A scene rides no Leg. It makes no Leg roll and no camp roll, reads no hazard, spends no ration unless a called roll's stakes name one, and never stands in place of a hazard roll.
+**A scene rides no Leg.** No Leg roll, no camp roll, no hazard, and no ration unless a stake names one. A retreat from a fight begun in a scene falls back exactly as a hazard's does, and the Leg ridden again takes the day's next slot.
 
 </Subsection>
 
 <Subsection title="The Straggler" id="the-straggler">
 
-One hazard takes a soldier off the back of the formation, and the Squad does not choose which. The pick is a roll.
+One hazard takes a soldier off the back of the formation, and **the Squad does not choose which** — the pick is a roll.
 
-1. **Which kind.** Roll {straggler.die}: on {straggler.squadmate} the victim is a <GlossaryTerm term="Squadmate" />, on {straggler.character} a player character. Only living soldiers on the Expedition who are not Down count. If none of that kind counts, use the other kind; if neither has one, the hazard is resolved as a plain Titan attack on the formation instead.
-2. **Which soldier.** Number the soldiers of that kind 1 upward in Squad sheet order and roll {straggler.die}, rolling again any result above the count. Every one of them is equally likely, and the order on the sheet chooses nothing.
-3. **Endure.** The victim rolls Endure. It needs 1 success, cannot be Helped or Covered, can be Pushed, and is never tried again.
-4. **On a failure** they take a {straggler.injury} <GlossaryTerm term="Critical Injury" /> at a rolled <GlossaryTerm term="Injury Location" />, which can be lethal. It is a Titan's harm, but it is not a Behavior Table card: no <GlossaryTerm term="Attack Dice" /> are rolled, no <GlossaryTerm term="Reaction" /> answers it, and the Critical Injury roll adds nothing for <GlossaryTerm term="Net Successes" />. It counts as gained as the Titan Engagement begins, so no separate care window is held for it and its time runs as one gained in that fight.
-5. **Then the fight begins,** with the victim at In Reach and every other soldier at Distant.
+1. **Which kind.** Roll {straggler.die}: {straggler.squadmate} a <GlossaryTerm term="Squadmate" />, {straggler.character} a player character. If neither kind has anyone, the hazard becomes a plain attack on the formation.
+2. **Which soldier.** Number them 1 upward in sheet order and roll {straggler.die}, re-rolling anything above the count.
+3. **Endure,** needing 1 success. No Help, no Cover, Push allowed, never retried.
+4. **On a failure,** a {straggler.injury} <GlossaryTerm term="Critical Injury" /> at a rolled location, which can be lethal. No <GlossaryTerm term="Attack Dice" />, no <GlossaryTerm term="Reaction" />, and no Net Success rider — and it counts as gained inside the fight that follows.
+5. **Then the fight begins,** the victim at In Reach and everyone else at Distant.
 
 </Subsection>
+
+</FinePrint>
+
+<FinePrint title="the camp roll, relief, and a retreat at night">
 
 <Subsection title="The Night Camp" id="the-night-camp">
 
-After the day's Legs, the Squad makes camp where the last Leg left it.
-
 <StepFlow id="fig-night" fig="Fig. 3" title="A Night Camp, watch to dawn" steps={nightFlow()} />
 
-- **The camp roll** is Survive, made by one soldier on the Expedition who is not Down, chosen by the players. It needs 1 success, up to 3 comrades who are not Down may Help spending nothing, it can be Pushed and Covered, and it is never tried again. With nobody to roll it, it fails, with no Help and no Push.
-- **<GlossaryTerm term="Camp Relief" />.** If the camp roll succeeded and the camp did not meet hunger, every soldier on the Expedition loses 1 <GlossaryTerm term="Stress" />.
-- **The night** counts the Distance Band of the day's last Leg ridden, whatever a retreat did afterwards, and {leg.campRollFailed} if the camp roll failed. A Titan Engagement the night begins takes its Anchor Rating from the kind of the Waypoint the camp is made at. Titans do not walk at night: the only one that comes is an Abnormal.
-- **A day passes** at the end: a care window with every soldier on the Expedition in its scope, <GlossaryTerm term="Field Repair" /> among its rolls, the <GlossaryTerm term="Death Roll">Death Rolls</GlossaryTerm> that fall due, all Health lost to damage back, and a day of healing.
+**The camp roll** is Survive by one soldier not Down, needing 1 success — Help from up to 3, Push and Cover allowed, never retried, and an automatic failure if nobody can roll.
 
-**A retreat at night.** If a Titan Engagement the night begins becomes a retreat before it ends, the Squad falls back overnight to the Waypoint the day's last Leg started from, and the camp goes on there at the day that passes, with no new camp roll, ration, or night roll. It still counts as a Night Camp made on this Expedition. Falling back is not riding a Leg: it makes no Leg roll, spends nothing, and reads no Leg hazard. The next day's first Leg rides that Leg again from the beginning, with a new Leg roll and a new hazard, and counts toward that day. Any other ending leaves the camp where it was. A camp already at the Waypoint that Leg started from falls back no further: it breaks off where it is, goes on at the day that passes, counts as the one night already counted, and the Leg queued for the morning is ridden as the next day's first, at Steady, unchanged.
+**<GlossaryTerm term="Camp Relief" />:** a successful camp roll with no hunger takes **1 <GlossaryTerm term="Stress" />** off every soldier. **The night** counts the day's last Distance Band, plus {leg.campRollFailed} if the camp roll failed. Titans do not walk at night — the only one that comes is an Abnormal.
+
+**A day passes** at the end: a care window with <GlossaryTerm term="Field Repair" /> among its rolls, the <GlossaryTerm term="Death Roll">Death Rolls</GlossaryTerm> due, all damage healed, and a day of healing.
+
+**A retreat at night** falls back overnight to where the day's last Leg started, and the camp goes on there — no new camp roll, ration, or night roll, and it still counts as the night. The morning rides that Leg again from the beginning.
 
 </Subsection>
 
-<Subsection title="Rations and hunger" id="rations-and-hunger">
-
-Squad Supply holds rations by <GlossaryTerm term="Funding" />. A Leg spends them by its Leg roll and its Pace, a Night Camp spends 1, and two hazards spend or spoil them.
+</FinePrint>
 
 <RuleBox title="Hunger" icon="ph:bowl-food">
 
-When a Leg or a Night Camp must spend rations and Squad Supply holds fewer than it must spend, **the Squad spends every ration it holds and every soldier on the Expedition gains 1 Stress**, with no roll. A Night Camp that meets <GlossaryTerm term="Hunger">hunger</GlossaryTerm> gives no Camp Relief.
+When a Leg or a camp must spend rations the Squad does not hold, **it spends everything it has and every soldier gains 1 Stress**, with no roll. A camp that meets <GlossaryTerm term="Hunger">hunger</GlossaryTerm> gives no Camp Relief.
 
 </RuleBox>
 
-</Subsection>
-
-<FieldReport id="example-hard-ride" title="A Hard Ride into the dark">
-
-The Squad is two days out, at the Center Post, with a Deep Leg left on the route and Command's order for a Hard Ride. Squad Supply holds 3 rations. Corporal Elise Vahn takes the Lead, mounted on her own horse: Agility 3, <GlossaryTerm term="Stress Dice">Stress</GlossaryTerm> 2, and a horse rated 2. Private Tomas Reiss Helps, for 1 <GlossaryTerm term="Bonus Dice">Bonus Die</GlossaryTerm>.
-
-<PoolRows rows={[
-  { label: 'The Ride', pool: 'base:4,2,6,5|gear:3,1l|stress:2,6', successes: 2 },
-]} />
-
-<TryRollButton pool={{ base: 4, gear: 2, stress: 2 }} label="Try Elise's Leg roll" />
-
-Two successes, so the Leg is made. The Squad arrives, spends 1 ration doubled by the Hard Ride to 2, and holds 1 ration. The second success takes 1 off the hazard, which then counts Deep at +2, two nights already camped at +1 each, the Center Post at -1, the Hard Ride at +1, and that -1: +3 on the GM's D6 before it is even thrown.
-
-Elise did not Push, so her Gear Die showing 1 wears nothing. Had she Pushed, the horse would have carried the cost, and Sure Seat would have covered a point of it.
-
-At camp that night the Squad spends its last ration, and the Leg after it will find the stores empty.
-
-</FieldReport>
-
 <SectionHead id="downtime" eyebrow="Section 2">Downtime</SectionHead>
 
-<FieldQuote cite="A quartermaster's clerk, on the returning column">They come back thinner than they went out. We count the horses first, because the horses are easier to count.</FieldQuote>
-
-**Downtime** is the time the Squad spends inside the Walls between Expeditions. It begins the moment the Squad reaches the gate that ends an Expedition and runs until the next Expedition begins.
-
-<Subsection title="When it runs" id="when-downtime-runs">
-
-- It spans **{days} days**, which pass at the infirmary. Nothing else in Downtime takes days.
-- The interim day and the interim issue never happen while it runs. Its {days} days and the next Expedition's issue take their place.
-- **Every soldier in the Squad takes part.** Stress never falls below a soldier's minimum, and <GlossaryTerm term="Grief" /> never below 0.
-
-</Subsection>
-
-<Subsection title="The steps" id="the-downtime-steps">
+**Downtime** runs from the gate that ends an Expedition until the next one begins. It spans **{days} days**, which pass at the infirmary; nothing else in it takes days. Every soldier in the Squad takes part.
 
 <StepFlow id="fig-downtime" fig="Fig. 4" title="One Downtime, gate to gate" steps={downtimeFlow()} />
 
-</Subsection>
+<FinePrint title="the infirmary, and what a Requisition grants">
 
 <Subsection title="The infirmary" id="the-infirmary">
 
-First, **one care window** with every soldier in the Squad in its scope. Field Repair is not rolled in it: inside the Walls, gear is put right by the Maintain Gear Downtime Action.
-
-Then **{days} days**, each resolved in this order.
+First **one care window** with the whole Squad in scope — and no Field Repair in it, because inside the Walls gear is put right by Maintain Gear. Then **{days} days**, each resolved in this order:
 
 <ol>
   {infirmaryDay().map((step) => <li>{step}</li>)}
@@ -276,121 +232,82 @@ Then **{days} days**, each resolved in this order.
 
 <MarginNote>The infirmary roll is 4 dice and nothing else: no Talent, no Gear, no <GlossaryTerm term="Stress Dice" />, no Bonus Dice, no Push, no Help. It is care, not heroics.</MarginNote>
 
-The {days} days hold no care window of their own, so the one above is Downtime's only one. A death on an infirmary day causes no <GlossaryTerm term="Fear Roll" />. Its Grief is the Grief of a day passing, and promotion is timed the same way.
+Those days hold no care window of their own, so the first is Downtime's only one. A death on an infirmary day causes no <GlossaryTerm term="Fear Roll" />.
 
 </Subsection>
 
-<Subsection title="Downtime Actions and the Squad Action" id="downtime-actions">
+</FinePrint>
 
-Each player character takes **one <GlossaryTerm term="Downtime Action" />**, in the order the players choose. Each <GlossaryTerm term="Squadmate" /> takes no action and loses {squadmateRelief()} instead. Then the Squad takes **one <GlossaryTerm term="Squad Action" />**, chosen by the players.
+<Subsection title="Downtime Actions" id="downtime-actions">
+
+Each player character takes **one <GlossaryTerm term="Downtime Action" />**, in an order the players choose. Each <GlossaryTerm term="Squadmate" /> takes none and loses {squadmateRelief()} instead. Then the Squad takes **one <GlossaryTerm term="Squad Action" />**.
 
 <CoreTable table="downtime-actions" />
 
 <IconKey title="What a Downtime can mend" items={[
   { icon: 'die-stress', label: 'Stress', note: 'Recover or Visit Haven, 2 off. A Squadmate loses 2 as well.' },
   { icon: 'harm-scar', label: 'Grief', note: 'Visit Haven takes 2, Honoring the Fallen 1 from everyone.' },
-  { icon: 'gear-odm', label: 'Gear', note: 'Maintain Gear returns every rated item you hold to its rating.' },
-  { icon: 'gear-medical-kit', label: 'Wounds', note: 'The infirmary: one care window, then seven days of healing.' },
+  { icon: 'gear-odm', label: 'Gear', note: 'Maintain Gear returns every rated item to its rating.' },
+  { icon: 'gear-medical-kit', label: 'Wounds', note: 'One care window, then seven days of healing.' },
 ]} />
 
-Training, investigation, research, and the other ways to spend a Downtime are not yet written into these rules.
+Training, investigation, and research are not yet written into these rules.
 
 </Subsection>
 
 <SectionHead id="requisition" eyebrow="Section 3">Requisition</SectionHead>
 
-<FieldQuote cite="Survey Corps manual, on the stores">Ask once, ask well, and ask for the thing you will actually carry.</FieldQuote>
-
-**<GlossaryTerm term="Requisition" />** is how a soldier gets gear beyond Standard Issue. There are no prices. Funding decides what Command will consider, and the item's <GlossaryTerm term="Scarcity" /> and your roll decide whether you get it.
-
-<Subsection title="When" id="when-requisition-runs">
-
-Requisition is a Downtime Action, and each player character may make **one Requisition per Downtime**. It is never made before a campaign's first Expedition, and never outside Downtime.
-
-</Subsection>
-
-<Subsection title="Scarcity and the Funding gate" id="scarcity-and-funding">
+**<GlossaryTerm term="Requisition" />** is how you get gear beyond Standard Issue. There are no prices: <GlossaryTerm term="Funding" /> decides what Command will consider, and the item's <GlossaryTerm term="Scarcity" /> and your roll decide whether you get it. **One per player character per Downtime,** and never before a campaign's first Expedition.
 
 <CoreTable table="requisition-gate" />
 
-A row held behind a Discovery cannot be named until the Squad holds that Discovery. No row on the list below is.
+<StepFlow id="fig-requisition" fig="Fig. 5" title="One ask, one answer" steps={requisitionFlow()} />
 
-</Subsection>
+<FinePrint title="the Requisition roll, and the ledger">
 
 <Subsection title="The roll" id="the-requisition-roll">
 
-<StepFlow id="fig-requisition" fig="Fig. 5" title="One ask, one answer" steps={requisitionFlow()} />
+Name one row the Funding gate allows and the soldier it is for, then roll **Persuade or Recall** — talking the quartermaster round, or citing the regulation and the officer who signed it. **It needs the row's Scarcity plus the <GlossaryTerm term="Ledger">ledger</GlossaryTerm>.**
 
-- **Name one row** the Funding gate allows, with any choice it asks for, and the soldier the item is for.
-- **Roll Persuade or Recall,** chosen before you roll: talking the quartermaster round, or citing the regulation and the officer who signed it.
-- **It needs the row's Scarcity, plus the <GlossaryTerm term="Ledger">ledger</GlossaryTerm>.**
-- **Help.** Up to 3 comrades in the Squad who are not Down. A player character Helps by taking Requisition as their own Downtime Action and spending it on the Help. A Squadmate Helps at most once a Downtime and spends nothing.
-- **Circumstances** reach it as they reach any attribute roll, and the GM may name a step for leverage you bring: a favour owed, a Commendation, a captured specimen. Scarcity and the ledger are what the roll needs, and no step ever changes them.
-- **Pushed and Covered** as usual. Stress gained here rides out on the next Expedition.
-- **Never tried again this Downtime.** That was your one Requisition, granted or refused.
-
-On a success Command grants the row and the ledger rises by 1. On a failure Command says no, and nothing else happens. Successes beyond the needs do nothing.
+Up to 3 comrades may Help: a player character by spending their own Downtime Action on it, a Squadmate for nothing, once a Downtime. Circumstances reach it like any roll — the GM may name a step for leverage you bring — but **no step ever changes what it needs**. Push and Cover as usual. Granted or refused, **that was your one ask**.
 
 </Subsection>
 
-<Subsection title="The ledger, and softening it" id="the-ledger">
+<Subsection title="The ledger" id="the-ledger">
 
 <BoxPair>
-<RuleBox title="The ledger" icon="ph:notebook">
+<RuleBox title="Command's patience" icon="ph:notebook">
 
-The ledger is Command's patience within one Downtime. It starts at **0** and counts the Requisitions Command has already granted the Squad this Downtime, and it is added to what the next roll needs.
+The ledger starts at **0** each Downtime and counts the Requisitions Command has already granted the Squad. It is added to what the next roll needs.
 
-Ask after three grants at Funding 3 and a Limited item needs 2 successes for the Scarcity and 3 more for the ledger. Order your asks accordingly.
+Ask after three grants and a Limited item needs 2 successes for its Scarcity and **3 more** for the ledger. Order your asks accordingly.
 
 </RuleBox>
 <RuleBox title="Size Up on the quartermaster" icon="ph:eye">
 
-Once a Downtime, **before any Requisition roll**, one soldier in the Squad who is not Down, a Squadmate included, may roll Size Up. It is not a Downtime Action.
+Once a Downtime, **before any Requisition roll**, one soldier who is not Down — a Squadmate included — may roll Size Up. It is not a Downtime Action.
 
-It needs 1 success, cannot be Helped or Covered, can be Pushed, and is never tried again. On a success the ledger counts **1 lower for the whole Squad** for the rest of this Downtime, never below 0.
+Needs 1 success, no Help, no Cover, Push allowed, never retried. Success makes the ledger count **1 lower for the whole Squad** for the rest of the Downtime.
 
 </RuleBox>
 </BoxPair>
 
 </Subsection>
 
+</FinePrint>
+
 <Subsection title="What a grant gives" id="what-a-grant-gives">
 
-- **An item** belongs to the soldier the Requisition named, and it is a <GlossaryTerm term="Kept item">kept item</GlossaryTerm>: it counts as items, it can be passed, taken, and shared out like any item of its kind, and Standard Issue never takes it away unless the soldier hands it in at an exchange. A Blade Set rated above 1 is still ruined by any wear. <GlossaryTerm term="ODM Gear" /> or a horse replaces the soldier's own, which leaves play.
-- **Squad Supply** is added above the stock, and it is not a kept item.
-- **It arrives** at the after-actions step of this Downtime, before prosthetics are fitted and before the next Standard Issue. A limb that heals during the {days} days can take a Requisitioned <GlossaryTerm term="Prosthetic">prosthetic</GlossaryTerm> the same Downtime.
+An **item** belongs to the named soldier and is a <GlossaryTerm term="Kept item">kept item</GlossaryTerm>, which Standard Issue never takes away unless it is handed in at an exchange. <GlossaryTerm term="ODM Gear" /> or a horse replaces the soldier's own, which leaves play. **Squad Supply** is added above the stock and is not kept.
+
+It arrives at the after-actions step — before prosthetics are fitted, so a limb that heals during the {days} days can take a Requisitioned <GlossaryTerm term="Prosthetic">prosthetic</GlossaryTerm> the same Downtime.
 
 <CoreTable table="requisition-list" />
 
 </Subsection>
 
-<FieldReport id="example-requisition" title="The fourth ask of the week">
-
-It is the Squad's Downtime and Command has already granted two Requisitions, so the ledger stands at 2. Private Rook Halvard wants a Blade Set rated 2, which is Limited: 2 successes for the Scarcity, plus 2 for the ledger, is 4.
-
-First, Squadmate Neve Lindqvist spends nobody's action on **Size Up** in the storehouse doorway, reading how badly the clerk wants the queue gone: Instinct 3 and Stress 1.
-
-<PoolRows rows={[
-  { label: 'Size Up', pool: 'base:2,6,3|stress:4', successes: 1 },
-]} />
-
-<TryRollButton pool={{ base: 3, stress: 1 }} label="Try Neve's Size Up" />
-
-One success. The ledger counts 1 lower for the whole Squad, so Rook needs 3, not 4. He rolls **Persuade** with Empathy 4 and Stress 2, and the GM names the Circumstances Easy for the letter of thanks Rook is carrying from a Garrison captain, for 1 Bonus Die.
-
-<PoolRows rows={[
-  { label: 'Persuade', pool: 'base:6,3,2,5,4|stress:6,3', successes: 2 },
-  { label: 'After the Push', pool: 'base:6k,5,2,6,3|stress:6k,4', successes: 3 },
-]} />
-
-<TryRollButton pool={{ base: 5, stress: 2 }} label="Try Rook's Requisition" />
-
-Two successes, one short. He Pushes, Corporal Elise Vahn Covers it so he adds no new Stress Die, and one more base die comes up 6. Three successes. Command signs, the ledger rises to 3 for everyone else asking today, and the new set arrives at the after-actions step, ready for the next ride out.
-
-</FieldReport>
-
 <SectionHead id="every-roll" eyebrow="Reference">Every roll</SectionHead>
 
 <CoreTable table="expedition-rolls" />
 
-<MarginNote>These rules are early. They hold a whole Expedition, a whole Downtime, and one ask of Command, and no more than that: expect them to grow.</MarginNote>
+<MarginNote>These rules are early. They hold a whole Expedition, a whole Downtime, and one ask of Command, and no more: expect them to grow.</MarginNote>

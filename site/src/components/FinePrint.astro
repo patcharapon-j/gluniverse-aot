@@ -1,0 +1,56 @@
+---
+/**
+ * Fine print: the edge cases of the rule above it, folded away by default.
+ * A chapter's running text carries what a table needs to resolve the common case;
+ * what is here settles the rare one, and stays one click from it rather than in
+ * the middle of it. Closed on load, and printed open.
+ */
+interface Props {
+  /** What the fold settles, in a few words: "two Titans, corpses, and horses". */
+  title?: string;
+}
+const { title = 'edge cases' } = Astro.props;
+---
+<details class="fineprint">
+  <summary><span class="lbl">Fine print</span> <span class="what">{title}</span></summary>
+  <div class="fineprint-body"><slot /></div>
+</details>
+
+<style is:global>
+  .fineprint {
+    margin: 14px 0;
+    border-left: 2px solid var(--rule);
+    padding-left: 12px;
+  }
+  .fineprint > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--ink-2);
+  }
+  .fineprint > summary::-webkit-details-marker { display: none; }
+  .fineprint > summary::before {
+    content: "+";
+    font-family: var(--f-type);
+    color: var(--ink-2);
+  }
+  .fineprint[open] > summary::before { content: "−"; }
+  .fineprint > summary .lbl {
+    border: 1px solid var(--ink-2);
+    padding: 1px 6px;
+    font-size: var(--fs-2xs);
+  }
+  .fineprint > summary .what { font-size: var(--fs-sm); font-style: italic; }
+  .fineprint > summary:hover .what { text-decoration: underline; }
+  .fineprint-body { font-size: var(--fs-sm); }
+  .fineprint-body > :first-child,
+  .fineprint-body > .subsection:first-child { margin-top: 10px; }
+  .fineprint-body .h3 { font-size: 1rem; }
+  .fineprint-body .subsection + .subsection { margin-top: 14px; }
+  @media print {
+    .fineprint { border-left: 0; padding-left: 0; }
+    .fineprint > summary { display: none; }
+  }
+</style>

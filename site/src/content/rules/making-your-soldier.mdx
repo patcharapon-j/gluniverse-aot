@@ -31,21 +31,20 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
+import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
-import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
-import PoolRows from '~/components/PoolRows.astro';
 import RuleBox from '~/components/RuleBox.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
-import TryRollButton from '~/components/TryRollButton.astro';
 import plateSoldier from '~/assets/plates/plate-making-your-soldier.webp';
 
 <FieldQuote cite="Instructor's saying, Training Corps">Three years to make a soldier. One afternoon beyond the Walls to find out whether we did.</FieldQuote>
@@ -53,70 +52,61 @@ import plateSoldier from '~/assets/plates/plate-making-your-soldier.webp';
 <Plate number="Plate VII" caption="The class stands at attention on Graduation morning." label="A long line of cadets in harness and green cloaks standing at attention in a walled parade ground at sunrise, an officer on a platform" art="guide-making-your-soldier-opener" image={plateSoldier} crop="21 / 9" maxWidth={900} />
 
 <ChapterContents items={[
-  { id: 'what-a-soldier-is', title: 'What a Soldier Is', note: 'The sheet, attributes, derived values' },
-  { id: 'the-lifepath', title: 'The Lifepath', note: 'Origin to Graduation, step by step' },
+  { id: 'what-a-soldier-is', title: 'What a Soldier Is', note: 'The sheet and its numbers' },
+  { id: 'the-lifepath', title: 'The Lifepath', note: 'Origin to Graduation' },
   { id: 'the-graduation-exam', title: 'The Graduation Exam', note: 'Three Trials for Merit' },
   { id: 'drives', title: 'Drives', note: 'Shrugging off fear' },
-  { id: 'specialties-and-talents', title: 'Specialties and Talents', note: 'Key attribute, levels, triggers' },
-  { id: 'actions', title: 'Actions', note: 'The Catalog, gear, called rolls' },
+  { id: 'specialties-and-talents', title: 'Specialties and Talents', note: 'Levels and triggers' },
+  { id: 'actions', title: 'Actions', note: 'The Catalog and its edges' },
   { id: 'squadmates', title: 'Squadmates', note: 'Templates, Wings, promotion' },
-  { id: 'building-without-the-lifepath', title: 'Building Without the Lifepath', note: 'Template Build and Free Build' },
+  { id: 'building-without-the-lifepath', title: 'Building Without the Lifepath', note: 'Two build procedures' },
 ]} />
 
 <SectionHead id="what-a-soldier-is" eyebrow="Section 1">What a Soldier Is</SectionHead>
 
-<FieldQuote cite="Survey Corps manual">A soldier is a body, a nerve, and a reason. Lose any one of them and the other two will not carry you home.</FieldQuote>
+Every player character is a Training Corps graduate in the Survey Corps. Three procedures make one: the <GlossaryTerm term="Lifepath" />, always allowed, and the <GlossaryTerm term="Template Build" /> and <GlossaryTerm term="Free Build" /> when the campaign allows them.
 
-Every player character is a Training Corps graduate who has joined the Survey Corps. You make yours by one of three procedures: the <GlossaryTerm term="Lifepath" />, which is always allowed, or the <GlossaryTerm term="Template Build" /> or the <GlossaryTerm term="Free Build" />, when the campaign allows them.
+**Talents are a soldier's only trained abilities.** A roll is an attribute, plus at most one Talent naming the entry, plus <GlossaryTerm term="Bonus Dice" />, <GlossaryTerm term="Gear Dice" />, and <GlossaryTerm term="Stress Dice" />.
 
-<Subsection title="The character sheet" id="the-character-sheet">
+<FinePrint title="what a soldier records, and the derived numbers">
 
-- **Attributes:** Strength, Agility, Wits, Perception, Instinct, and Empathy.
-- **Derived values:** <GlossaryTerm term="Health" />, kept as a row of boxes, <GlossaryTerm term="Resolve" />, <GlossaryTerm term="Stress" />, and minimum Stress.
-- **Origin and Haven:** where you grew up, and what you have to return to.
-- **Drive:** what keeps you fighting, written as a trigger; its named comrade, if it needs one; and whether you have used it this session, cleared at the start of each session.
-- **Merit and Class Rank:** how you did in the Training Corps, and "Declined the Military Police" for a Top 10 Class Rank. A built soldier and a promoted Squadmate record none.
-- **Specialty:** your trained specialization.
-- **Talents:** narrow trained abilities, each naming the Action Catalog entries it applies to. Record each use of a once-per-Titan-Engagement Talent beside it.
-- **Canon Tie:** optional.
-- **Rank:** every new soldier is a Private.
-- **Harm:** Health lost to damage, whether you are <GlossaryTerm term="Down" />, <GlossaryTerm term="Scars" />, <GlossaryTerm term="Grief" />, <GlossaryTerm term="Critical Injuries" />, and the other harm details in <a href="/guide/wounds-and-fear/">Wounds & Fear</a>. A new soldier has none of them.
-- **Gear:** Standard Issue.
+<Subsection title="The sheet" id="the-character-sheet">
 
-Talents are the only trained abilities a soldier has. A roll is an attribute, plus at most one Talent that names the roll's Action Catalog entry, plus <GlossaryTerm term="Bonus Dice" />, <GlossaryTerm term="Gear Dice" />, and <GlossaryTerm term="Stress Dice" />.
+<FactTable caption="What a soldier records" columns={['', '']} rows={[
+  ['Attributes', 'Strength, Agility, Wits, Perception, Instinct, Empathy.'],
+  ['Derived', 'Health as a row of boxes, Resolve, Stress, minimum Stress.'],
+  ['Story', 'Origin, Haven, Drive (with its named comrade, and whether it is used this session), optional Canon Tie.'],
+  ['Training', 'Merit, Class Rank, and “Declined the Military Police” for a Top 10.'],
+  ['Trained', 'Specialty, and Talents with the entries each names.'],
+  ['Standing', 'Rank — every new soldier is a Private.'],
+  ['Harm', 'Health lost, Down, Scars, Grief, Critical Injuries. A new soldier has none.'],
+  ['Gear', 'Standard Issue.'],
+]} />
 
 </Subsection>
 
-<MarginNote>How a pool is built, step by step: <a href="/guide/rules-of-play/#building-the-pool">The Rules of Play</a>.</MarginNote>
+<MarginNote>How a pool is built: <a href="/guide/rules-of-play/#building-the-pool">The Rules of Play</a>. What Health and Resolve do: <a href="/guide/wounds-and-fear/">Wounds & Fear</a>.</MarginNote>
 
-<Subsection title="Attributes" note="Rated 2 to 5" id="attributes">
+<Subsection title="Attributes and derived values" note="Rated 2 to 5" id="attributes">
 
 <CoreTable table="attributes" />
 
-- Attributes are rated **2 to 5**. The key attribute of your Specialty is the only one that can be rated **6**.
-- **Attributes never rise after creation,** whichever procedure made the soldier. A soldier grows through Talents and Scars instead.
-- The Lifepath sets ratings through its rolls and <a href="#graduation">Graduation</a>. A built soldier records them as <a href="#the-build-steps">its build</a> states.
+Attributes are rated **2 to 5**, and only your Specialty's key attribute can reach **6**. **They never rise after creation** — a soldier grows through Talents and Scars.
+
+<FactTable compact caption="The derived numbers" columns={['Value', 'How it is found']} rows={[
+  ['Health', 'Half of Strength + Agility, rounded up, as a row of boxes. Each untreated Critical Injury crosses one off; at 0 you are <GlossaryTerm term="Down" />.'],
+  ['Resolve', 'Half of Instinct + Empathy, rounded up, +1 per Scar, −1 per point of Grief (3 at most).'],
+  ['Stress', 'Starts at 0, which is the minimum for a soldier with no Scars.'],
+  ['Carrying limit', 'Strength + 4 items, before you are <GlossaryTerm term="Overloaded" />.'],
+]} />
 
 </Subsection>
 
-<MarginNote>What Health, Resolve, and Down do: <a href="/guide/wounds-and-fear/">Wounds & Fear</a>.</MarginNote>
-
-<Subsection title="Derived values" id="derived-values">
-
-- **Health** is half of Strength plus Agility, kept as a row of that many boxes. Each untreated Critical Injury crosses off one box, up to Health; damage marks the boxes left; at 0 you are Down. Titan attacks inflict Critical Injuries directly, without reducing Health first.
-- **Resolve** is half of Instinct plus Empathy, plus 1 per Scar, minus 1 per point of Grief, counting at most 3 points of Grief. A new soldier has no Scars and no Grief.
-- **Stress** starts at 0, the minimum Stress of a soldier with no Scars.
-- **Carrying limit:** Strength + 4 items before you are <GlossaryTerm term="Overloaded" />.
-
-Health and Resolve round the halved attributes up. Both come from the final ratings: after the Graduation swap and floor, or the ratings a built soldier records.
-
-</Subsection>
+</FinePrint>
 
 <SectionHead id="the-lifepath" eyebrow="Section 2">The Lifepath</SectionHead>
 
-<FieldQuote cite="From a Cadet's diary">They asked where I came from on the first morning. By the third winter nobody asked, and I understood why.</FieldQuote>
-
-The Lifepath takes a <GlossaryTerm term="Cadet" /> from their <GlossaryTerm term="Origin" /> through three <GlossaryTerm term="Training Years" /> to Graduation. Create your soldiers together, step by step: the Graduation Exam and the starting Squad involve every character at once.
+The Lifepath takes a <GlossaryTerm term="Cadet" /> from <GlossaryTerm term="Origin" /> through three <GlossaryTerm term="Training Years" /> to Graduation. Build your soldiers together — the Exam and the starting Squad involve everyone at once.
 
 <StepFlow id="fig-lifepath" fig="Fig. 1" title="The Lifepath" steps={[
   {
@@ -128,13 +118,13 @@ The Lifepath takes a <GlossaryTerm term="Cadet" /> from their <GlossaryTerm term
   {
     title: "Why You Enlisted.",
     icon: "ph:flag-banner",
-    text: "Roll D66: +1 to one attribute. Take the rolled row's Drive, or any other row's.",
+    text: "Roll D66: +1 to one attribute. Take that row's Drive, or any other row's.",
     exit: { kind: "note", label: "Fixed point", text: "Choosing another row's Drive never moves the attribute point." },
   },
   {
     title: "Training Years.",
     icon: "ph:barbell",
-    text: "Three times: roll D66 for an event (+1 attribute, +1 Talent level, Merit), then make the performance roll for more Merit.",
+    text: "Three times: roll D66 for an event (+1 attribute, +1 Talent level, Merit), then the performance roll for more Merit.",
     exit: { kind: "cover", label: "Exam", text: "If the players voted for the Graduation Exam, it replaces the third performance roll." },
   },
   {
@@ -146,36 +136,32 @@ The Lifepath takes a <GlossaryTerm term="Cadet" /> from their <GlossaryTerm term
   {
     title: "Finish.",
     icon: "ph:identification-card",
-    text: "Record Health, Resolve, Stress, Rank, and harm, receive Standard Issue, and name your soldier.",
+    text: "Record Health, Resolve, Stress, Rank, and harm, take Standard Issue, and name your soldier.",
     exit: { kind: "note", label: "Then", text: "Once everyone is done: starting Squadmates, then named comrades." },
   },
 ]} />
 
-<Subsection title="Before the Lifepath" id="before-the-lifepath">
+<FinePrint title="before you roll: the year, the vote, and shared choices">
 
-1. **Campaign Year.** If the campaign has none yet, the players record the <GlossaryTerm term="Campaign Year" />, from 845 to 850: the year the campaign begins. It changes only when a rule names a change, and no current rule does. Origin conditions are tested against the current Campaign Year, so a soldier created or promoted later uses the year the campaign has reached.
-2. **Exam vote.** The players decide whether to run the <GlossaryTerm term="Graduation Exam" />. A replacement character created later votes alone, before rolling their own Lifepath, and takes the Exam alone.
+<Subsection title="Before you roll" id="before-the-lifepath">
 
-**The GM plays no part in the Lifepath** beyond reading tables with the players. Every result comes from a roll, a table row, or a choice the table gives you.
+Record the <GlossaryTerm term="Campaign Year" /> (845 to 850) if the campaign has none, and vote on whether to run the <GlossaryTerm term="Graduation Exam" />. At session zero the GM also records, once and for good, whether the campaign allows the Template Build, the Free Build, or both — so one table can mix rolled and built soldiers.
 
-**Shared choices.** When players disagree on a choice that belongs to them together, each proposed choice is rolled for once, with a D6 rolled by one player who proposed it. The highest roll decides, and choices tied for highest roll again. This covers running the Graduation Exam, the Campaign Year, how many starting Squadmates to take when fewer than the rule gives are proposed, and the templates of starting Squadmates. The order of Cadets in a Trial is rolled, not chosen, and the campaign's procedures are the GM's choice.
+**The GM plays no part in the Lifepath** beyond reading tables with you. Every result comes from a roll, a row, or a choice the row offers.
 
-**Beside the Lifepath.** At session zero, before the campaign's first soldier is created, the GM records once whether the campaign also allows the Template Build, the Free Build, or both. The choice never changes, and it covers every soldier created in the campaign, including a new character for a player whose soldier dies or retires. Each player picks any allowed procedure, so one table can mix rolled and built soldiers.
+**Shared choices** — the Exam vote, the Campaign Year, how many Squadmates to start with and their templates — are settled by a D6 roll-off between the proposals when players disagree, highest taking it.
 
 </Subsection>
 
+</FinePrint>
+
 <MarginNote>Every row with its full story: <a href="/compendium/origins/">Compendium, Origins & Lifepath</a>.</MarginNote>
+
+<FinePrint title="the Origin and Enlistment rows, and the caps">
 
 <Subsection title="Origin" note="Step 1" id="origin">
 
-1. Set every attribute to 2.
-2. Roll D66 on the Origin table. If the row has a condition the current Campaign Year does not meet, roll again.
-3. Add 1 to each of the row's two attributes.
-4. Take level 1 in one of the row's two Talents.
-5. Record one of the row's two Havens. A <GlossaryTerm term="Haven" /> is what you have to return to: the Visit Haven <GlossaryTerm term="Downtime Action" /> uses it to lower your Stress and Grief.
-6. If the row has a Canon Tie, you may record it.
-
-A <GlossaryTerm term="Canon Tie" /> is optional and has no effect on play. A soldier has at most one, and gains it only from an Origin row.
+Set every attribute to **2**, then roll D66 — re-rolling a row whose condition the Campaign Year does not meet. Add 1 to each of its **two attributes**, take level 1 in one of its **two Talents**, and record one of its **two Havens**: what you have to return to, and what Visit Haven uses to lower your Stress and Grief. A row's <GlossaryTerm term="Canon Tie" /> is optional and changes nothing in play.
 
 <CoreTable table="origins" />
 
@@ -183,10 +169,7 @@ A <GlossaryTerm term="Canon Tie" /> is optional and has no effect on play. A sol
 
 <Subsection title="Why You Enlisted" note="Step 2" id="why-you-enlisted">
 
-1. Roll D66 on the Why You Enlisted table and add 1 to the rolled row's attribute.
-2. Record the rolled row's <GlossaryTerm term="Drive" />, or instead the Drive of any other row.
-
-A Drive that needs a named comrade names one when the Squad forms. <a href="#drives">Drives</a> explains each test.
+Roll D66, add 1 to that row's attribute, and record that row's <GlossaryTerm term="Drive" /> — or any other row's. A Drive needing a named comrade names one when the Squad forms.
 
 <CoreTable table="why-you-enlisted" />
 
@@ -194,28 +177,24 @@ A Drive that needs a named comrade names one when the Squad forms. <a href="#dri
 
 <Subsection title="Training Years" note="Steps 3 to 5" id="training-years">
 
-Each of the three Training Years is resolved the same way, with its own event table:
-
-1. **Event.** Roll D66 on the year's events. Add 1 to the event's attribute, gain 1 level in one of its two Talents, and add its Merit to your <GlossaryTerm term="Merit" /> total. Merit can be negative.
-2. **Performance roll.** Make the year's performance roll and add the Merit it earns.
+Each year: roll D66 on its events for **+1 attribute, 1 Talent level, and Merit** (which can be negative), then make the year's **performance roll** for more.
 
 <BoxPair>
 <RuleBox title="Attribute cap" icon="ph:user-focus">
 
-**Before Graduation, no attribute can go above 5.** A point that would raise an attribute above 5 goes instead to another attribute rated below 5, of your choice.
+**Nothing goes above 5 before Graduation.** A point that would is placed on another attribute below 5, your choice.
 
 </RuleBox>
 <RuleBox variant="stop" title="Talent cap" icon="ph:prohibit">
 
-No Talent can be above level 2 at creation, and a rule Talent cannot go above its maximum level, usually 1.
+**No Talent above level 2 at creation,** and no rule Talent above its maximum.
 
-- If neither of an event's Talents can gain a level, take 1 level in any Talent on that year's curriculum that can.
-- If the only one of the two that can gain a level names only entries no rule calls for, you may take that level, or 1 level in any curriculum Talent that can gain one.
+If neither of an event's Talents can take the level, take it in any Talent on that year's curriculum that can.
 
 </RuleBox>
 </BoxPair>
 
-A Lifepath soldier gains exactly 5 Talent levels: 1 from the Origin, 3 from the Training Year events, and 1 from the Specialty.
+A Lifepath soldier gains exactly **5 Talent levels**: 1 Origin, 3 events, 1 Specialty.
 
 <CoreTable table="training-years" />
 
@@ -227,20 +206,15 @@ A Lifepath soldier gains exactly 5 Talent levels: 1 from the Origin, 3 from the 
 
 </Subsection>
 
-<MarginNote>The performance roll in the table of rolls with exceptions: <a href="/guide/rules-of-play/#building-the-pool">The Rules of Play</a>.</MarginNote>
+</FinePrint>
 
 <Subsection title="The performance roll" id="the-performance-roll">
 
-The performance roll is an attribute roll made for its own Action Catalog entry.
-
-- **Attribute:** the higher of the year's two performance attributes. If they are equal, you pick. Each attribute is a performance attribute in exactly one Training Year.
-- **Pool:** the attribute alone, with no Talent dice, Bonus Dice, Gear Dice, or Stress Dice. It cannot be Pushed or Helped.
-- **Merit:** by the roll's successes, on the table below.
-- **No retry.** Each Training Year has exactly one performance roll, and it can never be tried again.
+The higher of the year's two performance attributes — **alone**. No Talent dice, Bonus Dice, Gear Dice, or Stress Dice, no Push, no Help, and never a second attempt.
 
 <CoreTable table="performance-merit" />
 
-If the players voted to run the Graduation Exam, it replaces the third year's performance roll. The third year's event still happens.
+If the players voted for the Exam, it replaces the third year's performance roll. That year's event still happens.
 
 </Subsection>
 
@@ -250,26 +224,26 @@ If the players voted to run the Graduation Exam, it replaces the third year's pe
   {
     title: "Class Rank.",
     icon: "ph:list-checks",
-    text: "Add up the Merit from all three Training Years and find the Class Rank for that total.",
+    text: "Total your Merit from all three years and read off the Class Rank.",
     exit: { kind: "note", label: "Shared", text: "Several graduates can share a Class Rank." },
   },
   {
     title: "Specialty.",
     icon: "ph:graduation-cap",
-    text: "Choose one of the nine Specialties. It is not rolled and has no requirement.",
+    text: "Choose one of the nine. Not rolled, and no requirement.",
     exit: { kind: "note", label: "For good", text: "A Specialty never changes afterwards." },
   },
   {
     title: "Swap and floor.",
     icon: "ph:arrows-left-right",
-    text: "Swap your highest rating onto the key attribute, then raise the key attribute to at least 4.",
+    text: "Swap your highest rating onto the key attribute, then raise it to at least 4 by lowering another rated 3 or more.",
     exit: { kind: "note", label: "Total", text: "Neither step changes your attribute total." },
   },
   {
     title: "Top 10.",
     icon: "ph:medal",
     text: "A Top 10 graduate declines the Military Police, and the key attribute gains 1, to a maximum of 6.",
-    exit: { kind: "cover", label: "Only way", text: "This is the only way to an attribute of 6." },
+    exit: { kind: "cover", label: "Only way", text: "This is the only route to an attribute of 6." },
   },
   {
     title: "Specialty Talent.",
@@ -279,10 +253,7 @@ If the players voted to run the Graduation Exam, it replaces the third year's pe
   },
 ]} />
 
-- **Swap.** If any other attribute is rated higher than the key attribute, swap the key attribute's rating with the highest rating among the other five. If several share that rating, you pick one. The key attribute now holds your highest rating.
-- **Floor.** If the key attribute is still below 4, raise it to 4. For each point added, lower by 1 another attribute rated 3 or more. This happens only when every attribute is 3.
-- **Top 10.** If your Class Rank is Top 10, you were offered a place in the Military Police and declined it: record "Declined the Military Police". Class Rank has no other effect.
-- **No free points.** The swap and the floor never change the total, so every new Lifepath soldier has 18 attribute points, or 19 with a Top 10 Class Rank.
+Class Rank has no other effect. Because nothing adds points, every new Lifepath soldier has **18 attribute points** — 19 with a Top 10.
 
 <CoreTable table="class-rank" />
 
@@ -290,71 +261,32 @@ If the players voted to run the Graduation Exam, it replaces the third year's pe
 
 <Subsection title="Finishing and joining the Squad" id="finishing">
 
-A built soldier finishes with these same steps.
+Record derived values, Rank Private, no harm, and <GlossaryTerm term="Standard Issue" /> — plus a medical kit for a Medic and a tool kit for an Engineer. Name your soldier. A built soldier finishes the same way.
 
-1. **Derived values.** Record Health as a row of that many boxes, Resolve, Stress 0, and minimum Stress 0.
-2. **Rank.** Record Private.
-3. **Harm.** Record Health lost 0, not Down, no Scars, Grief 0, and no Critical Injuries.
-4. **Gear.** Receive <GlossaryTerm term="Standard Issue" />. A Medic also receives a medical kit, and an Engineer a tool kit.
-5. **Name** your soldier.
-
-Once every player character is finished:
-
-6. **Starting Squadmates.** Create them as <a href="#the-starting-squad">The starting Squad</a> states.
-7. **Named comrades.** Each player whose Drive needs a named comrade names one now: a living player character or Squadmate in the Squad, other than their own soldier.
+Once everyone is done: create <a href="#the-starting-squad">starting Squadmates</a>, then each Drive that needs one names its comrade.
 
 </Subsection>
 
 <MarginNote>Gear, ratings, and Standard Issue: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
 
-<FieldReport id="example-mira" title="Mira rolls her Lifepath">
-
-The players record Campaign Year 846 and vote not to run the Graduation Exam. Cadet Mira Hollen's attributes all start at 2.
-
-- **Origin: 25, Wall Rose Farm.** Strength and Perception go to 3. She takes Horsemanship 1 and records the family farm as her Haven.
-- **Why You Enlisted: 42.** Strength goes to 4, and she keeps the rolled Drive, Shield the Walls.
-- **First Year: 44, Fire in the stables.** Perception goes to 4 and Merit to 1. She takes Keen Eyes 1, which adds its die to Spot, over Horsemanship. Her performance attributes are Strength 4 and Instinct 2, so she rolls 4 dice. One success brings Merit to 2.
-
-<PoolRows rows={[{ label: 'First Year performance roll', pool: 'base:6,4,2,1', successes: 1 }]} />
-
-<TryRollButton pool={{ base: 4 }} pushable={false} label="Try Mira's performance roll" />
-
-- **Second Year: 13, The wooden nape.** Strength goes to 5, she takes Clean Cut 1, and Merit rises by 2, to 4. Agility 2 against Perception 4: she rolls 4 dice, and one success brings Merit to 5.
-- **Third Year: 34, Arguing with an instructor.** Empathy goes to 3, she takes Silver Tongue 1 over Wide Awareness, and Merit drops to 4. With no Exam, she makes the performance roll with Empathy 3 over Wits 2, and one success brings Merit back to 5.
-- **Graduation.** Merit 5 is Class Rank 25: not Top 10, so no Military Police offer and no key attribute bonus. She chooses Slayer. Its key attribute, Strength, already holds her highest rating, 5, so nothing swaps. As a Tactician, her Instinct 2 would have swapped with her Strength 5; as a Hunter, her Perception 4 would have. Her Specialty level goes into Clean Cut, raising it to 2.
-- **Finish.** Strength 5, Agility 2, Wits 2, Perception 4, Instinct 2, Empathy 3: 18 points. Clean Cut 2, Horsemanship 1, Keen Eyes 1, Silver Tongue 1: 5 levels. Health is (5 + 2) / 2 = 3.5, rounded up to a row of 4 boxes. Resolve is (2 + 3) / 2 = 2.5, rounded up to 3. Stress 0, and she is a Private.
-
-Her Nape strike rolls 7 base dice before Bonus, Gear, and Stress Dice. On ODM Gear her dodge rolls only Agility 2: Horsemanship adds its die only to a dodge made mounted with the horse as its gear item. She will want a comrade Helping, or a Read and <GlossaryTerm term="Call It" />, when a Titan's hand comes for her.
-
-<TryRollButton pool={{ base: 7 }} label="Try her Nape strike's base dice" />
-
-</FieldReport>
-
 <SectionHead id="the-graduation-exam" eyebrow="Section 3">The Graduation Exam</SectionHead>
 
-<FieldQuote cite="Chalked on a Training Corps barracks door">The dummies do not bleed. Cut them as if they will get up again.</FieldQuote>
-
-The Graduation Exam is an optional prologue the table plays out: three <GlossaryTerm term="Trials" /> whose Merit replaces the third Training Year's performance roll, and so helps decide each Cadet's <GlossaryTerm term="Class Rank" />.
-
-<Subsection title="Using the Exam" id="using-the-exam">
-
-- **The vote.** Taken before the Lifepath begins. If the players run the Exam, every Cadet being created at the same time takes it. A replacement character created later decides before rolling their own Lifepath, and takes the Exam alone.
-- **When.** After every Cadet has applied their third year's event, and before Graduation.
-- **What it replaces.** The Merit from all three Trials, after any Stress Response costs, is added to the Merit total instead of the third performance roll. The third year's event still happens, with its attribute point, Talent level, and Merit.
-- **Built soldiers take no Exam.** A Template Build or Free Build soldier takes no Trial and earns no Exam Merit, whatever the vote. Only Cadets rolling the Lifepath count in each Trial's roll order and in the squad field exercise's Help.
-
-</Subsection>
+An optional prologue: three <GlossaryTerm term="Trials" /> played out after every Cadet's third-year event and before Graduation. Their Merit replaces the third performance roll, so it helps set each <GlossaryTerm term="Class Rank" />. **Built soldiers take no Trial** and earn no Exam Merit, whatever the vote.
 
 <InkVignette caption="A Cadet swings between pines toward the nape of a wooden Titan dummy running on its rail." label="A Cadet on ODM lines closing on a wooden Titan dummy" art="guide-making-your-soldier-exam" />
 
+<FinePrint title="the Exam's conditions and its three Trials">
+
 <Subsection title="How the Exam is played" id="how-the-exam-is-played">
 
-- **Not a Titan Engagement.** There are no rounds, turns, Positions, Attention, or Titans, no Gas Rolls, and no counting of Blade Sets. An entry's requirements that need a Titan, a Position, Attention, a Grabbed or Down soldier, a patient, a comrade with a Stress Response, or a worn or Jammed item do not apply. The listed exam issue item always meets the entry's gear requirement.
-- **Pools.** Every Trial roll is an attribute roll with the full pool: attribute, one dice Talent that names the entry, Bonus Dice only from Help in the squad field exercise, Gear Dice from the exam issue item listed for the entry, and Stress Dice. Rule Talents that name the entry apply. Only the squad field exercise can be Pushed; the other two Trials forbid a Push by their own rule.
-- **No Circumstances.** No Trial roll takes a step of <a href="/guide/rules-of-play/">Circumstances</a>. The Exam is creation, played before the campaign begins.
-- **Stress.** Every Cadet starts the Exam at Stress 0. Stress gained stays through later Trials and adds Stress Dice to those rolls. When the Exam ends, every Cadet's Stress returns to 0.
-- **Stress Responses.** A Stress Response during the Exam still happens, and the roll cannot be Pushed after it. It is not resolved on the Wounds & Fear table: instead it costs the Cadet 1 Merit on the Trial whose roll caused it, which can make that Trial's Merit negative. Nothing else happens.
-- **Roll order.** Before each Trial, every Cadet taking the Exam rolls a D6, and they roll that Trial from the highest result down. Cadets tied on a result roll again among themselves. The players never choose the order.
+<FactTable caption="Exam conditions" columns={['', '']} rows={[
+  ['Not a fight', 'No rounds, turns, Positions, Attention, Gas Rolls, or Titans. Requirements needing any of those do not apply, and the listed exam issue item always satisfies the gear requirement.'],
+  ['Pools', 'Full pools — attribute, one dice Talent, exam issue Gear Dice, Stress Dice. Bonus Dice only from Help in the squad field exercise.'],
+  ['Circumstances', 'None. The Exam is creation, played before the campaign begins.'],
+  ['Stress', 'Everyone starts at 0, carries what they gain between Trials, and returns to 0 when the Exam ends.'],
+  ['A Stress Response', 'Costs that Trial <b>1 Merit</b> instead of being rolled on the Wounds &amp; Fear table, and still blocks a Push.'],
+  ['Order', 'Rolled, never chosen: a D6 each before every Trial, highest first, ties re-rolled.'],
+]} />
 
 <CoreTable table="exam-issue" />
 
@@ -364,237 +296,144 @@ The Graduation Exam is an optional prologue the table plays out: three <Glossary
 
 <CoreTable table="exam-trials" />
 
-- **The ODM balance test and the Titan dummy course** cannot be Pushed, Helped, or Covered.
-- **The squad field exercise:** each Cadet picks one of its six rolls and needs 3 successes for 1 Merit. It can be Pushed.
-  - **Help is fixed.** Every other Cadet taking the Exam qualifies to Help each roll, but only one Helps it: the Cadet who rolls next in this Trial's order Helps the current roller, and the first roller Helps the last. Each Cadet Helps exactly one roll, declared before that roll, and that Help is all it spends. A Cadet taking the Exam alone has no Help.
-  - **Covering.** A Cadet who qualifies to Help a roll can <GlossaryTerm term="Cover" /> its Push, whether or not they Helped it, until they have made their own roll in this Trial. From then until the Trial ends they cannot Cover. Covering spends nothing.
-  - Each Cadet's Merit comes only from their own roll. There is no bonus when every Cadet succeeds.
+The ODM balance test and the Titan dummy course cannot be Pushed, Helped, or Covered.
+
+**The squad field exercise** lets each Cadet pick one of six rolls and need **3 successes** for 1 Merit. It can be Pushed, and **Help is fixed**: each Cadet Helps exactly one roll — the one after them in the order, the first Helping the last. Any Cadet who could Help may **Cover** a Push until they have made their own roll. Merit comes only from your own roll.
 
 </Subsection>
 
-<FieldReport id="example-anka" title="Anka at the squad field exercise">
-
-Three Cadets take the Exam. Before the squad field exercise they each roll a D6: Anka 5, Bruno 2, Carla 2. Bruno and Carla roll again, Carla 4 and Bruno 1, so the order is Anka, Carla, Bruno. Carla Helps Anka, Bruno Helps Carla, and Anka, the first roller, Helps Bruno.
-
-Anka picks Read: Instinct 3, Titan Reader 1, no gear, and 1 Bonus Die from Carla's Help. She has gained no Stress in the Exam, so she rolls no Stress Dice. Two successes, one short of 3.
-
-<PoolRows rows={[
-  { label: 'First roll', pool: 'base:6,3,6,1,4', successes: 2 },
-  { label: 'After the Push', pool: 'base:6k,5,6k,6,2', successes: 3 },
-]} />
-
-She Pushes. Carla and Bruno have not yet rolled, so either can Cover; Bruno does. He gains 1 Stress, which will add a Stress Die to his own roll later in this Trial, and Anka adds no Stress Die. The Push turns up a third 6: 1 Merit.
-
-<TryRollButton pool={{ base: 5 }} label="Try Anka's Read" />
-
-</FieldReport>
+</FinePrint>
 
 <SectionHead id="drives" eyebrow="Section 4">Drives</SectionHead>
 
-<FieldQuote cite="From a Cadet's diary">I wrote my reason inside my boot. I read it every time my hands shook.</FieldQuote>
+A Drive is what keeps a soldier fighting. When its trigger is met, it lets you **shrug off one <GlossaryTerm term="Fear Roll" /> result per session** — the result simply does not take effect. Every Drive is a Why You Enlisted row, written as a trigger beginning "When I ...".
 
-A Drive is what keeps a soldier fighting. While its trigger is met by your own act, a <GlossaryTerm term="Position" /> you moved into, or your own ODM flight, it lets you shrug off one <GlossaryTerm term="Fear Roll" /> result per session. Every Drive is a row of the Why You Enlisted table, written as a trigger that begins "When I ...".
-
-<Subsection title="Using a Drive" id="using-a-drive">
-
-1. **A Fear Roll result is about to take effect on you.**
-2. **Check your trigger** with its test and whom its acts count on, below.
-3. **If it is met and you have not used your Drive this session,** you may shrug off the result: it does not take effect. Wounds & Fear states what counts as a Fear Roll's result.
-4. **Record the use.** A Drive shrugs off one result per session.
-
-</Subsection>
-
-<MarginNote>What airborne means, and who carries whom: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
+<FinePrint title="what a Drive's triggers test, and naming a comrade">
 
 <Subsection title="Trigger tests" id="trigger-tests">
 
-Every trigger is met by something you did, or by where you put yourself.
+Every trigger is met by something you did, or where you put yourself.
 
-- **Your own state.** The trigger names a Position you hold, or your own flight on ODM Gear. It is met if that is true when the result is about to take effect.
-  - A Position counts only if your own move put you in it: your most recent change of Position was a move you made. A Position you were placed at when the Titan Engagement began, or by any rule other than your own move, does not count until your own move changes it. A Grab counts as a change of Position made by another rule, even when your Position stays On Body.
-  - Flight counts only through your own ODM use. A soldier carried by a comrade is not airborne on their own ODM Gear.
-  - The test never looks at a Titan's Attention, a comrade's state, a Titan's Body Parts, or your Stress, Grief, or injuries.
-- **Your most recent turn.** The trigger names acts. It is met if you took one of them on your most recent turn in the current Titan Engagement, whether that turn came earlier this round or in an earlier round.
-- **Since your most recent turn began.** The trigger names acts. It is met if you took or used one of them at any time from the start of your most recent turn in the current Titan Engagement until now, on that turn or outside it. Help, Cover, a dodge, and a Push made on a comrade's turn all count.
+<FactTable caption="The three tests" columns={['Test', 'Met when']} rows={[
+  ['Your own state', 'You hold the named <b>Position</b> — but only if your own <em>move</em> put you there — or you are airborne on your <em>own</em> ODM Gear. It never looks at Attention, a comrade, or your own harm.'],
+  ['Your most recent turn', 'You took one of the named acts on your last turn in this Titan Engagement, this round or an earlier one.'],
+  ['Since that turn began', 'You took one at any point from the start of your last turn until now — Help, Cover, a dodge, or a Push on a comrade\'s turn all count.'],
+]} />
 
-**Where triggers work.** The two turn tests are never met before your first turn in a Titan Engagement. Outside one they are never met, unless a rule that gives soldiers turns there says these tests count those turns: <a href="/guide/skirmishes/">Skirmishes</a> says so for a Skirmish's turns, and no Leg roll or camp roll counts as a turn. Positions exist only in a Titan Engagement, so a Position trigger is met only there. A flight trigger can be met anywhere.
+**Acts** are Catalog entries, plus Pushing a roll. A called roll or an improvised act counts as its named entry; a called roll on a bare attribute is no act.
 
-**Acts** are Action Catalog entries, plus Push, which means Pushing a roll. Covering is the Cover entry.
+**Where they work.** The two turn tests need turns, so they work in a Titan Engagement or a <a href="/guide/skirmishes/">Skirmish</a> and nowhere else. Position triggers need a Titan Engagement. A flight trigger works anywhere.
 
-A <a href="#called-rolls">called roll</a> counts as your own act of the entry the GM named for it, and an improvised act in a fight as your own act of its model entry. A called roll the GM names an attribute for, with no entry, is no act. The turn tests keep their timing, so a called roll meets one only where turns are counted: in a Titan Engagement, or in a Skirmish.
-
-**Whom an act counts on.**
-
-- Unless its row says otherwise, an act counts whoever it was used on.
-- **Your named comrade:** only Help to their roll, Cover of their Push, or an entry taken on them counts.
-- **A Grabbed or Down comrade:** an act counts only if it was used on a comrade who was <GlossaryTerm term="Grabbed" /> or Down when it was used, or who is Grabbed or Down when the Fear Roll result is about to take effect. The act must already have been used; an intention to act later never counts. The uses that qualify are Help to that comrade's roll, Cover of their Push, Treat Injury or Lift Comrade taken on them, Break Free taken on a Grabbed comrade's behalf (with Pry Loose), and a Body Part strike against the hand holding a Grabbed comrade.
+**Whom an act counts on.** Whoever it was used on, unless the row narrows it. A **named comrade** row counts only Help, Cover, or an entry taken on them. A **Grabbed or Down comrade** row counts only an act already used on a comrade who was, or now is, <GlossaryTerm term="Grabbed" /> or Down — Help, Cover, Treat Injury, Lift Comrade, Pry Loose, or a strike on the holding hand. An intention never counts.
 
 </Subsection>
 
-<Subsection title="Named comrades and a new Drive" id="named-comrades">
+<Subsection title="Named comrades" id="named-comrades">
 
-- A named comrade is a living player character or Squadmate in the Squad, other than you.
-- A Drive recorded when the Squad forms names its comrade then. A Drive recorded later names its comrade when it is recorded: a replacement Drive, a promoted Squadmate's Drive, or a new character's Drive. A promoted Squadmate is the same comrade and stays named.
-- If no other living soldier is in the Squad when a Drive that needs a named comrade would be recorded, record instead the Drive of a row that needs none.
-- If your named comrade dies, retires, or leaves the Squad, your Drive can never trigger again. Promotion does not make a soldier leave the Squad.
-- At the start of the next session, pick a new Drive from any row of the Why You Enlisted table. No attribute point is gained.
+A named comrade is any other living soldier in the Squad, chosen when the Drive is recorded. If there is nobody to name, record a Drive that needs none instead.
+
+**If your named comrade dies, retires, or leaves, the Drive can never trigger again** — promotion does not count as leaving. At the start of the next session, pick a new Drive from any row. No attribute point comes with it.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="specialties-and-talents" eyebrow="Section 5">Specialties and Talents</SectionHead>
 
-<FieldQuote cite="Training Corps instructor, Graduation Day">Your Specialty is what you do best. It is never what you are allowed to do.</FieldQuote>
-
-A <GlossaryTerm term="Specialty" /> is your trained specialization. A <GlossaryTerm term="Talent" /> is a narrow trained ability that adds dice or bends a rule, but only for the Action Catalog entries it names.
-
 <MarginNote>Every Specialty and every Talent in full: <a href="/compendium/specialties/">Compendium, Specialties</a> and <a href="/compendium/talents/">Talents</a>.</MarginNote>
+
+<FinePrint title="what a Specialty grants">
 
 <Subsection title="Specialties" id="specialties">
 
 <CoreTable table="specialties" />
 
-- **Choosing.** Choose at Graduation, or at a build's Specialty step. It is not rolled, has no requirement, and never changes.
-- **What it grants:**
-  - The key attribute, the only attribute that can be rated 6.
-  - At Graduation only, the swap and floor, which give the key attribute your highest rating, and at least 4, without adding points. A built soldier takes neither.
-  - At Graduation, or at a build's Talents step, 1 level in one Talent on its list, to a maximum of level 2.
-- **It never grants permission.** Every soldier, player character or Squadmate, can attempt every Action Catalog entry, and any soldier can hold any Talent, including one on another Specialty's list. A soldier without the right Talent still rolls their full attribute. The Squadmate rules apply whatever the Specialty.
-- **The Talent list** limits only the level a Specialty grants at Graduation or at a build's Talents step.
-- **Each list holds at least eight Talents:** at least three dice Talents, one of them with a condition, at least three rule Talents, and at least two that name a <GlossaryTerm term="Leg" />, <GlossaryTerm term="Night Camp" />, Requisition, or Skirmish roll or trigger. A Talent may sit on two lists, and at most four do: Well-Kept Rig is on the Flier's and the Engineer's.
-- **The general list** holds twelve Talents about temperament and survival, at most four of them dice Talents. Any soldier may hold them, but the level a Specialty grants never goes into one.
+Chosen at Graduation or at a build's Specialty step — not rolled, no requirement, never changed. It grants three things: the **key attribute** (the only one that can reach 6), the Graduation **swap and floor**, and **1 Talent level from its list**, to a maximum of level 2. A built soldier takes the first and last only.
 
-A Specialty grants nothing beyond these, apart from the kit Standard Issue gives a Medic or an Engineer.
+**It never grants permission.** Every soldier can attempt every entry and hold any Talent, including one from another Specialty's list; a soldier without the Talent still rolls their full attribute. The list limits only where that one granted level can go. The **general list** of twelve Talents about temperament and survival is open to anyone, but a Specialty's level never goes into one.
 
 </Subsection>
 
+</FinePrint>
+
+<FinePrint title="how dice Talents and rule Talents apply">
+
 <Subsection title="Talent levels" id="talent-levels">
 
-- Talents run from level 0 to level 3. No Talent can be above level 2 at creation.
-- A rule Talent has a maximum level of 1 unless its entry says otherwise. Holding it at level 1 means having it.
-- A Talent's short description only sums it up. Its type, maximum level, the entries it names, any condition, and a rule Talent's trigger, effect, and limit are the rule.
-- **At creation** a soldier gains 5 levels in total. The Lifepath's Origin and Training Year rows offer only some Talents; a Talent no row offers is reached by a build, or after creation.
-- **After creation,** levels come only from XP and the Train Downtime Action, which these rules do not yet cover.
+Talents run **level 0 to 3**, and no higher than **2 at creation**. A rule Talent maxes at level 1 unless it says otherwise. A soldier gains **5 levels** at creation; after that, levels come only from XP and the Train Downtime Action, which these rules do not yet cover.
+
+A Talent's description only sums it up. Its type, maximum level, the entries it names, its condition, and a rule Talent's trigger, effect, and limit are the rule.
 
 </Subsection>
 
 <BoxPair>
 <RuleBox title="Dice Talents" icon="ph:dice-five">
 
-- A dice Talent adds base dice equal to its level to a roll made for one of the entries it names.
-- **Conditions.** If it has a condition for that entry, it adds them only to a roll that meets it. Horsemanship adds its dice to a dodge only when you are mounted with the horse as its gear item; Ground Work adds to a Nape strike or a Body Part strike only against a grounded Titan.
-- A condition may name a moment of an Expedition procedure, such as Route Finder's "on the Leg roll, as Lead". A roll made anywhere else never meets it.
-- **A roll uses at most one dice Talent.** If more than one qualifies, you pick.
-- A dice Talent names only actions, Reactions, and rolls: the entries that are attribute rolls.
-- A Talent that does not name the roll's entry adds no dice, however close the action seems. <a href="#outside-the-catalog">Actions outside the Catalog</a> decides which entry an unusual action is; on a called roll or an improvised act the GM names the entry, and the Talents that name it follow.
-- No Talent changes, ignores, or lowers a step of <a href="/guide/rules-of-play/">Circumstances</a>. A Talent that helps you against bad conditions adds dice instead.
+Adds **base dice equal to its level** to a roll made for an entry it names.
+
+- **A roll uses at most one.** If several qualify, you pick.
+- **Conditions** narrow it: Horsemanship helps a dodge only when mounted with the horse as its gear item; Ground Work only against a grounded Titan.
+- A Talent that does not name the roll's entry adds nothing, however close the action looks.
+- **No Talent ever changes a step of Circumstances.** One that helps against bad conditions adds dice instead.
 
 </RuleBox>
 <RuleBox title="Rule Talents" icon="ph:scroll">
 
-- A rule Talent applies its effect every time its trigger occurs, within its limit.
-- **"You declare" triggers** are met when you declare that you take, make, or use the named entry, before its requirements, targets, pool, and cost are checked. The effect changes those checks for that use. If the use still does not qualify, it is not taken and nothing is spent. A rule Talent that changes who qualifies for an entry, its target, its attribute, its gear item, or its cost has this trigger. Every other trigger is met when its event happens.
-- Rule Talents stack with each other and with the roll's dice Talent.
-- A rule Talent changes only what its effect states. Unless its effect says so, it adds no Bonus Dice, changes no Stress, and makes no roll its trigger does not call for.
-- One that changes something the whole Squad shares, such as a Leg's hazard roll, a Night Camp's ration, or Camp Relief, says so and applies once for that use, however many soldiers hold it.
-- Some change a value another chapter sets, such as a Position requirement for Rally or what changing a canister spends. They apply to whatever that chapter sets.
+Applies its effect every time its trigger occurs, within its limit, and **stacks** with other rule Talents and with the dice Talent.
+
+- **"You declare" triggers** fire before requirements, targets, pool, and cost are checked — so the effect can change those checks. If the use still does not qualify, nothing is spent.
+- It changes **only** what its effect states: no Bonus Dice, no Stress, no extra roll.
+- One that changes something the whole Squad shares applies **once** for that use, however many soldiers hold it.
 
 </RuleBox>
 </BoxPair>
 
-<MarginNote>Legs, Night Camps, and Downtime: <a href="/guide/expeditions-and-downtime/">Expeditions & Downtime</a>.</MarginNote>
+**Limits.** *Once per Titan Engagement* means once between one fight's start and end, and never outside one — and a Skirmish, <GlossaryTerm term="Leg" />, or <GlossaryTerm term="Night Camp" /> that begins inside another procedure is its own, with its own use. *Once per Leg, Night Camp, Skirmish, or Downtime* works the same way for Talents only those can trigger.
 
-**Limits.**
-
-- **Once per Titan Engagement:** once between the start and the end of each Titan Engagement, and never outside one, unless a rule that creates another procedure with a start and an end says this limit applies to it. Expeditions & Downtime and Skirmishes say so for a Leg, a Night Camp, and a Skirmish. A Titan Engagement or a Skirmish that begins inside a Leg or a Night Camp is its own procedure with its own use: a use in it does not spend the use of the Leg or the Night Camp, and a use in the Leg or the Night Camp does not spend its use.
-- **Once per Leg, once per Night Camp, once per Skirmish, once per Downtime:** for a Talent whose trigger only that procedure can meet. Once during each, and never outside one. A Leg runs from its Leg roll to the end of its hazard, and a Night Camp from its camp roll until its day has passed.
+</FinePrint>
 
 <SectionHead id="actions" eyebrow="Section 6">Actions</SectionHead>
 
-<FieldQuote cite="Survey Corps manual">The manual names what we trained you to do. What it does not name, you will still have to do.</FieldQuote>
+The <GlossaryTerm term="Action Catalog" /> is the complete list of named actions and rolls, and the list Talents name. **Every attribute roll is made for one entry.**
 
-The <GlossaryTerm term="Action Catalog" /> is the complete list of named actions and rolls a soldier can make, and the list Talents name. Every attribute roll is made for one Catalog entry.
+<MarginNote>Every entry, with its attribute, gear, requirements, and effect: <a href="/compendium/actions/">Compendium, Actions</a>.</MarginNote>
 
-<MarginNote>Every entry, with its attribute, gear, requirements, and what it changes: <a href="/compendium/actions/">Compendium, Actions</a>.</MarginNote>
+<FinePrint title="the five kinds of entry">
 
-<Subsection title="What an entry is" id="kinds-of-entry">
+<Subsection title="The five kinds of entry" id="kinds-of-entry">
 
-- **Action:** taken as your action in a Titan Engagement or a <GlossaryTerm term="Skirmish" />.
-- **Reaction:** made when a Titan or a <GlossaryTerm term="Foe" /> acts against you, outside your own turn. It spends a turn, and it is not an action.
-- **Roll:** an attribute roll made when a rule calls for it, and, for the nine entries a <a href="#called-rolls">called roll</a> is made for, when the GM calls one. Not an action, and it spends no turn of its own.
-- **Option:** a use of another entry or rule, such as spending a Read's successes. Not an action and not a roll. It spends nothing of its own unless its entry or its calling rule says so.
-- **Fixed roll:** a roll that is not an attribute roll: the Fear Roll, the Stress Response roll, and the Gas Roll. It never gains Talent dice, and only rule Talents can name it.
+<FactTable compact columns={['Kind', 'What it is']} rows={[
+  ['Action', 'Taken as your action in a fight.'],
+  ['Reaction', 'Made when a Titan or <GlossaryTerm term="Foe" /> acts against you. Spends a turn; not an action.'],
+  ['Roll', 'Made when a rule — or, for nine of them, the GM — calls for it. Spends no turn.'],
+  ['Option', 'A use of another entry or rule, such as spending a Read\'s successes. Spends nothing of its own.'],
+  ['Fixed roll', 'Not an attribute roll: the Fear Roll, Stress Response roll, and Gas Roll. Never gains Talent dice.'],
+]} />
 
-Each entry also states whether it is rolled (every time it is taken, when a rule calls for it, when a rule or the GM calls for it, or never), its attribute, the gear items that can supply Gear Dice (you pick one if several qualify), whether it needs gear, where it is used, its requirements and the successes it needs, what it changes, and the Help it allows outside a Titan Engagement, including the Help a called roll allows. The chapter that owns an entry gives its procedure and full effect. Help and Draw Attention are actions that are never rolled, and Cover and Call It are options: they are in the Catalog so that rule Talents can name them.
+Help and Draw Attention are actions that are never rolled; Cover and Call It are options. They sit in the Catalog so that rule Talents can name them.
 
 </Subsection>
+
+</FinePrint>
+
+<FinePrint title="gear an entry needs, acts outside the Catalog, and improvising">
 
 <Subsection title="Entries that need gear" id="entries-that-need-gear">
 
-This applies every time an entry is taken, made, or called for: whether you name it or reach it through the steps for actions outside the Catalog, and whether the soldier is a player character or a Squadmate.
-
-- **If an entry needs gear and you have none of its gear items,** its entry says which applies:
-  - **Attribute alone:** roll the entry's attribute with no Talent dice and no Gear Dice. Everything else about the entry still applies. Only a rule Talent that names this case changes it: Make Do.
-  - **Not possible:** the entry cannot be taken, made, or used.
-- An item worn down to 0 counts as not had (for ODM Gear, a <GlossaryTerm term="Jam" />), and so does an item in any other state Gear & ODM says counts as not had.
-- An entry that does not need gear is rolled without Gear Dice when no gear item is available.
-
-A soldier whose last <GlossaryTerm term="Blade Set" /> is gone cannot make a Nape strike, however the player describes it. A soldier with no medical kit who takes Treat Injury rolls Wits alone.
-
-</Subsection>
-
-<MarginNote>Positions, Attention, the Grab, and falling Titans: <a href="/guide/fighting-titans/">Fighting Titans</a>. Foes and firearms: <a href="/guide/skirmishes/">Skirmishes</a>.</MarginNote>
-
-<Subsection title="Titan and Skirmish entries" note="Attribute and gear" id="titan-and-skirmish-entries">
-
-Entries other chapters own are defined here only as far as a Talent needs to name them and a pool needs to be built.
-
-<BoxPair>
-<RuleBox title="In a Titan Engagement" icon="ph:sword">
-
-- **Nape strike:** Strength, with a Blade Set. Only from Blind Spot, and never by the soldier holding the struck Titan's Attention.
-- **Body Part strike:** Strength, with a Blade Set.
-- A Nape strike, and a Body Part strike made from On Body or Blind Spot, need ODM Gear that counts as had, unless the Titan is grounded.
-- **Break Attention:** Perception, with ODM Gear or a horse.
-- **Read:** Instinct, with no gear.
-- **Break Free:** Strength, with a Blade Set if you have one. Also taken while Held in a Skirmish.
-- **Heave:** Strength, with no gear, lifting a Titan's body off a Pinned comrade.
-- **Draw Attention:** not rolled.
-- **Fly:** an Agility roll with ODM Gear that a rule calls for, or that the GM calls for outside a Titan Engagement. Outside a Titan Engagement it needs 1 success. Not an action.
-- **Leap Clear:** an Agility roll with ODM Gear, or the horse while you are mounted, that a falling Titan calls for. Not an action and not a Reaction, and it spends nothing.
-- **Dodge:** Agility, with ODM Gear, or the horse while you are mounted. A Pushed dodge made with the horse wears the horse, not ODM Gear, with its Gear Dice showing 1, and does not by itself make the Gas Roll three dice.
-
-</RuleBox>
-<RuleBox title="In Skirmishes and on Expeditions" icon="ph:users-three">
-
-- **Dodge:** also made against a Foe's Fight attack or shot.
-- **Fight:** Strength, with the Blade Set in the handles, or bare-handed with no Gear Dice. A Grapple is a Fight with no Gear Dice.
-- **Shoot:** Agility, with a loaded flintlock pistol or musket, or with a flare fired at a person, which spends 1 flare and takes no Gear Dice. With neither it cannot be taken.
-- **Block:** Strength, with a Blade Set if you have one, against a Foe's Fight attack only. No Titan can be blocked.
-- **Reload:** an option, not rolled, that loads a firearm and spends 1 shot of Squad Supply.
-- **Release:** an option, not rolled, that lets go of a Foe you hold with a Grapple, spending neither your move nor your action.
-- **Ride:** an Agility roll with a horse, not an action: the Leg roll on a Hard Ride.
-- **Spot, Survive, and Endure** on Legs and at the Night Camp; **Persuade, Recall, and Size Up** for Requisition and in a Skirmish; **Sneak** for the ambush.
-- Those seven, with Fly and Ride, are the nine entries a <a href="#called-rolls">called roll</a> is made for.
-
-</RuleBox>
-</BoxPair>
-
-**Options that are part of something else.** Mount or Dismount is part of a move. Shed Load is part of your turn, and so is Swap Blade Set, which in a Titan Engagement spends your move. Restock Medical Kit is part of a care window. Swap Initiative Card is part of a round's swap step, and Squad Tactic uses a Squad Tactic the Squad holds. Outside a Titan Engagement, where there are no moves or turns, each is used as its entry states. Downtime Action and Squad Action are the options taken in Downtime.
+With none of an entry's gear items — including an item worn to 0, or <GlossaryTerm term="Jam">Jammed</GlossaryTerm> — the entry says which applies: **attribute alone** (no Talent dice, no Gear Dice, everything else unchanged) or **not possible**. A soldier whose last <GlossaryTerm term="Blade Set" /> is gone cannot make a Nape strike, however it is described; one with no medical kit takes Treat Injury on Wits alone.
 
 </Subsection>
 
 <Subsection title="Actions outside the Catalog" note="Five steps, in order" id="outside-the-catalog">
 
-You can describe an action that has no Catalog entry. Outside a Titan Engagement and a Skirmish, these steps are the order to follow for an action meant to change one of the values the rules name. In a fight they are not used: <a href="#in-a-fight">Improvising in a fight</a> takes their place.
-
-The values are an index of what soldiers change by acting, not a gate on what you can try. An action the steps do not resolve is one <a href="#called-rolls">the GM rules on</a>.
+Outside a fight, an action meant to change one of the values the rules name follows these steps. The values are an index of what soldiers change by acting, not a gate on what you can try.
 
 <StepFlow id="fig-outside-catalog" fig="Fig. 3" title="Actions outside the Catalog" steps={[
   {
     title: "Name the change.",
     icon: "ph:list-checks",
-    text: "Name the one value the action is meant to change. What you describe never limits which value you name: the value alone decides which entries can be used.",
-    exit: { kind: "stop", label: "None", text: "If it is meant to change none of them, the GM rules on the action. Stop here." },
+    text: "Name the one value the action is meant to change. What you describe never limits which value you name.",
+    exit: { kind: "stop", label: "None", text: "Changing none of them? The GM rules on it. Stop here." },
   },
   {
     title: "Moves.",
@@ -605,109 +444,62 @@ The values are an index of what soldiers change by acting, not a gate on what yo
   {
     title: "Match.",
     icon: "ph:books",
-    text: "List every entry that changes that value. If you meet the requirements of at least one, pick one of those.",
-    exit: { kind: "cover", label: "That entry", text: "The action is that entry for every purpose: kind, attribute, gear, successes needed, effect, cost, and every Talent that names it." },
+    text: "List every entry that changes that value, and pick one whose requirements you meet.",
+    exit: { kind: "cover", label: "That entry", text: "The action is that entry for every purpose: kind, attribute, gear, successes, effect, cost, and every Talent naming it." },
   },
   {
     title: "Gear.",
     icon: "ph:sword",
-    text: "Apply Entries that need gear to the picked entry, as for any entry.",
+    text: "Apply the gear rule to the picked entry, as for any entry.",
     exit: { kind: "stop", label: "Not possible", text: "An entry that is not possible without gear cannot be used." },
   },
   {
     title: "No match.",
     icon: "ph:scroll",
-    text: "If no listed entry can be used and the value's own rule names an attribute roll, make that roll with the attribute alone.",
+    text: "If no listed entry works and the value's own rule names an attribute roll, make that roll with the attribute alone.",
     exit: { kind: "stop", label: "Otherwise", text: "The steps cannot change that value, and the GM rules on the action." },
   },
 ]} />
 
-<MarginNote>Each entry's list of what it changes is the list of values: <a href="/compendium/actions/">Compendium, Actions</a>.</MarginNote>
-
-- **Values a rule creates.** A rule that creates a clock, counter, or obstacle soldiers can change by acting either names the entries that change it, or names the attribute roll that changes it. That roll uses the attribute alone, with no Talent dice and Gear Dice only from an item the rule names.
-
 </Subsection>
 
-<MarginNote>The Circumstances ladder, the stakes a failure can cost, and when the GM calls for a roll: <a href="/guide/rules-of-play/">The Rules of Play</a>.</MarginNote>
+<Subsection title="Called rolls" id="called-rolls">
 
-<Subsection title="Called rolls" note="When the steps do not resolve an action" id="called-rolls">
+An action the steps leave unresolved is the GM's to rule on: it happens, it cannot be done, or it is a **<a href="/guide/rules-of-play/#called-rolls">called roll</a>**.
 
-An action meant to change none of the values, or one the No match step leaves unresolved, is the GM's to rule on. The ruling comes before anyone rolls, never after.
-
-Outside a Titan Engagement and a Skirmish, the GM says that the action happens with no roll, that it cannot be done, or that it is a **called roll**. Before the pool is built, the GM names three things:
-
-1. **The entry:** the Catalog entry closest to what you described, from the nine a called roll is made for, Spot, Size Up, Survive, Persuade, Endure, Sneak, Recall, Ride, and Fly, or an attribute alone when none of them fits.
-2. **The Circumstances:** one step of the ladder in <a href="/guide/rules-of-play/">The Rules of Play</a>, Standard when the GM names none.
-3. **The stakes:** what a failure costs, and, where it is not obvious, what success gives.
-
-**A called roll needs 1 success.** It is made for the named entry for every purpose that follows: that entry's attribute and gear items, the gear rule above, and every Talent that names it. You can Push it, a comrade can Cover the Push, and Help on it is as the GM rules. Once the dice are rolled, the entry, the Circumstances, and the stakes do not change, and the result stands.
-
-**Called on an attribute alone.** A called roll the GM names an attribute for is that attribute with no Talent dice and no Gear Dice. A gear item, or any other object that helps you, counts toward the Circumstances instead, and a Push on that roll wears nothing. A called roll named for Fly or Ride does take that entry's Gear Dice.
+The entry is the closest of the nine a called roll can use — Spot, Size Up, Survive, Persuade, Endure, Sneak, Recall, Ride, Fly — or a bare attribute when none fits. A bare-attribute call takes no Talent dice and no Gear Dice, wears nothing on a Push, and counts a helpful object toward the Circumstances instead. A call named for **Fly or Ride does** take that entry's Gear Dice.
 
 </Subsection>
 
 <Subsection title="Improvising in a fight" id="in-a-fight">
 
-In a Titan Engagement or a Skirmish the steps above are not used. Your action is Help, a Catalog entry you name and take as it is written, or an **improvised act**: an act you describe that is not an entry taken as written, even when a value it would change matches an entry. Which of the three it is, is part of the GM's ruling, made before the pool is built.
+In a Titan Engagement or Skirmish the steps above are not used. Your action is Help, an entry taken as written, or an **improvised act** — and which of the three is part of the GM's ruling, made before the pool is built.
 
-**With a model entry.** When an Action you could take in that fight has an effect your act imitates, the GM names that entry as the act's **model entry**, and the ruling stands. A model entry is always an Action you could take there: never a Reaction, a roll, a fixed roll, or an option such as Call It or Cover. The improvised act:
+**With a model entry.** The GM names the Action you could take there whose effect your act imitates — never a Reaction, roll, or option. The act spends your action, is made exactly as that entry is made, meets every requirement and restriction it carries, and on a success gives **only** that entry's effect at that entry's size.
 
-- spends your action;
-- is made as the model entry is made: rolled only if that entry is rolled, with its attribute, gear items, Talents, and successes needed, and with Circumstances as any roll takes them;
-- meets every requirement and restriction of the model entry. A soldier holding a Titan's Attention still cannot strike its Nape, a Feint keeps its Position rule, and a Foe's Guard still rolls;
-- on a success gives only the model entry's effect, at that entry's size.
+A supply wagon rolled past a Titan is Break Attention. A lantern swung from a rooftop is Draw Attention, and never from Distant. A chimney dropped on a leg is a Body Part strike. A rope thrown to a comrade is Help or Lift Comrade. An object hurled at a person is a Shoot at damage 1 and Crush. A dive behind a stack is a move, or nothing at all — never a dodge, and never an excuse for an easier one later.
 
-It never kills a Titan, never changes a Titan's Nape Depth, a Body Part's Toughness, its Attack Dice, or a card, never cancels or delays a card, never creates more Openings than the model entry could, and never gives an effect no entry has. Only a Nape strike taken as its entry is written kills a Titan. An act modelled on the Nape strike is resolved as a Nape strike that falls short, whatever its successes: each success creates 1 Opening, and making it counts as hooking into the Titan.
-
-A supply wagon cut loose to roll past a Titan is Break Attention, with Break Attention's needs. A lantern swung from a rooftop is Draw Attention, and never from Distant. A chimney dropped on a Titan's leg is a Body Part strike whose successes count toward that leg's Toughness. A rope thrown to a comrade is Help or Lift Comrade. An object that is not a gear item, hurled at a person, is a Shoot at damage 1 and Crush, with no Gear Dice. A dive behind a chimney stack is a move if it changes your Position, and otherwise changes nothing and needs no roll: it is never modelled on the dodge, and it gives no Circumstances to a later dodge.
-
-**With no model entry.** When no Action you could take there imitates the act, and it would change nothing the fight tracks, it is a called roll, named and made as above. It spends your action, Help on it is the fight's Help, and it never gives an effect an entry has. If the act would change nothing at all, describe it: it needs no roll. If the GM judges that it cannot be done, the GM says so before anyone rolls.
-
-**What the GM rules, and what the GM applies as written.** The GM rules whether an action the steps do not resolve happens, cannot be done, or is a called roll; a called roll's entry or attribute, its Circumstances, and its stakes; and, in a fight, whether what you described is an entry taken as written, an improvised act with its model entry, or a called roll. The GM applies as written the steps above, the entry you pick at the Match step, the gear rule, the rule that a Talent adds dice only to a roll made for an entry it names, and the successes every roll needs, which no ruling raises or lowers.
+**With no model entry,** and changing nothing the fight tracks, it is a called roll. It spends your action and never gives an effect an entry has.
 
 </Subsection>
 
-<FieldReport id="example-improvising" title="Improvising under a Titan">
-
-- **A torn cloak.** Private Jonas Reiter binds a comrade's Critical Injury with his cloak. The value is treating or stabilizing a Critical Injury, the entry is Treat Injury, and he has no medical kit, so he rolls his Wits of 3 alone, with no Talent dice and no Gear Dice.
-
-<TryRollButton pool={{ base: 3 }} label="Try Jonas's Treat Injury" />
-
-- **A shout.** In a Titan Engagement, Jonas shouts so a comrade can avoid a Titan's hand. No entry is a shout, so it is an improvised act, and the GM names its model entry before the pool is built. Call It, which adds dice to a comrade's dodge from a Read, is an option and never a model entry, so the GM names Help: the shout spends Jonas's action, needs Help's Position, is not rolled, and adds 1 die to the comrade's dodge.
-- **A prayer.** Jonas prays to steady himself in the field. The only entry that lowers a soldier's own Stress is Downtime Action, taken only in Downtime, so the No match step finds nothing. The GM rules that the prayer happens, with no roll and no effect on play: Stress relief comes only from a written trigger, and no ruling adds one.
-
-</FieldReport>
-
-<FieldReport id="example-called-roll" title="A roll the GM calls for">
-
-During an evacuation, Private Ilse Brandt braces a collapsing beam so that the civilians behind her can get clear. No value the rules name covers holding up a beam, so the GM rules on it. The outcome is in doubt and a failure would cost something, so the GM calls a roll.
-
-- **The entry.** Endure is hardship borne over hours, not a moment's lift, so none of the nine fits: the GM names Strength alone. No Talent dice and no Gear Dice.
-- **The Circumstances.** Hard, because the beam is already sagging: a 1-die penalty.
-- **The stakes.** If the roll fails, the beam comes down and Ilse takes 2 Crush damage. The GM states her current Health with it.
-
-Her Strength is 4, so she rolls 3 base dice after the penalty, plus her Stress Dice. The roll needs 1 success. She may Push it, a comrade may Cover the Push, and a comrade at the beam may Help as the GM rules.
-
-<TryRollButton pool={{ base: 3 }} label="Try Ilse's called roll" />
-
-</FieldReport>
+</FinePrint>
 
 <SectionHead id="squadmates" eyebrow="Section 7">Squadmates</SectionHead>
 
-<FieldQuote cite="A Squad Leader, to a new Private">Learn their names before the gate opens. You will not have time after.</FieldQuote>
+A <GlossaryTerm term="Squadmate" /> is a named soldier who rides with you. Any player can direct one, Titans target it like anyone else, and it can be promoted into a player character. Those serving now are the <GlossaryTerm term="Squad Pool" />.
 
-A <GlossaryTerm term="Squadmate" /> is a named soldier who rides with the player characters. Any player can direct one, Titans can target it like anyone else, and it can be promoted to a player character. The Squadmates serving now are the <GlossaryTerm term="Squad Pool" />.
+Two more soldiers mean two more turns a round and more Help on every strike — so Titans die sooner and you face fewer of their cards. They reach a Grabbed comrade in time, turn a Titan's head, and screen whoever holds its Attention. They are also comrades a Drive can name and a Squad can grieve.
 
-Two more soldiers mean two more turns a round and more Help on every strike, so Titans die sooner and the Squad faces fewer of their cards. Squadmates reach a Grabbed comrade in time to cut the holding hand or help them break free, turn a Titan's head with a decoy, and screen the soldier who holds its Attention. When a player character dies or retires, one of them takes that player's seat. And they are comrades a Drive can name and a Squad can grieve.
+<FinePrint title="the Squadmate stat block, and which rules apply">
 
 <Subsection title="The stat block" id="the-stat-block">
 
 <CoreTable table="squadmate-templates" />
 
-- A Squadmate uses one of nine templates, one per Specialty: key attribute 4, four others 3, and one 2, for 18 points, a new player character's total without a Top 10 Class Rank. It has one dice Talent at level 1, and Health 3 or 4. Health and Resolve come from its ratings, as for a player character.
-- **It records** its name, Specialty, attributes, Talent, Health as a row of boxes and Health lost to damage, Resolve, Stress, minimum Stress, Scars, Grief, Critical Injuries, whether it is Down, its gear, its Wing, and the other harm details in Wounds & Fear. Its boxes crossed off are its untreated Critical Injuries, as for a player character.
-- **It does not record** an Origin, Haven, Drive, Canon Tie, Merit, Class Rank, or XP.
-- **Gear.** It receives Standard Issue and records its gear exactly as a player character does, including Gas Rating, spare canisters, Blade Sets, carried items, and each item's Gear Dice rating. A rating changes only when a rule names a change. It never Pushes, so Push wear never lowers its ratings. Gear & ODM gives it a one-line Squad sheet row.
+Nine templates, one per Specialty: key attribute 4, four at 3, one at 2 — **18 points**, a new player character's total. One dice Talent at level 1, and Health and Resolve from its ratings.
+
+It records everything a player character does **except** Origin, Haven, Drive, Canon Tie, Merit, Class Rank, and XP. It takes Standard Issue and tracks gear exactly as you do; since **it never Pushes**, Push wear never lowers its ratings.
 
 </Subsection>
 
@@ -715,27 +507,21 @@ Two more soldiers mean two more turns a round and more Help on every strike, so 
 
 <CoreTable table="squadmate-rules" />
 
-</Subsection>
-
-<Subsection title="Actions" id="squadmate-actions">
-
-- A Squadmate can take every Action Catalog entry a player character can take as an action, including Help, and every option of those entries, such as Call It. It must meet each entry's requirements, as a player character must. Its Specialty never limits what it can attempt.
-- It uses the steps for <a href="#outside-the-catalog">actions outside the Catalog</a> exactly as a player character does, and an act of its the steps do not resolve is ruled on the same way.
-- Its only Reaction is the dodge, and it makes any roll a rule calls for, such as Fly, Ride, or the Death Roll.
-- It never Pushes and never Covers.
-- Its own Reaction spends its own turn. On a Wing, that is the turn it takes right after its player character's turn.
+A Squadmate can take every entry a player character can, meeting the same requirements, and uses the same steps for acts outside the Catalog. Its only Reaction is the dodge. **It never Pushes and never Covers.**
 
 </Subsection>
 
-<MarginNote>Wings in a Titan Engagement, and Squadmates on no Wing: <a href="/guide/fighting-titans/">Fighting Titans</a>.</MarginNote>
+</FinePrint>
+
+<MarginNote>Wings in a fight, and Squadmates on no Wing: <a href="/guide/fighting-titans/">Fighting Titans</a>.</MarginNote>
+
+<FinePrint title="Wings, directing, and promotion">
 
 <Subsection title="Wings and directing" id="wings-and-directing">
 
-- During a Titan Engagement, a Squadmate can be on one player character's <GlossaryTerm term="Wing" />. A Wing holds at most one Squadmate.
-- It acts right after that player character's turn, as a turn of one move and one action. It still acts then if that character's turn has no move and no action because a Reaction or a result spent it in advance.
-- Fighting Titans sets when Squadmates are assigned to Wings and what a Squadmate on no Wing does.
+In a Titan Engagement a Squadmate can ride one player character's <GlossaryTerm term="Wing" /> — one Squadmate per Wing — acting immediately after that character's turn, even when that turn was spent in advance.
 
-**Directing a Squadmate.** Any player can propose what a Squadmate does. If players disagree about one on a Wing, the player whose character's Wing it is decides. If they disagree about one on no Wing, each proposed choice is rolled for once, with a D6 rolled by one player who proposed it; the highest roll decides, and choices tied for highest roll again. The GM never directs a Squadmate, though the GM may give one a voice.
+**Any player may propose what a Squadmate does.** On a Wing, that character's player decides; off one, a D6 roll-off settles a disagreement. **The GM never directs a Squadmate,** though the GM may give one a voice.
 
 </Subsection>
 
@@ -743,55 +529,41 @@ Two more soldiers mean two more turns a round and more Help on every strike, so 
 
 <Subsection title="The starting Squad" id="the-starting-squad">
 
-- The Squad aims for 6 soldiers.
-- **Starting Squadmates = 6 minus the number of player characters, minimum 0.** Four player characters start with two Squadmates.
-- **Fewer is allowed.** At session zero, the players may start with fewer, down to none; if they disagree on how many, it is a shared choice. It costs two things: fights run about three times deadlier for player characters, and a player character who dies or retires while no living Squadmate is in the Squad Pool has no one to promote.
-- The players choose a template for each starting Squadmate and name it. It receives Standard Issue, and starts with Health lost 0, not Down, Stress 0, and no Scars, Grief, or Critical Injuries.
+The Squad aims for **6 soldiers**, so you start with **6 minus the number of player characters** Squadmates — four players, two Squadmates. Choose each one's template and name it.
+
+**Fewer is allowed,** down to none, and costs two things: fights run about three times deadlier for player characters, and a player whose character dies with no living Squadmate has nobody to promote.
 
 </Subsection>
 
 <Subsection title="Promotion" note="When a player character dies or retires" id="promotion">
 
-1. **When.** When the procedure in which the death or <GlossaryTerm term="Retirement" /> happened ends, exactly as Retirement is timed: the last end step of a Titan Engagement, the last step of a day passing, the end of a care window for harm taken outside a fight and its Death Rolls, or the end of any other procedure as its rule states. At once if no procedure is under way. Promotions that fall due at the same moment are resolved together.
-2. **Who chooses.** First, every soldier due to retire at that moment retires, and a retiring Squadmate leaves the Squad Pool. Then every player whose character died or retired chooses a living Squadmate in the Squad Pool, all at the same time. If two or more choose the same one, each of them rolls a D6: the highest takes it, and ties roll again. Each player who loses chooses again from the living Squadmates no player has taken, rolling again for any chosen by more than one of them, until every player has a Squadmate or none is left.
-3. **Conversion.**
-   - The soldier keeps its name, Specialty, attributes, Talent, Health and Health lost to damage, Resolve, Stress, Scars, Grief, Critical Injuries, Down state, gear, and its other harm details, all in their current state. Attributes, Health, and Resolve are not recalculated.
-   - Its template Talent counts as the level a Lifepath soldier gains from the Specialty at Graduation.
-   - Roll D66 on the Origin table, rolling again if a condition is not met. Record a Haven and, if you want, a Canon Tie, and gain 1 level in one of the row's two Talents. A Talent it already holds rises by 1 level. No attribute points.
-   - Roll D66 on Why You Enlisted and record a Drive as a Lifepath soldier does. No attribute point. If the Drive needs a named comrade, name one now.
-   - Roll D66 once on each Training Year's events, and from each gain 1 level in one of its two Talents. No attribute point and no Merit.
-   - Every level follows the Lifepath's Talent cap and fallbacks, for 5 Talent levels in all.
-   - Record Merit and Class Rank as none, and Rank as Private.
-   - It now follows every player character rule, leaves any Wing, and is no longer a Squadmate. It stays in the Squad.
-4. **No Squadmate left.** The player creates a new character by any procedure the campaign allows; the Template Build, when allowed, is the quickest. The new character joins the Squad, with Standard Issue, at whichever of these comes first:
-   - the next <GlossaryTerm term="Waypoint" /> the Squad reaches, while an Expedition is under way;
-   - the start of the next Titan Engagement, while no Expedition is under way;
-   - the next Downtime.
+1. **When.** As the procedure ends — a fight's last end step, a day passing, a care window closing — or at once if none is under way.
+2. **Who.** Retirements resolve first. Then every player who lost a character picks a living Squadmate at the same time, a D6 roll-off settling any clash, repeating until everyone has one or none is left.
+3. **Conversion.** It keeps its name, Specialty, attributes, Talent, gear, and every point of harm exactly as they stand — nothing is recalculated, and its template Talent counts as the Specialty level. Then roll D66 on the Origin table, on Why You Enlisted, and once on each Training Year's events, taking **1 Talent level from each** and no attribute points. Record Merit and Class Rank as none, and Rank as Private. It is now a player character and leaves any Wing.
+4. **Nobody left?** Build a new character by any allowed procedure. They join at the next Waypoint, the next Titan Engagement, or the next Downtime — whichever comes first.
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="building-without-the-lifepath" eyebrow="Section 8">Building Without the Lifepath</SectionHead>
 
-<FieldQuote cite="Survey Corps quartermaster">You do not choose the Titan. You choose what you carry out to meet it.</FieldQuote>
+A built soldier is the steady soldier every Titan in this book was made to face, with the player choosing what they carry. A rolled soldier is that same soldier on average — with a chance to come out ahead, and a chance to come out worse.
 
-A built soldier is the steady soldier every Titan in this book was made to face, with the player choosing what they carry. A rolled soldier is that same soldier on average, with a chance to come out ahead and a chance to come out worse.
-
-Use the Template Build or the Free Build only when the campaign allows it. Beyond that choice, the GM plays no part in a build. Both builds follow the same steps, and differ only at step 3.
+<FinePrint title="the build steps, and their limits">
 
 <Subsection title="The steps" note="Nine steps, in order" id="the-build-steps">
 
-1. **Campaign Year.** If the campaign has none yet, record it as <a href="#before-the-lifepath">the Lifepath</a> does. A built soldier takes no Graduation Exam and earns no Exam Merit, whatever the vote.
-2. **Specialty.** Choose one of the nine Specialties. It is not rolled, has no requirement, and never changes.
-3. **Attributes.**
-   - **Template Build:** record your Specialty's <a href="#the-stat-block">Squadmate template</a> ratings, unchanged. Take only the ratings, not the template's Talent.
-   - **Free Build:** choose one of the two shapes, 4, 3, 3, 3, 3, 2 or 4, 4, 3, 3, 2, 2, and place its six ratings on the six attributes, one each, in any order that puts a 4 on the key attribute.
+Both builds run the same way and differ only at step 3.
 
-   Either way: 18 points, every attribute rated 2 to 4, the key attribute at exactly 4, and at most two attributes at 4. There are no rolled points, no swap, no floor, and no Top 10 bonus.
-4. **Origin.** Choose an Origin row whose condition the current Campaign Year meets. Record one of its two Havens, and its Canon Tie if it has one and you want it. Gain level 1 in one of its two Talents. The row's attributes gain nothing.
-5. **Drive.** Record the Drive of any Why You Enlisted row. No attribute gains a point.
-6. **Training Years, for the story.** You may name one event row of each Training Year. A named row gives no attribute point, Talent level, or Merit, and no performance roll is made.
-7. **Talents.** Gain 1 level in one Talent on your Specialty's list, then 3 levels in any Talents, within the limits below.
-8. **Merit and Class Rank.** Record both as none. The soldier is not Top 10: no Military Police offer, and no key attribute bonus.
+1. **Campaign Year,** if the campaign has none. No Exam, whatever the vote.
+2. **Specialty.** One of the nine.
+3. **Attributes.** **Template Build:** your Specialty's <a href="#the-stat-block">Squadmate template</a> ratings, unchanged — the ratings only, not its Talent. **Free Build:** one of two shapes, **4·3·3·3·3·2** or **4·4·3·3·2·2**, placed in any order that puts a 4 on the key attribute. Either way: 18 points, nothing below 2 or above 4, and no swap, floor, or Top 10 bonus.
+4. **Origin.** Choose a row the Campaign Year allows. Take a Haven, its Canon Tie if you want it, and **1 Talent level** — but none of its attribute points.
+5. **Drive.** Any row's, with no attribute point.
+6. **Training Years, for the story.** Name one event row per year if you like. They give nothing.
+7. **Talents.** 1 level from your Specialty's list, then 3 in any Talents.
+8. **Merit and Class Rank:** none. Never Top 10.
 9. **Finish and join the Squad** as a <a href="#finishing">Lifepath soldier</a> does.
 
 </Subsection>
@@ -799,32 +571,18 @@ Use the Template Build or the Free Build only when the campaign allows it. Beyon
 <BoxPair>
 <RuleBox title="Talent limits" icon="ph:student">
 
-- 5 levels in total: 1 from the Origin row, 1 from the Specialty's list, and 3 in any Talents.
+- **5 levels:** 1 Origin, 1 Specialty list, 3 free.
 - No Talent above level 2, and **at most one Talent at level 2**.
-- No rule Talent above its maximum level.
-- A level gained in a Talent you already hold raises it by 1.
+- No rule Talent above its maximum.
 
 </RuleBox>
 <RuleBox variant="stop" title="What only the Lifepath reaches" icon="ph:prohibit">
 
-A built soldier always has 18 attribute points, a key attribute of 4, and Health and Resolve of 2 to 4 each. A Free Build soldier with both 2s on Strength and Agility has Health 2 and is fragile: two untreated Critical Injuries put them Down, and a Squad of four such soldiers loses about four times as many soldiers a fight as the same Squad at Health 4.
+A built soldier always has 18 points and a key attribute of 4. A Free Build with 2s on both Strength and Agility has **Health 2** — two untreated Critical Injuries and they are Down, and a Squad of four such soldiers loses about four times as many soldiers a fight.
 
-Only the Lifepath can give a key attribute of 5 or 6, a Top 10 Class Rank, or a place in the Graduation Exam. A player who wants that chance rolls.
+Only the Lifepath gives a key attribute of 5 or 6, a Top 10 Class Rank, or a place in the Exam. A player who wants that chance rolls.
 
 </RuleBox>
 </BoxPair>
 
-<FieldReport id="example-tomas" title="Tomas takes the Free Build">
-
-The campaign allows the Free Build. Tomas Wendel's player chooses Slayer, takes the 4, 4, 3, 3, 2, 2 shape, and places Strength 4, Agility 4, Perception 3, Instinct 3, Wits 2, and Empathy 2.
-
-- **Origin:** Underground City, for the friends still living below as his Haven, and Grip Breaker 1. Its Agility and Instinct gain nothing.
-- **Drive:** Duty, from any row, with no attribute point.
-- **Talents:** Clean Cut 1 from the Slayer's list, then Clean Cut again to 2, Hamstringer 1, and Field Medicine 1. That is 5 levels, and only one Talent at level 2.
-- **Finish:** Health (4 + 4) / 2 = 4, Resolve (3 + 2) / 2 = 2.5, rounded up to 3, Merit and Class Rank none, and he is a Private.
-
-His Nape strike rolls 6 base dice before Bonus, Gear, and Stress Dice.
-
-<TryRollButton pool={{ base: 6 }} label="Try his Nape strike's base dice" />
-
-</FieldReport>
+</FinePrint>

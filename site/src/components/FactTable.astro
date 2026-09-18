@@ -1,0 +1,161 @@
+---
+/**
+ * A table written in the page rather than built from shared data: the drawing CoreTable
+ * uses, for the short summaries that replace a run of prose. Cells take inline HTML, so a
+ * cell can hold <b>, <em>, or a link. Rows stack into labelled cards on narrow screens.
+ */
+interface Props {
+  caption?: string;
+  note?: string;
+  columns: string[];
+  rows: string[][];
+  /** Sets the first column in typewriter type, for dice, rolls, and numbers. */
+  roll?: boolean;
+  /** Drops the "Table" tag and the caption rule, for a small aside table. */
+  compact?: boolean;
+}
+const { caption, note, columns, rows, roll = false, compact = false } = Astro.props;
+for (const row of rows) {
+  if (row.length !== columns.length) throw new Error(`FactTable "${caption ?? columns[0]}": a row has the wrong number of cells.`);
+}
+---
+<div class:list={['facttable wide', roll && 'facttable--roll', compact && 'facttable--compact']}>
+  <table>
+    {caption && (
+      <caption>
+        {!compact && <span class="lbl">Table</span>}
+        <b>{caption}</b>
+        {note && <span class="note">{note}</span>}
+      </caption>
+    )}
+    <thead>
+      <tr>{columns.map((column) => <th scope="col">{column}</th>)}</tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          {row.map((cell, i) => {
+            const Tag = i === 0 ? 'th' : 'td';
+            return <Tag scope={i === 0 ? 'row' : undefined} data-label={columns[i]} set:html={cell} />;
+          })}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-bottom: 2px solid var(--ink);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding-bottom: 10px;
+  }
+  caption .lbl {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 1px 6px;
+    border: 1px solid var(--ink-2);
+    color: var(--ink-2);
+    font-size: var(--fs-2xs);
+  }
+  caption b {
+    font-family: var(--f-type);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  caption .note {
+    display: block;
+    margin-top: 6px;
+    font-style: italic;
+    font-size: var(--fs-sm);
+    color: var(--ink-2);
+  }
+  thead th {
+    padding: 8px 10px;
+    text-align: left;
+    font-family: var(--f-type);
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  tbody th,
+  tbody td {
+    padding: 9px 10px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid rgba(156, 144, 120, 0.6);
+  }
+  tbody th[scope="row"] {
+    font-weight: 600;
+  }
+  .facttable--roll tbody th[scope="row"] {
+    white-space: nowrap;
+    font-family: var(--f-type);
+    font-variant-numeric: tabular-nums;
+  }
+  .facttable--compact table {
+    font-size: var(--fs-sm);
+  }
+
+  @media (min-width: 761px) {
+    .facttable {
+      overflow-x: auto;
+    }
+    .facttable:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: -3px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    table,
+    caption,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    tbody tr {
+      padding: 10px 0;
+      border-top: 1px solid rgba(156, 144, 120, 0.6);
+    }
+    tbody th,
+    tbody td {
+      padding: 2px 0;
+      border-top: 0;
+    }
+    .facttable--roll tbody th[scope="row"] {
+      white-space: normal;
+    }
+    tbody td::before {
+      content: attr(data-label);
+      display: block;
+      margin-top: 6px;
+      font-family: var(--f-type);
+      font-size: var(--fs-2xs);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+    }
+  }
+</style>

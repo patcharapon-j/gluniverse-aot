@@ -26,5 +26,10 @@ export function chapterLink(entry: Chapter | undefined, base: string): ChapterLi
 
 export async function gmTabs(): Promise<IndexTab[]> {
   const chapters = await gmChapters();
-  return [{ href: '/gm/', label: 'Briefing' }, ...chapterTabs(chapters, '/gm/'), { href: '/gm/titan-dossiers/', label: 'Dossiers' }];
+  return [
+    { href: '/gm/', label: 'Briefing' },
+    ...chapterTabs(chapters, '/gm/'),
+    { href: '/gm/titan-dossiers/', label: 'Dossiers' },
+    { href: '/gm/screen/', label: 'Screen' },
+  ];
 }
