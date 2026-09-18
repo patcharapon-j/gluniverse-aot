@@ -54,35 +54,26 @@ export const zero = foeAtZero();
 />
 
 <ChapterContents items={[
-  { id: 'starting-a-skirmish', title: 'Starting a Skirmish', note: 'What begins one, and setting out' },
-  { id: 'engaged-and-apart', title: 'Engaged and Apart', note: 'The only two ranges there are' },
-  { id: 'the-ambush', title: 'The Ambush', note: 'Going first, and unanswered' },
-  { id: 'rounds-and-turns', title: 'Rounds and Turns', note: 'Cards, your card, their card' },
-  { id: 'what-you-can-do', title: 'What You Can Do', note: 'Your action, and acts no entry covers' },
-  { id: 'attacks-and-reactions', title: 'Attacks and Reactions', note: 'Severity, Guard, Net Successes' },
-  { id: 'damage', title: 'Damage', note: 'What a weapon does to you, and to them' },
+  { id: 'starting-a-skirmish', title: 'Starting a Skirmish', note: 'What begins one' },
+  { id: 'engaged-and-apart', title: 'Engaged and Apart', note: 'The only two ranges' },
+  { id: 'the-ambush', title: 'The Ambush', note: 'Going first, unanswered' },
+  { id: 'rounds-and-turns', title: 'Rounds and Turns', note: 'Cards and turns' },
+  { id: 'what-you-can-do', title: 'What You Can Do', note: 'Your action, and improvising' },
+  { id: 'attacks-and-reactions', title: 'Attacks and Reactions', note: 'Severity, Guard, damage' },
   { id: 'weapons', title: 'Weapons', note: 'Blades, fists, powder, fire' },
-  { id: 'the-grapple', title: 'The Grapple', note: 'Taking hold, and letting go' },
-  { id: 'parley-and-size-up', title: 'Parley and Size Up', note: 'Talking, and reading the room' },
-  { id: 'ending-a-skirmish', title: 'Ending a Skirmish', note: 'Breaking, leaving, and the steps after' },
+  { id: 'the-grapple', title: 'The Grapple', note: 'Taking hold, letting go' },
+  { id: 'parley-and-size-up', title: 'Parley and Size Up', note: 'Talking, reading the room' },
+  { id: 'ending-a-skirmish', title: 'Ending a Skirmish', note: 'Breaking, and what follows' },
   { id: 'fear-drives-and-talents', title: 'Fear, Drives, and Talents', note: 'What a Skirmish counts as' },
 ]} />
 
 <SectionHead id="starting-a-skirmish" eyebrow="Section 1">Starting a Skirmish</SectionHead>
 
-A <GlossaryTerm term="Skirmish" /> is a scene in which soldiers fight people: Military Police, bandits, a Garrison picket. People roll their attacks, can be blocked, can be talked down, and hurt you with damage, never with a <GlossaryTerm term="Critical Injury" /> outright. No Titan takes part, and <GlossaryTerm term="Titan Engagement">Titan Engagements</GlossaryTerm> are unchanged.
+A <GlossaryTerm term="Skirmish" /> is soldiers fighting people: Military Police, bandits, a Garrison picket. People **roll** their attacks, **can be blocked**, **can be talked down**, and hurt you with damage — never with a <GlossaryTerm term="Critical Injury" /> outright. No Titan takes part.
 
-<MarginNote>Every <GlossaryTerm term="Foe" /> kind, with the numbers behind its rolls, is kept in the GM's Guide. What you learn about a group, you learn by fighting it or by a Size Up.</MarginNote>
+<MarginNote>Every <GlossaryTerm term="Foe" /> kind, with the numbers behind its rolls, stays in the GM's Guide. What you learn about a group, you learn by fighting it or by a Size Up.</MarginNote>
 
-<Subsection title="What starts one" id="what-starts-one">
-
-A rule that names a Skirmish starts one: the Night table's prowlers row, or a Mission Brief. So does the GM framing a scene that sets the Squad against people, the way scene framing starts a Titan fight. A <GlossaryTerm term="Waypoint" /> scene, or the stakes of a failed <GlossaryTerm term="Called roll">called roll</GlossaryTerm>, may begin one through the fiction.
-
-**What the start names.** One Foe kind, and, where it says so, how many Foes, which side has the Ambush, that it is night, and which soldiers take part. **One Foe group takes part in a Skirmish.** Its number is the one the start names, or else that kind's group size. A Skirmish that begins at a <GlossaryTerm term="Night Camp" /> is at night.
-
-**Who takes part.** The soldiers the start names. If it names none: every living soldier in the <GlossaryTerm term="Squad" /> on the same <GlossaryTerm term="Expedition" />, or every living soldier in the Squad when no Expedition is under way.
-
-</Subsection>
+A rule that names a Skirmish starts one — the Night table's prowlers row, a Mission Brief — and so does the GM framing a scene that sets the Squad against people. **One Foe group takes part.** The start names the kind, and may name the number, the Ambush, the dark, and which soldiers are in it; where it names no soldiers, everyone living in the <GlossaryTerm term="Squad" /> is.
 
 <StepFlow id="fig-skirmish-start" fig="Fig. 1" title="Setting out a Skirmish" steps={startingSteps()} />
 
@@ -90,7 +81,7 @@ A rule that names a Skirmish starts one: the Night table's prowlers row, or a Mi
 
 <FieldQuote cite="Instructor's saying, Training Corps">Close enough to touch, or not. There is no third place in an alley.</FieldQuote>
 
-You are **Engaged** with a Foe or **Apart** from it, and you hold that separately for each Foe: Engaged with the one in front of you, Apart from the two by the wagon.
+You are **Engaged** with a Foe or **Apart** from it, held separately for each: Engaged with the one in front of you, Apart from the two by the wagon.
 
 <ul>
   {ranges().map((r) => <li><b>{r.name}.</b> {r.meaning}</li>)}
@@ -98,50 +89,39 @@ You are **Engaged** with a Foe or **Apart** from it, and you hold that separatel
 
 <RuleBox title="Engaged and Apart are not Positions" icon="ph:warning">
 
-A Skirmish has **no <GlossaryTerm term="Position">Positions</GlossaryTerm>, no <GlossaryTerm term="Anchor Rating" />, no Anchors, no Momentum, no <GlossaryTerm term="ODM move" /> and so no <GlossaryTerm term="Flight" />, no Fly roll a rule calls for, and no <GlossaryTerm term="Airborne">airborne</GlossaryTerm> soldier.** The one Fly roll here is a called roll the GM names for Fly, and it leaves you on the ground.
+A Skirmish has **no <GlossaryTerm term="Position">Positions</GlossaryTerm>, no <GlossaryTerm term="Anchor Rating" />, no Anchors, no Momentum, no <GlossaryTerm term="ODM move" /> and so no <GlossaryTerm term="Flight" />, and no <GlossaryTerm term="Airborne">airborne</GlossaryTerm> soldier.** The one Fly roll here is a called roll, and it leaves you on the ground.
 
 </RuleBox>
 
 <Subsection title="A move" id="a-move">
 
-Your move does one of these, and it may include one mount or one dismount as well.
+Your move does one of these, and may include one mount or dismount.
 
 <ul>
   {moves().map((m) => <li><b>{m.name}.</b> {m.text}</li>)}
 </ul>
 
-**Whose move changes nothing:** a soldier <GlossaryTerm term="Held">Held</GlossaryTerm> by a person, a soldier who holds a Foe, and a <GlossaryTerm term="Down" /> soldier. Each stays Engaged with or Apart from each Foe as they were. A Foe changes its own range only on its own turn.
+**Whose move changes nothing:** a soldier <GlossaryTerm term="Held">Held</GlossaryTerm>, a soldier holding a Foe, and a <GlossaryTerm term="Down" /> soldier. A Foe changes its own range only on its own turn.
 
 </Subsection>
 
 <SectionHead id="the-ambush" eyebrow="Section 3">The Ambush</SectionHead>
 
-<FieldQuote cite="A Squad Leader, before the approach">If they see us coming, half of what we have is already spent.</FieldQuote>
-
-A start may hand the <GlossaryTerm term="Ambush" /> to the Foes, as the prowlers row does. Otherwise the Squad may try for it.
-
-<Subsection title="Trying for it" id="trying-for-it">
-
-Before round 1 of a Skirmish whose start does not give the Foes the Ambush, the GM rules whether the Squad can approach unseen at all.
-
-- **It cannot.** No roll is made, and no side has the Ambush.
-- **It can.** One soldier taking part who is not Down, chosen by the players, rolls **Sneak** with the <GlossaryTerm term="Circumstances" /> the GM names. It needs the Foe group's **Watch**, cannot be <GlossaryTerm term="Help">Helped</GlossaryTerm> or <GlossaryTerm term="Cover">Covered</GlossaryTerm>, can be <GlossaryTerm term="Push">Pushed</GlossaryTerm>, and is never tried again. On a success the Squad has the Ambush. On a failure, no side has it.
-
-</Subsection>
+A start may hand the <GlossaryTerm term="Ambush" /> to the Foes. Otherwise the GM rules whether the Squad can approach unseen at all — and if it can, one soldier rolls **Sneak** against the group's **Watch**. No Help, no Cover, Push allowed, never retried. Fail and neither side has it.
 
 <CoreTable table="skirmish-ambush" />
 
 <FieldReport id="example-ambush" title="The lane behind the depot">
 
-The Squad has the Ambush, so every soldier's card comes up before the Foe group's. Private Rike Mahler shoots first, at a prowler who has not yet acted: Agility 4 and 2 Bonus Dice for the Ambush make 6 base dice, with 2 <GlossaryTerm term="Gear Dice" /> from her flintlock pistol and 1 <GlossaryTerm term="Stress Dice">Stress Die</GlossaryTerm>.
+With the Ambush, Rike shoots a prowler who has not yet acted: Agility 4 and 2 Bonus Dice, a pistol rated 2, Stress 1.
 
 <PoolRows rows={[{ label: 'The shot', pool: 'base:6,3,6,2,4,1|gear:6,5|stress:4', successes: 3 }]} />
 
+The target rolls **no Guard**, so all three are <GlossaryTerm term="Net Successes" />: the pistol's 2, plus 1 each for the second and third, is **4 Pierce**. More than the prowler's Health — out of the Skirmish, and dead, because it was Pierce.
+
+Her pistol is now empty until someone spends a Shot to Reload it. She has never killed a person before, so the <GlossaryTerm term="Fear Roll" /> comes as the kill resolves.
+
 <TryRollButton pool={{ base: 6, gear: 2, stress: 1 }} label="Try Rike's shot" />
-
-The target has not yet acted and the Ambush is the Squad's, so it rolls no Guard: all 3 successes are <GlossaryTerm term="Net Successes" />. The pistol deals 2, plus 1 for each Net Success beyond the first, so 4 damage of Pierce. That is more than the prowler's Health, so it is out of the Skirmish, and dead, because the damage was Pierce.
-
-Rike's pistol is empty until someone spends a Shot to Reload it. She has never killed a person before, so she makes the <GlossaryTerm term="Fear Roll" /> for a first human kill as the kill resolves.
 
 </FieldReport>
 
@@ -149,35 +129,30 @@ Rike's pistol is empty until someone spends a Shot to Reload it. She has never k
 
 <StepFlow id="fig-skirmish-round" fig="Fig. 2" title="A Skirmish round" steps={roundSteps()} />
 
-<MarginNote>Turns, actions, Reactions, and what a move or an action can be spent on: <a href="/guide/rules-of-play/#turns-actions-and-reactions">The Rules of Play</a>.</MarginNote>
+<MarginNote>Turns, actions, and Reactions: <a href="/guide/rules-of-play/#turns-actions-and-reactions">The Rules of Play</a>.</MarginNote>
 
 <SectionHead id="what-you-can-do" eyebrow="Section 5">What You Can Do</SectionHead>
 
-<FieldQuote cite="From a Cadet's diary">I had my blades, and I had my hands, and for a moment I could not think which one he deserved.</FieldQuote>
-
 <CoreTable table="skirmish-actions" />
 
-**Help** on a roll in a Skirmish comes from up to 3 comrades taking part who are not Down, each spending their action, whether Engaged or Apart.
+**Help** comes from up to 3 comrades who are not Down, each spending their action, Engaged or Apart alike.
 
 <BoxPair>
-<RuleBox title="Trying something the rules do not cover" icon="ph:question">
+<RuleBox title="Something the rules do not cover" icon="ph:question">
 
-An act you describe that is not an entry taken as written is an <GlossaryTerm term="Improvised act">improvised act</GlossaryTerm>, even when what it would change matches an entry. Before the pool is built the GM names its **model entry**: one entry of kind action this chapter allows, never Block, Dodge, or an option such as Reload or Release. That ruling stands.
+An <GlossaryTerm term="Improvised act">improvised act</GlossaryTerm> takes a **model entry** the GM names — one action this chapter allows, never Block, Dodge, or an option. It spends your action, rolls as that entry rolls, carries its restrictions, and gives only its effect at its size. A Foe's Guard still answers it.
 
-The act spends your action, is rolled as the model entry is, takes Circumstances as any roll does, carries the model entry's restrictions, and produces only the model entry's effect at that entry's size. A Foe's Guard still rolls against it.
-
-**An object that is not a gear item, thrown** at a Foe, Engaged or Apart, is a Shoot at that object's damage of 1 and Crush, with no Gear Dice.
+**An object thrown** at a Foe is a Shoot at damage 1 and Crush, with no Gear Dice.
 
 </RuleBox>
 <RuleBox title="A called roll here" icon="ph:dice-three">
 
-An act no allowed entry of kind action could model, that would change nothing the Skirmish tracks, is a called roll instead: no Foe's Health, Guard, Grit, Parley value, Attack Dice, or Watch, no Engaged or Apart, and no card.
+An act no allowed entry could model, changing nothing the Skirmish tracks — no Health, Guard, Grit, Parley value, Attack Dice, Watch, range, or card.
 
-- It spends your action, on your turn, and **never stands in for a Reaction**.
-- Help on it is Help in a Skirmish, as above.
-- A fall it stakes is low or high, never extreme, and a cost of time or position touches only the situation outside what the Skirmish tracks.
-- Success never gives an effect an entry has. It can be tried again on a later turn.
-- **Fly.** The GM may name Fly for it. The roll takes your <GlossaryTerm term="ODM Gear">ODM Gear's</GlossaryTerm> Gear Dice, and a Pushed Gear Die showing 1 wears the gear. It leaves you on the ground, makes no <GlossaryTerm term="Gas Roll" />, drops no one if the gear <GlossaryTerm term="Jam">Jams</GlossaryTerm>, and gives no Engaged or Apart, which only a move changes. With Jammed ODM Gear you cannot be named for Fly, and the GM names Agility alone.
+- It spends your action and **never stands in for a Reaction**.
+- A fall it stakes is low or high, never extreme.
+- It can be tried again on a later turn.
+- **Fly,** if the GM names it, takes your <GlossaryTerm term="ODM Gear">ODM Gear's</GlossaryTerm> dice but leaves you on the ground, makes no <GlossaryTerm term="Gas Roll" />, and drops nobody if the gear <GlossaryTerm term="Jam">Jams</GlossaryTerm>.
 
 </RuleBox>
 </BoxPair>
@@ -186,150 +161,122 @@ An act no allowed entry of kind action could model, that would change nothing th
 
 <FieldQuote cite="Survey Corps manual, on the guard">He is watching your edge. That is the one thing a Titan never does.</FieldQuote>
 
-Every attack in a Skirmish follows the same shape as an attack in a Titan fight: the attack is rolled, a cancelling roll answers it, and what is left decides. People differ from Titans in three ways, and only these three are the Skirmish's own. A person can be blocked. A Foe answers your attack with Guard. And a person's harm is damage that grows with each Net Success beyond the first, so half a Reaction is worth having.
+An attack here has the same shape as a Titan's. **People differ in three ways only:** they can be blocked, they answer your attack with **Guard**, and their harm is damage that grows with each Net Success beyond the first — so half a Reaction is worth having.
 
 <StepFlow id="fig-skirmish-attack" fig="Fig. 3" title="An attack and its answer" steps={attackSteps()} />
 
 <Subsection title="Reactions against a Foe" id="reactions-against-a-foe">
 
-- **Block:** Strength, with a <GlossaryTerm term="Blade Set" /> if you have one and otherwise with no Gear Dice. It answers a Fight attack, and only a Fight attack.
-- **Dodge:** Agility, with your ODM Gear, or with the horse while you are mounted. It answers a Fight attack or a shot.
+**Block** is Strength with a <GlossaryTerm term="Blade Set" /> if you have one, and answers a Fight attack and nothing else. **Dodge** is Agility with ODM Gear or the horse, and answers a Fight attack or a shot.
 
-A <GlossaryTerm term="Reaction" /> spends a whole turn. You make **at most one Reaction against each Foe per round**, and its successes cancel against the attack it answered and, separately, against each later attack that Foe makes on you that round. They are never used up.
-
-- **The reacting side Pushes last,** after the Foe's roll is known.
-- **Circumstances** are the step in force when the Foe group's card came up, and no step is named or changed for a Reaction after that.
-- **Forbidden.** A Held soldier cannot Dodge. No Reaction answers an attack the Ambush leaves unanswered, and any state or result that forbids Reactions forbids them here too.
+A <GlossaryTerm term="Reaction" /> spends a whole turn, and you make **one per Foe per round** — its successes cancelling against every later attack that Foe makes on you, never used up. The reacting side Pushes last. A Held soldier cannot Dodge, and no Reaction answers an attack the Ambush leaves unanswered.
 
 </Subsection>
 
-<SectionHead id="damage" eyebrow="Section 7">Damage</SectionHead>
+<Subsection title="Damage" id="damage">
 
-An attack that lands deals its weapon's **damage, plus 1 for each Net Success beyond the first**, with the weapon's <GlossaryTerm term="Injury Type" />. A Grapple deals none. So a Reaction that cancels part of an attack still lightens what is left.
+A landed attack deals its weapon's **damage, +1 for each Net Success beyond the first**, with the weapon's <GlossaryTerm term="Injury Type" />. A Grapple deals none.
 
 <BoxPair>
 <RuleBox title="On a soldier" icon="ph:heart-break">
 
-It is <GlossaryTerm term="Damage" /> as the wound rules give it, at a rolled <GlossaryTerm term="Injury Location" />. It marks Health lost, and at 0 <GlossaryTerm term="Current Health">current Health</GlossaryTerm> you are Down and gain a Critical Injury of the weapon's Injury Type, which takes its name and any rider from that type's table. **A person never inflicts a Critical Injury directly.**
+Ordinary <GlossaryTerm term="Damage" /> at a rolled <GlossaryTerm term="Injury Location" />. At 0 <GlossaryTerm term="Current Health">current Health</GlossaryTerm> you are Down and gain a Critical Injury of that type. **A person never inflicts one directly.**
 
-**Cut and Pierce** reach you in two ways only: from a Foe's weapon here, and as damage the stakes of a <GlossaryTerm term="Called roll">called roll</GlossaryTerm> named. Both carry riders:
-
-- a **lethal Cut bleeds**, so its <GlossaryTerm term="Death Roll" /> comes at the end of each of your turns until it is treated;
-- a **Pierce from the 7 row up holds the ball**, so <GlossaryTerm term="Treat Injury" /> on it takes a 1-die penalty, and it does not heal until it is treated.
+**Cut and Pierce** reach you only here and through a called roll's stakes, and both carry riders: a **lethal Cut bleeds**, so its <GlossaryTerm term="Death Roll" /> comes at the end of each of your turns until treated; a **Pierce from the 7 row up holds the ball**, so <GlossaryTerm term="Treat Injury" /> on it takes a 1-die penalty and it never heals untreated.
 
 </RuleBox>
 <RuleBox title="On a Foe" icon="ph:user-minus">
 
-Damage lowers the Foe's Health, never below 0. A Foe has **no Critical Injuries, no <GlossaryTerm term="Stress" />, and no Down state**.
+Damage lowers its Health, never below 0. A Foe has **no Critical Injuries, no <GlossaryTerm term="Stress" />, and no Down state**.
 
-At 0 Health it is **out of the Skirmish**: dead if the damage was {zero.killed}, and out cold if it was {zero.outCold}. A Foe out of the Skirmish takes no further part and is never a target again in it.
+At 0 it is **out of the Skirmish**: dead if the damage was {zero.killed}, out cold if it was {zero.outCold}. It takes no further part and is never a target again.
 
 </RuleBox>
 </BoxPair>
 
+</Subsection>
+
 <FieldReport id="example-exchange" title="An exchange in the doorway">
 
-Private Jost Halden is Engaged with a Foe in the doorway. Strength 3, a Blade Set rated 2, Stress 2. Everything below is his side of the exchange: the Foe's numbers stay with the GM, and what reaches Jost is a roll in the open and a number said aloud.
+Jost cuts at a Foe in the doorway — Strength 3, Blade Set 2, Stress 2. The Foe's numbers stay with the GM; what reaches Jost is an open roll and a number said aloud.
 
 <PoolRows rows={[{ label: 'The cut', pool: 'base:6,4,2|gear:6,3|stress:6,5', successes: 3 }]} />
 
-<TryRollButton pool={{ base: 3, gear: 2, stress: 2 }} label="Try Jost's cut" />
+**<GlossaryTerm term="Severity" /> 3.** The Guard cancels one, leaving 2 Net Successes: the blades' 2, +1 for the second, is **3 Cut**.
 
-<GlossaryTerm term="Severity" /> 3, announced. The GM rolls the Foe's Guard in the open, and it cancels one.
-
-Two Net Successes are left. The Blade Set deals 2, plus 1 for the second Net Success: 3 damage of Cut.
-
-**The Foe group's card.** The Foe cuts back with a sabre. The GM rolls its attack in the open and announces Severity 2. That number is all Jost needs: two successes are coming at him unless he cancels them.
-
-Jost answers with a Block, the same blades, and this time the dice are thinner.
+Then the Foe cuts back at Severity 2, and Jost Blocks.
 
 <PoolRows rows={[{ label: 'The Block', pool: 'base:6,1,3|gear:5,2|stress:4,2', successes: 1 }]} />
 
-<TryRollButton pool={{ base: 3, gear: 2, stress: 2 }} label="Try Jost's Block" />
+One cancelled, one through. The sabre deals 2 with nothing added. **Half a Block is still half the harm.**
 
-One of the two cancelled, so 1 Net Success. The sabre deals 2, with nothing added, and Jost loses 2 Health. Half a Block is still half the harm.
+<TryRollButton pool={{ base: 3, gear: 2, stress: 2 }} label="Try Jost's Block" />
 
 </FieldReport>
 
-<SectionHead id="weapons" eyebrow="Section 8">Weapons</SectionHead>
+<SectionHead id="weapons" eyebrow="Section 7">Weapons</SectionHead>
 
 <CoreTable table="skirmish-weapons" />
 
 <InkVignette caption="A pistol on the cobbles where it was dropped, the smoke still on it." label="A dropped flintlock pistol on wet cobblestones" art="guide-skirmishes-weapons" />
 
-<SectionHead id="the-grapple" eyebrow="Section 9">The Grapple</SectionHead>
-
-<FieldQuote cite="A Squad Leader, on taking prisoners">Anyone can kill him. Holding him is the hard part, and it costs you the rest of the fight.</FieldQuote>
+<SectionHead id="the-grapple" eyebrow="Section 8">The Grapple</SectionHead>
 
 <GrappleStates fig="Fig. 4" />
 
-<MarginNote stamp="Read twice">No Foe you will meet yet Grapples, so no rule makes you Held. The rules for it are written for the Foes still to come.</MarginNote>
+<MarginNote stamp="Read twice">No Foe you will meet yet Grapples, so no rule makes you Held. These are written for the Foes still to come.</MarginNote>
 
-<SectionHead id="parley-and-size-up" eyebrow="Section 10">Parley and Size Up</SectionHead>
+<SectionHead id="parley-and-size-up" eyebrow="Section 9">Parley and Size Up</SectionHead>
 
 <Subsection title="Parley" id="parley">
 
-On your action, once per Skirmish for each soldier, you may **Parley** with the whole Foe group. It is a Persuade roll on Empathy, or, made as a threat, on Strength in place of Empathy. It is still Persuade, so a <GlossaryTerm term="Talent" /> that names Persuade adds its dice.
+Once per Skirmish each, on your action, you may **Parley** with the whole Foe group: a Persuade roll on Empathy, or on Strength as a threat. It is still Persuade, so a <GlossaryTerm term="Talent" /> naming Persuade adds its dice.
 
-**What it needs:** the group's **Parley value**, plus 1, minus 1 for each of its Foes out of the Skirmish, never below 1. Then add the ask's number.
+**What it needs:** the group's **Parley value**, **+1**, **−1 per Foe out of the Skirmish**, never below 1 — then the ask's own number. Up to 3 comrades may Help, each spending their action.
 
-Up to 3 comrades taking part who are not Down may Help, each spending their action. It can be Pushed and Covered.
-
-**On a success** the group yields, does what the ask says, and the Skirmish ends. **On a failure** nothing happens, except that a **failed threat** raises the group's **Grit** by 1 and its Parley value by 1 for the rest of the Skirmish. A threat that does not land makes every later Parley harder.
-
-</Subsection>
+**Success** yields the group and ends the Skirmish. **Failure** does nothing — except that a **failed threat** raises the group's Grit and Parley value by 1 each for the rest of the fight. A threat that does not land makes every later ask harder.
 
 <CoreTable table="parley-asks" />
 
+With **no Skirmish under way**, each soldier may make one Parley with a group the scene sets them before. It needs the Parley value plus the ask, with no Help and no Cover, and is never retried by that soldier with that group.
+
+</Subsection>
+
 <FieldReport id="example-parley" title="Working out what a Parley needs">
 
-Say the group's Parley value is 2, and two of its Foes are already out of the Skirmish. Squad Leader Nadja Vent asks for Surrender: 2, plus 1, minus 2 for the Foes out, is 1, and Surrender adds 1. She needs 2.
-
-Empathy 3 and 2 Bonus Dice from two comrades Helping make 5 base dice, with 2 Stress Dice.
+Parley value 2, two Foes already out: 2 + 1 − 2 = 1, and Surrender adds 1. **She needs 2.** Empathy 3 and two comrades Helping make 5 base dice.
 
 <PoolRows rows={[{ label: 'The ask', pool: 'base:6,3,2,5,4|stress:6,1', successes: 2 }]} />
 
-<TryRollButton pool={{ base: 5, stress: 2 }} label="Try Nadja's Parley" />
+Two, and the group lays down its arms. The Stress Die showing 1 still sets off her <GlossaryTerm term="Stress Response" /> — **a success never spares you that**.
 
-Two successes, and the group lays down its arms. The Stress Die showing 1 still sets off her <GlossaryTerm term="Stress Response" />, because a success never spares you that.
+<TryRollButton pool={{ base: 5, stress: 2 }} label="Try Nadja's Parley" />
 
 </FieldReport>
 
-<Subsection title="Parley with no Skirmish under way" id="parley-outside">
-
-When a Mission Brief or the scene sets the Squad before a Foe group with no Skirmish under way, each soldier may make **one** Parley with that group. It needs the group's Parley value plus the ask's number, cannot be Helped or Covered, can be Pushed, and is never tried again by that soldier with that group. On a success the group does what the ask says. On a failure nothing happens. Talking with anyone who is not one of these groups is a called roll.
-
-</Subsection>
-
 <Subsection title="Size Up" id="size-up">
 
-On your action, **once per Foe group per Skirmish for the whole Squad**, you may roll **Size Up** on Instinct. It needs 1 success, cannot be Helped or Covered, can be Pushed, and is never tried again.
+Once per Foe group per Skirmish, for the whole Squad: an Instinct action needing 1 success, never Helped, Covered, or retried.
 
-**On a success the GM states,** aloud:
+**On a success the GM says aloud** the group's **Grit** and how many more Foes must go before it breaks; what each Foe will do on the group's next card; and, for any Foe the GM already means to direct, what it will do instead and why.
 
-1. the group's **Grit**, and how many more of its Foes must be out before it breaks;
-2. what each of its Foes will do on the group's next card, as things stand;
-3. for a Foe the GM already means to direct, what it will do instead, and the reason.
-
-Each Foe then does what was stated on its turn on that card. Only something that happens **after** the Size Up changes it: a change in the facts the group's own rule reads, or a new reason the fiction gives a Foe, said aloud, or an action a directed Foe can no longer take. The GM never holds a reason back at a Size Up and produces it on that card.
+Each Foe then does what was stated. **Only something that happens after the Size Up changes it** — the GM never holds a reason back and produces it on that card.
 
 </Subsection>
 
-<SectionHead id="ending-a-skirmish" eyebrow="Section 11">Ending a Skirmish</SectionHead>
+<SectionHead id="ending-a-skirmish" eyebrow="Section 10">Ending a Skirmish</SectionHead>
 
 <FieldQuote cite="Survey Corps manual, on the aftermath">Count them, bind them, and get off the road. Nothing out here waits for you to finish.</FieldQuote>
 
 <Subsection title="When a group breaks" id="when-a-group-breaks">
 
-A group breaks when the number of its Foes out of the Skirmish reaches its **Grit**, at the latest. The GM may break it, or have it surrender, sooner, with a reason said aloud as it happens, and never later. A Size Up is how you learn the number.
+A group breaks when its Foes out of the Skirmish reach its **Grit**, at the latest. The GM may break it sooner with a reason said aloud, and never later — a Size Up is how you learn the number.
 
-When a group breaks, at once: every Foe of it still in the Skirmish that is not Held becomes Apart from every soldier and takes no further turn, and each leaves at the end of the round. A Held Foe stays Held, and leaves at the end of the round its hold ends. A group that surrenders yields as the Surrender ask gives, and the Skirmish ends.
+At once, every Foe still in it that is not Held becomes Apart, takes no further turn, and leaves at the end of the round. A group that surrenders yields as the Surrender ask gives, and the Skirmish ends.
 
 </Subsection>
 
 <Subsection title="The three tests" id="the-three-tests">
-
-A Skirmish ends when one of these is true.
 
 <ol>
   {endingTests().map((test) => <li><b>{test.title}.</b> {test.text}</li>)}
@@ -339,32 +286,29 @@ A Skirmish ends when one of these is true.
 
 <Subsection title="And then the same steps as any fight" id="after-a-skirmish">
 
-When it ends, work the nine steps that follow any fight, in order, with the Skirmish in the Titan Engagement's place, all of them resolved outside the Skirmish. Two readings change:
-
-- **Everyone who took part** is who those steps mean by everyone who held a Position. Each of them loses the 1 Stress, counts as holding the patient's Position at the aftermath rolls and in the care window, gains the <GlossaryTerm term="Grief" /> for the deaths, and shares in the left items and the dropped Blade Sets.
-- **A Skirmish has no Nape kill,** so nothing gives that relief. Every turn limit still becomes an engagement limit, every lasting <GlossaryTerm term="Stress Response" /> gained here still ends, and Retirement and promotion still come last.
+Work the nine steps that follow any fight, with the Skirmish in the Titan Engagement's place. Two readings change: **everyone who took part** is what those steps mean by everyone who held a Position, and **a Skirmish has no Nape kill**, so nothing gives that relief.
 
 </Subsection>
 
-<MarginNote>The nine end steps in full, with the aftermath rolls, the <GlossaryTerm term="Death Roll">Death Rolls</GlossaryTerm>, the care window, and Grief: <a href="/guide/wounds-and-fear/#after-the-fight">Wounds &amp; Fear</a>.</MarginNote>
+<MarginNote>The nine end steps in full: <a href="/guide/wounds-and-fear/#after-the-fight">Wounds &amp; Fear</a>.</MarginNote>
 
-<SectionHead id="fear-drives-and-talents" eyebrow="Section 12">Fear, Drives, and Talents</SectionHead>
+<SectionHead id="fear-drives-and-talents" eyebrow="Section 11">Fear, Drives, and Talents</SectionHead>
 
 <Subsection title="Fear Rolls" id="fear-rolls">
 
-- **A comrade dies.** Every other soldier taking part who is alive makes the Fear Roll. A Down soldier makes none.
-- **A first kill.** You kill a person when damage you deal brings a Foe to 0 Health with {zero.killed}, a flare included. If you have never killed a person before, you make the Fear Roll for a first human kill as the kill resolves, and your sheet records it. A <GlossaryTerm term="Drive" /> may shrug the result off.
-- **Nobody is Grabbed in a Skirmish,** so that trigger never comes up here.
-- **The GM's own trigger.** A Skirmish is outside a Titan fight, so the GM may call for a Fear Roll in one: rarely, for an event at least as horrifying as a listed trigger, and only for the witnesses the GM names. It is never called for an outcome a called roll's stakes already named.
+- **A comrade dies.** Every other living soldier taking part rolls. A Down soldier makes none.
+- **A first kill.** Bring a Foe to 0 with {zero.killed} and, if you have never killed a person, you roll as the kill resolves. Your sheet records it, and a <GlossaryTerm term="Drive" /> may shrug the result off.
+- **Nobody is Grabbed in a Skirmish,** so that trigger never comes up.
+- **The GM's own trigger** is open here, as a Skirmish is outside a Titan fight — rarely, and never for an outcome a called roll already staked.
 
 </Subsection>
 
 <Subsection title="Drives, Talents, and Squadmates" id="drives-talents-squadmates">
 
-- **Drives.** A Drive's turn triggers count Skirmish turns. A Drive's Position triggers need a Titan fight and are never met here.
-- **Talents.** A Skirmish has a start and an end, so a Talent limited to once per Titan Engagement can also be used once per Skirmish. A Skirmish that begins inside a <GlossaryTerm term="Leg" /> or a Night Camp has its own use, and neither use spends the other. A Talent whose effect reads a Position does nothing in a Skirmish unless its own row says what it does here, as Carrying Voice's does.
-- **Three that carry over cleanly.** Hand-to-Hand adds its dice to Fight, with a Blade Set, bare-handed, or as a Grapple, and to Block. Blade Discipline also names Fight, so it adds its dice here. Pry Loose frees only a Grabbed comrade, never a Held one.
-- **<GlossaryTerm term="Squadmate">Squadmates</GlossaryTerm>** take part like player characters, on their own cards, directed as the Squadmate rules give it, and never Push or Cover.
+- **Drives.** Turn triggers count Skirmish turns. Position triggers need a Titan fight and are never met here.
+- **Talents.** A Skirmish has a start and an end, so a once-per-Titan-Engagement Talent can also be used once per Skirmish. One whose effect reads a Position does nothing here unless its own row says what it does.
+- **Three carry over cleanly.** Hand-to-Hand adds its dice to Fight and Block; Blade Discipline names Fight, so it applies; Pry Loose frees only a Grabbed comrade, never a Held one.
+- **<GlossaryTerm term="Squadmate">Squadmates</GlossaryTerm>** take part on their own cards, and never Push or Cover.
 
 </Subsection>
 

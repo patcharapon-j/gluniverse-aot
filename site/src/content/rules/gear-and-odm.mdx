@@ -32,6 +32,7 @@ sources:
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
+import FactTable from '~/components/FactTable.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
 import FieldReport from '~/components/FieldReport.astro';
 import GlossaryTerm from '~/components/GlossaryTerm.astro';
@@ -65,105 +66,56 @@ export const repair = repairNumbers();
 />
 
 <ChapterContents items={[
-  { id: 'gear-and-gear-dice', title: 'Gear and Gear Dice', note: 'Ratings, wear, and what a repair mends' },
+  { id: 'gear-and-gear-dice', title: 'Gear and Gear Dice', note: 'Ratings, wear, repair' },
   { id: 'odm-gear-and-gas', title: 'ODM Gear and Gas', note: 'Flying, the Gas Roll, the Jam' },
   { id: 'blades', title: 'Blades', note: 'The handles, ruin, the swap' },
   { id: 'horses', title: 'Horses', note: 'Mounting, Gear Dice, lame' },
   { id: 'falling', title: 'Falling', note: 'Three bands and a D6' },
-  { id: 'carrying', title: 'Carrying', note: 'Limits, comrades, handing things over' },
-  { id: 'standard-issue', title: 'Standard Issue and Squad Supply', note: 'What you are given, what the Squad holds' },
+  { id: 'carrying', title: 'Carrying', note: 'Limits, comrades, handing over' },
+  { id: 'standard-issue', title: 'Standard Issue and Squad Supply', note: 'What you are given' },
 ]} />
 
 <SectionHead id="gear-and-gear-dice" eyebrow="Section 1">Gear and Gear Dice</SectionHead>
 
-<FieldQuote cite="A quartermaster, handing over a harness">Signed for. Bring it back or do not come back.</FieldQuote>
+A <GlossaryTerm term="Gear item">gear item</GlossaryTerm> is one of these and nothing else: **ODM Gear, gas canisters, Blade Sets, horses, medical kits, tool kits, flintlock pistols, muskets, prosthetics.**
 
-A <GlossaryTerm term="Gear item">gear item</GlossaryTerm> is one of the things on this list, and nothing else is: ODM Gear, gas canisters, Blade Sets, horses, medical kits, tool kits, flintlock pistols, muskets, and prosthetic arms and legs.
+Any other object — a rope, a lantern, a wheelbarrow — adds no <GlossaryTerm term="Gear Dice" /> and counts as no item. It matters only where a rule names it, or through <GlossaryTerm term="Circumstances" />: a rope and a grapnel might make a climb Easy.
 
-Any other object you describe, a rope or a lantern or a wheelbarrow, adds no <GlossaryTerm term="Gear Dice" /> and counts as no item. It has a mechanical effect only where a rule names it, as a thrown cloak is named as a <GlossaryTerm term="Decoy">decoy</GlossaryTerm> for <GlossaryTerm term="Break Attention" />. Otherwise it works through <GlossaryTerm term="Circumstances" />: an object used well may count toward the step the GM names, so a rope and a grapnel might make a climb Easy. On a <GlossaryTerm term="Called roll">called roll</GlossaryTerm> made with an attribute alone, even a gear item that helps you counts that way and gives no Gear Dice.
+<Subsection title="Ratings and wear" id="ratings">
 
-<Subsection title="Ratings" id="ratings">
+Everything but a canister and a prosthetic is **rated 1 to 3**, set on receipt and never changed. Its **<GlossaryTerm term="Current rating">current rating</GlossaryTerm>** runs from 0 up to that, and **the item's Gear Dice are its current rating**. One item per roll.
 
-Every item except a gas canister and a prosthetic is **rated**.
-
-- An item's **rating** runs from 1 to 3 and is set when you receive it. It never changes.
-- Its **<GlossaryTerm term="Current rating">current rating</GlossaryTerm>** runs from 0 up to that rating, and it is the only number that moves.
-- **The item's Gear Dice are its current rating.** A roll takes Gear Dice from at most one item, chosen before you roll if more than one qualifies.
-
-</Subsection>
-
-<Subsection title="Wear, and what 0 means" id="wear">
-
-<MarginNote>Pushing, Covering, and the order a Pushed roll is resolved in: <a href="/guide/rules-of-play/#pushing-your-luck">The Rules of Play</a>.</MarginNote>
+<MarginNote>Pushing, Covering, and the order a Pushed roll resolves in: <a href="/guide/rules-of-play/#pushing-your-luck">The Rules of Play</a>.</MarginNote>
 
 <StepFlow id="fig-wear" fig="Fig. 1" title="From a Push to a Jam" steps={wearFlow()} />
 
-An item whose current rating is 0 **counts as not had** for every entry in the <GlossaryTerm term="Action Catalog" /> and adds no Gear Dice. Some items count as not had while they are whole, too, and the table gives each case.
+An item at **0 counts as not had** for every Catalog entry and gives no dice. Some items count as not had while whole, too — an empty firearm, a Blade Set out of the handles.
 
 <CoreTable table="gear-items" />
 
-No ruling ever wears an item. A called roll's stakes can cost you a carried item, never a point of wear.
+**No ruling ever wears an item.** A called roll's stakes can cost you a carried item, never a point of wear.
+
+**Four things restore a rating,** never above the rating: <GlossaryTerm term="Field Repair" /> (ODM Gear, tool kits, firearms), **restocking** a medical kit in a care window, **<GlossaryTerm term="Standard Issue" />** (which replaces rather than mends, and never a firearm), and the **Maintain Gear** Downtime Action, which restores everything you hold.
 
 </Subsection>
 
-<Subsection title="Getting it back" id="restoring">
+<Subsection title="Firearms, prosthetics, and kept items" id="firearms">
 
-A current rating rises only through a rule the item's own row allows, and never above the rating. There are four:
-
-1. **<GlossaryTerm term="Field Repair" />,** below, for ODM Gear, a tool kit, and a firearm.
-2. **Restocking** a medical kit from the Squad's medical supplies, in a care window.
-3. **<GlossaryTerm term="Standard Issue" />,** which replaces the item rather than mending it. It never restores a firearm.
-4. **The Maintain Gear Downtime Action,** which restores every rated item you hold.
-
-</Subsection>
-
-<Subsection title="Firearms" id="firearms">
-
-A flintlock pistol and a musket are the gear items for Shoot, and Shoot belongs to <a href="/guide/skirmishes/">Skirmishes</a>. Their damage, their Injury Type, and which Foes you can fire at are Skirmish rules.
-
-- **Received** only through a Requisition, and empty. Standard Issue never gives one and never restores one.
-- **Rated** like any rated item, and worn out at 0. Only Field Repair and Maintain Gear bring one back.
-- **Loaded or empty,** and your sheet records which. Only Reload loads a firearm, spending 1 unit of shot, and making a Shoot roll empties it. An empty firearm counts as not had, so Shoot cannot be taken with it. Outside a <GlossaryTerm term="Skirmish" /> and a <GlossaryTerm term="Titan Engagement" /> you may load one at any time for that one shot, and it stays loaded until it is fired. In a Skirmish, reloading a musket also spends your move.
-- **No use in a Titan Engagement.** Shoot is never taken there, and a firearm gives Gear Dice to no roll made there.
-- **Carried** as 1 item for a pistol and 2 for a musket. Either can be passed, taken, or shared out.
-
-</Subsection>
-
-<Subsection title="Prosthetics" id="prosthetics">
-
-A prosthetic arm or leg is workshop work of the era: a hook or an iron hand on a socket, or a peg or a jointed wooden leg, fitted to one side you have lost.
-
-- **Received** only through a Requisition, at Limited Scarcity, one per Requisition. Standard Issue never gives one and never takes one away.
-- **Not rated.** It gives no Gear Dice, never wears, adds no die to any roll, and is never a weapon.
-- **Fitted** during a Downtime, once the loss at that side has healed. What it does to the lost-limb grades is in <a href="/guide/wounds-and-fear/">Wounds & Fear</a>.
-- **Carried as no item,** and never passed or taken. A fitted prosthetic leaves play with its soldier.
-
-</Subsection>
-
-<Subsection title="Kept items" id="kept-items">
-
-An item a Requisition gave you is a **<GlossaryTerm term="Kept item">kept item</GlossaryTerm>**, and your sheet records which of yours are kept.
-
-Standard Issue never takes a kept item away unless you hand it in. At any step that would replace it or make it leave play, you may hand it in and take the issue in its place; by default you keep it, exactly as if you had declined that exchange. It stays kept when it is passed, taken, or shared out. In every other way it is an item of its kind: it counts as items, it wears, it is restored as its row states, and a Blade Set rated above 1 is still ruined by any wear.
+<FactTable columns={['', '']} rows={[
+  ['Firearms', 'Requisition only, and empty. <b>Loaded or empty is recorded</b> — only Reload loads one, spending 1 unit of shot, and firing empties it. An empty firearm counts as not had. <b>Never used in a Titan Engagement.</b> A pistol is 1 item, a musket 2.'],
+  ['Prosthetics', 'Requisition only, at Limited Scarcity. Not rated: no dice, no wear, never a weapon. Fitted during a <GlossaryTerm term="Downtime" /> once that side\'s wound has healed, permanently, and carried as no item.'],
+  ['Kept items', 'What a Requisition gave you. Standard Issue never takes one unless you hand it in; by default you keep it. In every other way it is an ordinary item of its kind.'],
+]} />
 
 </Subsection>
 
 <Subsection title="Field Repair" id="field-repair">
 
-Field Repair is a **Wits** action that takes its Gear Dice from a tool kit. Without one it rolls Wits alone, unless Make Do applies. Gearwright adds dice to it.
+A **Wits** action with a tool kit — Wits alone without one. Name the item first: {repair.items.slice(0, -1).join(', ')}, or {repair.items[repair.items.length - 1]}. Blade Sets, horses, and medical kits cannot be repaired, and a tool kit never mends itself.
 
-- **Name the item before you roll:** {repair.items.slice(0, -1).join(', ')}, or {repair.items[repair.items.length - 1]}. A Blade Set, a horse, and a medical kit cannot be repaired, and the tool kit supplying the roll's Gear Dice is never the item it mends. A tool kit at 0 gives no Gear Dice, so it can be mended with another kit or with Wits alone.
-- **It needs {repair.needs} success.** <GlossaryTerm term="Circumstances" /> reach it as they reach any attribute roll: the GM names one step, Standard if none, and a repair in the dark or in a downpour might be Hard. No step changes the {repair.needs} success it needs.
-- **On a success,** the item's current rating rises by 1 for each success, up to its rating. ODM Gear raised above 0 is no longer <GlossaryTerm term="Jam">Jammed</GlossaryTerm>. On a failure, nothing happens.
+It needs **{repair.needs} success**, and each success raises the current rating by 1. ODM Gear raised above 0 stops being <GlossaryTerm term="Jam">Jammed</GlossaryTerm>.
 
-**In a Titan Engagement,** the item is yours or belongs to a comrade at your Position, and two soldiers who have both left the fight count as sharing one Position. It spends your action, it can be Helped, Pushed, and Covered as usual, and a failure can be tried again on a later turn.
-
-**Outside one,** Field Repair is rolled only in a care window held when a Titan Engagement ends, when a day passes during an <GlossaryTerm term="Expedition" />, or on the interim day, and only on an item belonging to a soldier in that window's scope. Restoring gear during <GlossaryTerm term="Downtime" /> belongs to the Maintain Gear Downtime Action instead.
-
-- Each living soldier in the scope who is not <GlossaryTerm term="Down" /> may make **one Field Repair roll** in each such window, separate from their Treat Injury roll.
-- Another living soldier in the scope who is not <GlossaryTerm term="Down" /> and is not rolling may **<GlossaryTerm term="Help" />** if they have not yet made or Helped a Field Repair roll in that window. Help is declared before the roll and spends that soldier's own repair for the window. At most 3 soldiers Help one roll.
-- Anyone who could Help can **<GlossaryTerm term="Cover">Cover</GlossaryTerm>** the Push, even a soldier who has already rolled or Helped. Covering spends nothing.
-- The players choose the order, with the usual roll-off if they disagree, and <GlossaryTerm term="Squadmate">Squadmates</GlossaryTerm> take part like anyone else. A failed roll waits for a later window.
+**In a Titan Engagement** it spends your action, on your own item or one held by a comrade at your Position, and can be Helped, Pushed, and retried on a later turn. **Outside one** it is rolled only in a care window — one repair roll each, separate from the Treat Injury roll, with Help spending the helper's own repair.
 
 </Subsection>
 
@@ -171,49 +123,32 @@ Field Repair is a **Wits** action that takes its Gear Dice from a tool kit. With
 
 <FieldQuote cite="Instructor's saying, Training Corps">Gas is time. Spend it like you only have some.</FieldQuote>
 
-<GlossaryTerm term="ODM Gear" /> supplies Gear Dice to four entries: the dodge, Break Attention, Fly, and <GlossaryTerm term="Leap Clear" />. A <GlossaryTerm term="Nape strike" />, a <GlossaryTerm term="Body Part strike" />, and Break Free take theirs from the <GlossaryTerm term="Blade Set" /> in your handles, never from the harness.
+<GlossaryTerm term="ODM Gear" /> supplies Gear Dice to four entries: **the dodge, Break Attention, Fly, and <GlossaryTerm term="Leap Clear" />**. Strikes and Break Free take theirs from the <GlossaryTerm term="Blade Set" /> in your handles, never from the harness.
 
 <BoxPair>
 <RuleBox title="Strikes need a working harness" icon="ph:anchor-simple">
 
-In a Titan Engagement, a Nape strike, and a Body Part strike made from On Body or Blind Spot, need your ODM Gear to count as had: **not Jammed, and <GlossaryTerm term="Gas Rating" /> above 0.** Jammed or dry, you cannot make them.
+In a Titan Engagement a <GlossaryTerm term="Nape strike" />, and a <GlossaryTerm term="Body Part strike" /> from On Body or Blind Spot, need your harness to count as had: **not Jammed, and <GlossaryTerm term="Gas Rating" /> above 0**.
 
-The strike still takes its Gear Dice from the Blade Set, and it is not ODM use, so it makes no <GlossaryTerm term="Gas Roll" />. Only a rule that names this requirement lifts it, as the <GlossaryTerm term="Grounded">grounded</GlossaryTerm> Titan's does. Outside a Titan Engagement the requirement does not apply at all.
+The strike still takes its dice from the Blade Set and is not ODM use, so it makes no <GlossaryTerm term="Gas Roll" />. Only a <GlossaryTerm term="Grounded">grounded</GlossaryTerm> Titan lifts the requirement.
 
 </RuleBox>
 <RuleBox title="Airborne" icon="ph:wind">
 
-You are **<GlossaryTerm term="Airborne">airborne</GlossaryTerm>** while you are in the air on your own ODM Gear.
+You are **<GlossaryTerm term="Airborne">airborne</GlossaryTerm>** while in the air on your own ODM Gear. An ODM move always puts you there, however the dice fall.
 
-- **You become airborne** by making an ODM move, which in a Titan Engagement is a <GlossaryTerm term="Flight" />, or by a rule that calls for a Fly roll with your own harness and says the roll makes you airborne. Making a called roll does not by itself: that rule says whether a success, a failure, or both do. A Flight always does, however its dice fall.
-- **At the Urban rating you are not airborne at Blind Spot.** You are anchored to a roof, so a <GlossaryTerm term="Jam" /> does not drop you.
-- **You stop** when you make a move that is not an ODM move, when you fall, when you become <GlossaryTerm term="Grabbed" />, and when the Titan Engagement ends, where everyone still in the air lands with no fall. Outside a fight, you land when the procedure that lifted you ends, unless its rule names another point.
-- **You are never airborne** while you are carried, while you are Grabbed, or while you are <GlossaryTerm term="Mounted">mounted</GlossaryTerm>. Running out of gas in the air does not bring you down.
+- **At Urban you are not airborne at Blind Spot** — you are anchored to a roof, so a <GlossaryTerm term="Jam" /> leaves you standing.
+- **You stop** on a move that is not an ODM move, on a fall, on being <GlossaryTerm term="Grabbed" />, and when the fight ends, where everyone still up lands with no fall.
+- **Never airborne** while carried, Grabbed, or <GlossaryTerm term="Mounted">mounted</GlossaryTerm>. Running out of gas does not bring you down.
 
 </RuleBox>
 </BoxPair>
 
-<Subsection title="ODM moves" id="odm-moves">
+<Subsection title="ODM moves and ODM use" id="odm-moves">
 
-An **<GlossaryTerm term="ODM move">ODM move</GlossaryTerm>** is a move you make on your own ODM Gear. Which Position changes need one, and which can be made on foot or mounted, is set by the <GlossaryTerm term="Anchor Rating" /> in <a href="/guide/fighting-titans/#positions-and-moves">Fighting Titans</a>.
+An **<GlossaryTerm term="ODM move">ODM move</GlossaryTerm>** is a move on your own harness. In a Titan Engagement every one is a <GlossaryTerm term="Flight" />. It needs a harness that counts as had, dismounts you first, and — while <GlossaryTerm term="Overloaded" /> — spends your action as well.
 
-- **In a Titan Engagement every ODM move is a Flight:** you roll Fly with this harness, the step happens whatever the roll gives, each success is 1 <GlossaryTerm term="Momentum" />, and no successes leaves you marked loudest. The rule is in <a href="/guide/fighting-titans/#the-flight">Fighting Titans</a>.
-- It needs ODM Gear that counts as had, so Jammed or dry you cannot make one.
-- A mounted soldier's ODM move dismounts them before it moves them.
-- While <GlossaryTerm term="Overloaded" />, an ODM move also spends your action, and cannot be made once that action is spent.
-- A soldier being carried makes none.
-
-</Subsection>
-
-<Subsection title="Using ODM Gear" id="odm-use">
-
-You **use ODM Gear** in a round if, during that round, you make an ODM move, make a roll whose gear item is your own harness, or take an act a rule names as ODM use. That is what the Gas Roll asks.
-
-Holding a Position without moving is not ODM use, even while airborne. Neither is a mounted charge, a roll made with a Blade Set, a horse, or a kit, every Nape strike included, nor being carried.
-
-A Flight is ODM use twice over, since it is an ODM move and a roll with this harness, and it still makes **one** Gas Roll for the round, as any number of uses does. Momentum spent on a clean line makes none at all that round.
-
-Outside a Titan Engagement there are no rounds, and ODM use there makes a Gas Roll only where the rule that calls for it says so. Travelling on horseback never spends gas, and the <GlossaryTerm term="Graduation Exam" /> makes no Gas Rolls at all.
+**You use ODM Gear** in a round if you make an ODM move, roll with your own harness, or take an act a rule names as ODM use. **That is what the Gas Roll asks.** Holding a Position, a mounted charge, a Nape strike, and being carried are none of them. However many uses, **one Gas Roll a round**.
 
 </Subsection>
 
@@ -227,59 +162,48 @@ Outside a Titan Engagement there are no rounds, and ODM use there makes a Gas Ro
 
 <Subsection title="Gas and the Gas Roll" id="the-gas-roll">
 
-Your **Gas Rating** is the gas left in the canister fitted to your harness, from 0 to the {gas.full} a full canister holds. With no canister fitted it is 0. You can carry **spare canisters** too, each recording its own Gas Rating; one from Standard Issue is full, and a canister at 0 is discarded as it comes off, so a carried spare always has gas in it.
+Your **Gas Rating** is the gas in the fitted canister, 0 to {gas.full}. Spare canisters each record their own, and an empty one is discarded as it comes off — so a carried spare always has gas.
 
 <StepFlow id="fig-gas" fig="Fig. 2" title="The Gas Roll, and running dry" steps={gasRollFlow()} />
 
 A <GlossaryTerm term="Squadmate" /> never Pushes, so its Gas Roll is always {gas.dice} dice and its harness never Jams from wear.
 
-**A Gas Roll a Fear Roll calls for.** A <GlossaryTerm term="Fear Roll" /> result can call for a Gas Roll at once. It is {gas.dice} dice on the canister fitted to your harness, read and applied as any other, and nothing happens if you have none fitted or it is already empty. It is not the round's Gas Roll and it is not ODM use, so you still make the round's own roll if you used the harness, with the dice that roll would have had.
+**A Gas Roll a <GlossaryTerm term="Fear Roll" /> calls for** is {gas.dice} dice, read like any other, and it is neither the round's roll nor ODM use.
 
-**A canister about to change hands.** No canister moves before the gas it owes is rolled.
+**No canister changes hands before the gas it owes is rolled.** Declare a pass or a take and you make that round's Gas Roll first, with the dice your rolls so far have earned — and it counts for the whole round. If it empties the canister, the canister is discarded, nothing moves, and the pass spends nothing. A soldier who dies makes that roll too, before their canister becomes a left item.
 
-1. If you used ODM Gear this round and have not yet made that round's Gas Roll, you make it before your fitted canister can be passed or taken: when you declare that you mean to pass it, or, if you are Down, when a comrade declares that they mean to take it. It has the dice your rolls so far this round give it, and it is your Gas Roll for the whole round, whatever canister you fit later.
-2. **If that roll empties the canister,** it is discarded. You have none fitted, nothing moves, and the pass or take is not made and spends nothing, so whoever declared it may still take an action that turn. If gas remains, the canister moves with its Gas Rating and the pass or take spends what it spends.
-3. A soldier who dies after using ODM Gear this round makes that Gas Roll at once, before their fitted canister becomes a left item. A canister it empties is discarded and is never left.
+**Change Canister** is not rolled. You need a spare in hand; in a fight it spends your action, or your move with Quick Refit. You can do it airborne.
 
 </Subsection>
 
-<Subsection title="Change Canister" id="change-canister">
-
-**Change Canister** is not rolled, so it is never Helped or Covered. You need a spare in hand. In a Titan Engagement it spends your action, and Quick Refit lets you spend your move instead; outside one it spends nothing. You fit one of your spares and its Gas Rating becomes yours, and the canister you take off is kept as a spare unless it is empty. You can do it airborne.
-
-</Subsection>
-
-<MarginNote stamp="Read twice">Dry is not the same as Jammed. Dry, the harness is whole and one canister fixes it. Jammed, the harness is broken and only a repair or a new one will do.</MarginNote>
+<MarginNote stamp="Read twice">Dry is not Jammed. Dry, the harness is whole and one canister fixes it. Jammed, it is broken, and only a repair or a new one will do.</MarginNote>
 
 <Subsection title="Running dry and the Jam" id="running-dry-and-the-jam">
 
-At **Gas Rating 0 you have run dry**, and at **current rating 0 your ODM Gear Jams**. Both make the harness count as not had, so neither lets you make an ODM move, a Nape strike, or a Body Part strike from On Body or Blind Spot, and neither adds a Gear Die. They part company here:
+Both make the harness count as not had — no ODM move, no strike from the body, no Gear Dice. They part company here:
 
-- **Running dry does not drop you.** Airborne, you hang at your Position until something else takes you out of the air. It ends the moment your Gas Rating rises above 0: Change Canister, Standard Issue, or taking a canister from someone and changing to it.
-- **A Jam drops you.** If you are airborne when it Jams, you fall once the roll that Jammed it is finished. At the Urban rating a soldier at Blind Spot is anchored to a roof and is not airborne, so a Jam leaves them standing there. Your Gas Rating does not change, you still make the Gas Roll for the round it Jammed in, and none while it stays Jammed. It ends when Field Repair or a Standard Issue harness lifts the current rating above 0.
-
-The Graduation Exam's training harness carries no canister, so it never runs dry.
+<FactTable compact columns={['', 'Dry (Gas Rating 0)', 'Jammed (current rating 0)']} rows={[
+  ['Does it drop you?', 'No. Airborne, you hang where you are.', '<b>Yes</b>, once the roll that Jammed it is finished.'],
+  ['How it ends', 'Any canister with gas in it.', 'Field Repair, or a Standard Issue harness.'],
+  ['Gas Rolls', 'None to make.', 'You still make the round it Jammed in, then none.'],
+]} />
 
 </Subsection>
 
 <FieldReport id="example-jam" title="A Jam at On Body">
 
-Private Jonas Keller is airborne at In Reach of a Medium Focus Titan at Wooded, with Agility 3, <GlossaryTerm term="Stress" /> 1, and ODM Gear rated 2 that an earlier Push has already worn to 1. He moves to On Body, and the Titan's card turns on him for Severity 2.
-
-He is not mounted, so he dodges with the harness: 3 base dice, 1 Gear Die, 1 <GlossaryTerm term="Stress Dice">Stress Die</GlossaryTerm>.
+Jonas dodges at On Body with a harness already worn to 1: 3 base, 1 Gear, 1 Stress.
 
 <PoolRows rows={[
   { label: 'The dodge', pool: 'base:6,2,4|gear:1l|stress:3', successes: 1 },
   { label: 'After the Push', pool: 'base:6k,6,5|gear:1l|stress:3,2', successes: 2 },
 ]} />
 
+Two successes cancel the card — then the wear lands. The Gear Die shows 1 on a Pushed roll, so the harness drops to 0 and **Jams**. He is airborne, so he falls: D6 4, +2 for the high band, **2 damage**. At the round's end he still makes a three-dice Gas Roll, and two 1s take him from 3 gas to 1.
+
 <TryRollButton pool={{ base: 3, gear: 1, stress: 1 }} label="Try Jonas's dodge" />
 
-Two successes cancel the card's two, so it whiffs against him. Then the wear lands: the roll was Pushed and his Gear Die shows 1, so the harness drops to 0 and **Jams**. He is airborne, so he falls, and On Body is high.
-
-The D6 shows 4, plus 2 for the band makes 6: a hard landing, 2 damage. At the end of the round he still makes his Gas Roll, three dice because he Pushed a roll with the harness. Two show 1, and his Gas Rating drops from 3 to 1.
-
-Next round a Squadmate at his Position takes **Field Repair** on his harness with Wits 4 and no tool kit. One die shows 6, so his current rating rises to 1 and the Jam ends.
+Next round a Squadmate repairs the harness with Wits 4 and no kit. One 6, and the Jam ends.
 
 <TryRollButton pool={{ base: 4 }} label="Try the repair" />
 
@@ -287,35 +211,15 @@ Next round a Squadmate at his Position takes **Field Repair** on his harness wit
 
 <SectionHead id="blades" eyebrow="Section 3">Blades</SectionHead>
 
-<FieldQuote cite="A Squad Leader, on the rack">Two in the handles, the rest on your back. Count them before you count anything else.</FieldQuote>
+A **Blade Set** is one pair of ODM blades — the only unit in which blades are carried, counted, passed, and lost. Your handles hold **at most one**, and only that set gives Gear Dice or counts as had for a strike, Break Free, Block, or Fight. **Empty handles, no Nape strike.** The set in your handles counts as no item; every other counts as 1.
 
-A **Blade Set** is one pair of ODM blades, and the only unit in which blades are carried, counted, passed, and lost. Each set keeps its own rating.
+<Subsection title="Ruin and the swap" id="ruin">
 
-<Subsection title="The handles" id="the-handles">
+**Any wear ruins a Blade Set.** When a Pushed roll using the set in your handles is final and 1 point of wear survives Blade Discipline, it is discarded at once and your handles are empty. A set's rating never falls — ruin takes wear's place, so a higher rating buys more dice and no more safety.
 
-Your handles hold **at most one Blade Set**, the set in use.
+**The swap** fits a carried set into empty handles. In a Titan Engagement: once per turn, **spending your move** — so you refit where you stand and still strike this turn, and what ruin really costs you is that turn's <GlossaryTerm term="Flight" /> and its Momentum. Outside a fight: whenever you like. A Down soldier cannot swap.
 
-- Only the set in your handles supplies Gear Dice, or counts as had, for the Nape strike, the Body Part strike, Break Free, Block, and Fight. Every other set you carry counts as not had until it is swapped in, so with empty handles you cannot make a Nape strike at all.
-- When a Titan Engagement begins, empty handles take one of your carried sets.
-- The set in your handles counts as no item. Every other Blade Set counts as 1.
-
-</Subsection>
-
-<Subsection title="Ruin" id="ruin">
-
-When a Pushed roll whose gear item is the set in your handles is final, and at least 1 point of wear is left after Blade Discipline, **that Blade Set is ruined**. It is discarded at once and your handles are empty. A Blade Set's current rating never falls: ruin takes the place of wear, so a higher rating buys more dice and no more safety. Otherwise a set is lost only when it is dropped, passed, or named by a rule.
-
-A Fear Roll result can drop the set in your handles. Your handles are empty, the set lies at your Position, nobody picks it up during the fight, and it is shared out with the other left items when the fight ends.
-
-</Subsection>
-
-<Subsection title="The swap" id="the-swap">
-
-With empty handles, fit one carried Blade Set into them.
-
-- **In a Titan Engagement,** once during each of your own turns, at any point in that turn, **spending your move.** It never spends your action, and a move can change no Position, so you refit where you stand and still strike this turn. What a ruined set costs you is the turn's <GlossaryTerm term="Flight" />, and the Momentum it would have earned. A turn spent in advance still happens, so you can swap during it, spending that turn's move.
-- **Outside one,** at any time, as often as you like.
-- A Down soldier cannot swap. A Squadmate swaps exactly as you do.
+A Fear Roll can drop the set in your handles. It lies at your Position, nobody picks it up during the fight, and it is shared out at the end.
 
 </Subsection>
 
@@ -323,28 +227,21 @@ With empty handles, fit one carried Blade Set into them.
 
 <FieldQuote cite="From a Cadet's diary">They tell you the horse is issued to you. Nobody tells you it will know your whistle before you know its name.</FieldQuote>
 
-Your horse is the one your sheet records, from Standard Issue, and **you can mount only your own horse**.
+Your horse is the one your sheet records, and **you can mount only your own**.
 
 <Subsection title="Where the horse is" id="where-the-horse-is">
 
-In a Titan Engagement a horse holds a <GlossaryTerm term="Position" /> of its own. While you are mounted it holds yours and moves with you. Once you dismount, it stays where you left it until you mount it again, and your sheet records that Position with the <GlossaryTerm term="Focus Titan" /> it is held relative to. A horse sent out as a riderless-horse decoy and taken leaves the fight, and holds no Position, gives no Gear Dice, and cannot be mounted until the fight ends. Horse Whistle is the one Talent that moves a horse, bringing it to your Position before a move that mounts it.
-
-When the Titan Engagement ends, no horse holds a Position any longer. Each living soldier's horse is theirs again, lame or not, the decoy included; whoever was mounted stays mounted, and whoever was not stays dismounted. Outside a fight no horse holds a Position.
+In a Titan Engagement a horse holds a <GlossaryTerm term="Position" /> of its own: yours while you ride it, and wherever you left it once you dismount. **Horse Whistle is the only Talent that moves one.** A horse taken as a riderless-horse decoy leaves the fight entirely. When the fight ends no horse holds a Position, and every living soldier's horse is theirs again.
 
 </Subsection>
 
-<Subsection title="Mounting and dismounting" id="mounting">
+<Subsection title="Mounting, riding, and the charge" id="mounting">
 
-You are **mounted** while you are riding your own horse, and a mounted soldier is never airborne. Neither mounting nor dismounting is rolled.
+Neither mounting nor dismounting is rolled. **In a Titan Engagement** each happens as part of a move: the horse must share your Position and not be lame, and you must not be airborne, Down, Grabbed, or carried. **A mounted soldier's ODM move dismounts them first,** leaving the horse behind.
 
-- **In a Titan Engagement** both happen as part of a move, one or the other, at the Position you hold before or after that move's change of Position. To mount, your horse must hold the Position you hold, compared relative to the Focus Titan recorded with it, and must not be lame, and you must not be airborne, Down, Grabbed, or carried. When you dismount, the horse stays at the Position you hold.
-- **Outside one** there are no moves, except in a Skirmish, where a move may include one mount or dismount. You mount or dismount when the rule for the procedure under way says so. If none says anything, you may do either at any time, as long as the horse is yours and not lame and you are not airborne, Down, or carried.
-- **A mounted soldier's ODM move dismounts them first,** and the horse stays behind. It is a Flight from there, as any ODM move is.
-- **The charge.** A mounted step between Distant and In Reach may also mark you loudest on that Focus Titan. It is never rolled, spends nothing beyond the move, and is not ODM use, so it makes no Gas Roll. At the Open rating that step may be made **twice** in one move, in either order, so a rider can come in and get out again. It is still one charge, and marks you loudest at most once.
-- **Made airborne from the saddle,** by an ODM move or by a Fly roll whose rule says so, you are dismounted first, with no fall, and the horse stays at your Position.
-- **A soldier who has lost both arms** mounts and dismounts only with a comrade's help.
+**The charge.** A mounted step between Distant and In Reach may mark you loudest. It is never rolled, spends nothing beyond the move, and is not ODM use. At Open it may be made **twice in one move**, so a rider can come in and get out — still one charge, and one mark at most.
 
-**Forced dismounts.** Your horse going lame, or you going Down, dismounts you and you fall from a horse. Being Grabbed dismounts you with no fall. The horse stays at the Position each time.
+**Forced dismounts:** your horse going lame or you going Down dismounts you **and you fall**. Being Grabbed dismounts you with no fall. The horse stays put each time.
 
 </Subsection>
 
@@ -352,17 +249,11 @@ You are **mounted** while you are riding your own horse, and a mounted soldier i
 
 <MarginNote>A Funding 3 horse and a Funding 3 harness are both rated 2, so a mounted dodge rolls the same pool either way. What differs is the bill: wear and a fall against gas and a Jam.</MarginNote>
 
-- **The dodge, Ride, and Leap Clear,** only while you are mounted on it. Horsemanship adds its dice to that dodge, and Ride is the Leg roll on a Hard Ride.
-- **Break Attention,** while you are mounted on it or while it holds the Position you hold, compared relative to the Focus Titan recorded with its Position.
-- Otherwise the horse counts as not had for that entry.
+It gives Gear Dice to **the dodge, Ride, and Leap Clear** while you are mounted on it, and to **Break Attention** while mounted or while it shares your Position. Otherwise it counts as not had.
 
-Mounted, you may take a dodge's or a Break Attention's Gear Dice from your ODM Gear instead, one item per roll. That roll is ODM use, and it does not make you airborne. A Pushed roll made with the horse wears **the horse**, not your harness, and does not by itself make your Gas Roll three dice. Sure Seat can ignore 1 point of that wear.
+Mounted, you may take a dodge's or a Break Attention's dice from your harness instead. **A Pushed roll made with the horse wears the horse,** not the harness, and does not by itself make your Gas Roll three dice.
 
-</Subsection>
-
-<Subsection title="Lame" id="lame">
-
-A horse worn to 0 is **<GlossaryTerm term="Lame">lame</GlossaryTerm>**. It cannot be mounted, adds no Gear Dice, and counts as not had for every entry, and a soldier mounted on it is dismounted and falls from a horse. Standard Issue exchanges a lame horse unless you decline the exchange, and Maintain Gear ends lameness. Nothing else restores a horse: Field Repair cannot mend one. On an Expedition, every soldier who is not Down and whose horse is not lame is mounted on each Leg and dismounted at each <GlossaryTerm term="Night Camp" />.
+**A horse worn to 0 is <GlossaryTerm term="Lame">lame</GlossaryTerm>:** unmountable, no dice, and it dismounts and drops its rider. Only Standard Issue's exchange and Maintain Gear bring one back — Field Repair cannot mend a horse.
 
 </Subsection>
 
@@ -370,20 +261,19 @@ A horse worn to 0 is **<GlossaryTerm term="Lame">lame</GlossaryTerm>**. It canno
 
 <FieldQuote cite="Survey Corps manual, on the ground">The ground has killed more of us than the hands have. It simply gets less credit.</FieldQuote>
 
-A fall inflicts **damage**, and it is never a Titan attack.
+A fall inflicts **damage**, and is never a Titan attack.
 
 <Subsection title="When you fall" id="when-you-fall">
 
-You fall only for one of these reasons, and no other:
+Only for these reasons, and no other:
 
-- **Your ODM Gear Jams while you are airborne,** once the roll that Jammed it is finished. At Urban you are not airborne at Blind Spot, so the Jam leaves you on the roof.
-- **You become Down while airborne,** once the harm that made you Down, and any <GlossaryTerm term="Critical Injury" /> it gave, is fully resolved.
-- **You become Down while mounted,** a fall from a horse, once that harm is resolved.
-- **Your horse goes lame while you are mounted,** a fall from a horse, once the roll that wore it is finished.
-- **The comrade carrying you falls,** for any reason at all, or is Grabbed while airborne, or dies while airborne or mounted. You fall from their band, at the same moment.
-- **A rule or a ruling names it.** Another rule names a fall and its band. A called roll's stakes can name one too: the GM names low or high before the dice, never extreme, in a Titan Engagement as well as outside one, and low if no band is named. The GM states your current Health with those stakes.
+- **Your harness Jams while you are airborne,** once that roll is finished.
+- **You go Down while airborne or mounted,** once the harm is resolved.
+- **Your horse goes lame while you ride it.**
+- **The comrade carrying you falls,** is Grabbed while airborne, or dies airborne or mounted. You fall from their band, at the same moment.
+- **A rule or a ruling names one.** A called roll's stakes may name low or high, **never extreme**, and low if the GM names none.
 
-A <GlossaryTerm term="Grabbed">Grab's</GlossaryTerm> hold ends the airborne and mounted states before its crush, so a soldier that crush puts Down meets neither Down trigger. Running dry, landing through a move, and being set down are never falls. **A fall never causes a second fall** for the same soldier.
+Running dry, landing through a move, and being set down are never falls, and **a fall never causes a second fall**.
 
 </Subsection>
 
@@ -393,47 +283,31 @@ A <GlossaryTerm term="Grabbed">Grab's</GlossaryTerm> hold ends the airborne and 
 
 <CoreTable table="fall-damage" />
 
-<Subsection title="After the fall" id="after-the-fall">
-
-Which Position a fall leaves you at is in <a href="/guide/fighting-titans/#where-a-fall-lands">Fighting Titans</a>. A fall changes no rating, no Gas Rating, and no item you carry. It is not a behavior, so no <GlossaryTerm term="Reaction" /> answers it, and it is not a Fear Roll trigger.
-
-</Subsection>
+A fall changes no rating, no Gas Rating, and no item you carry. No <GlossaryTerm term="Reaction" /> answers it, and it is no Fear Roll trigger. Where it leaves you is in <a href="/guide/fighting-titans/#where-a-fall-lands">Fighting Titans</a>.
 
 <SectionHead id="carrying" eyebrow="Section 6">Carrying</SectionHead>
 
-<FieldQuote cite="A Squad Leader, before a sortie">Everything you take, you carry. Everyone you take, you carry too.</FieldQuote>
-
-You can carry **{carryingLimit()} items** before you are <GlossaryTerm term="Overloaded" />. Attributes never rise, so the limit never changes.
+You carry **{carryingLimit()} items** before you are <GlossaryTerm term="Overloaded" />. Attributes never rise, so the limit never changes.
 
 <CoreTable table="carrying" />
 
-<Subsection title="Overloaded" id="overloaded">
+<Subsection title="Overloaded, and shedding load" id="overloaded">
 
-While you carry more items than your limit, **every ODM move you make also spends your action**, and you cannot make one at all once that action is spent. Nothing else changes: no roll, no Gas Roll, no Reaction, and no move that is not an ODM move. Outside a Titan Engagement being Overloaded does nothing unless the rule for the procedure under way says otherwise.
+Over your limit, **every ODM move also spends your action**, and none can be made once that action is gone. Nothing else changes. A soldier who has lost one leg carries the same cost on every move on foot.
 
-A soldier who has lost one leg carries the same weight on every move on foot: each one spends their action as well, and none can be made once the action is spent, with the same exception outside a fight.
-
-</Subsection>
-
-<Subsection title="Shedding load" id="shedding-load">
-
-You can **drop** any carried item that counts as 1 or more items, other than a comrade, and a dropped item leaves play. You can **set down** a comrade you carry, who then holds your Position, and a carried soldier who is not Down can **stop being carried**, holding their carrier's Position.
-
-In a Titan Engagement you shed load at any point during your own turn, as often as you like, spending neither your move nor your action. Outside one, at any time. A Down soldier cannot shed load, an airborne carrier cannot set anyone down, and nobody leaves an airborne carrier.
+**Shedding load** costs nothing, at any point in your own turn, as often as you like: drop any carried item (it leaves play), set down a comrade, or stop being carried. A Down soldier cannot; an airborne carrier cannot set anyone down, and nobody leaves an airborne carrier.
 
 </Subsection>
 
 <Subsection title="Carrying a comrade" id="lift-comrade">
 
-**Lift Comrade** is not rolled. In a Titan Engagement it spends your action, or happens as part of your move with Rescue Ride while mounted; outside one it spends nothing.
+**Lift Comrade** is not rolled. In a fight it spends your action — or your move with Rescue Ride while mounted.
 
-- **The comrade** holds your Position and is Down, or is not Down, consents, and is forbidden to move by the both-legs grade. They must not be Grabbed, <GlossaryTerm term="Pinned" />, or already carried, and a Pinned soldier is never lifted.
-- **You** must not be Down, must carry no other comrade, and must not be carried yourself.
-- **Outside a Titan Engagement,** the comrade takes part in the same procedure as you rather than holding your Position: the soldiers that procedure's rule names, or every soldier of the Squad on the same Expedition, or every soldier of the Squad when none is under way.
+**The comrade** must share your Position and be Down, or consent while the both-legs grade forbids them to move. Never one who is Grabbed, <GlossaryTerm term="Pinned" />, or already carried. **You** must not be Down, already carrying, or carried yourself.
 
-**While you carry them,** they hold your Position and move when your move moves you. They are never airborne on their own harness, and being carried is not ODM use. Their turns still happen: their move changes nothing, and a carried comrade who is not Down keeps their action for entries that need no move. They count against your limit as 5 items plus every item they carry, and those items stay theirs, counting against their own limit too; only they can drop or pass them, though while they are Down anyone at that Position, you included, can take one. Strong Back removes the 5 and not their items. You carry at most one comrade, a carried soldier carries nobody, and carrying goes on after the fight ends.
+**While you carry them** they hold your Position and move when you do, never airborne on their own harness. Their turns still happen: their move changes nothing, and if not Down they keep their action for entries needing no move. They count as **5 items plus everything they carry** — Strong Back removes the 5 but not their items.
 
-**Carrying ends** when you set them down or they leave; when you go Down while neither airborne nor mounted, setting them down at your Position; when you go Down airborne or mounted, where carrying lasts until your own fall lets go of everything and they fall with you from the same band; when you are Grabbed, setting them down at your Position, and they fall if you were airborne; when you fall for any other reason, and they fall with you; when you die, setting them down at the Position you held, and they fall if you were airborne or mounted; when you retire, with no fall; when they are Grabbed, with no fall; when you are Pinned, where they are Pinned too, each with your own crushing Critical Injury at your own rolled location and your own pinning Body Part; and when they die. Outside a Titan Engagement nobody holds a Position, so a comrade set down there holds none.
+**Carrying ends** when you set them down or they leave, when either of you is Grabbed, dies, retires, or is Pinned, or when you go Down or fall. If you were airborne or mounted, they fall with you from the same band; otherwise they are simply set down where you stand.
 
 </Subsection>
 
@@ -441,23 +315,20 @@ In a Titan Engagement you shed load at any point during your own turn, as often 
 
 <CoreTable table="passing-items" />
 
-**Passing** an item spends your action in a Titan Engagement and nothing outside one. You must not be Down, and the receiver must be a living comrade at your Position, who may themselves be Down or Grabbed. Two soldiers who have both left the fight count as sharing one Position. Outside a fight the receiver takes part in the same procedure as you, as for Lift Comrade. One item moves, and from then on it counts against the receiver's limit, and against their carrier's too if they are carried. No rule lets you pass an item to a comrade at another Position.
+Each spends your action in a Titan Engagement and nothing outside one, and you must not be Down. **Passing** needs a living comrade at your Position, who may be Down or Grabbed. **Taking** works on a comrade who is **Down and not Grabbed**, or — in a fight only — on a dead comrade's left items where they lie. A fitted canister you take leaves them at Gas Rating 0 and reaches you as a spare.
 
-**Taking** an item spends your action in a Titan Engagement and nothing outside one, and you must not be Down. You can take one item from a comrade who is **Down and not Grabbed**, anything they could have passed you themselves, or, in a Titan Engagement only, one of a dead comrade's left items where they lie. Both need you at the same Position. A fitted canister you take leaves them at Gas Rating 0 with nothing fitted and reaches you as a spare. Outside a fight, left items are never taken: they are shared out. When the players disagree about who takes what, or in what order, they use the usual roll-off, and the Down comrade's player has no veto.
+**No rule passes an item to a comrade at another Position.** Disagreements go to the usual roll-off, and a Down comrade's player has no veto.
 
 </Subsection>
 
 <Subsection title="When a soldier dies or retires" id="death-and-retirement">
 
-A dead soldier's **ODM Gear, horse, and fitted prosthetics leave play**. Everything else is left for the Squad: spare canisters, the fitted canister as a spare if it still has gas, every Blade Set including the one in the handles, every kit, and every firearm.
+A dead soldier's **ODM Gear, horse, and fitted prosthetics leave play.** Everything else is left for the Squad: canisters, every Blade Set, every kit, every firearm.
 
-- **Where they lie.** A soldier who dies in a Titan Engagement while holding a Position and not Grabbed leaves their items at that Position until the fight ends, recorded with the Focus Titan it is held relative to. Otherwise the items lie at no Position.
-- **During the fight,** a left item can be taken only with Take Item, by a soldier at the Position where it lies.
-- **Sharing out.** When the procedure the death happened in ends, at the moment promotion is timed and before any promotion, the players give each item not already taken to a living soldier who took part. For a Titan Engagement that means anyone who held a Position at any point during it. They choose together, with the usual roll-off. Every item nobody takes leaves play.
-- **Left behind.** The items of a soldier who dies left behind when a Titan Engagement ends are never shared out: they leave play with the ground they lie on. An item that soldier passed to a comrade before the ending is the comrade's and is untouched.
-- **Retirement** takes a soldier's gear out of play with them. A promoted Squadmate keeps its own.
-
-A soldier who dies or retires while carried stops being carried, and a carrier who dies or retires sets their comrade down. Squad Supply belongs to the Squad, so no death and no Retirement takes any of it away.
+- **During the fight** a left item lies where they fell and can only be taken with Take Item, from that Position.
+- **Sharing out** happens when the procedure ends, before any promotion: the players give each remaining item to a living soldier who took part. Anything nobody takes leaves play.
+- **Left behind.** The items of a soldier who dies left behind when a fight ends are never shared out.
+- **Retirement** takes a soldier's gear out of play with them. Squad Supply belongs to the Squad, so no death takes any of it.
 
 </Subsection>
 
@@ -467,15 +338,15 @@ A soldier who dies or retires while carried stops being carried, and a carrier w
 
 <Subsection title="Standard Issue" id="what-you-are-issued">
 
-**Standard Issue** is the gear every soldier receives on joining the Squad and whenever a rule issues it, scaled by <GlossaryTerm term="Funding" />.
+What every soldier receives on joining the Squad, and whenever a rule issues it, scaled by <GlossaryTerm term="Funding" />.
 
 <CoreTable table="standard-issue" />
 
 <CoreTable table="standard-issue-specialty" />
 
-**You receive it** when you make a new soldier, at the finish step of the <GlossaryTerm term="Lifepath" />; as a starting Squadmate, or as anyone who joins the Squad later; with the whole Squad as a **full issue** before each Expedition and on reaching a depot Waypoint; and with the whole Squad as an **interim issue** at the start of each session while no Expedition and no Downtime is under way, after the interim day and its care window, Field Repair rolls included. If a session opens partway through a procedure, the interim issue waits until that procedure has ended, after its last step, and so after a dead soldier's gear is shared out, after Retirement, and after promotion. Promotion itself gives no issue: a promoted Squadmate keeps its gear and receives every issue the Squad receives from then on.
+**You receive it** when you make a new soldier or join the Squad; as a **full issue** with the whole Squad before each Expedition and at a depot Waypoint; and as an **interim issue** at the start of each session while no Expedition or Downtime is under way.
 
-**The interim issue** follows the steps below with three differences. It replaces ODM Gear only if you have none or its rating is below the row's, so a Jammed or worn harness rated at least the row's is kept as it is. It gives a Specialty kit only to a soldier holding none of that kind, so a kit at 0 is kept. Its horse step is the full issue's, and you may decline that exchange as always.
+**The interim issue** differs three ways: it replaces ODM Gear only if you have none or yours is rated below the row, gives a Specialty kit only to a soldier holding none of that kind, and keeps the full issue's horse step.
 
 <ol>
   {issueSteps().map((step) => (
@@ -483,13 +354,13 @@ A soldier who dies or retires while carried stops being carried, and a carrier w
   ))}
 </ol>
 
-Standard Issue never restores the current rating of an item you keep. Field Repair, restocking, and Maintain Gear do that. And whenever the whole Squad receives Standard Issue together, Squad Supply is restocked with it.
+**Standard Issue never restores the rating of an item you keep** — Field Repair, restocking, and Maintain Gear do that. Whenever the whole Squad is issued together, Squad Supply is restocked with it.
 
 </Subsection>
 
 <Subsection title="Squad Supply" id="squad-supply">
 
-<GlossaryTerm term="Squad Supply" /> is the shared pool the Squad draws on beyond the Walls. The Squad holds all of it, no soldier carries it, and it counts as no item. Each kind is a whole number of units that never drops below 0, and a use that needs a unit cannot be made with none left, except where the Expedition rules say what a Leg or a Night Camp with no rations costs.
+<GlossaryTerm term="Squad Supply" /> is the shared pool. The Squad holds all of it, no soldier carries it, and it counts as no item. Each kind is a whole number that never drops below 0.
 
 <IconKey title="The four kinds" items={[
   { icon: 'gear-rations', label: 'Rations', note: 'Legs, Night Camps, and hazards eat them.' },
@@ -502,21 +373,21 @@ Standard Issue never restores the current rating of an item you keep. Field Repa
 
 <CoreTable table="squad-supply-stock" />
 
-Each kind is set to its row when the Squad forms. Whenever the whole Squad receives Standard Issue together, the interim issue included, each kind below its row rises to it. None is ever lowered, so units a Requisition added above the stock stay there.
+Each kind is set to its row when the Squad forms, and any kind below its row rises to it whenever the whole Squad is issued together. **None is ever lowered,** so units a Requisition added above the stock stay there.
 
-**Medical supplies** have two uses, both outside a Titan Engagement. When a soldier declares a Treat Injury roll in a care window, before rolling, they may spend 1 unit for **1 <GlossaryTerm term="Bonus Dice">Bonus Die</GlossaryTerm>** on that roll, at most 1 unit a roll, and never on an aftermath roll. And at any point in a care window, including before the first roll and between rolls, any living soldier in its scope who is not Down may spend 1 unit to **refill one medical kit** held by a soldier in the scope to its rating. Each kit can be refilled once per window, and it is not a roll and spends nobody's roll.
+**Medical supplies** have two uses, both outside a fight: **1 unit for 1 <GlossaryTerm term="Bonus Dice">Bonus Die</GlossaryTerm>** on a care-window Treat Injury roll, declared before rolling and never on an aftermath roll; and **1 unit to refill one medical kit** to its rating, once per kit per window, spending nobody's roll.
 
 </Subsection>
 
 <RuleBox title="What a ruling can do to gear and supply" icon="ph:gavel">
 
-The GM rules on gear only before the dice, and only in these ways.
+Before the dice, and only these ways:
 
-- **A called roll's stakes** may name a fall, low or high as the GM names and never extreme, or low if none is named; or one carried item lost; or 1 unit of one kind of Squad Supply spent.
-- **A successful called search** of a place the GM named with the stakes may find Squad Supply: at most **1 unit per success**, of one kind that place could plausibly hold. A place yields Squad Supply to **one** called search only, whatever that search rolls, and everyone else present searches it by Helping that roll. A place is one building, wagon, cache, or the like the Squad can search in one go. A Waypoint scene yields to **at most two** called searches however many places it holds. No called search happens in a Titan Engagement or a Skirmish, so a place at hand is searched once the fighting stops.
-- **An object that is not a gear item** may count toward the Circumstances the GM names for a roll, and Field Repair takes Circumstances like any attribute roll.
+- **A called roll's stakes** may name a fall (low or high, never extreme), one carried item lost, or 1 unit of Squad Supply spent.
+- **A successful called search** may find at most **1 unit per success** of one kind the place could plausibly hold. Each place yields to one search only, everyone else Helping; a Waypoint scene yields to two at most.
+- **An object that is not a gear item** may count toward the Circumstances.
 
-Everything else is applied as written: wear, which only a Pushed Gear Die showing 1 causes; Gear Dice, which only a rated gear item gives; what an object counts as for carrying; the Gas Roll and the fall roll, neither of which takes Circumstances; the fall bands and tables; Standard Issue and when it arrives; and every other spend and restock of Squad Supply. **No ruling ever hands out a gear item.** One comes only from Standard Issue, a Requisition, or a rule that moves an item between soldiers.
+Everything else is applied as written — wear, Gear Dice, the Gas Roll, the fall tables, Standard Issue, and every spend of Squad Supply. **No ruling ever hands out a gear item.**
 
 </RuleBox>
 
