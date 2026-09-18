@@ -29,6 +29,7 @@ sources:
     sha: "deeac6163448a03a1fac606c19d143b609949d18"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import AbnormalLadder from '~/components/AbnormalLadder.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CommanderNote from '~/components/CommanderNote.astro';
@@ -53,6 +54,8 @@ Four Titans, each a record you can run a whole fight from. A standard Titan's nu
   { id: 'large-titan', title: 'The Large Titan', note: 'Slow, and it drags' },
   { id: 'sprinting-abnormal', title: 'The Sprinting Abnormal', note: 'Its table, its bars, its ladder' },
 ]} />
+
+<FinePrint title="which Titan appears, and reading a dossier">
 
 <SectionHead id="which-titan-appears" eyebrow="Section 1">Which Titan Appears</SectionHead>
 
@@ -87,6 +90,8 @@ Thrash is the entry these Titans resolve most, and almost all of it comes from a
 That is the fallback rule working, not a fault in the tables. Read the line as written: the Titan failing to get at the soldier who is hurting it.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="small-titan" eyebrow="Section 3">The Small Titan</SectionHead>
 
@@ -155,6 +160,8 @@ Four bars on the record above: each Body Part's Toughness, its Nape Depth, its c
 
 <AbnormalLadder titan="sprinting-abnormal" />
 
+<FinePrint title="what its ladder means, and any other Abnormal">
+
 <Subsection title="What its ladder means at the table" id="abnormal-ladder-at-the-table">
 
 - **A blade at its Nape or a soldier On Body turns it first,** as on every ladder.
@@ -181,3 +188,5 @@ An Abnormal breaks the standard pattern and runs from its own Behavior Table. Ev
 - **It causes the Abnormal Fear Roll.**
 
 </Subsection>
+
+</FinePrint>

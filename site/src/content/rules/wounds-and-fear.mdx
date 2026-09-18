@@ -35,6 +35,7 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
@@ -88,6 +89,8 @@ export const TYPE_NOTES = {
 
 <SectionHead id="health-and-harm" eyebrow="Section 1">Health and Harm</SectionHead>
 
+<FinePrint title="the row of boxes, and the three kinds of harm">
+
 <Subsection title="The row of boxes" id="the-row-of-boxes">
 
 **<GlossaryTerm term="Health" />** is half of Strength plus Agility, rounded up, and it never changes. Keep it as a row of boxes, each clean, marked by damage, or crossed off.
@@ -100,6 +103,8 @@ Health is small on purpose, because a <GlossaryTerm term="Titan attack" /> goes 
 
 </Subsection>
 
+</FinePrint>
+
 <HarmTrack fig="Fig. 1" />
 
 <Subsection title="The three kinds of harm" id="kinds-of-harm">
@@ -109,6 +114,8 @@ Health is small on purpose, because a <GlossaryTerm term="Titan attack" /> goes 
 **With no clean box,** a Critical Injury crosses off one marked by damage and your Health lost falls by 1. **Crossing off your last box** puts you Down and gives no further Critical Injury — only damage that brings you to 0, or is taken at 0, does that.
 
 </Subsection>
+
+<FinePrint title="harm a Titan's body deals, and harm the GM names">
 
 <Subsection title="Titan attacks go around Health" id="titan-attacks">
 
@@ -138,7 +145,11 @@ A called roll's <GlossaryTerm term="Stakes">stakes</GlossaryTerm> can name only 
 
 </Subsection>
 
+</FinePrint>
+
 <CoreTable table="health-restore" />
+
+<FinePrint title="how to read an effect">
 
 <Subsection title="How to read an effect" id="effects">
 
@@ -149,6 +160,8 @@ Every row in this chapter names its effects from one closed list, so each has ex
 **Penalties add up** — Critical Injuries, lasting Stress Responses, Scars, <GlossaryTerm term="Circumstances" /> alike — and never take base dice below 1 or touch <GlossaryTerm term="Gear Dice" /> or <GlossaryTerm term="Stress Dice" />. **No row here damages gear** or causes a <GlossaryTerm term="Fear Roll" />.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="critical-injuries" eyebrow="Section 2">Critical Injuries</SectionHead>
 
@@ -182,6 +195,8 @@ One arm table for both arms, one leg table for both legs, each open-ended at bot
 
 <InkVignette caption="A soldier braces a shoulder against a beam while a comrade cuts the sleeve away." label="A soldier cutting a comrade's sleeve away to reach a wound" art="guide-wounds-and-fear-injury" />
 
+<FinePrint title="holding, treating, and lost limbs">
+
 <Subsection title="Holding and treating" id="holding-and-treating">
 
 You **hold** a wound from the moment you gain it until it heals, and every held one counts toward worsening, treated or not. Arm and leg wounds are held **at a side**, and a row with permanent effects is gained at most once per side.
@@ -210,11 +225,15 @@ A side is lost on the **13 or more** row of the arm or leg table, and stays lost
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="down-and-dying" eyebrow="Section 3">Down and Dying</SectionHead>
 
 <Subsection title="Down" id="down">
 
 You are **Down** while your current Health is 0, or while you hold an untreated Critical Injury whose row says so.
+
+<FinePrint title="what Down allows and forbids, and turns">
 
 <BoxPair>
 <RuleBox title="What you can still do" icon="ph:hand">
@@ -239,6 +258,8 @@ You are **Down** while your current Health is 0, or while you hold an untreated 
 **Down ends the moment** your current Health is above 0 and no untreated Down row holds you — which only treating or healing a wound, a revive, or a day passing brings about.
 
 **Turns are never given back.** Going Down costs any action of this round's turn you still held, a turn that begins while you are Down has its move only, and ending Down restores nothing already spent.
+
+</FinePrint>
 
 </Subsection>
 
@@ -277,6 +298,8 @@ You die from a failed Death Roll, an instant-death row, or any rule that names d
 
 <CoreTable table="treat-injury-uses" />
 
+<FinePrint title="what changes a treatment roll">
+
 <FactTable caption="What changes the roll" columns={['', '']} rows={[
   ['Patient', 'Any other living soldier. Treating <em>yourself</em> costs <b>2 base dice</b>, and you can never revive yourself.'],
   ['A Burn', 'Needs a medical kit, or 1 medical unit of Squad Supply spent on the roll. Wits alone will not do.'],
@@ -287,7 +310,11 @@ You die from a failed Death Roll, an instant-death row, or any rule that names d
 
 **In a fight** it is an action, and in a Titan Engagement the patient must hold your Position. Helped, Pushed, and Covered as usual, and retried on a later turn.
 
+</FinePrint>
+
 <MarginNote>Medical kits, restocking, and the medical Squad Supply that buys a Bonus Die: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
+
+<FinePrint title="care windows, aftermath rolls, and healing time">
 
 <Subsection title="Care windows" id="care-windows">
 
@@ -327,11 +354,15 @@ Each time a day passes, in this order:
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="stress-responses-and-rally" eyebrow="Section 5">Stress Responses and Rally</SectionHead>
 
 **<GlossaryTerm term="Resolve" />** is half of Instinct plus Empathy, rounded up, **+1 per Scar** and **−1 per point of Grief**. It counts against both rolls below and has no floor — enough Grief and it goes negative, raising both totals.
 
 <MindPaths fig="Fig. 3" />
+
+<FinePrint title="the Stress Response table, and Rally">
 
 <Subsection title="The Stress Response" id="the-stress-response">
 
@@ -358,6 +389,8 @@ An Empathy action that talks a comrade back. **It never lowers Stress.**
 
 </Subsection>
 
+</FinePrint>
+
 <MarginNote>The whole table of Stress gains and losses: <a href="/guide/rules-of-play/#gaining-and-losing-stress">The Rules of Play</a>.</MarginNote>
 
 <SectionHead id="fear" eyebrow="Section 6">Fear</SectionHead>
@@ -369,6 +402,8 @@ Only a horrifying event on this closed list causes one — **the dice never do**
 <CoreTable table="fear-rolls" />
 
 Every row is instant, and they escalate: **0 or less** costs nothing; **1–2** cost Stress, a penalty, or a Gas Roll; **3–4** your next action; **5–6** your next turn; **7+** that turn and a Scar; **8+** the next two. From 6 up they also forbid Reactions until that turn is spent.
+
+<FinePrint title="the Fear Roll's limits, the GM's own trigger, and the event's Titan">
 
 <Subsection title="Limits and the snapshot" id="fear-limits">
 
@@ -390,6 +425,8 @@ An effect that acts on a Titan acts on **the event's Titan** — the one the tri
 
 </Subsection>
 
+</FinePrint>
+
 <RuleBox title="What a Drive shrugs off" icon="ph:flame">
 
 A Fear Roll's **result** is every effect of its row: Stress to you or to comrades, a spent action or turn, a ban on Reactions, the loudest mark, a forced step, a forced strike, a dropped Blade Set, a Gas Roll, a Scar. A Drive stops all of them. The Fear Roll still counts as made.
@@ -409,6 +446,8 @@ Every Scar raises your **minimum Stress by 1** — your Stress rising to meet it
 </Subsection>
 
 <InkVignette caption="A row of empty bunks, and one soldier still sitting on the edge of hers." label="A soldier sitting alone on a bunk in an empty barracks" art="guide-wounds-and-fear-grief" />
+
+<FinePrint title="Retirement, and who gains Grief">
 
 <Subsection title="Retirement" id="retirement">
 
@@ -433,6 +472,8 @@ Every Scar raises your **minimum Stress by 1** — your Stress rising to meet it
 Retirement, promotion, and a Squadmate leaving the Pool give no Grief.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="after-the-fight" eyebrow="Section 8">After the Fight</SectionHead>
 

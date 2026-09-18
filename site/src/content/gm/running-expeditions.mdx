@@ -18,6 +18,7 @@ sources:
     sha: "435c03b33fab67afc94c2b444c20dbed52ec1b0e"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CommanderNote from '~/components/CommanderNote.astro';
 import FieldQuote from '~/components/FieldQuote.astro';
@@ -50,6 +51,8 @@ You write the Brief as Command, before the Expedition. Its route names the **Way
 
 **Set once, and nothing changes it.** The hazard roll reads Band, Post, and Pace as written — once the Squad rides out, no ruling of yours moves any of them.
 
+<FinePrint title="the bounds of a route, and the interim route">
+
 <RuleBox title="The bounds of a route" icon="ph:map-trifold">
 
 - **4 to 6 Legs,** and so 4 to 6 Waypoints.
@@ -79,6 +82,8 @@ Riding with no Brief, or a Brief with no route? Roll one:
 
 <GmTable table="formation-post-roll" />
 
+</FinePrint>
+
 <CommanderNote title="What a route is worth">
 
 An interim route climbs to Deep in the middle and comes back, and every Leg after the first night carries the camps already made. **That shape is what the hazard table was built for.** A Brief that runs Deep early, or sends a Squad six Legs out with no Depot, is a harder Expedition than the tables ship for. Write the hard route when you mean to, and know that you have. A Hard Ride comes up on a {hardRideOn()} — as often as Command should be pushing them.
@@ -88,6 +93,8 @@ An interim route climbs to Deep in the middle and comes back, and every Leg afte
 <SectionHead id="running-the-day" eyebrow="Section 2">Running the Day</SectionHead>
 
 Two Legs and a Night Camp, with a Hard Ride third when Command orders one — on a Brief day, or on a {hardRideOn()} rolled after the second Leg on an interim route. **Legs are never ridden at night.** Frame a Waypoint scene after any Leg you like.
+
+<FinePrint title="your side of a Leg, and what you may stake">
 
 <Subsection title="Your side of a Leg" id="your-side-of-a-leg">
 
@@ -111,6 +118,8 @@ Your step reaches the Leg roll, the camp roll, the Straggler's Endure, and every
 
 </RuleBox>
 
+</FinePrint>
+
 <SectionHead id="the-leg-hazard" eyebrow="Section 3">The Leg Hazard Table</SectionHead>
 
 <GmTable table="leg-hazard-modifiers" />
@@ -126,6 +135,8 @@ Both tables are rolled in the open, for the Squad, by nobody in particular. Desc
 A danger you author belongs in a Waypoint scene, never in place of a hazard roll.
 
 </RuleBox>
+
+<FinePrint title="picking the Straggler, and hunger">
 
 <Subsection title="The Straggler" id="the-straggler">
 
@@ -146,6 +157,8 @@ The row that takes a soldier picks them at random. **The pick is a roll, not a c
 When a Leg or camp must spend rations the Squad does not hold, it spends everything and **every soldier gains 1 Stress**, with no roll. Holding short counts as holding none, and a camp that meets hunger gives no Camp Relief however the roll went.
 
 </Subsection>
+
+</FinePrint>
 
 <InkVignette caption="The formation strung out at dusk, and one rider too far back." label="A line of mounted soldiers riding through tall grass at dusk, one rider trailing far behind" art="gm-running-expeditions-straggler" />
 
@@ -169,6 +182,8 @@ Between Legs you may frame a scene at a Waypoint: an abandoned town searched, su
 
 <GmTable table="night-hazards" />
 
+<FinePrint title="where the camp stands, and a retreat at night">
+
 <Subsection title="Where the camp stands" id="where-the-camp-stands">
 
 At the Waypoint the Squad is standing at — the one the day's last Leg reached, or the one it fell back to.
@@ -185,6 +200,8 @@ The Squad falls back overnight to where the day's last Leg started, and the camp
 A camp already standing where that Leg started falls back no further: it breaks off where it is and the queued Leg waits for morning.
 
 </Subsection>
+
+</FinePrint>
 
 <CommanderNote title="What the tables will do to a campaign">
 

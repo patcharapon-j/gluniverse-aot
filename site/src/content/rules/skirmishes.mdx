@@ -20,6 +20,7 @@ sources:
     sha: "e34f0720353db60bef4d273677dcbdd4d2d0d78d"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
@@ -82,6 +83,8 @@ You are **Engaged** with a Foe or **Apart** from it, held separately for each: E
   {ranges().map((r) => <li><b>{r.name}.</b> {r.meaning}</li>)}
 </ul>
 
+<FinePrint title="Engaged, Apart, and your move">
+
 <RuleBox title="Engaged and Apart are not Positions" icon="ph:warning">
 
 A Skirmish has **no <GlossaryTerm term="Position">Positions</GlossaryTerm>, no <GlossaryTerm term="Anchor Rating" />, no Anchors, no Momentum, no <GlossaryTerm term="ODM move" /> and so no <GlossaryTerm term="Flight" />, and no <GlossaryTerm term="Airborne">airborne</GlossaryTerm> soldier.** The one Fly roll here is a called roll, and it leaves you on the ground.
@@ -100,6 +103,8 @@ Your move does one of these, and may include one mount or dismount.
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="the-ambush" eyebrow="Section 3">The Ambush</SectionHead>
 
 A start may hand the <GlossaryTerm term="Ambush" /> to the Foes. Otherwise the GM rules whether the Squad can approach unseen at all — and if it can, one soldier rolls **Sneak** against the group's **Watch**. No Help, no Cover, Push allowed, never retried. Fail and neither side has it.
@@ -111,6 +116,8 @@ A start may hand the <GlossaryTerm term="Ambush" /> to the Foes. Otherwise the G
 <StepFlow id="fig-skirmish-round" fig="Fig. 2" title="A Skirmish round" steps={roundSteps()} />
 
 <MarginNote>Turns, actions, and Reactions: <a href="/guide/rules-of-play/#turns-actions-and-reactions">The Rules of Play</a>.</MarginNote>
+
+<FinePrint title="what you can do, and acts the rules do not cover">
 
 <SectionHead id="what-you-can-do" eyebrow="Section 5">What You Can Do</SectionHead>
 
@@ -138,11 +145,15 @@ An act no allowed entry could model, changing nothing the Skirmish tracks — no
 </RuleBox>
 </BoxPair>
 
+</FinePrint>
+
 <SectionHead id="attacks-and-reactions" eyebrow="Section 6">Attacks and Reactions</SectionHead>
 
 An attack here has the same shape as a Titan's. **People differ in three ways only:** they can be blocked, they answer your attack with **Guard**, and their harm is damage that grows with each Net Success beyond the first — so half a Reaction is worth having.
 
 <StepFlow id="fig-skirmish-attack" fig="Fig. 3" title="An attack and its answer" steps={attackSteps()} />
+
+<FinePrint title="Reactions against a Foe, and damage">
 
 <Subsection title="Reactions against a Foe" id="reactions-against-a-foe">
 
@@ -175,6 +186,8 @@ At 0 it is **out of the Skirmish**: dead if the damage was {zero.killed}, out co
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="weapons" eyebrow="Section 7">Weapons</SectionHead>
 
 <CoreTable table="skirmish-weapons" />
@@ -188,6 +201,8 @@ At 0 it is **out of the Skirmish**: dead if the damage was {zero.killed}, out co
 <MarginNote stamp="Read twice">No Foe you will meet yet Grapples, so no rule makes you Held. These are written for the Foes still to come.</MarginNote>
 
 <SectionHead id="parley-and-size-up" eyebrow="Section 9">Parley and Size Up</SectionHead>
+
+<FinePrint title="Parley, Size Up, and breaking a group">
 
 <Subsection title="Parley" id="parley">
 
@@ -212,6 +227,8 @@ Once per Foe group per Skirmish, for the whole Squad: an Instinct action needing
 Each Foe then does what was stated. **Only something that happens after the Size Up changes it** — the GM never holds a reason back and produces it on that card.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="ending-a-skirmish" eyebrow="Section 10">Ending a Skirmish</SectionHead>
 
@@ -239,6 +256,8 @@ Work the nine steps that follow any fight, with the Skirmish in the Titan Engage
 
 <MarginNote>The nine end steps in full: <a href="/guide/wounds-and-fear/#after-the-fight">Wounds &amp; Fear</a>.</MarginNote>
 
+<FinePrint title="Fear, Drives, Talents, and Squadmates here">
+
 <SectionHead id="fear-drives-and-talents" eyebrow="Section 11">Fear, Drives, and Talents</SectionHead>
 
 <Subsection title="Fear Rolls" id="fear-rolls">
@@ -258,5 +277,7 @@ Work the nine steps that follow any fight, with the Skirmish in the Titan Engage
 - **<GlossaryTerm term="Squadmate">Squadmates</GlossaryTerm>** take part on their own cards, and never Push or Cover.
 
 </Subsection>
+
+</FinePrint>
 
 <CoreTable table="skirmish-rolls" />

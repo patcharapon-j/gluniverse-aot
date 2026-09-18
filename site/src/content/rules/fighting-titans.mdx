@@ -41,6 +41,7 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
 import FactTable from '~/components/FactTable.astro';
@@ -89,6 +90,8 @@ import plate from '~/assets/plates/plate-fighting-titans.webp';
 
 Rounds, until the Titans are dead or you are out. A Titan tracked in full is a <GlossaryTerm term="Focus Titan" />, labelled A then B — **two at most**. Anything else closing in is a <GlossaryTerm term="Background Titan" />: a clock everyone can see.
 
+<FinePrint title="setting a fight up">
+
 <Subsection title="How one starts" id="how-one-starts">
 
 <FactTable caption="Setting up a fight" columns={['', '']} rows={[
@@ -101,6 +104,8 @@ Rounds, until the Titans are dead or you are out. A Titan tracked in full is a <
 ]} />
 
 </Subsection>
+
+</FinePrint>
 
 <Subsection title="The round" note="Five steps, in order" id="the-round">
 <RoundDiagram fig="Fig. 1" />
@@ -129,6 +134,8 @@ Fights run at Standard <GlossaryTerm term="Circumstances" />, and the step never
 <CoreTable table="position-steps" />
 
 <MarginNote>A Flight uses your own ODM Gear, so it counts toward your <GlossaryTerm term="Gas Roll" /> and leaves you airborne: <a href="/guide/gear-and-odm/">Gear & ODM</a>.</MarginNote>
+
+<FinePrint title="what a move can do, and the Flight">
 
 <Subsection title="What a move can do" id="what-a-move-can-do">
 
@@ -159,6 +166,10 @@ One named Titan's Position, by one step or not at all, with one mount or dismoun
 
 </Subsection>
 
+</FinePrint>
+
+<FinePrint title="Momentum, Anchors, and the Terrain Trait">
+
 <Subsection title="Momentum and Anchors" id="momentum">
 
 Speed you are carrying, 0 up to the Anchors left. **Lose all of it at the end of any round you made no ODM move in.** You spend it in your own turn, and nobody else — the GM included — ever grants, spends, or takes a point.
@@ -176,6 +187,8 @@ Speed you are carrying, 0 up to the Anchors left. **Lose all of it at the end of
 Each rating carries one **Terrain Trait**; Wooded has none, and is the plain ground the rest are read against.
 
 </Subsection>
+
+</FinePrint>
 
 <Subsection title="Comparing two soldiers" id="comparing-positions">
 
@@ -206,6 +219,8 @@ A horse moves only with its rider, and no ladder or behavior picks one.
 <SectionHead id="reading-a-titan" eyebrow="Section 3">Reading a Titan</SectionHead>
 
 <MarginNote>Every playable Titan, with its stat block and Behavior Table: <a href="/compendium/titans/">Compendium, Titans</a>.</MarginNote>
+
+<FinePrint title="the stat block, and reading a Behavior Table">
 
 <Subsection title="The stat block" id="the-stat-block">
 
@@ -256,6 +271,8 @@ Each row gives its D6 result, name and tier, **targets**, the **holder's Positio
 **No entry names death.** A Titan kills you only through a lethal <GlossaryTerm term="Critical Injury" />, the Grab's devour, or a fall.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="when-a-titan-acts" eyebrow="Section 4">When a Titan Acts</SectionHead>
 
@@ -363,6 +380,8 @@ A mark lasts until the end of that Titan's **next card that resolves a behavior*
 
 <MarginNote>A shout from beyond its reach is not what turns it. From Distant, use a flare — or come in badly.</MarginNote>
 
+<FinePrint title="Draw Attention, Break Attention, and decoys">
+
 <Subsection title="Draw Attention" id="draw-attention">
 
 An unrolled action against one Titan, for a soldier not at Distant and not Grabbed. It spends your action — your move with Shout Them Off — and marks you **loudest**.
@@ -388,6 +407,8 @@ A Perception action on ODM Gear or the horse, and no dice for a Feint on foot. Y
 <CoreTable table="decoys" />
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="cutting-titans-down" eyebrow="Section 6">Cutting Titans Down</SectionHead>
 

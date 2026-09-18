@@ -31,6 +31,7 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
@@ -67,6 +68,8 @@ Every player character is a Training Corps graduate in the Survey Corps. Three p
 
 **Talents are a soldier's only trained abilities.** A roll is an attribute, plus at most one Talent naming the entry, plus <GlossaryTerm term="Bonus Dice" />, <GlossaryTerm term="Gear Dice" />, and <GlossaryTerm term="Stress Dice" />.
 
+<FinePrint title="what a soldier records, and the derived numbers">
+
 <Subsection title="The sheet" id="the-character-sheet">
 
 <FactTable caption="What a soldier records" columns={['', '']} rows={[
@@ -98,6 +101,8 @@ Attributes are rated **2 to 5**, and only your Specialty's key attribute can rea
 ]} />
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="the-lifepath" eyebrow="Section 2">The Lifepath</SectionHead>
 
@@ -136,6 +141,8 @@ The Lifepath takes a <GlossaryTerm term="Cadet" /> from <GlossaryTerm term="Orig
   },
 ]} />
 
+<FinePrint title="before you roll: the year, the vote, and shared choices">
+
 <Subsection title="Before you roll" id="before-the-lifepath">
 
 Record the <GlossaryTerm term="Campaign Year" /> (845 to 850) if the campaign has none, and vote on whether to run the <GlossaryTerm term="Graduation Exam" />. At session zero the GM also records, once and for good, whether the campaign allows the Template Build, the Free Build, or both — so one table can mix rolled and built soldiers.
@@ -146,7 +153,11 @@ Record the <GlossaryTerm term="Campaign Year" /> (845 to 850) if the campaign ha
 
 </Subsection>
 
+</FinePrint>
+
 <MarginNote>Every row with its full story: <a href="/compendium/origins/">Compendium, Origins & Lifepath</a>.</MarginNote>
+
+<FinePrint title="the Origin and Enlistment rows, and the caps">
 
 <Subsection title="Origin" note="Step 1" id="origin">
 
@@ -194,6 +205,8 @@ A Lifepath soldier gains exactly **5 Talent levels**: 1 Origin, 3 events, 1 Spec
 <CoreTable table="training-year-3" />
 
 </Subsection>
+
+</FinePrint>
 
 <Subsection title="The performance roll" id="the-performance-roll">
 
@@ -262,6 +275,8 @@ An optional prologue: three <GlossaryTerm term="Trials" /> played out after ever
 
 <InkVignette caption="A Cadet swings between pines toward the nape of a wooden Titan dummy running on its rail." label="A Cadet on ODM lines closing on a wooden Titan dummy" art="guide-making-your-soldier-exam" />
 
+<FinePrint title="the Exam's conditions and its three Trials">
+
 <Subsection title="How the Exam is played" id="how-the-exam-is-played">
 
 <FactTable caption="Exam conditions" columns={['', '']} rows={[
@@ -287,9 +302,13 @@ The ODM balance test and the Titan dummy course cannot be Pushed, Helped, or Cov
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="drives" eyebrow="Section 4">Drives</SectionHead>
 
 A Drive is what keeps a soldier fighting. When its trigger is met, it lets you **shrug off one <GlossaryTerm term="Fear Roll" /> result per session** — the result simply does not take effect. Every Drive is a Why You Enlisted row, written as a trigger beginning "When I ...".
+
+<FinePrint title="what a Drive's triggers test, and naming a comrade">
 
 <Subsection title="Trigger tests" id="trigger-tests">
 
@@ -317,9 +336,13 @@ A named comrade is any other living soldier in the Squad, chosen when the Drive 
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="specialties-and-talents" eyebrow="Section 5">Specialties and Talents</SectionHead>
 
 <MarginNote>Every Specialty and every Talent in full: <a href="/compendium/specialties/">Compendium, Specialties</a> and <a href="/compendium/talents/">Talents</a>.</MarginNote>
+
+<FinePrint title="what a Specialty grants">
 
 <Subsection title="Specialties" id="specialties">
 
@@ -330,6 +353,10 @@ Chosen at Graduation or at a build's Specialty step — not rolled, no requireme
 **It never grants permission.** Every soldier can attempt every entry and hold any Talent, including one from another Specialty's list; a soldier without the Talent still rolls their full attribute. The list limits only where that one granted level can go. The **general list** of twelve Talents about temperament and survival is open to anyone, but a Specialty's level never goes into one.
 
 </Subsection>
+
+</FinePrint>
+
+<FinePrint title="how dice Talents and rule Talents apply">
 
 <Subsection title="Talent levels" id="talent-levels">
 
@@ -363,11 +390,15 @@ Applies its effect every time its trigger occurs, within its limit, and **stacks
 
 **Limits.** *Once per Titan Engagement* means once between one fight's start and end, and never outside one — and a Skirmish, <GlossaryTerm term="Leg" />, or <GlossaryTerm term="Night Camp" /> that begins inside another procedure is its own, with its own use. *Once per Leg, Night Camp, Skirmish, or Downtime* works the same way for Talents only those can trigger.
 
+</FinePrint>
+
 <SectionHead id="actions" eyebrow="Section 6">Actions</SectionHead>
 
 The <GlossaryTerm term="Action Catalog" /> is the complete list of named actions and rolls, and the list Talents name. **Every attribute roll is made for one entry.**
 
 <MarginNote>Every entry, with its attribute, gear, requirements, and effect: <a href="/compendium/actions/">Compendium, Actions</a>.</MarginNote>
+
+<FinePrint title="the five kinds of entry">
 
 <Subsection title="The five kinds of entry" id="kinds-of-entry">
 
@@ -382,6 +413,10 @@ The <GlossaryTerm term="Action Catalog" /> is the complete list of named actions
 Help and Draw Attention are actions that are never rolled; Cover and Call It are options. They sit in the Catalog so that rule Talents can name them.
 
 </Subsection>
+
+</FinePrint>
+
+<FinePrint title="gear an entry needs, acts outside the Catalog, and improvising">
 
 <Subsection title="Entries that need gear" id="entries-that-need-gear">
 
@@ -448,11 +483,15 @@ A supply wagon rolled past a Titan is Break Attention. A lantern swung from a ro
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="squadmates" eyebrow="Section 7">Squadmates</SectionHead>
 
 A <GlossaryTerm term="Squadmate" /> is a named soldier who rides with you. Any player can direct one, Titans target it like anyone else, and it can be promoted into a player character. Those serving now are the <GlossaryTerm term="Squad Pool" />.
 
 Two more soldiers mean two more turns a round and more Help on every strike — so Titans die sooner and you face fewer of their cards. They reach a Grabbed comrade in time, turn a Titan's head, and screen whoever holds its Attention. They are also comrades a Drive can name and a Squad can grieve.
+
+<FinePrint title="the Squadmate stat block, and which rules apply">
 
 <Subsection title="The stat block" id="the-stat-block">
 
@@ -472,7 +511,11 @@ A Squadmate can take every entry a player character can, meeting the same requir
 
 </Subsection>
 
+</FinePrint>
+
 <MarginNote>Wings in a fight, and Squadmates on no Wing: <a href="/guide/fighting-titans/">Fighting Titans</a>.</MarginNote>
+
+<FinePrint title="Wings, directing, and promotion">
 
 <Subsection title="Wings and directing" id="wings-and-directing">
 
@@ -501,9 +544,13 @@ The Squad aims for **6 soldiers**, so you start with **6 minus the number of pla
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="building-without-the-lifepath" eyebrow="Section 8">Building Without the Lifepath</SectionHead>
 
 A built soldier is the steady soldier every Titan in this book was made to face, with the player choosing what they carry. A rolled soldier is that same soldier on average — with a chance to come out ahead, and a chance to come out worse.
+
+<FinePrint title="the build steps, and their limits">
 
 <Subsection title="The steps" note="Nine steps, in order" id="the-build-steps">
 
@@ -538,3 +585,4 @@ Only the Lifepath gives a key attribute of 5 or 6, a Top 10 Class Rank, or a pla
 </RuleBox>
 </BoxPair>
 
+</FinePrint>

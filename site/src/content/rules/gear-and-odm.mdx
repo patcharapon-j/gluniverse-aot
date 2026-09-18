@@ -29,6 +29,7 @@ sources:
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
@@ -78,6 +79,8 @@ A <GlossaryTerm term="Gear item">gear item</GlossaryTerm> is one of these and no
 
 Any other object — a rope, a lantern, a wheelbarrow — adds no <GlossaryTerm term="Gear Dice" /> and counts as no item. It matters only where a rule names it, or through <GlossaryTerm term="Circumstances" />: a rope and a grapnel might make a climb Easy.
 
+<FinePrint title="ratings, wear, and what brings gear back">
+
 <Subsection title="Ratings and wear" id="ratings">
 
 Everything but a canister and a prosthetic is **rated 1 to 3**, set on receipt and never changed. Its **<GlossaryTerm term="Current rating">current rating</GlossaryTerm>** runs from 0 up to that, and **the item's Gear Dice are its current rating**. One item per roll.
@@ -95,6 +98,10 @@ An item at **0 counts as not had** for every Catalog entry and gives no dice. So
 **Four things restore a rating,** never above the rating: <GlossaryTerm term="Field Repair" /> (ODM Gear, tool kits, firearms), **restocking** a medical kit in a care window, **<GlossaryTerm term="Standard Issue" />** (which replaces rather than mends, and never a firearm), and the **Maintain Gear** Downtime Action, which restores everything you hold.
 
 </Subsection>
+
+</FinePrint>
+
+<FinePrint title="firearms, prosthetics, kept items, and Field Repair">
 
 <Subsection title="Firearms, prosthetics, and kept items" id="firearms">
 
@@ -116,9 +123,13 @@ It needs **{repair.needs} success**, and each success raises the current rating 
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="odm-gear-and-gas" eyebrow="Section 2">ODM Gear and Gas</SectionHead>
 
 <GlossaryTerm term="ODM Gear" /> supplies Gear Dice to four entries: **the dodge, Break Attention, Fly, and <GlossaryTerm term="Leap Clear" />**. Strikes and Break Free take theirs from the <GlossaryTerm term="Blade Set" /> in your handles, never from the harness.
+
+<FinePrint title="ODM moves, ODM use, and being airborne">
 
 <BoxPair>
 <RuleBox title="Strikes need a working harness" icon="ph:anchor-simple">
@@ -147,6 +158,8 @@ An **<GlossaryTerm term="ODM move">ODM move</GlossaryTerm>** is a move on your o
 
 </Subsection>
 
+</FinePrint>
+
 <InkVignette
   caption="Check your gas before you check your blades."
   label="A soldier's hands checking the gas canister seated in the ODM Gear at their hip"
@@ -154,6 +167,8 @@ An **<GlossaryTerm term="ODM move">ODM move</GlossaryTerm>** is a move on your o
   image={canister}
   width="260px"
 />
+
+<FinePrint title="running dry, the Jam, and changing a canister">
 
 <Subsection title="Gas and the Gas Roll" id="the-gas-roll">
 
@@ -185,9 +200,13 @@ Both make the harness count as not had — no ODM move, no strike from the body,
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="blades" eyebrow="Section 3">Blades</SectionHead>
 
 A **Blade Set** is one pair of ODM blades — the only unit in which blades are carried, counted, passed, and lost. Your handles hold **at most one**, and only that set gives Gear Dice or counts as had for a strike, Break Free, Block, or Fight. **Empty handles, no Nape strike.** The set in your handles counts as no item; every other counts as 1.
+
+<FinePrint title="ruin, the swap, and what a horse rates">
 
 <Subsection title="Ruin and the swap" id="ruin">
 
@@ -202,6 +221,10 @@ A Fear Roll can drop the set in your handles. It lies at your Position, nobody p
 <SectionHead id="horses" eyebrow="Section 4">Horses</SectionHead>
 
 Your horse is the one your sheet records, and **you can mount only your own**.
+
+</FinePrint>
+
+<FinePrint title="where a horse stands, mounting, and the charge">
 
 <Subsection title="Where the horse is" id="where-the-horse-is">
 
@@ -231,9 +254,13 @@ Mounted, you may take a dodge's or a Break Attention's dice from your harness in
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="falling" eyebrow="Section 5">Falling</SectionHead>
 
 A fall inflicts **damage**, and is never a Titan attack.
+
+<FinePrint title="when you fall, and being Overloaded">
 
 <Subsection title="When you fall" id="when-you-fall">
 
@@ -248,6 +275,8 @@ Only for these reasons, and no other:
 Running dry, landing through a move, and being set down are never falls, and **a fall never causes a second fall**.
 
 </Subsection>
+
+</FinePrint>
 
 <StepFlow id="fig-fall" fig="Fig. 3" title="A fall, band to landing" steps={fallFlow()} />
 
@@ -270,6 +299,8 @@ Over your limit, **every ODM move also spends your action**, and none can be mad
 **Shedding load** costs nothing, at any point in your own turn, as often as you like: drop any carried item (it leaves play), set down a comrade, or stop being carried. A Down soldier cannot; an airborne carrier cannot set anyone down, and nobody leaves an airborne carrier.
 
 </Subsection>
+
+<FinePrint title="carrying a comrade, passing, taking, and the dead">
 
 <Subsection title="Carrying a comrade" id="lift-comrade">
 
@@ -304,7 +335,11 @@ A dead soldier's **ODM Gear, horse, and fitted prosthetics leave play.** Everyth
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="standard-issue" eyebrow="Section 7">Standard Issue and Squad Supply</SectionHead>
+
+<FinePrint title="Standard Issue, Squad Supply, and what a ruling may do">
 
 <Subsection title="Standard Issue" id="what-you-are-issued">
 
@@ -360,5 +395,7 @@ Before the dice, and only these ways:
 Everything else is applied as written — wear, Gear Dice, the Gas Roll, the fall tables, Standard Issue, and every spend of Squad Supply. **No ruling ever hands out a gear item.**
 
 </RuleBox>
+
+</FinePrint>
 
 <MarginNote>Every item with its rating, what it gives, and how it comes back: <a href="/compendium/gear/">Compendium, Gear</a>.</MarginNote>

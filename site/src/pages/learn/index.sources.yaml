@@ -12,13 +12,13 @@
 # site/design/claims/learn-to-play.md.
 sources:
   - path: site/src/content/rules/rules-of-play.mdx
-    sha: "b5576df3e8d3d87117239993bbc67965ba48b9e4"
+    sha: "621090412464bff9877202bdbcc535f4668b3ef7"
   - path: site/src/content/rules/fighting-titans.mdx
-    sha: "94a0e1087474b92d1811d8c56a51a03e90e9898a"
+    sha: "c6f8b7014640bdcac008e3019e8d19225edc9843"
   - path: site/src/content/rules/making-your-soldier.mdx
-    sha: "39b5809b847b4e318d7ae4a07da1558856f895c3"
+    sha: "05cb561d00b7e04907abeee698757d8a2ebdc05e"
   - path: site/src/content/rules/gear-and-odm.mdx
-    sha: "8677d9bfc3faecbcc88a818ff83df9bc8103951b"
+    sha: "3dc334f46d03226092ef5451d8e6d6d1f72b3c1d"
   - path: data/character/action-catalog.yaml
     sha: "9eba542902e16a0011914c52daa225f11e42e671"
   - path: data/gear/items.yaml

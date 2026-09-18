@@ -17,6 +17,7 @@ sources:
     sha: "009774e74c398fe85408b30f2fae21639efd2522"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import BoxPair from '~/components/BoxPair.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CoreTable from '~/components/CoreTable.astro';
@@ -50,6 +51,8 @@ Build a pool of six-sided dice, roll it, count the sixes. Every roll in the game
 
 <SectionHead id="dice-and-successes" eyebrow="Section 1">Dice and Successes</SectionHead>
 
+<FinePrint title="the four fixed rules, and the kinds of die">
+
 <Subsection title="Four fixed rules" id="when-you-roll">
 
 1. **Roll only when it matters.** No rule, no doubt, no cost — no dice.
@@ -75,9 +78,13 @@ A roll is an **attribute roll** if its rule names an attribute: actions, <Glossa
 
 </Subsection>
 
+</FinePrint>
+
 <Subsection title="Building the pool" note="Seven steps, in order" id="building-the-pool">
 
 <PoolBuild fig="Fig. 1" />
+
+<FinePrint title="what each step of the pool needs">
 
 <FactTable caption="What each step needs" columns={['Step', 'The catch']} rows={[
   ['Name the roll', 'One Catalog entry, or a bare attribute when a rule or the GM names one. The GM sets the Circumstances here.'],
@@ -89,6 +96,8 @@ A roll is an **attribute roll** if its rule names an attribute: actions, <Glossa
 ]} />
 
 A **bare attribute** roll takes no Talent and no Gear Dice — a tool that helps you counts toward the Circumstances instead.
+
+</FinePrint>
 
 </Subsection>
 
@@ -110,11 +119,15 @@ One step of a seven-step ladder, named by the GM. Name none and the roll is Stan
 
 <CoreTable table="circumstances" />
 
+<FinePrint title="how Circumstances behave">
+
 - **One step per roll,** named with the stakes and before Bonus Dice, so <GlossaryTerm term="Help" /> can answer a minus step. Rain, dark, and a snapped strap are one judgment, not three.
 - **Plus steps are Bonus Dice** under the cap of 4. **Minus steps are penalties:** base dice only, after the cap, and never below **1 base die**.
 - **Fixed once named.** No Talent, Push, or <GlossaryTerm term="Cover" /> moves it, and a Reaction takes the step in force when the attacker's card comes up.
 - **Dice change, needs never do.** Nape Depth 4 at Hard still wants 4 successes, from one die fewer.
 - **Reaches** every attribute roll a soldier or <GlossaryTerm term="Squadmate" /> makes. **Never** Titan Dice, a Foe's dice, or the Death Roll.
+
+</FinePrint>
 
 <MarginNote stamp="Read twice">Routine and Effortless mostly serve a soldier carrying penalties: injured, doing something simple, and keeping their dice.</MarginNote>
 
@@ -175,11 +188,15 @@ One cost, staked aloud before the dice — and one cost however many times you P
 
 <CoreTable table="called-roll-costs" />
 
+<FinePrint title="what a called roll can and cannot cost">
+
 <FactTable caption="The edges of a called roll" columns={['', '']} rows={[
   ['Success can give', 'The act, information, a better position, an ordinary object, or Squad Supply within its caps — never in a fight.'],
   ['Never gives', 'A gear item, Stress relief, a Health box, healing, a Commendation, a Research Point, Faction Standing. Each has its own rule.'],
   ['Never staked', 'A Critical Injury, Death Roll, Scar, Grief, or Fear Roll; Stress relief or healing; any Titan, Foe, or table result.'],
 ]} />
+
+</FinePrint>
 
 </Subsection>
 
@@ -208,6 +225,8 @@ Circumstances is the **one** thing a ruling names. Applied exactly as written:
 </RuleBox>
 </BoxPair>
 
+<FinePrint title="passive rolls, and trying again">
+
 <Subsection title="Passive rolls" id="passive-rolls">
 
 {exceptionText('passive-roll')}
@@ -221,6 +240,8 @@ The GM builds your pool as it stands and keeps the step to themselves. You learn
 In a fight, try again on a later turn for that turn's action. Outside one, only when something has changed — a new approach, a better tool, another soldier, time spent — and the GM prices that change first. One attempt each per changed situation.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="pushing-your-luck" eyebrow="Section 4">Pushing Your Luck</SectionHead>
 
@@ -257,6 +278,8 @@ A Pushed dodge on ODM Gear counts. On your horse it does not. A Push after the r
 
 <InkVignette caption="A soldier hangs on taut ODM lines below a Titan's Nape, gas venting from her canister." label="A soldier on ODM lines beneath a Titan's Nape" art="guide-rules-of-play-push" />
 
+<FinePrint title="finishing a roll, and Covering">
+
 <Subsection title="Finishing a roll" note="Four steps, in order" id="finishing-a-roll">
 
 1. **Count successes.**
@@ -278,11 +301,15 @@ To Cover is to take the Stress of a comrade's Push — declared after the Push, 
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="stress" eyebrow="Section 5">Stress</SectionHead>
 
 Mounting fear and adrenaline: it makes you more capable and more likely to break. Every attribute roll takes Stress Dice equal to your Stress — a **6** succeeds like any die, a **1** sets off a Stress Response. It carries between fights, <GlossaryTerm term="Expeditions" />, and sessions.
 
 <InkVignette caption="A soldier on a rooftop grips her handles in shaking hands as a Titan's shadow crosses the street below." label="A soldier steadying her hands on a rooftop" art="guide-rules-of-play-stress" />
+
+<FinePrint title="minimum Stress, and what the dice can trigger">
 
 <Subsection title="Minimum Stress" id="minimum-stress">
 
@@ -291,6 +318,8 @@ Your minimum Stress is your number of <GlossaryTerm term="Scars" />, and no loss
 </Subsection>
 
 <MarginNote>Scars, Resolve, Rally, and Fear: <a href="/guide/wounds-and-fear/">Wounds & Fear</a>. Havens and Downtime: <a href="/guide/expeditions-and-downtime/">Expeditions & Downtime</a>.</MarginNote>
+
+</FinePrint>
 
 <Subsection title="Gaining and losing Stress" id="gaining-and-losing-stress">
 
@@ -320,6 +349,8 @@ Only a trigger on this table moves Stress — never the GM's discretion, but for
 
 A comrade adds **1 die**, up to **3 comrades** per roll — any other soldier in the <GlossaryTerm term="Squad" />, player or Squadmate. Helpers never roll, so they take no Stress and no Stress Response.
 
+<FinePrint title="who can Help, where">
+
 <FactTable caption="Who can Help, and what it costs" columns={['Where', 'Who qualifies', 'What it spends']} rows={[
   ['Titan Engagement', 'Same Position or one step away, action unspent.', 'Their action, usable outside their own turn. Their turn keeps only its move.'],
   ['Skirmish', 'A comrade taking part, not Down, Engaged, or Apart.', 'Their action, and nothing more.'],
@@ -329,6 +360,8 @@ A comrade adds **1 die**, up to **3 comrades** per roll — any other soldier in
 
 In every case: not Down, declared before the roll, no state forbidding it, and a roll that allows Help at all.
 
+</FinePrint>
+
 </Subsection>
 
 <SectionHead id="turns-actions-and-reactions" eyebrow="Section 7">Turns, Actions, and Reactions</SectionHead>
@@ -337,12 +370,18 @@ In every case: not Down, declared before the roll, no state forbidding it, and a
 
 One **turn** a round: one **move**, one **action**. A move changes your Position by a step; an action is Help, a Catalog entry, an <a href="#improvised-acts">improvised act</a>, or a called roll. <a href="/guide/fighting-titans/">Fighting Titans</a> sets the order of play.
 
+<FinePrint title="turns spent in advance, and what a state forbids">
+
 - **Once per round, never banked.** Decline them and they stay only for Help and Reactions — and a Reaction needs both. Whatever is held is lost at the round's end.
 - **A turn spent in advance** — by a Reaction or a result — is your earliest turn with both parts free. It arrives already spent: no Help, no Reaction, nothing held.
 - **Not actions:** Reactions, Pushing, Covering, declaring Bonus Dice, spending Openings.
 - **A state forbids only what it names** among Push, Help, Cover, React. Down forbids all four; <GlossaryTerm term="Grabbed" /> forbids the last three.
 
+</FinePrint>
+
 </Subsection>
+
+<FinePrint title="improvised acts, and Reactions in detail">
 
 <Subsection title="Improvised acts" id="improvised-acts">
 
@@ -366,6 +405,8 @@ A **Reaction** is a dodge or block made outside your turn, when a Titan or Foe a
 - When the fight ends, every advance-spent turn not yet come up is cancelled.
 
 </Subsection>
+
+</FinePrint>
 
 <Subsection title="Attack and Reaction" note="One procedure for every attack" id="attack-and-reaction">
 

@@ -27,6 +27,7 @@ sources:
     sha: "c64683a5b889e6cf9fb38cbc30c21bcba54c6952"
 ---
 
+import FinePrint from '~/components/FinePrint.astro';
 import ChapterContents from '~/components/ChapterContents.astro';
 import CommanderNote from '~/components/CommanderNote.astro';
 import FactTable from '~/components/FactTable.astro';
@@ -85,6 +86,8 @@ Call rolls sparingly. A roll is a moment with something at stake, and calling on
 
 <MarginNote>Everyone starts Distant unless the starting rule places them. Mounted stay mounted, nobody is airborne, and a dismounted soldier's horse holds Distant.</MarginNote>
 
+<FinePrint title="what you may frame, and the setup table">
+
 <Subsection title="What you may frame" id="what-you-may-frame">
 
 Before any setup roll you may name the **Focus Titan** (any on the <a href="/gm/titans/">Titans</a> page), the **Anchor Rating**, and the **Background Titans** — none, one, or two, each on a clock of 4, 6, or 8 segments.
@@ -103,11 +106,15 @@ The setup table's mix is the fight these rules are built around. A table that fr
 
 Roll each part in the table's order, skipping whatever is already named. **On a Medium Focus Titan, and only there,** roll again on the second table: that is what makes the Sprinting Abnormal the Focus Titan of {abnormalShare()} the table sets up. A Background Titan the table gives never rolls for an Abnormal.
 
+</FinePrint>
+
 <SectionHead id="what-you-track" eyebrow="Section 3">What You Track</SectionHead>
 
 One tracker: an Engagement line, a row per Focus Titan, a row per Background Titan, and a row left behind for each corpse. The players keep the rest — and their Positions sit in one place, the positions column of the Squad sheet. **Read the ladder straight off that column.**
 
 <GmTable table="gm-tracker" />
+
+<FinePrint title="keeping the tracker, and pacing the round">
 
 <Subsection title="Running the round" id="when-to-update-it">
 
@@ -118,6 +125,8 @@ One tracker: an Engagement line, a row per Focus Titan, a row per Background Tit
 - **Expect the time.** One Focus Titan against four players and two Squadmates runs **12 to 20 minutes a round**; a round with a Grab runs to the top of that. Two Focus Titans run to half an hour — which is why the Background clocks are as long as they are.
 
 </Subsection>
+
+</FinePrint>
 
 <SectionHead id="the-next-behavior" eyebrow="Section 4">Rolling the Next Behavior</SectionHead>
 
@@ -160,6 +169,8 @@ Roll a new one when the Titan becomes a Focus Titan, after each card that resolv
 
 <MarginNote>A telegraph shows the squad what is coming: reveal the new Next Behavior, and leave it revealed until a card resolves it or a decoy's card spends it.</MarginNote>
 
+<FinePrint title="your side of a card">
+
 <Subsection title="Your side of a card" id="running-the-card">
 
 <a href="/guide/fighting-titans/">Fighting Titans</a> carries the card itself, and the players know it. Yours is the bookkeeping:
@@ -174,9 +185,13 @@ Roll a new one when the Titan becomes a Focus Titan, after each card that resolv
 
 </Subsection>
 
+</FinePrint>
+
 <SectionHead id="background-titans" eyebrow="Section 5">Background Titans and the Retreat</SectionHead>
 
 A **Background Titan** is not a Titan in play. It is a closing clock — public, with nobody holding a Position relative to it.
+
+<FinePrint title="the clocks, the retreat, and the stay limit">
 
 <Subsection title="The clocks" id="the-clocks">
 
@@ -215,6 +230,8 @@ It covers a comrade Pinned under a corpse in **every** retreat, and every fallen
 From the first round past the limit, a soldier whom a lost-limb grade forbids every move **is not standing** — which is how a fight beside a corpse ends instead of running for ever.
 
 </RuleBox>
+
+</FinePrint>
 
 <InkVignette caption="The last two out, one carried, the corpse steaming behind them." label="Two soldiers on a horse riding away from a steaming Titan corpse" art="gm-running-a-titan-fight-retreat" />
 
