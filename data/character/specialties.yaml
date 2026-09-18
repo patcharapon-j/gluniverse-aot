@@ -35,8 +35,9 @@ rules:
     OQ-28 (c) as revised; OQ-136).
   general_list: >-
     The general list holds the twelve Talents on no Specialty's list, about temperament and
-    survival, at most four of them dice Talents. Any soldier may hold them, but the level a
-    Specialty grants never goes into one (decision batch 7, 7-2).
+    survival, at most four of them dice Talents. Any soldier may hold them, and the one level
+    a Specialty grants at Graduation or at a build's Talents step may go into one of them
+    (decision batch 12, 12-1, which widened decision batch 7, 7-2).
 
 specialties:
   - id: slayer

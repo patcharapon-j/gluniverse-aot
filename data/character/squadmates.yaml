@@ -179,9 +179,9 @@ promotion:
   steps:
     - Keep the Squadmate's name, Specialty, attributes (ADR-0011), Talent, Health and Health lost to damage, Resolve, Stress, Scars, Grief, Critical Injuries, Down state, gear, and every field in data/harm/sheet-fields.yaml in its current state. Attributes, Health, and Resolve are not recalculated.
     - The template Talent counts as the Talent level a player character gains from the Specialty at Graduation.
-    - Roll D66 on the Origin table (rolling again if a condition is not met). Record a Haven and optionally a Canon Tie from it, and gain 1 level in one of its two Talents, following the level caps in talent_cap in data/character/training-years.yaml. A Talent the soldier already holds rises by 1 level. Gain no attribute points.
+    - Roll D66 on the Origin table (rolling again if a condition is not met). Record a Haven and optionally a Canon Tie from it, and gain 1 level in one of its four Talents, following the level caps in talent_cap in data/character/training-years.yaml. A Talent the soldier already holds rises by 1 level. Gain no attribute points.
     - Roll D66 on Why You Enlisted and record a Drive as its use block states. Gain no attribute point. If the Drive needs a named comrade, name one now.
-    - Roll D66 once on each Training Year's events. From each, gain 1 level in one of its two Talents, following talent_cap in data/character/training-years.yaml. Gain no attribute point and no Merit.
+    - Roll D66 once on each Training Year's events. From each, gain 1 level in one of its three Talents or in any Talent on that year's curriculum, following talent_cap in data/character/training-years.yaml. Gain no attribute point and no Merit.
     - Record Merit and Class Rank as none, and Rank as Private.
     - The soldier now follows every player character rule, leaves any Wing, and is no longer a Squadmate. It stays in the Squad.
 

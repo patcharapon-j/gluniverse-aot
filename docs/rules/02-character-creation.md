@@ -19,7 +19,7 @@ Some content is not yet written: XP and how Talents are bought after creation, t
 - `data/character/enlistment.yaml`: the Why You Enlisted table (D66) with its Drives, and the rules every Drive follows.
 - `data/character/training-years.yaml`: the three Training Year event tables (D66), curriculum lists, and the performance roll.
 - `data/character/class-rank.yaml`: Merit to Class Rank, what a Top 10 Class Rank does, and what a built or promoted soldier records instead.
-- `data/character/graduation-exam.yaml`: the optional Graduation Exam and its three Trials.
+- `data/character/graduation-exam.yaml`: the optional Graduation Exam, its three Stages, the six Trials each Stage can run, and the conditions they are run under.
 - `data/character/specialties.yaml`: the nine Specialties.
 - `data/character/talents.yaml`: the Phase 1 Talent list.
 - `data/character/action-catalog.yaml`: the Action Catalog, the gear rule, its tracked values, and the procedure for actions outside it.
@@ -126,8 +126,8 @@ The Lifepath takes a Cadet from their Origin through three Training Years to Gra
 1. Set every attribute to 2.
 2. Roll D66 on the Origin table below. If the row has a condition that the current Campaign Year does not meet, roll again.
 3. Add 1 to each of the row's two attributes.
-4. Take level 1 in one of the row's two Talents.
-5. Record one of the row's two Havens. A Haven is what the soldier has to return to. The Visit Haven Downtime Action uses it to lower the soldier's Stress and Grief (Chapter 7, section 7.2).
+4. Take level 1 in one of the row's **four** Talents.
+5. Record one of the row's **three** Havens. A Haven is what the soldier has to return to. The Visit Haven Downtime Action uses it to lower the soldier's Stress and Grief (Chapter 7, section 7.2).
 6. If the row has a Canon Tie, the player may record it.
 
 A Canon Tie is optional and has no mechanical effect in the Phase 1 rules. A soldier can have at most one, and the only way to gain one is from an Origin row. The Canon Clock rules, not yet written, may give Canon Ties effects, and will decide what happens to a tie whose canon character is dead or absent when the campaign starts (OQ-32).
@@ -137,18 +137,18 @@ A Canon Tie is optional and has no mechanical effect in the Phase 1 rules. A sol
 
 | D66 | Origin | +1 to each | Talent level 1 in one of | Haven, one of | Canon Tie (optional) | Keep the row only with | Description |
 |---|---|---|---|---|---|---|---|
-| 11–13 | Shiganshina District | Agility, Instinct | Quiet Step or Slip Away | A younger sibling you promised to look after<br>A childhood friend now serving in the Garrison | Hannes: The Garrison soldier at the district gate who knew every child on your street. | no condition | A childhood in the walled district on Wall Maria's southern face, watching Survey Corps columns ride out through the outer gate. |
-| 14–16 | Wall Maria Refugee | Strength, Instinct | Hard to Kill or Fieldcraft | A younger sibling still living in the camps<br>The farm family who took you in | Armin Arlert: Another refugee child from Shiganshina who stood in the same bread line. | Campaign Year 848 or later | Fled north by boat when Wall Maria fell in 845, then grew up hungry in the refugee camps of Wall Rose. |
-| 21–23 | Trost Merchant Family | Wits, Empathy | Silver Tongue or Steady Voice | The family shop<br>A sweetheart who works the market square | none | no condition | Raised at a shop counter in Trost District, the southern gate town of Wall Rose. |
-| 24–26 | Wall Rose Farm | Strength, Perception | Strong Back or Horsemanship | The family farm<br>A grandparent too old to work the fields | none | no condition | Hauled grain, mended fences, and drove the cart to market on farmland inside Wall Rose. |
-| 31–33 | Forest Hunting Village | Perception, Instinct | Keen Eyes or Lure | A parent who still hunts the old forest<br>The village elder who taught you to track | Sasha Braus: A hunter's daughter from a mountain village much like yours, met at a market fair. | no condition | Learned to track game and move quietly through the trees in a mountain village that lived by the bow. |
-| 34–36 | Garrison Family | Strength, Wits | Gearwright or Make Do | A parent who still serves on the Wall<br>The barracks family that raised you | none | no condition | The child of a Garrison soldier, raised in barracks housing among the Wall's lifts and cannon. |
-| 41–43 | Underground City | Agility, Instinct | Quiet Step or Grip Breaker | Friends still living below<br>The one adult who got you out | none | no condition | Born in the lightless streets beneath Mitras, where a soldier's pay and a bunk were the only way to reach the surface for good. |
-| 44–46 | Interior Merchant House | Wits, Empathy | Book Learning or Titan Reader | A sibling who writes to you every month<br>The family townhouse, if they will still open the door | none | no condition | Raised among ledgers and guild dinners in a rich merchant family inside Wall Sina, who never forgave you for enlisting. |
-| 51–53 | Minor Noble House | Empathy, Agility | Horsemanship or Judge of Character | An old family servant who raised you<br>A cousin who still speaks to you | none | no condition | A younger child of a lesser noble family, taught riding and manners and then left free to throw your life away. |
-| 54–56 | Church Orphanage | Empathy, Strength | Steady Voice or Iron Nerve | The orphanage and the children still in it<br>The priest who raised you | none | no condition | Raised by the Church of the Walls after losing your parents, the eldest of a crowded dormitory of children. |
-| 61–63 | Doctor's Household | Wits, Perception | Field Medicine or Careful Nursing | Your parent's clinic<br>A patient who owes you their life | none | no condition | Grew up fetching bandages and holding patients still for a town doctor. |
-| 64–66 | Horse Ranch | Agility, Perception | Horsemanship or Loose the Horse | The ranch and its horses<br>A sibling who still trains the young horses | none | no condition | Raised on a ranch on the plains of Wall Rose that breeds horses for the military. |
+| 11–13 | Shiganshina District | Agility, Instinct | Quiet Step or Slip Away or Wirework or Light Sleeper | A younger sibling you promised to look after<br>A childhood friend now serving in the Garrison<br>The street you grew up on, and the neighbours still living down it | Hannes: The Garrison soldier at the district gate who knew every child on your street. | no condition | A childhood in the walled district on Wall Maria's southern face, watching Survey Corps columns ride out through the outer gate. |
+| 14–16 | Wall Maria Refugee | Strength, Instinct | Hard to Kill or Fieldcraft or Will to Live or Strong Back | A younger sibling still living in the camps<br>The farm family who took you in<br>The other children off the boats, scattered now across Wall Rose | Armin Arlert: Another refugee child from Shiganshina who stood in the same bread line. | Campaign Year 848 or later | Fled north by boat when Wall Maria fell in 845, then grew up hungry in the refugee camps of Wall Rose. |
+| 21–23 | Trost Merchant Family | Wits, Empathy | Silver Tongue or Steady Voice or Book Learning or Judge of Character | The family shop<br>A sweetheart who works the market square<br>The old shopkeeper two streets over who taught you the trade | none | no condition | Raised at a shop counter in Trost District, the southern gate town of Wall Rose. |
+| 24–26 | Wall Rose Farm | Strength, Perception | Strong Back or Horsemanship or Long Haul or Keen Eyes | The family farm<br>A grandparent too old to work the fields<br>The village the farm sells to, and its harvest fair | none | no condition | Hauled grain, mended fences, and drove the cart to market on farmland inside Wall Rose. |
+| 31–33 | Forest Hunting Village | Perception, Instinct | Keen Eyes or Lure or Fieldcraft or Quiet Step | A parent who still hunts the old forest<br>The village elder who taught you to track<br>The dog you raised from a pup, still waiting at the village | Sasha Braus: A hunter's daughter from a mountain village much like yours, met at a market fair. | no condition | Learned to track game and move quietly through the trees in a mountain village that lived by the bow. |
+| 34–36 | Garrison Family | Strength, Wits | Gearwright or Make Do or Know the Stores or Iron Nerve | A parent who still serves on the Wall<br>The barracks family that raised you<br>The gun crew who let you climb the Wall as a child | none | no condition | The child of a Garrison soldier, raised in barracks housing among the Wall's lifts and cannon. |
+| 41–43 | Underground City | Agility, Instinct | Quiet Step or Grip Breaker or Underground Instincts or Hand-to-Hand | Friends still living below<br>The one adult who got you out<br>The tavern keeper below who feeds anyone who asks | none | no condition | Born in the lightless streets beneath Mitras, where a soldier's pay and a bunk were the only way to reach the surface for good. |
+| 44–46 | Interior Merchant House | Wits, Empathy | Book Learning or Titan Reader or Silver Tongue or Put In a Word | A sibling who writes to you every month<br>The family townhouse, if they will still open the door<br>The tutor who taught you your letters and never took the family side | none | no condition | Raised among ledgers and guild dinners in a rich merchant family inside Wall Sina, who never forgave you for enlisting. |
+| 51–53 | Minor Noble House | Empathy, Agility | Horsemanship or Judge of Character or Sure Seat or Silver Tongue | An old family servant who raised you<br>A cousin who still speaks to you<br>The horse you were given as a child, still in the family stable | none | no condition | A younger child of a lesser noble family, taught riding and manners and then left free to throw your life away. |
+| 54–56 | Church Orphanage | Empathy, Strength | Steady Voice or Iron Nerve or Careful Nursing or Shoulder the Load | The orphanage and the children still in it<br>The priest who raised you<br>The chapel itself, and the one hour a week it is quiet | none | no condition | Raised by the Church of the Walls after losing your parents, the eldest of a crowded dormitory of children. |
+| 61–63 | Doctor's Household | Wits, Perception | Field Medicine or Careful Nursing or Book Learning or Sure Hands | Your parent's clinic<br>A patient who owes you their life<br>The town the clinic serves, which still knows your name | none | no condition | Grew up fetching bandages and holding patients still for a town doctor. |
+| 64–66 | Horse Ranch | Agility, Perception | Horsemanship or Loose the Horse or Sure Seat or Keen Eyes | The ranch and its horses<br>A sibling who still trains the young horses<br>The stable hand who taught you to ride before you could walk | none | no condition | Raised on a ranch on the plains of Wall Rose that breeds horses for the military. |
 <!-- END RENDERED: origins -->
 
 ### 2.3.2 Why You Enlisted
@@ -184,31 +184,30 @@ Each of the three Training Years is resolved the same way, using its own event t
 
 1. **Event.** Roll D66 on the year's `events`.
    - Add 1 to the event's attribute.
-   - Gain 1 level in one of the event's two Talents.
+   - Gain 1 level in one of the event's **three** Talents, **or** in any Talent on that Training Year's `curriculum` list of ten.
    - Add the event's `merit_change` to the Cadet's Merit. It can be negative.
 2. **Performance roll.** The Cadet makes the year's performance roll and adds the Merit it earns (see below).
 
 **Talent levels during the Lifepath.** No Talent can be above level 2 at creation (ADR-0006), and a rule Talent cannot go above its `max_level` in `data/character/talents.yaml`, usually 1.
 
-**Choosing a Talent.** Every Origin row and every event offers at least one Talent that names an entry a current rule uses. A Talent that names only dormant entries (section 2.8) does nothing until later rules call for them. A player may still take it.
+**Choosing a Talent.** The event's own three Talents are what its fiction trained; the year's `curriculum` list is open beside them whether or not the event's three can gain a level (`talent_cap.curriculum_always_open`). Every Training Year therefore offers at least **twelve** Talents to choose between, so two Cadets who roll the same event need not leave it with the same Talent. The Origin's four and Graduation's twenty or twenty-one (section 2.3.4) do the same work at the other two steps.
 
-Two fallbacks cover an event whose Talents are capped (`talent_cap` in `data/character/training-years.yaml`; OQ-20):
+Every Origin row and every event offers at least one Talent that names an entry a current rule uses. A Talent that names only dormant entries (section 2.8) does nothing until later rules call for them. A player may still take it.
 
-- If neither of the event's two Talents can gain a level, the Cadet takes 1 level in any Talent on that Training Year's `curriculum` list that can gain one.
-- If the only one of the two that can gain a level names only dormant or reserved entries, the Cadet may take that level, or instead 1 level in any Talent on the `curriculum` list that can gain one.
+One fallback remains, for a Cadet whose whole year is capped (`talent_cap` in `data/character/training-years.yaml`; OQ-20): if no Talent on either list can gain a level, because each is at level 2 or at its `max_level`, the Cadet takes 1 level in any Talent that can gain one.
 
-A new player character gains exactly 5 Talent levels: 1 from the Origin, 3 from the Training Year events, and 1 from the Specialty (`talent_levels_at_creation` in `data/character/lifepath.yaml`).
+A new player character gains exactly 5 Talent levels: 1 from the Origin, 3 from the Training Year events, and 1 from the Specialty (`talent_levels_at_creation` in `data/character/lifepath.yaml`). Widening the lists changes which Talents a soldier can end with, never how many.
 
-No Action Catalog entry is dormant or reserved now: the eight rolls that once waited for rules not yet written, and Fight and Block, are called by Chapter 7's playtest rules (decision batch 7, 7-14, 7-16, 7-17). No Origin or event choice offers only Talents that name dormant or reserved entries, and with the fallbacks above no Cadet is ever forced to take a level in such a Talent (OQ-33). The fallbacks stay for entries later rules add.
+No Action Catalog entry is dormant or reserved now: the eight rolls that once waited for rules not yet written, and Fight and Block, are called by Chapter 7's playtest rules (decision batch 7, 7-14, 7-16, 7-17). No Origin or event choice offers only Talents that name dormant or reserved entries, and because the curriculum is always open no Cadet is ever forced to take a level in such a Talent (OQ-33). The fallback stays for entries later rules add.
 
 ### The Training Year tables
 
 <!-- BEGIN RENDERED: training-years from data/character/training-years.yaml -->
 | Training Year | Performance attributes | Curriculum |
 |---|---|---|
-| First Year, Conditioning and Discipline | Strength and Instinct | Iron Nerve, Long Haul, Strong Back, Hard to Kill, Grip Breaker, Quiet Step |
-| Second Year, ODM Gear and the Blade Set | Agility and Perception | Clean Cut, Hamstringer, Slip Away, Wirework, Gearwright, Lure |
-| Third Year, Field Exercises | Wits and Empathy | Titan Reader, Field Medicine, Steady Voice, Keen Eyes, Horsemanship, Judge of Character |
+| First Year, Conditioning and Discipline | Strength and Instinct | Iron Nerve, Long Haul, Strong Back, Hard to Kill, Grip Breaker, Quiet Step, Hand-to-Hand, Will to Live, Steady Heart, Shoulder Charge |
+| Second Year, ODM Gear and the Blade Set | Agility and Perception | Clean Cut, Hamstringer, Slip Away, Wirework, Gearwright, Lure, Blade Discipline, Well-Kept Rig, Light Trigger, High Vantage |
+| Third Year, Field Exercises | Wits and Empathy | Titan Reader, Field Medicine, Steady Voice, Keen Eyes, Horsemanship, Judge of Character, Fieldcraft, Route Finder, Carrying Voice, Wide Awareness |
 
 A Talent marked dormant or reserved names only dormant or reserved Action Catalog entries (section 2.8).
 <!-- END RENDERED: training-years -->
@@ -218,18 +217,18 @@ A Talent marked dormant or reserved names only dormant or reserved Action Catalo
 
 | D66 | Event | +1 | Talent level in one of | Merit | Description |
 |---|---|---|---|---|---|
-| 11–13 | The first inspection | Instinct | Iron Nerve or Long Haul | +1 | An instructor screamed a finger's width from your face on the first morning, and you did not flinch. |
-| 14–16 | Found in the storehouse | Agility | Quiet Step or Slip Away | -1 | You were found stealing bread from the storehouse and ran laps until you collapsed. |
-| 21–23 | Upside down in the harness | Agility | Wirework or Slip Away | 0 | You hung upside down in the balance harness on the first day and practiced every night until you could hold it. |
-| 24–26 | The storm march | Strength | Strong Back or Long Haul | +1 | On a mountain march in a storm you carried a Cadet who collapsed the last five kilometers. |
-| 31–33 | Top of the written test | Wits | Book Learning or Titan Reader | +1 | You placed first in the class on the written tactics test. |
-| 34–36 | A winter in the infirmary | Wits | Field Medicine or Hard to Kill | -1 | A fall from the obstacle course fractured your wrist, and you spent the winter helping the infirmary staff. |
-| 41–43 | A fight in the barracks | Strength | Hand-to-Hand or Grip Breaker | 0 | A barracks argument turned into a fight, and you finished it. |
-| 44–46 | Fire in the stables | Perception | Keen Eyes or Horsemanship | +1 | On night watch you smelled smoke from the stables before anyone else and raised the alarm. |
-| 51–53 | A homesick bunkmate | Empathy | Steady Voice or Judge of Character | 0 | You talked a homesick Cadet out of deserting on their first winter night. |
-| 54–56 | Stable duty | Perception | Horsemanship or Fieldcraft | 0 | You were assigned to the stables for a month and learned every horse by name. |
-| 61–63 | Three days alone | Instinct | Fieldcraft or Iron Nerve | +1 | The survival exercise left you alone in the woods for three days, and you came back first. |
-| 64–66 | The dismissal list | Empathy | Silver Tongue or Iron Nerve | -1 | Your name went on the dismissal list, and you argued your way off it. |
+| 11–13 | The first inspection | Instinct | Iron Nerve or Long Haul or Steady Heart | +1 | An instructor screamed a finger's width from your face on the first morning, and you did not flinch. |
+| 14–16 | Found in the storehouse | Agility | Quiet Step or Slip Away or Underground Instincts | -1 | You were found stealing bread from the storehouse and ran laps until you collapsed. |
+| 21–23 | Upside down in the harness | Agility | Wirework or Slip Away or Mid-Air Catch | 0 | You hung upside down in the balance harness on the first day and practiced every night until you could hold it. |
+| 24–26 | The storm march | Strength | Strong Back or Long Haul or Shoulder the Load | +1 | On a mountain march in a storm you carried a Cadet who collapsed the last five kilometers. |
+| 31–33 | Top of the written test | Wits | Book Learning or Titan Reader or Know the Stores | +1 | You placed first in the class on the written tactics test. |
+| 34–36 | A winter in the infirmary | Wits | Field Medicine or Hard to Kill or Careful Nursing | -1 | A fall from the obstacle course fractured your wrist, and you spent the winter helping the infirmary staff. |
+| 41–43 | A fight in the barracks | Strength | Hand-to-Hand or Grip Breaker or Menace | 0 | A barracks argument turned into a fight, and you finished it. |
+| 44–46 | Fire in the stables | Perception | Keen Eyes or Horsemanship or Light Sleeper | +1 | On night watch you smelled smoke from the stables before anyone else and raised the alarm. |
+| 51–53 | A homesick bunkmate | Empathy | Steady Voice or Judge of Character or Campfire Talk | 0 | You talked a homesick Cadet out of deserting on their first winter night. |
+| 54–56 | Stable duty | Perception | Horsemanship or Fieldcraft or Horse Whistle | 0 | You were assigned to the stables for a month and learned every horse by name. |
+| 61–63 | Three days alone | Instinct | Fieldcraft or Iron Nerve or Forager | +1 | The survival exercise left you alone in the woods for three days, and you came back first. |
+| 64–66 | The dismissal list | Empathy | Silver Tongue or Iron Nerve or Put In a Word | -1 | Your name went on the dismissal list, and you argued your way off it. |
 <!-- END RENDERED: training-year-events year-1 -->
 
 <!-- BEGIN RENDERED: training-year-events year-2 from data/character/training-years.yaml -->
@@ -237,18 +236,18 @@ A Talent marked dormant or reserved names only dormant or reserved Action Catalo
 
 | D66 | Event | +1 | Talent level in one of | Merit | Description |
 |---|---|---|---|---|---|
-| 11–13 | The wooden nape | Strength | Clean Cut or Relentless | +2 | On your first run of the Titan dummy course you cut the wooden nape clean through. |
-| 14–16 | A snapped wire | Instinct | Slip Away or Hard to Kill | -1 | An anchor wire snapped mid-swing and dropped you through the branches, and you walked away from it. |
-| 21–23 | Workshop duty | Wits | Gearwright or Well-Kept Rig | 0 | You took apart a Cadet's jammed ODM Gear and rebuilt it before the morning drill. |
-| 24–26 | The gas race | Agility | Wirework or Light Trigger | 0 | You raced another Cadet through the training forest and emptied your canister doing it. |
-| 31–33 | Paired with the best | Perception | Hamstringer or Wirework | +1 | You were paired with the best in the class on ODM Gear and learned by watching every swing. |
-| 34–36 | Three Blade Sets in a week | Wits | Blade Discipline or Gearwright | -1 | You ruined three Blade Sets in one week, and the instructors had you sharpen for the whole class. |
-| 41–43 | From saddle to trees | Agility | Horsemanship or Sure Seat | +1 | You mastered firing your anchors from horseback and swinging straight into the trees. |
-| 44–46 | The decoy drill | Perception | Lure or Loose the Horse | +1 | In the decoy drill you pulled the instructors' mock Titan crew off your squad with a flare. |
-| 51–53 | Thrown in the yard | Strength | Hand-to-Hand or Grip Breaker | +1 | In hand-to-hand training you threw a Cadet twice your size. |
-| 54–56 | Frozen on the high wires | Empathy | Iron Nerve or Steady Voice | -1 | You froze on the high wires, and an instructor had to talk you down one anchor at a time. |
-| 61–63 | The repair drill | Instinct | Gearwright or Quick Refit | 0 | In the timed repair drill you found a fault in your gear by feel, with your eyes shut. |
-| 64–66 | Coaching the course | Empathy | Hamstringer or Carrying Voice | +1 | You coached a struggling squad through the dummy course until every one of them passed. |
+| 11–13 | The wooden nape | Strength | Clean Cut or Relentless or Ready Blade | +2 | On your first run of the Titan dummy course you cut the wooden nape clean through. |
+| 14–16 | A snapped wire | Instinct | Slip Away or Hard to Kill or Mid-Air Catch | -1 | An anchor wire snapped mid-swing and dropped you through the branches, and you walked away from it. |
+| 21–23 | Workshop duty | Wits | Gearwright or Well-Kept Rig or Spare Parts | 0 | You took apart a Cadet's jammed ODM Gear and rebuilt it before the morning drill. |
+| 24–26 | The gas race | Agility | Wirework or Light Trigger or Quick Refit | 0 | You raced another Cadet through the training forest and emptied your canister doing it. |
+| 31–33 | Paired with the best | Perception | Hamstringer or Wirework or High Vantage | +1 | You were paired with the best in the class on ODM Gear and learned by watching every swing. |
+| 34–36 | Three Blade Sets in a week | Wits | Blade Discipline or Gearwright or Make Do | -1 | You ruined three Blade Sets in one week, and the instructors had you sharpen for the whole class. |
+| 41–43 | From saddle to trees | Agility | Horsemanship or Sure Seat or Hard Rider | +1 | You mastered firing your anchors from horseback and swinging straight into the trees. |
+| 44–46 | The decoy drill | Perception | Lure or Loose the Horse or Flare Discipline | +1 | In the decoy drill you pulled the instructors' mock Titan crew off your squad with a flare. |
+| 51–53 | Thrown in the yard | Strength | Hand-to-Hand or Grip Breaker or Headlock | +1 | In hand-to-hand training you threw a Cadet twice your size. |
+| 54–56 | Frozen on the high wires | Empathy | Iron Nerve or Steady Voice or Gallows Humour | -1 | You froze on the high wires, and an instructor had to talk you down one anchor at a time. |
+| 61–63 | The repair drill | Instinct | Gearwright or Quick Refit or Know the Stores | 0 | In the timed repair drill you found a fault in your gear by feel, with your eyes shut. |
+| 64–66 | Coaching the course | Empathy | Hamstringer or Carrying Voice or Formation Drill | +1 | You coached a struggling squad through the dummy course until every one of them passed. |
 <!-- END RENDERED: training-year-events year-2 -->
 
 <!-- BEGIN RENDERED: training-year-events year-3 from data/character/training-years.yaml -->
@@ -256,18 +255,18 @@ A Talent marked dormant or reserved names only dormant or reserved Action Catalo
 
 | D66 | Event | +1 | Talent level in one of | Merit | Description |
 |---|---|---|---|---|---|
-| 11–13 | The signal relay | Perception | Keen Eyes or Horsemanship | +1 | On a mock formation ride you relayed every signal flare without a single mistake. |
-| 14–16 | Taking command | Empathy | Carrying Voice or Unshaken Command | +2 | When your exercise squad leader was ruled dead, you took command and brought the squad home. |
-| 21–23 | The mock casualty | Wits | Field Medicine or Sure Hands | +1 | You kept a mock casualty alive through a timed treatment drill in the rain. |
-| 24–26 | The adopted plan | Wits | Titan Reader or Sharp Call | +1 | The instructors adopted your route plan for the whole class's field exercise. |
-| 31–33 | Lost at night | Instinct | Fieldcraft or Wide Awareness | 0 | Your squad got lost on the night exercise, and you found the way back by the stars. |
-| 34–36 | Arguing with an instructor | Empathy | Wide Awareness or Silver Tongue | -1 | You told an instructor his exercise plan would get everyone killed. You were right, and you were punished for it. |
-| 41–43 | The notebook | Perception | Titan Reader or Book Learning | 0 | You filled a notebook with sketches from the Titan lectures, noting how each kind moved. |
-| 44–46 | An afternoon on the Wall | Instinct | Titan Reader or Hunter's Eye | 0 | On cannon drill atop an outer district's wall you watched a Titan wander the plain beyond it for an entire afternoon. |
-| 51–53 | The falling Cadet | Agility | Wirework or Shoulder the Load | 0 | A Cadet's anchor tore loose in the forest exercise, and you reached them before they hit the ground. |
-| 54–56 | The forced march | Strength | Strong Back or Long Haul | +1 | You carried half your squad's gear on the final forced march. |
-| 61–63 | The rescue drill | Strength | Pry Loose or Grip Breaker | +1 | In the rescue drill you pried a dummy loose from a mock Titan's grip before the whistle. |
-| 64–66 | The runaway wagon | Agility | Rescue Ride or Horsemanship | -1 | You left formation to ride down a runaway supply wagon and were disciplined for it. |
+| 11–13 | The signal relay | Perception | Keen Eyes or Horsemanship or Flare Discipline | +1 | On a mock formation ride you relayed every signal flare without a single mistake. |
+| 14–16 | Taking command | Empathy | Carrying Voice or Unshaken Command or Sharp Call | +2 | When your exercise squad leader was ruled dead, you took command and brought the squad home. |
+| 21–23 | The mock casualty | Wits | Field Medicine or Sure Hands or Triage | +1 | You kept a mock casualty alive through a timed treatment drill in the rain. |
+| 24–26 | The adopted plan | Wits | Titan Reader or Sharp Call or Route Finder | +1 | The instructors adopted your route plan for the whole class's field exercise. |
+| 31–33 | Lost at night | Instinct | Fieldcraft or Wide Awareness or Route Finder | 0 | Your squad got lost on the night exercise, and you found the way back by the stars. |
+| 34–36 | Arguing with an instructor | Empathy | Wide Awareness or Silver Tongue or Stand Down | -1 | You told an instructor his exercise plan would get everyone killed. You were right, and you were punished for it. |
+| 41–43 | The notebook | Perception | Titan Reader or Book Learning or Saw It Coming | 0 | You filled a notebook with sketches from the Titan lectures, noting how each kind moved. |
+| 44–46 | An afternoon on the Wall | Instinct | Titan Reader or Hunter's Eye or Judge of Character | 0 | On cannon drill atop an outer district's wall you watched a Titan wander the plain beyond it for an entire afternoon. |
+| 51–53 | The falling Cadet | Agility | Wirework or Shoulder the Load or Mid-Air Catch | 0 | A Cadet's anchor tore loose in the forest exercise, and you reached them before they hit the ground. |
+| 54–56 | The forced march | Strength | Strong Back or Long Haul or Stay With the Column | +1 | You carried half your squad's gear on the final forced march. |
+| 61–63 | The rescue drill | Strength | Pry Loose or Grip Breaker or Not Like This | +1 | In the rescue drill you pried a dummy loose from a mock Titan's grip before the whistle. |
+| 64–66 | The runaway wagon | Agility | Rescue Ride or Horsemanship or Hard Rider | -1 | You left formation to ride down a runaway supply wagon and were disciplined for it. |
 <!-- END RENDERED: training-year-events year-3 -->
 
 ### The performance roll
@@ -302,7 +301,7 @@ Resolve Graduation in this order (`graduation` step in `data/character/lifepath.
 4. **Top 10.** If the Class Rank row says Top 10:
    - The graduate is offered a place in the Military Police and declines it. Record "Declined the Military Police".
    - The key attribute gains 1, to a maximum of 6.
-5. **Specialty Talent.** Gain 1 level in one Talent on the Specialty's list, to a maximum of level 2.
+5. **Specialty Talent.** Gain 1 level in one Talent on the Specialty's list **or on the general list** (section 2.6), to a maximum of level 2. That is 20 Talents to choose between, or 21 for a Leader.
 
 <!-- BEGIN RENDERED: class-rank from data/character/class-rank.yaml -->
 | Merit total | Class Rank | Top 10 |
@@ -341,7 +340,9 @@ Once every player character is finished:
 
 ## 2.4 The Graduation Exam (optional)
 
-The Graduation Exam is the optional played prologue of three Trials whose Merit replaces the third Training Year's performance roll, and so helps decide each Cadet's Class Rank. It belongs in character creation because the glossary lists it with the Lifepath terms and it feeds Class Rank, which Graduation sets. `data/character/graduation-exam.yaml` holds the whole procedure.
+The Graduation Exam is the optional played prologue of three **Stages** whose Merit replaces the third Training Year's performance roll, and so helps decide each Cadet's Class Rank. It belongs in character creation because the glossary lists it with the Lifepath terms and it feeds Class Rank, which Graduation sets. `data/character/graduation-exam.yaml` holds the whole procedure.
+
+Each Stage runs one **Trial**, drawn from that Stage's list of six, under one of six **conditions**. Both are rolled, not chosen: one **D66** per Stage, the tens die naming the Trial and the units die the condition. Thirty-six ways to sit each Stage, so no two classes graduate the same way.
 
 ### Using the Exam
 
@@ -350,48 +351,106 @@ The Graduation Exam is the optional played prologue of three Trials whose Merit 
 - It **replaces the Year 3 performance roll.** The Merit from its three Trials is added to the Cadet's Merit total instead. The Year 3 event still happens.
 - **Built soldiers take no Exam.** A soldier made with the Template Build or the Free Build takes no Trial and earns no Exam Merit, whatever the vote (`built_steps` in `data/character/lifepath.yaml`). Only Cadets rolling the Lifepath take the Exam, so only they count in each Trial's roll order and in the squad field exercise's Help.
 
+### The board
+
+Before the Exam's first Trial, one player rolls **D66 for each Stage**, in the Stage order below (`board`). The tens die names which of that Stage's six Trials the class runs; the units die names the condition it is run under. The result is the same for every Cadet taking the Exam, including a replacement character taking it alone, and it is rolled rather than chosen, exactly as the order within a Trial is: `group_choices` does not apply to it.
+
 ### How the Exam is played
 
 - **It is not a Titan Engagement.** It has no rounds, turns, Positions, Attention, or Titans. `requirements_ignored` lists the entry requirements that do not apply, such as those needing a Titan, a Position, a patient, a comrade with a Stress Response, or a worn item.
-- **Exam issue.** Each Cadet uses training ODM Gear, a training Blade Set, a training medical kit, and a training tool kit, each with a Gear Dice rating of 1. There are no Gas Rolls and no Blade Set counting. Wear during the Exam applies during the Exam and has no effect after it.
-- **Pools.** Every Trial roll uses the full Chapter 1 pool: attribute, one dice Talent that names the entry, Bonus Dice only from the squad field exercise's Help, Gear Dice from the listed exam issue item, and Stress Dice. Rule Talents that name the entry apply. Only the squad field exercise can be Pushed; the first two Trials forbid a Push by their own rule (Chapter 1, section 1.5). No Trial roll takes Circumstances (Chapter 1, section 1.4a): the Exam is creation, before play (`conditions.circumstances`).
+- **Exam issue.** Each Cadet uses training ODM Gear, a training Blade Set, a training medical kit, a training tool kit, a training horse, and a training musket, each with a Gear Dice rating of 1. A Trial gives Gear Dice only from the item its entry lists; a Trial that lists none gives no Gear Dice. There are no Gas Rolls and no Blade Set counting. Wear during the Exam applies during the Exam and has no effect after it.
+- **Pools.** Every Trial roll uses the full Chapter 1 pool: attribute, one dice Talent that names the entry, Bonus Dice from the squad field exercise's Help and from the Trial's condition, Gear Dice from the listed exam issue item, and Stress Dice. Rule Talents that name the entry apply. A roll can be Pushed only where its Stage allows it or its condition adds a Push; otherwise the Trial forbids a Push by its own rule (Chapter 1, section 1.5). No Trial roll takes Circumstances (Chapter 1, section 1.4a): the Exam is creation, before play (`conditions.circumstances`).
 - **Stress.** Every Cadet starts at Stress 0. Stress gained in one Trial stays for the later Trials and adds Stress Dice to their rolls. When the Exam ends, every Cadet's Stress returns to 0. This is the `graduation-exam-ends` row in `data/core/stress-changes.yaml`.
 - **Stress Responses.** A Stress Response during the Exam still happens, and the roll cannot be Pushed after it. The Exam names its resolution, as Chapter 1 allows (section 1.5, *Finishing a roll*, step 2): it is not resolved on the Chapter 3 table, and instead costs the Cadet 1 Merit on the Trial whose roll caused it. Nothing else happens, and no Chapter 3 result arises during the Exam (`stress_responses`).
-- **Order.** Every Cadet completes a Trial before the next Trial begins. Before each Trial, every Cadet taking the Exam rolls a D6, and they roll that Trial in descending order of result. Cadets tied for the same result roll again among themselves. The players do not choose the order (`roll_order_within_a_trial`).
+- **Order.** Every Cadet completes a Stage's Trial before the next Stage begins. Before each Trial, every Cadet taking the Exam rolls a D6, and they roll that Trial in descending order of result. Cadets tied for the same result roll again among themselves. The players do not choose the order (`roll_order_within_a_trial`).
 
-### The three Trials
+<!-- BEGIN RENDERED: graduation-exam-issue from data/character/graduation-exam.yaml -->
+| Exam issue | Counts as | Gear Dice |
+|---|---|---|
+| training ODM Gear | odm-gear | 1 |
+| training Blade Set | blade-set | 1 |
+| training medical kit | medical-kit | 1 |
+| training tool kit | tool-kit | 1 |
+| a training horse | horse | 1 |
+| a training musket | musket | 1 |
+<!-- END RENDERED: graduation-exam-issue -->
 
-<!-- BEGIN RENDERED: graduation-exam-trials from data/character/graduation-exam.yaml -->
-| Order | Trial | Action Catalog entry | Gear item | Can be Pushed | Help | Merit |
-|---|---|---|---|---|---|---|
-| 1 | The ODM balance test | Fly | training ODM Gear | no | none | 0–1 successes: 0 Merit; 2 or more successes: 1 Merit |
-| 2 | The Titan dummy course | Nape strike | training Blade Set | no | none | 0–1 successes: 0 Merit; 2 or more successes: 1 Merit |
-| 3 | The squad field exercise | one of the entry choices below | listed with each choice | yes | fixed by the Trial's roll order (see the list below) | 0–2 successes: 0 Merit; 3 or more successes: 1 Merit |
+### The three Stages
 
-**The squad field exercise: entry choices** (each needs 3 successes)
+<!-- BEGIN RENDERED: graduation-exam-stages from data/character/graduation-exam.yaml -->
+| Order | Stage | Successes needed | Can be Pushed | Help | Merit |
+|---|---|---|---|---|---|
+| 1 | The individual assessment | 2 | no | none | 0–1 successes: 0 Merit; 2 or more successes: 1 Merit |
+| 2 | The Titan test | 2 | no | none | 0–1 successes: 0 Merit; 2 or more successes: 1 Merit |
+| 3 | The squad field exercise | 3 | yes | fixed by the Trial's roll order (see below) | 0–2 successes: 0 Merit; 3 or more successes: 1 Merit |
+<!-- END RENDERED: graduation-exam-stages -->
 
-| Entry | Gear item |
-|---|---|
-| Read | none |
-| Break Attention | training ODM Gear |
-| Body Part strike | training Blade Set |
-| Treat Injury | training medical kit |
-| Field Repair | training tool kit |
-| Rally | none |
-<!-- END RENDERED: graduation-exam-trials -->
-
-The three Trials, with their Help and Cover rules:
-
-1. **The ODM balance test:** a roll for `fly` with training ODM Gear. It pays 1 Merit at 2 or more successes and 0 otherwise. It cannot be Pushed, Helped, or Covered.
-2. **The Titan dummy course:** a roll for `nape-strike` with a training Blade Set. It pays 1 Merit at 2 or more successes and 0 otherwise. It cannot be Pushed, Helped, or Covered.
-3. **The squad field exercise:** each Cadet picks one entry from `entry_choice` and needs **3** successes for 1 Merit. It can be Pushed.
-   - **Help is fixed.** Every Cadet taking the Exam, other than the roller, qualifies to Help each roll in this Trial (Chapter 1, section 1.8), but only one of them Helps it: the Cadet who rolls next in this Trial's order Helps the current roller, and the first roller Helps the last. Each Cadet Helps exactly one roll, declared before that roll, and that one Help is all it spends. A Cadet taking the Exam alone has no Help.
+1. **The individual assessment:** a solo test of what the Training Corps expects of every Cadet. It pays 1 Merit at 2 or more successes and 0 otherwise. It cannot be Helped or Covered, and it cannot be Pushed unless its condition allows one.
+2. **The Titan test:** a solo test of what the Cadet does when the shape in front of them is a Titan. Same threshold, same limits.
+3. **The squad field exercise:** the Cadets taking the Exam work one day-long exercise as a squad. Each picks one entry from the Trial's list and needs **3** successes for 1 Merit. It can be Pushed.
+   - **Help is fixed.** Every Cadet taking the Exam, other than the roller, qualifies to Help each roll in this Stage (Chapter 1, section 1.8), but only one of them Helps it: the Cadet who rolls next in this Trial's order Helps the current roller, and the first roller Helps the last. Each Cadet Helps exactly one roll, declared before that roll, and that one Help is all it spends. A Cadet taking the Exam alone has no Help.
    - **Covering.** Every Cadet who qualifies to Help a roll can Cover its Push (Chapter 1, section 1.5), whether or not they Helped it, unless they hold the rolled state: a Cadet who has made their own roll in this Trial holds a state that forbids Covering for the rest of the Trial (`forbids: [cover]`), using Chapter 1's shared hook (section 1.9). So only a Cadet who has not yet made their own roll can Cover. Covering spends nothing.
    - Each Cadet's Merit comes only from their own roll. There is no bonus for the whole group succeeding.
 
-> **Design note (OQ-22, OQ-37):** Trials 1 and 2 pay at 2 successes and forbid a Push, so they are solo tests of attribute, Talent, and gear; a Cadet at Stress 0 who cannot Push never has a Stress Response there. Trial 3 needs 3 successes with exactly one helper. In the payout model, the Year 3 performance roll pays a mean of 0.583 Merit, 2 or more Merit 10.5% of the time, and 3 or more 1.3%. The Exam with one cycle helper pays 0.612, 13.4%, and 1.1%, and a Cadet taking it alone pays 0.506, 10.8%, and 0.8%. Three free helpers on Trial 3 would pay 0.803, which is why Help is fixed at one. The vote before the Lifepath, the rolled order, and cycle Help leave no Exam choice made with Merit known; a rolled order with cycle Help measured a Top 10 share of 6.48% against 6.20% for four Cadets.
+### Each Stage's six Trials
+
+<!-- BEGIN RENDERED: graduation-exam-trials from data/character/graduation-exam.yaml -->
+**The individual assessment: its Trials (the tens die)**
+
+| D6 | Trial | Action Catalog entry | Gear item | Description |
+|---|---|---|---|---|
+| 1 | The ODM balance test | Fly | training ODM Gear | Hanging from wires in a harness, the Cadet must hold steady and upright while instructors watch. |
+| 2 | The forced march | Endure | none | A day on the mountain road under full pack, graded on arriving with the column and with your kit on your back. |
+| 3 | The night watch | Spot | none | Midnight to dawn on the district wall, graded on what you can report when the sun comes up. |
+| 4 | The written examination | Recall | none | Three hours in the hall on tactics, Titan anatomy, and the regulations, with no notes allowed. |
+| 5 | The survival week | Survive | none | Seven days in the woods with a knife and a blanket, graded on the state you walk back in. |
+| 6 | The board interview | Persuade | none | Three instructors behind a table who want to hear why the Corps should keep you. |
+
+**The Titan test: its Trials (the tens die)**
+
+| D6 | Trial | Action Catalog entry | Gear item | Description |
+|---|---|---|---|---|
+| 1 | The Titan dummy course | Nape strike | training Blade Set | A timed run through the training forest, cutting the napes of wooden Titans on hidden rails. |
+| 2 | The marksman's butts | Shoot | a training musket | Powder, ball, and a painted nape at eighty paces, with the whole class counting your misses. |
+| 3 | The grab drill | Break Free | training Blade Set | An instructor's wooden fist closes around you, and you have until the count of five to be out of it. |
+| 4 | The decoy run | Break Attention | training ODM Gear | A flare, a pole-mounted mask on a cart, and a class watching to see whose eye you can pull. |
+| 5 | The silhouette drill | Read | none | Boards raised on the range at dusk, to be named by class, height, and gait before they drop again. |
+| 6 | The casualty drill | Treat Injury | training medical kit | A Cadet playing a soldier cut out of a Titan's hand, bleeding paint, with the clock running. |
+
+**The squad field exercise: its Trials (the tens die)**
+
+| D6 | Trial | Action Catalog entry | Gear item | Description |
+|---|---|---|---|---|
+| 1 | The squad field exercise | Read (no gear); Break Attention (training ODM Gear); Body Part strike (training Blade Set); Treat Injury (training medical kit); Field Repair (training tool kit); Rally (no gear) | listed with each roll | The set piece, with instructors in Titan harness working a wooded valley and a squad ordered to cross it. |
+| 2 | The forest crossing | Fly (training ODM Gear); Sneak (no gear); Spot (no gear); Read (no gear); Rally (no gear); Field Repair (training tool kit) | listed with each roll | Cross the training forest in formation without one instructor's whistle finding you. |
+| 3 | The night withdrawal | Treat Injury (training medical kit); Heave (no gear); Survive (no gear); Rally (no gear); Ride (a training horse); Spot (no gear) | listed with each roll | Bring a squad of painted casualties back to the beacon line before the graders call dawn. |
+| 4 | The relief of the gate | Nape strike (training Blade Set); Break Attention (training ODM Gear); Fight (training Blade Set); Endure (no gear); Rally (no gear); Treat Injury (training medical kit) | listed with each roll | Hold the mock gate against instructors in Titan harness until the relief column rides in. |
+| 5 | The supply run | Ride (a training horse); Field Repair (training tool kit); Heave (no gear); Persuade (no gear); Spot (no gear); Rally (no gear) | listed with each roll | Take the wagons the length of the course and bring them back with the load still on them. |
+| 6 | The ruined exercise | Rally (no gear); Persuade (no gear); Field Repair (training tool kit); Treat Injury (training medical kit); Read (no gear); Survive (no gear) | listed with each roll | The graders break the exercise on purpose, with jammed gear, contradicting orders, and a squad leader ruled dead in the first hour. |
+<!-- END RENDERED: graduation-exam-trials -->
+
+### The conditions
+
+A condition applies to **every Cadet's roll in that Stage's Trial**, and to that Stage only. A condition that changes the successes the Trial needs changes every bound of its Merit rows by the same amount, so "1 fewer success" also pays 1 success earlier. A condition with nothing to change in a Trial, such as taking the Gear Dice from a Trial that issues no gear, simply does nothing there (`conditions_table.applies_to`).
+
+<!-- BEGIN RENDERED: graduation-exam-conditions from data/character/graduation-exam.yaml -->
+**Exam conditions (the units die)**
+
+| D6 | Condition | What changes | Description |
+|---|---|---|---|
+| 1 | Driving rain | The Trial needs 1 more success, and pays its Merit 1 success later. | Sheeting rain, a churned yard, and instructors who will not call it off. |
+| 2 | Worn training gear | The exam issue gives no Gear Dice. | The class before you handed back everything it had, and nothing has been serviced since. |
+| 3 | A fair run | Nothing changes. | Clear weather, working gear, and an instructor who grades what they see. |
+| 4 | An instructor walks it with you | Every roll in the Trial takes 1 Bonus Die. | An instructor stays at your shoulder the whole way, calling the next move a breath before you need it. |
+| 5 | Run it twice, best score | Every roll in the Trial takes 1 Bonus Die. The Trial can be Pushed 1 more time than its Stage allows. | The graders have time for two passes, and a word of correction between them. |
+| 6 | A short course | The Trial needs 1 fewer success, and pays its Merit 1 success earlier. | Half the class is down with fever, so the graders cut the course to what the hall can run. |
+<!-- END RENDERED: graduation-exam-conditions -->
+
+> **Design note (OQ-22, OQ-37):** The Exam's shape is unchanged: three Trials, each paying at most 1 Merit, with the first two solo and the third the squad exercise. What the Stages add is variety. Each Stage draws its Trial from six, and its condition from six, so the class does not take the same three tests every campaign, and the Trials across a Stage's six deliberately roll different attributes, so which Cadets shine is a property of the class and the year rather than of the procedure. Both are rolled, so no Exam choice is made with Merit known, which was OQ-37 (e)'s reason for moving the vote before the Lifepath. Trials 1 and 2 keep the single graded entry the Training Corps' own rankings imply, and only the squad field exercise lets the Cadet pick their part; letting the first two Stages be picked as well would let every Cadet roll their best attribute three times, which measured about a point of extra Top 10 share on its own.
 >
-> **Simulator target:** mean Exam Merit within 0.1 of the Year 3 performance roll it replaces, and the Top 10 share with the Exam within 0.3 points of the share without it, for 1 to 6 Cadets, under the aimed policy of Chapter 2 review 3, with every Cadet who has not yet rolled able to Cover. If the target fails, tune first the successes Trial 3 needs, then the threshold of Trials 1 and 2 (2, then 3).
+> Parity is measured by `tools/probes/lifepath-exam/exam.py`, which reads the tables, rolls whole Lifepaths from them, and then runs the Year 3 performance roll, the old three-Trial Exam, and this one against the same Cadets. Under that model the Year 3 roll pays a mean of about 0.584 Merit; the expanded Exam pays 0.484 to 0.527 for 1 to 6 Cadets, a delta of -0.06 to -0.10, and moves the Top 10 share by -0.21 to +0.12 points. Both targets hold. The three fixed Trials it replaces paid 0.354 to 0.401 under the same model, a delta of -0.18 to -0.23, and cost 0.9 to 1.2 points of Top 10 share, so the expanded Exam is much the closer of the two to the roll it replaces. That model rolls Lifepaths, where the earlier payout model behind OQ-22's 0.583 and 0.612 used reference pools; the two are not the same measurement, and the figures above are the ones this schedule was tuned against. The conditions table carries the tuning: its six rows are worth about +0.19 Merit across a whole Exam, which is what brings a Stage schedule of 2, 2, and 3 successes back to the roll it replaces. Each row was measured on its own, and the table balances a heavy bane (driving rain, worth about -0.45 Merit over an Exam) against a heavy boon (a short course, about +1.13) with two small boons, one small bane, and one row that changes nothing between them.
+>
+> **Simulator target:** mean Exam Merit within 0.1 of the Year 3 performance roll it replaces, and the Top 10 share with the Exam within 0.3 points of the share without it, for 1 to 6 Cadets, under the aimed policy of Chapter 2 review 3, with every Cadet who has not yet rolled able to Cover. If the target fails, tune first the conditions table, then the successes the squad field exercise needs, then the threshold of the first two Stages (2, then 3).
 
 ---
 
@@ -464,11 +523,11 @@ A Specialty is a soldier's trained specialization. The table below gives each of
 - **What it grants:**
   - The key attribute. It is the only attribute that can be rated 6.
   - At Graduation only, the swap and floor, which give the key attribute the soldier's highest rating, and at least 4, without adding points (section 2.2). A built soldier takes neither.
-  - At Graduation, or at a build's Talents step, 1 level in one Talent on the Specialty's list, to a maximum of level 2.
+  - At Graduation, or at a build's Talents step, 1 level in one Talent on the Specialty's list or on the general list, to a maximum of level 2.
 - **What it never grants is permission.** Every soldier, player character or Squadmate, can attempt every Action Catalog entry, and any soldier can hold any Talent, including one on another Specialty's list (ADR-0006). A soldier without the right Talent still rolls their full attribute. The Squadmate rules still apply whatever the Specialty: a Squadmate never Pushes or Covers, and its only Reaction is the dodge (section 2.10).
 - **The Talent list** limits only the Talent level gained at Graduation or at a build's Talents step. The XP rules, not yet written, state whether it matters when a soldier buys Talents later.
 - **Each list holds eight Talents:** at least three dice Talents, one of them with a condition, at least three rule Talents, and at least two that name a Leg, Night Camp, Requisition, or Skirmish roll or trigger (Chapter 7). A Talent may sit on two lists, and at most four do; Well-Kept Rig is on the Flier's and the Engineer's (`rules.list_size`).
-- **The general list** holds twelve Talents about temperament and survival, at most four of them dice Talents. They sit on no Specialty's list, so any soldier may hold them, but the level a Specialty grants never goes into one (`rules.general_list`).
+- **The general list** holds twelve Talents about temperament and survival, at most four of them dice Talents. They sit on no Specialty's list, so any soldier may hold them, and the one level a Specialty grants may go into one of them (`rules.general_list`; decision batch 12, 12-1).
 
 A Specialty grants nothing beyond the key attribute, the swap and floor, and one Talent level. Separately, through Standard Issue (Chapter 4), a Medic also receives a medical kit and an Engineer a tool kit (`by_specialty` in `data/gear/standard-issue.yaml`; OQ-28, OQ-59).
 
@@ -765,9 +824,9 @@ Chapter 5 gives the full procedure for Wings in a Titan Engagement (section 5.3)
 3. **Conversion:** follow `promotion.steps`.
    - The soldier keeps everything it has, in its current state: attributes, Talent, Health and the Health it has lost to damage, Resolve, Stress, Scars, Grief, Critical Injuries, Down state, gear, and every field in `data/harm/sheet-fields.yaml`. Nothing is recalculated, and attributes never rise (ADR-0011).
    - Its template Talent counts as the Talent level a new soldier gains from the Specialty.
-   - It rolls an Origin for a Haven and an optional Canon Tie, and gains 1 level in one of the row's two Talents, following the same caps. A Talent it already holds, such as its template Talent, rises by 1 level.
+   - It rolls an Origin for a Haven and an optional Canon Tie, and gains 1 level in one of the row's four Talents, following the same caps. A Talent it already holds, such as its template Talent, rises by 1 level.
    - It rolls Why You Enlisted for a Drive, as a new soldier does, and names a comrade now if the Drive needs one.
-   - It rolls once on each Training Year's events and gains 1 level in one of each event's two Talents, following the same caps and fallback. This gives it 5 Talent levels in total, from the same sources as a new soldier.
+   - It rolls once on each Training Year's events and gains 1 level in one of each event's three Talents, or in any Talent on that year's curriculum, following the same caps and fallback. This gives it 5 Talent levels in total, from the same sources as a new soldier.
    - It gains no attribute points and no Merit. It records Merit and Class Rank as none, and Rank as Private.
    - It follows every player character rule from then on, leaves any Wing, and is no longer a Squadmate. It stays in the Squad.
 4. **No Squadmate available** (`promotion.no_squadmate`): the player creates a new character by any procedure the campaign allows (section 2.3, *Beside the Lifepath*); the Template Build, when the campaign allows it, is the quickest. The new character joins the Squad, with Standard Issue (Chapter 4), at whichever of these comes first:
@@ -792,10 +851,10 @@ Two procedures sit beside the Lifepath (section 2.3): the **Template Build** and
 3. **Attributes** (section 2.2, *How a built soldier's attribute ratings are set*):
    - **Template Build:** record the Specialty's template ratings (section 2.10).
    - **Free Build:** choose one of the two shapes and place it with a 4 on the key attribute.
-4. **Origin.** Choose an Origin row whose condition the current Campaign Year meets (section 2.3.1). Record one of its two Havens and, if the row has one and the player wants it, its Canon Tie. Gain level 1 in one of its two Talents. The row's two attributes gain nothing.
+4. **Origin.** Choose an Origin row whose condition the current Campaign Year meets (section 2.3.1). Record one of its three Havens and, if the row has one and the player wants it, its Canon Tie. Gain level 1 in one of its four Talents. The row's two attributes gain nothing.
 5. **Drive.** Record the Drive of any Why You Enlisted row (section 2.3.2). No attribute gains a point.
 6. **Training Years, for the story.** The player may name one event row of each Training Year. A named row gives no attribute point, Talent level, or Merit, and no performance roll is made.
-7. **Talents.** Gain 1 level in one Talent on the Specialty's list, then 3 levels in any Talents, within the limits below.
+7. **Talents.** Gain 1 level in one Talent on the Specialty's list or on the general list, then 3 levels in any Talents, within the limits below.
 8. **Merit and Class Rank.** Record Merit none and Class Rank none (`built_and_promoted` in `data/character/class-rank.yaml`). The soldier is not Top 10: there is no Military Police offer and no key attribute bonus.
 9. **Finish and join the Squad** as a Lifepath soldier does (section 2.3.5).
 
@@ -803,7 +862,7 @@ Two procedures sit beside the Lifepath (section 2.3): the **Template Build** and
 
 `built_steps.talent_levels` gives them:
 
-- 5 levels in total: 1 from the Origin row, 1 from the Specialty's list, and 3 from any Talents.
+- 5 levels in total: 1 from the Origin row, 1 from the Specialty's list or the general list, and 3 from any Talents.
 - No Talent above level 2, and **at most one Talent at level 2**.
 - No rule Talent above its `max_level` (section 2.7).
 - A level gained in a Talent the soldier already holds raises it by 1.

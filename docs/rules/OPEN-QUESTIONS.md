@@ -3785,3 +3785,30 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Costs recorded:** the issued ODM ladder flattens from Funding 3 up, and the horse keeps the 1, 1, 2, 2, 2, 3 ladder, so decision batch 2b's parity between a mounted dodge and an ODM one ends.
 - **ADR:** amends ADR-0004. A Push still costs Stress and gear; its gear cost is now 1 point per Pushed roll, and Gear Dice are no longer the one part of the pool a Push leaves alone.
 - **Simulator case:** required, as a retune in the same rerun as OQ-182 to OQ-186. It must re-read the Jam test on the full model, the reference builds (the Rookie's ODM Gear is now 3), gas, the Blade Set ruin rate, and the PC Critical Injury and death targets.
+
+### OQ-188: The Talent choice at each Lifepath step is too narrow
+
+- **Type:** Design change (owner instruction, 2026-09-18: the options at each Lifepath step are too narrow, and duplicate across a party)
+- **Arose in:** play. `data/character/origins.yaml` (`talent_choice`, `haven_choice`); `data/character/training-years.yaml` (`talent_choice`, `curriculum`, `talent_cap`); `data/character/lifepath.yaml` (step `graduation`, `built_steps.talents`).
+- **Related:** OQ-20, OQ-33, OQ-136, OQ-135.
+- **Question:** Every rolled step of the Lifepath offered exactly two Talents, and the year's curriculum was a fallback the Cadet reached only when both were capped. With four players rolling the same twelve Origin rows and the same three event tables, two Cadets who roll the same row leave it with the same Talent far too often. How much should each step open up, and does anything about a soldier's power change with it?
+- **Options:** (a) Leave the lists at two. (b) Widen the rolled lists only. (c) Widen the rolled lists and open the year's curriculum beside every event, and let Graduation's one level go to the general list as well.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 12*, 12-1)
+- **Decision:** (c). An Origin row offers **four** Talents and **three** Havens. A Training Year event offers **three**, and that year's `curriculum`, now **ten** Talents, is open beside them whether or not the event's own three can gain a level, so every year offers at least twelve. Graduation's one level goes to a Talent on the Specialty's list **or** on the general list, which is 20 or 21 to choose between, and a built soldier's Specialty level does the same.
+- **Costs recorded:** none measured. The number of Talent levels a new soldier gains is unchanged at 5, the level caps are unchanged, and no roll a target measures carries Talent dice (OQ-70, OQ-94), so no ADR-0014 target moves. The one fallback that remains is for a Cadet whose whole year is capped.
+- **ADR:** none. ADR-0006 and ADR-0016 are unchanged: the lists widened, the Talents did not.
+- **Simulator case:** none.
+
+### OQ-189: The Graduation Exam runs the same three Trials every campaign
+
+- **Type:** Design change (owner instruction, 2026-09-18: make the Exam more dynamic and more fun)
+- **Arose in:** play. `data/character/graduation-exam.yaml`.
+- **Related:** OQ-05, OQ-18, OQ-22, OQ-37.
+- **Question:** The Exam was three fixed Trials: the ODM balance test, the Titan dummy course, and the squad field exercise. Every class in every campaign sat the same three. What can open it up without moving the parity OQ-22 set, which is that the Exam's Merit stays within 0.1 of the Year 3 performance roll it replaces and its Top 10 share within 0.3 points?
+- **Options:** (a) Leave it as it is. (b) Let each Cadet choose their entry in all three Trials. (c) Three Stages, each rolling its Trial and the condition it is run under.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 12*, 12-2)
+- **Decision:** (c). The Exam keeps three Trials paying at most 1 Merit each, but each is drawn from a **Stage**: the individual assessment, the Titan test, and the squad field exercise, each with six Trials. One **D66 per Stage**, rolled once for the whole class, names the Trial on the tens die and one of six **conditions** on the units die. The first two Stages keep one graded entry each; only the squad field exercise lets the Cadet pick their part. The exam issue gains a training horse and a training musket.
+- **Costs recorded:** (b) was rejected on measurement: letting every Cadet roll their best attribute in all three Trials raised the Top 10 share about a point on its own, because Exam Merit then correlates with the Merit the Cadet already has.
+- **Why the conditions table exists:** it carries the parity tuning. Its six rows are worth about +0.19 Merit across a whole Exam, which is what brings a Stage schedule of 2, 2, and 3 successes back to the roll it replaces.
+- **ADR:** none.
+- **Simulator case:** `tools/probes/lifepath-exam/exam.py`, which rolls whole Lifepaths from the tables. Measured: the Year 3 roll pays about 0.584 Merit; the expanded Exam pays 0.484 to 0.527 for 1 to 6 Cadets (delta -0.06 to -0.10) and moves the Top 10 share by -0.21 to +0.12 points. Both targets hold. The three fixed Trials it replaces paid 0.354 to 0.401 under the same model and cost 0.9 to 1.2 points of Top 10 share.

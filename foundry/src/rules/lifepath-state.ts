@@ -27,17 +27,22 @@ import {
   originAllowed,
   performanceAttribute,
   sixes,
+  specialtyTalentOptions,
   startingAttributes,
   swapOptions,
   templateAttributes,
+  trialBands,
   trialMerit,
+  trialNeeds,
   trialPool,
   type Levels,
+  type LpCondition,
   type LpEnlist,
   type LpEvent,
   type LpOrigin,
   type LpRank,
   type LpSpecialty,
+  type LpStage,
   type LpTables,
   type LpTrial,
   type LpTrialChoice,
@@ -45,6 +50,7 @@ import {
   type TrialPool,
 } from './lifepath.ts';
 import { applyPush, pushBlock, rerollCounts, type DiceFaces, type PushBlock } from './roll.ts';
+import type { Band } from './lifepath.ts';
 
 export type StepId = 'campaign' | 'origin' | 'enlist' | 'year-1' | 'year-2' | 'year-3' | 'exam' | 'graduation' | 'specialty' | 'attributes' | 'drive' | 'stories' | 'talents' | 'merit' | 'finish' | 'squad';
 
@@ -65,6 +71,8 @@ export interface YearState {
   perf: number[] | null;
 }
 export interface TrialState {
+  /** The Stage's D66: tens names its Trial, units the condition it is run under. */
+  board: D66Roll | null;
   /** D6 rolls for the order (again on a tie). */
   order: number[];
   entry: string | null;
@@ -102,7 +110,7 @@ export interface LifepathState {
 }
 
 const emptyYear = (): YearState => ({ roll: null, talent: null, overflow: null, perfAttr: null, perf: null });
-const emptyTrial = (): TrialState => ({ order: [], entry: null, helped: false, hunterEye: false, coverStress: 0, dice: null, covers: [], fresh: -1, response: false, message: '' });
+const emptyTrial = (): TrialState => ({ board: null, order: [], entry: null, helped: false, hunterEye: false, coverStress: 0, dice: null, covers: [], fresh: -1, response: false, message: '' });
 
 /** A fresh state; every key is always present so a flag merge never keeps a stale one. */
 export function emptyState(): LifepathState {
@@ -168,7 +176,10 @@ export interface YearDetail {
   event: LpEvent | null;
   roll: number | null;
   talentOptions: string[];
-  fallback: 'none' | 'both-capped' | 'dormant';
+  /** The options the event itself offers, and the year's curriculum beside them. */
+  eventTalents: string[];
+  curriculumTalents: string[];
+  fallback: 'none' | 'all-capped';
   overflowNeeds: AttributeId[] | null;
   overflowFrom: AttributeId | null;
   /** The Exam replaces this year's performance roll. */
@@ -179,7 +190,17 @@ export interface YearDetail {
   merit: number;
 }
 export interface TrialDetail {
-  trial: LpTrial;
+  stage: LpStage;
+  /** The Trial the Stage's board roll named, once rolled. */
+  trial: LpTrial | null;
+  condition: LpCondition | null;
+  /** The Stage's D66 result, once rolled. */
+  board: number | null;
+  /** The successes this Trial needs, and its Merit bands, after the condition. */
+  needs: number;
+  bands: Band[];
+  /** The Exam Stress the Cadet carries into this Trial, before Covering another Cadet's Push. */
+  stressCarried: number;
   choice: LpTrialChoice | null;
   pool: TrialPool | null;
   successes: number | null;
@@ -198,6 +219,9 @@ export interface GradDetail {
   before: Attributes;
   after: Attributes | null;
   talentOptions: string[];
+  /** The Specialty's own list and the general list beside it. */
+  specialtyTalents: string[];
+  generalTalents: string[];
 }
 export interface FinalSoldier {
   procedure: Procedure;
@@ -245,12 +269,15 @@ export function railFor(state: LifepathState): StepId[] {
   return LIFEPATH_RAIL.filter((s) => s !== 'exam' || state.exam === true);
 }
 
-/** Choice keys fixed by a roll made after them (plan section 4). */
+/**
+ * Choice keys fixed by a roll made after them (plan section 4). A GM override clears every lock:
+ * `replay` is then run with `gm: true` and returns an empty set.
+ */
 export function locksOf(s: LifepathState): Set<string> {
   const locks = new Set<string>();
   const perf = s.years.map((y) => y.perf !== null);
   const trialRolled = s.trials.map((x) => x.dice !== null);
-  const anyTrial = trialRolled.some(Boolean) || s.trials.some((x) => x.order.length > 0);
+  const anyTrial = trialRolled.some(Boolean) || s.trials.some((x) => x.order.length > 0 || x.board !== null);
   const poolFrom = (i: number) => perf.slice(i).some(Boolean) || (s.exam === true && trialRolled.some(Boolean));
   const anyRoll = s.origin.rolls.length > 0 || s.enlist.roll !== null || s.years.some((y) => y.roll !== null || y.perf !== null) || anyTrial;
   if (anyRoll) locks.add('procedure');
@@ -280,16 +307,33 @@ function stepOf(key: string): StepId | null {
   return null;
 }
 
-export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Procedure[]; worldYear?: number | null } = {}): Replay {
+export interface ReplayOpts {
+  allowed?: Procedure[];
+  worldYear?: number | null;
+  /** The campaign's exam board, one D66 per Stage, as far as it has been rolled. */
+  worldBoard?: (number | null)[];
+  /** A GM override: every lock is off, so any earlier choice can still be changed. */
+  gm?: boolean;
+}
+
+export function replay(input: LifepathState, t: LpTables, opts: ReplayOpts = {}): Replay {
   const s = clone(input);
   const allowed = opts.allowed ?? ['lifepath'];
   if (opts.worldYear != null && !s.origin.rolls.length) s.year = opts.worldYear;
+  // Every Cadet takes the same Trial under the same condition, so the campaign's board wins.
+  for (let k = 0; k < s.trials.length; k++) {
+    const shared = opts.worldBoard?.[k];
+    if (shared == null || s.trials[k].dice) continue;
+    const tens = Math.floor(shared / 10);
+    const units = shared % 10;
+    if (s.trials[k].board?.tens !== tens || s.trials[k].board?.units !== units) s.trials[k].board = { tens, units };
+  }
   const rail = railFor(s);
   const complete: Record<string, boolean> = {};
   const attrs: Replay['attrs'] = {};
   const levels: Replay['levels'] = {};
   const merit: Replay['merit'] = {};
-  const out: Replay = { state: s, rail, status: {}, current: rail[0], attrs, levels, merit, locks: locksOf(s), origin: null, enlist: null, years: [], trials: [], examMerit: null, grad: null, builtTalents: null, final: null };
+  const out: Replay = { state: s, rail, status: {}, current: rail[0], attrs, levels, merit, locks: opts.gm ? new Set<string>() : locksOf(s), origin: null, enlist: null, years: [], trials: [], examMerit: null, grad: null, builtTalents: null, final: null };
   const built = s.procedure === 'template-build' || s.procedure === 'free-build';
   const rules = t.rules;
   let a: Attributes = startingAttributes(rules.start);
@@ -354,7 +398,7 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
       const id = YEAR_STEPS[i];
       const ys = s.years[i];
       const year = t.years[i];
-      const detail: YearDetail = { event: null, roll: null, talentOptions: [], fallback: 'none', overflowNeeds: null, overflowFrom: null, skipPerformance: i === 2 && s.exam === true, perf: null, perfSuccesses: null, perfMerit: null, merit: 0 };
+      const detail: YearDetail = { event: null, roll: null, talentOptions: [], eventTalents: [], curriculumTalents: [], fallback: 'none', overflowNeeds: null, overflowFrom: null, skipPerformance: i === 2 && s.exam === true, perf: null, perfSuccesses: null, perfMerit: null, merit: 0 };
       if (broken) {
         out.years.push(detail);
         continue;
@@ -365,6 +409,8 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
         detail.event = event;
         const opts = eventTalentOptions(t, lv, event, year);
         detail.talentOptions = opts.options;
+        detail.eventTalents = opts.event;
+        detail.curriculumTalents = opts.curriculum;
         detail.fallback = opts.fallback;
         if (ys.talent && !opts.options.includes(ys.talent)) ys.talent = null;
         const p = addPoint(a, event.attribute, rules.cap, ys.overflow);
@@ -399,27 +445,50 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
     // ---- the Graduation Exam
     if (s.exam === true) {
       let examMerit = 0;
-      t.exam.trials.forEach((trial, k) => {
+      // Stress gained in one Trial stays through the later ones (graduation-exam.yaml, conditions.stress).
+      let examStress = 0;
+      t.exam.stages.forEach((stage, k) => {
         const ts = s.trials[k];
-        const detail: TrialDetail = { trial, choice: null, pool: null, successes: null, merit: null, push: 'not-allowed', reroll: null };
+        const detail: TrialDetail = { stage, trial: null, condition: null, board: null, needs: stage.needs, bands: stage.merit, stressCarried: examStress, choice: null, pool: null, successes: null, merit: null, push: 'not-allowed', reroll: null };
         out.trials.push(detail);
         if (broken) return;
+        // The board: the tens die names this Stage's Trial, the units die the condition it runs under.
+        const trial = ts.board ? (stage.trials.find((x) => x.result === ts.board!.tens) ?? null) : null;
+        const cond = ts.board ? (t.exam.conditions.find((c) => c.result === ts.board!.units) ?? null) : null;
+        if (!trial || !cond) {
+          ts.board = null;
+          ts.entry = null;
+          ts.dice = null;
+          broken = true;
+          return;
+        }
+        detail.trial = trial;
+        detail.condition = cond;
+        detail.board = d66(ts.board!.tens, ts.board!.units);
+        detail.needs = trialNeeds(stage, cond);
+        detail.bands = trialBands(stage, cond);
         if (s.alone) {
           ts.helped = false;
           ts.coverStress = 0;
         }
-        if (!trial.help) ts.helped = false;
+        if (!stage.help) {
+          ts.helped = false;
+          ts.coverStress = 0;
+        }
         if (trial.choices.length === 1) ts.entry = trial.choices[0].entry;
         else if (ts.entry && !trial.choices.some((c) => c.entry === ts.entry)) ts.entry = null;
         if (ts.hunterEye && !(ts.entry === 'read' && (lv['hunters-eye'] ?? 0) > 0)) ts.hunterEye = false;
         const choice = trial.choices.find((c) => c.entry === ts.entry) ?? null;
         detail.choice = choice;
-        if (choice) detail.pool = trialPool(t, a, lv, trial, choice, { helped: ts.helped, stress: k === 2 ? ts.coverStress : 0, hunterEye: ts.hunterEye });
+        const stressHere = examStress + ts.coverStress;
+        if (choice) detail.pool = trialPool(t, a, lv, stage, cond, choice, { helped: ts.helped, stress: stressHere, hunterEye: ts.hunterEye });
         if (ts.dice) {
+          examStress = stressHere + ts.covers.filter((c) => !c).length;
           detail.successes = sixes([...ts.dice.base, ...ts.dice.gear, ...ts.dice.stress]);
-          detail.merit = trialMerit(t, trial, detail.successes, ts.response);
+          detail.merit = trialMerit(t, stage, cond, detail.successes, ts.response);
           examMerit += detail.merit;
-          detail.push = pushBlock({ dice: ts.dice, pushes: ts.covers.length, maxPushes: detail.pool?.maxPushes ?? 0, pushAllowed: trial.push, down: false });
+          const maxPushes = detail.pool?.maxPushes ?? 0;
+          detail.push = pushBlock({ dice: ts.dice, pushes: ts.covers.length, maxPushes, pushAllowed: maxPushes > 0, down: false });
           if (ts.response && !detail.push) detail.push = 'stress-one';
           detail.reroll = detail.push ? null : rerollCounts(ts.dice);
         }
@@ -437,7 +506,7 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
     if (!broken) {
       const before = a;
       const rank = classRankFor(t.classRank, m);
-      const g: GradDetail = { meritTotal: m, rank, specialty, swap: null, swapped: null, floor: { points: 0, needs: null }, before, after: null, talentOptions: [] };
+      const g: GradDetail = { meritTotal: m, rank, specialty, swap: null, swapped: null, floor: { points: 0, needs: null }, before, after: null, talentOptions: [], specialtyTalents: [], generalTalents: [] };
       out.grad = g;
       let ok = !!specialty;
       if (specialty) {
@@ -472,7 +541,10 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
             g.after = a;
           }
         }
-        g.talentOptions = specialty.talents.filter((id) => canGain(t, lv, id));
+        const gt = specialtyTalentOptions(t, lv, specialty);
+        g.talentOptions = gt.options;
+        g.specialtyTalents = gt.specialty;
+        g.generalTalents = gt.general;
         if (s.grad.talent && !g.talentOptions.includes(s.grad.talent)) s.grad.talent = null;
         if (ok && s.grad.talent) lv = gain(lv, s.grad.talent);
       } else {
@@ -544,7 +616,8 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
     // ---- built: Talents
     if (!broken && specialty) {
       const afterOrigin = lv;
-      const specialtyOptions = specialty.talents.filter((id) => builtCanGain(t, lv, id));
+      // The Specialty's list and the general list beside it (lifepath.yaml, built_steps.talents).
+      const specialtyOptions = [...specialty.talents, ...t.general.filter((id) => !specialty.talents.includes(id))].filter((id) => builtCanGain(t, lv, id));
       if (s.grad.talent && !specialtyOptions.includes(s.grad.talent)) s.grad.talent = null;
       if (s.grad.talent) lv = gain(lv, s.grad.talent);
       const any: string[] = [];
@@ -613,7 +686,7 @@ export function replay(input: LifepathState, t: LpTables, opts: { allowed?: Proc
   }
   out.current = current ?? rail[rail.length - 1];
   if (!rail.includes(s.step) || rail.indexOf(s.step) > rail.indexOf(out.current)) s.step = out.current;
-  out.locks = locksOf(s);
+  out.locks = opts.gm ? new Set<string>() : locksOf(s);
   return out;
 }
 
@@ -631,10 +704,13 @@ export function floorPrefix(attrs: Attributes, key: AttributeId, minimum: number
 
 // ---------------------------------------------------------------- edits
 
-/** Sets one choice by path ("origin.talent", "years.1.overflow", "trials.2.entry"), unless a later roll fixed it. */
-export function setChoice(state: LifepathState, key: string, value: unknown, t: LpTables, opts: Parameters<typeof replay>[2] = {}): LifepathState {
-  if (state.finished && key !== 'finish.comrade') return state;
-  if (locksOf(state).has(key)) return state;
+/**
+ * Sets one choice by path ("origin.talent", "years.1.overflow", "trials.2.entry"), unless a later
+ * roll fixed it. A GM override (`opts.gm`) ignores both the locks and a filed soldier.
+ */
+export function setChoice(state: LifepathState, key: string, value: unknown, t: LpTables, opts: ReplayOpts = {}): LifepathState {
+  if (state.finished && key !== 'finish.comrade' && !opts.gm) return state;
+  if (!opts.gm && locksOf(state).has(key)) return state;
   const s = clone(state);
   const parts = key.split('.');
   let target: any = s;
@@ -687,6 +763,23 @@ export function recordOrder(state: LifepathState, k: number, d6: number, t: LpTa
   return replay(s, t, opts).state;
 }
 
+/** Records a Stage's D66 board roll: the tens die names its Trial, the units die the condition. */
+export function recordBoard(state: LifepathState, k: number, roll: D66Roll, t: LpTables, opts: ReplayOpts = {}): LifepathState {
+  const die = (n: number) => Number.isInteger(n) && n >= 1 && n <= 6;
+  if (!state.trials[k] || !die(roll.tens) || !die(roll.units)) return state;
+  if (!opts.gm && (state.trials[k].board || state.trials[k].dice)) return state;
+  const s = clone(state);
+  s.trials[k].board = { ...roll };
+  if (opts.gm) {
+    s.trials[k].entry = null;
+    s.trials[k].dice = null;
+    s.trials[k].covers = [];
+    s.trials[k].fresh = -1;
+    s.trials[k].response = false;
+  }
+  return replay(s, t, opts).state;
+}
+
 /** A Trial roll: its faces by kind; a Stress Die showing 1 is the Exam's Stress Response. */
 export function recordTrial(state: LifepathState, k: number, dice: DiceFaces, t: LpTables, opts: Parameters<typeof replay>[2] = {}): LifepathState {
   const r = replay(state, t, opts);
@@ -735,10 +828,12 @@ export function confirmStep(state: LifepathState, step: StepId, t: LpTables, opt
   return replay(next.state, t, opts).state;
 }
 
-/** Opens a step, if every step before it is done. */
-export function goToStep(state: LifepathState, step: StepId, t: LpTables, opts: Parameters<typeof replay>[2] = {}): LifepathState {
+/** Opens a step, if every step before it is done. A GM override opens any step on the rail. */
+export function goToStep(state: LifepathState, step: StepId, t: LpTables, opts: ReplayOpts = {}): LifepathState {
   const r = replay(state, t, opts);
-  if (!r.rail.includes(step) || r.status[step] === 'blocked') return r.state;
+  if (!r.rail.includes(step)) return r.state;
+  if (opts.gm) return { ...r.state, step };
+  if (r.status[step] === 'blocked') return r.state;
   if (r.rail.indexOf(step) > r.rail.indexOf(r.current)) return r.state;
   return { ...r.state, step };
 }
@@ -761,4 +856,140 @@ export function markFinished(state: LifepathState, t: LpTables, opts: Parameters
 /** Totals a finished soldier must meet (for the tests and the Finish page). */
 export function finalChecks(f: FinalSoldier): { points: number; levels: number; top: number } {
   return { points: attributeTotal(f.attributes), levels: levelTotal(f.talents), top: Math.max(...Object.values(f.talents)) };
+}
+
+// ---------------------------------------------------------------- the GM's overrides
+// Everything below belongs to the GM (foundry/src/lifepath/wizard.ts gates it on game.user.isGM).
+// The rules give the GM no part in the Lifepath; these exist so a table can correct a misclick, run
+// a step again, or hand a player a file made away from the table (ADR-0024).
+
+/** Clears the inputs one step records. Later steps are cleared beside it by `clearStep`. */
+function resetStep(s: LifepathState, step: StepId): void {
+  const base = emptyState();
+  switch (step) {
+    case 'campaign':
+      s.procedure = null;
+      s.year = null;
+      s.exam = null;
+      break;
+    case 'origin':
+      s.origin = base.origin;
+      break;
+    case 'enlist':
+    case 'drive':
+      s.enlist = base.enlist;
+      break;
+    case 'year-1':
+    case 'year-2':
+    case 'year-3':
+      s.years[YEAR_STEPS.indexOf(step)] = emptyYear();
+      break;
+    case 'exam':
+      s.alone = base.alone;
+      s.trials = [emptyTrial(), emptyTrial(), emptyTrial()];
+      break;
+    case 'graduation':
+      s.grad = base.grad;
+      s.specialty = null;
+      break;
+    case 'specialty':
+      s.specialty = null;
+      break;
+    case 'attributes':
+      s.built = { ...s.built, shape: null, placement: base.built.placement };
+      break;
+    case 'stories':
+      s.built = { ...s.built, stories: [null, null, null] };
+      break;
+    case 'talents':
+      s.grad = { ...s.grad, talent: null };
+      s.built = { ...s.built, any: [] };
+      break;
+    case 'merit':
+      break;
+    case 'finish':
+      s.finished = false;
+      s.finish = base.finish;
+      break;
+    case 'squad':
+      s.finish = { ...s.finish, comrade: '' };
+      break;
+  }
+}
+
+/** Clears a step and every step after it on the rail, and opens the cleared step. */
+export function clearStep(state: LifepathState, step: StepId, t: LpTables, opts: ReplayOpts = {}): LifepathState {
+  const rail = railFor(state);
+  const from = rail.indexOf(step);
+  if (from < 0) return state;
+  const s = clone(state);
+  for (const id of rail.slice(from)) resetStep(s, id);
+  s.finished = false;
+  s.confirmed = s.confirmed.filter((id) => rail.indexOf(id) >= 0 && rail.indexOf(id) < from);
+  s.step = step;
+  return replay(s, t, opts).state;
+}
+
+/** A file started over. The soldier's name is kept unless the GM asks for a blank sheet. */
+export function restartState(state: LifepathState, keep: { name?: boolean } = {}): LifepathState {
+  const s = emptyState();
+  if (keep.name) s.finish.name = state.finish.name;
+  return s;
+}
+
+/** Re-opens a filed soldier so the GM can change what it recorded. */
+export function unfinish(state: LifepathState, t: LpTables, opts: ReplayOpts = {}): LifepathState {
+  const s = clone(state);
+  s.finished = false;
+  s.confirmed = s.confirmed.filter((id) => id !== 'finish' && id !== 'squad');
+  s.step = 'finish';
+  return replay(s, t, opts).state;
+}
+
+/** One roll the GM can throw away so it can be made again. */
+export type RollKey = 'origin' | 'enlist' | `years.${number}.event` | `years.${number}.perf` | `trials.${number}.board` | `trials.${number}.order` | `trials.${number}.dice`;
+
+export function clearRoll(state: LifepathState, key: RollKey, t: LpTables, opts: ReplayOpts = {}): LifepathState {
+  const s = clone(state);
+  const [head, idx, what] = key.split('.');
+  const i = Number(idx);
+  if (key === 'origin') s.origin = { ...emptyState().origin };
+  else if (key === 'enlist') s.enlist = { ...emptyState().enlist };
+  else if (head === 'years' && what === 'event') s.years[i] = emptyYear();
+  else if (head === 'years' && what === 'perf') s.years[i] = { ...s.years[i], perf: null, perfAttr: null };
+  else if (head === 'trials' && what === 'board') s.trials[i] = emptyTrial();
+  else if (head === 'trials' && what === 'order') s.trials[i] = { ...s.trials[i], order: [] };
+  else if (head === 'trials' && what === 'dice') s.trials[i] = { ...s.trials[i], dice: null, covers: [], fresh: -1, response: false, message: '' };
+  else return state;
+  s.finished = false;
+  return replay(s, t, opts).state;
+}
+
+/** The faces an overridden roll of `dice` dice records to show `successes` sixes: no 1 is ever written. */
+export const facesFor = (dice: number, successes: number): number[] => Array.from({ length: Math.max(0, dice) }, (_, i) => (i < successes ? 6 : 2));
+
+/** The GM writes a Training Year's performance roll straight to a number of successes. */
+export function setPerformanceResult(state: LifepathState, i: number, successes: number, t: LpTables, opts: ReplayOpts = {}): LifepathState {
+  const r = replay(state, t, { ...opts, gm: true });
+  const d = r.years[i];
+  if (!d?.perf?.attribute || d.skipPerformance) return state;
+  const s = clone(r.state);
+  s.years[i].perf = facesFor(d.perf.dice, Math.max(0, Math.min(d.perf.dice, successes)));
+  return replay(s, t, opts).state;
+}
+
+/** The GM writes a Trial's roll straight to a number of successes, clearing any Push it carried. */
+export function setTrialResult(state: LifepathState, k: number, successes: number, t: LpTables, opts: ReplayOpts = {}): LifepathState {
+  const r = replay(state, t, { ...opts, gm: true });
+  const pool = r.trials[k]?.pool;
+  if (!pool) return state;
+  const s = clone(r.state);
+  let left = Math.max(0, Math.min(pool.base + pool.gear + pool.stress, successes));
+  const take = (count: number) => {
+    const hits = Math.min(count, left);
+    left -= hits;
+    return facesFor(count, hits);
+  };
+  s.trials[k] = { ...s.trials[k], dice: { base: take(pool.base), gear: take(pool.gear), stress: take(pool.stress) }, covers: [], fresh: -1, response: false };
+  return replay(s, t, opts).state;
 }

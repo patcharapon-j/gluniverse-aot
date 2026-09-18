@@ -23,9 +23,10 @@
   const locks = $derived(r.locks);
   const perfBlocks = $derived(view.page.sections['the-performance-roll']);
 
+  // The event's own three Talents, then the year's whole curriculum beside them (talent_cap).
   const talentOptions = $derived.by(() => {
     if (!d?.event) return [];
-    const ids = d.fallback === 'none' ? d.event.talents : [...new Set([...d.event.talents, ...d.talentOptions])];
+    const ids = d.fallback === 'all-capped' ? d.talentOptions : [...new Set([...d.event.talents, ...year.curriculum])];
     return ids.map((id) => {
       const x = talentInfo(tables, id);
       const open = d.talentOptions.includes(id);
@@ -82,8 +83,8 @@
       <Overflow from={d.event.attribute} needs={d.overflowNeeds} value={ys.overflow} cap={tables.rules.cap} locked={locks.has(`years.${i}.overflow`)} disabled={ro} onpick={(a) => act.choose(`years.${i}.overflow`, a)} />
     {/if}
     <h5 class="lp-q">{t('WOF.Lifepath.year.talent')}</h5>
-    {#if d.fallback === 'both-capped'}<p class="note red-text">{t('WOF.Lifepath.year.bothCapped')}</p>{/if}
-    {#if d.fallback === 'dormant'}<p class="note">{t('WOF.Lifepath.year.dormant')}</p>{/if}
+    <p class="note">{t('WOF.Lifepath.year.talentHint', { n: talentOptions.filter((x) => !x.disabled).length })}</p>
+    {#if d.fallback === 'all-capped'}<p class="note red-text">{t('WOF.Lifepath.year.allCapped')}</p>{/if}
     <Pick options={talentOptions} value={ys.talent} label={t('WOF.Lifepath.year.talent')} locked={locks.has(`years.${i}.talent`)} disabled={ro} cols={talentOptions.length > 2 ? 3 : 2} onpick={(id) => act.choose(`years.${i}.talent`, id)} />
   </article>
 

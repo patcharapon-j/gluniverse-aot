@@ -40,7 +40,7 @@ export interface LifepathWording {
 
 /** The Subsections, boxes, and figures the wizard shows. */
 export const NEEDED = {
-  sections: ['before-the-lifepath', 'origin', 'why-you-enlisted', 'training-years', 'the-performance-roll', 'graduation', 'finishing', 'using-the-exam', 'how-the-exam-is-played', 'the-three-trials', 'the-build-steps', 'the-starting-squad', 'named-comrades'],
+  sections: ['before-the-lifepath', 'origin', 'why-you-enlisted', 'training-years', 'the-performance-roll', 'graduation', 'finishing', 'using-the-exam', 'how-the-exam-is-played', 'the-three-stages', 'the-build-steps', 'the-starting-squad', 'named-comrades'],
   boxes: ['Attribute cap', 'Talent cap', 'Talent limits', 'What only the Lifepath reaches'],
   flows: ['fig-lifepath', 'fig-graduation'],
 } as const;

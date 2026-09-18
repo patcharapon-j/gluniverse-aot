@@ -7,7 +7,7 @@ import { commitPlan, REPLACED_TYPES, type HeldItem } from './commit-plan.ts';
 import type { IssuePlan, LpTables, Procedure } from '../rules/lifepath.ts';
 import { replay, type LifepathState, type Replay } from '../rules/lifepath-state.ts';
 import { named, SvelteSheetMixin } from '../sheets/svelte-sheet.ts';
-import { allowedProcedures, recordCampaignYear, worldYear } from './campaign.ts';
+import { allowedProcedures, recordCampaignYear, worldBoard, worldYear } from './campaign.ts';
 import WizardRoot from './components/LifepathWizard.svelte';
 import { lifepathActions, lpTables, readState, type LifepathActions } from './wizard.ts';
 
@@ -21,18 +21,24 @@ export interface WizardView {
   page: { sections: Record<string, any[]>; boxes: Record<string, any[]>; flows: Record<string, any[]> };
   allowed: Procedure[];
   worldYear: number | null;
+  /** The campaign's exam board, one D66 per Stage, as far as it has been rolled. */
+  worldBoard: (number | null)[];
+  /** The GM has every lock off on this file (wizard-app.ts owns the toggle). */
+  gmOverride: boolean;
   issue: IssuePlan | null;
   replaced: string[];
   comrades: { id: string; name: string }[];
   act: LifepathActions;
 }
 
-export function buildWizardView(actor: any, editable: boolean, act: LifepathActions): WizardView {
+export function buildWizardView(actor: any, editable: boolean, act: LifepathActions, override = false): WizardView {
   const tables = lpTables();
   const state = readState(actor);
   const allowed = allowedProcedures();
   const year = worldYear();
-  const r = replay(state, tables, { allowed, worldYear: year });
+  const board = worldBoard();
+  const gmOverride = override && !!game.user.isGM;
+  const r = replay(state, tables, { allowed, worldYear: year, worldBoard: board, gm: gmOverride });
   const held: HeldItem[] = [...actor.items].map((i: any) => ({
     id: i.id,
     type: i.type,
@@ -54,6 +60,8 @@ export function buildWizardView(actor: any, editable: boolean, act: LifepathActi
     page: CONFIG.WOF.lifepathPage,
     allowed,
     worldYear: year,
+    worldBoard: board,
+    gmOverride,
     issue: plan?.issue ?? null,
     replaced,
     comrades,
@@ -109,8 +117,17 @@ export function defineWizard() {
       return WizardRoot;
     }
 
+    /** The GM's lock override for this window only; it is never stored on the actor. */
+    #override = false;
+
+    toggleOverride() {
+      if (!game.user.isGM) return;
+      this.#override = !this.#override;
+      this.render();
+    }
+
     async buildView() {
-      return buildWizardView(this.document, this.isEditable, this.act);
+      return buildWizardView(this.document, this.isEditable, this.act, this.#override);
     }
 
     _onFirstRender(context: any, options: any) {

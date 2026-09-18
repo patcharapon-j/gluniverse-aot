@@ -61,7 +61,7 @@ const talentHref = (t: Ref) => `/compendium/talents/#${t.slug}`;
       >
         <div slot="head">
           <SectionHead id="origins" eyebrow="Roll D66">Origin</SectionHead>
-          <p class="lp-intro">Each row names two attributes, two Talents to choose from, and two Havens to choose from.</p>
+          <p class="lp-intro">Each row names two attributes, four Talents to choose from, and three Havens to choose from.</p>
         </div>
         <div class="cards">
           {origins.map((o) => (
@@ -129,7 +129,7 @@ const talentHref = (t: Ref) => `/compendium/talents/#${t.slug}`;
 
     <section class="lp-section" aria-labelledby="training-years">
       <SectionHead id="training-years" eyebrow="Three years, roll D66 for each">Training Years</SectionHead>
-      <p class="lp-intro">Each event names one attribute, two Talents to choose from, and a change to Merit, which can be negative. If neither Talent can gain a level, take a level in a Talent on that year's curriculum. Each year also has a performance roll that earns Merit; the Graduation Exam, if played, replaces the third.</p>
+      <p class="lp-intro">Each event names one attribute, three Talents to choose from, and a change to Merit, which can be negative. The year's curriculum is open beside them, so every year offers at least twelve Talents. Each year also has a performance roll that earns Merit; the Graduation Exam, if played, replaces the third.</p>
       {years.map((y) => (
         <div class="year">
           <div class="year-head">

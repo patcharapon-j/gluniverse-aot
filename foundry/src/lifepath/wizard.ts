@@ -10,29 +10,40 @@ import { clock, postCard, saveCard } from '../dice/post.ts';
 import { showDice, WofRoll } from '../dice/terms.ts';
 import { d66, sixes, type LpTables } from '../rules/lifepath.ts';
 import {
+  clearRoll,
+  clearStep,
   confirmStep,
   goToStep,
   normalizeState,
   previousStep,
   pushNeeds,
+  recordBoard,
   recordD66,
   recordOrder,
   recordPerformance,
   recordPush,
   recordTrial,
   replay,
+  restartState,
   setChoice,
+  setPerformanceResult,
+  setTrialResult,
+  unfinish,
   type LifepathState,
+  type RollKey,
   type StepId,
 } from '../rules/lifepath-state.ts';
-import { allowedProcedures, recordCampaignYear, worldYear } from './campaign.ts';
+import { allowedProcedures, clearExamBoard, recordCampaignYear, recordExamBoard, setExamBoard, worldBoard, worldYear } from './campaign.ts';
 import { commitLifepath } from './commit.ts';
 
 export const LIFEPATH_FLAG = 'lifepath';
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 export const lpTables = (): LpTables => CONFIG.WOF.lifepath as LpTables;
-export const replayOpts = () => ({ allowed: allowedProcedures(), worldYear: worldYear() });
+export const replayOpts = () => ({ allowed: allowedProcedures(), worldYear: worldYear(), worldBoard: worldBoard() });
+/** The same options with every lock off, for the GM's overrides. */
+export const gmOpts = () => ({ ...replayOpts(), gm: true });
+const isGM = (): boolean => !!game.user.isGM;
 
 export function readState(actor: any): LifepathState {
   return normalizeState(actor.getFlag(SYSTEM_ID, LIFEPATH_FLAG));
@@ -225,6 +236,30 @@ export function lifepathActions(actor: any) {
         return next;
       }),
 
+    rollBoard: (k: number) =>
+      run(actor, async (s) => {
+        if (s.trials[k].board || worldBoard()[k] !== null) return s;
+        const { roll, tens, units } = await rollD66();
+        await recordExamBoard(k, d66(tens, units));
+        const next = recordBoard(s, k, { tens, units }, tb(), o());
+        if (next === s) return s;
+        const d = replay(next, tb(), o()).trials[k];
+        await postCard(
+          actor,
+          card(actor, {
+            title: t('WOF.Lifepath.card.board', { stage: d.stage.name }),
+            d66: [tens, units],
+            big: String(d66(tens, units)),
+            label: d.trial?.name ?? '',
+            text: d.trial?.description ?? '',
+            lines: [t('WOF.Lifepath.card.condition', { name: d.condition?.name ?? '', text: d.condition?.description ?? '' })],
+            glyph: iconPath('seal-wax'),
+          }),
+          [roll],
+        );
+        return next;
+      }),
+
     rollOrder: (k: number) =>
       run(actor, async (s) => {
         const roll = await new (WofRoll())('1d6').evaluate();
@@ -234,7 +269,7 @@ export function lifepathActions(actor: any) {
         await postCard(
           actor,
           card(actor, {
-            title: t('WOF.Lifepath.card.order', { trial: tb().exam.trials[k].name }),
+            title: t('WOF.Lifepath.card.order', { trial: tb().exam.stages[k].name }),
             plain: [d6],
             big: String(d6),
             label: t('WOF.Lifepath.card.orderLabel'),
@@ -292,6 +327,57 @@ export function lifepathActions(actor: any) {
       run(actor, async () => {
         await actor.unsetFlag(SYSTEM_ID, LIFEPATH_FLAG);
       }),
+
+    // ---------------------------------------------------------------- the GM's overrides
+    // Every one of these is a no-op for a player: the wizard shows them only to a GM, and the
+    // check here is what enforces it.
+
+    /** Sets any choice, however late, ignoring the locks and a filed soldier. */
+    gmChoose: (key: string, value: unknown) => run(actor, async (s) => (isGM() ? setChoice(s, key, value, tb(), gmOpts()) : s)),
+
+    /** Opens any step on the rail. */
+    gmGoTo: (step: StepId) => run(actor, async (s) => (isGM() ? goToStep(s, step, tb(), gmOpts()) : s)),
+
+    /** Clears a step and everything after it. */
+    gmClearStep: (step: StepId) => run(actor, async (s) => (isGM() ? clearStep(s, step, tb(), gmOpts()) : s)),
+
+    /** Throws one roll away so it can be made again. */
+    gmClearRoll: (key: RollKey) => run(actor, async (s) => (isGM() ? clearRoll(s, key, tb(), gmOpts()) : s)),
+
+    /** Starts the file over, keeping the soldier's name unless asked for a blank sheet. */
+    gmRestart: (keepName = true) => run(actor, async (s) => (isGM() ? restartState(s, { name: keepName }) : s)),
+
+    /** Re-opens a filed soldier. */
+    gmUnfinish: () => run(actor, async (s) => (isGM() ? unfinish(s, tb(), gmOpts()) : s)),
+
+    /** Writes a D66 roll by hand. */
+    gmSetD66: (where: 'origin' | 'enlist' | 0 | 1 | 2, tens: number, units: number) =>
+      run(actor, async (s) => {
+        if (!isGM()) return s;
+        const cleared = clearRoll(s, where === 'origin' || where === 'enlist' ? where : (`years.${where}.event` as RollKey), tb(), gmOpts());
+        return recordD66(cleared, where, { tens, units }, tb(), gmOpts());
+      }),
+
+    /** Writes a Stage's board by hand, for this soldier and for the campaign. */
+    gmSetBoard: (k: number, tens: number, units: number) =>
+      run(actor, async (s) => {
+        if (!isGM()) return s;
+        await setExamBoard(k, d66(tens, units));
+        return recordBoard(s, k, { tens, units }, tb(), gmOpts());
+      }),
+
+    /** Clears a Stage's board, for this soldier and for the campaign, so it is rolled again. */
+    gmClearBoard: (k: number | null) =>
+      run(actor, async (s) => {
+        if (!isGM()) return s;
+        await clearExamBoard(k);
+        if (k === null) return clearStep(s, 'exam', tb(), gmOpts());
+        return clearRoll(s, `trials.${k}.board` as RollKey, tb(), gmOpts());
+      }),
+
+    /** Writes a performance roll or a Trial roll straight to a number of successes. */
+    gmSetPerformance: (i: number, successes: number) => run(actor, async (s) => (isGM() ? setPerformanceResult(s, i, successes, tb(), gmOpts()) : s)),
+    gmSetTrial: (k: number, successes: number) => run(actor, async (s) => (isGM() ? setTrialResult(s, k, successes, tb(), gmOpts()) : s)),
   };
 }
 
@@ -308,13 +394,14 @@ function trialCard(actor: any, s: LifepathState, k: number): LifepathCard {
   const lines: string[] = [];
   if (ts.response) lines.push(t('WOF.Lifepath.exam.response'));
   if (d.pool?.talent) lines.push(t('WOF.Lifepath.card.talent', { name: d.pool.talent.name, n: d.pool.talent.dice }));
+  if (d.condition && d.condition.id !== 'a-fair-run') lines.push(d.condition.name);
   return card(actor, {
-    title: d.trial.name,
+    title: d.trial?.name ?? d.stage.name,
     dice: ts.dice,
     fresh: ts.fresh,
     pushes: ts.covers.length,
     big: String(d.successes ?? 0),
-    label: t('WOF.Lifepath.card.needs', { entry: entry?.name ?? '', needs: d.trial.needs }),
+    label: t('WOF.Lifepath.card.needs', { entry: entry?.name ?? '', needs: d.needs }),
     text: t('WOF.Lifepath.card.merit', { merit: signed(d.merit ?? 0) }),
     lines,
     flags,

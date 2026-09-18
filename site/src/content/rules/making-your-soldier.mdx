@@ -6,25 +6,25 @@ order: 2
 tab: Soldier
 sources:
   - path: docs/rules/02-character-creation.md
-    sha: "3f3e80a8b39660283d5404ee2343983408dfdcf2"
+    sha: "9e0516ac5e70fc27a182a2ca095d11f945a99f6f"
   - path: data/character/attributes.yaml
     sha: "a096bb9f1ef8eb9690180527a6d22807d2db3b04"
   - path: data/character/lifepath.yaml
-    sha: "63a82b62122bb2fd75ebe2f37dcd713fa32f245f"
+    sha: "432a3f8a2e6020f3e8e4cf2efc8fd4d362257431"
   - path: data/character/origins.yaml
-    sha: "f1f3a49f24267123a072716e2e46395d959dcc1e"
+    sha: "19f8707b73475db492a371820f038b401679982e"
   - path: data/character/enlistment.yaml
     sha: "44ada152c4942980c41db24e4cf9855e0e962cec"
   - path: data/character/training-years.yaml
-    sha: "680d7e61d8b18d7a3dc2ef9f67d28ae35ece1a88"
+    sha: "cd34ba15125b16f81d1ba83b7632c129de9d2fc5"
   - path: data/character/class-rank.yaml
     sha: "15dc3a919762ba599ae0a60cf15df8f34ea9c900"
   - path: data/character/graduation-exam.yaml
-    sha: "7086980b7e6f8a14d19b4bce12a6c509f7427679"
+    sha: "22eb43a6f27449c9d54e1f085f75b0564ca52230"
   - path: data/character/specialties.yaml
-    sha: "a08367f95a4cc296febc06a2b773ef6054065ffc"
+    sha: "e2a9ac2e3ba1f33ed573570291b89f769aa1118c"
   - path: data/character/squadmates.yaml
-    sha: "9b6eaa396654a45d25a36eaa453b398c264d4559"
+    sha: "35cc08512631fad8bfc02ad44269ed888e401dc7"
   - path: data/character/talents.yaml
     sha: "4d63533a7910acc0dcb8bb0ee1f5e6e5b0340c4b"
   - path: data/character/action-catalog.yaml
@@ -161,7 +161,7 @@ Record the <GlossaryTerm term="Campaign Year" /> (845 to 850) if the campaign ha
 
 <Subsection title="Origin" note="Step 1" id="origin">
 
-Set every attribute to **2**, then roll D66 on the Origin table, re-rolling a row whose condition the Campaign Year does not meet. Add 1 to each of its **two attributes**, take level 1 in one of its **two Talents**, and record one of its **two Havens**: what you have to return to, and what Visit Haven uses to lower your Stress and Grief. A row's <GlossaryTerm term="Canon Tie" /> is optional and changes nothing in play.
+Set every attribute to **2**, then roll D66 on the Origin table, re-rolling a row whose condition the Campaign Year does not meet. Add 1 to each of its **two attributes**, take level 1 in one of its **four Talents**, and record one of its **three Havens**: what you have to return to, and what Visit Haven uses to lower your Stress and Grief. A row's <GlossaryTerm term="Canon Tie" /> is optional and changes nothing in play.
 
 <CoreTable table="origins" />
 
@@ -249,8 +249,8 @@ If the players voted for the Exam, it replaces the third year's performance roll
   {
     title: "Specialty Talent.",
     icon: "ph:student",
-    text: "Gain 1 level in one Talent on your Specialty's list, to a maximum of level 2.",
-    exit: { kind: "stop", label: "List only", text: "Never a Talent from the general list." },
+    text: "Gain 1 level in one Talent on your Specialty's list or on the general list, to a maximum of level 2.",
+    exit: { kind: "stop", label: "Two lists", text: "Your Specialty's eight, or the general list's twelve." },
   },
 ]} />
 
@@ -274,9 +274,11 @@ Once everyone is done: create <a href="#the-starting-squad">starting Squadmates<
 
 An optional prologue: three <GlossaryTerm term="Trials" /> played out after every Cadet's third-year event and before Graduation. Their Merit replaces the third performance roll, so it helps set each <GlossaryTerm term="Class Rank" />. **Built soldiers take no Trial** and earn no Exam Merit, whatever the vote.
 
+The Exam runs in three **Stages**, and each Stage rolls **D66** once for the whole class: the tens die names which of that Stage's six Trials you run, the units die the condition it is run under. Thirty-six ways to sit each Stage, so no two classes graduate the same way.
+
 <InkVignette caption="A Cadet swings between pines toward the nape of a wooden Titan dummy running on its rail." label="A Cadet on ODM lines closing on a wooden Titan dummy" art="guide-making-your-soldier-exam" />
 
-<FinePrint title="the Exam's conditions and its three Trials">
+<FinePrint title="the Exam's conditions, its three Stages, and the Trials they run">
 
 <Subsection title="Using the Exam" id="using-the-exam">
 
@@ -291,24 +293,31 @@ An optional prologue: three <GlossaryTerm term="Trials" /> played out after ever
 
 <FactTable caption="Exam conditions" columns={['', '']} rows={[
   ['Not a fight', 'No rounds, turns, Positions, Attention, Gas Rolls, or Titans. Requirements needing any of those do not apply, and the listed exam issue item always satisfies the gear requirement.'],
-  ['Pools', 'Full pools: attribute, one dice Talent, exam issue Gear Dice, Stress Dice. Bonus Dice only from Help in the squad field exercise.'],
+  ['Pools', 'Full pools: attribute, one dice Talent, exam issue Gear Dice, Stress Dice. Bonus Dice from Help in the squad field exercise and from the Trial\'s condition.'],
   ['Circumstances', 'None. The Exam is creation, played before the campaign begins.'],
   ['Stress', 'Everyone starts at 0, carries what they gain between Trials, and returns to 0 when the Exam ends.'],
   ['A Stress Response', 'Costs that Trial <b>1 Merit</b> instead of being rolled on the Wounds &amp; Fear table, and still blocks a Push.'],
   ['Order', 'Rolled, never chosen: a D6 each before every Trial, highest first, ties re-rolled.'],
+  ['The board', 'Rolled, never chosen: one D66 per Stage for the whole class, the tens die naming the Trial and the units die its condition.'],
 ]} />
 
 <CoreTable table="exam-issue" />
 
 </Subsection>
 
-<Subsection title="The three Trials" id="the-three-trials">
+<Subsection title="The three Stages" id="the-three-stages">
+
+<CoreTable table="exam-stages" />
+
+**The individual assessment** and **the Titan test** are graded alone: no Help, no Covering, and no Push unless the Stage's condition allows one. Each pays 1 Merit at **2 successes**.
+
+**The squad field exercise** lets each Cadet pick their part and need **3 successes** for 1 Merit. It can be Pushed, and **Help is fixed**: each Cadet Helps exactly one roll, the one after them in the order, the first Helping the last. Any Cadet who could Help may **Cover** a Push until they have made their own roll. Merit comes only from your own roll.
 
 <CoreTable table="exam-trials" />
 
-The ODM balance test and the Titan dummy course cannot be Pushed, Helped, or Covered.
+<CoreTable table="exam-conditions" />
 
-**The squad field exercise** lets each Cadet pick one of six rolls and need **3 successes** for 1 Merit. It can be Pushed, and **Help is fixed**: each Cadet Helps exactly one roll, the one after them in the order, the first Helping the last. Any Cadet who could Help may **Cover** a Push until they have made their own roll. Merit comes only from your own roll.
+A condition that changes the successes a Trial needs moves its Merit rows by the same amount. A condition with nothing to change in a Trial, such as taking the Gear Dice from a Trial that issues no gear, simply does nothing there.
 
 </Subsection>
 
@@ -360,7 +369,7 @@ A named comrade is any other living soldier in the Squad, chosen when the Drive 
 
 Chosen at Graduation or at a build's Specialty step — not rolled, no requirement, never changed. It grants three things: the **key attribute** (the only one that can reach 6), the Graduation **swap and floor**, and **1 Talent level from its list**, to a maximum of level 2. A built soldier takes the first and last only.
 
-**It never grants permission.** Every soldier can attempt every entry and hold any Talent, including one from another Specialty's list; a soldier without the Talent still rolls their full attribute. The list limits only where that one granted level can go. The **general list** of twelve Talents about temperament and survival is open to anyone, but a Specialty's level never goes into one.
+**It never grants permission.** Every soldier can attempt every entry and hold any Talent, including one from another Specialty's list; a soldier without the Talent still rolls their full attribute. The list limits only where that one granted level can go: your own Specialty's list, or the **general list** of twelve Talents about temperament and survival, which is open to anyone. That is twenty Talents to choose between, or twenty-one for a Leader.
 
 </Subsection>
 
@@ -572,7 +581,7 @@ Both builds run the same way and differ only at step 3.
 4. **Origin.** Choose a row the Campaign Year allows. Take a Haven, its Canon Tie if you want it, and **1 Talent level**, but none of its attribute points.
 5. **Drive.** Any row's, with no attribute point.
 6. **Training Years, for the story.** Name one event row per year if you like. They give nothing.
-7. **Talents.** 1 level from your Specialty's list, then 3 in any Talents.
+7. **Talents.** 1 level from your Specialty's list or the general list, then 3 in any Talents.
 8. **Merit and Class Rank:** none. Never Top 10.
 9. **Finish and join the Squad** as a <a href="#finishing">Lifepath soldier</a> does.
 
@@ -581,7 +590,7 @@ Both builds run the same way and differ only at step 3.
 <BoxPair>
 <RuleBox title="Talent limits" icon="ph:student">
 
-- **5 levels:** 1 Origin, 1 Specialty list, 3 free.
+- **5 levels:** 1 Origin, 1 from the Specialty or general list, 3 free.
 - No Talent above level 2, and **at most one Talent at level 2**.
 - No rule Talent above its maximum.
 

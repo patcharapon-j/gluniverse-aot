@@ -293,6 +293,24 @@
   .wof-sheet .lp-tab, .wof-sheet .pick, .wof-sheet .lf-attr { transition: none; }
 }
 
+/* ── The GM's controls (the rules give the GM no part in the Lifepath) ─ */
+.wof-sheet .lp-gm {
+  margin: 0 0 var(--s3); padding: var(--s2); border: 1px dashed var(--ink2);
+  background: repeating-linear-gradient(135deg, rgba(110, 83, 37, .05) 0 8px, transparent 8px 16px);
+}
+.wof-sheet .lp-gm .gm-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s1) var(--s2); margin: var(--s1) 0; }
+.wof-sheet .lp-gm .gm-tag {
+  font: 700 var(--t-xs)/1 var(--fl); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--paper-hi); background: var(--ink); padding: 3px var(--s1);
+}
+.wof-sheet .lp-gm .lbl { font: var(--t-xs)/1.3 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); }
+.wof-sheet .lp-gm .gm-field { display: inline-flex; align-items: center; gap: var(--s1); }
+.wof-sheet .lp-gm input[type=number] { width: 52px; height: 24px; padding: 0 var(--s1); font: var(--t-sm)/1.2 var(--fd); text-align: center; }
+.wof-sheet .lp-gm select { height: 24px; padding: 0 var(--s1); font: var(--t-sm)/1.2 var(--fb); }
+.wof-sheet .lp-gm .note { flex: 1 1 100%; }
+/* The condition a Stage's board rolled, above the Trial's own choices. */
+.wof-sheet .trial .cond { margin: var(--s1) 0 var(--s2); font: var(--t-sm)/1.4 var(--fb); color: var(--ink2); border-left: 3px solid var(--brass); padding-left: var(--s2); }
+
 /* ── Chat: the Lifepath card ────────────────────────────────────────── */
 .wof-card .d66-sep { display: inline-block; width: 4px; }
 .wof-card .result.struck .big, .wof-card .result.struck .rt b { text-decoration: line-through; text-decoration-color: var(--red); color: var(--ink3); }

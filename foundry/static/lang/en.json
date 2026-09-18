@@ -1053,6 +1053,10 @@
           "name": "Momentum",
           "hint": "Take all Momentum from every soldier who made no ODM move, at the end of each round."
         }
+      },
+      "examBoard": {
+        "name": "The Graduation Exam board",
+        "hint": "The D66 each Exam Stage was rolled on, one per Stage, so every Cadet takes the same Trial under the same condition."
       }
     },
     "Sheet": {
@@ -1974,17 +1978,16 @@
       },
       "exam": {
         "run": "Run the Exam",
-        "runSub": "Three Trials replace the Third Year's performance roll.",
+        "runSub": "Three Trials, one from each Stage, replace the Third Year's performance roll.",
         "skip": "No Exam",
         "skipSub": "The Third Year ends with its performance roll.",
-        "hint": "Three Trials, in order",
-        "trialsRules": "The three Trials, with Help and Cover",
+        "hint": "Three Stages, in order",
+        "trialsRules": "The three Stages, with Help and Cover",
         "company": "Who takes the Exam?",
         "alone": "Alone",
         "aloneSub": "A replacement character, or the only Cadet: no order rolls, no Help, no Cover.",
         "group": "With other Cadets",
         "groupSub": "Every Cadet rolls for the order before each Trial; the table settles who Helps and Covers.",
-        "trialN": "Trial {n}",
         "rollOrder": "Roll for the order",
         "orderNote": "Roll again on a tie. Cadets roll this Trial from the highest result down.",
         "orderFirst": "Roll a D6 for the order before this Trial.",
@@ -2011,7 +2014,12 @@
           "already-pushed": "Already Pushed.",
           "nothing": "Every die shows a success: nothing to Push."
         },
-        "total": "Exam Merit {merit}. Merit total {total}."
+        "total": "Exam Merit {merit}. Merit total {total}.",
+        "stageN": "Stage {n}",
+        "rollBoard": "Roll the board (D66)",
+        "boardNote": "D66 for {stage}: the tens die names its Trial, the units die the condition it is run under.",
+        "needsChip": "{needs} successes for 1 Merit",
+        "carriedStress": "{n} Stress carried from an earlier Trial"
       },
       "origin": {
         "hint": "D66",
@@ -2049,8 +2057,6 @@
         "talent": "Talent, +1 level",
         "curriculumBadge": "Curriculum",
         "capped": "Cannot gain a level now.",
-        "bothCapped": "Neither of the event's Talents can gain a level: take 1 level in a Talent on this year's curriculum.",
-        "dormant": "The only Talent here that can gain a level names only entries no rule calls for: take it, or a Talent on this year's curriculum.",
         "performance": "Performance roll",
         "tie": "Both are equal: pick one.",
         "dice": "{n} dice",
@@ -2059,7 +2065,9 @@
         "choicesFirst": "Choose the Talent (and where any extra point goes) first.",
         "examReplaces": "The Graduation Exam replaces this roll",
         "meritTotal": "Merit total after this year: {merit}",
-        "bands": "Merit by successes"
+        "bands": "Merit by successes",
+        "allCapped": "Every Talent the event and the curriculum offer is already at its highest level at creation, so any Talent that can gain one is open instead.",
+        "talentHint": "{n} Talents are open: the event's own three, and the year's whole curriculum beside them."
       },
       "grad": {
         "hint": "Five steps, in order",
@@ -2078,7 +2086,9 @@
         "lower": "Lower {a}",
         "floorUndo": "Undo",
         "top10Line": "Top 10: {a} rises to {v}.",
-        "talent": "{name} Talent, +1 level"
+        "talent": "{name} Talent, +1 level",
+        "generalBadge": "General",
+        "talentHint": "{n} Talents are open: the {name}'s list and the general list beside it."
       },
       "finish": {
         "hint": "Record, receive, and name",
@@ -2177,7 +2187,9 @@
         "orderText": "Highest rolls first",
         "needs": "{entry}, needs {needs}",
         "talent": "{name} {n}",
-        "covered": "Covered"
+        "covered": "Covered",
+        "board": "{stage}: the board",
+        "condition": "{name}. {text}"
       },
       "banner": {
         "emptyTitle": "This file is empty",
@@ -2192,7 +2204,38 @@
         "title": "Clear the Lifepath",
         "hint": "Clears this soldier's Lifepath progress and rolls. The sheet itself is not changed."
       },
-      "orMore": "{n} or more"
+      "orMore": "{n} or more",
+      "gm": {
+        "title": "GM controls",
+        "tag": "GM",
+        "override": "Override the locks",
+        "overrideOn": "Every choice can be changed, however late, and a filed soldier can be edited.",
+        "overrideOff": "The file follows the rules: a choice a later roll fixed cannot change.",
+        "step": "Open a step",
+        "clearFrom": "Clear this step and everything after",
+        "clearStep": {
+          "title": "Clear this step and everything after",
+          "hint": "Throws away what this step and every later step recorded, and opens this step again. The soldier's sheet is not changed."
+        },
+        "reopen": "Re-open the filed soldier",
+        "restart": {
+          "title": "Restart the file",
+          "hint": "Throws the whole file away and starts again from the Campaign Year, keeping only the soldier's name. The sheet itself is not changed."
+        },
+        "restartTitle": "Restart the file",
+        "setD66": "Write a D66",
+        "write": "Write",
+        "clearRoll": "Clear the roll",
+        "setSuccesses": "Successes",
+        "writePerformance": "Write the performance roll",
+        "writeTrial": "Write the Trial roll",
+        "board": "The Exam board",
+        "boardNote": "The board is the campaign's: every Cadet takes the same Trial under the same condition.",
+        "clearBoard": "Clear this Stage",
+        "clearBoardAll": "Clear the whole board",
+        "restartHint": "Throws the whole file away and starts again from the Campaign Year, keeping only the soldier's name. The sheet itself is not changed.",
+        "restartLabel": "Restart the file"
+      }
     },
     "Tracker": {
       "title": "Engagement tracker",

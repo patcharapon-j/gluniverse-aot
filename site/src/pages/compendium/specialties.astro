@@ -47,7 +47,7 @@ const groups: FilterGroup[] = [
         </div>
         <div>
           <dt class="lbl">One Talent level</dt>
-          <dd>At Graduation, or at a build's Talents step, 1 level in one Talent on the Specialty's list, at most level 2.</dd>
+          <dd>At Graduation, or at a build's Talents step, 1 level in one Talent on the Specialty's list or on the general list, at most level 2.</dd>
         </div>
         <div>
           <dt class="lbl">Never permission</dt>
@@ -80,7 +80,7 @@ const groups: FilterGroup[] = [
               <h2 id={s.id}>{d.general ? 'General Talents' : d.name}</h2>
               <p class="summary"><GlossText parts={summary} /></p>
               {d.issue && <p class="issue"><GlossText parts={issue} /></p>}
-              {d.general && <p class="issue">The Talent level a Specialty grants never goes into one of these.</p>}
+              {d.general && <p class="issue">The one Talent level a Specialty grants may go into one of these instead.</p>}
               <div class="talent-cols">
                 {dice.length > 0 && (
                   <div>
