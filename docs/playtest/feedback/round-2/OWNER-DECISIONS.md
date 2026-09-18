@@ -1,6 +1,6 @@
 # Playtest packet feedback, round 2: owner direction
 
-Given 2026-09-17, on Artifact Version 3. Nothing is applied yet. When fixing starts, a decider turns these into a decision batch (DECISIONS, ADRs, CONTEXT, OQ entries) before any chapter or YAML changes, per `docs/playtest/HANDOFF.md`.
+Given 2026-09-17, on Artifact Version 3. **Applied 2026-09-17 as decision batch 10 (OQ-182 to OQ-186).** The owner answered every open question below, and the batch is recorded in `docs/rules/DECISIONS-2026-09-14.md` and applied across the data, the chapters, the packet, the site and the Foundry system. The simulator has not been rerun: batch 10 is a retune and every figure in `docs/reviews/simulator-report.md` and `data/engagement/tuning.yaml` is marked stale until it runs.
 
 | # | Topic | Owner direction | Research file |
 |---|---|---|---|
@@ -12,21 +12,26 @@ Given 2026-09-17, on Artifact Version 3. Nothing is applied yet. When fixing sta
 | 6 | All three designs | "I actually like all a b and c." Merged into one mechanism: C supplies the roll, B the currency, A the cap. | `unified-design.md` |
 | 7 | Draw Attention, mounted | "Other two fix make sense." **Accepted by the owner.** | `design-proposals.md`, fixes 1 and 2 |
 
-## Open for the owner
+## Answered by the owner
 
-These need the owner's answer before a decider can record a batch.
+Every question below was put to the owner and answered. The answers are the batch.
 
-1. **The merged design** (`unified-design.md`). Flight (every ODM move is rolled, the step always happens), Momentum (each success, lost the moment you stop flying), Anchors as everyone's Momentum cap, wrecked by the Titan. Accept the merge, or keep the three separate and pick one?
-2. **Bite.** Momentum spent for a Bonus Die on a strike is the piece that shortens the fight and moves the kill-round target. Keep it and let the Anchor counts absorb it, or cut it and keep Momentum to movement and defence only?
-3. **Table time.** The merge adds roughly a third more dice pools to a Titan Engagement (about +1 to +1.5 a round against 3.57). Acceptable for the first playtest, or is Flight only rolled when a soldier reaches for more than one step?
-4. **Anchor counts.** Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3. Accept as the starting values for the retune?
-5. **Blade swap** (`unified-design.md`, the Gear Dice question). Swap Blade Set spends the move in a Titan Engagement. This is the recommendation and it needs no tuned value to change. Do it?
-6. **The Gear Die package.** Re-roll 2 to 5, keep 6, lock 1, plus a wear cap of 1 per Pushed roll, plus issued ODM Gear rising to rating 3. Measured at 24.2% on the Jam test against a bar of a third. Recommended **at the post-playtest retune**, not now. Agreed, or do you want it sooner?
+1. **The merged design.** Take all three: "I actually like all a b and c." Merged into one mechanism, since the three are one mechanism seen from three sides. Applied as 10-1.
+2. **Bite.** Kept. It stays the first thing to cut if the rerun shows the kill-round target has moved, and the rerun must measure it separately.
+3. **Table time.** Accepted at about +1 to +1.5 dice pools a round against 3.57. Flight is rolled for every ODM move, not only for a reach beyond one step.
+4. **Anchor counts.** Accepted as the starting values: Open 0, Sparse 1, Wooded 2, Urban 3, Giant Forest 3.
+5. **Blade swap.** Taken. Swap Blade Set spends the move in a Titan Engagement (10-4).
+6. **The Gear Die package.** Deferred to the post-playtest retune, as recommended. The owner's instruction was the swap now and the package later.
+7. **The Talent and the list-size lock.** "Remove the lock. Add the talent." Done: `list_size` reads at least eight, the Leader's list holds nine, the total is 84, the Foundry schema is `min(8)`, and the Talent is **Shout Them Off** (Leader, rule, once per Titan Engagement: you may spend your move on Draw Attention instead of your action). It follows Quick Refit's precedent, because no Talent in the game grants Bonus Dice and a dice Talent is impossible on an entry that is never rolled.
 
-## Accepted by the owner
+## Raised while applying, and decided
 
-- **Draw Attention** (`design-proposals.md`, fix 1): while a soldier holds the loudest flag they also meet every rung any other candidate meets except hooked into its body, plus a Talent so it stops being the only Titan Engagement action with none.
-- **Mounted movement** (`design-proposals.md`, fix 2): the charge (a mounted Distant to In Reach step may set the loudest flag), and at Open a mounted move may make that step twice.
+**OQ-186 / item 10-5**, raised by the packet drafter rather than left as a drafting guess: a move made under a **retreat is a Flight**, because a retreat narrows the soldier's own move rather than replacing it; a Fear Roll's **forced step never is**, because it is a change of Position a rule names and not the soldier's move. Momentum is the reward for choosing to fly, and a soldier flung back by fear has chosen nothing.
+
+## Accepted by the owner, and applied
+
+- **Draw Attention** (fix 1, applied as 10-3): while a soldier holds the loudest flag they also meet every rung any other candidate meets except hooked into its body. ADR-0010 is preserved as written rather than amended, because its promise protects rung 1 only and everything below it was the room the fix used. The Talent came with it (see item 7 above).
+- **Mounted movement** (fix 2, applied as 10-2): the charge, and the double step at Open.
 
 ## Corrected
 
