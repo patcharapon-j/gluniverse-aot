@@ -51,10 +51,12 @@ against the 0.058 measured today.
 anyone had played, and the first session said soldiers felt too fragile. Play beats projection.
 
 What follows from that is a recommendation about the retune rather than about Health. **When lethality
-is put back, put it on the Titans, not on Health.** The levers are the Attack Dice pools (already the
-tuned value, keyed at 3 dice per former Severity point), Nape Depth, and Tempo. Keeping Health as a
-stable, generous, player-facing number and making the monsters carry the danger is the healthier split
-in any case: dying because the thing is strong reads better than dying because you had three boxes.
+is put back, put it on the Titans, not on Health**, and put it on the Titans' *behavior* before their
+dice. Item 12 is the lever: the Titans currently waste most of their cards on Thrash, and fixing that
+raises lethality by making the monsters do their job rather than by inflating pools. Attack Dice, Nape
+Depth and Tempo stay in reserve behind it. Keeping Health as a stable, generous, player-facing number
+and making the monsters carry the danger is the healthier split in any case: dying because the thing is
+strong reads better than dying because you had three boxes.
 
 Two smaller effects, for the record:
 
@@ -62,11 +64,31 @@ Two smaller effects, for the record:
   the Levi-grade gains 40%, so Strength and Agility buy relatively less than they do now.
 - **Damage-sourced Critical Injuries get rarer**, since damage reaches 0 Health less often.
 
-### Still open
+### The musket, and the rider that is already there
 
-**Skirmish.** The musket deals 4 damage against a Rookie's new pool of 6, so no human weapon in the
-list can Down a soldier in one hit. Accept it, scale human weapon damage, or decide after the Skirmish
-has been played. Unchanged from the first pass, and now the only question left on this item.
+**Owner, 2026-09-20:** "for musket i think we should fillow coriolis that addtional success beyond the
+first deal extre damage right? so even if musket damage is 4, it can still deal more".
+
+**That rule is already in the game.** `data/skirmish/skirmish.yaml` `damage.amount` reads `base: the
+weapon's damage` and `per_net_success_beyond_the_first: 1`. A musket at 1 Net Success deals 4, at 2
+deals 5, at 3 deals 6. So a good shot scales exactly as intended, and against the new Health 6 Rookie a
+musket still Downs them at 3 Net Successes rather than never.
+
+What changes is the threshold, and it is a real change: a ball that used to drop a Rookie on any hit
+now needs a well-rolled one. Two things to watch in the rerun, in this order:
+
+1. **Can a firearm still frighten a soldier?** If 3 Net Successes turns out to be rare enough that
+   nobody fears a musket, the cleanest lever is **raising the Skirmish rider to 2 per Net Success beyond
+   the first**, because it keeps the lucky-shot feel and scales with the roll rather than making every
+   graze worse. Raising the musket's base to 5 or 6 is the blunter alternative.
+2. **Does the Skirmish become a slog?** Most weapons deal 1 or 2. Against 6 boxes instead of 4 a bandit
+   needs half again as many landed hits, while a soldier kills Foes exactly as fast as before, because
+   Foe Health is untouched. The asymmetry is the thing to measure: the risk is not that bandits became
+   survivable, it is that they became boring.
+
+Either lever is one number and needs no new design, so this should be decided from the report rather
+than now. The data's own note under the musket row ("a ball that lands at 1 Net Success ... brings a
+Health 4 Rookie to 0") has to be rewritten either way.
 
 ### Files
 
@@ -478,6 +500,135 @@ None to the rules. This documents behaviour that already works, plus one badge a
 
 ---
 
+## 12. Titans that never get to be dangerous
+
+**Owner, 2026-09-20:** "since we roll titan behavior sometimes it land fals as titan only do 1, 2
+whatever every grabbing or going for a kill before it dies. how do we fix this?"
+
+This is not variance. It is structural, it is measurable, and it is the most serious rules problem
+found in this round.
+
+### The measurement
+
+The Standard Medium Titan's table is ordered by tier: 1 Fixed Grin and 2 Snap Short (terrorize), 3 Swat
+and 4 Shake Off (control), 5 Bite and 6 Grab (kill). Each entry lists the Positions its Attention holder
+must be in, and **every single fallback in the table is `thrash`**
+(`data/titans/standard-medium.yaml`). So when the rolled entry does not fit where the holder is
+standing, the Titan flails.
+
+Run that against each Position the Attention holder can be in:
+
+| Attention holder is | Cards that become Thrash | Kill-tier entries reachable | Chance of one Bite or Grab in a 3-round fight |
+|---|---|---|---|
+| Distant | **83%** | none | **0%** |
+| In Reach | 17% | 33% | 70% |
+| On Body | 0% | 33% | 70% |
+| Blind Spot | **67%** | none | **0%** |
+
+Bite and Grab both require the holder at In Reach or On Body. **If the Titan's Attention is on a soldier
+at Distant or in its Blind Spot, it is mechanically incapable of biting or grabbing anyone, for the
+whole fight.**
+
+### Why it bites exactly when the Squad plays well
+
+Now put that next to the Attention Ladder. Its first rung is `hooked-into-its-body`, which a soldier
+meets by being On Body **or by holding the `hooked-by-strike` flag**, which a Nape strike sets
+(item 11). So:
+
+1. The striker goes to the Blind Spot, which is where a Nape strike must be made from.
+2. They strike and fall short of the Nape Depth.
+3. The flag puts the Titan's Attention on them, at Blind Spot.
+4. The Titan now Thrashes two cards in three and cannot Bite or Grab at all.
+5. Everyone else is playing correctly, which means Distant or In Reach, so nothing changes.
+
+**The better the Squad plays, the more inert the Titan becomes.** A Medium gets one card a round against
+a kill median of three rounds, so a well-run fight can easily be nine tenths Thrash and end with the
+monster never having done anything a player would remember. That is the thing the first session felt.
+
+Two smaller aggravators: an entry can never follow itself (`behavior-procedure.yaml`, choose), and
+Thrash is the only entry that may, so Thrash feeds itself; and Tempo 1 means a Medium gets very few
+rolls of the dice to escape the trap.
+
+### The fix, in two parts
+
+**Part 1, the important one: a Titan that cannot reach its fixation turns on someone else.**
+
+> When the Attention holder does not meet the rolled entry's `position_requirement`, the Titan takes the
+> next candidate down the Attention Ladder who does. Its Attention moves to that soldier and the entry
+> resolves against them. Only when no soldier in the Titan Engagement meets the requirement does the
+> behavior become Thrash.
+
+This is the right fix for four reasons. It is what a predator does: the thing it wanted is out of reach,
+so it takes what it can catch. It uses the Attention Ladder the game already has, so the choice stays
+deterministic and the GM still picks nothing (ADR-0024, limit 8). It makes a soldier's safe position
+stop being *everyone's* safe position, which is the cover-your-comrade tension the game is supposed to
+be about. And it costs one paragraph in `behavior-procedure.yaml` plus nothing else: no table needs
+re-authoring.
+
+The alternative shape, keeping the target and downgrading the action (use the highest-numbered entry at
+or below the roll whose requirement the holder meets), is also workable and we think worse: it keeps the
+Titan fixated on the person who is deliberately standing where it cannot hurt them, which is the problem
+we are trying to remove. It is worth keeping in the file as a fallback if retargeting measures badly.
+
+**Part 2: the Titan escalates. Call it Frenzy.**
+
+> Each Focus Titan holds Frenzy, starting at 0 and rising by 1 at the end of each round, to a cap of 3.
+> Its behavior roll is D6 plus Frenzy. A result above the table's highest entry reads as the highest.
+
+Because every table is already ordered terrorize to kill, adding to the roll walks the Titan up its own
+table. Round 1 it postures, by round 3 it is trying to kill you. That gives the fight a shape it does
+not currently have, and it gives the Squad a reason to commit rather than kite: every round you spend
+not killing it is a round it gets worse.
+
+| Round | Roll | Kill-tier chance on a Medium |
+|---|---|---|
+| 1 | D6 | 33% |
+| 2 | D6+1 | 50% |
+| 3 | D6+2 | 67% |
+| 4 and after | D6+3 | 83% |
+
+### This is also the answer to "adjust Titan lethality as needed"
+
+These two changes are a better lethality lever than the Attack Dice pools, and we would reach for them
+first.
+
+Raising Attack Dice makes every card hit harder, including the Thrash the Titan is flailing with, so it
+inflates the numbers without fixing the feel. Retargeting and Frenzy instead convert wasted cards into
+real ones: Thrash at 6 dice with a non-lethal Critical Injury becomes Bite or Grab at 9 dice. Lethality
+goes up **because the monster is finally doing its job**, which is what the Health change took away and
+the right way to give it back.
+
+It is also self-correcting in the direction the design wants: a Squad that kills fast sees little
+Frenzy, and a Squad that grinds gets eaten. That is closer to the target in waiting (7-12, OQ-140) than
+a flat dice bump could be, and it rewards the play the game is trying to teach.
+
+So the recommended order for the retune is: **Part 1, then Part 2, then measure, and only then consider
+Attack Dice.** The simulator moves the Frenzy rate and cap first.
+
+### How this interacts with zones
+
+The Stride (item 8) fixes the Distant row of the table on its own, because a Titan that cannot reach its
+fixation walks to it. It does **not** fix the Blind Spot row, since a Titan still cannot bite something
+standing behind it, and the Blind Spot row is the one that fires when the Squad is playing well. So
+Part 1 is needed whether or not zones ship, and it should go in early rather than waiting for batch E.
+
+### Files
+
+`data/engagement/behavior-procedure.yaml` (the `choose` step rewritten), `data/engagement/attention.yaml`
+(the Ladder is read for retargeting), `data/engagement/titan-format.yaml` (Frenzy in the format and the
+result-above-the-table rule), `data/engagement/round.yaml` (Frenzy rises at a round-end step, and the GM
+tracker row), `data/titans/*.yaml` (no table needs re-authoring; the `fallback` field stays for tables
+that want it), `docs/rules/05-titan-engagement.md` sections 5.3 and 5.6, the packet's GM section and
+quick reference, `foundry/src/rules/engagement/cards.ts` and `behavior.ts`, the tracker's Titan block.
+
+### Risk
+
+Low on the rules, one paragraph and one counter. **High on the tuning, deliberately**: this is the
+change that gives lethality back, so it must be measured in the same run as the Health change and read
+together with it.
+
+---
+
 ## Consolidated change list
 
 Grouped into the batches we would ship them in.
@@ -495,7 +646,16 @@ Grouped into the batches we would ship them in.
 | A7 | The three Position maps drawn, one per Anchor Rating shape (Open, Sparse, branching) | Chapter 5, packet quick reference, site |
 | A8 | The Nape strike sentence: still at Blind Spot, hooking in is an Attention fact, Attention locks out the next strike | `data/character/action-catalog.yaml`, Chapter 5, packet |
 | A9 | `hooked-by-strike` badge, the striker's tracker note, legal steps shown in the move menu | `foundry/src/tracker/badges.ts`, `view.ts` |
-| A10 | **Retune**, downward: every Critical Injury and death band re-measured. Lethality goes back on the Titans, not on Health | `tools/sim`, `docs/reviews/simulator-report.md`, `data/titans/tuning.yaml`, ADR-0014 |
+| A10 | **Retune**: every Critical Injury and death band re-measured, with batch F in the same run. Health pulls lethality down, batch F puts it back through behavior rather than dice | `tools/sim`, `docs/reviews/simulator-report.md`, `data/titans/tuning.yaml`, ADR-0014 |
+
+### Batch F: Titans that act (rules, Foundry, packet) - ships with A
+
+| # | Change | Where |
+|---|---|---|
+| F1 | A Titan that cannot reach its Attention holder takes the next candidate down the Attention Ladder who does meet the entry's requirement, and its Attention moves. Thrash only when nobody qualifies | `data/engagement/behavior-procedure.yaml`, `attention.yaml`, Chapter 5, packet |
+| F2 | Frenzy: each Focus Titan starts at 0, rises 1 at each round end to a cap of 3, and is added to its behavior roll. A result above the table's highest entry reads as the highest | `data/engagement/titan-format.yaml`, `round.yaml`, Chapter 5, packet, tracker |
+| F3 | The musket row's note rewritten for the new Health range | `data/skirmish/skirmish.yaml` |
+| F4 | Measured with A10 in one run: Attack Dice, Nape Depth and Tempo stay untouched until the report says otherwise. Skirmish rider and musket base held in reserve as single-number levers | `tools/sim`, `data/titans/tuning.yaml`, ADR-0014 |
 
 ### Batch B: the GM is never blocked (Foundry)
 
@@ -549,20 +709,22 @@ Settled on 2026-09-20: the Health formula (add 2, crits stay at one box), steam 
 the Position clarity work, the Stride for Titan movement, and a custom board rather than the Foundry
 canvas. What is left:
 
-1. **Skirmish lethality.** With damage unchanged and a Rookie at Health 6, no human weapon can Down a
-   soldier in one hit. Accept, scale human weapon damage, or decide after the Skirmish has been played?
-   We recommend accepting for this batch and reading it in the report.
-2. **Where lethality goes back.** The Health change lowers every band and moves away from the target in
-   waiting (7-12, OQ-140). We recommend putting it back on the Titans when the retune comes, through
-   the Attack Dice pools, Nape Depth and Tempo, rather than on Health. Confirm that direction?
-3. **Prompt timeout.** How long should an unanswered prompt card wait before the system rolls it, and
+1. **Skirmish, after the report.** The Coriolis-style rider already exists, so a musket still Downs a
+   Health 6 Rookie at 3 Net Successes. If the report says firearms stopped frightening anyone, the lever
+   is the rider (1 to 2 per Net Success) or the musket's base. Decide from the numbers, not now.
+2. **Frenzy's rate and cap.** We propose +1 per round to a cap of 3. The simulator moves both; the
+   shape (escalation added to the behavior roll) is what needs confirming.
+3. **Retarget or downgrade.** When a Titan cannot reach its fixation, we recommend it turns on the next
+   soldier down the Attention Ladder. The alternative keeps the target and downgrades the action.
+   Confirm retargeting?
+4. **Prompt timeout.** How long should an unanswered prompt card wait before the system rolls it, and
    should the default be "wait forever" at a live table?
-4. **Zones, the size of the step.** Derived Positions (our recommendation, roughly one batch) or a full
+5. **Zones, the size of the step.** Derived Positions (our recommendation, roughly one batch) or a full
    replacement (a redesign with its own retune)?
-5. **Field size.** 13 hexes as the default, 7 for a corridor fight, 19 for a set piece?
-6. **Stride values.** Small 1, Medium 2, Large 2, Abnormal 3, against a soldier's 1 zone on foot. The
+6. **Field size.** 13 hexes as the default, 7 for a corridor fight, 19 for a set piece?
+7. **Stride values.** Small 1, Medium 2, Large 2, Abnormal 3, against a soldier's 1 zone on foot. The
    rule is accepted; these are the numbers the simulator will move.
-7. **Does striding wreck the zones it crosses**, or only the `wreck` effect on the Titan's own zone? We
+8. **Does striding wreck the zones it crosses**, or only the `wreck` effect on the Titan's own zone? We
    recommend the latter first, so the tuning lever stays where it already is.
-8. **Sequencing.** Batches A to D could be at the table within one cycle. Does E start in parallel, or
-   after A to D have been played?
+9. **Sequencing.** Batches A, F and B to D could be at the table within one cycle. Does E start in
+   parallel, or after they have been played?

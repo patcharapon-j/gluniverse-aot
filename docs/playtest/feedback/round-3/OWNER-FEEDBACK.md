@@ -39,3 +39,12 @@ Scope named by the owner for the work that follows: "the rule. Website and found
 | D3 | Positions | "ah then I run it wrong then, so it is right the stay in blind spot then on their turn the atten laddter focus on then, then what will be thier status? on body is the literally on body right? then characcter can goes form in reach to blind spot directly without going on body first? ... but please make it more clear" | Answered in ASSESSMENT item 11; clarity work is batch A |
 | D4 | The board | "we can ither used foundry canvas or custom ui entirely up to you, art twill be handled codex to generate later" | Our call: a custom board taking over the canvas area. Art list specified for Codex |
 | D5 | Titan movement | "please reinvent titan movment as suggested" | The Stride accepted, `zone-combat-design.md` section 3 |
+
+## Owner decisions, 2026-09-20 (fourth pass)
+
+| # | Item | Owner's words | Status |
+|---|---|---|---|
+| D6 | Titan lethality | "okay adjust titan lethality as need dice and musket if needed" | Recommended order: batch F behavior fixes first, dice held in reserve |
+| D7 | Musket | "for musket i think we should fillow coriolis that addtional success beyond the first deal extre damage right? so even if musket damage is 4, it can still deal more" | Already in the rules: `per_net_success_beyond_the_first: 1`. Levers named for the report |
+| D8 | Behavior rolls | "since we roll titan behavior sometime it land fals as titan onyl do 1, 2 wihtever every grabbing or going for a kill before it dies. how do we fix this?" | New item 12. Structural, measured, fixed by retargeting plus Frenzy |
+| D9 | The board | "custom board" | Confirmed |
