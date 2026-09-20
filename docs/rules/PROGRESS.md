@@ -33,13 +33,24 @@ Process changes (2026-09-14, during Chapter 3 round 3): fixes driven by a later 
 > stale; the rerun is a **retune** that measures batches A and F together and is scheduled with
 > batches 10 and 11's, on the tuning line.
 >
-> Still open from this round, outside this change: the Foundry code for batches B, C, and D (their
-> ADRs are written: new ADR-0028, amended ADR-0026 and ADR-0027), the site and packet, a renderer in
-> `tools/render/render.py` for `anchor-ratings.yaml` `position_maps`, two readers of the renamed
-> `reported_squad_fragile` key in `tools/sim/rules.py` and `foundry/test/derived.test.ts`, a missing
-> `wreck` branch in `tools/probes/chapter-06/render.py` `effect_text` that fails that probe's
-> `render.py check`, and batch E, zone combat, whose rules, ADR-0029, and retune wait until batches
-> A and F have been played.
+> **Applied since that note, in the same branch:** the Foundry code for batches B, C and D, the
+> site, and the packet. The two readers of the renamed `reported_squad_fragile` key are fixed in
+> `tools/sim/rules.py` and `foundry/test/derived.test.ts`, the second of which also guarded that the
+> Squad's Health was 2 and so would have thrown on the first run after the formula changed. The
+> missing `wreck` branch in `tools/probes/chapter-06/render.py` `effect_text` is added and the
+> chapter regenerated, which put the effect into six Behavior Table rows that had been silently
+> short of it since batch 10, and that probe's `render.py check` passes again. The tree is green:
+> typecheck clean, 407 of 407 Foundry tests, the packs build, `check:data`, every rendered block
+> matching its data, and the site's build, links, tests and sync check.
+>
+> Still open from this round: the **retune**, which is the next package and needs `tools/sim` taught
+> Frenzy and retargeting before it can measure either; a renderer in `tools/render/render.py` for
+> `anchor-ratings.yaml` `position_maps`, which Chapter 5 draws by hand meanwhile and which ADR-0012
+> wants rendered from the data; the **batch 1 art**, which runs on the owner's machine from
+> `docs/playtest/feedback/round-3/ART-HANDOUT.md`; the packet's **print layout**, verified so far by
+> rule inspection and arithmetic rather than by rendering; a **review round** under the HANDOFF
+> feedback loop; and **batch E**, zone combat, whose rules, ADR-0029, board and retune wait until
+> batches A and F have been played.
 
 | # | Chapter | Chapter file | Status | Review round | Open Critical | Open Major | Latest review |
 |---|---------|--------------|--------|--------------|---------------|------------|---------------|
