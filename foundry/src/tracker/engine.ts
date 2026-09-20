@@ -1054,11 +1054,14 @@ export async function undoCheck(combat: any, index: number): Promise<void> {
  */
 function raiseFrenzy(combat: any, rec: Recorder): void {
   const rows = rec.get(combat, 'system.titans') as any[];
+  const focus = rows.filter((r) => r.status === 'focus');
+  if (!focus.length) {
+    rec.line(tr('end.noFocus'));
+    return;
+  }
   const next = rows.map((r) => (r.status === 'focus' ? { ...r, frenzy: frenzyAfterRound(Number(r.frenzy ?? 0)) } : r));
   rec.set(combat, 'system.titans', next);
-  const risen = next.filter((r, i) => r.frenzy !== (rows[i].frenzy ?? 0));
   for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzy', { label: r.label, n: r.frenzy, cap: FRENZY_CAP }));
-  if (!risen.length && !next.some((r) => r.status === 'focus')) rec.line(tr('end.noFocus'));
 }
 
 async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): Promise<void> {

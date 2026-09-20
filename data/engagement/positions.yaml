@@ -103,6 +103,22 @@ changes_to_position:
       effect: >-
         Positions become relative to its corpse, except that on-body and blind-spot read in-reach
         (two_focus_titans, a_focus_titan_dies; corpse, positions).
+    - id: fall-back
+      what: The Fall Back Squad Tactic
+      effect: >-
+        At the wings step, each soldier who holds on-body or blind-spot relative to a Focus Titan and
+        is not Down, Grabbed, or carried may instead hold in-reach relative to that Titan, their own
+        player choosing. The change is made by that rule and not by the soldier's own move; it is not
+        a fall, not ODM use, and does not change airborne
+        (data/engagement/squad-tactics.yaml, fall-back).
+    - id: titan-stands-up
+      what: A grounded Titan standing up, at the Open rating
+      effect: >-
+        When a Titan has no Broken leg its grounded permissions end, and at the Open rating a soldier
+        who holds blind-spot relative to it then holds on-body instead, because that rating has no
+        blind-spot while the Titan stands. It is a change of Position made by that rule and not a
+        fall (data/engagement/anchor-ratings.yaml, grounded_titan, ends). At every other rating a
+        soldier keeps the Position they hold.
     - id: carried
       what: Being carried
       effect: >-

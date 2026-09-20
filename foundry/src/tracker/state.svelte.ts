@@ -6,7 +6,7 @@ import { SYSTEM_ID } from '../config.ts';
 import { DIRECT_SETTING } from '../settings-menu.ts';
 import { nextCheck, type EndEntry } from '../rules/engagement/round.ts';
 import { currentEngagement } from './combat.ts';
-import { applyCheck, endEngagement, endLock, isGM, leave, movePosition, nextCard, returnTo, roundAction, runEnd, skipCheck, swap, undoCheck } from './engine.ts';
+import { applyCheck, endEngagement, endLock, isGM, leave, movePosition, nextCard, returnTo, roundAction, runEnd, setAirborne, setAnchorRating, setAttention, setGrabbed, setInEngagement, setLoudest, setMomentum, setOpening, setPinned, setTurnSpent, skipCheck, swap, undoCheck } from './engine.ts';
 import { ask } from './requests.ts';
 import { foeAct } from './results.ts';
 import { refreshStatuses } from './statuses.ts';
@@ -74,38 +74,38 @@ export function setFolded(folded: boolean): void {
 const combatNow = () => currentEngagement();
 
 /**
- * The GM-only direct setters of ADR-0028, which live in `engine.ts`: Grabbed, Pinned, Momentum,
- * airborne, the anchor rating, the loudest flag, Openings, Attention, turn spent, and in or out of
- * the engagement. Each takes the Combat and one plain payload of ids and the value, writes the same
- * note the rules path writes marked as a GM ruling, and goes through the Recorder so Undo still
- * works. They are looked up by name when they are used, so a client whose build is missing one says
- * so at the table rather than failing to load the tracker.
+ * The GM's Direct Control menu (ADR-0028), wired to the direct setters in `engine.ts`. Each one is
+ * GM only, runs through the Recorder as one transaction, writes the same note the rules path writes
+ * marked as a GM ruling, and keeps its ops on that note so Undo still works. Nothing here is
+ * reachable from a player's request.
  */
-const DIRECT_SETTERS: Record<string, string> = {
-  grabbed: 'setGrabbed',
-  pinned: 'setPinned',
-  momentum: 'setMomentum',
-  airborne: 'setAirborne',
-  anchor: 'setAnchorRating',
-  loud: 'setLoudFlag',
-  openings: 'setOpenings',
-  attention: 'setAttention',
-  spent: 'setTurnSpent',
-  'in-out': 'setInEngagement',
-};
-
-export type DirectOp = keyof typeof DIRECT_SETTERS;
-
-async function direct(op: string, combat: any, data: Record<string, unknown>): Promise<void> {
-  const name = DIRECT_SETTERS[op];
-  if (!isGM() || !combat || !name) return;
-  const mod = (await import('./engine.ts')) as unknown as Record<string, unknown>;
-  const fn = mod[name];
-  if (typeof fn !== 'function') {
-    ui.notifications.warn(game.i18n.format('WOF.Tracker.direct.missing', { op: name }));
-    return;
+async function direct(op: string, combat: any, data: Record<string, any>): Promise<void> {
+  if (!isGM() || !combat) return;
+  const soldier = String(data.soldier ?? '');
+  const key = String(data.key ?? '');
+  switch (op) {
+    case 'grabbed':
+      return void (await setGrabbed(combat, soldier, key, !!data.on));
+    // A pin set by ruling holds the whole body, which is the case the owner hit; the sheet sets a limb.
+    case 'pinned':
+      return void (await setPinned(combat, soldier, data.on ? { label: String(data.label ?? ''), limb: 'body' } : null));
+    case 'momentum':
+      return void (await setMomentum(combat, soldier, Number(data.value ?? 0)));
+    case 'airborne':
+      return void (await setAirborne(combat, soldier, !!data.on));
+    case 'anchor':
+      return void (await setAnchorRating(combat, String(data.rating ?? '')));
+    case 'loud':
+      return void (await setLoudest(combat, soldier, key, !!data.on));
+    case 'opening':
+      return void (await setOpening(combat, key, !!data.on, data.on ? soldier : ''));
+    case 'attention':
+      return void (await setAttention(combat, key, data.on ? soldier : null));
+    case 'spent':
+      return void (await setTurnSpent(combat, soldier, !!data.on));
+    case 'in-out':
+      return void (await setInEngagement(combat, soldier, !!data.in));
   }
-  await (fn as (combat: any, payload: Record<string, unknown>) => Promise<unknown>)(combat, data);
 }
 
 /** Picks a soldier's card for a swap (GM: makes the swap; a player: proposes it). */
@@ -190,7 +190,7 @@ export async function act(action: string, data: Record<string, any> = {}): Promi
       case 'move':
         // With Direct Control on, the GM's request carries `force`: the rules checks are stepped over
         // and the permission check still runs (ADR-0028).
-        return void (await movePosition(combat, { actor: game.actors.get(data.soldier), key: data.key, to: data.to, way: data.way, carry: data.carry, charge: data.charge, kind: data.kind, force: !!data.force } as any));
+        return void (await movePosition(combat, { actor: game.actors.get(data.soldier), key: data.key, to: data.to, way: data.way, carry: data.carry, charge: data.charge, kind: data.kind, force: !!data.force }));
       case 'direct':
         return await direct(String(data.op ?? ''), combat, data);
       case 'leave':

@@ -1,0 +1,52 @@
+---
+import { Icon } from 'astro-icon/components';
+import OpenerLayout from '~/layouts/OpenerLayout.astro';
+import { issued, releaseTabs, releases } from '~/lib/updates';
+
+const entries = await releases();
+const tabs = releaseTabs(entries);
+---
+<OpenerLayout
+  title="Updates"
+  description="What changed in the manual, release by release, and what each change means at the table."
+  section="updates"
+  tabs={tabs}
+  tabsLabel="Releases"
+  runhead={['Updates', 'Amendments to the field copy']}
+  eyebrow="Amendments"
+  lede="Rules change. This is where you find out what changed, what it means at the table, and why."
+  plate={{
+    number: 'Plate VI',
+    caption: 'An amendment slip pasted into the front of a field copy.',
+    label: 'A typed amendment slip stamped and pasted inside the cover of a Survey Corps field manual, with a dated signature beneath it',
+    art: 'updates-opener',
+  }}
+  stamp="Amended"
+>
+  <p class="lede-note">
+    Every change here came from somewhere: a rule that read two ways at the table, a fight that did not
+    bite, a soldier who went down before anyone could reach them. Each release says what moved, what it
+    does to your soldier, and what it does to the things you are fighting.
+  </p>
+
+  <ol class="contents">
+    {entries.map((entry) => (
+      <li>
+        <a href={`/updates/${entry.id}/`}>
+          <span class="cnum" aria-hidden="true"><Icon name="ph:seal-check" class="arrow" /></span>
+          <span class="ctitle">{entry.data.title}</span>
+          <span class="csum">{entry.data.summary}</span>
+          <span class="cmeta lbl">{issued(entry.data.date)}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</OpenerLayout>
+
+<style>
+  .lede-note {
+    margin: 0 0 24px;
+    max-width: 62ch;
+    line-height: 1.6;
+  }
+</style>
