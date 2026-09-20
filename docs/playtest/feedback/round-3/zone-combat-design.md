@@ -205,48 +205,103 @@ whole of batches A to D in `ASSESSMENT.md` put together.
 
 ---
 
-## 6. The isometric hex board in Foundry (item 9)
+## 6. The board on the canvas (item 9)
 
-### 6.1 Where it goes
+**Owner's direction, 2026-09-20: it goes on the Foundry canvas directly, and it is a hero feature of
+the system. It has to look like a game.**
 
-`foundry/src/tracker/components/Board.svelte` already draws the engagement as a two page ledger
-spread: the soldier by Titan Position matrix on the left, the Titan blocks and the clocks on the right.
-The zone board **replaces the left page** and leaves the right page alone. The tracker keeps its shape,
-its ledger styling and its round-end checklist, and the matrix becomes a map.
+That is the right call and it is also the one that fixes section 1's worst problem outright. If zones
+are drawn on the canvas and a soldier's zone is where their token actually stands, then the map stops
+lying, there is exactly one answer to "where am I", and the GM moves people by dragging tokens on the
+surface they already use. The tracker board becomes a readout rather than the control.
 
-### 6.2 What it draws
+### 6.1 How it is built, and what it does not fight
 
-- **Zone tiles** in a shallow isometric projection, each carrying its terrain art and a small anchor
-  rating mark in the corner. Effects sit on the tile as overlays.
-- **A Titan figure** standing in its zone, scaled by Size Class, with Openings and Broken Body Parts
-  marked on the figure itself. This is also where item 7's Openings badge naturally lives.
-- **Soldier pieces** standing on their tile, with the vertical axis carrying the attachment: a soldier
-  On Body is drawn on the Titan figure at the right height, one in the Blind Spot is drawn behind it
-  with a marker, one Airborne floats above the tile with a line down to their anchor, one Grabbed is in
-  the Titan's hand, one Pinned is under the corpse. The condition is the thing you see, which is the
-  point of the design.
-- **Momentum pips** under each piece, matching the token badges from item 7, so the two readouts agree.
+Foundry supports **hexagonal grids natively**, so the field is a scene on a hex grid where one hex is
+one zone. Everything the engine already does well keeps working: drag and drop, targeting, vision and
+lighting, tile art, and other modules.
 
-### 6.3 How it is used
+What we should **not** do is reproject the whole canvas into true isometric. That fights the engine at
+every turn, breaks measurement, walls and lighting, and is a known source of module conflicts. The
+isometric *feel* comes from the art and from a purpose-built overlay layer, not from a camera
+transform. In practice that means:
 
-- **Drag a piece to a zone to move.** Legal destinations light up, with the Momentum cost and the roll
-  the move will ask for shown on each. With Direct Control on (batch B), every zone lights up and no
-  cost is charged.
-- **Click a piece's height band** to attach, take the blind spot, or let go.
-- **Hover a zone** for its terrain, its anchor rating, and what is in it.
-- Pieces lift and settle using the existing motion tokens in `foundry/src/motion/`, so it feels like
-  the rest of the system rather than a different product.
+- **Terrain tiles drawn in a painted three-quarter view**, in the locked art language, so the field
+  reads as a diorama seen from above and slightly forward.
+- **Figures with a ground shadow and a standing pose** rather than top-down discs, so the field reads
+  as pieces on a board.
+- **A custom overlay layer for the vertical axis**, which is the part Foundry has no concept of and the
+  part this game most needs.
 
-### 6.4 The canvas question
+### 6.2 The vertical layer, which is the whole trick
 
-There is a choice here worth putting to the owner. The board above is a panel inside the tracker: it is
-self contained, it is the smaller build, and it leaves the Foundry scene canvas as scenery.
+A soldier's zone is a flat fact the grid can hold. Their attachment is not, and it is the more
+important of the two. The overlay layer draws it:
 
-The more ambitious version draws the zones **on the scene canvas itself**, as regions, and reads each
-soldier's zone from where their token actually stands. That closes the gap named in section 1: the
-tokens stop lying, there is one answer to "where am I", and the GM moves people by dragging tokens on
-the map they already use. It costs more, it constrains scene art to zone-shaped maps, and it makes the
-tracker board a mirror rather than the primary control.
+- **On Body**: the figure is pinned to the Titan's silhouette at a named anchor, nape, shoulder, arm or
+  leg, so you can see who is on the thing and roughly where.
+- **In the Blind Spot**: the figure sits behind the Titan with a marker, visibly not on it. After the
+  work in item 11, the difference between the Nape striker and the body climber becomes something you
+  look at rather than something you remember.
+- **Airborne**: the figure is lifted above its zone with a grapple line running down to the anchor it
+  is hanging from, and a shadow on the tile below.
+- **Grabbed**: in the Titan's hand. **Pinned**: under the corpse.
 
-We recommend building the panel board first, with the zone model kept strictly separate from its
-rendering so the canvas version is a second renderer rather than a rewrite.
+### 6.3 The set piece: a Flight that is actually a flight
+
+Round 2's note was "in the show the ODM gear is quite a set piece but in the game the move just
+happens". A canvas board is the chance to answer that literally. When a Flight resolves, the token
+**arcs along its route**, hex by hex, with the grapple line firing ahead to each anchor and a gas trail
+behind, landing in the destination zone. The route is the one the player chose, so flying the short way
+past the Titan looks like flying the short way past the Titan.
+
+This is the single most valuable piece of juice on the list, because it is the only one that makes the
+game's signature move feel like its signature move.
+
+### 6.4 The rest of the canvas presence
+
+- **The Titan** is a large token scaled by Size Class, with Openings and Broken Body Parts marked on
+  the figure itself (this is where item 7's Openings badge naturally lives), and an Attention line
+  drawn to whoever currently holds it. Attention is the game's core teamwork mechanism and it is
+  currently invisible on the canvas.
+- **Zone rims** carry the anchor rating as a colour and a glyph, so where the anchors are is readable
+  at a glance, which is what makes route choice a decision rather than a guess.
+- **Effects** (steam, fire, dust) are animated tile overlays, which also gives the softened fill steam
+  of item 2 something to be.
+- **Momentum pips and a small gas gauge** under each figure, matching the token badges of item 7 so the
+  two readouts never disagree.
+
+### 6.5 Interaction
+
+- **Drag a token to a zone to move.** Legal destinations light up, each labelled with the Momentum cost
+  and the roll the move will ask for. Drop it and the Flight prompt goes to that player (item 6).
+- **Drag onto the Titan's silhouette to attach**, or onto its rear marker to take the Blind Spot. Drag
+  off to let go, which is a fall and says so before you commit.
+- **With Direct Control on** (batch B), every zone and every attachment lights up and nothing is
+  checked, so the GM can put anyone anywhere for narrative reasons. This is the same toggle as item 3
+  and it should be visibly on while it is on.
+- **Hover a zone** for its terrain, anchor rating, occupants and effects.
+
+### 6.6 What makes or breaks it
+
+- **Scene setup must be nearly free.** If building a field is work, the hero feature will not get used.
+  It needs a generator: pick a field size and a terrain mix, and it produces the scene, the hex grid,
+  the zone regions, the terrain tiles and the starting placements. This is not optional polish; it is
+  the difference between a feature and a demo.
+- **Art is the long pole.** A terrain tile set across the five anchor ratings with variants, Titan
+  figures at three Size Classes, soldier pieces, and the effect overlays. In the locked style, produced
+  the way the rest of the art is produced (ADR-0022, ADR-0027). This gates the whole thing and should
+  start early.
+- **ADR-0027 needs amending.** It locks the look as flat and paper with WebGL scoped to two small
+  vitals widgets. The canvas is a different surface and can have a richer budget, but it should be
+  written down, with the art language held to the one already locked so the board reads as the same
+  product.
+- **Performance and reduced motion.** The flight animation and the effect overlays respect the existing
+  Full, Reduced and Off setting, with Off leaving a clean static board that is still completely
+  playable.
+
+### 6.7 What the tracker becomes
+
+The ledger spread keeps its right page (the Titan blocks, the clocks, the round-end checklist) and its
+left page becomes a compact readout of the field rather than the matrix: who is in which zone, with
+what attachment, and how much Momentum. The canvas is where you act; the tracker is where you check.

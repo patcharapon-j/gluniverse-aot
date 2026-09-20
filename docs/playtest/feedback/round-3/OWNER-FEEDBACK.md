@@ -19,3 +19,12 @@ numbering is ours.
 | 10 | Positioning, general | "positioning is currently a bit confusing." (read as a restatement of item 8) |
 
 Scope named by the owner for the work that follows: "the rule. Website and foundry."
+
+## Owner revisions, 2026-09-20 (second pass)
+
+| # | Revises | Owner's words |
+|---|---|---|
+| R1 | Item 1 | "heal is 2 + (current formula) instead of just straight dropping the divide two. And keep this rest the same." |
+| R2 | Item 2 | "keep the steam on regen but make it less severe. Maybe the reason player got it is my mistake because i think they got hit when they are all on body." |
+| R3 | New, item 11 | "also i want to be more clabout after a nape strike. Is that people still in blind spot or on body. What actiom cause positiom changes. This might solve the steam issue." |
+| R4 | Item 9 | "for isometrix zone convat display i want it tobe on foundry canvas dirwctly. Make it a hero feature of this game system. So it must looks good like a game as well." |
