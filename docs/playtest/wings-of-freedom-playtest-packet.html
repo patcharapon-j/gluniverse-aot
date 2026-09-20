@@ -302,7 +302,7 @@ figure.posmap figcaption b{color:var(--ink)}
 <p><b>What a 1 means.</b></p>
 <ul>
 <li><b>Base die:</b> nothing.</li>
-<li><b>Gear Die:</b> if the roll was Pushed and any Gear Die shows 1 when the roll is final, the item that supplied it wears by 1 &mdash; one point per Pushed roll, whether one Gear Die shows a 1 or all three. A roll that was not Pushed wears nothing, whatever its Gear Dice show. What wear does is in <a href="#gear-items">Gear</a>.</li>
+<li><b>Gear Die:</b> if the roll was Pushed and any Gear Die shows 1 when the roll is final, the item that supplied it wears by 1. That is one point per Pushed roll, whether one Gear Die shows a 1 or all three. A roll that was not Pushed wears nothing, whatever its Gear Dice show. What wear does is in <a href="#gear-items">Gear</a>.</li>
 <li><b>Stress Die:</b> a Stress Response.</li>
 </ul>
 
@@ -1976,7 +1976,7 @@ figure.posmap figcaption b{color:var(--ink)}
 
 <h3>Wear</h3>
 <ul>
-<li><b>When a Pushed roll is final,</b> an item whose Gear Dice show one or more 1s wears by 1 point &mdash; one point per Pushed roll, however many of its Gear Dice show 1. A roll that was not Pushed never wears anything. No ruling wears an item: a called roll's stakes may lose a carried item, never a point of wear.</li>
+<li><b>When a Pushed roll is final,</b> an item whose Gear Dice show one or more 1s wears by 1 point, one point per Pushed roll, however many of its Gear Dice show 1. A roll that was not Pushed never wears anything. No ruling wears an item: a called roll's stakes may lose a carried item, never a point of wear.</li>
 <li>A Talent that ignores wear, such as Well-Kept Rig, Blade Discipline, or Sure Seat, removes points before they apply.</li>
 <li>Each point left lowers the current rating by 1, never below 0. A Blade Set is the exception: any wear ruins it (see <a href="#gear-blades">Blade Sets</a>).</li>
 </ul>
@@ -2567,7 +2567,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Distant</b> is out of a standing Titan's reach. Even so, a Behavior Table entry whose needed Positions include Distant ("Any" includes it) still happens while its holder is there.</li>
 <li><b>In Reach</b> is within reach of its hands, on the ground or on anchors beside it.</li>
 <li><b>On Body</b> means literally on it: hooked into the Titan's body or standing on it, anywhere but the Nape.</li>
-<li><b>Blind Spot</b> is <b>not on the Titan at all</b>. You are anchored to terrain behind it, a tree or a roof, out of its sight with its Nape within reach. You are not touching it. The name sounds like a place on the monster and it is a place in the world behind the monster. It is the only Position a Nape strike can be made from.</li>
+<li><b>Blind Spot</b> is <b>not on the Titan at all</b>. You are anchored to terrain behind it, a tree or a roof, hanging from it on your lines or standing on it, out of its sight with its Nape within reach. You are not touching the Titan. The name sounds like a place on the monster and it is a place in the world behind the monster. Whether you are airborne follows the move that brought you there, not the Position: an ODM move leaves you airborne, as anywhere, so a Jam drops you and a Titan's falling body misses you. Only the Urban Terrain Trait says the roof holds you and you are not airborne. It is the only Position a Nape strike can be made from.</li>
 </ul>
 <p>When a rule compares two soldiers' Positions, it compares them relative to one Titan or body:</p>
 <ul>
@@ -2578,7 +2578,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 
 <div class="box" id="fight-changes">
 <h4>An action never changes a Position</h4>
-<p>Your Position changes when <b>you move</b>, and otherwise only when one of the rules listed here says so. <b>No action moves you.</b> The Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other entry in the <a href="#actions-catalog">Action Catalog</a> leave you exactly where you stand. Taking a Titan's Attention does not move you either, and neither does losing it.</p>
+<p>Your Position changes when <b>you move</b>, and otherwise only when one of the rules listed here says so. <b>No action moves you.</b> The Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other entry in the <a href="#actions-catalog">Action Catalog</a> that is an action leave you exactly where you stand. Taking a Titan's Attention does not move you either, and neither does losing it. Three Catalog entries are not actions, and they belong to the list below rather than to this paragraph: Fly, which is your own move; Leap Clear, which belongs to a Titan's body coming down; and Mount or Dismount, which is part of a move.</p>
 <div class="table-wrap"><table>
 <caption>Everything that changes a Position</caption>
 <thead><tr><th>What</th><th>Where it leaves you</th></tr></thead><tbody>
@@ -2589,9 +2589,10 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <tr><td>A Fear Roll's forced step</td><td>One step toward Distant, at the start of your next turn.</td></tr>
 <tr><td>A Grab landing</td><td>You hold On Body relative to the Titan holding you.</td></tr>
 <tr><td>Being freed from a Grab</td><td>In Reach, with a fall first if you had been lifted.</td></tr>
-<tr><td>The close rule</td><td>Coming to hold On Body or Blind Spot on one Focus Titan makes your On Body or Blind Spot on any other In Reach.</td></tr>
+<tr><td>The close rule</td><td>Coming to hold On Body or Blind Spot on one Focus Titan makes your On Body or Blind Spot relative to every other Focus Titan In Reach. A Titan you were Distant or In Reach of does not change.</td></tr>
 <tr><td>A Titan becoming a Focus Titan</td><td>Everyone who holds a Position holds Distant relative to it.</td></tr>
 <tr><td>A Focus Titan dying</td><td>Positions become relative to its Corpse, and On Body and Blind Spot read In Reach.</td></tr>
+<tr><td>A Titan's body coming down, by its death or by a living Titan becoming grounded</td><td>Everyone On Body or at Blind Spot relative to it who is not airborne holds In Reach relative to its body, whether they Leap Clear or are Pinned. An airborne soldier swings clear and keeps their Position.</td></tr>
 <tr><td>Being carried</td><td>You move with whoever carries you.</td></tr>
 <tr><td>The Fall Back Squad Tactic</td><td>At the wings step, In Reach instead of On Body or Blind Spot, with no fall.</td></tr>
 <tr><td>A grounded Titan standing again, at Open only</td><td>Blind Spot relative to it becomes On Body, with no fall.</td></tr>
@@ -2792,7 +2793,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <h3>Two Focus Titans</h3>
 <ul>
 <li>A second Focus Titan arrives from outside the fight, so every soldier who holds a Position holds Distant relative to it. No other Position changes, and a soldier who has left stays out. A move changes your Position relative to one Titan only.</li>
-<li><b>The close rule.</b> Whenever you come to hold On Body or Blind Spot relative to one Focus Titan, your On Body or Blind Spot relative to any other becomes In Reach. You are never hooked into two Titans at once.</li>
+<li><b>The close rule.</b> Whenever you come to hold On Body or Blind Spot relative to one Focus Titan, your On Body or Blind Spot relative to every other Focus Titan becomes In Reach. A Titan you were Distant or In Reach of does not change at all. You are never hooked into two Titans at once.</li>
 <li>A Grabbed soldier holds On Body relative to the Titan holding them, and the close rule applies.</li>
 <li>When a Focus Titan dies, every Position relative to it ends, and its body becomes a Corpse (see <a href="#fight-regen">Regeneration and death</a>). A horse or a dead soldier's items recorded at a Position relative to it are now at Distant relative to the living Focus Titan with the earliest label.</li>
 </ul>
@@ -2870,7 +2871,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </ul>
 
 <h3 id="fight-retarget">It turns on whoever it can reach</h3>
-<p><b>When the soldier holding a Titan's Attention is not in a Position the rolled behavior needs</b>, the Titan does not simply flail at the air. It turns on whoever it can reach. The GM reads its <a href="#fight-ladder">Attention Ladder</a> again over only those soldiers who are in a Position the behavior needs, and its Attention moves to the one the ladder picks. The behavior then resolves against that soldier. Only when nobody in the Titan Engagement is in a Position the behavior needs does it fall back as its table says.</p>
+<p><b>When the soldier holding a Titan's Attention is not in a Position the rolled behavior needs</b>, the Titan does not simply flail at the air. It turns on whoever it can reach. The GM reads its <a href="#fight-ladder">Attention Ladder</a> again over only those soldiers who are in a Position the behavior needs, and its Attention moves to the one the ladder picks. The behavior then resolves against that soldier. Only when nobody in the Titan Engagement is in a Position the behavior needs does it fall back as its table says, and the fallback is read the same way: the Titan turns on whoever the fallback can reach, and Thrashes only when the fallback reaches nobody either.</p>
 <p>So standing where a Titan cannot hurt you no longer keeps it from hurting anyone. It keeps it from hurting <b>you</b>, and it hands the thing to the comrade standing closest to its hands. Cover them.</p>
 
 <h3 id="fight-frenzy">Frenzy</h3>
@@ -2934,7 +2935,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>Ties are narrowed by each lower rung; the nearest rung keeps the tied soldiers at the closest Position any of them holds. If still tied, the soldier already holding its Attention keeps it. Otherwise the lowest card this round takes it (a Wing Squadmate counts just after its player character), unless no cards have been dealt this round or the ladder is checked at an end step, as when a Background Titan enters. Otherwise nothing holds its Attention until its next card.</li>
 <li><b>Down and carried soldiers</b> meet only the nearest rung. A Titan turns to a Down soldier only when no one is closer, hooked in, hurting it, or louder.</li>
 <li>Soldiers who have left, soldiers held by another Titan, and horses are never chosen. No ladder reads a Position relative to a Corpse.</li>
-<li>An Abnormal may have its own ladder. Every ladder begins with hooked into its body and ends with nearest, so a soldier who strikes a Titan's Nape and falls short always draws its Next Behavior.</li>
+<li>An Abnormal may have its own ladder. Every ladder begins with hooked into its body and ends with nearest, so a soldier who strikes a Titan's Nape and falls short always draws its Attention. They take its next behavior only when that behavior's Position requirement includes Blind Spot. When it does not, the Titan retargets to a comrade it can reach, and its Attention goes with them.</li>
 </ul>
 
 <h3>What a Titan remembers</h3>
@@ -3021,7 +3022,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <h4>Where the strike leaves you</h4>
 <p><b>A Nape strike does not move you.</b> You began at Blind Spot and you are still at Blind Spot when it is over, anchored to your tree or your roof behind the Titan, whether you killed it or fell short.</p>
 <p><b>The mark counts as hooking into the Titan, for the Attention Ladder and nothing else.</b> It puts you on the ladder's top rung, ahead of a comrade who is merely On Body. It does not put you on the Titan, and no other rule reads it: Steam at a Regeneration fill still passes you by, because you are not on the body.</p>
-<p><b>So a striker who pulls the Attention onto themselves cannot strike again.</b> The strike needs a soldier who does not hold that Titan's Attention, and the mark you just set is what turned it toward you. You are standing in exactly the right place and you are locked out of using it. Getting the Attention off you takes a comrade's Draw Attention, or a Break Attention with a decoy. That is the engine of the whole fight: the blade at the Nape is never the soldier the Titan is watching.</p>
+<p><b>So a striker who pulls the Attention onto themselves cannot strike again.</b> The strike needs a soldier who does not hold that Titan's Attention, and the mark you just set is what turned it toward you. You are standing in exactly the right place and you are locked out of using it. Getting the Attention off you takes a comrade's Draw Attention, a Break Attention with a decoy, or the Titan itself turning on someone it can reach. That is the engine of the whole fight: the blade at the Nape is never the soldier the Titan is watching.</p>
 </div>
 <ul>
 <li><b>Reach its Nape Depth</b> and the Titan dies.</li>
@@ -3193,7 +3194,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>An Abnormal only:</b> one named Body Part's Toughness, its Nape Depth, its Regeneration clock's length, or its Attention Ladder.</li>
 </ul>
 <p>Everything else is public without a Read: each Titan's Size Class and whether it is an Abnormal, Body Part States and counts, filled clock segments, Openings, the Attention holder and marks, the previous behavior, Background clocks, and the state of a Grab. Against a standard Titan, its Next Behavior is the one thing a Read can learn.</p>
-<p><b>Call It</b> is an option of a Read that revealed the Next Behavior. It takes 2 of that Read's successes, including the one that revealed the behavior (Sharp Call makes it 1). Each target other than you who dodges the card that resolves the Called behavior gains 2 Bonus Dice, even if it resolves as its fallback or as Thrash. You gain nothing from your own Call It, and a target who cancels with an earlier dodge gains nothing. A Next Behavior can be Called once, and the Call ends when that card is done, when a decoy's card uses the behavior up, or when the Titan dies.</p>
+<p><b>Call It</b> is an option of a Read that revealed the Next Behavior. It takes 2 of that Read's successes, including the one that revealed the behavior (Sharp Call makes it 1). Each target other than you who dodges the card that resolves the Called behavior gains 2 Bonus Dice, even if it resolves as its fallback or as Thrash, and even if the Titan retargets and the behavior lands on someone else. What was Called is the entry, not the soldier it lands on. You gain nothing from your own Call It, and a target who cancels with an earlier dodge gains nothing. A Next Behavior can be Called once, and the Call ends when that card is done, when a decoy's card uses the behavior up, or when the Titan dies.</p>
 
 <h2 id="fight-grab">The Grab</h2>
 <p>A <b>Grabbed</b> soldier is held in a Titan's hand.</p>
@@ -3985,8 +3986,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <div>
 <h3>Positions</h3>
 <ul>
-<li><b>An action never changes a Position.</b> Only your own move does, plus this closed list: letting go, any fall, a knock loose, a Fear Roll's forced step, a Grab landing or ending, the close rule, a Titan arriving or dying, being carried, Fall Back, a grounded Titan standing at Open, and starting placement, leaving, returning, and a retreat's forced moves. The Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, and Rally leave you where you stand.</li>
-<li><b>On Body</b> means literally on it. <b>Blind Spot is not on the Titan:</b> you are anchored to terrain behind it, a tree or a roof, out of its sight with its Nape in reach. Steam at a Regeneration fill hits On Body and not Blind Spot, because Blind Spot is not on it.</li>
+<li><b>An action never changes a Position.</b> Only your own move does, plus this closed list: letting go, any fall, a knock loose, a Fear Roll's forced step, a Grab landing or ending, the close rule, a Titan arriving or dying, a Titan's body coming down, being carried, Fall Back, a grounded Titan standing at Open, and starting placement, leaving, returning, and a retreat's forced moves. The Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, and Rally leave you where you stand. Fly, Leap Clear, and Mount or Dismount are not actions, and each belongs to the list above.</li>
+<li><b>On Body</b> means literally on it. <b>Blind Spot is not on the Titan:</b> you are anchored to terrain behind it, hanging from a tree on your lines or standing on a roof, out of its sight with its Nape in reach, and whether you are airborne follows the move that brought you there. Steam at a Regeneration fill hits On Body and not Blind Spot, because Blind Spot is not on it.</li>
 <li><b>The map's shape is the Anchor Rating's</b> (see <a href="#fight-maps">the Position map</a>). <b>Open:</b> Distant to In Reach to On Body, and no Blind Spot at all while it stands. <b>Sparse:</b> a chain, Distant to In Reach to On Body to Blind Spot, so the Nape is reached by way of the body. <b>Wooded, Urban, Giant Forest:</b> a branch, In Reach to either On Body or Blind Spot, and those two joined.</li>
 <li><b>Grounded:</b> every step among In Reach, On Body, and Blind Spot can also be made on foot, none mounted. At Open it adds an On Body to Blind Spot step, so a plain finally reaches the Nape.</li>
 </ul>
@@ -4009,7 +4010,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ul>
 <li><b>Working ODM Gear</b> (not Jammed, Gas Rating above 0) is needed for a Nape strike, and for a Body Part strike from On Body or Blind Spot, unless the Titan is grounded.</li>
 <li><b>Nape strike:</b> Strength + the Blade Set in your handles, from Blind Spot; + Openings (never your own); +2 if grounded. Not while you hold its Attention or are Grabbed, and never in a retreat. Nape Depth kills; short, each success is an Opening.</li>
-<li><b>After a Nape strike you are still at Blind Spot.</b> The strike counts as hooking into the Titan for the Attention Ladder only, so a striker who pulls the Attention onto themselves cannot strike again until it moves: a comrade's Draw Attention or a Break Attention gets it off them.</li>
+<li><b>After a Nape strike you are still at Blind Spot.</b> The strike counts as hooking into the Titan for the Attention Ladder only, so a striker who pulls the Attention onto themselves cannot strike again until it moves: a comrade's Draw Attention, a Break Attention, or the Titan retargeting to someone it can reach gets it off them.</li>
 <li><b>Body Part strike:</b> eyes from On Body or Blind Spot; arms and legs from In Reach or On Body. Grounded: any part from In Reach, On Body, or Blind Spot, except a holding arm. Successes add to the count; at Toughness the part worsens one state; past Broken, Openings.</li>
 <li><b>Broken leg:</b> grounded, and its body falls. <b>Broken arm:</b> frees its soldier. <b>Broken eyes:</b> no flare or cloak decoy.</li>
 </ul>
@@ -4321,7 +4322,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Body Parts used:</b> the kinds the entry needs unbroken. "arm" needs one unbroken arm; "both legs" needs both legs unbroken.</li>
 <li><b>Attack Dice:</b> how many Titan Dice the entry rolls when a card resolves it. A telegraph-only entry rolls none.</li>
 <li><b>Effects,</b> applied in order to each target the card lands on. Every effect that harms names its Injury Type.</li>
-<li><b>Fallback:</b> the entry that happens instead when <b>no soldier at all</b> holds a Position this entry needs. While anyone does, the Titan retargets onto them rather than falling back (see <a href="#gm-ladder">Checking the Attention Ladder</a>).</li>
+<li><b>Fallback:</b> the entry that happens instead when <b>no soldier at all</b> holds a Position this entry needs. While anyone does, the Titan retargets onto them rather than falling back. The fallback is then read the same way, and the Titan retargets for it in its turn (see <a href="#gm-ladder">Checking the Attention Ladder</a>).</li>
 <li><b>Grab:</b> "yes" marks an entry that starts the Grab. The Closing Hand Scar reads this mark.</li>
 </ul>
 <div class="box">
@@ -4358,7 +4359,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ol>
 <li>Roll D6 and add the Titan's <a href="#fight-frenzy">Frenzy</a>. A total above the table's highest result reads as that highest result. Find the entry.</li>
 <li>The entry cannot be rolled if it was the Titan's previous behavior, or if it needs Body Parts the Titan no longer has unbroken.</li>
-<li>If it cannot, take the entry holding the next higher result, wrapping from 6 to 1, and test again.</li>
+<li>If it cannot, take the entry holding the next higher result and test again. At Frenzy 0, after 6 comes 1. At Frenzy 1 or more the roll never wraps: if the entry at 6 cannot be rolled, turn back down the table to the next result below the total, then the next below that, to 1.</li>
 <li>If no entry passes, the Next Behavior is Thrash.</li>
 </ol>
 </div>
@@ -4374,7 +4375,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Holding.</b> If it holds a living Grabbed soldier, the card resolves nothing. Do not check the ladder. The Next Behavior and the marks stay.</li>
 <li><b>Decoy.</b> If a decoy holds its Attention, the card resolves nothing and the hold has one card fewer left. The Next Behavior counts as spent: it becomes the previous behavior, any Call It on it ends, and you roll a new one. If that was the hold's last card, the hold ends and you check the ladder; otherwise the decoy keeps its Attention. Either way the marks stay and decoys in a row does not change.</li>
 <li><b>Attention.</b> Otherwise, check the Attention Ladder. If nothing holds its Attention, the card resolves nothing, the Next Behavior is kept, and the marks stay.</li>
-<li><b>Choose.</b> Take the Next Behavior's entry. If the Titan lacks the Body Parts it uses, the behavior is Thrash. <b>If the holder does not meet its Position requirement, the Titan retargets:</b> check the Attention Ladder again over only the candidates who do meet that requirement, move its Attention to the soldier the ladder picks, and resolve the entry against them. Only if no candidate meets the requirement does the entry become its fallback. If the fallback repeats the previous behavior or fails either test, the behavior is Thrash. Thrash can always happen, and it is the only entry that can follow itself.</li>
+<li><b>Choose.</b> Take the Next Behavior's entry. If the Titan lacks the Body Parts it uses, the behavior is Thrash. <b>If the holder does not meet its Position requirement, the Titan retargets:</b> check the Attention Ladder again over only the candidates who do meet that requirement, move its Attention to the soldier the ladder picks, and resolve the entry against them. Only if no candidate meets the requirement does the entry become its fallback, and the fallback is tested the same way. If the fallback is Thrash, repeats the previous behavior, or needs Body Parts the Titan no longer has, the behavior is Thrash. Otherwise, if the holder does not meet the fallback's own Position requirement, the Titan retargets over the candidates who do. Only when nobody meets the fallback either is the behavior Thrash. Thrash can always happen, and it is the only entry that can follow itself.</li>
 <li><b>Roll and announce.</b> Announce the behavior's name, tier, and targets. Roll its Attack Dice as Titan Dice in the open and announce the successes: the card's Severity, the same for every target.</li>
 <li><b>Reactions.</b> On Severity 0 the card whiffs against every target, a target who cannot make a Reaction included, and no one dodges. Otherwise each target, knowing the Severity, chooses whether to dodge, or cancels with a dodge already made against this Titan this round. Each dodge success cancels one of the card's successes, separately for this card. The card lands on a target on 1 or more Net Successes and whiffs on 0. A target who makes no Reaction, or cannot make one, cancels nothing: every success is net against them. A Call It on this behavior adds its Bonus Dice to a dodge made against this card, never to an earlier dodge compared against it (see <a href="#fight-dodge">Dodging a Titan</a>).</li>
 <li><b>Effects.</b> For each target it lands on, apply the effects in order, targets in card order, a Wing Squadmate just after its player character. Only a Critical Injury reads the Net Successes. A telegraph and a Wreck apply whether the card landed or whiffed, and a Wreck applies even where the entry landed on no one. A target who dies receives none of the card's later effects; every other target still does.</li>
@@ -4413,7 +4414,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p><b>When a card's entry needs a Position its Attention holder does not hold</b>, check the ladder a second time with a narrowed field. The candidates are only the soldiers who hold a Position the entry needs; everything else about the check is unchanged, tie-breaks included. The soldier it picks takes the Titan's Attention, and the entry resolves against them.</p>
 <ol>
 <li>Narrow the candidates to those who hold a Position the entry names.</li>
-<li>If none do, the entry becomes its fallback, and the Titan's Attention does not move. That is the only road to the fallback.</li>
+<li>If none do, the entry becomes its fallback, and the Titan's Attention does not move. Check the fallback the same way: narrow the candidates to those who hold a Position the fallback names, and run the ladder over them. Only when nobody holds one of those either is the behavior Thrash.</li>
 <li>Otherwise run the ladder over the narrowed field and move the Titan's Attention to the soldier it picks.</li>
 <li>Announce the behavior against that soldier, and resolve the card as usual. Its Attention stays with them until something moves it again.</li>
 </ol>
@@ -4486,7 +4487,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 
 <h3 id="gm-frenzy-note">Frenzy at the table</h3>
 <p>Set each Focus Titan's Frenzy to 0 the moment it becomes one, a Background Titan that walks in included, and raise it by 1 at its own end step of each round, just after the Regeneration clocks, to a cap of 3. It is public. Say it when it rises, because it is the clock the players can do something about: it is the packet's promise that a fight they let run turns into one they cannot win.</p>
-<p>Two Focus Titans hold their own Frenzy each. A Titan that enters in round 4 starts at 0 while the first is at 3.</p>
+<p>Two Focus Titans hold their own Frenzy each. A Titan that enters in round 4 starts at 0 while the first is at 3. A Titan that walks in from a Background clock arrives at the step after Frenzy, so that round's rise has already happened and it stays at 0 through its whole first round; one a flare brings in mid-round rises with the rest at that round's end.</p>
 
 <h3>Background Titans and the retreat</h3>
 <ul>
@@ -4730,7 +4731,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </tbody></table></div>
 <p>As on every ladder, a soldier marked as having struck its Nape comes before a soldier who is only On Body, and the tie-breaks are the same: the current holder, then the lowest card (not before the deal or at an end step), then nothing.</p>
 <ul>
-<li><b>A blade at its Nape or a soldier On Body turns it first,</b> whoever else is making noise. A Nape striker who falls short draws its Next Behavior.</li>
+<li><b>A blade at its Nape or a soldier On Body turns it first,</b> whoever else is making noise. A Nape striker who falls short draws its Attention, and its next behavior only when that behavior reaches Blind Spot.</li>
 <li><b>Then noise.</b> While no one is hooked into it, a soldier marked as loud outranks everyone below. Only Draw Attention, or a Fear Roll result that works like it, sets that mark, and only from a Position other than Distant.</li>
 <li><b>Then the one it is already running down.</b> Its holder keeps its Attention while at On Body, In Reach, or Blind Spot, until a Nape strike, a soldier On Body, or noise turns it. A comrade standing closer does not pull it away. A holder who gets away to Distant, mounted or on foot, keeps it only while they are the nearest.</li>
 <li><b>Only then whoever is nearest.</b> When nothing holds its Attention, or its holder is at Distant, it takes the soldiers at On Body, then In Reach, then Blind Spot, then Distant. A Squad that starts at one Position starts with nothing holding its Attention, so its first card turns to whoever has come closest, or to the lowest card when no one has moved.</li>

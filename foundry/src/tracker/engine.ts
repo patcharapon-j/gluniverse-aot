@@ -541,7 +541,7 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
   // resolving_a_card, choose, completed after round 3 review 1, M1: a fallback entry the holder
   // cannot meet retargets the same way, over the candidates who meet the fallback's own
   // position_requirement, and the move is real: Attention (and the note) move with it.
-  const entry = chooseEntry(s.behavior_table.entries, s.next_behavior.entry, s.previous_behavior, s.body_parts, holder.positions[label], (fallback) => {
+  const entry = chooseEntry(s.behavior_table.entries, s.next_behavior.entry, s.previous_behavior, s.body_parts, holder.positions[label], (fallback: any) => {
     const moved = retargetForEntry(ladderCtx, fallback, holder.id);
     const to = moved ? snap.soldiers.find((x) => x.id === moved) : null;
     if (!to) return null;

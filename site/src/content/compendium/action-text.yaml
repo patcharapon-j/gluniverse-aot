@@ -15,13 +15,13 @@
 # the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/action-catalog.yaml
-    sha: "747752afe49fd764d041b05362412356a62fe355"
+    sha: "b55b7753cc0cbe90315c007e8cc323c2c0017e1e"
   - path: data/engagement/attention.yaml
-    sha: "a01305bb80f454c445be1d37ab633b85d0027c5d"
+    sha: "c77419b5d117358b44af5d3a792a6ec524afed98"
   - path: data/engagement/read.yaml
-    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
+    sha: "4c6f60af2d757027d71368129ae3ec6f58ea3004"
   - path: data/engagement/round.yaml
-    sha: "a6d51d5d3d3a3c8348bf0659e4dabd35c28df781"
+    sha: "6f8fab37b45617fc67ee37bb97892e1ade9bb3b8"
   - path: data/engagement/squad-tactics.yaml
     sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
   - path: data/engagement/titan-harm.yaml
@@ -60,7 +60,7 @@ actions:
     does:
       - If the successes reach the Nape Depth, the Titan dies. If they fall short, each success creates 1 Opening, which your comrades can spend and you never can.
       - Openings, a grounded Titan, and Help can add Bonus Dice, up to the cap of 4. Its successes never count toward a later Nape strike, except as Openings.
-      - Making the strike counts as hooking into the Titan for the Attention Ladder only. It does not move you, and you are still at Blind Spot, anchored to the terrain behind the Titan and not on it. Because this roll needs a soldier who does not hold the Titan's Attention, a striker who draws that Attention onto themselves cannot strike again until the Attention moves: by a comrade's Draw Attention, by a decoy, or by the Titan retargeting to someone it can reach.
+      - Making the strike counts as hooking into the Titan for the Attention Ladder only. It does not move you, and you are still at Blind Spot, anchored to the terrain behind the Titan and not on it. Because this roll needs a soldier who does not hold the Titan's Attention, a striker who draws that Attention onto themselves cannot strike again until the Attention moves, whether by a comrade's Draw Attention, by a decoy, or by the Titan retargeting to someone it can reach.
     pages: [fighting-titans, gear-and-odm]
 
   body-part-strike:
@@ -118,7 +118,7 @@ actions:
       - The same Read revealed the Titan's Next Behavior. You declare Call It when the Read's facts are picked.
     needs: 2 of the Read's successes, the one that revealed the Next Behavior and one more.
     does:
-      - Every target other than you who dodges the card that resolves that behavior gains Bonus Dice on the dodge, even when the card resolves it as its fallback or as Thrash. You gain none from your own Call It.
+      - Every target other than you who dodges the card that resolves that behavior gains Bonus Dice on the dodge, even when the card resolves it as its fallback or as Thrash, and even when the Titan retargets and the behavior lands on someone else. What you Called is the entry, not the soldier it lands on. You gain none from your own Call It.
       - A target who already cancelled with a dodge made earlier this round against that Titan gains nothing. A Next Behavior can be Called once.
     pages: [fighting-titans]
 

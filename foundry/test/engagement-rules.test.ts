@@ -452,6 +452,21 @@ describe('Attention (attention.yaml, evaluation)', () => {
     expect(chooseEntry(medium.behavior_table.entries, 'nope', '', partsOf(), 'distant').tier).toBe('thrash');
   });
 
+  it('retargets over the fallback’s own requirement instead of testing it against the unchanged holder (completed after round 3 review 1, M1)', () => {
+    const large = tables.titans.find((t) => t.id === 'standard-large')!;
+    const entries = large.behavior_table.entries;
+    const parts = large.body_parts.map((b) => ({ ...b, state: 'intact' as const, progress: 0 }));
+    // bite (on-body) falls back to crush (in-reach); a holder at Blind Spot meets neither.
+    // With no retarget callback the fallback is unreachable, as before decision batch 13, 13-9.
+    expect(chooseEntry(entries, 'bite', '', parts, 'blind-spot').id).toBe('thrash');
+    // A retarget that finds nobody still leaves Thrash.
+    expect(chooseEntry(entries, 'bite', '', parts, 'blind-spot', () => null).id).toBe('thrash');
+    // A retarget that finds someone at In Reach reaches the fallback.
+    expect(chooseEntry(entries, 'bite', '', parts, 'blind-spot', () => 'in-reach').id).toBe('crush');
+    // The fallback is still Thrash when it is the previous behavior, whatever the retarget finds.
+    expect(chooseEntry(entries, 'bite', 'crush', parts, 'blind-spot', () => 'in-reach').id).toBe('thrash');
+  });
+
   it('targets the holder, or everyone at the holder’s Position who is not Grabbed', () => {
     const t = titan('A');
     const s = [soldier('h', { positions: { A: 'in-reach' } }), soldier('x', { positions: { A: 'in-reach' } }), soldier('g', { positions: { A: 'in-reach' } }), soldier('y', { positions: { A: 'distant' } })];
