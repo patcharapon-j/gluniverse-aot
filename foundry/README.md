@@ -10,6 +10,9 @@ titans, foes, squadmates, and field notes).
 - Foundry VTT v14.
 - [Dice So Nice](https://foundryvtt.com/packages/dicesonice) (optional). The system ships its
   own dice presets for it; without it, rolls still work and post as chat cards.
+- [Phil's Token Studio](https://foundryvtt.com/packages/phils-token-studio) (optional). Sheets
+  open it on the actor whose Token you are drawing; without it, the same button opens Foundry's
+  own prototype Token sheet.
 
 ## Install
 
@@ -21,6 +24,41 @@ https://github.com/patcharapon-j/gluniverse-aot/releases/latest/download/system.
 
 Foundry downloads the latest release automatically. Updates work the same way, through
 Foundry's own update check.
+
+## Using a character sheet
+
+### Edit mode and Play mode
+
+Every Soldier and Squadmate sheet carries a **Play / Edit** switch in its header.
+
+- **Play** is how a sheet sits at the table. Everything a session moves still moves: health,
+  stress, gas and spare canisters, Blade Sets, Critical Injuries, Scars, Stress Responses, the
+  kit ledger, positions, bonus dice, rolls and notes. What the character *is* holds still: the
+  name, the attributes, the Specialty, the Origin, Talent levels, the Drive, and the service
+  record. Dropping an Origin, a Specialty or a Talent on a sheet in Play mode is declined.
+- **Edit** opens the file for amendment and unlocks all of that. A red strip runs along the top
+  and bottom edge while it is open, so nobody rewrites a character thinking they are playing one.
+  The strip holds still under the Reduced and Off motion settings.
+
+The choice is remembered per character, in this browser only: switching to Edit never changes the
+world or what anybody else sees. A sheet with no Origin, Specialty or Talent yet opens in Edit, so
+a new soldier reaches the Lifepath wizard straight away; every other sheet opens in Play.
+
+### Character images
+
+The plate in the header holds three buttons, and the same entries sit in its right-click menu:
+
+- **Browse** picks an image already in the world.
+- **Upload** takes one from your own computer. Dropping an image file on the plate does the same
+  and sets the Token image too. Uploads are saved under `worlds/<world>/wings-of-freedom/portraits`
+  unless the GM points **Character image folder** somewhere else in the system settings; each one
+  is filed under the character's name, so a new image never overwrites an old one. Uploading needs
+  Foundry's file upload permission.
+- **Token Studio** opens [Phil's Token Studio](https://foundryvtt.com/packages/phils-token-studio)
+  on that actor, where the Token can be drawn and saved. The module is optional: without it, the
+  button opens Foundry's own prototype Token sheet instead, and a second button next to it always
+  does. The plate menu also copies the portrait onto the Token, browses for a Token image on its
+  own, and puts both back to the system's default art.
 
 ## Local development
 

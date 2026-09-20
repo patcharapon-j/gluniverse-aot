@@ -16,6 +16,8 @@
   const { actor, sheet, state: ss } = sheetContext();
   const s = $derived(view.system);
   const ro = $derived(!view.editable);
+  /** The character's own build: locked in Play mode (mode.ts). */
+  const roStats = $derived(!view.statsEditable);
   const scaleMin = CONFIG.WOF.attributeScale.min;
 
   const attributes = CONFIG.WOF.attributes as { id: string; name: string; summary: string }[];
@@ -59,7 +61,7 @@
   const talentMenu = (id: string, used: boolean, hasLimit: boolean) => () => [
     { label: t('WOF.Sheet.menu.open'), icon: 'fa-solid fa-book-open', onClick: () => openItem(actor, id) },
     { label: t(used ? 'WOF.Sheet.talent.markReady' : 'WOF.Sheet.talent.markUsed'), icon: 'fa-solid fa-check', visible: view.editable && hasLimit, onClick: () => setItem(actor, id, { 'system.used': !used }) },
-    { label: t('WOF.Sheet.menu.remove'), icon: 'fa-solid fa-trash', visible: view.editable, onClick: () => deleteItem(actor, id) },
+    { label: t('WOF.Sheet.menu.remove'), icon: 'fa-solid fa-trash', visible: view.statsEditable, onClick: () => deleteItem(actor, id) },
   ];
 </script>
 
@@ -82,7 +84,7 @@
                 value={v}
                 max={view.attributeMax[a.id]}
                 min={scaleMin}
-                disabled={ro}
+                disabled={roStats}
                 label={t(`WOF.Attribute.${a.id}`)}
                 onset={(n) => setField(actor, `system.attributes.${a.id}`, n)}
               />
@@ -172,7 +174,7 @@
               max={tal.maxLevel}
               min={1}
               cls={tal.type === 'dice' ? 'dt' : 'da'}
-              disabled={ro || tal.maxLevel <= 1}
+              disabled={roStats || tal.maxLevel <= 1}
               label={tal.name}
               onset={(n) => setItem(actor, tal.id, { 'system.level': n })}
             />
@@ -192,16 +194,16 @@
       {:else}
         <p class="empty">{t('WOF.Sheet.soldier.noTalents')}</p>
       {/each}
-      <p class="dropzone">{t('WOF.Sheet.drop.talents')}</p>
+      {#if view.statsEditable}<p class="dropzone">{t('WOF.Sheet.drop.talents')}</p>{/if}
     </div>
 
     <div class="box">
       <Sec n="4" title={t('WOF.Sheet.soldier.enlistment')} />
       <dl class="facts">
         <dt>{t('WOF.Actor.Soldier.FIELDS.drive.label')}</dt>
-        <dd class="drive"><input type="text" value={s.drive} disabled={ro} onchange={(e) => setField(actor, 'system.drive', e.currentTarget.value)} /></dd>
+        <dd class="drive"><input type="text" value={s.drive} disabled={roStats} onchange={(e) => setField(actor, 'system.drive', e.currentTarget.value)} /></dd>
         <dt>{t('WOF.Actor.Soldier.FIELDS.drive_named_comrade.label')}</dt>
-        <dd><input type="text" value={s.drive_named_comrade} disabled={ro} onchange={(e) => setField(actor, 'system.drive_named_comrade', e.currentTarget.value)} /></dd>
+        <dd><input type="text" value={s.drive_named_comrade} disabled={roStats} onchange={(e) => setField(actor, 'system.drive_named_comrade', e.currentTarget.value)} /></dd>
         <dt>{t('WOF.Sheet.soldier.driveUsed')}</dt>
         <dd>
           <input
