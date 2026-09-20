@@ -7,11 +7,13 @@ interface Item {
 }
 interface Props {
   items: Item[];
+  /** The heading over the list, for a page that is not a chapter. */
+  label?: string;
 }
-const { items } = Astro.props;
+const { items, label = 'In this chapter' } = Astro.props;
 ---
 <nav class="chapter-contents wide" aria-labelledby="chapter-contents-title">
-  <p class="lbl" id="chapter-contents-title">In this chapter</p>
+  <p class="lbl" id="chapter-contents-title">{label}</p>
   <ol>
     {items.map((item, i) => (
       <li>
