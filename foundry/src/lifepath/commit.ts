@@ -4,6 +4,7 @@
  * ids; the actor's fields and the finished state go in one update.
  */
 import { SYSTEM_ID } from '../config.ts';
+import { packItemData } from '../pack-items.ts';
 import type { LpTables } from '../rules/lifepath.ts';
 import { markFinished, replay, type LifepathState } from '../rules/lifepath-state.ts';
 import { allowedProcedures, worldYear } from './campaign.ts';
@@ -24,14 +25,8 @@ function heldItems(actor: any): HeldItem[] {
 }
 
 async function packData(pack: PackName, key: string): Promise<Record<string, any>> {
-  const ids = CONFIG.WOF.packIds as Record<PackName, Record<string, string>>;
-  const id = ids[pack]?.[key];
-  const collection = game.packs.get(`${SYSTEM_ID}.${pack}`);
-  const doc = id && collection ? await collection.getDocument(id) : null;
-  if (!doc) throw new Error(t('WOF.Lifepath.finish.missing', { key, pack }));
-  const data = doc.toObject();
-  delete data._id;
-  data._stats = { compendiumSource: doc.uuid };
+  const data = await packItemData(pack, key);
+  if (!data) throw new Error(t('WOF.Lifepath.finish.missing', { key, pack }));
   return data;
 }
 

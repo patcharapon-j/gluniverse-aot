@@ -13,11 +13,12 @@
   import { HoverCards } from '../hover.svelte.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import { deleteItem, openItem, setField, setItem } from '../soldier-ops.ts';
+  import { setTemplate, squadmateTemplates } from '../squadmate-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
   import DetailCards from './DetailCards.svelte';
-  import Dots from './Dots.svelte';
   import EditBanner from './EditBanner.svelte';
   import ModeSwitch from './ModeSwitch.svelte';
+  import Pips from './Pips.svelte';
   import Plate from './Plate.svelte';
   import Sec from './Sec.svelte';
   import TabKit from './TabKit.svelte';
@@ -41,6 +42,8 @@
   /** The Squadmate's own template: locked in Play mode (mode.ts). */
   const roStats = $derived(!view.statsEditable);
   const attributes = CONFIG.WOF.attributes as { id: string; summary: string }[];
+  const scaleMin = CONFIG.WOF.attributeScale.min;
+  const templates = squadmateTemplates();
   const TABS = [
     { id: 'stat', label: 'WOF.Squad.tab.stat' },
     { id: 'wounds', label: 'WOF.Sheet.tab.wounds' },
@@ -104,7 +107,13 @@
     return out;
   });
   /** A template is named for its Specialty; the sheet shows that name, never the table's id. */
-  const templateName = (id: string) => (CONFIG.WOF.specialties as { id: string; name: string }[]).find((x) => x.id === id)?.name ?? id;
+  const templateName = (id: string) => templates.find((x) => x.id === id)?.name ?? id;
+
+  /** Setting a template may be declined at the confirmation, so the picker is put back either way. */
+  async function pickTemplate(id: string) {
+    await setTemplate(actor, id);
+    await sheet.render();
+  }
 </script>
 
 <div class="wof-sheet compact" bind:this={paper} data-gore={viewer.gore} data-motion={motionMode()} data-mode={view.mode} style="--wof-loop: {MOTION.loop}ms">
@@ -115,7 +124,14 @@
       <div class="kicker">
         <img class="ic s16" src={view.specialty?.icon ?? icon('brand-emblem')} alt="" />
         {t('WOF.Squad.kicker')}
-        <span class="serial">{s.template ? t('WOF.Squad.template', { id: templateName(s.template) }) : ''}</span>
+        {#if view.statsEditable}
+          <select class="serial" value={s.template} aria-label={t('WOF.Squad.templateLabel')} use:tooltip={t('WOF.Squad.templateTip')} onchange={(e) => pickTemplate(e.currentTarget.value)}>
+            <option value="">{t('WOF.Squad.noTemplate')}</option>
+            {#each templates as m (m.id)}<option value={m.id}>{m.name}</option>{/each}
+          </select>
+        {:else}
+          <span class="serial">{s.template ? t('WOF.Squad.template', { id: templateName(s.template) }) : ''}</span>
+        {/if}
       </div>
       <input class="name" type="text" value={view.name} aria-label={t('WOF.Squad.name')} disabled={roStats} onchange={(e) => actor.update({ name: e.currentTarget.value.trim() || view.name })} />
       <div class="meta">
@@ -155,7 +171,7 @@
     {:else}
       <section class="panel">
         <div class="block">
-          <Sec n="1" title={t('WOF.Sheet.soldier.attributes')} hint={t('WOF.Squad.attributesHint')} />
+          <Sec n="1" title={t('WOF.Sheet.soldier.attributes')} hint={t(view.statsEditable ? 'WOF.Squad.attributesEdit' : 'WOF.Squad.attributesHint')} />
           <div class="attrlist">
             {#each attributes as a (a.id)}
               {@const v = s.attributes[a.id]}
@@ -166,7 +182,14 @@
                   <i class="fa-solid fa-dice-d6 hint" aria-hidden="true"></i>
                 </button>
                 <span class="nm"><button type="button" class="attr-roll nm-btn" tabindex="-1" aria-hidden="true" use:tooltip={rollTip} onclick={(e) => rollAttribute(a.id, e.currentTarget)}>{t(`WOF.Attribute.${a.id}`)}</button>{#if view.keyAttribute === a.id}<span class="stamp key">{t('WOF.Sheet.soldier.key')}</span>{/if}</span>
-                <Dots groups={[{ cls: 'da', n: v }, { cls: 'da o', n: Math.max(0, view.attributeMax[a.id] - v) }]} label={t('WOF.Sheet.aria.rating', { label: t(`WOF.Attribute.${a.id}`), value: v, max: view.attributeMax[a.id] })} />
+                <Pips
+                  value={v}
+                  max={view.attributeMax[a.id]}
+                  min={scaleMin}
+                  disabled={roStats}
+                  label={t(`WOF.Attribute.${a.id}`)}
+                  onset={(n) => setField(actor, `system.attributes.${a.id}`, n)}
+                />
                 <b>{v}</b>
               </div>
             {/each}
@@ -181,7 +204,15 @@
                 <div class="tal-h">
                   <img class="ic" src={icon(talent.type === 'dice' ? 'talent-dice' : 'talent-rule')} alt="" />
                   <strong><button type="button" class="link" onclick={() => openItem(actor, talent.id)}>{talent.name}</button></strong>
-                  <Dots groups={[{ cls: talent.type === 'dice' ? 'dt' : 'da', n: talent.level }, { cls: 'dt o', n: Math.max(0, talent.maxLevel - talent.level) }]} label={t('WOF.Sheet.aria.rating', { label: talent.name, value: talent.level, max: talent.maxLevel })} />
+                  <Pips
+                    value={talent.level}
+                    max={talent.maxLevel}
+                    min={1}
+                    cls={talent.type === 'dice' ? 'dt' : 'da'}
+                    disabled={roStats || talent.maxLevel <= 1}
+                    label={talent.name}
+                    onset={(n) => setItem(actor, talent.id, { 'system.level': n })}
+                  />
                 </div>
                 <p>{talent.text}</p>
                 <div class="for">

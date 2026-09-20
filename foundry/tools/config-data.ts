@@ -452,6 +452,13 @@ export function buildConfig(t: Tables, site: SiteWording, fw: FoundryWording) {
     })),
     trackedValues: t.actionCatalog.tracked_values.map((v) => ({ id: v.id, name: v.name })),
     specialties: t.specialties.specialties.map((s) => ({ id: s.id, name: s.name, keyAttribute: s.key_attribute })),
+    // The nine Squadmate stat blocks, so a sheet in Edit mode can set one (data/character/squadmates.yaml).
+    squadmateTemplates: t.squadmates.templates.map((m) => ({
+      id: m.id,
+      specialty: m.specialty,
+      talent: { id: m.talent.id, level: m.talent.level },
+      attributes: { ...m.attributes },
+    })),
     gearItems: t.gearItems.items.map((i) => ({
       id: i.id,
       name: i.name,

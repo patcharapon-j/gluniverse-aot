@@ -1496,6 +1496,18 @@
     "Squad": {
       "kicker": "Squadmate stat block",
       "template": "Template: {id}",
+      "templateLabel": "Stat block template",
+      "templateTip": "Pick a stat block: its Specialty, its Talent and its attributes are written onto this Squadmate.",
+      "noTemplate": "No template",
+      "applyTitle": "Set the stat block template",
+      "applyHint": "Setting the {name} template changes:",
+      "applies": {
+        "attributes": "The attributes, to the ratings the template gives",
+        "specialty": "The Specialty, replaced by the template’s",
+        "talent": "The Talent, replaced by the template’s at level 1"
+      },
+      "applied": "This Squadmate now reads as the {name} template. Its kit was left as it is.",
+      "applyMissing": "The {name} template could not be read from the system compendia, so nothing changed.",
       "name": "Squadmate name",
       "noWing": "No Wing",
       "onWing": "On {name}’s Wing",
@@ -1505,6 +1517,7 @@
         "stat": "Stat block"
       },
       "attributesHint": "Set by the template; they never change",
+      "attributesEdit": "Set by the template; click a pip to write one by hand",
       "talentHint": "One template Talent",
       "dropTalent": "Drop a Talent to replace the template Talent.",
       "mind": "Mind",
