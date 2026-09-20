@@ -6,7 +6,7 @@
 <meta name="description" content="A three-act Wings of Freedom one-shot: everything one GM needs to run a first session of Attack on Titan on the Year Zero Engine.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=Noto+Serif+Thai:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
 <style>
 :root{
   --paper:#f6f7f4;--ink:#1c2420;--muted:#56615b;--rule:#cfd6d0;--accent:#2d5b4c;--gm:#6b4a2e;
@@ -72,7 +72,6 @@ hr{border:0;border-top:1px solid var(--rule);margin:.4rem 0}
 .read{background:var(--read);border-left:3px solid var(--gm);font-style:italic}
 .read p+p{padding-top:.1rem}
 .read b{font-style:normal}
-.read::before{content:"Read aloud";display:block;font-style:normal;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gm)}
 .enc{border:1px solid var(--ink)}
 .npc{border:1px solid var(--rule);border-left:4px solid var(--gm)}
 .statblock{border:1px solid var(--ink)}
@@ -127,6 +126,27 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
 .steps.gmsteps>li::before{background:var(--gm)}
 .topjump{position:fixed;right:14px;bottom:14px;border:0;cursor:pointer;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:var(--on-band);text-decoration:none;padding:.45rem .6rem;border-radius:3px;opacity:.9}
 .topjump:hover{opacity:1}
+
+/* ---------- Thai layer ---------- */
+:root{--font-thai:"Noto Serif Thai","Sarabun","Leelawadee UI","Tahoma",sans-serif}
+.th{font-family:var(--font-thai);line-height:1.85;font-size:.95em;font-style:normal}
+.read .th,.read .th p{font-style:normal}
+.th em{font-style:normal;font-weight:600}
+.read{gap:.7rem}
+.read .en,.read .th{display:flex;flex-direction:column;gap:.5rem}
+.read .th{padding-top:.6rem;border-top:1px dashed var(--rule)}
+.read .en::before,.read .th::before{content:"Read aloud";display:block;font-style:normal;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gm)}
+.read .th::before{content:"อ่านออกเสียง";font-family:var(--font-thai);letter-spacing:.04em;text-transform:none;font-size:.72rem}
+p.th,li.th{color:var(--muted)}
+pre.th{margin-top:.5rem;font-family:var(--font-thai);font-size:.8rem;line-height:1.7}
+
+/* language switch */
+body[data-lang="en"] .th{display:none!important}
+body[data-lang="th"] .en{display:none!important}
+body[data-lang="th"] .read .th{padding-top:0;border-top:0}
+.langpick{display:flex;gap:2px;margin:.1rem .4rem .2rem}
+.langpick button{flex:1;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:.28rem .2rem;border:1px solid var(--rule);background:none;color:var(--muted);cursor:pointer;border-radius:3px}
+.langpick button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-band)}
 
 /* ---------- side rail ---------- */
 .railnav{
@@ -185,6 +205,9 @@ body[data-rail="open"] .railscrim{display:block}
   .qr2{columns:2}
   ul,ol{display:block}
   li+li{margin-top:.18rem}
+  .read .en,.read .th{display:block}
+  .read .en>*+*,.read .th>*+*{margin-top:.4rem}
+  .th{line-height:1.7}
   .toc ol{display:block}
   a{color:inherit;text-decoration:none}
   .topjump,.railnav,.railscrim{display:none!important}
@@ -205,6 +228,12 @@ body[data-rail="open"] .railscrim{display:block}
   <div class="railhead">
     <span class="s">Wings of Freedom</span>
     <a class="t" href="#top">Before the Gate Closes</a>
+  </div>
+
+  <div class="langpick" role="group" aria-label="Boxed text language">
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    <button type="button" data-lang="th" aria-pressed="false" lang="th" style="font-family:var(--font-thai);text-transform:none;letter-spacing:0">ไทย</button>
+    <button type="button" data-lang="both" aria-pressed="true">Both</button>
   </div>
 
   <div class="hot">
@@ -1361,9 +1390,16 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3>Scene 1 &middot; The supply yard, Karanes District</h3>
   <div class="read">
+  <div class="en">
     <p>The supply yard smells of oiled leather and horse. Somebody is stencilling numbers onto crates that were stencilled yesterday. Two weeks ago you were cadets; eleven days ago you were posted here, east, while half your year went west to Trost, and since then you have done inventory.</p>
     <p>The rumours have been coming down the road all week, and no two of them agree. Trost fell. Trost held. The wall is breached and they have plugged it. A Titan fought other Titans in the street and nobody can say what that is supposed to mean. The only thing everyone agrees on is that the Corps has stopped sending letters home.</p>
     <p>Above the yard, the wall does what the wall always does: it stands there, fifty metres of it, and makes the sky a smaller shape than it should be.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ลานเสบียงมีกลิ่นหนังชุบน้ำมันปนกลิ่นม้า ใครบางคนกำลังพ่นเลขลงบนลังที่เพิ่งพ่นไปเมื่อวาน สองสัปดาห์ก่อนพวกนายยังเป็นนักเรียนทหาร สิบเอ็ดวันก่อนพวกนายถูกส่งมาที่นี่ ทางตะวันออก ขณะที่ครึ่งหนึ่งของรุ่นถูกส่งไปทางตะวันตกที่ทรอสต์ และตั้งแต่นั้นมาพวกนายก็ได้แต่นับของในคลัง</p>
+    <p>ข่าวลือไหลมาตามถนนทั้งสัปดาห์ และไม่มีสองเรื่องไหนตรงกันเลย ทรอสต์แตกแล้ว ทรอสต์ยังอยู่ กำแพงถูกเจาะแต่มีคนอุดไว้ทัน ไททันตัวหนึ่งสู้กับไททันด้วยกันกลางถนน และไม่มีใครบอกได้ว่านั่นควรจะแปลว่าอะไร สิ่งเดียวที่ทุกคนพูดตรงกันคือหน่วยสำรวจหยุดส่งจดหมายกลับบ้านแล้ว</p>
+    <p>เหนือลานขึ้นไป กำแพงก็ทำในสิ่งที่กำแพงทำเสมอ มันยืนอยู่ตรงนั้น สูงห้าสิบเมตร และทำให้ท้องฟ้ามีรูปร่างเล็กกว่าที่มันควรจะเป็น</p>
+  </div>
   </div>
   <div class="box">
     <h4>Let them breathe &mdash; five minutes, no dice</h4>
@@ -1381,11 +1417,20 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3>Scene 2 &middot; The briefing</h3>
   <div class="read">
+  <div class="en">
     <p>Lieutenant Weiss does not sit down and does not ask you to. She has a map already unrolled and one finger on it.</p>
     <p>&ldquo;Relay Station 18. Hedgerow line, two hours east. It has missed two flare reports, which is probably a wet flare box and a lazy sergeant. You will ride out, confirm the post&rsquo;s status, recover the route records, and be back inside this wall before the gate closes. Corporal Voss goes with you. He has done this eleven times. You have done it none.&rdquo;</p>
     <p>&ldquo;Understand what you are being asked for. Not the post. The <em>records</em>. If the route east is still marked, the next expedition rides in nine days. If it is not, somebody rides out to mark it again, and I will be sending soldiers I have not got to spare. Bring me the box.&rdquo;</p>
     <p>She rolls the map up.</p>
     <p>&ldquo;Sunset is at seven. Sergeant Klein does not hold the gate for anyone, and if he did, I would have him replaced. Questions that are not about Trost.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ร้อยโทไวส์ไม่นั่งลง และไม่เอ่ยให้พวกนายนั่ง เธอคลี่แผนที่ไว้ก่อนแล้ว และมีนิ้วหนึ่งกดอยู่บนนั้น</p>
+    <p>&ldquo;สถานีส่งสัญญาณที่ 18 แนวพุ่มไม้ ห่างไปทางตะวันออกสองชั่วโมง มันขาดรายงานพลุไปสองครั้ง ซึ่งน่าจะเป็นแค่กล่องพลุเปียกกับจ่าขี้เกียจ พวกนายจะขี่ม้าออกไป ยืนยันสถานะของสถานี เอาบันทึกเส้นทางกลับมา แล้วกลับเข้ามาในกำแพงนี้ก่อนประตูปิด สิบโทโวสไปด้วย เขาทำเรื่องแบบนี้มาสิบเอ็ดครั้งแล้ว พวกนายยังไม่เคยสักครั้ง&rdquo;</p>
+    <p>&ldquo;เข้าใจให้ตรงกันว่าฉันสั่งอะไร ไม่ใช่ตัวสถานี แต่เป็น<em>บันทึก</em> ถ้าเส้นทางตะวันออกยังมีเครื่องหมายอยู่ ภารกิจสำรวจครั้งหน้าจะออกได้ในอีกเก้าวัน ถ้าไม่มี ก็ต้องมีคนขี่ม้าออกไปทำเครื่องหมายใหม่ และฉันจะต้องส่งทหารที่ฉันไม่มีจะส่ง เอากล่องนั้นมาให้ฉัน&rdquo;</p>
+    <p>เธอม้วนแผนที่เก็บ</p>
+    <p>&ldquo;ตะวันตกดินหนึ่งทุ่ม จ่าไคลน์ไม่รั้งประตูให้ใครทั้งนั้น และถ้าเขารั้ง ฉันก็จะเปลี่ยนคนคุมประตู มีคำถามอะไรที่ไม่เกี่ยวกับทรอสต์ไหม&rdquo;</p>
+  </div>
   </div>
   <div class="box">
     <h4>What she will answer</h4>
@@ -1398,17 +1443,30 @@ body[data-rail="open"] .railscrim{display:block}
     <p class="small mut"><b>Weiss is not a villain and not a fool.</b> She is short of soldiers, short of information, and five days past the worst week of her career. Play her as efficient and slightly too fast, a woman working down a list. She calls it routine because the Corps has to call something routine or it stops functioning.</p>
   </div>
   <div class="read">
+  <div class="en">
     <p>Sergeant Klein is at the gate mechanism with his arms folded. He looks at you the way a man looks at a delivery.</p>
     <p>&ldquo;Seven o&rsquo;clock. Not five past. The counterweight takes four minutes to drop and I start it at seven whether there is a flare on the road or not, because that is the order, and because the last time somebody held it we lost the gate crew as well as the patrol.&rdquo;</p>
     <p>&ldquo;Ride well. Come back early.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>จ่าไคลน์ยืนกอดอกอยู่ที่กลไกประตู เขามองพวกนายแบบที่คนมองของที่ถูกส่งมา</p>
+    <p>&ldquo;หนึ่งทุ่ม ไม่ใช่ทุ่มห้านาที ตุ้มถ่วงใช้เวลาสี่นาทีกว่าจะลงสุด และฉันเริ่มปล่อยมันตอนหนึ่งทุ่ม ไม่ว่าจะมีพลุขึ้นบนถนนหรือไม่ เพราะนั่นคือคำสั่ง และเพราะครั้งสุดท้ายที่มีคนรั้งประตูไว้ เราเสียทั้งหน่วยลาดตระเวนและชุดคุมประตู&rdquo;</p>
+    <p>&ldquo;ขี่ให้ดี กลับมาให้เร็ว&rdquo;</p>
+  </div>
   </div>
 </section>
 
 <section>
   <h3>Scene 3 &middot; Leg 1 &mdash; the road east</h3>
   <div class="read">
+  <div class="en">
     <p>Outside, the world does not end &mdash; that is the thing nobody warns you about. It simply keeps going. Grass to the horizon, a road with wagon ruts in it, hedgerows running away east in long dark lines, and a sky with nothing in it at all. Behind you the wall gets smaller and does not stop getting smaller.</p>
     <p>Voss rides at the front and does not talk for the first half hour. When he does, it is to say: &ldquo;Look at the hedge line, not the road. Things come through hedges.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ข้างนอก โลกไม่ได้สิ้นสุดลง นั่นคือสิ่งที่ไม่มีใครเตือนพวกนายไว้ มันแค่ทอดยาวต่อไปเรื่อย ๆ ทุ่งหญ้าจรดเส้นขอบฟ้า ถนนที่มีรอยล้อเกวียน แนวพุ่มไม้ทอดหนีไปทางตะวันออกเป็นเส้นยาวสีเข้ม และท้องฟ้าที่ไม่มีอะไรอยู่ในนั้นเลย ข้างหลังพวกนาย กำแพงเล็กลงเรื่อย ๆ และไม่หยุดเล็กลง</p>
+    <p>โวสขี่นำหน้าและไม่พูดอะไรเลยตลอดครึ่งชั่วโมงแรก พอเขาพูด เขาพูดว่า &ldquo;มองแนวพุ่มไม้ อย่ามองถนน ของพวกนั้นมันออกมาจากพุ่มไม้&rdquo;</p>
+  </div>
   </div>
   <div class="box">
     <h4>Run the Leg</h4>
@@ -1425,9 +1483,16 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3 id="enc1">Encounter &middot; The One in the Wheat <span class="tag bad">Titan Engagement</span></h3>
   <div class="read">
+  <div class="en">
     <p>The hedge on your left is two hundred metres of blackthorn and it has been the same hedge for twenty minutes. Then a section of it is not there any more.</p>
     <p>It comes out sideways, through the hedge rather than around it, the way weather comes through a hedge. Four metres, maybe five. Small enough that your first thought is that it is a person, and that thought lasts about half a second, because it is grinning, and the grin does not come off, and nothing about how it walks belongs to a person.</p>
     <p>Voss has already pulled up. &ldquo;All right,&rdquo; he says, and his voice is completely level, which is worse than shouting. &ldquo;All right. This is the one you get to practise on.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>พุ่มไม้ทางซ้ายของพวกนายคือแนวหนามดำยาวสองร้อยเมตร และมันเป็นพุ่มเดิมมายี่สิบนาทีแล้ว แล้วจู่ ๆ ช่วงหนึ่งของมันก็ไม่อยู่ตรงนั้นอีก</p>
+    <p>มันออกมาทางข้าง ทะลุพุ่มไม้ ไม่ใช่อ้อม แบบเดียวกับที่พายุทะลุพุ่มไม้ สูงสี่เมตร หรืออาจจะห้า เล็กพอที่ความคิดแรกของพวกนายคือมันเป็นคน และความคิดนั้นอยู่ได้ราวครึ่งวินาที เพราะมันยิ้ม และรอยยิ้มนั้นไม่เคยหลุดไปจากหน้า และไม่มีอะไรในท่าเดินของมันที่เป็นของคน</p>
+    <p>โวสดึงบังเหียนหยุดไปแล้ว &ldquo;เอาล่ะ&rdquo; เขาพูด ด้วยน้ำเสียงเรียบสนิท ซึ่งน่ากลัวกว่าการตะโกน &ldquo;เอาล่ะ ตัวนี้แหละที่พวกนายจะได้ฝึกมือ&rdquo;</p>
+  </div>
   </div>
   <div class="enc">
     <h3>Setup</h3>
@@ -1460,9 +1525,16 @@ body[data-rail="open"] .railscrim{display:block}
     </ul>
   </div>
   <div class="read">
+  <div class="en">
     <p>The steam comes off it in a column you can see from the road, and the body goes soft at the edges before it hits the ground. In four minutes there will be a shape of flattened grass and nothing else.</p>
     <p>Voss gets down off his horse and is quietly, efficiently sick into the hedge. Then he straightens up, wipes his mouth, and says, &ldquo;Right. That is the good kind. Mount up, we have got an hour of light to waste.&rdquo;</p>
     <p>He does not say <em>the good kind</em> in a way that invites a question.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ไอน้ำพุ่งขึ้นจากมันเป็นลำที่มองเห็นได้จากบนถนน และร่างนั้นเริ่มเลือนที่ขอบก่อนจะตกถึงพื้นด้วยซ้ำ อีกสี่นาทีจะเหลือแค่รอยหญ้าแบนราบ และไม่มีอะไรอีกเลย</p>
+    <p>โวสลงจากม้า แล้วอาเจียนลงพุ่มไม้อย่างเงียบ ๆ และเป็นระเบียบ จากนั้นเขายืดตัวขึ้น เช็ดปาก แล้วพูดว่า &ldquo;เอาล่ะ นั่นคือแบบที่ดี ขึ้นม้า เรายังมีแสงเหลือให้ผลาญอีกชั่วโมงหนึ่ง&rdquo;</p>
+    <p>เขาไม่ได้พูดคำว่า<em>แบบที่ดี</em>ด้วยน้ำเสียงที่เปิดให้ใครถามต่อ</p>
+  </div>
   </div>
   <div class="box warn">
     <h4>Tuning</h4>
@@ -1482,19 +1554,33 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3>Scene 4 &middot; Arrival <span class="tag gm">Fill one Sunset segment</span></h3>
   <div class="read">
+  <div class="en">
     <p>You smell it before you see it, and what you smell is mostly horse.</p>
     <p>Relay Station 18 is one squat stone building, a stable, a flare mast, and a fence. The fence is flat across about ten metres. The stable door is off its hinges and lying in the yard, and there are two horses in the stable that are not standing up. The gate has been pushed inward hard enough to take part of the wall with it.</p>
     <p>There is no fighting. There is no shouting. There is a bucket on its side by the well with water still spreading out of it, which means somebody put it down not very long ago.</p>
     <p>Ten metres up, in the fork of the ash tree by the fence, there is an ODM harness. Both hooks are fired and buried in the trunk. The straps are still buckled. There is nobody in it.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>พวกนายได้กลิ่นมันก่อนจะเห็นมัน และสิ่งที่ได้กลิ่นส่วนใหญ่คือกลิ่นม้า</p>
+    <p>สถานีส่งสัญญาณที่ 18 คืออาคารหินเตี้ยหนึ่งหลัง คอกม้า เสาพลุสัญญาณ และรั้ว รั้วราบไปกับพื้นเป็นช่วงราวสิบเมตร ประตูคอกม้าหลุดจากบานพับ นอนอยู่กลางลาน และในคอกมีม้าสองตัวที่ไม่ได้ยืน ประตูรั้วถูกดันเข้าด้านในแรงพอจะพาส่วนหนึ่งของกำแพงรั้วไปด้วย</p>
+    <p>ไม่มีเสียงต่อสู้ ไม่มีเสียงตะโกน มีถังน้ำล้มอยู่ข้างบ่อ น้ำยังแผ่ออกมาอยู่ ซึ่งแปลว่าใครบางคนเพิ่งวางมันลงไปไม่นานนี้เอง</p>
+    <p>สูงขึ้นไปสิบเมตร ตรงง่ามต้นแอชข้างรั้ว มีสายรัดอุปกรณ์เคลื่อนที่สามมิติค้างอยู่ ตะขอทั้งสองข้างถูกยิงออกและฝังอยู่ในลำต้น หัวเข็มขัดยังรัดครบทุกเส้น ไม่มีใครอยู่ในนั้น</p>
+  </div>
   </div>
   <div class="box gmbox">
     <h4>The passive roll &mdash; do this now, before anyone says anything</h4>
     <p class="small">There is something here nobody would know to look for. Roll it yourself, out of sight, for <b>each</b> soldier: their <b>Spot</b> &mdash; Perception, plus a Talent that names Spot, plus Gear Dice if the entry allows &mdash; at <b>Easy</b> (+1 die). No Help, no Cover, no Push, and a Stress Die showing 1 does nothing, because they never knew they rolled.</p>
     <p class="small"><b>On a success, tell that player only:</b></p>
     <div class="read small" style="margin-top:.3rem">
-      <p>There are two sets of drag marks out of the yard, not one. They both go west. One set is dry and dark at the edges, hours old.</p>
-      <p>The other one is still wet.</p>
-    </div>
+<div class="en">
+  <p>There are two sets of drag marks out of the yard, not one. They both go west. One set is dry and dark at the edges, hours old.</p>
+  <p>The other one is still wet.</p>
+</div>
+<div class="th" lang="th">
+  <p>รอยลากออกจากลานมีสองรอย ไม่ใช่รอยเดียว ทั้งสองมุ่งไปทางตะวันตก รอยหนึ่งแห้งแล้วและคล้ำที่ขอบ เก่าหลายชั่วโมง</p>
+  <p>อีกรอยหนึ่งยังเปียกอยู่</p>
+</div>
+</div>
     <p class="small mut">If nobody succeeds, they find out in Act II anyway when Linne tells them &mdash; but they find out as information rather than as a feeling, and the difference is the whole reason this rule exists. Do not fudge it.</p>
   </div>
 </section>
@@ -1528,8 +1614,14 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3>Scene 6 &middot; Linne Faber</h3>
   <div class="read">
+  <div class="en">
     <p>She is maybe twenty-five, and she has her own belt pulled tight around her right thigh above a dressing that was a shirt this morning. Her face is the colour of the sheet. She has her blades within reach of her hand and one of them is broken off halfway.</p>
     <p>&ldquo;Faber. Relay Eighteen. Don&rsquo;t &mdash;&rdquo; she stops, breathes, starts again. &ldquo;Don&rsquo;t move me yet. Listen first, in case I stop making sense.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>เธออายุราวยี่สิบห้า เข็มขัดของเธอเองถูกรัดแน่นรอบต้นขาขวา เหนือผ้าพันแผลที่เมื่อเช้ายังเป็นเสื้อ ใบหน้าเธอสีเดียวกับผ้าปูที่นอน ใบมีดวางอยู่ในระยะเอื้อมมือ และมีเล่มหนึ่งหักไปครึ่งเล่ม</p>
+    <p>&ldquo;ฟาเบอร์ สถานีสิบแปด อย่า—&rdquo; เธอหยุด หายใจ แล้วเริ่มใหม่ &ldquo;อย่าเพิ่งย้ายฉัน ฟังก่อน เผื่อว่าเดี๋ยวฉันจะเริ่มพูดไม่รู้เรื่อง&rdquo;</p>
+  </div>
   </div>
   <div class="box">
     <h4>What she tells them, in this order, without being asked</h4>
@@ -1547,6 +1639,7 @@ body[data-rail="open"] .railscrim{display:block}
     <ul class="small">
       <li>She wants <b>Tomas and Anka brought in</b>. She will not ask. She is a corporal&rsquo;s idea of a soldier and she thinks asking would be a kind of cheating.</li>
       <li>If a PC asks her straight out what she wants, she says: <b>&ldquo;I want somebody to go and look. That&rsquo;s all. Just go and look.&rdquo;</b></li>
+<li class="th" lang="th">ถ้าผู้เล่นถามตรง ๆ ว่าเธอต้องการอะไร เธอตอบว่า <b>&ldquo;ฉันอยากให้มีใครสักคนไปดู แค่นั้น แค่ไปดูให้หน่อย&rdquo;</b></li>
       <li>She will refuse to be carried ahead of the records, loudly, and she will be wrong about it, and she is not going to be argued out of it in the time available.</li>
       <li>She is <b>lucid</b>. Do not play her delirious. A person bleeding out who is completely clear-headed and slightly embarrassed is far worse.</li>
     </ul>
@@ -1601,12 +1694,22 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3>Scene 8 &middot; The choice</h3>
   <div class="read">
+  <div class="en">
     <p>Voss is standing in the yard with the log box under one arm, looking west, at two kilometres of grass with the light coming across it flat and orange.</p>
     <p>&ldquo;Right,&rdquo; he says. &ldquo;I&rsquo;m going to say the part I&rsquo;m supposed to say, and then I&rsquo;m going to say the other part.&rdquo;</p>
     <p>&ldquo;The order was: confirm the post, take the records, be back before the gate. We have got the records. The order is complete. Mounting up right now is not cowardice, it is the order, and anybody who tells you different has never had to write the letter.&rdquo;</p>
     <p>He does not look away from the grass.</p>
     <p>&ldquo;Other part. There are two of ours in that hamlet and they have been in there since midday, and I have got eleven of these behind me and I have never once come home wishing I&rsquo;d gone sooner.&rdquo;</p>
     <p>&ldquo;It&rsquo;s your call. I&rsquo;m an escort. Make it fast, because either way, that light is going.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>โวสยืนอยู่กลางลาน หนีบกล่องบันทึกไว้ใต้แขนข้างหนึ่ง มองไปทางตะวันตก มองทุ่งหญ้าสองกิโลเมตรที่แสงสาดผ่านมาเรี่ยพื้นเป็นสีส้ม</p>
+    <p>&ldquo;เอาล่ะ&rdquo; เขาพูด &ldquo;ฉันจะพูดส่วนที่ฉันต้องพูดก่อน แล้วค่อยพูดอีกส่วนหนึ่ง&rdquo;</p>
+    <p>&ldquo;คำสั่งคือ ยืนยันสถานะของสถานี เอาบันทึกไป กลับก่อนประตูปิด เราได้บันทึกแล้ว คำสั่งเสร็จสมบูรณ์ การขึ้นม้ากลับเดี๋ยวนี้ไม่ใช่ความขี้ขลาด มันคือคำสั่ง และใครที่บอกพวกนายเป็นอย่างอื่น คนนั้นไม่เคยต้องเขียนจดหมายแจ้งข่าวให้ครอบครัวใครมาก่อน&rdquo;</p>
+    <p>เขาไม่ละสายตาจากทุ่งหญ้า</p>
+    <p>&ldquo;อีกส่วนหนึ่ง มีคนของเราสองคนอยู่ในหมู่บ้านนั้น และพวกเขาอยู่ในนั้นมาตั้งแต่เที่ยง ฉันผ่านงานแบบนี้มาสิบเอ็ดครั้ง และไม่เคยมีสักครั้งที่กลับถึงบ้านแล้วนึกเสียดายว่าน่าจะไปให้เร็วกว่านี้&rdquo;</p>
+    <p>&ldquo;พวกนายตัดสินใจ ฉันเป็นแค่คนคุ้มกัน ตัดสินให้ไว เพราะไม่ว่าทางไหน แสงมันกำลังจะหมด&rdquo;</p>
+  </div>
   </div>
   <div class="box">
     <h4>The three shapes this takes</h4>
@@ -1635,17 +1738,34 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3>Scene 9 &middot; The pasture</h3>
   <div class="read">
+  <div class="en">
     <p>Two kilometres of grass, and the light is going the colour of a bruise. Nobody talks. The hedgerows are behind you now and there is nothing between you and the hamlet but pasture and a drainage ditch and, about halfway across, a line in the grass where something very heavy went through at speed, in a straight line, without slowing for the ditch.</p>
     <p>Brandt&rsquo;s Hollow was eleven buildings once. It is nine now, a wall, a lane, a well, and a mill house with a wheel that stopped turning forty years ago. The roofs are low and close and the lanes between them are narrow, and for the first time since you rode out of Karanes there is something to hook into.</p>
     <p>Then you hear the shouting. It is coming from underneath the mill house, and it is a young man&rsquo;s voice, and he is not shouting for help.</p>
     <p>He is shouting <em>get back, get back, get back.</em></p>
   </div>
+  <div class="th" lang="th">
+    <p>ทุ่งหญ้าสองกิโลเมตร และแสงกำลังเปลี่ยนเป็นสีของรอยช้ำ ไม่มีใครพูด แนวพุ่มไม้อยู่ข้างหลังพวกนายแล้ว และระหว่างพวกนายกับหมู่บ้านไม่มีอะไรนอกจากทุ่งหญ้า ร่องระบายน้ำ และราวกลางทาง รอยเส้นหนึ่งในหญ้า ที่ซึ่งบางอย่างหนักมากพุ่งผ่านไปด้วยความเร็วสูง เป็นเส้นตรง โดยไม่ชะลอให้ร่องน้ำเลย</p>
+    <p>แบรนดท์ฮอลโลว์เคยมีสิบเอ็ดหลัง ตอนนี้เหลือเก้า กำแพงหนึ่งด้าน ตรอกหนึ่งสาย บ่อน้ำหนึ่งบ่อ และโรงสีที่กังหันหยุดหมุนไปเมื่อสี่สิบปีก่อน หลังคาเตี้ยและอยู่ชิดกัน ตรอกระหว่างหลังคาแคบ และเป็นครั้งแรกนับตั้งแต่ออกจากคาราเนส ที่มีอะไรให้ยิงตะขอเกาะ</p>
+    <p>แล้วพวกนายก็ได้ยินเสียงตะโกน มันมาจากใต้ถุนโรงสี เป็นเสียงผู้ชายหนุ่ม และเขาไม่ได้ตะโกนขอความช่วยเหลือ</p>
+    <p>เขาตะโกนว่า <em>ถอยไป ถอยไป ถอยไป</em></p>
+  </div>
+  </div>
   <div class="read">
+  <div class="en">
     <p>Corporal Voss is thirty metres ahead of you because Corporal Voss has been thirty metres ahead of you all afternoon.</p>
     <p>It comes over the wall.</p>
     <p>Not around. Over &mdash; a seven-metre body folding through the gap between two roofs at a dead sprint, one arm down and swinging, head lolling like the neck cannot quite hold it. It does not slow down for the wall and it does not slow down for him.</p>
     <p>When it stops it stops completely, all at once, the way nothing alive stops.</p>
     <p>It has him in its left hand. He is not screaming. He is looking at you, and he is trying to get a hand to his blades.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>สิบโทโวสอยู่ข้างหน้าพวกนายสามสิบเมตร เพราะสิบโทโวสอยู่ข้างหน้าพวกนายสามสิบเมตรมาทั้งบ่าย</p>
+    <p>มันข้ามกำแพงมา</p>
+    <p>ไม่ใช่อ้อม แต่<em>ข้าม</em> ร่างสูงเจ็ดเมตรพับตัวลอดช่องระหว่างหลังคาสองหลังด้วยการวิ่งเต็มฝีเท้า แขนข้างหนึ่งห้อยแกว่ง หัวสั่นคลอนเหมือนคอรับน้ำหนักไม่ค่อยไหว มันไม่ชะลอให้กำแพง และมันไม่ชะลอให้เขา</p>
+    <p>ตอนมันหยุด มันหยุดสนิท ทั้งตัว ในคราวเดียว แบบที่ไม่มีสิ่งมีชีวิตอะไรหยุดได้</p>
+    <p>เขาอยู่ในมือซ้ายของมัน เขาไม่ได้กรีดร้อง เขากำลังมองพวกนาย และเขากำลังพยายามเอื้อมมือไปหาใบมีดของตัวเอง</p>
+  </div>
   </div>
 </section>
 
@@ -1713,8 +1833,14 @@ body[data-rail="open"] .railscrim{display:block}
 <section>
   <h3>Scene 10 &middot; The cellar</h3>
   <div class="read">
+  <div class="en">
     <p>The mill house cellar has a coal hatch at ground level and a bar across it on the inside. Behind the bar: a boy about your age with a sabre he does not know how to hold, and a young woman kneeling on the floor with both hands pressed into someone&rsquo;s leg.</p>
     <p>&ldquo;Don&rsquo;t open it,&rdquo; the boy says. &ldquo;Don&rsquo;t &mdash; it comes back. It keeps coming back. It came back <em>four times.</em>&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ใต้ถุนโรงสีมีช่องส่งถ่านอยู่ระดับพื้นดิน และมีคานขัดไว้จากข้างใน หลังคานนั้น เด็กหนุ่มอายุราว ๆ พวกนายคนหนึ่งถือดาบที่เขาจับไม่ถูกท่า และหญิงสาวคนหนึ่งคุกเข่าอยู่บนพื้น เอามือทั้งสองข้างกดลงบนขาของใครบางคน</p>
+    <p>&ldquo;อย่าเปิด&rdquo; เด็กหนุ่มพูด &ldquo;อย่า—มันกลับมา มันกลับมาเรื่อย ๆ มันกลับมาแล้ว<em>สี่รอบ</em>&rdquo;</p>
+  </div>
   </div>
   <div class="box">
     <h4>Getting them out</h4>
@@ -1744,9 +1870,16 @@ body[data-rail="open"] .railscrim{display:block}
     <p class="small mut">Read the retreat rules out at the table when it starts. They are not a punishment; they are a handrail out, and the Squad will need to be told that they are allowed to go and get the fallen on the way.</p>
   </div>
   <div class="read">
+  <div class="en">
     <p>The flare mast at the station is a long way behind you now, but you can see the hedge line from here, and the hedge line has something walking along it.</p>
     <p>It is not running. It does not need to.</p>
     <p>Somewhere west, past the mill, the sun is doing the last of what it does.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>เสาพลุสัญญาณของสถานีอยู่ไกลลิบข้างหลังแล้ว แต่จากตรงนี้พวกนายยังมองเห็นแนวพุ่มไม้ และบนแนวพุ่มไม้นั้นมีอะไรบางอย่างกำลังเดินอยู่</p>
+    <p>มันไม่ได้วิ่ง มันไม่จำเป็นต้องวิ่ง</p>
+    <p>ทางตะวันตก เลยโรงสีออกไป ดวงอาทิตย์กำลังทำสิ่งสุดท้ายที่มันทำ</p>
+  </div>
   </div>
   <div class="box">
     <h4>Tuning round six</h4>
@@ -1759,8 +1892,14 @@ body[data-rail="open"] .railscrim{display:block}
 <section id="act3alt">
   <h3>Act III, the alternative &mdash; if they rode for Karanes</h3>
   <div class="read">
+  <div class="en">
     <p>The road bends south around the pasture, and the pasture is where it is standing.</p>
     <p>Not moving. Not moving at all, in the way that a thing which has just been moving very fast is not moving. It is facing the hamlet. Then, without any part of it seeming to turn first, it is facing you.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ถนนโค้งลงใต้อ้อมทุ่งหญ้า และทุ่งหญ้านั้นคือที่ที่มันยืนอยู่</p>
+    <p>ไม่ขยับ ไม่ขยับเลยสักนิด ในแบบที่สิ่งซึ่งเพิ่งเคลื่อนที่เร็วมากถึงจะไม่ขยับได้แบบนั้น มันหันหน้าไปทางหมู่บ้าน แล้วโดยที่ไม่มีส่วนไหนของมันดูเหมือนจะหันก่อน มันก็หันหน้ามาทางพวกนาย</p>
+  </div>
   </div>
   <div class="box">
     <h4>Run it the same, with three changes</h4>
@@ -1787,8 +1926,14 @@ body[data-rail="open"] .railscrim{display:block}
     <p class="small mut">If you are short of time, skip the Leg roll entirely. Narrate the ride in three sentences and go to the gate. Nothing in the ending depends on it.</p>
   </div>
   <div class="read">
+  <div class="en">
     <p>Nobody rides well. Two of the horses are carrying more than one person and one of them is not going to be sound tomorrow. Somebody is holding somebody else on. The log box is in a saddlebag and it weighs about the same as a loaf of bread.</p>
     <p>Behind you the pasture has gone the colour of iron, and the last of the light is on the top thirty metres of the wall in front of you, and it is climbing.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ไม่มีใครขี่ม้าได้ดีเลย ม้าสองตัวแบกคนมากกว่าหนึ่งคน และหนึ่งในนั้นพรุ่งนี้คงใช้การไม่ได้ ใครบางคนกำลังประคองใครอีกคนไว้ กล่องบันทึกอยู่ในถุงอานม้า และมันหนักพอ ๆ กับขนมปังหนึ่งก้อน</p>
+    <p>ข้างหลังพวกนาย ทุ่งหญ้ากลายเป็นสีเหล็ก และแสงสุดท้ายอยู่บนกำแพงสามสิบเมตรบนสุดที่อยู่ตรงหน้า และมันกำลังไต่สูงขึ้นเรื่อย ๆ</p>
+  </div>
   </div>
 </section>
 
@@ -1799,27 +1944,47 @@ body[data-rail="open"] .railscrim{display:block}
   <div class="box">
     <h4>7 or fewer &mdash; In time</h4>
     <div class="read">
-      <p>There is a flare crew on the parapet and one of them is waving with both arms, and the gate is open, and it stays open, and you go through it at a canter with the light still on the top of the wall.</p>
-      <p>Inside, it is very loud and very ordinary. Somebody takes the horses. A gate hand is shouting for a stretcher before anyone has asked for one. Sergeant Klein looks at the log box, looks at what else you brought back, and steps aside without a word, which from him is a parade.</p>
-    </div>
+  <div class="en">
+    <p>There is a flare crew on the parapet and one of them is waving with both arms, and the gate is open, and it stays open, and you go through it at a canter with the light still on the top of the wall.</p>
+    <p>Inside, it is very loud and very ordinary. Somebody takes the horses. A gate hand is shouting for a stretcher before anyone has asked for one. Sergeant Klein looks at the log box, looks at what else you brought back, and steps aside without a word, which from him is a parade.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>มีชุดพลุสัญญาณอยู่บนเชิงเทิน และหนึ่งในนั้นกำลังโบกมือทั้งสองข้าง และประตูเปิดอยู่ และมันเปิดค้างไว้ และพวกนายควบผ่านเข้าไปขณะที่แสงยังอยู่บนยอดกำแพง</p>
+    <p>ข้างใน มันเสียงดังมากและธรรมดามาก ใครบางคนรับม้าไป คนคุมประตูตะโกนเรียกเปลหามก่อนที่ใครจะเอ่ยขอด้วยซ้ำ จ่าไคลน์มองกล่องบันทึก มองสิ่งอื่นที่พวกนายเอากลับมาด้วย แล้วหลีกทางให้โดยไม่พูดสักคำ ซึ่งสำหรับเขาแล้วถือว่าเป็นการตั้งแถวรับ</p>
+  </div>
+  </div>
   </div>
 
   <div class="box">
     <h4>Exactly 8 as they arrive &mdash; Almost too late</h4>
     <div class="read">
-      <p>The counterweight is already moving. You can hear it before you can see the gate: a sound like a mill in the wall, and the gap getting shorter in a way you can measure against the horses.</p>
-      <p>Klein is standing in the gap with one hand up, not to stop you &mdash; to <em>count</em> you. Four minutes, he said. He is spending all four.</p>
-      <p>You go under it one at a time, ducking, and the last of you is close enough to feel the iron come down behind.</p>
-      <p>&ldquo;That,&rdquo; says Klein, to nobody, &ldquo;is not a habit.&rdquo;</p>
-    </div>
+  <div class="en">
+    <p>The counterweight is already moving. You can hear it before you can see the gate: a sound like a mill in the wall, and the gap getting shorter in a way you can measure against the horses.</p>
+    <p>Klein is standing in the gap with one hand up, not to stop you &mdash; to <em>count</em> you. Four minutes, he said. He is spending all four.</p>
+    <p>You go under it one at a time, ducking, and the last of you is close enough to feel the iron come down behind.</p>
+    <p>&ldquo;That,&rdquo; says Klein, to nobody, &ldquo;is not a habit.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ตุ้มถ่วงเริ่มเคลื่อนแล้ว พวกนายได้ยินมันก่อนจะเห็นประตู เสียงเหมือนมีโรงสีอยู่ในกำแพง และช่องว่างที่แคบลงในอัตราที่วัดเทียบกับตัวม้าได้</p>
+    <p>ไคลน์ยืนอยู่ในช่องนั้น ยกมือขึ้นข้างหนึ่ง ไม่ใช่เพื่อห้ามพวกนาย แต่เพื่อ<em>นับ</em>พวกนาย สี่นาที เขาบอกไว้อย่างนั้น และเขากำลังใช้มันจนครบทั้งสี่</p>
+    <p>พวกนายลอดเข้าไปทีละคน ก้มหัวต่ำ และคนสุดท้ายอยู่ใกล้พอจะรู้สึกได้ถึงเหล็กที่ปิดลงมาข้างหลัง</p>
+    <p>&ldquo;นี่&rdquo; ไคลน์พูดกับอากาศ &ldquo;ไม่ใช่เรื่องที่ควรทำจนติดเป็นนิสัย&rdquo;</p>
+  </div>
+  </div>
   </div>
 
   <div class="box warn">
     <h4>Filled before they reached the road &mdash; The closed gate</h4>
     <div class="read">
-      <p>The gate is shut. It has been shut for some time. There is no shouting and no flare, because the crew went off the parapet at seven o&rsquo;clock and that is the order.</p>
-      <p>There is an emergency ladder on the wall face eight hundred metres north, bolted iron, one person at a time, fifty metres of it. The horses cannot climb it. Neither can anything you are not carrying on your own back.</p>
-    </div>
+  <div class="en">
+    <p>The gate is shut. It has been shut for some time. There is no shouting and no flare, because the crew went off the parapet at seven o&rsquo;clock and that is the order.</p>
+    <p>There is an emergency ladder on the wall face eight hundred metres north, bolted iron, one person at a time, fifty metres of it. The horses cannot climb it. Neither can anything you are not carrying on your own back.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ประตูปิดแล้ว และมันปิดมาสักพักแล้วด้วย ไม่มีเสียงตะโกน ไม่มีพลุสัญญาณ เพราะชุดคุมลงจากเชิงเทินตอนหนึ่งทุ่ม และนั่นคือคำสั่ง</p>
+    <p>มีบันไดฉุกเฉินติดอยู่บนหน้ากำแพง ห่างไปทางเหนือแปดร้อยเมตร เป็นเหล็กยึดสลัก ขึ้นได้ทีละคน สูงห้าสิบเมตร ม้าปีนขึ้นไปไม่ได้ และอะไรก็ตามที่พวกนายไม่ได้แบกไว้บนหลังตัวเองก็ขึ้นไม่ได้เหมือนกัน</p>
+  </div>
+  </div>
     <ul class="small">
       <li><b>Everybody gets up.</b> This is not a place to kill the Squad by attrition. The wall is the ending, not another encounter.</li>
       <li><b>The horses stay.</b> Say that out loud and let it sit. A Rider is going to have something to say about it.</li>
@@ -1827,37 +1992,65 @@ body[data-rail="open"] .railscrim{display:block}
       <li>If they are still carrying anything beyond the records and the people &mdash; spare Blade Sets, a canister, the log box <em>and</em> a wounded soldier &mdash; make them say which hand is holding what. Then let them up.</li>
     </ul>
     <div class="read">
-      <p>At the top there is one Garrison private who was not expecting anybody, and who does not salute, because his hands are over his mouth.</p>
-    </div>
+  <div class="en">
+    <p>At the top there is one Garrison private who was not expecting anybody, and who does not salute, because his hands are over his mouth.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ข้างบนมีพลทหารหน่วยพิทักษ์อยู่คนหนึ่งที่ไม่ได้คาดว่าจะมีใครขึ้นมา และเขาไม่ได้วันทยหัตถ์ เพราะมือทั้งสองข้างของเขาปิดปากตัวเองอยู่</p>
+  </div>
+  </div>
   </div>
 
   <div class="box gmbox">
     <h4>The debrief &mdash; play this out, it is worth four minutes</h4>
     <div class="read">
-      <p>Weiss takes the box out of your hands before you are off the horse. She opens it there in the yard, in the lamplight, and thumbs through four sheets, and closes it.</p>
-      <p>&ldquo;This is the corridor. Good.&rdquo;</p>
-      <p>Then she looks up, and takes in the rest of it, and the efficiency goes out of her for about two seconds.</p>
-      <p>&ldquo;Names,&rdquo; she says. &ldquo;All of them. The ones you brought and the ones you didn&rsquo;t.&rdquo;</p>
-    </div>
+  <div class="en">
+    <p>Weiss takes the box out of your hands before you are off the horse. She opens it there in the yard, in the lamplight, and thumbs through four sheets, and closes it.</p>
+    <p>&ldquo;This is the corridor. Good.&rdquo;</p>
+    <p>Then she looks up, and takes in the rest of it, and the efficiency goes out of her for about two seconds.</p>
+    <p>&ldquo;Names,&rdquo; she says. &ldquo;All of them. The ones you brought and the ones you didn&rsquo;t.&rdquo;</p>
+  </div>
+  <div class="th" lang="th">
+    <p>ไวส์รับกล่องไปจากมือพวกนายก่อนที่พวกนายจะลงจากม้าด้วยซ้ำ เธอเปิดมันตรงนั้นกลางลาน ใต้แสงตะเกียง พลิกดูกระดาษสี่แผ่น แล้วปิดมันลง</p>
+    <p>&ldquo;นี่คือเส้นทางนั้น ดี&rdquo;</p>
+    <p>แล้วเธอก็เงยหน้าขึ้น มองสิ่งที่เหลือทั้งหมด และความกระฉับกระเฉงของเธอหายไปประมาณสองวินาที</p>
+    <p>&ldquo;ชื่อ&rdquo; เธอพูด &ldquo;ทุกชื่อ ทั้งคนที่พวกนายพากลับมาได้ และคนที่พากลับมาไม่ได้&rdquo;</p>
+  </div>
+  </div>
     <p class="small">Go round the table and make the players say them. Faber. Riehl. Brenner. Voss. Adler, who was in the tree. Whoever else. <b>Make them do the counting out loud</b> &mdash; it is the single most effective thing in the whole scenario and it costs nothing.</p>
     <p class="small"><b>If Voss died:</b> Weiss stops writing at his name. &ldquo;Diedrich. That was his twelfth.&rdquo; Then she keeps writing, because there is no version of this where she does not keep writing.</p>
+    <p class="small th" lang="th"><b>ถ้าโวสตาย</b> ไวส์หยุดปากกาตรงชื่อเขา &ldquo;ดีดริช นั่นครั้งที่สิบสองของเขา&rdquo; แล้วเธอก็เขียนต่อ เพราะไม่มีทางไหนเลยที่เธอจะไม่เขียนต่อ</p>
     <p class="small"><b>If Voss lived:</b> he is at the edge of the lamplight with his ribs strapped and he will not go to the infirmary until the Squad have been seen to. He tells them they did well. He is not being kind; he means it, and he has eleven of these to compare it against.</p>
     <p class="small"><b>If they left the hamlet:</b> Weiss does not reprimand them. She writes <em>status unknown</em> beside two names, and the not-reprimanding is worse than a reprimand, and every player at the table will feel it.</p>
+    <p class="small th" lang="th"><b>ถ้าพวกเขาทิ้งหมู่บ้านไว้ข้างหลัง</b> ไวส์ไม่ตำหนิใครทั้งนั้น เธอเขียนว่า <em>ไม่ทราบสถานะ</em> ไว้ข้างชื่อสองชื่อ และการไม่ถูกตำหนินั้นหนักกว่าการถูกตำหนิ และผู้เล่นทุกคนที่โต๊ะจะรู้สึกได้</p>
   </div>
 
   <div class="box">
     <h4>The last beat &mdash; the barracks</h4>
     <div class="read">
-      <p>Lamplight. Bunks. Somebody has put a plate out for you and it has gone cold. Your harness is in the corner where you dropped it and you are going to have to clean it before you sleep, and you are not going to.</p>
-      <p>Across the room, two soldiers who did not go out today are arguing in the way people argue at eleven at night.</p>
-      <p>&ldquo;&mdash; I&rsquo;m telling you, Trost <em>held</em>.&rdquo;</p>
-      <p>&ldquo;Nothing holds.&rdquo;</p>
-      <p>&ldquo;It held. They sealed the breach. My cousin&rsquo;s in the Garrison and he says there was a Titan fighting on our side.&rdquo;</p>
-      <p>&ldquo;That&rsquo;s not a thing. That is not a thing that happens.&rdquo;</p>
-      <p>&ldquo;I&rsquo;m only telling you what he said.&rdquo;</p>
-      <p>Nobody asks you. You went out east today and came back, which means nothing happened, which is how it gets recorded.</p>
-      <p>Outside, somewhere past fifty metres of stone, the grass goes on for a very long way.</p>
-    </div>
+  <div class="en">
+    <p>Lamplight. Bunks. Somebody has put a plate out for you and it has gone cold. Your harness is in the corner where you dropped it and you are going to have to clean it before you sleep, and you are not going to.</p>
+    <p>Across the room, two soldiers who did not go out today are arguing in the way people argue at eleven at night.</p>
+    <p>&ldquo;&mdash; I&rsquo;m telling you, Trost <em>held</em>.&rdquo;</p>
+    <p>&ldquo;Nothing holds.&rdquo;</p>
+    <p>&ldquo;It held. They sealed the breach. My cousin&rsquo;s in the Garrison and he says there was a Titan fighting on our side.&rdquo;</p>
+    <p>&ldquo;That&rsquo;s not a thing. That is not a thing that happens.&rdquo;</p>
+    <p>&ldquo;I&rsquo;m only telling you what he said.&rdquo;</p>
+    <p>Nobody asks you. You went out east today and came back, which means nothing happened, which is how it gets recorded.</p>
+    <p>Outside, somewhere past fifty metres of stone, the grass goes on for a very long way.</p>
+  </div>
+  <div class="th" lang="th">
+    <p>แสงตะเกียง เตียงสองชั้น ใครบางคนวางจานอาหารไว้ให้พวกนาย และมันเย็นชืดไปแล้ว สายรัดของพวกนายกองอยู่ตรงมุมห้องที่ทิ้งมันไว้ และพวกนายควรจะทำความสะอาดมันก่อนนอน และพวกนายจะไม่ทำ</p>
+    <p>อีกฝั่งของห้อง ทหารสองนายที่ไม่ได้ออกไปข้างนอกวันนี้กำลังเถียงกันในแบบที่คนเถียงกันตอนห้าทุ่ม</p>
+    <p>&ldquo;—บอกแล้วไงว่าทรอสต์<em>ยังอยู่</em>&rdquo;</p>
+    <p>&ldquo;ไม่มีอะไรอยู่ได้หรอก&rdquo;</p>
+    <p>&ldquo;มันอยู่ได้ พวกเขาปิดรอยแตกได้แล้ว ลูกพี่ลูกน้องฉันอยู่หน่วยพิทักษ์ เขาบอกว่ามีไททันตัวหนึ่งสู้อยู่ข้างเรา&rdquo;</p>
+    <p>&ldquo;ไม่มีเรื่องแบบนั้น เรื่องแบบนั้นมันไม่เกิดขึ้นหรอก&rdquo;</p>
+    <p>&ldquo;ฉันก็แค่เล่าตามที่เขาบอก&rdquo;</p>
+    <p>ไม่มีใครถามพวกนาย วันนี้พวกนายออกไปทางตะวันออกแล้วกลับมา ซึ่งแปลว่าไม่มีอะไรเกิดขึ้น และนั่นคือวิธีที่มันจะถูกบันทึกไว้</p>
+    <p>ข้างนอก เลยหินหนาห้าสิบเมตรออกไป ทุ่งหญ้าทอดยาวต่อไปอีกไกลมาก</p>
+  </div>
+  </div>
     <p class="small mut">Cut there. Do not summarise, do not offer an epilogue montage, and do not tell them what happens next. The last thing at the table should be the two soldiers arguing about something the players now know is true.</p>
   </div>
 </section>
@@ -1917,6 +2110,7 @@ body[data-rail="open"] .railscrim{display:block}
     <p class="small"><b>How to play him.</b> Not a mentor, not a hero, and not funny. He is a man doing a job he has done eleven times, who has stopped expecting to be impressed and has not stopped being careful. He gives advice in one short sentence and never twice. He is quietly sick after a kill. He calls the Squad &ldquo;you lot&rdquo; all afternoon and by the hamlet he is calling them by name.</p>
     <p class="small"><b>His function.</b> Act I: a working tutorial &mdash; he Reads on the first round, cuts a leg rather than going for the Nape, and says what he is doing and why. Act II: he makes the case for going and then refuses to make the decision. Act III: he is in the hand.</p>
     <p class="small mut"><b>Three lines to keep in your pocket:</b> &ldquo;Look at the hedge line, not the road.&rdquo; &mdash; &ldquo;That&rsquo;s the good kind.&rdquo; &mdash; &ldquo;I&rsquo;ve never once come home wishing I&rsquo;d gone sooner.&rdquo;</p>
+    <p class="small mut th" lang="th"><b>สามประโยคที่ควรพกติดตัวไว้:</b> &ldquo;มองแนวพุ่มไม้ อย่ามองถนน&rdquo; &mdash; &ldquo;นั่นคือแบบที่ดี&rdquo; &mdash; &ldquo;ไม่เคยมีสักครั้งที่กลับถึงบ้านแล้วนึกเสียดายว่าน่าจะไปให้เร็วกว่านี้&rdquo;</p>
   </div>
 
   <div class="npc">
@@ -1930,6 +2124,7 @@ body[data-rail="open"] .railscrim{display:block}
       <dt>No sheet</dt><dd>She never rolls, never acts on a card, and never holds a Position. She is the situation, not a combatant.</dd>
     </dl>
     <p class="small"><b>How to play her.</b> Completely lucid. That is the whole trick. She is not raving and she is not brave about it &mdash; she is <em>embarrassed</em>, and she wants to get the briefing out before she stops being reliable. She will not ask them to go for the hamlet. If a player asks her outright what she wants, she gives them the one line she has: &ldquo;I want somebody to go and look. That&rsquo;s all. Just go and look.&rdquo;</p>
+    <p class="small th" lang="th"><b>วิธีเล่นเธอ:</b> สติดีสมบูรณ์ นั่นคือหัวใจทั้งหมด เธอไม่ได้เพ้อ และไม่ได้ทำตัวกล้าหาญ เธอแค่<em>เขินอาย</em> และอยากพูดรายงานให้จบก่อนที่ตัวเองจะเริ่มพูดไม่รู้เรื่อง เธอจะไม่ขอให้ใครไปหมู่บ้านนั้น ถ้าถูกถามตรง ๆ เธอมีประโยคเดียวคือ &ldquo;ฉันอยากให้มีใครสักคนไปดู แค่นั้น แค่ไปดูให้หน่อย&rdquo;</p>
   </div>
 
   <div class="npc">
@@ -1946,6 +2141,7 @@ body[data-rail="open"] .railscrim{display:block}
       <dt>Rules</dt><dd>A Squadmate. Never Pushes, never Covers. Her only Reaction is the dodge. Joins the fight at the start of the round after the hatch is opened, at whatever Position the opener holds.</dd>
     </dl>
     <p class="small"><b>How to play her.</b> She has been holding a tourniquet for six hours and she will keep doing it. She is useful and she is at the end of her rope and both are visible. <b>She will not leave Tomas</b> &mdash; if the Squad try to carry her out without him she refuses, and a Squadmate&rsquo;s refusals are directed by the players, so make them argue it out at the table.</p>
+    <p class="small th" lang="th"><b>วิธีเล่นเธอ:</b> เธอกดห้ามเลือดมาหกชั่วโมงแล้ว และเธอจะกดต่อไป เธอยังมีประโยชน์ และเธอถึงขีดสุดแล้ว ทั้งสองอย่างมองเห็นได้พร้อมกัน <b>เธอจะไม่ทิ้งโทมัส</b> ถ้าหน่วยพยายามพาเธอออกไปโดยไม่เอาเขาไปด้วย เธอปฏิเสธ และการปฏิเสธของเพื่อนร่วมหน่วยเป็นเรื่องที่ผู้เล่นต้องกำกับกันเอง ดังนั้นปล่อยให้พวกเขาเถียงกันที่โต๊ะ</p>
     <p class="small mut">Hand her to a player whose character died in Act I. Her Stress of 3 makes her a genuinely different thing to play, and three Stress Dice in every pool teaches the Stress economy faster than any explanation.</p>
   </div>
 
@@ -1959,6 +2155,7 @@ body[data-rail="open"] .railscrim{display:block}
       <dt>No sheet</dt><dd>He takes no turns and rolls nothing. He is a weight and a voice.</dd>
     </dl>
     <p class="small"><b>How to play him.</b> He apologises. Constantly, for everything, in the way that people do when they have decided they are the reason someone else is going to die. &ldquo;I can walk. I can &mdash; no. Sorry. Sorry.&rdquo; He has counted the times it came back and he will tell you the number whether or not you asked.</p>
+    <p class="small th" lang="th"><b>วิธีเล่นเขา:</b> เขาขอโทษ ตลอดเวลา กับทุกเรื่อง แบบที่คนเราขอโทษเมื่อปักใจแล้วว่าตัวเองคือสาเหตุที่คนอื่นกำลังจะตาย &ldquo;ผมเดินได้ ผม—ไม่ ขอโทษครับ ขอโทษ&rdquo; เขานับจำนวนครั้งที่มันกลับมา และเขาจะบอกตัวเลขนั้นไม่ว่าจะมีใครถามหรือไม่</p>
   </div>
 
   <div class="npc">
@@ -1966,6 +2163,7 @@ body[data-rail="open"] .railscrim{display:block}
     <p class="flavor">Survey Corps, Eastern Command, Karanes. Forties. Short ash-blonde hair, a stern face that is not unkind, and a list. Efficient, tired, unsentimental, and five days past the worst week of her career.</p>
     <p class="small"><b>How to play her.</b> Slightly too fast. She calls the mission routine because the Corps has to call something routine or it stops working, and she is not lying, she is short of information. She does not apologise at the end and she does not need to be forgiven. She asks for the names and she writes all of them down.</p>
     <p class="small mut"><b>Two lines:</b> &ldquo;Not the post. The <em>records</em>.&rdquo; &mdash; &ldquo;Names. All of them. The ones you brought and the ones you didn&rsquo;t.&rdquo;</p>
+    <p class="small mut th" lang="th"><b>สองประโยค:</b> &ldquo;ไม่ใช่ตัวสถานี แต่เป็น<em>บันทึก</em>&rdquo; &mdash; &ldquo;ชื่อ ทุกชื่อ ทั้งคนที่พวกนายพากลับมาได้ และคนที่พากลับมาไม่ได้&rdquo;</p>
   </div>
 
   <div class="npc">
@@ -1973,6 +2171,7 @@ body[data-rail="open"] .railscrim{display:block}
     <p class="flavor">Garrison, Karanes east gate. Fifties. Square face, cropped grey hair, heavy brows, built like the counterweight he operates. Gruff, procedural, and out of patience with excuses.</p>
     <p class="small"><b>How to play him.</b> He is the deadline made of a person, and he is right. He starts the gate at seven because the last time somebody held it they lost the gate crew as well as the patrol, and if the players push him on it he will tell them that in one sentence and then stop talking.</p>
     <p class="small mut"><b>Two lines:</b> &ldquo;Seven o&rsquo;clock. Not five past.&rdquo; &mdash; and at the end, if they made it under the iron: &ldquo;That is not a habit.&rdquo;</p>
+    <p class="small mut th" lang="th"><b>สองประโยค:</b> &ldquo;หนึ่งทุ่ม ไม่ใช่ทุ่มห้านาที&rdquo; &mdash; และตอนจบ ถ้าพวกเขาลอดเหล็กเข้ามาทัน: &ldquo;ไม่ใช่เรื่องที่ควรทำจนติดเป็นนิสัย&rdquo;</p>
   </div>
 
   <div class="npc">
@@ -2441,6 +2640,30 @@ TIMING:  Sunset 19:00. The east gate closes at 19:00 and is not held.
 
                                               M. WEISS
                                               Lieutenant, Survey Corps</pre>
+    <pre class="th" lang="th">หน่วยสำรวจ - กองบัญชาการตะวันออก - เขตคาราเนส
+ปีที่ 850 วันที่ 5 หลังเหตุการณ์ที่ทรอสต์
+
+คำสั่งประจำวัน - ภารกิจปกติ
+
+ถึง:      หมู่ทหารรุ่น 104 ภาคตะวันออก พร้อมผู้คุ้มกัน
+คุ้มกัน:   สิบโท ด. โวส หน่วยพิทักษ์ สมทบ
+
+ภารกิจ:   สถานีส่งสัญญาณที่ 18 (แนวพุ่มไม้ ระยะใกล้ ทางตะวันออก)
+         สถานีขาดรายงานพลุติดต่อกันสองครั้ง
+
+         1. ยืนยันสถานะของสถานี
+         2. นำบันทึกเส้นทางกลับมา (กล่องบันทึกพลุ เหล็ก ขนาดหนึ่งฝ่ามือ)
+            นี่คือเป้าหมายหลักของหมู่ เรื่องอื่นเป็นเรื่องรอง
+         3. กลับเข้ามาในกำแพงก่อนประตูปิด
+
+เบิกจ่าย: ยุทโธปกรณ์มาตรฐานเต็มอัตรา ระดับงบประมาณ 3
+         เสบียงหมู่: เสบียง 8 พลุ 2 เวชภัณฑ์ 2 กระสุน 6
+         ไม่อนุมัติพลุเพิ่มเติม
+
+เวลา:     ตะวันตกดิน 19:00 น. ประตูตะวันออกปิด 19:00 น. และไม่รั้งไว้ให้ผู้ใด
+
+                                              ม. ไวส์
+                                              ร้อยโท หน่วยสำรวจ</pre>
   </div>
 </section>
 
@@ -2585,6 +2808,28 @@ TIMING:  Sunset 19:00. The east gate closes at 19:00 and is not held.
   function onScroll() { if (!queued) { queued = true; window.requestAnimationFrame(spy); } }
 
   measure(); spy();
+
+  /* ---- boxed-text language ---- */
+  var LANGS = ['en', 'th', 'both'];
+  var picker = rail.querySelector('.langpick');
+  function setLang(v) {
+    if (LANGS.indexOf(v) === -1) v = 'both';
+    body.setAttribute('data-lang', v);
+    if (picker) {
+      Array.prototype.forEach.call(picker.querySelectorAll('button'), function (b) {
+        b.setAttribute('aria-pressed', b.getAttribute('data-lang') === v ? 'true' : 'false');
+      });
+    }
+    try { localStorage.setItem('btgc-lang', v); } catch (e) {}
+    measure(); onScroll();
+  }
+  var saved = 'both';
+  try { saved = localStorage.getItem('btgc-lang') || 'both'; } catch (e) {}
+  if (picker) picker.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('button[data-lang]') : null;
+    if (b) setLang(b.getAttribute('data-lang'));
+  });
+  setLang(saved);
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', function () { measure(); onScroll(); });
   window.addEventListener('load', function () { measure(); onScroll(); });
