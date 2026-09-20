@@ -703,28 +703,10 @@ Grouped into the batches we would ship them in.
 
 ---
 
-## Questions still open
+## Questions: all settled
 
-Settled on 2026-09-20: the Health formula (add 2, crits stay at one box), steam left exactly as it is,
-the Position clarity work, the Stride for Titan movement, and a custom board rather than the Foundry
-canvas. What is left:
-
-1. **Skirmish, after the report.** The Coriolis-style rider already exists, so a musket still Downs a
-   Health 6 Rookie at 3 Net Successes. If the report says firearms stopped frightening anyone, the lever
-   is the rider (1 to 2 per Net Success) or the musket's base. Decide from the numbers, not now.
-2. **Frenzy's rate and cap.** We propose +1 per round to a cap of 3. The simulator moves both; the
-   shape (escalation added to the behavior roll) is what needs confirming.
-3. **Retarget or downgrade.** When a Titan cannot reach its fixation, we recommend it turns on the next
-   soldier down the Attention Ladder. The alternative keeps the target and downgrades the action.
-   Confirm retargeting?
-4. **Prompt timeout.** How long should an unanswered prompt card wait before the system rolls it, and
-   should the default be "wait forever" at a live table?
-5. **Zones, the size of the step.** Derived Positions (our recommendation, roughly one batch) or a full
-   replacement (a redesign with its own retune)?
-6. **Field size.** 13 hexes as the default, 7 for a corridor fight, 19 for a set piece?
-7. **Stride values.** Small 1, Medium 2, Large 2, Abnormal 3, against a soldier's 1 zone on foot. The
-   rule is accepted; these are the numbers the simulator will move.
-8. **Does striding wreck the zones it crosses**, or only the `wreck` effect on the Titan's own zone? We
-   recommend the latter first, so the tuning lever stays where it already is.
-9. **Sequencing.** Batches A, F and B to D could be at the table within one cycle. Does E start in
-   parallel, or after they have been played?
+Every question this file raised was answered on 2026-09-20, the last round with "all as recommended".
+The settled list, the batches and the ADR work are in `OWNER-DECISIONS.md`, which is the document the
+implementation is driven from. Two things are deliberately held rather than decided: the Skirmish
+levers and the Attack Dice levers, both of which wait on the rerun that measures batches A and F
+together.
