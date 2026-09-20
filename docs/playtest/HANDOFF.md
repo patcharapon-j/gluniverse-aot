@@ -13,7 +13,7 @@ State on 2026-09-15: Phase 1 is complete (`docs/rules/PROGRESS.md`). **Owner fee
 | Review task template (last used for round 3) | `docs/playtest/process/packet-review-task-template.md` |
 | Codex review runner | `tools/codex/run-review.sh` |
 | Packet reviews | `docs/reviews/playtest-packet-review-1.md` to `-3.md`, each with `-codex.md`; `-3-fable.md` |
-| Progress, open questions, decisions | `docs/rules/PROGRESS.md`, `docs/rules/OPEN-QUESTIONS.md` (149 entries), `docs/rules/DECISIONS-2026-09-14.md` (through batch 8, item 8-14) |
+| Progress, open questions, decisions | `docs/rules/PROGRESS.md`, `docs/rules/OPEN-QUESTIONS.md` (197 entries), `docs/rules/DECISIONS-2026-09-14.md` (through batch 14) |
 | Simulator and report | `tools/sim/`, `docs/reviews/simulator-report.md` |
 
 ## Feedback loop

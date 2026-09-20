@@ -7,7 +7,7 @@ id: titan-format
 name: Titan Stat Blocks and Behavior Tables
 chapter: 05-titan-engagement
 adrs: [ADR-0001, ADR-0005, ADR-0007, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
-decided: [OQ-78, OQ-80, OQ-82, OQ-137, OQ-145, OQ-192, OQ-193]
+decided: [OQ-78, OQ-80, OQ-82, OQ-137, OQ-145, OQ-192, OQ-193, OQ-195, OQ-196]
 
 # ------------------------------------------------------------------ stat block
 stat_block:

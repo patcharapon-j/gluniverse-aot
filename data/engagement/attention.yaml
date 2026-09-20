@@ -6,7 +6,7 @@ id: attention
 name: Attention
 chapter: 05-titan-engagement
 adrs: [ADR-0010, ADR-0024]
-decided: [OQ-75, OQ-81, OQ-87, OQ-99, OQ-102, OQ-111, OQ-192]
+decided: [OQ-75, OQ-81, OQ-87, OQ-99, OQ-102, OQ-111, OQ-192, OQ-196, OQ-197]
 
 holder: >-
   A Focus Titan's Attention is held by exactly one soldier, by a decoy, or by nothing. The soldier

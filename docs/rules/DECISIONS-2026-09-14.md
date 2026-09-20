@@ -4012,3 +4012,45 @@ A **grounded Titan** changes every map: every step among In Reach, On Body, and 
 **Recorded.** Batches **B** (the GM is never blocked), **C** (the prompt card), and **D** (token readouts) are settled in `docs/playtest/feedback/round-3/OWNER-DECISIONS.md` and are **Foundry only**: this batch writes their ADRs (13-12, 13-13, 13-14) and nothing else. Batch **E**, zone combat, is settled in the same record, with its design in `zone-combat-design.md`, and is **not part of this rules change**: its rules and its retune wait until batches A and F have been played, because E changes the tempo of every fight and its numbers must build on A and F's measured ones. **No ADR for zones is written here**; ADR-0029 lands with batch E.
 
 **Out of scope:** the simulator rerun itself, the Foundry and site code, the packet, and the zone rules.
+
+## Batch 14: round 3 review 1, applied
+
+Rulings on `docs/reviews/round-3-rule-change-review-1.md`, the first adversarial review of decision batch 13 (wof-reviewer on Opus, 2026-09-21: 6 Critical, 6 Major, 7 Minor). Made 2026-09-21. Nineteen findings, plus two the review did not raise and applying it uncovered. The five that were design calls rather than mechanical fixes went to a Fable decider, whose reasoning is in `docs/reviews/round-3-review-decisions.md`; the fix plan is `docs/playtest/feedback/round-3/REVIEW-FIX-PLAN.md`. Nothing in `docs/playtest/feedback/round-3/OWNER-DECISIONS.md` is reopened: the Health formula, Frenzy's shape, retargeting rather than downgrading, and lethality restored through behavior all stand, and Attack Dice, Nape Depth and Tempo stay in reserve.
+
+### Summary table
+
+| Item | Finding | Decision (one line) | ADR change | Glossary change | Impact |
+|---|---|---|---|---|---|
+| 14-1 | C1 | The glossary states the new Health formula and points at the data, so the number lives in one place | none | **Health** | `CONTEXT.md` |
+| 14-2 | C2 | The frenzy end step raises only a Titan that is a Focus Titan when it runs, as the regeneration step fills only their clocks; a Titan that enters at the background-clocks step stays at 0 through its first full round | none | none | `round.yaml`, `titan-format.yaml`, `background-titans.yaml`, Ch5 5.3 |
+| 14-3 | C3 | The move-up rule's wrap from 6 to 1 stands at Frenzy 0 and is gone at Frenzy 1 or more, where an illegal result at 6 turns back **down** the table | amends ADR-0001 | **Frenzy** | `behavior-procedure.yaml`, `titan-format.yaml`, Ch5 5.5, `CONTEXT.md` |
+| 14-4 | C4 | The one-half kill-share constraint binds at Frenzy 0 only; the Frenzy 1 to 3 shares are reported figures and Frenzy's rate and cap are the levers | none | none | `data/titans/tuning.yaml`, `behavior-procedure.yaml`, Ch6 |
+| 14-5 | C5 | The narrowed set bounds every step of a retargeting evaluation, `loudest-matches` included, so a loud soldier who fails the Position requirement is never added | none | none | `attention.yaml` |
+| 14-6 | C6 | ADR-0010's batch 4b promise is narrowed honestly: a failed striker draws the Titan's **Attention** on every ladder, and its next behavior when that behavior can reach Blind Spot | amends ADR-0010 | none | ADR-0010, Ch5 5.6 and 5.7, `attention.yaml`, `action-catalog.yaml` |
+| 14-7 | M1 | The fallback entry is tested the same way as the rolled one and retargets in its turn; Thrash comes only when nobody meets the fallback either | amends ADR-0001 | none | `behavior-procedure.yaml`, `titan-format.yaml`, Ch5 5.5 and 5.6, `tools/sim` |
+| 14-8 | M2 | A fifteenth row in the closed list: a Titan's body coming down, by its death or by a living Titan becoming grounded | none | none | `positions.yaml`, Ch5 5.2, site wording |
+| 14-9 | M3 | "An action never changes a Position" is true of Catalog entries of kind `action`; `fly`, `leap-clear` and `mount-or-dismount` are not actions and sit on the list | none | none | `positions.yaml`, Ch5 5.2 |
+| 14-10 | M4 | Blind Spot is anchored to terrain behind the Titan, hanging from it or standing on it; whether the soldier is airborne follows the move that brought them there, and only the Urban Terrain Trait says the roof holds them. No mechanics change | none | **Blind Spot** | `positions.yaml`, Ch5 5.2, `CONTEXT.md`, 13-6 |
+| 14-11 | M5 | Frenzy and its end step join Chapter 1's closed list of what the GM applies as written, and Frenzy and a retarget join the Circumstances `never` list | none | none | Ch1 1.1, `circumstances.yaml` |
+| 14-12 | M6 | The Grab model's victim reads `builds`, `rookie` rather than a literal Health, and `health_reports` moves to Health 4 to 8 with the pre-batch-13 figures kept under `history` | none | none | `data/engagement/tuning.yaml` |
+| 14-13 | m1 to m7 | Seven small corrections: the Down comrade a retarget can reach, the branch map's phantom node, `call_it` and a retarget, the close rule's dropped qualifier, a narrowed evaluation that reaches its own `none` step, a stale template Health in a label, and the glossary's missing **Retarget** | none | **Attention Ladder**, new **Retarget** | `attention.yaml`, `read.yaml`, `tuning.yaml`, `CONTEXT.md`, Ch5, `tools/render` |
+| 14-14 | found while applying | Chapter 5's worked example resolved a Swat as Thrash against a Blind Spot holder while two soldiers stood In Reach, which retargeting makes wrong. The revealed entry becomes Shake Off, which reaches Blind Spot, and the retarget case is shown beside it | none | none | Ch5 |
+| 14-15 | found while applying | Chapter 6 was not touched by batch 13 at all: its Thrash shares, its D6 column and its procedure list all described the pre-batch-13 rules | none | none | Ch6 |
+
+### 14-3: the move-up wrap is keyed to Frenzy 0 (C3)
+
+**Decision.** The roll climbs the table from the total as before. At **Frenzy 0** the wrap stands, after 6 comes 1. At **Frenzy 1 or more** the roll never wraps: if the entry at 6 cannot be rolled, it turns back down and takes the entry holding the next result below the total, and so on to 1. Thrash is still what is left when nothing can be rolled.
+
+**Why.** The clamp pushes every face Frenzy carries past 6 onto result 6. Whenever the entry at 6 is illegal, which is the previous behavior or a Broken arm for three of the four Grabs, the old wrap landed every one of those faces on result 1, the weakest entry on the table. Enumerated exactly: the standard Medium at Frenzy 3 that had just Grabbed resolved Fixed Grin on 4 faces in 6 against 2 in 6 at Frenzy 0, with a kill share of 1 in 6, the lowest of any state. A maximally frenzied Titan postured more than a calm one, which inverts the escalation 13-10 exists to produce. Keying the wrap to Frenzy 0 leaves every Frenzy 0 share untouched, so Chapter 6's tables were authored to a rule that still holds and the chapter-06 probes, which run at Frenzy 0, need no change; at Frenzy 1 or more it is the clean rule, climb then descend.
+
+**Measured after.** On all four tables, the share of any result-1 entry at Frenzy 1 to 3 is now 0 in 6 in every state, and kill shares climb 2, 3, 4, 5 in 6 with nothing Broken and 3, 4, 5, 6 after the entry at result 4.
+
+**ADR.** Amends ADR-0001.
+
+### 14-7: the fallback is retargeted too (M1)
+
+**Decision.** When no candidate meets the rolled entry, the Titan takes the entry's fallback and tests it the same way: Thrash if it is thrash, is the previous behavior, or needs Body Parts the Titan lacks; otherwise, if the Attention holder does not meet the fallback's own `position_requirement`, the Titan retargets over the candidates who do; Thrash only when nobody meets that either.
+
+**Why.** 13-9 says "no Behavior Table is re-authored and every `fallback` value stands", which is only true if a fallback is reachable. Two tables have a real fallback, the standard Large's Crush and the Sprinting Abnormal's Pitch Headlong, and both were tested against the very holder the rolled entry had just failed against, so both reproduced exactly the inertness 13-9 exists to remove: a Large Titan whose Attention sat on a mounted soldier at Distant would Thrash rather than Crush the soldier standing inside its reach.
+
+**ADR.** Amends ADR-0001.

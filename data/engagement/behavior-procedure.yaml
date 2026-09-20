@@ -6,7 +6,7 @@ id: behavior-procedure
 name: Next Behavior and Titan Cards
 chapter: 05-titan-engagement
 adrs: [ADR-0001, ADR-0010, ADR-0015, ADR-0019, ADR-0024]
-decided: [OQ-80, OQ-107, OQ-145, OQ-192, OQ-193]
+decided: [OQ-80, OQ-107, OQ-145, OQ-192, OQ-193, OQ-195, OQ-196]
 
 # ------------------------------------------------------------------ the Next Behavior
 next_behavior:

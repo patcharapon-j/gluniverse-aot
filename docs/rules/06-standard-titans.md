@@ -65,7 +65,7 @@ A standard Titan's numbers are public. An Abnormal's Toughness, Nape Depth, Rege
 ### Reading a Behavior Table
 
 Each row of a rendered Behavior Table gives:
-- **D6:** the result that rolls it. Thrash is never rolled.
+- **D6:** the result that rolls it. The behavior roll is D6 plus the Titan's Frenzy, so a frenzied Titan reaches the lower rows of this column and the upper ones only when the roll cannot be taken (Chapter 5, sections 5.4 and 5.5). Thrash is never rolled.
 - **Behavior and tier.**
 - **Targets:** the holder of the Titan's Attention, or the holder and everyone else at their Position who is not Grabbed.
 - **Holder's Position:** the entry's Position requirement. "Any" means all four Positions.
@@ -77,12 +77,12 @@ Each row of a rendered Behavior Table gives:
 
 Below each table, one line per entry says what the behavior looks like. The line decides nothing; the row does. Each line names only the Body Parts its row uses, and shows nothing its row's Positions rule out, so the words never show a Titan doing something its Broken parts or the holder's Position forbid. `titans.py` fails any line that names the Titan's arm, leg, or eyes when its row does not list that kind, that shows the Titan seeing a holder its row allows at Blind Spot, or that shows it touching a holder its row allows at Distant.
 
-Every procedure step comes from Chapter 5: the Next Behavior roll with no back-to-back repeats and move-up past Broken parts, the card, the fallback, Thrash, and dodging. No entry names death. A Titan kills only through:
+Every procedure step comes from Chapter 5: the Next Behavior roll with Frenzy added, no back-to-back repeats and move-up past Broken parts, the card, the retarget, the fallback and its own retarget, Thrash, and dodging. No entry names death. A Titan kills only through:
 - a lethal Critical Injury, by its Death Roll or an instant-death row, which a lucky roll's net success rider can reach (Chapter 3);
 - the Grab's devour step (Chapter 5);
 - a fall one of its effects causes, such as a knock-loose, or a Critical Injury that leaves an airborne or mounted soldier Down. The fall's damage can bring Health to 0 and inflict a Critical Injury that is lethal (Chapter 4).
 
-In play, Thrash is the behavior each table resolves most: 31% of the standard Small Titan's resolved cards, 41% of the standard Medium Titan's and of the standard Large Titan's, and 34% of the Sprinting Abnormal's at their reference starts. Nearly all of it comes from a holder standing where the rolled entry cannot reach, most often a Nape striker who fell short at Blind Spot, so a Titan with a soldier at its Nape mostly thrashes. Each table's Thrash line is written for that Titan's body. Thrash's share is a consequence of the fallback rule, accepted and not tuned away (`tuning.yaml`, `verdicts`, `thrash_share`; decision batch 4, OQ-101).
+In play, Thrash used to be the behavior each table resolved most: 31% of the standard Small Titan's resolved cards, 41% of the standard Medium Titan's and of the standard Large Titan's, and 34% of the Sprinting Abnormal's at their reference starts. Nearly all of it came from a holder standing where the rolled entry could not reach, most often a Nape striker who fell short at Blind Spot, so a Titan with a soldier at its Nape mostly thrashed. **Decision batch 13 is aimed squarely at that**: a Titan whose Attention holder cannot meet the rolled entry now retargets down the Attention Ladder to a soldier who can, and falls back only when nobody in the fight qualifies, so those four figures are stale and the retune replaces them (Chapter 5, section 5.6). Each table's Thrash line is still written for that Titan's body. What Thrash's share settles at is now a figure the retune reports rather than a consequence accepted and not tuned away (`tuning.yaml`, `verdicts`, `thrash_share`; decision batch 4, OQ-101, as amended by decision batch 13, 13-9).
 
 An entry is marked as a Grab by its grab effect alone, with no field of its own (decision batch 4, OQ-100).
 

@@ -7,7 +7,7 @@ id: titan-tuning
 name: Chapter 6 Tuning Targets and Verdicts
 chapter: 06-standard-titans
 adrs: [ADR-0014, ADR-0015, ADR-0019]
-decided: [OQ-78, OQ-79, OQ-80, OQ-95, OQ-96, OQ-98, OQ-101, OQ-102, OQ-103, OQ-104, OQ-107, OQ-109, OQ-113, OQ-126, OQ-127, OQ-145, OQ-190, OQ-192, OQ-193]   # Chapter 5's values and readings, applied here; Chapter 6's entries (decision batch 4)
+decided: [OQ-78, OQ-79, OQ-80, OQ-95, OQ-96, OQ-98, OQ-101, OQ-102, OQ-103, OQ-104, OQ-107, OQ-109, OQ-113, OQ-126, OQ-127, OQ-145, OQ-190, OQ-192, OQ-193, OQ-195]   # Chapter 5's values and readings, applied here; Chapter 6's entries (decision batch 4)
 
 starting_values: >-
   Chapter 6 changes no Size Class value. Every number in a standard Titan's stat block is Chapter 5's

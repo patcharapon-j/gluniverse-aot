@@ -3880,3 +3880,42 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Costs recorded:** a real change in threshold. Whether a firearm still frightens anyone is read from the rerun, and two single-number levers are held in reserve behind it: the Skirmish rider at 2 per Net Success beyond the first, ahead of the musket's base damage (b).
 - **ADR:** none.
 - **Simulator case:** read from the retune of OQ-190, which must re-read the musket against the new Health and the Skirmish probe's reported figures.
+
+### OQ-195: Frenzy sends a Titan to the bottom of its own table
+
+- **Type:** Mechanical bug (from OQ-193)
+- **Arose in:** `docs/reviews/round-3-rule-change-review-1.md`, C3, verified by exact enumeration of all four tables in `data/titans/`.
+- **Related:** OQ-80, OQ-101, OQ-192, OQ-193.
+- **Question:** The behavior roll clamps D6 plus Frenzy at 6, and the move-up rule sends an illegal result to the next higher one, wrapping from 6 to 1. So every face Frenzy carries past 6 lands on result 6, and whenever that entry is illegal, which is whenever it is the previous behavior or needs a Broken arm, all of them wrap to result 1, the table's weakest entry. The standard Medium at Frenzy 3 that had just Grabbed resolved Fixed Grin on 4 faces in 6 against 2 in 6 at Frenzy 0, with the lowest kill share of any state on the table. What does a frenzied Titan do when it cannot take the top of its table?
+- **Options:** (a) Wrap downward always, at every Frenzy. (b) Apply the clamp after the legality test. (c) Exempt only the case where the total exceeded 6. (d) Key the wrap to Frenzy: it stands at Frenzy 0 and is gone at Frenzy 1 or more, where the roll turns back down from 6.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 14*, 14-3)
+- **Decision:** (d). At Frenzy 0 the wrap stands, so every Frenzy 0 share is untouched, Chapter 6's tables were authored to a rule that still holds, and the chapter-06 probes need no change. At Frenzy 1 or more the roll never wraps and turns back down the table from 6. (a) changes every Frenzy 0 share and the sentence Chapter 6's authors were given; (c) splits two faces that both read as 6, which cannot be said at the table.
+- **Costs recorded:** every Frenzy 1 to 3 share in which the result-6 entry is illegal changes, so the retune must read the kill share by previous behavior, Broken parts, and Frenzy, and the share of rolls resolving each table's result-1 entry by Frenzy.
+- **ADR:** amends ADR-0001.
+- **Simulator case:** `data/engagement/tuning.yaml`, `simulator_cases`, the behavior roll under Frenzy.
+
+### OQ-196: a Titan's fallback entry is never retargeted
+
+- **Type:** Mechanical bug (from OQ-192)
+- **Arose in:** `docs/reviews/round-3-rule-change-review-1.md`, M1.
+- **Related:** OQ-101, OQ-192.
+- **Question:** The `choose` step retargets the rolled entry and then, when nobody qualifies, tests the fallback against the **unchanged** Attention holder. Where the fallback is `thrash` that is harmless, because Thrash lists all four Positions. In the two tables with a real fallback, the standard Large's Crush and the Sprinting Abnormal's Pitch Headlong, it reproduces exactly the inertness OQ-192 exists to remove. Is the fallback retargeted?
+- **Options:** (a) Retarget the fallback the same way. (b) Resolve the fallback against whoever a retarget would pick, untested against Position. (c) Set both real fallbacks to `thrash` and keep the field for Abnormals.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 14*, 14-7)
+- **Decision:** (a). The fallback is tested the same way as the rolled entry and retargets in its turn, and Thrash comes only when nobody meets the fallback either. (b) changes what `fallback` means; (c) touches `data/titans/`, which 13-9 promises it does not.
+- **Costs recorded:** the retune must report the share of cards on which the fallback itself retargets, which is where the change reaches the standard Large and the Sprinting Abnormal.
+- **ADR:** amends ADR-0001.
+- **Simulator case:** `data/engagement/tuning.yaml`, the batch 13 retune note.
+
+### OQ-197: what a failed Nape striker is still promised
+
+- **Type:** Consequential fix (from OQ-192)
+- **Arose in:** `docs/reviews/round-3-rule-change-review-1.md`, C6.
+- **Related:** OQ-81, OQ-111, OQ-112, OQ-192.
+- **Question:** ADR-0010 promises three times, from batch 4b onward, that a Nape striker who falls short draws the Titan's **next behavior** on every ladder, and 13-9's amendment closes by saying the Nape strike's Attention restriction is unchanged. Retargeting breaks the promise in the common case: the striker takes Attention at the card's `attention` step and the `choose` step moves it straight off them, because most entries do not reach Blind Spot. On the standard Medium that is 4 rolls in 6 at Frenzy 0 and 5 in 6 above it. Is the promise kept, or is the record corrected?
+- **Options:** (a) Amend ADR-0010 to say what the rules now do. (b) Exempt a soldier holding the hooked-by-strike flag from every retarget. (c) Return Attention to the flag holder at the card's `next` step.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 14*, 14-6)
+- **Decision:** (a). The striker draws the Titan's **Attention** on every ladder, which is unchanged, and its next behavior when that behavior's Position requirement includes Blind Spot. When it does not, the Titan retargets to a comrade it can reach and its Attention goes with it. No mechanics change; the record stops overstating what was unchanged. (b) is the exact counter-case 13-9 was decided against, since a striker at Blind Spot is the soldier who parked the fight; (c) contradicts `attention_moves` and adds a step no tracker carries.
+- **Costs recorded:** the price of a failed strike now falls on whoever is within the Titan's hands' reach rather than on the striker, and a striker freed to cut twice may move the lone-strike band. (b) is held as the alternative, beside downgrading, if that band breaks upward.
+- **ADR:** amends ADR-0010.
+- **Simulator case:** `data/engagement/tuning.yaml`, `simulator_cases`, failed Nape strikes.

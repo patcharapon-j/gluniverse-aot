@@ -1346,7 +1346,7 @@ The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The exa
 
 **The field.**
 - **The engagement line** reads `Wooded | Anchors 2/2 | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut, Fall Back | Cloaks: - | No one standing since: -`. Nothing has wrecked an Anchor, so every soldier's Momentum cap is 2.
-- **The tracker row** reads `A Medium | cards 9 | Att: Jonas | Next: [hidden] | Prev: Roar | Eyes I0 LA I0 RA I0 LL B0 RL W1 | Op 1 (Jonas) | Regen 2/3 | Decoys 0 | Grab: - | Flags: -`.
+- **The tracker row** reads `A Medium | cards 9 | Att: Jonas | Next: [hidden] | Prev: Roar | Eyes I0 LA I0 RA I0 LL B0 RL W1 | Op 1 (Jonas) | Regen 2/3 | Decoys 0 | Grab: - | Flags: - | Frenzy 2`. Two rounds have ended, so its Frenzy is 2 and every behavior roll it makes now is D6 plus 2.
 - **The left leg is Broken,** so the Titan is grounded. Jonas created its one Opening with a success beyond Breaking the leg last round.
 - **Private Mila Brandt** holds Blind Spot, with Strength 4, Clean Cut 1, Blade Set 1, Agility 3, ODM Gear 3, and Stress 1.
 - **Private Jonas Keller** holds In Reach and Attention, with Strength 3, Blade Set 1, and Stress 2.
@@ -1363,10 +1363,11 @@ The Squad fights Focus Titan A, a Medium Titan, at Anchor Rating Wooded. The exa
 
 **Card 9: Focus Titan A.**
 - **Attention.** No Grab holds it and no decoy holds its Attention, so it evaluates the ladder. Mila holds the hooked-by-strike flag, the top rung; Jonas at In Reach meets only the second. Mila takes Attention. The flags stay until this card's Next step.
-- **The behavior.** The Next Behavior is revealed as Swat, a control entry needing In Reach or On Body. Mila is at Blind Spot, so it takes its fallback, Thrash: 6 Attack Dice, knock-loose.
-- **The roll.** The GM rolls six Titan Dice in the open: 6, 2, 5, 3, 1, and 4. That is 2 successes, so the Thrash's Severity is 2.
-- **Mila's dodge.** Her turn this round is spent, so the dodge spends her round 4 turn. Agility 3, ODM Gear 3, and Stress 2 make 8 dice. The base dice show 6, 3, and 1, the Gear Dice 6, 4, and 2, and the Stress Dice 5 and 2. Her two successes cancel the Thrash's two, leaving no Net Successes, so it whiffs against her and she does not fall.
-- **Next.** Thrash becomes the previous behavior, Mila's flag clears, and the GM rolls the new Next Behavior out of sight.
+- **The behavior.** The Next Behavior is revealed as Shake Off, a control entry needing On Body or Blind Spot. Mila is at Blind Spot, so it reaches her and no retarget is made: 6 Attack Dice, knock-loose.
+- **Had it been Swat,** which needs In Reach or On Body, Mila would not have met it and the Titan would have retargeted rather than flailed. Jonas and Ilse both hold In Reach and both meet it, the ladder ties them at nearest person in reach, and Jonas's card comes before Ilse's, which follows his. Jonas would have taken the Titan's Attention and the Swat would have landed on him, leaving Mila her Openings and a clean board.
+- **The roll.** The GM rolls six Titan Dice in the open: 6, 2, 5, 3, 1, and 4. That is 2 successes, so the Shake Off's Severity is 2.
+- **Mila's dodge.** Her turn this round is spent, so the dodge spends her round 4 turn. Agility 3, ODM Gear 3, and Stress 2 make 8 dice. The base dice show 6, 3, and 1, the Gear Dice 6, 4, and 2, and the Stress Dice 5 and 2. Her two successes cancel the Shake Off's two, leaving no Net Successes, so it whiffs against her and she does not fall.
+- **Next.** Shake Off becomes the previous behavior, Mila's flag clears, and the GM rolls the new Next Behavior out of sight, D6 plus the Frenzy of 2 that stands at this moment.
 
 **Card 11: Jonas.** Jonas no longer holds Attention.
 - **His move** is an ODM move from In Reach to Blind Spot, a Wooded step, and every ODM move is a Flight. He rolls for Fly: Agility 3, ODM Gear 3, and Stress 2 make 3 base dice, 3 Gear Dice, and 2 Stress Dice. The base dice show 6, 4, and 2, the Gear Dice 3, 5, and 2, and the Stress Dice 4 and 2. The step happens whatever the roll gives, and the one success gives him 1 Momentum, under the cap of 2.
