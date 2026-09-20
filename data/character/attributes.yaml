@@ -152,12 +152,22 @@ creation:
 derived_values:
   - id: health
     name: Health
-    formula: (strength + agility) / 2
-    rounding: up
-    source: settled design summary (docs/reviews/2026-09-14-final-review-brief.md)
+    formula: 2 + (strength + agility) / 2
+    rounding: up    # applies to the halved attributes, before the 2 is added
+    range: >-
+      4 to 6 for a built soldier (built, min 2 and max 4), and 4 to 8 for a rolled one, whose
+      Lifepath ceiling is Strength 6 with Agility 5. The reference builds are Rookie 6, Veteran 6,
+      and Levi-grade 7 (ADR-0014, as amended in decision batch 13).
+    source: >-
+      settled design summary (docs/reviews/2026-09-14-final-review-brief.md); the plus 2 is the
+      owner's decision of 2026-09-20 after the first session (decision batch 13, 13-1; OQ-190)
+    unchanged_by_it: >-
+      Everything about damage, healing, Treat Injury, and the boxes an untreated Critical Injury
+      crosses off (data/harm/health.yaml). An untreated Critical Injury still crosses off exactly
+      one Health box.
     rules: [03-harm-and-mind]
     adrs: [ADR-0005]
-    decided: [OQ-24]
+    decided: [OQ-24, OQ-190]
   - id: resolve
     name: Resolve
     formula: (instinct + empathy) / 2, plus 1 per Scar, minus 1 per point of Grief (at most 3 points count)
