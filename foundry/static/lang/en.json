@@ -63,6 +63,12 @@
       "on-body": "On Body",
       "blind-spot": "Blind Spot"
     },
+    "PositionTip": {
+      "distant": "Distant: out of the Titan’s reach, and it out of yours.",
+      "in-reach": "In Reach: close enough to be struck, and to strike its legs.",
+      "on-body": "On Body: literally on the Titan, hooked into or standing on its body, anywhere but the Nape. It carries you with it.",
+      "blind-spot": "Blind Spot: anchored to terrain behind the Titan — a tree or a roof — out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
+    },
     "GearSubtype": {
       "odm": "ODM Gear",
       "blade-set": "Blade Set",
@@ -1007,7 +1013,9 @@
         "save": "Save preferences",
         "campaign": "Character creation",
         "trackerApply": "Engagement tracker",
-        "trackerApplyHint": "What the tracker applies by itself. A step switched off waits on the board or the card with an Apply button."
+        "trackerApplyHint": "What the tracker applies by itself. A step switched off waits on the board or the card with an Apply button.",
+        "prompts": "Prompt cards",
+        "promptsHint": "Steam, falls, Critical Injuries, Gas Rolls and the Flight are rolled by the soldier’s own player, on their own client."
       },
       "campaignChoice": {
         "name": "Procedures the campaign allows",
@@ -1064,11 +1072,9 @@
       },
       "promptTimeout": {
         "name": "Prompt timeout",
-        "hint": "Off by default: a live table waits for the player, and the GM’s “roll it for them” control is the escape hatch. Switch it on for an asynchronous table and an unanswered prompt card is rolled after the wait below."
-      },
-      "promptTimeoutSeconds": {
-        "name": "Prompt timeout, seconds",
-        "hint": "How long an unanswered prompt card waits before it is rolled. Only used while the prompt timeout is on. 60 seconds by default."
+        "hint": "Prompt cards (steam, falls, Critical Injuries, Gas Rolls, Flights) wait for the player by default. Set a number of seconds to have unanswered prompts roll themselves; 0 waits. The GM can always roll a prompt for a player.",
+        "wait": "Wait for the player (default)",
+        "seconds": "{n} seconds"
       }
     },
     "Sheet": {
@@ -1987,6 +1993,30 @@
         "dt": "Wings of Freedom: Titan Dice (flesh)"
       }
     },
+    "Prompt": {
+      "ask": {
+        "steam": "Steam",
+        "fall": "Fall",
+        "injury": "Critical Injury",
+        "gas": "Gas Roll",
+        "flight": "Flight"
+      },
+      "by": {
+        "gm": "rolled by the GM",
+        "timeout": "rolled on the timeout"
+      },
+      "cause": "Why: ",
+      "roll": "Roll it",
+      "rollFixed": "Roll {rolls}",
+      "forThem": "Roll it for them",
+      "rolling": "Rolling…",
+      "waitingFor": "Waiting for {name}",
+      "closed": "This prompt is closed.",
+      "waitNote": "Waiting on {n} roll(s). The GM can roll any of them.",
+      "dueNote": "Waiting on {n} roll(s). Unanswered ones roll themselves when the timeout runs out.",
+      "nothing": "Nothing came of it.",
+      "noResolver": "This system cannot resolve that prompt."
+    },
     "Lifepath": {
       "window": "Lifepath: {name}",
       "kicker": "Training Corps · Personnel file",
@@ -2334,6 +2364,31 @@
       }
     },
     "Tracker": {
+      "prompt": {
+        "health": "Health {current}/{full}",
+        "steamTitle": "Scalding steam from {label}",
+        "steamDeath": "{name} ({label}) dies, and the steam scalds everyone On Body or at its Blind Spot.",
+        "steamRegen": "{name} ({label}) fills its Regeneration clock, and the steam scalds everyone On Body.",
+        "steamRolls": "a D6 on the steam table",
+        "fallTitle": "{name} falls",
+        "fallCause": "{name} falls from {label}: a {band} fall.",
+        "fallRolls": "a D6 + {adds}",
+        "injuryTitle": "{name} takes a Critical Injury",
+        "injuryCause": "{name} is at 0 Health: the injury is {type}.",
+        "injuryRolls": "the location die and 2D6",
+        "gasTitle": "Gas Rolls",
+        "gasCause": "The round ends, and everyone who used their ODM Gear owes a Gas Roll.",
+        "gasRolls": "your Gas Roll",
+        "gasRating": "Gas {n}",
+        "gasDone": "{name}: Gas {from} to {to}.",
+        "gasNone": "{name} rolled nothing.",
+        "flightTitle": "{name} takes a Flight",
+        "flightCause": "{name} moves relative to {label}, {from} to {to}, on their ODM Gear.",
+        "flightRolls": "your Fly",
+        "flightDetail": "Momentum {n} of {cap}",
+        "flightGone": "{name} is no longer where the move began: nothing moved.",
+        "flightDone": "{name} flies: {n} success(es), {gained} Momentum gained."
+      },
       "title": "Engagement tracker",
       "idle": "No Titan Engagement or Skirmish is running.",
       "failed": "The tracker could not make that change. See the console.",
@@ -2577,7 +2632,8 @@
         "charge": "A charge: it may draw its eye",
         "noMomentum": "The soldier holds too little Momentum for the extra steps.",
         "chargeReach": "A charge is a mounted step between Distant and In Reach.",
-        "chargeAct": "Mounted, and charge"
+        "chargeAct": "Mounted, and charge",
+        "forceGM": "Only the GM steps over the rules."
       },
       "block": {
         "corpse": "That body is a corpse.",
@@ -2690,7 +2746,9 @@
         "momentumKept": "Kept, to a cap of {cap}: {who}.",
         "wrecked": "An Anchor is wrecked. {n} left.",
         "wreckIgnored": "One good tree survives: the first Anchor is not lost.",
-        "momentumTrim": "{name} is over the new cap and holds {n}."
+        "momentumTrim": "{name} is over the new cap and holds {n}.",
+        "frenzy": "{label} Frenzy {n} of {cap}.",
+        "gasAsked": "Gas Rolls owed by {who}: each rolls their own."
       },
       "note": {
         "startTitle": "Titan Engagement begins",
@@ -2742,7 +2800,10 @@
         "flightLoud": "They come in loud: {label} hears them.",
         "carry": "Carry: {n} Momentum spent on the extra steps.",
         "charge": "A charge: {label} hears them.",
-        "chargeDouble": "A charge in and out again on the plain: {label} hears them, and they end where they began."
+        "chargeDouble": "A charge in and out again on the plain: {label} hears them, and they end where they began.",
+        "retargeted": "It cannot reach its holder, so it turns on {name} for {entry}.",
+        "flightAsked": "{name} takes a Flight",
+        "flightAskedLine": "Relative to {label}, to {to}: their own client rolls the Fly."
       },
       "death": {
         "relief": "Nape-kill Stress relief: {who}.",
@@ -2754,6 +2815,30 @@
       "grab": {
         "freed": "{name} is freed and holds In Reach.",
         "freedFalls": "{name} is freed and falls, then holds In Reach."
+      },
+      "gm": {
+        "ruling": "GM ruling.",
+        "byRuling": "by GM ruling",
+        "onlyGM": "Only the GM can do that.",
+        "undone": "The GM's ruling was taken back.",
+        "grabbed": "{name} is Grabbed by {label}",
+        "grabCleared": "{name} is let go by {label}",
+        "pinned": "{name} is Pinned under {label}",
+        "pinCleared": "{name} is no longer Pinned",
+        "momentum": "{name} holds {n} Momentum of {cap}",
+        "airborne": "{name} is airborne",
+        "grounded": "{name} is on the ground",
+        "anchor": "The field is {name}: {n} Anchors",
+        "loud": "{name} is the loudest to {label}",
+        "loudCleared": "{name} is no longer the loudest to {label}",
+        "opening": "{label} has {n} Opening(s)",
+        "openingCleared": "{label} has {n} Opening(s)",
+        "attention": "{label} turns its Attention on {name}",
+        "attentionCleared": "{label} holds nobody's Attention",
+        "spent": "{name} has spent their move this round",
+        "unspent": "{name} has their move back",
+        "joins": "{name} joins the engagement",
+        "leaves": "{name} is out of the engagement"
       },
       "ending": {
         "notMet": "No ending test is met yet.",
@@ -2824,7 +2909,8 @@
         "foeOutCold": "{name} is out cold.",
         "firstKill": "{name} has killed a person for the first time: a Fear Roll.",
         "groupBreaks": "The group reaches its Grit and breaks.",
-        "soldierDamage": "{name} takes {n} damage from {by}'s {weapon}."
+        "soldierDamage": "{name} takes {n} damage from {by}'s {weapon}.",
+        "injuryAsked": "{name} is asked for their Critical Injury dice."
       },
       "board": {
         "title": "Engagement board",
@@ -2936,8 +3022,7 @@
         "off": "off",
         "in": "in",
         "out": "out",
-        "logged": "Every override is written to the tracker note as a GM ruling, and Undo still works.",
-        "missing": "This build has no direct setter for {op}."
+        "logged": "Every override is written to the tracker note as a GM ruling, and Undo still works."
       },
       "setup": {
         "titleTitan": "Begin a Titan Engagement",
@@ -2977,7 +3062,10 @@
           "low": "low",
           "high": "high",
           "extreme": "extreme"
-        }
+        },
+        "steamNone": "Nobody is caught by the steam.",
+        "steamAsked": "The steam scalds {who}: each rolls their own D6.",
+        "fallAsked": "{name} takes a {band} fall: their own D6."
       },
       "close": {
         "turns": "Pending results cancelled: {who}.",
@@ -3015,12 +3103,6 @@
       "brace": "Brace: 1 Bonus Die on your next dodge this round.",
       "quiet": "Quiet: nothing you do this turn marks you loudest.",
       "clean-line": "Clean line: you make no Gas Roll this round."
-    },
-    "PositionTip": {
-      "distant": "Distant: out of the Titan’s reach, and it out of yours.",
-      "in-reach": "In Reach: close enough to be struck, and to strike its legs.",
-      "on-body": "On Body: literally on the Titan, hooked into or standing on its body, anywhere but the Nape. It carries you with it.",
-      "blind-spot": "Blind Spot: anchored to terrain behind the Titan — a tree or a roof — out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
     }
   }
 }

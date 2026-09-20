@@ -413,10 +413,10 @@ body.wof-hud-on #ui-middle #ui-top { padding-top: var(--wof-hud-h, 0); }
 .wof-board .frz i, .wof-hud .frz i { width: 8px; height: 14px; display: block; border: 1.5px solid var(--red-lo); background: var(--paper-hi); transform: skewX(-8deg); }
 .wof-board .frz i.on, .wof-hud .frz i.on { background: linear-gradient(160deg, var(--red-hi), var(--red) 60%, var(--red-lo)); }
 .wof-board .frz b { font: 900 var(--t-lg)/1 var(--fd); color: var(--red); margin-left: 2px; }
-.wof-hud .frz { grid-column: 1 / -1; }
+.wof-hud .frz { grid-column: 2; gap: 2px; min-width: 0; }
 .wof-hud .frz i { width: 6px; height: 10px; border-color: rgba(226, 192, 120, .5); background: none; }
 .wof-hud .frz i.on { background: var(--red); border-color: var(--red); }
-.wof-hud .frz b { font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: #bfae8c; margin-right: 2px; }
+.wof-hud .frz b { font: 9px/1 var(--fl); letter-spacing: .02em; text-transform: uppercase; color: #bfae8c; margin-right: 1px; }
 
 /* The anchor plate on the strip: the rating and its Anchor count belong to the engagement, so they
    are read once here and not on every token (batch D). */

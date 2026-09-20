@@ -192,7 +192,7 @@ const TRACKER_WORDING: Record<string, { name: string; text: string }> = {
   'engagement_line/which-soldiers-have-thrown-their': { name: 'Cloaks', text: 'Which soldiers have thrown their cloak.' },
   'engagement_line/the-round-in-which-no': { name: 'No one standing since', text: 'The round in which no soldier was left standing, while a returner decides how soon the fight ends.' },
 
-  'focus_titan_row/frenzy': {
+  'focus_titan_row/frenzy-from-0-to-3': {
     name: 'Frenzy',
     text: '0 at the start of the fight, and 1 more at each round\u2019s end step, to a cap of 3. Added to its behavior roll, so the Titan walks down its own table as the fight runs long. Public: say it aloud as it rises.',
   },

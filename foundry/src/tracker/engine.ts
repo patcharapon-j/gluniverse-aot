@@ -1048,9 +1048,10 @@ export async function undoCheck(combat: any, index: number): Promise<void> {
 }
 
 /**
- * batch F2: each Focus Titan's Frenzy rises by 1 at the end of the round, to FRENZY_CAP, and is
- * added to its behavior roll. It runs at round.yaml's own `frenzy` step where the file has one, and
- * with round-ends where it does not, but never twice in one round.
+ * The frenzy end step (round.yaml, end_steps, frenzy; batch F2): every living Focus Titan's Frenzy
+ * rises by 1, never above FRENZY_CAP. A corpse has none, and a Next Behavior already rolled is not
+ * touched: a behavior roll takes the Frenzy that stood when it was rolled (behavior-procedure.yaml,
+ * next_behavior, frenzy_when).
  */
 function raiseFrenzy(combat: any, rec: Recorder): void {
   const rows = rec.get(combat, 'system.titans') as any[];
@@ -1067,9 +1068,10 @@ function raiseFrenzy(combat: any, rec: Recorder): void {
 async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): Promise<void> {
   const sys = plain(combat);
   const snap = snapshot(combat);
-  // round.yaml's own Frenzy step, once it names one (the checklist is built from the file).
-  if ((check as string) === 'frenzy') return void raiseFrenzy(combat, rec);
   switch (check) {
+    case 'frenzy':
+      raiseFrenzy(combat, rec);
+      return;
     case 'gas-rolls': {
       const due = gasRollsDue(sys.odmUsed, (id) => !!snap.soldiers.find((s) => s.id === id)?.alive, sys.cleanLine ?? []);
       const message = await askGasRolls(combat, due);
@@ -1151,7 +1153,6 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
       return;
     }
     case 'round-ends':
-      if (sys.mode === 'titan' && !(sys.endLog as EndEntry[]).some((e) => (e.check as string) === 'frenzy')) raiseFrenzy(combat, rec);
       rec.line(tr('end.roundEnds'));
       return;
     case 'broken-leave': {

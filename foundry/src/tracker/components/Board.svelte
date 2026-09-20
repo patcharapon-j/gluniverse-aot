@@ -289,7 +289,7 @@
                     <!-- Frenzy rises 1 a round to its cap and is added to the behavior roll: the
                          longer the fight runs, the worse the Titan gets (round 3, decision 12). -->
                     <span class="lbl">{t('frenzy')}</span>
-                    <span class="frz big" title={ti.frenzyTitle} aria-label={ti.frenzyTitle}>
+                    <span class="frz" title={ti.frenzyTitle} aria-label={ti.frenzyTitle}>
                       {#each Array.from({ length: ti.frenzyCap }) as _, k (k)}<i class:on={k < ti.frenzy}></i>{/each}
                       <b>+{ti.frenzy}</b>
                     </span>
@@ -421,7 +421,7 @@
             <button type="button" role="menuitemcheckbox" aria-checked={menu.cell.grab} onclick={() => set('grabbed', { on: !menu!.cell.grab })}>{t('direct.grabbed')}<small>{menu.cell.grab ? t('direct.on') : t('direct.off')}</small></button>
             <button type="button" role="menuitemcheckbox" aria-checked={menu.cell.attention} onclick={() => set('attention', { on: !menu!.cell.attention })}>{t('direct.attention')}<small>{menu.cell.attention ? t('direct.on') : t('direct.off')}</small></button>
             <button type="button" role="menuitemcheckbox" aria-checked={menu.cell.flagLoud} onclick={() => set('loud', { on: !menu!.cell.flagLoud })}>{t('direct.loud')}<small>{menu.cell.flagLoud ? t('direct.on') : t('direct.off')}</small></button>
-            <button type="button" role="menuitemcheckbox" aria-checked={menu.row.pinned} onclick={() => set('pinned', { on: !menu!.row.pinned })}>{t('direct.pinned')}<small>{menu.row.pinned ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={menu.row.pinned} onclick={() => set('pinned', { on: !menu!.row.pinned, label: menu!.cell.label })}>{t('direct.pinned')}<small>{menu.row.pinned ? t('direct.on') : t('direct.off')}</small></button>
             <button type="button" role="menuitemcheckbox" aria-checked={menu.row.airborne} onclick={() => set('airborne', { on: !menu!.row.airborne })}>{t('direct.airborne')}<small>{menu.row.airborne ? t('direct.on') : t('direct.off')}</small></button>
             <button type="button" role="menuitemcheckbox" aria-checked={menu.row.spent} onclick={() => set('spent', { on: !menu!.row.spent })}>{t('direct.spent')}<small>{menu.row.spent ? t('direct.on') : t('direct.off')}</small></button>
             <button type="button" role="menuitemcheckbox" aria-checked={!menu.row.left} onclick={() => set('in-out', { in: menu!.row.left })}>{t('direct.inOut')}<small>{menu.row.left ? t('direct.out') : t('direct.in')}</small></button>
@@ -432,9 +432,9 @@
             <b>{menu.row.momentum}</b>
             <button type="button" role="menuitem" aria-label={t('direct.more')} onclick={() => set('momentum', { value: menu!.row.momentum + 1 })}>+</button>
             <span class="dlbl">{t('direct.openings')}</span>
-            <button type="button" role="menuitem" aria-label={t('direct.less')} onclick={() => set('openings', { value: Math.max(0, (menuTitan?.openings.length ?? 0) - 1) })}>−</button>
+            <button type="button" role="menuitem" aria-label={t('direct.less')} disabled={!(menuTitan?.openings.length ?? 0)} onclick={() => set('opening', { on: false })}>−</button>
             <b>{menuTitan?.openings.length ?? 0}</b>
-            <button type="button" role="menuitem" aria-label={t('direct.more')} onclick={() => set('openings', { value: (menuTitan?.openings.length ?? 0) + 1 })}>+</button>
+            <button type="button" role="menuitem" aria-label={t('direct.more')} onclick={() => set('opening', { on: true })}>+</button>
           </div>
           <label class="drow">
             <span class="dlbl">{t('direct.anchor')}</span>

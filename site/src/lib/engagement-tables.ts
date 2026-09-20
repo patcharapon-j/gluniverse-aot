@@ -114,6 +114,8 @@ const POSITION_CHANGE_WORDING: Record<string, string> = {
   'close-rule': "Coming to On Body or Blind Spot on one Titan makes every other Titan's On Body or Blind Spot read In Reach.",
   'titan-becomes-focus': 'Everyone holding a Position holds Distant relative to it.',
   'focus-titan-dies': 'Your Positions carry over to its corpse, with On Body and Blind Spot reading In Reach.',
+  'fall-back': 'At the Wings step, each soldier on the body or at Blind Spot may take In Reach instead, their own choice. It is not a fall and it is not ODM use.',
+  'titan-stands-up': 'On Open ground only: a Titan that gets its legs back has no Blind Spot to stand behind, so a soldier there holds On Body instead. Everywhere else you keep the Position you hold.',
   carried: 'You move with whoever carries you, and your own move changes nothing.',
   'placement-leaving-returning-retreat': 'As each rule states. A retreat narrows the move you may make; it moves nobody by itself.',
 };
@@ -1095,7 +1097,7 @@ export interface PositionShape {
   reachesBlindSpot: boolean;
 }
 
-export function positionShapes(): { shapes: PositionShape[]; groundedNote: string } {
+export function positionShapes(): PositionShape[] {
   const doc = parse(anchorText) as {
     ratings: RawRating[];
     position_maps: {
@@ -1108,59 +1110,56 @@ export function positionShapes(): { shapes: PositionShape[]; groundedNote: strin
         reaches_blind_spot: boolean;
         says: string;
       }[];
-      grounded_titan: string;
     };
   };
   const T = 'Position maps';
   const maps = doc.position_maps?.maps;
   if (!Array.isArray(maps) || maps.length === 0) throw new Error(`${T}: the table draws no maps.`);
 
-  /** A rating's step rows as a sorted, comparable list of Position pairs. */
+  /** A ground's step rows as a sorted, comparable list of Position pairs. */
   const edgesOf = (ratingId: string) => {
     const rating = doc.ratings.find((r) => r.id === ratingId);
     if (!rating) throw new Error(`${T}: a map names a ground, "${ratingId}", the table does not rate.`);
-    return rating.steps
-      .map((s) => [s.between[0], s.between[1]].sort().join(">"))
-      .sort();
+    return rating.steps.map((s) => [s.between[0], s.between[1]].sort().join('>')).sort();
   };
 
+  /** Left to right, the way a soldier closes on a Titan. */
   const LANE = ['distant', 'in-reach', 'on-body', 'blind-spot'];
 
-  return {
-    shapes: maps.map((map) => {
-      const edges = edgesOf(map.ratings[0]);
-      for (const other of map.ratings.slice(1)) {
-        if (edgesOf(other).join('|') !== edges.join('|')) {
-          throw new Error(`${T}: "${map.name}" draws one shape for grounds whose step rows differ ("${map.ratings[0]}" and "${other}").`);
-        }
+  return maps.map((map) => {
+    const edges = edgesOf(map.ratings[0]);
+    for (const other of map.ratings.slice(1)) {
+      if (edgesOf(other).join('|') !== edges.join('|')) {
+        throw new Error(`${T}: "${map.name}" draws one shape for grounds whose step rows differ ("${map.ratings[0]}" and "${other}").`);
       }
-      const links = edges.map((edge) => {
+    }
+    const links = edges
+      .map((edge) => {
         const [a, b] = edge.split('>');
         return LANE.indexOf(a) < LANE.indexOf(b) ? { from: a, to: b } : { from: b, to: a };
-      });
-      const reached = new Set(links.flatMap((l) => [l.from, l.to]));
-      if (reached.has('blind-spot') !== map.reaches_blind_spot) {
-        throw new Error(`${T}: "${map.name}" says whether it reaches the Blind Spot, and its step rows say otherwise.`);
-      }
-      const nodes = LANE.filter((id) => reached.has(id)).map((id) => ({
-        id,
-        name: position(id, T),
-        icon: wording(POSITION_ICONS, id, T),
-      }));
-      return {
-        id: map.id,
-        name: map.name,
-        shape: map.shape,
-        anchors: String(map.anchors),
-        ratings: map.ratings,
-        says: map.says.replace(/\s+/g, ' ').trim(),
-        nodes,
-        links,
-        reachesBlindSpot: map.reaches_blind_spot,
-      };
-    }),
-    groundedNote: doc.position_maps.grounded_titan.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim(),
-  };
+      })
+      .sort((x, y) => LANE.indexOf(x.from) - LANE.indexOf(y.from) || LANE.indexOf(x.to) - LANE.indexOf(y.to));
+    const reached = new Set(links.flatMap((l) => [l.from, l.to]));
+    if (reached.has('blind-spot') !== map.reaches_blind_spot) {
+      throw new Error(`${T}: "${map.name}" says whether it reaches the Blind Spot, and its step rows say otherwise.`);
+    }
+    const nodes = LANE.filter((id) => reached.has(id)).map((id) => ({
+      id,
+      name: position(id, T),
+      icon: wording(POSITION_ICONS, id, T),
+    }));
+    return {
+      id: map.id,
+      name: map.name,
+      shape: map.shape,
+      anchors: String(map.anchors),
+      ratings: map.ratings,
+      says: map.says.replace(/\s+/g, ' ').trim(),
+      nodes,
+      links,
+      reachesBlindSpot: map.reaches_blind_spot,
+    };
+  });
 }
 
 /** The Grab countdown, for the countdown drawing. */

@@ -208,6 +208,8 @@ That last clause is worth reading twice, because everything about the Blind Spot
 | The close rule | Becoming On Body or Blind Spot of one Titan sets the other Titan's Position to In Reach (*Two Focus Titans*, below) |
 | A Titan becoming a Focus Titan | Everyone who holds a Position holds Distant relative to it |
 | A Focus Titan dying | Positions become relative to its corpse; On Body and Blind Spot read In Reach (*A corpse*, below) |
+| The Fall Back Squad Tactic | At the wings step, a soldier at On Body or Blind Spot may instead hold In Reach relative to that Titan, by their own player's choice; not a fall (section 5.12) |
+| A grounded Titan standing up | At the Open rating only, a soldier at Blind Spot relative to it then holds On Body, because that rating has no Blind Spot while the Titan stands; not a fall (*A grounded Titan*, above) |
 | Being carried | The carried soldier moves with their carrier (Chapter 4, section 4.7) |
 | Starting placement, leaving, returning, a retreat's compelled moves | As each rule states (*sections 5.1, 5.10, and 5.11*) |
 

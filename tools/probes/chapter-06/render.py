@@ -50,6 +50,10 @@ def effect_text(eff):
         return "Telegraph"
     if typ == "knock-loose":
         return f"Knock loose (fall: {injury_type_name(titans.load('data', 'gear', 'falls.yaml')['injury_type'])})"
+    if typ == "wreck":
+        # decision batch 10: the Titan Engagement loses 1 Anchor. It harms no soldier, so it carries
+        # no Injury Type and never reaches the critical-injury fields below.
+        return "Wreck (the Titan Engagement loses 1 Anchor)"
     if typ == "grab":
         crush = titans.load("data", "engagement", "grab.yaml")["grab_lands"]["crush_harm"]
         return f"Grab (crush: {injury_type_name(crush['injury_type'])})"

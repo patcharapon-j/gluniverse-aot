@@ -7,11 +7,14 @@ import { SYSTEM_ID } from './config.ts';
 import { APPLY_CATEGORIES } from './rules/roll.ts';
 import { TRACKER_CATEGORIES } from './rules/engagement/round.ts';
 import { iconPath } from './art.ts';
+import { PROMPT_TIMEOUT_DEFAULT, PROMPT_TIMEOUT_SETTING } from './dice/prompt.ts';
 
 const esc = (s: string) => foundry.utils.escapeHTML(s);
 const t = (k: string) => game.i18n.localize(k);
 
 const MOTION = ['full', 'reduced', 'off'] as const;
+/** What the prompt timeout is offered as: waiting, then the default and its neighbours. */
+const PROMPT_TIMEOUT_CHOICES = [0, 30, PROMPT_TIMEOUT_DEFAULT, 120, 300];
 const GORE = ['low', 'standard', 'graphic'] as const;
 
 function choiceGroup(setting: 'motion' | 'gore', values: readonly string[], current: string): string {
@@ -48,6 +51,8 @@ export function defineSettingsMenu() {
       const motion = game.settings.get(SYSTEM_ID, 'motion') as string;
       const gore = game.settings.get(SYSTEM_ID, 'gore') as string;
       const os = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? `<p class="note warn">${esc(t('WOF.Settings.motion.osReduced'))}</p>` : '';
+      // 0 is the default and means the table waits (OWNER-DECISIONS, question 4).
+      const timeout = Number(game.settings.get(SYSTEM_ID, PROMPT_TIMEOUT_SETTING) ?? 0);
       const lp = CONFIG.WOF.lifepath as { campaignChoices: { id: string }[]; campaignYears: { min: number; max: number } };
       const choice = game.settings.get(SYSTEM_ID, 'campaignChoice') as string;
       const year = Number(game.settings.get(SYSTEM_ID, 'campaignYear'));
@@ -89,6 +94,14 @@ export function defineSettingsMenu() {
     <span>${esc(t(`WOF.Settings.trackerApply.${c}.name`))}</span>
   </label>`;
   }).join('')}
+</fieldset>
+<fieldset class="pgroup gm">
+  <legend>${esc(t('WOF.Settings.menu.prompts'))}<span class="gm-tag">${esc(t('WOF.Settings.menu.gmOnly'))}</span></legend>
+  <p class="note">${esc(t('WOF.Settings.menu.promptsHint'))}</p>
+  <label class="pfield"><span>${esc(t('WOF.Settings.promptTimeout.name'))}</span><select name="promptTimeout">${PROMPT_TIMEOUT_CHOICES.map(
+    (n) => `<option value="${n}" ${n === timeout ? 'selected' : ''}>${esc(n === 0 ? t('WOF.Settings.promptTimeout.wait') : game.i18n.format('WOF.Settings.promptTimeout.seconds', { n }))}</option>`,
+  ).join('')}</select></label>
+  <p class="note">${esc(t('WOF.Settings.promptTimeout.hint'))}</p>
 </fieldset>`
         : '';
       return `<div class="wof-prefs">
@@ -120,6 +133,8 @@ export function defineSettingsMenu() {
           const on = !!(data[`trackerApply.${c}`] ?? foundry.utils.getProperty(data, `trackerApply.${c}`));
           if (on !== (game.settings.get(SYSTEM_ID, `trackerApply.${c}`) !== false)) writes.push(game.settings.set(SYSTEM_ID, `trackerApply.${c}`, on));
         }
+        const timeout = Number(data.promptTimeout);
+        if (Number.isFinite(timeout) && timeout !== Number(game.settings.get(SYSTEM_ID, PROMPT_TIMEOUT_SETTING) ?? 0)) writes.push(game.settings.set(SYSTEM_ID, PROMPT_TIMEOUT_SETTING, Math.max(0, timeout)));
         for (const c of APPLY_CATEGORIES) {
           const on = !!(data[`autoApply.${c}`] ?? foundry.utils.getProperty(data, `autoApply.${c}`));
           if (on !== (game.settings.get(SYSTEM_ID, `autoApply.${c}`) !== false)) writes.push(game.settings.set(SYSTEM_ID, `autoApply.${c}`, on));
@@ -135,48 +150,32 @@ export function defineSettingsMenu() {
 /** Direct Control (ADR-0028) is remembered per GM client, never per world, and never for a player. */
 export const DIRECT_SETTING = 'directControl';
 
-/** The optional prompt timeout (round 3, question 4): off by default, because waiting is the default at a live table. */
-export const PROMPT_TIMEOUT_SETTING = 'promptTimeout';
-export const PROMPT_TIMEOUT_SECONDS_SETTING = 'promptTimeoutSeconds';
-export const PROMPT_TIMEOUT_DEFAULT = 60;
+/**
+ * The optional prompt timeout (round 3, question 4): the seconds after which an unanswered prompt
+ * card rolls itself. 0 is off, and off is the default, because waiting is the default at a live
+ * table: the GM's "roll it for them" control is the escape hatch, and auto-rolling by default would
+ * quietly restore the problem the prompt card exists to fix. The key and its reader live with the
+ * card (src/dice/prompt.ts); 60 seconds is what the table is offered when it switches one on.
+ */
+export { PROMPT_TIMEOUT_SETTING, PROMPT_TIMEOUT_DEFAULT };
 
 /**
  * Settings the tracker and the prompt card own, registered here beside the preferences menu so they
  * keep the file's conventions: world-scoped and GM-restricted where the table shares them, client
- * where a single viewer's own client holds them, and none of them listed one by one in Configure
- * Settings unless a GM is meant to find it there.
+ * where a single viewer's own client holds them.
  */
 function registerTrackerSettings(): void {
   game.settings.register(SYSTEM_ID, DIRECT_SETTING, { scope: 'client', config: false, type: Boolean, default: false });
-  // The default is to wait: a live table has the GM's "roll it for them" control as the escape
-  // hatch, and auto-rolling by default would quietly restore the problem the prompt card exists to
-  // fix. The timeout is offered for asynchronous tables only.
   game.settings.register(SYSTEM_ID, PROMPT_TIMEOUT_SETTING, {
     name: 'WOF.Settings.promptTimeout.name',
     hint: 'WOF.Settings.promptTimeout.hint',
     scope: 'world',
     config: true,
     restricted: true,
-    type: Boolean,
-    default: false,
-  });
-  game.settings.register(SYSTEM_ID, PROMPT_TIMEOUT_SECONDS_SETTING, {
-    name: 'WOF.Settings.promptTimeoutSeconds.name',
-    hint: 'WOF.Settings.promptTimeoutSeconds.hint',
-    scope: 'world',
-    config: true,
-    restricted: true,
     type: Number,
-    default: PROMPT_TIMEOUT_DEFAULT,
-    range: { min: 10, max: 600, step: 5 },
+    default: 0,
+    range: { min: 0, max: 600, step: 5 },
   });
-}
-
-/** The prompt timeout in seconds, or null while the table waits (the default). */
-export function promptTimeoutSeconds(): number | null {
-  if (game.settings.get(SYSTEM_ID, PROMPT_TIMEOUT_SETTING) !== true) return null;
-  const n = Number(game.settings.get(SYSTEM_ID, PROMPT_TIMEOUT_SECONDS_SETTING));
-  return Number.isFinite(n) && n > 0 ? n : PROMPT_TIMEOUT_DEFAULT;
 }
 
 export function registerSettingsMenu(): void {

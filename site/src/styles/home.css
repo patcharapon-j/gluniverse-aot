@@ -207,6 +207,17 @@
 .entry:hover .arrow {
   color: var(--seal);
 }
+.whatsnew {
+  margin: 14px 0 0;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+  position: relative;
+  z-index: 1;
+}
+.whatsnew a {
+  font-weight: 600;
+}
+
 .hero-foot {
   display: flex;
   flex-wrap: wrap;

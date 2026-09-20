@@ -129,7 +129,7 @@ When an effect kills its target, that target receives none of the card's later e
 | 1 | Gape | Terrorize | holder | Any | none | 3 | Stress +1 | Thrash | no |
 | 2 | Lurch Closer | Terrorize | holder | Distant, In Reach | none | 3 | Stress +1; Telegraph | Thrash | no |
 | 3 | Clutch at the Legs | Control | holder | In Reach | arm | 6 | Crush Critical Injury (leg, side rolled, cannot be lethal) | Thrash | no |
-| 4 | Scrabble | Control | holder | On Body, Blind Spot | none | 6 | Knock loose (fall: Crush) | Thrash | no |
+| 4 | Scrabble | Control | holder | On Body, Blind Spot | none | 6 | Knock loose (fall: Crush); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
 | 5 | Bite | Kill | holder | In Reach, On Body | none | 6 | Bite Critical Injury (leg, side rolled, can be lethal) | Thrash | no |
 | 6 | Grab | Kill | holder | In Reach, On Body | arm | 6 | Grab (crush: Crush) | Thrash | yes |
 | never rolled | Thrash | Thrash | holder | Any | none | 6 | Knock loose (fall: Crush) | none | no |
@@ -174,7 +174,7 @@ When an effect kills its target, that target receives none of the card's later e
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Fixed Grin | Terrorize | holder | Any | eyes | 3 | Stress +1; Telegraph | Thrash | no |
 | 2 | Snap Short | Terrorize | holder | In Reach, On Body | none | 3 | Stress +1 | Thrash | no |
-| 3 | Swat | Control | holder | In Reach, On Body | arm | 6 | Crush Critical Injury (rolled location, cannot be lethal) | Thrash | no |
+| 3 | Swat | Control | holder | In Reach, On Body | arm | 6 | Crush Critical Injury (rolled location, cannot be lethal); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
 | 4 | Shake Off | Control | holder | On Body, Blind Spot | none | 6 | Knock loose (fall: Crush) | Thrash | no |
 | 5 | Bite | Kill | holder | In Reach, On Body | none | 9 | Bite Critical Injury (torso, can be lethal) | Thrash | no |
 | 6 | Grab | Kill | holder | In Reach, On Body | arm | 9 | Grab (crush: Crush) | Thrash | yes |
@@ -221,8 +221,8 @@ When an effect kills its target, that target receives none of the card's later e
 | D6 | Behavior | Tier | Targets | Holder's Position | Body Parts used | Attack Dice | Effects | Fallback | Grab |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Loom | Terrorize | holder | Any | none | 6 | Stress +1; Telegraph | Thrash | no |
-| 2 | Heavy Tread | Terrorize | holder and everyone at their Position | Distant, In Reach | both legs | 6 | Stress +1 | Thrash | no |
-| 3 | Crush | Control | holder | In Reach | none | 9 | Crush Critical Injury (leg, side rolled, cannot be lethal) | Thrash | no |
+| 2 | Heavy Tread | Terrorize | holder and everyone at their Position | Distant, In Reach | both legs | 6 | Stress +1; Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
+| 3 | Crush | Control | holder | In Reach | none | 9 | Crush Critical Injury (leg, side rolled, cannot be lethal); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
 | 4 | Shrug Off | Control | holder | On Body, Blind Spot | none | 9 | Knock loose (fall: Crush) | Thrash | no |
 | 5 | Bite | Kill | holder | On Body | none | 12 | Bite Critical Injury (torso, can be lethal) | Crush | no |
 | 6 | Grab | Kill | holder | In Reach, On Body | arm | 12 | Grab (crush: Crush) | Thrash | yes |
@@ -265,10 +265,10 @@ A Medium Abnormal that runs. At the table everyone sees what any Focus Titan sho
 <!-- BEGIN RENDERED: behavior-table sprinting-abnormal -->
 | D6 | Behavior | Tier | Targets | Holder's Position | Body Parts used | Attack Dice | Effects | Fallback | Grab |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | Run Past | Terrorize | holder and everyone at their Position | Distant, In Reach | both legs | 3 | Stress +1 | Thrash | no |
+| 1 | Run Past | Terrorize | holder and everyone at their Position | Distant, In Reach | both legs | 3 | Stress +1; Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
 | 2 | Veer | Terrorize | holder | Any | none | 3 | Stress +1; Telegraph | Thrash | no |
 | 3 | Trample | Control | holder | Distant, In Reach | both legs | 6 | Crush Critical Injury (leg, side rolled, cannot be lethal) | Thrash | no |
-| 4 | Pitch Headlong | Control | holder | On Body, Blind Spot | none | 3 | Knock loose (fall: Crush) | Thrash | no |
+| 4 | Pitch Headlong | Control | holder | On Body, Blind Spot | none | 3 | Knock loose (fall: Crush); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
 | 5 | Grab | Kill | holder | In Reach, On Body | arm | 6 | Grab (crush: Crush) | Thrash | yes |
 | 6 | Headlong Lunge | Kill | holder | In Reach, On Body | both legs | 6 | Crush Critical Injury (rolled location, can be lethal) | Pitch Headlong | no |
 | never rolled | Thrash | Thrash | holder | Any | none | 6 | Knock loose (fall: Crush) | none | no |

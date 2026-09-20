@@ -16,6 +16,31 @@ Process changes (2026-09-14, during Chapter 3 round 3): fixes driven by a later 
 > in `docs/reviews/simulator-report.md` and `data/engagement/tuning.yaml` is stale; the rerun is a
 > retune and is the next work on the tuning line.
 
+> **Decision batch 13 (2026-09-20)** is applied to the rules, the data, and the ADRs: owner
+> feedback round 3, after the first session at the table. **Health** is now 2 plus half of Strength
+> plus Agility, rounded up, so a built soldier has 4 to 6 and a rolled one 4 to 8, with an untreated
+> Critical Injury still crossing off exactly one box and no damage value changed (OQ-190).
+> **Positions** gain a closed list of what changes one, headed by "an action never changes a
+> Position", the Blind Spot clause (anchored to terrain behind the Titan, not on it), the three
+> Position maps, and one sentence on the Nape strike, none of which changes a rule (OQ-191). A Titan
+> whose Attention holder cannot meet a rolled entry's Position requirement **retargets** down the
+> Attention Ladder instead of falling to Thrash (OQ-192), and each Focus Titan carries **Frenzy**,
+> rising 1 at a new round-end step to a cap of 3 and added to its behavior roll, counted as of the
+> moment the Next Behavior is rolled (OQ-193). The musket note is rewritten for the new Health
+> (OQ-194). Research and owner direction are in `docs/playtest/feedback/round-3/`.
+> **The simulator has not been rerun**, so every figure in `docs/reviews/simulator-report.md`,
+> `data/engagement/tuning.yaml`, `data/titans/tuning.yaml`, and `data/titans/probe-figures.yaml` is
+> stale; the rerun is a **retune** that measures batches A and F together and is scheduled with
+> batches 10 and 11's, on the tuning line.
+>
+> Still open from this round, outside this change: the Foundry code for batches B, C, and D (their
+> ADRs are written: new ADR-0028, amended ADR-0026 and ADR-0027), the site and packet, a renderer in
+> `tools/render/render.py` for `anchor-ratings.yaml` `position_maps`, two readers of the renamed
+> `reported_squad_fragile` key in `tools/sim/rules.py` and `foundry/test/derived.test.ts`, a missing
+> `wreck` branch in `tools/probes/chapter-06/render.py` `effect_text` that fails that probe's
+> `render.py check`, and batch E, zone combat, whose rules, ADR-0029, and retune wait until batches
+> A and F have been played.
+
 | # | Chapter | Chapter file | Status | Review round | Open Critical | Open Major | Latest review |
 |---|---------|--------------|--------|--------------|---------------|------------|---------------|
 | 1 | Core Rules | `docs/rules/01-core-rules.md` | Applying decisions (batch 8; WP-R Attack Dice applied; final full rerun done and its verdicts written (WP-S2); feedback round 1 final review fix package A applied: R33 Chapter 7 Stress pointer, R48 "a Titan or a Foe" for "enemy"; batch 9 applied (WP-G0), with 9-21; GM judgment review round 1 fix package R1 applied: 9-25, 9-26, 9-27, 9-28, 9-30, 9-31, 9-32, and 9-34 items 1 and 2 for Chapter 1 and `data/core`, plus pure fixes 1 to 4, with the Circumstances ladder now rendered into section 1.4a from `data/core/circumstances.yaml`; GM judgment review round 2 fix package WP-S5 applied: 9-36 (a called roll in a fight) in sections 1.1, 1.3, 1.8, and 1.9 and in `dice-pool.yaml` and `circumstances.yaml`, 9-37 in section 1.1 item 6, and 9-41 items 2 and 4; GM judgment review round 3 fix package WP-K1 applied: 9-42 in sections 1.5 and 1.8 and in `bonus-dice-sources.yaml`, 9-44 in section 1.1 **A fall** and `dice-pool.yaml` `failure_menu.fall`, and 9-45 items 1 and 5 in sections 1.1 and 1.9 and in `dice-pool.yaml`) | 3 + conformance 4 + 01-05 conformance 3 | 0 + 0 | 0 + 0 | `docs/reviews/01-05-decisions-conformance-review-3.md`, `-review-3-codex.md` |

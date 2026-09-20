@@ -12,7 +12,7 @@ interface Props {
   fig: string;
 }
 const { fig } = Astro.props;
-const { shapes, groundedNote } = positionShapes();
+const shapes = positionShapes();
 
 const CHIP_W = 116;
 const CHIP_H = 30;
@@ -25,15 +25,21 @@ interface Placed {
   y: number;
 }
 
-/** Where each node sits, from the shape the table names. Any other shape has no drawing. */
-function place(shape: string, nodes: { id: string; name: string }[]): { placed: Placed[]; width: number; height: number } {
+/**
+ * Where each node sits, from the shape the table names. Any other shape has no drawing.
+ * `slots` is how many stops the row is spaced for, which is one more than the nodes on ground
+ * that reaches no Blind Spot, so the missing stop has its place kept.
+ */
+function place(shape: string, nodes: { id: string; name: string }[], slots: number): { placed: Placed[]; width: number; height: number; spare?: { x: number; y: number } } {
   const width = 560;
   if (shape === 'chain') {
-    const gap = (width - 128) / (nodes.length - 1);
+    const gap = (width - 128) / (slots - 1);
+    const y = 46;
     return {
       width,
       height: 92,
-      placed: nodes.map((n, i) => ({ ...n, x: 64 + i * gap, y: 46 })),
+      placed: nodes.map((n, i) => ({ ...n, x: 64 + i * gap, y })),
+      spare: slots > nodes.length ? { x: 64 + nodes.length * gap, y } : undefined,
     };
   }
   if (shape === 'branch') {
@@ -56,20 +62,19 @@ function place(shape: string, nodes: { id: string; name: string }[]): { placed: 
   throw new Error(`Position maps: the table names a shape, "${shape}", the drawing cannot lay out.`);
 }
 
+/** The widest map sets the spacing, so every drawing on the page lines up stop for stop. */
+const SLOTS = Math.max(...shapes.map((s) => s.nodes.length));
+
 const drawings = shapes.map((shape) => {
-  const { placed, width, height } = place(shape.shape, shape.nodes);
+  const { placed, width, height, spare } = place(shape.shape, shape.nodes, SLOTS);
   const at = new Map(placed.map((p) => [p.id, p]));
   const links = shape.links.map((link) => {
     const a = at.get(link.from)!;
     const b = at.get(link.to)!;
     return { a, b, from: a.name, to: b.name };
   });
-  // Open ground reaches no Blind Spot at all, and the gap is the point: draw it as a missing stop.
-  const missing = shape.reachesBlindSpot
-    ? null
-    : shape.shape === 'chain'
-      ? { x: placed[placed.length - 1].x, y: placed[placed.length - 1].y }
-      : null;
+  // Open ground reaches no Blind Spot at all, and the gap is the point: keep its place, struck out.
+  const missing = shape.reachesBlindSpot ? null : (spare ?? null);
   return { ...shape, placed, links, width, height, missing };
 });
 ---
@@ -98,20 +103,13 @@ const drawings = shapes.map((shape) => {
           {map.missing && (
             <g class="gone">
               <line
-                x1={map.missing.x + HALF + 18}
+                x1={map.placed[map.placed.length - 1].x}
                 y1={map.missing.y}
-                x2={map.missing.x + HALF + 74}
+                x2={map.missing.x}
                 y2={map.missing.y}
-                stroke-dasharray="5 5"
               />
-              <rect
-                x={map.missing.x + HALF + 74}
-                y={map.missing.y - CHIP_H / 2}
-                width={CHIP_W}
-                height={CHIP_H}
-                rx="3"
-              />
-              <text x={map.missing.x + HALF + 74 + HALF} y={map.missing.y + 4}>No Blind Spot</text>
+              <rect x={map.missing.x - HALF} y={map.missing.y - CHIP_H / 2} width={CHIP_W} height={CHIP_H} rx="3" />
+              <text x={map.missing.x} y={map.missing.y + 4}>No Blind Spot</text>
             </g>
           )}
           <g class="stops">
@@ -130,7 +128,13 @@ const drawings = shapes.map((shape) => {
     ))}
   </ol>
 
-  <p class="foot">{groundedNote}</p>
+  <p class="foot">
+    <b>A grounded Titan changes every map.</b> Break one of its legs and it comes down, so every step
+    among In Reach, On Body and Blind Spot can be made on foot, and none of them mounted. On Open
+    ground a grounded Titan finally gives you a Blind Spot to work from, which is the only way a Nape
+    is cut on a plain. When it stands again, a soldier who was at its Blind Spot there holds On Body
+    instead. A corpse counts as grounded for as long as it lies there.
+  </p>
 
   <figcaption class="titleblock" id="fig-position-shapes-caption"><span>{fig}</span><span>The shape of the map, by the ground you fight on</span></figcaption>
 </figure>
@@ -176,7 +180,6 @@ const drawings = shapes.map((shape) => {
     width: 100%;
     height: auto;
     max-width: 640px;
-    overflow: visible;
   }
   .links line {
     stroke: var(--ink);
@@ -207,6 +210,7 @@ const drawings = shapes.map((shape) => {
   .gone line {
     stroke: var(--rule);
     stroke-width: 1.4;
+    stroke-dasharray: 5 5;
   }
   .gone rect {
     fill: none;
