@@ -650,7 +650,7 @@
   .wof-sheet { --gl: 28px; --gr: 10px; }
   .wof-sheet .hdr { grid-template-columns: 64px minmax(0, 1fr); }
   .wof-sheet .plate { width: 64px; height: 84px; padding: 3px 3px 12px; }
-  .wof-sheet .crest { display: none; }
+  .wof-sheet .crest .emblem { display: none; }
   .wof-sheet .rolls { grid-template-columns: minmax(0, 1fr); }
   .wof-sheet .tabs button .tl { display: none; }
   .wof-sheet .eyelet { display: none; }
@@ -665,7 +665,7 @@
 /* Compact cards: no binder eyelets, a narrower gutter */
 .wof-sheet.compact { --gl: 16px; --gr: 16px; }
 .wof-sheet.compact::after { display: none; }
-.wof-sheet.compact .hdr { grid-template-columns: 68px minmax(0, 1fr); }
+.wof-sheet.compact .hdr { grid-template-columns: 68px minmax(0, 1fr) auto; }
 .wof-sheet.compact .plate { width: 68px; height: 88px; padding: 3px 3px 13px; }
 .wof-sheet.compact input.name { font-size: var(--t-xl); }
 .wof-sheet .mini.tiny { min-height: 20px; padding: 0 6px; }
@@ -952,3 +952,51 @@
 }
 .wof-prefs .pbtn:hover { background: var(--red-hi); transform: translate(-1px, -1px); box-shadow: 2.5px 2.5px 0 var(--ink); }
 @media (prefers-reduced-motion: reduce) { .wof-prefs .pc-body, .wof-prefs .pbtn { transition: none; } }
+
+/* ══ Edit mode and Play mode, the plate, and the Token door ═════════════ */
+
+/* The running strip that marks a sheet open for amendment: one along the top edge, one along the
+   bottom, each two identical runs of the same line. The track slides exactly one run's width and
+   starts over, so the text never breaks; Reduced and Off motion leave it standing still. */
+.wof-sheet .editbar {
+  position: relative; z-index: 3; flex: 0 0 auto; height: 18px; display: flex; align-items: center; overflow: hidden;
+  background: linear-gradient(var(--red-hi), var(--red)); color: var(--paper-hi);
+  border-top: 1px solid var(--red-lo); border-bottom: 1px solid var(--red-lo);
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .22em; text-transform: uppercase;
+}
+.wof-sheet .editbar::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(135deg, rgba(0, 0, 0, .16) 0 6px, transparent 6px 12px);
+}
+.wof-sheet .ebtrack { display: flex; width: max-content; will-change: transform; }
+.wof-sheet .ebrun { display: flex; gap: var(--s6); padding-right: var(--s6); white-space: nowrap; }
+.wof-sheet[data-motion=full] .ebtrack { animation: wof-marquee 34s linear infinite; }
+.wof-sheet[data-motion=full] .editbar[data-edge=bottom] .ebtrack { animation-direction: reverse; }
+@keyframes wof-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Header controls: the mode switch and the Token door, above the crest. */
+.wof-sheet .hdr-acts { display: flex; align-items: center; justify-content: flex-end; gap: var(--s1); flex-wrap: wrap; }
+.wof-sheet .hdr-acts.col { flex-direction: column; align-items: flex-end; justify-content: center; }
+.wof-sheet .modesw, .wof-sheet .tokbtn { display: inline-flex; }
+.wof-sheet .modesw .mini, .wof-sheet .tokbtn .mini { box-shadow: none; }
+.wof-sheet .modesw .mini:hover:not(:disabled), .wof-sheet .tokbtn .mini:hover:not(:disabled) { transform: none; box-shadow: inset 0 0 0 1px var(--ink2); }
+.wof-sheet .modesw .mini + .mini, .wof-sheet .tokbtn .mini + .mini { margin-left: -1px; }
+.wof-sheet .mini.tiny i { font-size: 10px; }
+.wof-sheet .mini.tiny.icon { width: 20px; padding: 0; }
+
+/* The plate: the portrait is the button that changes it, with browse, upload and Token under it. */
+.wof-sheet .plate-img { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; }
+.wof-sheet .plate-img img { display: block; width: 100%; height: 100%; }
+.wof-sheet .plate-acts {
+  position: absolute; left: 0; right: 0; bottom: 14px; z-index: 2;
+  display: flex; justify-content: center; gap: 2px; padding: 2px 0;
+  background: linear-gradient(transparent, rgba(36, 31, 27, .78)); opacity: 0; transition: opacity .15s var(--ease);
+}
+.wof-sheet .plate:hover .plate-acts, .wof-sheet .plate:focus-within .plate-acts { opacity: 1; }
+.wof-sheet .pbtn { width: 20px; height: 18px; display: grid; place-items: center; color: var(--paper-hi); font-size: 11px; }
+.wof-sheet .pbtn:hover:not(:disabled) { color: var(--brass-hi); }
+.wof-sheet .pbtn:disabled { opacity: .5; }
+/* A file dragged over the plate is an image on its way in. */
+.wof-sheet .plate.over { outline: 2px dashed var(--red); outline-offset: 3px; }
+.wof-sheet .plate.over img { filter: sepia(.35) brightness(1.08); }
+.wof-sheet .plate.busy { opacity: .7; }

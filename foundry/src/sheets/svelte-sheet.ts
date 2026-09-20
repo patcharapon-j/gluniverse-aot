@@ -4,6 +4,7 @@
  * view it reads; _onClose unmounts it. Subclasses give the root component and build the view.
  */
 import { mount, unmount, type Component } from 'svelte';
+import { initialMode, rememberMode, type SheetMode } from './mode.ts';
 import { SheetState } from './sheet-state.svelte.ts';
 
 export function SvelteSheetMixin(Base: any) {
@@ -12,6 +13,8 @@ export function SvelteSheetMixin(Base: any) {
     #state: SheetState<unknown> | null = null;
     /** The tab outlives a re-mount while the sheet object lives. */
     #tab: string | null = null;
+    /** Edit or Play, read once from the viewer's remembered choice (mode.ts). */
+    #mode: SheetMode | null = null;
 
     /** The Svelte root; it receives { sheetState, sheet }. */
     get svelteRoot(): Component<any> {
@@ -21,6 +24,29 @@ export function SvelteSheetMixin(Base: any) {
     /** The tab a newly opened sheet shows. */
     get initialTab(): string {
       return '';
+    }
+
+    /**
+     * Whether this sheet offers Edit and Play modes. A sheet that does not is always open, so far
+     * as the mode goes: only Foundry's own permissions decide what it lets the viewer change.
+     */
+    get modeAware(): boolean {
+      return false;
+    }
+
+    /** The mode this sheet is in; a sheet that knows no modes reports Edit. */
+    get sheetMode(): SheetMode {
+      if (!this.modeAware) return 'edit';
+      this.#mode ??= initialMode(this.document);
+      return this.#mode;
+    }
+
+    /** Switches the mode, remembers it for this viewer alone, and rebuilds the view. */
+    async setSheetMode(mode: SheetMode): Promise<void> {
+      if (!this.modeAware || mode === this.sheetMode) return;
+      this.#mode = mode;
+      await Promise.resolve(rememberMode(this.document, mode)).catch(() => undefined);
+      await this.render();
     }
 
     /** The plain view the Svelte tree renders, rebuilt on every render. */

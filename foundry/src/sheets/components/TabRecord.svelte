@@ -9,7 +9,8 @@
   let { view }: { view: SoldierView } = $props();
   const { actor } = sheetContext();
   const s = $derived(view.system);
-  const ro = $derived(!view.editable);
+  /** The service record is the character's own: written in Edit mode, read in Play (mode.ts). */
+  const ro = $derived(!view.statsEditable);
   const RANKS = ['private', 'squad-leader', 'section-commander'];
   const XP_BOXES = 10;
 

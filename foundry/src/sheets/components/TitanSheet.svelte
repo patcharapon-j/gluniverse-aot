@@ -33,6 +33,7 @@
   } from '../titan-ops.ts';
   import type { EntryView, PartView, TitanView } from '../titan-view.ts';
   import Dots from './Dots.svelte';
+  import Plate from './Plate.svelte';
   import RegenClock from './RegenClock.svelte';
   import Sec from './Sec.svelte';
   import Stepper from './Stepper.svelte';
@@ -286,10 +287,7 @@
 <div class="wof-sheet titan-sheet" data-gore={viewer.gore} data-motion={motionMode()} style="--wof-loop: {MOTION.loop}ms">
   <i class="eyelet e1"></i><i class="eyelet e2"></i><i class="eyelet e3"></i>
   <header class="hdr">
-    <figure class="plate">
-      <img src={view.img} alt={t('WOF.TitanSheet.plateAlt', { name: view.name })} data-edit="img" data-action={view.editable ? 'editImage' : undefined} use:tooltip={view.editable ? t('WOF.Sheet.header.portraitEdit') : null} />
-      <figcaption>{t('WOF.TitanSheet.plate', { size: view.sizeClass.label.slice(0, 1) })}</figcaption>
-    </figure>
+    <Plate {actor} src={view.img} alt={t('WOF.TitanSheet.plateAlt', { name: view.name })} caption={t('WOF.TitanSheet.plate', { size: view.sizeClass.label.slice(0, 1) })} editable={view.editable} />
     <div class="ident">
       <div class="kicker">
         <img class="ic s16" src={view.kindIcon} alt="" />

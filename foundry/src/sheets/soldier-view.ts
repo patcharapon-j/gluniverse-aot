@@ -10,6 +10,7 @@ import { actorPool, entryBlock, poolInputs } from '../dice/actor-pool.ts';
 import { previewPool, type PoolPreview } from '../rules/pool.ts';
 import type { MindEffect } from '../../tools/config-data.ts';
 import { severityOf, type Severity } from './figure.ts';
+import type { SheetMode } from './mode.ts';
 import { lifepathOffer } from '../lifepath/wizard.ts';
 
 export const icon = iconPath;
@@ -146,7 +147,12 @@ export interface SoldierView {
   img: string;
   /** The actor has no portrait yet: the plate shows the emblem until a Specialty brings one. */
   placeholder: boolean;
+  /** Foundry lets this viewer change the actor at all: everything play touches follows this. */
   editable: boolean;
+  /** Edit or Play (mode.ts). */
+  mode: SheetMode;
+  /** The core of the character may be rewritten: editable, and the sheet is in Edit mode. */
+  statsEditable: boolean;
   isGM: boolean;
   /** The actor carries the core "dead" status. */
   dead: boolean;
@@ -256,7 +262,9 @@ function gearStatus(g: any, subtype: string): { label: string; bad: boolean } {
 
 const sortBy = (a: any, b: any) => (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name);
 
-export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTML: string; bonus: number }): SoldierView {
+export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTML: string; bonus: number; mode?: SheetMode }): SoldierView {
+  const mode: SheetMode = opts.mode ?? 'edit';
+  const statsEditable = opts.editable && mode === 'edit';
   const W = CONFIG.WOF;
   const sys = actor.system;
   const source = sys.toObject();
@@ -427,6 +435,8 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     img: CORE_DEFAULT_IMGS.has(actor.img ?? '') ? icon('brand-emblem') : actor.img,
     placeholder: CORE_DEFAULT_IMGS.has(actor.img ?? ''),
     editable: opts.editable,
+    mode,
+    statsEditable,
     isGM: !!game.user?.isGM,
     dead: !!actor.statuses?.has?.('dead'),
     system: source,
@@ -450,6 +460,7 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
     fullGas: W.gas.full,
     bonusCap: W.bonusDiceCap,
     notesHTML: opts.notesHTML,
-    lifepath: opts.editable ? lifepathOffer(actor) : null,
+    // Writing a file is Edit-mode work, so the Lifepath is offered only there.
+    lifepath: statsEditable ? lifepathOffer(actor) : null,
   };
 }
