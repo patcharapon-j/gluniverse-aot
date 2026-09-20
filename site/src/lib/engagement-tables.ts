@@ -121,16 +121,8 @@ const POSITION_CHANGE_WORDING: Record<string, string> = {
 };
 
 const positionChangeDoc = parse(positionsText) as {
-  changes_to_position: { principle: string; list: RawPositionChange[] };
+  changes_to_position: { list: RawPositionChange[] };
 };
-
-/** The one sentence at the head of the closed list, as the table states it. */
-export function positionChangePrinciple(): string {
-  return positionChangeDoc.changes_to_position.principle
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/\s*\([^)]*\)/g, '');
-}
 
 export function positionChangesTable(): CoreTableData {
   const T = 'What changes a Position';

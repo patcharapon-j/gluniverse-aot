@@ -61,7 +61,6 @@ import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
 import TryRollButton from '~/components/TryRollButton.astro';
 import plate from '~/assets/plates/plate-fighting-titans.webp';
-import { positionChangePrinciple } from '~/lib/engagement-tables';
 
 <FieldQuote cite="Survey Corps manual, on engaging">It cannot see behind itself. That is the whole of our advantage, and it is enough.</FieldQuote>
 
@@ -210,7 +209,7 @@ Each rating carries one **Terrain Trait**; Wooded has none, and is the plain gro
 
 <Subsection title="What changes a Position" id="what-changes-a-position">
 
-**{positionChangePrinciple()}**
+**An action never changes a Position.** Only your own move does, plus the rules on this list. Nothing else in the game moves anyone between Distant, In Reach, On Body, and Blind Spot.
 
 <CoreTable table="position-changes" />
 

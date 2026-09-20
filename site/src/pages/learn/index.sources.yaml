@@ -14,9 +14,9 @@ sources:
   - path: site/src/content/rules/rules-of-play.mdx
     sha: "7c571547fd126ee47e33a9a93ad92651f8380336"
   - path: site/src/content/rules/fighting-titans.mdx
-    sha: "edf6d51ef3516ad1814554df5c4c8a88b066b8c7"
+    sha: "6d00aeb39a9331bb3bd71f852732ae87d646f751"
   - path: site/src/content/rules/making-your-soldier.mdx
-    sha: "67683994d48ee5fd14c48d3a57bb38d7af8b81f0"
+    sha: "6dd75938ee279bfcba7ed2493939ea696e3194b5"
   - path: site/src/content/rules/gear-and-odm.mdx
     sha: "6f193cfc24b0e3401652f6e6cee4d31532766708"
   - path: data/character/action-catalog.yaml
