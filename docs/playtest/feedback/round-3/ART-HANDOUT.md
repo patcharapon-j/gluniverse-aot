@@ -117,7 +117,7 @@ These are not optional and they have bitten this project before.
   share a hash (`md5 -r *.png`). Do it like this, and regenerate anything that collides:
 
 ```bash
-md5 -r *.png | sort | uniq -d -w32
+md5 -r *.png | awk '{print $1}' | sort | uniq -d
 ```
 
   A duplicate hash means one file is another run's image wearing the wrong name. Two assets that look
@@ -214,6 +214,11 @@ flagged in section 8.
 
 Working folder for this batch: `foundry/art-src/batch-2/`. Generate into
 `foundry/art-src/batch-2/originals/`.
+
+> **The folder name is wrong and is kept deliberately.** Batch 1's files sit in a folder called
+> `batch-2`, while batch 2 itself goes to `foundry/art-src/board/` (section 5). The batch 1 run of
+> 2026-09-21 followed the path as written so that section 5's table and the commands above line up.
+> A wiring session looking for batch 1's assets should look in `foundry/art-src/batch-2/`.
 
 ```bash
 mkdir -p foundry/art-src/batch-2/originals foundry/art-src/batch-2/icons foundry/art-src/batch-2/web
@@ -379,6 +384,15 @@ already a deviation, which is another reason to keep them in code.
 
 ### 3.3 E. The Updates opener plate, `plate-updates.webp`
 
+> **Corrected after the batch 1 run (2026-09-21).** This subject asked for "a dated signature in ink",
+> which the locked colour plate block's own exclusions forbid: `site/design/art-style.md` line 66
+> reads "no signatures". `art-style.md` is binding and this handout is not, so the signature is struck
+> from the subject above. The generated `plate-updates.webp` in `foundry/art-src/batch-2/web/` was
+> made before this correction and carries an abstract ink scrawl where the signature was asked for.
+> It is staged and unapproved: the owner decides whether it stands or the plate is regenerated
+> without it. The typewriting marks and the stamp are not letters or numerals and are what the
+> shipped `plate-compendium.webp` already does, so they are not at issue.
+
 Not a tracker icon: a website colour plate, and the only asset here that `art-style.md` covers
 completely with no open question. The site's new Updates section, the player-facing changelog at
 `/updates/`, renders its opener frame empty because no plate exists yet. The page is not broken, and
@@ -400,7 +414,7 @@ renders as an empty figure with its aria-label and the build passes. The frame i
   already says it is:
 
   > A typed amendment slip pasted inside the front cover of a Survey Corps field manual. The slip is
-  > a small sheet of paper, typewritten, stamped once, with a dated signature in ink beneath it. It
+  > a small sheet of paper, typewritten and stamped once. It
   > lies slightly askew on the inside board of a worn leather-bound manual, the cover open and the
   > edges of its pages showing. Lit as a document on a desk, from one side, with the dust and grain
   > the other plates carry. No people, no Titans, no ODM gear.
@@ -416,7 +430,7 @@ renders as an empty figure with its aria-label and the build passes. The frame i
 
 ### 3.4 After the batch 1 generations
 
-1. Check hashes: `cd foundry/art-src/batch-2/originals && md5 -r *.png | sort | uniq -d -w32`.
+1. Check hashes: `cd foundry/art-src/batch-2/originals && md5 -r *.png | awk '{print $1}' | sort | uniq -d`.
 2. If an icon came back on white, convert white to alpha against `#FFFFFF` and save a 1024 px
    transparent PNG into `foundry/art-src/batch-2/icons/` (art-style.md, "Post-processing").
 3. Proof at 20 px on paper `#E4DCC5`, on white, and as a black silhouette, and also proof the
@@ -818,7 +832,7 @@ name collision is a problem for the wiring session, not for the art.
 
 Before you take anything to the owner:
 
-- [ ] `md5 -r *.png | sort | uniq -d -w32` is empty in every `originals/` folder.
+- [ ] `md5 -r *.png | awk '{print $1}' | sort | uniq -d` is empty in every `originals/` folder.
 - [ ] Every run had both style-lock plates on `-i`. If you cannot say this for a file, regenerate it.
 - [ ] Batch 1: each icon proofed at 20 px on paper `#E4DCC5`, on white, as a black silhouette, and
       inverted, and in a strip beside the icons it will sit next to.
