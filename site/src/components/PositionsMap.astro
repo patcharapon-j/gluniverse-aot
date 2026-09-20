@@ -37,7 +37,7 @@ const along = steps.filter((s) => s.span === 1).sort((x, y) => x.from - y.from);
 const arcs = steps.filter((s) => s.span > 1).sort((x, y) => x.from - y.from);
 ---
 <figure class="drawing wide posmap" aria-labelledby="fig-positions-caption">
-  <p class="lead">Every soldier holds one of these relative to each Focus Titan. A move changes it by one step, and only a move you make changes it yourself.</p>
+  <p class="lead">Every soldier holds one of these relative to each Focus Titan, and which kinds of move can make each step is a property of the ground. <b>No action you take ever moves you.</b></p>
 
   <ol class="lane">
     {lane.map((p, i) => (

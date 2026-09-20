@@ -377,6 +377,8 @@ async function attackEffects(card: AttackCard, rec: Recorder): Promise<void> {
     }
     rec.line(tr('result.lands', { name: actor.name, n: net }));
     for (const e of entry.effects) {
+      // A death from a Critical Injury now lands when the injured player answers their prompt
+      // (gainOn), so this reads the deaths already recorded rather than one this card just caused.
       if (actor.statuses.has('dead')) break;
       await effect(combat, key, label, actor, e, net, rec);
     }

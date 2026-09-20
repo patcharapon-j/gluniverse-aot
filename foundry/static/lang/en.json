@@ -67,7 +67,7 @@
       "distant": "Distant: out of the Titan’s reach, and it out of yours.",
       "in-reach": "In Reach: close enough to be struck, and to strike its legs.",
       "on-body": "On Body: literally on the Titan, hooked into or standing on its body, anywhere but the Nape. It carries you with it.",
-      "blind-spot": "Blind Spot: anchored to terrain behind the Titan — a tree or a roof — out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
+      "blind-spot": "Blind Spot: anchored to terrain behind the Titan, a tree or a roof, out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
     },
     "GearSubtype": {
       "odm": "ODM Gear",
@@ -2365,7 +2365,7 @@
     },
     "Tracker": {
       "prompt": {
-        "health": "Health {current}/{full}",
+        "health": "Health {current} of {full}",
         "steamTitle": "Scalding steam from {label}",
         "steamDeath": "{name} ({label}) dies, and the steam scalds everyone On Body or at its Blind Spot.",
         "steamRegen": "{name} ({label}) fills its Regeneration clock, and the steam scalds everyone On Body.",
@@ -2546,7 +2546,7 @@
         "distant": "Distant: out of the Titan’s reach, and it out of yours.",
         "in-reach": "In Reach: close enough to be struck, and to strike its legs.",
         "on-body": "On Body: literally on the Titan, hooked into or standing on its body, anywhere but the Nape. It carries you with it.",
-        "blind-spot": "Blind Spot: anchored to terrain behind the Titan — a tree or a roof — out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
+        "blind-spot": "Blind Spot: anchored to terrain behind the Titan, a tree or a roof, out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
       },
       "stamp": {
         "dead": "Dead",
@@ -3002,14 +3002,14 @@
       },
       "direct": {
         "toggle": "Direct Control",
-        "hint": "ADR-0028: automation assists the GM and never blocks them. While it is on, every cell menu offers every value rather than only the legal ones, and the direct setters are offered under them. GM only.",
+        "hint": "Automation assists the GM and never blocks it. While this is on, every cell menu offers every value rather than only the legal ones, and the GM’s own setters are offered under them. GM only.",
         "banner": "Direct Control is on: the rules checks are stepped over, and every override is logged and can be undone.",
-        "section": "Direct Control — the GM’s own setters",
+        "section": "Direct Control: the GM’s own setters",
         "setPosition": "Set directly",
         "grabbed": "Grabbed",
         "pinned": "Pinned",
         "attention": "Attention",
-        "loud": "Loudest flag",
+        "loud": "Loudest",
         "airborne": "Airborne",
         "spent": "Turn spent",
         "inOut": "In the engagement",

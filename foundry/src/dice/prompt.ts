@@ -173,6 +173,12 @@ const ownsActor = (uuid: string, user: any = game.user): boolean => !!foundry.ut
 
 const asker = () => ({ userId: game.user.id, isGM: isGM(), owns: (uuid: string) => ownsActor(uuid) });
 
+/** Does a player (not a GM) own this soldier? A GM's own roll on it is then a roll for them. */
+function ownedByAPlayer(uuid: string): boolean {
+  const actor = foundry.utils.fromUuidSync(uuid, { strict: false });
+  return !!actor && [...(game.users ?? [])].some((u: any) => !u.isGM && actor.testUserPermission?.(u, 'OWNER'));
+}
+
 /** One press at a time per card row, so a double click never rolls twice on this client either. */
 const pressing = new Set<string>();
 
@@ -192,7 +198,8 @@ export async function pressPrompt(message: any, index: number, forThem = false):
       ui.notifications.warn(why);
       return;
     }
-    const by: PromptBy = forThem || (isGM() && !ownsActor(card.entries[index].actor)) ? 'gm' : 'owner';
+    // A GM rolling a soldier a player owns is always "for them", however they pressed it.
+    const by: PromptBy = forThem || (isGM() && ownedByAPlayer(card.entries[index].actor)) ? 'gm' : 'owner';
     await answerPrompt(message, card, index, by);
   } finally {
     pressing.delete(key);

@@ -15,13 +15,13 @@
 # the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/action-catalog.yaml
-    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
+    sha: "747752afe49fd764d041b05362412356a62fe355"
   - path: data/engagement/attention.yaml
-    sha: "3d64d61249c17643e00e10197041a9dc0cd9b798"
+    sha: "a01305bb80f454c445be1d37ab633b85d0027c5d"
   - path: data/engagement/read.yaml
     sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/round.yaml
-    sha: "49d3a172e4a7ca7e0bbbaa7f5d74c9e3887b40d7"
+    sha: "a6d51d5d3d3a3c8348bf0659e4dabd35c28df781"
   - path: data/engagement/squad-tactics.yaml
     sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
   - path: data/engagement/titan-harm.yaml

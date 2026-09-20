@@ -10,7 +10,7 @@ sources:
   - path: data/character/talents.yaml
     sha: "4d63533a7910acc0dcb8bb0ee1f5e6e5b0340c4b"
   - path: data/character/action-catalog.yaml
-    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
+    sha: "747752afe49fd764d041b05362412356a62fe355"
   - path: data/engagement/read.yaml
     sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
   - path: data/engagement/grab.yaml
