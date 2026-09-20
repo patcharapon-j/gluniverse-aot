@@ -202,10 +202,10 @@ targets:
     titan: standard-medium
     at_the_reference_start:
       median_kill_round: 3
-      killed_by_round_3: 55% to 70%
+      killed_by_round_3: 55% to 75%   # 55% to 70% before the round 3 retune (R2): retargeting's second-strike effect adds five points at every Frenzy setting
       critical_injuries_per_fight: 0.5 to 0.9
-      deaths_per_fight: at most 0.08, deaths through the end of the Titan Engagement; deaths during the fight reported beside it   # decision batch 8, 8-31, the owner's chosen lethality (OQ-132 decided anew); history: at most 0.06 under decision batch 7, 7-13, and 0.05 under decision batch 5, 5-19; re-set again under OQ-140
-      grabs_per_fight: 0.15 to 0.30
+      deaths_per_fight: at most 0.15, deaths through the end of the Titan Engagement; deaths during the fight reported beside it   # round 3 retune, R2 (docs/reviews/round-3-retune-decisions.md): re-set to what the owner's batch 13 rules measure at Frenzy's halved rate, as 8-31 re-set it to 0.08; history: at most 0.08 under decision batch 8, 8-31, 0.06 under decision batch 7, 7-13, and 0.05 under decision batch 5, 5-19; re-set again under OQ-140
+      grabs_per_fight: 0.15 to 0.45   # 0.15 to 0.30 before the round 3 retune (R2): Frenzy puts up to four faces on the Grab by design; the one-Grab-result guard is checked directly (every_standard_table)
   small:
     titan: standard-small
     at_the_reference_start:
@@ -231,14 +231,14 @@ targets:
   adr_0014_targets_quoted:
     bands:   # ADR-0014, as amended in decision batch 5 (OQ-127)
       prepared_squad: the median kill round is exactly 3
-      lone_strike: {rookie_fresh_cut: 8% to 14%, levi_grade: 45% to 55%}
+      lone_strike: {rookie_fresh_cut: 8% to 16%, levi_grade: 45% to 55%}
       grab: {alone: 61.7% to 71.7%, stress_2_grief_0: 28.3% to 38.3%, every_cell: under 50%}
       per_table: Each range or limit in targets is its own band, read exactly, and a median is read exactly.
       second_seed: A figure past a band's edge by at most 2 standard errors is re-run on a second seed and judged on the figure pooled over both runs.
     prepared_squad: A prepared Squad of 4 kills a standard Medium Titan in about 3 rounds.
     lone_strike: >-
       A lone, average soldier who has used Break Attention succeeds on about 10% of Nape strikes against a
-      Medium Titan, between 8% and 14% on a cut made directly after Break Attention from the Rookie's
+      Medium Titan, between 8% and 16% on a cut made directly after Break Attention from the Rookie's
       fight-start Stress of 1, with the cut a lone soldier makes after the cards they took while waiting
       reported beside it and not tuned; a Levi-grade soldier pushing hard succeeds about 50% of the time.
       The solo figures are that fresh cut; the lone-fight figures report the in-fight cut.
@@ -256,7 +256,9 @@ targets:
       bar, not tuned to a target. Values stay within Tempo 1 to 2, Nape Depth 3 to 4, Regeneration 2 to
       4, Toughness 1 to 3, and Attack Dice 3 to 12. Each limit below is a figure a standard Titan measured
       under the same probes: the standard Medium Titan is the floor, and the standard Large Titan, the
-      hardest standard fight Phase 1 accepts, gives the winnable limit and the ceiling. Every part is
+      hardest standard fight Phase 1 accepts, gives the winnable limit and the ceiling (read with its
+      Bite reaching In Reach, as the round 3 retune set it, R5; before that the Large read below the
+      Medium at Health 6 and the bar had no solution). Every part is
       read the same way, row against row, as decision batch 3b reads every table: each Abnormal row
       against the standard Medium and Large Titans' rows with the same support, or their reference
       rows where they have none (twins). A row's support is what it adds to the 4 player characters

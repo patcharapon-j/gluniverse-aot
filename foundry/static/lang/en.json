@@ -2417,7 +2417,7 @@
       "tempo": "Tempo {n}",
       "frenzy": "Frenzy",
       "frenzyTitle": "Frenzy {n} of {cap}: added to its behavior roll",
-      "frenzyNote": "Rises 1 at each round end, to 3. Added to the behavior roll.",
+      "frenzyNote": "Rises 1 at the end of every even-numbered round, to 3. Added to the behavior roll.",
       "of": "of",
       "none": "none",
       "used": "used",
@@ -2748,6 +2748,7 @@
         "wreckIgnored": "One good tree survives: the first Anchor is not lost.",
         "momentumTrim": "{name} is over the new cap and holds {n}.",
         "frenzy": "{label} Frenzy {n} of {cap}.",
+        "frenzyHeld": "{label} Frenzy unchanged: it rises at the end of even-numbered rounds.",
         "gasAsked": "Gas Rolls owed by {who}: each rolls their own."
       },
       "note": {

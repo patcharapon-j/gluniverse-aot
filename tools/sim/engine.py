@@ -2005,8 +2005,9 @@ class Fight:
         # round.yaml, end_steps, frenzy (decision batch 13, 13-10): every living Focus Titan's Frenzy rises by 1 to
         # its cap, during a retreat as well, and never touches a Next Behavior already rolled. It raises only a Titan
         # that is a Focus Titan when the step runs (round 3 review 1, C2), which this model cannot distinguish because
-        # it has no Background Titans: the one Focus Titan is present from the start.
-        if not t.dead and t.frenzy < R.frenzy_cap:
+        # it has no Background Titans: the one Focus Titan is present from the start. It rises only at the end of a
+        # round that is a multiple of the rate, every even-numbered round at rate 2 (round 3 retune, R1).
+        if not t.dead and t.frenzy < R.frenzy_cap and self.rnd % R.frenzy_rate == 0:
             t.frenzy += 1
         if was_grounded and not t.grounded():
             self.free_pinned()      # decision batch 8, 8-9: a living Titan that stops being grounded frees its Pinned

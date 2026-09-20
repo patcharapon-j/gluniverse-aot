@@ -53,7 +53,7 @@ export function defineCombatModels() {
             dodges: new f.ArrayField(new f.SchemaField({ soldier: k.str(), successes: k.nonNeg(), message: k.str() })),
             pending: k.str(),
             clearTheHand: k.bool(),
-            // batch F2: rises 1 at each round end to FRENZY_CAP, and is added to the behavior roll.
+            // batch F2: rises 1 at the end of every even-numbered round to FRENZY_CAP, and is added to the behavior roll.
             frenzy: k.nonNeg(),
           }),
         ),

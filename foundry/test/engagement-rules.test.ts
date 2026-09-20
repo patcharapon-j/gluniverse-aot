@@ -554,16 +554,17 @@ describe('Attention (attention.yaml, evaluation)', () => {
 describe('Frenzy (behavior-procedure.yaml, roll; round 3, decision 12)', () => {
   const entries = medium.behavior_table.entries;
 
-  it('rises 1 at each round end and stops at the cap of 3', () => {
+  it('rises 1 at the end of every even-numbered round and stops at the cap of 3', () => {
     expect(FRENZY_CAP).toBe(3);
-    expect(frenzyAfterRound(0)).toBe(1);
-    expect(frenzyAfterRound(1)).toBe(2);
-    expect(frenzyAfterRound(2)).toBe(3);
-    expect(frenzyAfterRound(3)).toBe(3);
-    expect(frenzyAfterRound(FRENZY_CAP)).toBe(FRENZY_CAP);
-    // A Focus Titan enters at 0, so four round ends walk it up and hold it there.
+    expect(frenzyAfterRound(0, 1)).toBe(0);
+    expect(frenzyAfterRound(0, 2)).toBe(1);
+    expect(frenzyAfterRound(1, 3)).toBe(1);
+    expect(frenzyAfterRound(1, 4)).toBe(2);
+    expect(frenzyAfterRound(2, 6)).toBe(3);
+    expect(frenzyAfterRound(3, 8)).toBe(3);
+    // A Focus Titan enters at 0, so six rounds from 0 give 3.
     let f = 0;
-    for (let round = 0; round < 6; round++) f = frenzyAfterRound(f);
+    for (let round = 1; round <= 6; round++) f = frenzyAfterRound(f, round);
     expect(f).toBe(3);
   });
 

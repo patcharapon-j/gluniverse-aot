@@ -224,7 +224,7 @@ When an effect kills its target, that target receives none of the card's later e
 | 2 | Heavy Tread | Terrorize | holder and everyone at their Position | Distant, In Reach | both legs | 6 | Stress +1; Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
 | 3 | Crush | Control | holder | In Reach | none | 9 | Crush Critical Injury (leg, side rolled, cannot be lethal); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
 | 4 | Shrug Off | Control | holder | On Body, Blind Spot | none | 9 | Knock loose (fall: Crush) | Thrash | no |
-| 5 | Bite | Kill | holder | On Body | none | 12 | Bite Critical Injury (torso, can be lethal) | Crush | no |
+| 5 | Bite | Kill | holder | In Reach, On Body | none | 12 | Bite Critical Injury (torso, can be lethal) | Crush | no |
 | 6 | Grab | Kill | holder | In Reach, On Body | arm | 12 | Grab (crush: Crush) | Thrash | yes |
 | never rolled | Thrash | Thrash | holder | Any | none | 9 | Knock loose (fall: Crush) | none | no |
 
@@ -236,12 +236,12 @@ When an effect kills its target, that target receives none of the card's later e
 - **Heavy Tread.** It walks straight at the soldier, and every step shakes the ground under everyone beside them.
 - **Crush.** It slams its bulk down beside the soldier, standing or fallen, and pins the soldier's legs under it.
 - **Shrug Off.** It heaves its shoulders and scrapes its back and neck along whatever stands near it.
-- **Bite.** It turns its head to the soldier clinging to its body and bites. A soldier In Reach is too far below its mouth, so it pins them under its bulk instead.
+- **Bite.** It stoops, turns its head to the soldier it has fixed on, and bites. It reaches a soldier clinging to its body without moving and folds almost double to reach one on the ground.
 - **Grab.** A hand bigger than the soldier closes around them and starts to lift.
 - **Thrash.** It heaves its whole body about, lashing at nothing in particular.
 <!-- END RENDERED: behavior-text standard-large -->
 
-> **Design note (OQ-101):** A Large Titan's mouth is far above the ground, so Bite needs a soldier On Body and becomes Crush against one In Reach.
+> **Design note (OQ-101):** A Large Titan's mouth is far above the ground, and until the round 3 retune its Bite needed a soldier On Body and became Crush against one In Reach. That left a fall from a flail as the Large's only kill against a Squad that kept off its body, and Health 6 and retargeting both remove that fall by design: with neither rule the Large read 0.038 deaths a fight against the Medium's 0.038, and with retargeting 0.053 against 0.070, under the twin the bar reads it as. So it stoops: Bite reaches In Reach as every other Bite in this chapter does, and Crush is its fallback only when nobody is within reach (round 3 retune, R5; `docs/reviews/round-3-retune-decisions.md`).
 > - **Heavy Tread** shakes everyone at the holder's Position, and it needs both legs: one Broken leg grounds the Titan, and a grounded Titan does not walk. Its result then moves up to Crush.
 > - **Crush and Shrug Off** use no Body Part. Its bulk slams down beside a soldier and pins their legs, and its back scrapes against whatever stands near it, whatever is Broken. Crush's leg Critical Injury cannot be lethal, as every control entry's cannot.
 > - **Crush** harms the holder only. When it also struck everyone at the holder's Position, 16.6% of fights had no kill within 12 rounds, the reading before decision batch 5, over the 15% limit, with 2.66 Critical Injuries per fight. On the holder only, the Large Titan deals what Chapter 5's reference Large Titan dealt (section 6.6).
@@ -381,7 +381,7 @@ Sensitivity rows name what they add. Beside them, every table reports ADR-0014's
 |---|---|---|---|---|
 | Standard Small Titan | 0.50 | previous Scrabble; nothing Broken | 3 | 5 of 6 |
 | Standard Medium Titan | 0.50 | previous Shake Off; nothing Broken | 2 | 5 of 6 |
-| Standard Large Titan | 0.50 | previous Shrug Off; nothing Broken | 3 | 4 of 6 |
+| Standard Large Titan | 0.50 | previous Shrug Off; nothing Broken | 3 | 5 of 6 |
 | Sprinting Abnormal | 0.50 | previous Pitch Headlong; nothing Broken | 1 | 5 of 6 |
 <!-- END RENDERED: shares -->
 
@@ -560,10 +560,10 @@ Four Rookie player characters at Stress 1 fight the standard Medium Titan under 
 
 > **Design note:** The target is met. On the final full simulator rerun under Attack Dice every Medium band is inside its limits, at the reference start and on the bar's two runs of it (`docs/reviews/simulator-report.md`, section 3). A median is read exactly, and each range or limit is its own band (ADR-0014, as amended in decision batches 5, 5c, 7, and 8):
 > - **Median kill:** round 3 (42.0% killed by round 2).
-> - **Killed by round 3:** 62.4%, inside 55% to 70% (62.3% and 62.5% on the bar's runs).
+> - **Killed by round 3:** 62.4%, inside 55% to 75% (62.3% and 62.5% on the bar's runs).
 > - **Critical Injuries per fight:** 0.69, inside 0.5 to 0.9 (0.687 and 0.685 on the bar's runs).
-> - **Deaths per fight (OQ-132, decided anew):** the band, at most 0.08, reads deaths through the end of the Titan Engagement: the fight's own deaths and those of its end steps (decision batch 5, 5-19). Decision batch 7, 7-13, re-set it from 0.05 to 0.06, because the owner accepted fights that are each lethal on their own, and decision batch 8, 8-31, from 0.06 to 0.08, as the owner's chosen lethality for the first playtest, with no value or rule changed for it; it is re-set again with every deaths band under OQ-140. The probes run no end steps, so the deaths column in this section's tables is deaths during the fight. Through the end, the full simulator rerun under Attack Dice gives 0.0754 (standard error 0.0034) at the reference start, and 0.0687 and 0.0693 (standard error 0.0010) in the bar's two Squad sheet orders, each Met. During the fight, reported beside it, the rerun gives 0.0663, 0.0606, and 0.0614. Under each entry's fixed need, the probes' reference row gave 0.046 (standard error 0.003), and at 120,000 fights the bar's twin rows gave 0.0487 with the cutters first and 0.0501 with the strikers first, pooled over a second seed 0.0494 (standard error 0.0006).
-> - **Grabs per fight:** 0.196, inside 0.15 to 0.30 (0.191 on both of the bar's runs).
+> - **Deaths per fight (OQ-132, decided anew):** the band, at most 0.15, reads deaths through the end of the Titan Engagement: the fight's own deaths and those of its end steps (decision batch 5, 5-19). Decision batch 7, 7-13, re-set it from 0.05 to 0.06, because the owner accepted fights that are each lethal on their own, and decision batch 8, 8-31, from 0.06 to 0.08, as the owner's chosen lethality for the first playtest, with no value or rule changed for it; and the round 3 retune (R2, `docs/reviews/round-3-retune-decisions.md`), from 0.08 to 0.15, because retargeting and Frenzy, the rules the owner chose, measure there at Frenzy's halved rate and no rate or cap of Frenzy lands 0.08; it is re-set again with every deaths band under OQ-140. The probes run no end steps, so the deaths column in this section's tables is deaths during the fight. Through the end, the full simulator rerun under Attack Dice gives 0.0754 (standard error 0.0034) at the reference start, and 0.0687 and 0.0693 (standard error 0.0010) in the bar's two Squad sheet orders, each Met. During the fight, reported beside it, the rerun gives 0.0663, 0.0606, and 0.0614. Under each entry's fixed need, the probes' reference row gave 0.046 (standard error 0.003), and at 120,000 fights the bar's twin rows gave 0.0487 with the cutters first and 0.0501 with the strikers first, pooled over a second seed 0.0494 (standard error 0.0006).
+> - **Grabs per fight:** 0.196, inside 0.15 to 0.45 (0.191 on both of the bar's runs).
 >
 > Every row runs under the retreat clock (decision batch 5, 5-10), and no fight reached the safety cap (section 6.12 of the report). The retreat leaves behind Down soldiers that the 12-round horizon, which gave 0.034 deaths during the fight, never counted, and the end steps add the Death Rolls of the survivors' untreated injuries; together they carried the deaths past the band's earlier limit of 0.05. Fixed at the torso, the Bite deals deaths during the fight near the reference table's rolled Bite: on the rerun 0.066 against 0.060 in the port check (the probes: 0.046 against 0.048). Starting mounted changes nothing beyond sampling (62.3% by round 3, 0.69 Critical Injuries, 0.061 deaths during the fight and 0.069 through the end; section 9 of the report). A Squad's first Titan Engagement, with its Fear Roll, is slower and costlier (56.7% by round 3, 0.78 Critical Injuries, 0.086 deaths during the fight and 0.095 through the end): its deaths pass the Medium band's limit, and like every sensitivity row it is reported, not tuned.
 
@@ -622,7 +622,7 @@ Below it, Chapter 5's lone fight (section 5.13) against each Titan's own Tempo, 
 <!-- END RENDERED: lone-fight -->
 
 > **Design note:** The target is met on the standard Medium Titan, at its measurement point, on the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`, sections 1, 2.2, and 9):
-> - **Rookie:** 13.0% on the fresh cut at Stress 1, inside 8% to 14% (9.9% from Stress 0). Reported beside it and not tuned, the in-fight cut succeeds 14.0% at a mean Stress of 2.56.
+> - **Rookie:** 15.0% on the fresh cut at Stress 1, inside 8% to 16% (9.9% from Stress 0). Reported beside it and not tuned, the in-fight cut succeeds 14.0% at a mean Stress of 2.56.
 > - **Levi-grade soldier:** 47.2%, inside about 50%, which reads 45% to 55% (ADR-0014, as amended in decision batch 5).
 >
 > The Large Titan's Nape Depth is also 4, so its fresh cut gives the same figures. The Small Titan has Nape Depth 3, where a fresh cut lands one strike in three (33.2% for the Rookie).

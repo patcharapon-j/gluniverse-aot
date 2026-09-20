@@ -1905,6 +1905,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 3*)
 - **Decision:** (a) with (d): Medium Nape Depth stays 4, and ADR-0014's bound becomes "about 10%", 8% to 14% at the Rookie's fight-start Stress of 1, with 13.1% accepted; every lever was measured and rejected (Nape Depth 5, a 1- or 2-die penalty on the lone cut, no Push). Revised by batch 3b: the lone-line figures are replaced by the full lone-fight rows under the rule as revised (76.0% of lone fights reach a usable strike within 12 rounds, most often in round 4; the cut succeeds 14.2% in the fight), and the band is read on a fresh cut directly after Break Attention at fight-start Stress 1, with the in-fight cut reported beside it.
 - **ADR:** ADR-0014 (body and `## Amended`) and again in batch 3b (the band's measurement point)
+- **Revised by the round 3 retune (R4):** the band reads 8% to 16% on the fresh cut. Decision batch 11's Push re-rolls the blade's Gear Dice, which moved the fresh cut from 13.0% to 15.0% (12.9% with the re-roll off, nothing else changed) and the Levi-grade cut from 47.2% to 52.2%; Nape Depth 5 reads 4.4% and 33.7%, and the batch 11 package is the owner's, taken whole. Same reading as batch 3's, same kind of cause.
 
 ### OQ-80: The Behavior Table procedure
 
@@ -2321,6 +2322,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 4*)
 - **Decision:** Keep (a): the three standard tables as revised, with "any state" read as every previous behavior combined with every count of Broken parts; Thrash's share of resolved cards is an accepted, stated consequence of the fallback rule; any change to the Large table re-runs the two-Titan Jam cell.
 - **ADR:** none
+- **Revised by the round 3 retune (R5):** the Large's Bite reaches In Reach; the design note is rewritten.
 
 ### OQ-102: The Sprinting Abnormal's Attention Ladder and Behavior Table
 
@@ -2427,6 +2429,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Decision:** (a)'s bar unchanged, read under batch 4's tie-break in both sheet orders; Medium class, Tempo 2, Nape Depth 3, Regeneration 3, Toughness 2 stand; the Grab and Headlong Lunge move to Severity 2, so both kill entries are one below the medium kill tier's Severity 3, Pitch Headlong one below the medium control tier's Severity 2, and Trample at that control Severity (4-4; 4b-7). At 120,000 fights a row, in both sheet orders, the ceiling holds with helpers (0.0205 and 0.0197 deaths against the Large twin's 0.0205 and 0.0216), the screen (0.0104 and 0.0102 against 0.0104 and 0.0105), and the screen with the pair (0.0078 and 0.0081 against 0.0086 and 0.0082), and the floor and the winnable limit hold by 20 standard errors or more; the Grab alone at Severity 2 fails one seed in the pair row (+2.1). The reference start moves to median round 2, 69.7% by round 3, 0.85 Critical Injuries, 0.078 deaths. Every Abnormal figure re-runs. Revised by batch 4b: the bar's limits are unchanged, and a row past 2 standard errors on one seed is re-run on a second seed and fails only on the pooled figure; the decided helpers ceiling sits at the Large twin's rate, and the Grab alone at Severity 2 sits above it, pooled +3.5 standard errors (4b-4). Under the swapped ladder (4b-1) the bar holds in both orders: helpers 0.0206 and 0.0194 deaths against 0.0207 and 0.0215, the screen 0.0101 and 0.0096 against 0.0108 and 0.0101, the screen with the pair 0.0078 and 0.0080 against 0.0088 and 0.0092.
 - **ADR:** ADR-0014 (`## Amended`, batch 4)
 - **Revised by batch 5:** The bar's winnable limit reads "no kill" for "no kill within 12 rounds", the share of fights that end with the Focus Titan alive under the retreat clock (decision batch 5, 5-10; OQ-126). Re-measured under the clock at 120,000 fights a row in both sheet orders, the bar holds every limit in every row, the helpers ceiling at −10.5 and −11.8 standard errors (`tools/probes/batch-5/retreat_b5_bar.out`).
+- **Revised by the round 3 retune (R5):** the bar is judged on the confirming run with the Large's Bite reaching In Reach; on the retune's first run the Large twin sat below the Medium reference at every Frenzy setting and every bar failure was that.
 
 ### OQ-104: When the Abnormal enters Phase 1 play
 
@@ -2964,6 +2967,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
   - **The order guard.** The retreat order guard now checks what follows an action taken first. That action must be one of option 4's actions, and the only move after it is the stay with the comrade it was taken for. A lift must be followed by the move out. A policy that treats a comrade and then walks on now raises, instead of reporting a rescue the order forbids.
   - **The miss in the files.** The tuning files name the band's reading (5-19), and `data/titans/tuning.yaml`'s Medium verdict reads Missed. The report's missed-result map and OQ-128's gap list are synchronized with this register, and the rerun renders the three Medium deaths rows Missed (OQ-132).
 - **Decided anew by batch 8 (8-31), after the full rerun:** the band reads "at most 0.08 deaths per fight through the end of the Titan Engagement", with deaths during the fight reported beside it, recorded as the owner's chosen lethality for the first playtest (`OWNER-DECISIONS.md`, *After the full rerun*). The rerun under the round 1 package read 0.0754 (standard error 0.0034) at the reference start and 0.0687 and 0.0693 (standard error 0.0010) in the bar's two orders, Missed against 0.06 and Met against 0.08; during the fight, 0.0663, 0.0606, and 0.0614. No option (b) to (d) and no lever of 8-14 is taken. The first-Titan-Engagement row (0.073 to 0.095 through the end) is a sensitivity row no target reads. OQ-140 still re-sets the band after the playtest.
+- **Decided anew by the round 3 retune (R2):** the band reads "at most 0.15 deaths per fight through the end of the Titan Engagement", with deaths during the fight reported beside it. Retargeting and Frenzy (decision batch 13) measure 0.137 at the reference start at Frenzy's halved rate, 0.070 with Frenzy off, and 0.174 at the rate as first written; no rate or cap lands 0.08 with retargeting on, so the band moved as 8-31 moved it. OQ-140 still re-sets it after the playtest.
 
 ### OQ-133: Simulator target: eye strikes at the Small and Large Size Classes and arm Toughness are not measured
 
@@ -3103,6 +3107,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Open
 - **Revised by batch 8 (8-1, 8-14):** option (a)'s lever is now Attack Dice, a smooth knob (each Titan die adds about a sixth of a success against a Rookie who cancels about 1.8), but the research measured that no rolled shape at any Health reaches this target by dice alone (about 36 kill dice on sixes, or a pool no one rolls), so the retune uses (b), (d), (e), or (f) with Attack Dice as a fine adjustment only. Steam, corpse heat, and the falling Titan (OQ-138, OQ-146) add deaths outside the attack roll and are counted in the playtest's per-Expedition tally before this is decided.
 - **Revised by batch 8 (8-31):** in the current handling the Medium band stands at 0.08 through the end, not 0.06, since the owner accepted the rerun's 0.075 as the playtest's lethality (OQ-132). This target is unchanged and still aims above it.
+- **Revised by the round 3 retune (R2):** the Medium band stands at 0.15 through the end; the default Squad reads about 0.050 PC deaths a fight on the standard Medium under R1, against this target's 0.125. Still in waiting.
 
 ### OQ-141: Expeditions and Downtime, the playtest minimum
 
@@ -3867,6 +3872,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Costs recorded:** the escalation reaches the table one card late, which is stated in the rules rather than discovered. Frenzy adds no dice, changes no Attack Dice, no need, and no effect, and moves no soldier. No Behavior Table is re-authored.
 - **ADR:** amends ADR-0001.
 - **Simulator case:** required, in the same retune as OQ-190 and OQ-192. The rate and the cap are starting values the simulator moves; the shape is settled.
+- **Revised by the round 3 retune (R1):** the rate is one rise every second round, at the frenzy end step of every even-numbered round; the cap stays 3. The shape is unchanged.
 
 ### OQ-194: The musket note quotes a Health that no longer exists
 
@@ -3919,3 +3925,16 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Costs recorded:** the price of a failed strike now falls on whoever is within the Titan's hands' reach rather than on the striker, and a striker freed to cut twice may move the lone-strike band. (b) is held as the alternative, beside downgrading, if that band breaks upward.
 - **ADR:** amends ADR-0010.
 - **Simulator case:** `data/engagement/tuning.yaml`, `simulator_cases`, failed Nape strikes.
+
+### OQ-198: The standard Large Titan is softer than the Medium at Health 6
+
+- **Type:** Simulator target (the round 3 retune)
+- **Arose in:** `docs/reviews/round-3-retune-decisions.md`, R5; `docs/reviews/simulator-report.md` sections 2.1, 5.1, and 6.15; `data/titans/standard-large.yaml`; Chapter 6 section 6.4.
+- **Related:** OQ-101, OQ-103, OQ-140, OQ-190, OQ-192.
+- **Question:** With Health 6 the Large's Thrash and Shrug Off falls no longer kill, and its Bite, On Body only, never reached a Squad off its body, so the Large read 0.038 deaths a fight with neither batch 13 rule (0.112 at Health 4), 0.053 with retargeting, and below the Medium at every Frenzy setting, and the Abnormal's bar, which reads the Large as its ceiling and the Medium as its floor, bounded an empty interval.
+- **Options:** (a) Bite reaches In Reach as well as On Body (0.122 with Frenzy off, 0.210 under R1; every bar row measured holds). (b) Bite falls back to Grab (0.108 and 0.184; 0.67 Grabs a fight, the doubling the Grab guard exists to catch). (c) Nape Depth 5 (0.460, median 4, 21.6% no kill; a reserved lever). (d) Leave it and read the bar as unjudged.
+- **Status:** Decided (round 3 retune, R5)
+- **Decision:** (a). One table line and OQ-101's design note; nothing reserved is touched. The confirming run reads the whole bar, the Large band, and the Large's Jam test on it.
+- **Costs recorded:** one line of a Chapter 6 table is re-authored, which 13-9 and 13-10 promised not to do *for retargeting or Frenzy*; this is re-authored because Health 6 removed the Large's kill and the Large must anchor the bar. The Large's Jam test moves toward its kill-pool reading as the Bite reaches the In Reach holder, and the confirming run reads both.
+- **ADR:** ADR-0014, as amended by the round 3 retune.
+- **Simulator case:** the confirming run's bar in both orders, the Large band, and the Large's Jam test.

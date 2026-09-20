@@ -195,7 +195,7 @@ export const ROUND_STEPS = [
 const END_STEP_WORDING: Record<string, string> = {
   'gas-rolls': 'Gas Rolls for everyone who used ODM Gear. Roll them together.',
   regeneration: "Fill 1 segment of every living Focus Titan's Regeneration clock.",
-  frenzy: 'Every living Focus Titan gains 1 Frenzy, to a cap of 3. Say the new number aloud.',
+  frenzy: 'Every living Focus Titan gains 1 Frenzy at the end of every even-numbered round, to a cap of 3. Say the new number aloud.',
   'background-clocks': 'Fill every Background clock and resolve any that is full. Then the retreat clock, last of the two.',
   momentum: 'Everyone who made no ODM move loses all their Momentum.',
   'round-ends': 'Unspent moves and actions are lost, and round-long effects end.',

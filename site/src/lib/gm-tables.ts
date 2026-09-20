@@ -194,7 +194,7 @@ const TRACKER_WORDING: Record<string, { name: string; text: string }> = {
 
   'focus_titan_row/frenzy-from-0-to-3': {
     name: 'Frenzy',
-    text: '0 at the start of the fight, and 1 more at each round\u2019s end step, to a cap of 3. Added to its behavior roll, so the Titan walks down its own table as the fight runs long. Public: say it aloud as it rises.',
+    text: '0 at the start of the fight, and 1 more at the end of every even-numbered round, to a cap of 3. Added to its behavior roll, so the Titan walks down its own table as the fight runs long. Public: say it aloud as it rises.',
   },
   'focus_titan_row/label': { name: 'Label', text: 'A, B, and so on. Every Position is held relative to a label.' },
   'focus_titan_row/size-class-and-stat-block': { name: 'Size Class and Titan', text: 'Which Titan it is, and which dossier you are running it from.' },

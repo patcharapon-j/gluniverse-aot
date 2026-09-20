@@ -3963,7 +3963,7 @@ A **grounded Titan** changes every map: every step among In Reach, On Body, and 
 
 **Why.** Every fallback in every table written is `thrash`, but two. With Attention on a soldier at Distant or Blind Spot a Medium Titan could not Bite or Grab **at all**, and two cards in three became Thrash, so the better the Squad played the more inert the monster became. That is what the first session felt. No Behavior Table is re-authored, and every `fallback` value stands.
 
-**Rejected, and kept in the file.** Keeping the target and downgrading the entry to the highest-numbered one at or below the roll whose requirement the holder meets. It is workable and worse, because it keeps the Titan fixated on the person deliberately standing where it cannot hurt them, which is the problem. It stays as the alternative if retargeting measures badly.
+**Rejected, and kept in the file.** Keeping the target and downgrading the entry to the highest-numbered one at or below the roll whose requirement the holder meets. It is workable and worse, because it keeps the Titan fixated on the person deliberately standing where it cannot hurt them, which is the problem. It stays as the alternative if retargeting measures badly. Measured in the round 3 retune (R3): at Frenzy's cap of 3 it reads 0.125 deaths against retargeting's 0.174 on the reference start, with 40% of cards downgraded and 5% Thrash, and the holder it cannot reach is grinned at instead of flailed at. Not taken.
 
 **ADR.** Amends ADR-0001 and ADR-0010. ADR-0010's batch 4b promise is narrowed by this, recorded after round 3 review 1 (C6; `docs/reviews/round-3-review-decisions.md`): a failed striker draws the Titan's Attention on every ladder, and its next behavior when that behavior can reach Blind Spot.
 
@@ -3977,7 +3977,7 @@ A **grounded Titan** changes every map: every step among In Reach, On Body, and 
 
 **No table is re-authored.** No file in `data/titans/` changes for this, and no `fallback` value or comment became wrong.
 
-**Measurement.** The rate and the cap are starting values the simulator moves in 13-2's rerun; the shape is settled. The move-up rule's wrap is keyed to Frenzy 0 after round 3 review 1 (C3; `docs/reviews/round-3-review-decisions.md`).
+**Measurement.** The rate and the cap are starting values the simulator moves in 13-2's rerun; the shape is settled. The move-up rule's wrap is keyed to Frenzy 0 after round 3 review 1 (C3; `docs/reviews/round-3-review-decisions.md`). The retune moved the rate to one rise every second round, at the end of every even-numbered round, and kept the cap (round 3 retune, R1; `docs/reviews/round-3-retune-decisions.md`).
 
 ### 13-11: When Frenzy counts (OQ-193)
 
@@ -4054,3 +4054,20 @@ Rulings on `docs/reviews/round-3-rule-change-review-1.md`, the first adversarial
 **Why.** 13-9 says "no Behavior Table is re-authored and every `fallback` value stands", which is only true if a fallback is reachable. Two tables have a real fallback, the standard Large's Crush and the Sprinting Abnormal's Pitch Headlong, and both were tested against the very holder the rolled entry had just failed against, so both reproduced exactly the inertness 13-9 exists to remove: a Large Titan whose Attention sat on a mounted soldier at Distant would Thrash rather than Crush the soldier standing inside its reach.
 
 **ADR.** Amends ADR-0001.
+
+## Batch 15: the round 3 retune, applied
+
+Rulings on the retune decision batch 13 scheduled (13-2 and 13-10), made 2026-09-21 by the Fable decider after the run of 1002 cases and 63,040,000 trials. The reasoning, every figure it rests on, and the exact wording of every edit are in `docs/reviews/round-3-retune-decisions.md`; this table is the index. The run found that **batch F overshot**: the standard Medium's deaths through the end read 0.169 against a band of 0.08, with Critical Injuries 0.928, Grabs 0.389, and 71.5% killed by round 3. Attack Dice, Nape Depth, and Tempo stay in reserve, because they move only if batch F fell short, and it did not.
+
+| Item | Ruling | ADR change | Glossary change | Impact |
+|---|---|---|---|---|
+| R1 | Frenzy rises at the end of every **even-numbered** round of the Titan Engagement, not every round; the cap stays 3. 13-10 names the rate as the simulator's, and the retune moved it: at one rise a round Frenzy 1 sat on the round-3 card, the round the kill target names, so the Squad playing exactly as intended paid it | amends ADR-0001 | **Frenzy** | `titan-format.yaml`, `round.yaml`, Ch5 5.3 and 5.4 and the worked example, `CONTEXT.md`, `tools/sim`, site, packet, Foundry |
+| R2 | The Medium bands are re-set: deaths **at most 0.15** through the end, Grabs **0.15 to 0.45**, killed by round 3 **55% to 75%**; Critical Injuries 0.5 to 0.9 stand. No rate or cap of Frenzy lands 0.08 with retargeting on, so the band moved as 8-31 moved it rather than the owner's rule being removed | amends ADR-0014 | none | `data/titans/tuning.yaml`, `tools/sim/targets.py`, Ch5 5.13, Ch6 6.6, OQ-132, OQ-140 |
+| R3 | Neither held alternative is taken. The hooked-by-strike exemption reads 0.120 by putting the Thrash share back to 43%, and downgrading reads 0.125 with 40% of cards downgraded: each is retargeting switched off for the case 13-9 was made for | none | none | 13-9's rejected paragraph, ADR-0010 |
+| R4 | Target 2's band reads **8% to 16%**. The fresh cut moved from 13.0% to 15.0% because of decision batch 11's Push re-roll, not batch F; with that rule off it reads 12.9% | amends ADR-0014 | none | ADR-0014, both tuning files, Ch5 5.13, Ch6 6.6, OQ-79 |
+| R5 | The standard **Large Titan's Bite reaches In Reach as well as On Body**. At Health 6 the Large's only kill against a Squad off its body was a fall from a flail, which Health and retargeting both remove, so it read softer than the Medium and the Abnormal's bar bounded an empty interval | amends ADR-0014 | none | `data/titans/standard-large.yaml`, Ch6 6.4's rendered rows and its OQ-101 note, `data/titans/tuning.yaml`, OQ-101, OQ-103, new **OQ-198** |
+| R6 | One confirming run after R1 to R5, then every figure paragraph is re-rendered from the report and the stale markers come off | none | none | the run |
+
+**Out of scope, and unchanged:** Attack Dice, Nape Depth, Tempo, every Attention Ladder, the Grab, the retreat clock, the Sprinting Abnormal's own values, the Health formula, and Frenzy's cap.
+
+**The owner's veto point, recorded because it is theirs and not the decider's:** if the first playtest is to run at the 0.08 lethality chosen before batch 13, the setting is retargeting with Frenzy switched off, which reads 0.070. That is a rule removal the owner makes.

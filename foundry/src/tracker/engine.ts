@@ -1062,7 +1062,8 @@ export async function undoCheck(combat: any, index: number): Promise<void> {
 
 /**
  * The frenzy end step (round.yaml, end_steps, frenzy; batch F2): every living Focus Titan's Frenzy
- * rises by 1, never above FRENZY_CAP. A corpse has none, and a Next Behavior already rolled is not
+ * rises by 1 at the end of an even-numbered round, never above FRENZY_CAP; at the end of an
+ * odd-numbered round it is held. A corpse has none, and a Next Behavior already rolled is not
  * touched: a behavior roll takes the Frenzy that stood when it was rolled (behavior-procedure.yaml,
  * next_behavior, frenzy_when).
  */
@@ -1073,9 +1074,13 @@ function raiseFrenzy(combat: any, rec: Recorder): void {
     rec.line(tr('end.noFocus'));
     return;
   }
-  const next = rows.map((r) => (r.status === 'focus' ? { ...r, frenzy: frenzyAfterRound(Number(r.frenzy ?? 0)) } : r));
+  const next = rows.map((r) => (r.status === 'focus' ? { ...r, frenzy: frenzyAfterRound(Number(r.frenzy ?? 0), combat.round) } : r));
   rec.set(combat, 'system.titans', next);
-  for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzy', { label: r.label, n: r.frenzy, cap: FRENZY_CAP }));
+  if (combat.round % 2 === 0) {
+    for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzy', { label: r.label, n: r.frenzy, cap: FRENZY_CAP }));
+  } else {
+    for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzyHeld', { label: r.label }));
+  }
 }
 
 async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): Promise<void> {

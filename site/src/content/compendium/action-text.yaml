@@ -21,7 +21,7 @@ sources:
   - path: data/engagement/read.yaml
     sha: "4c6f60af2d757027d71368129ae3ec6f58ea3004"
   - path: data/engagement/round.yaml
-    sha: "6f8fab37b45617fc67ee37bb97892e1ade9bb3b8"
+    sha: "eaa97eda49253631fdd4992c65ba43ed9d1393c0"
   - path: data/engagement/squad-tactics.yaml
     sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
   - path: data/engagement/titan-harm.yaml

@@ -64,12 +64,15 @@ end_steps:
     text: Fill 1 segment of every living Focus Titan's Regeneration clock (data/engagement/titan-harm.yaml, regeneration).
   - id: frenzy
     text: >-
-      Raise every living Focus Titan's Frenzy by 1, never above its cap of 3
-      (data/engagement/titan-format.yaml, frenzy). It raises only a Titan that is a Focus
+      Raise every living Focus Titan's Frenzy by 1, never above its cap of 3, at the end of an
+      even-numbered round only, the second, the fourth, the sixth, and so on
+      (data/engagement/titan-format.yaml, frenzy, rate); at the end of an odd-numbered round this
+      step does nothing. It raises only a Titan that is a Focus
       Titan when this step runs, as the regeneration step fills only their clocks: a Titan that
-      entered mid-round when a flare filled its clock rises to 1 here, and a Titan that enters at
-      the background-clocks step, which comes after this one, enters at 0 and stays at 0 through
-      its first full round (data/engagement/background-titans.yaml, ticks; full_clock). It rises during a retreat as well, as the Regeneration clock does
+      entered mid-round when a flare filled its clock rises here with the others when the round is
+      even-numbered, and a Titan that enters at the background-clocks step, which comes after this
+      one, enters at 0 and stays at 0 through its first full round, rising first at the next
+      even-numbered round's end (data/engagement/background-titans.yaml, ticks; full_clock). It rises during a retreat as well, as the Regeneration clock does
       (data/engagement/background-titans.yaml, ticks, stopped). It never falls, and a corpse has
       none. This step changes no Next Behavior already rolled: a behavior roll takes the Frenzy that
       stood when it was rolled (data/engagement/behavior-procedure.yaml, next_behavior, frenzy_when;
@@ -179,7 +182,7 @@ gm_tracker:
       - Grabbed soldier held, with countdown turns and lifted
       - flags this Titan has set, by soldier (hooked-by-strike, just-hurt, loudest)
       - >-
-        Frenzy, from 0 to 3, raised by 1 at the frenzy end step and added to every behavior roll the
+        Frenzy, from 0 to 3, raised by 1 at the frenzy end step of every even-numbered round and added to every behavior roll the
         Titan makes from that moment on (data/engagement/titan-format.yaml, frenzy;
         data/engagement/behavior-procedure.yaml, next_behavior, frenzy_when)
       - >-

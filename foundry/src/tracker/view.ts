@@ -160,7 +160,7 @@ export interface TitanView {
   openings: { initial: string; name: string }[];
   openingsBy: string;
   /**
-   * Frenzy (round 3, decision 12): it starts at 0, rises 1 at each round end to FRENZY_CAP, and is
+   * Frenzy (round 3, decision 12): it starts at 0, rises 1 at the end of every even-numbered round to FRENZY_CAP, and is
    * added to the behavior roll, so the longer the fight runs the worse the Titan gets. Public: it is
    * the clock that tells the Squad to finish it.
    */

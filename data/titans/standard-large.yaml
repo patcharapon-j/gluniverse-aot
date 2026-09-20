@@ -92,15 +92,15 @@ behavior_table:
       results: [5]
       tier: kill
       targets: holder
-      position_requirement: [on-body]
+      position_requirement: [in-reach, on-body]   # on-body alone until the round 3 retune (R5, docs/reviews/round-3-retune-decisions.md): at Health 6 the fall from a flail no longer kills, so the Large's Bite must reach the ground
       body_parts_used: []
       attack_dice: 12
       effects:
         - {type: critical-injury, injury_location: torso, injury_type: bite, cannot_be_lethal: false}
       fallback: crush
       text: >-
-        It turns its head to the soldier clinging to its body and bites. A soldier In Reach is too far
-        below its mouth, so it pins them under its bulk instead.
+        It stoops, turns its head to the soldier it has fixed on, and bites. It reaches a soldier
+        clinging to its body without moving and folds almost double to reach one on the ground.
 
     - id: grab
       name: Grab

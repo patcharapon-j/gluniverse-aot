@@ -2811,7 +2811,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ol>
 <li>Every soldier who used ODM Gear this round makes a Gas Roll. If the Titan Engagement ends mid-round, these Gas Rolls are made at once.</li>
 <li>Each living Focus Titan's Regeneration clock fills 1 segment.</li>
-<li>Each living Focus Titan's <a href="#fight-frenzy">Frenzy</a> rises by 1, never above 3. It rises during a retreat as well.</li>
+<li>Each living Focus Titan's <a href="#fight-frenzy">Frenzy</a> rises by 1 at the end of every even-numbered round (the second, the fourth, the sixth), never above 3, and not at all at the end of an odd-numbered round. It rises during a retreat as well.</li>
 <li>Each Background Titan's clock fills 1 segment, and full clocks resolve. Then the retreat clock fills 1 segment; if it is full, the Titan Engagement becomes a retreat. During a retreat no Background Titan's clock fills and the retreat clock does not fill; steps 2 and 3, the Regeneration clocks and Frenzy, still happen.</li>
 <li>Every soldier who made no ODM move this round loses all their <a href="#fight-momentum">Momentum</a>. A soldier who flew keeps what they hold, to the cap the Anchors left give.</li>
 <li>The round ends. Unspent moves and actions are lost.</li>
@@ -2878,12 +2878,12 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p>A Titan gets worse the longer you let it live. Each Focus Titan holds <b>Frenzy</b>, a public number the GM keeps on the tracker.</p>
 <ul>
 <li>It starts at <b>0</b> when the Titan becomes a Focus Titan.</li>
-<li>It rises by <b>1</b> at the end of each round, and stops at <b>3</b>.</li>
+<li>It rises by <b>1</b> at the end of every second round (rounds 2, 4, and 6), and stops at <b>3</b>.</li>
 <li>Its behavior roll is <b>D6 plus its Frenzy</b>. A total above the highest result on its table reads as that highest result.</li>
 <li>The roll takes the Frenzy standing at the moment it is made. A Titan rolls its next behavior in advance, so an escalation reaches the table one card late, and a roll already made never changes.</li>
 <li>Frenzy rises during a retreat too. It never falls, and a Corpse holds none.</li>
 </ul>
-<p>Every Behavior Table is ordered the same way: the low results terrorize, the middle results control, the high results kill. Adding to the roll walks the Titan up its own table, toward the kill tier. In the first round it postures at you. By the third it is trying to eat you, and it stays there.</p>
+<p>Every Behavior Table is ordered the same way: the low results terrorize, the middle results control, the high results kill. Adding to the roll walks the Titan up its own table, toward the kill tier. For three rounds it postures at you. By the fourth it is trying to eat you, and it stays there.</p>
 <p><b>Finish the fight, or it gets worse.</b> Every round you spend not killing it is a round it spends becoming more dangerous, and by the time the retreat clock fills you are running from something worse than the thing you closed with.</p>
 
 <h3 id="fight-dodge">Dodging a Titan</h3>
@@ -3968,7 +3968,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Knock loose:</b> a target airborne, On Body, or at Blind Spot falls. A mounted target is not affected.</li>
 <li><b>Wreck:</b> the fight loses 1 Anchor, whether the card landed or whiffed.</li>
 <li><b>Retargeting:</b> when the Attention holder is not in a Position the behavior needs, the Titan runs the Attention Ladder again over only the soldiers who are, its Attention moves to the one it picks, and the behavior lands on them. It falls back only when nobody qualifies.</li>
-<li><b>Frenzy:</b> each Focus Titan starts at 0, gains 1 at each round end, and caps at 3. Its behavior roll is D6 + Frenzy, and a total above its table's highest result reads as the highest. <b>Finish the fight, or it gets worse.</b></li>
+<li><b>Frenzy:</b> each Focus Titan starts at 0, gains 1 at the end of every even-numbered round, and caps at 3. Its behavior roll is D6 + Frenzy, and a total above its table's highest result reads as the highest. <b>Finish the fight, or it gets worse.</b></li>
 </ul>
 </div>
 
@@ -3979,7 +3979,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Deal</b> cards 1 to 20: one per player character, one per Squadmate on no Wing, and Tempo cards per Focus Titan.</li>
 <li><b>Swap:</b> both at the same Position or one step apart, or both have left; neither Down nor Grabbed; once each.</li>
 <li><b>Play</b> lowest first. Your turn is one move and one action, in either order. A Wing Squadmate acts right after its player character.</li>
-<li><b>End:</b> Gas Rolls; Regeneration +1; Frenzy +1 (cap 3, during a retreat too); Background clocks +1, then the retreat clock +1 (neither during a retreat); everyone who made no ODM move loses all their Momentum.</li>
+<li><b>End:</b> Gas Rolls; Regeneration +1; Frenzy +1 on an even-numbered round (cap 3, during a retreat too); Background clocks +1, then the retreat clock +1 (neither during a retreat); everyone who made no ODM move loses all their Momentum.</li>
 </ol>
 </div>
 
@@ -4300,7 +4300,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p>Keep one line for the Titan Engagement, one row for each Focus Titan, one row for each Corpse, and one row for each Background Titan. Everything on the tracker is public except an unrevealed Next Behavior and the values an Abnormal keeps hidden.</p>
 <ul>
 <li><b>Engagement line:</b> the Anchor Rating; the Anchors left of the number it started with, which is every soldier's Momentum cap; the round; the retreat clock's filled segments out of its length; whether a retreat is under way, and the round it began (the retreat's stay limit counts from it); the Squad Tactics and which are used; whose cloaks are thrown; and the round in which no soldier was left standing, while the ending waits.</li>
-<li><b>Focus Titan row:</b> its label, Size Class, and stat block; its <a href="#fight-frenzy">Frenzy</a>, 0 to 3, raised by 1 at each round end; its cards this round; the Attention holder, or the decoy holding it and how many cards its hold has left, or nothing; the Next Behavior (face down), the previous behavior, and any Call It on the Next Behavior; each Body Part's state and count; Openings and who created each; the Regeneration clock (only its filled segments for an Abnormal whose clock length no Read has revealed); decoys in a row; any Grabbed soldier, with countdown turns and whether lifted; the marks standing on soldiers; its Heave count out of its Heave rating; and each soldier its body pins, by limb with the pinning Body Part (or none), or by the body.</li>
+<li><b>Focus Titan row:</b> its label, Size Class, and stat block; its <a href="#fight-frenzy">Frenzy</a>, 0 to 3, raised by 1 at the end of every even-numbered round; its cards this round; the Attention holder, or the decoy holding it and how many cards its hold has left, or nothing; the Next Behavior (face down), the previous behavior, and any Call It on the Next Behavior; each Body Part's state and count; Openings and who created each; the Regeneration clock (only its filled segments for an Abnormal whose clock length no Read has revealed); decoys in a row; any Grabbed soldier, with countdown turns and whether lifted; the marks standing on soldiers; its Heave count out of its Heave rating; and each soldier its body pins, by limb with the pinning Body Part (or none), or by the body.</li>
 <li><b>Corpse row:</b> when a Focus Titan dies, its row stays for its Corpse, marked Corpse: each Body Part's state and count, which never regenerate; its Heave count out of its Heave rating; and each soldier it pins.</li>
 <li><b>Background Titan row:</b> its Size Class, its stat block, and its clock.</li>
 </ul>
@@ -4363,7 +4363,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>If no entry passes, the Next Behavior is Thrash.</li>
 </ol>
 </div>
-<p><b>Frenzy.</b> Each Focus Titan starts at Frenzy 0 and gains 1 at its own end step of each round, to a cap of 3, during a retreat as well. It is public: keep it on the tracker and say it aloud when it rises. It is added to the roll above, so a Titan at Frenzy 3 never rolls lower than its table's result 4. It adds no dice, changes no Attack Dice and no need, and moves no soldier.</p>
+<p><b>Frenzy.</b> Each Focus Titan starts at Frenzy 0 and gains 1 at its own end step of every even-numbered round, to a cap of 3, during a retreat as well. It is public: keep it on the tracker and say it aloud when it rises. It is added to the roll above, so a Titan at Frenzy 3 never rolls lower than its table's result 4. It adds no dice, changes no Attack Dice and no need, and moves no soldier.</p>
 <p><b>The Frenzy a roll takes</b> is the Frenzy standing when you roll, and nothing re-reads it afterwards. A Titan that has just become a Focus Titan is at 0, so its first Next Behavior is a plain D6. A Next Behavior rolled in one round and resolved in the next was rolled at the earlier round's Frenzy, so the escalation reaches the table one card late. The end step raises the counter and never touches a roll already made.</p>
 <p>Rolling never checks Positions; those are checked when the card comes up. A Read that reveals the Next Behavior reveals its whole row, Attack Dice included. Its Severity exists only once its card rolls.</p>
 
@@ -4390,7 +4390,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p><b>Roll and announce.</b> You announce Bite, a kill entry, against Lena, and roll its 9 Attack Dice in the open: 6, 2, 5, 3, 1, 4, 5, 2, 3. Three dice show 5 or 6: Severity 3.</p>
 <p><b>Reactions.</b> Lena's turn this round is unspent, so her dodge spends it. Agility 3, ODM Gear 3, and Stress 2 give 3 base dice, 3 Gear Dice, and 2 Stress Dice. She rolls base 6, 4, 1; Gear 6, 3, 2; Stress 5, 2. Two successes cancel two of the Bite's three, leaving 1 Net Success. The Bite lands.</p>
 <p><b>Effects.</b> Lena gains a Bite Critical Injury at the torso, which can be lethal. With 1 Net Success its roll adds nothing. Had she not dodged, all 3 successes would be net, and the roll would add 2.</p>
-<p><b>Next.</b> Bite becomes the previous behavior, decoys in a row returns to 0, the marks clear, and you roll a new Next Behavior out of sight. If this is the fight's third round the Titan sits at Frenzy 2, so that roll is D6 + 2, and any total of 7 or more reads as result 6.</p>
+<p><b>Next.</b> Bite becomes the previous behavior, decoys in a row returns to 0, the marks clear, and you roll a new Next Behavior out of sight. If this is the fight's third round the Titan sits at Frenzy 1, so that roll is D6 + 1, and a total of 7 reads as result 6.</p>
 <p><b>Had Lena been at Blind Spot.</b> Bite needs In Reach or On Body, so the Titan would retarget: you would check the ladder again over only the soldiers at In Reach or On Body, move its Attention to the one it picks, and bite them instead. Bite would fall back to Thrash only if nobody at all were standing there.</p>
 <p><b>Had the dice whiffed.</b> Had no Titan Die shown 5 or 6, the Bite would whiff against Lena, she would make no dodge and keep her turn, and the Next step would still happen in full: Bite the previous behavior, the marks cleared, a new Next Behavior rolled.</p>
 </div>
@@ -4486,8 +4486,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </div>
 
 <h3 id="gm-frenzy-note">Frenzy at the table</h3>
-<p>Set each Focus Titan's Frenzy to 0 the moment it becomes one, a Background Titan that walks in included, and raise it by 1 at its own end step of each round, just after the Regeneration clocks, to a cap of 3. It is public. Say it when it rises, because it is the clock the players can do something about: it is the packet's promise that a fight they let run turns into one they cannot win.</p>
-<p>Two Focus Titans hold their own Frenzy each. A Titan that enters in round 4 starts at 0 while the first is at 3. A Titan that walks in from a Background clock arrives at the step after Frenzy, so that round's rise has already happened and it stays at 0 through its whole first round; one a flare brings in mid-round rises with the rest at that round's end.</p>
+<p>Set each Focus Titan's Frenzy to 0 the moment it becomes one, a Background Titan that walks in included, and raise it by 1 at its own end step of every even-numbered round, just after the Regeneration clocks, to a cap of 3, and leave it alone at the end of an odd-numbered round. It is public. Say it when it rises, because it is the clock the players can do something about: it is the packet's promise that a fight they let run turns into one they cannot win.</p>
+<p>Two Focus Titans hold their own Frenzy each. A Titan that enters in round 5 starts at 0 while the first is at 2. A Titan that walks in from a Background clock arrives at the step after Frenzy, so any rise that round has already happened and it stays at 0 through its whole first round, first rising at the next even-numbered round's end; one a flare brings in mid-round rises with the rest at that round's end when the round is even-numbered.</p>
 
 <h3>Background Titans and the retreat</h3>
 <ul>
@@ -4545,7 +4545,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <section class="chapter gm" id="titans">
 <h1>The Titans</h1>
 <p class="epigraph">"Small ones crawl, medium ones reach, large ones fall on you. All of them bite."<span>Garrison sergeant, Wall Rose</span></p>
-<p>Every page of this chapter is public: show it to any player who asks. A standard Titan takes every number from its Size Class and uses the standard Attention Ladder. Every one of them starts at Frenzy 0, gains 1 at the end of each round, and caps at 3, and every behavior roll is D6 plus that Frenzy. <a href="#gm-legend">How to read a stat block and a Behavior Table</a> explains every column, every effect, and the Titan Dice. Below each table, a line for each entry describes the behavior for narration; the row is the rule.</p>
+<p>Every page of this chapter is public: show it to any player who asks. A standard Titan takes every number from its Size Class and uses the standard Attention Ladder. Every one of them starts at Frenzy 0, gains 1 at the end of every even-numbered round, and caps at 3, and every behavior roll is D6 plus that Frenzy. <a href="#gm-legend">How to read a stat block and a Behavior Table</a> explains every column, every effect, and the Titan Dice. Below each table, a line for each entry describes the behavior for narration; the row is the rule.</p>
 <p>A Behavior Table kills only through a lethal Critical Injury, by its Death Roll or an instant-death row that the Net Success rider can reach; through the Grab's devour step; or through a fall one of its effects causes. A Titan's body also harms with Steam, its fall, and Corpse Heat, which no entry deals (see <a href="#gm-harm">Titan harm, clocks, and the end</a>). No entry affects a horse.</p>
 
 <section class="titan" id="titan-small">
@@ -4559,7 +4559,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Regeneration clock</dt><dd>2 segments</dd>
 <dt>Body Parts and Toughness</dt><dd>eyes 1, left arm 1, right arm 1, left leg 1, right leg 1</dd>
 <dt>Heave rating</dt><dd>2</dd>
-<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at the end of every even-numbered round, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Standard Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4596,7 +4596,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Regeneration clock</dt><dd>3 segments</dd>
 <dt>Body Parts and Toughness</dt><dd>eyes 2, left arm 2, right arm 2, left leg 2, right leg 2</dd>
 <dt>Heave rating</dt><dd>3</dd>
-<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at the end of every even-numbered round, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Standard Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4633,7 +4633,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Regeneration clock</dt><dd>4 segments</dd>
 <dt>Body Parts and Toughness</dt><dd>eyes 2, left arm 3, right arm 3, left leg 2, right leg 2</dd>
 <dt>Heave rating</dt><dd>4</dd>
-<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at the end of every even-numbered round, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Standard Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4643,7 +4643,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <tr><td>2</td><td>Heavy Tread</td><td>Terrorize</td><td>holder and everyone at their Position</td><td>Distant, In Reach</td><td>both legs</td><td>6</td><td>Stress +1; Wreck</td><td>Thrash</td><td>no</td></tr>
 <tr><td>3</td><td>Crush</td><td>Control</td><td>holder</td><td>In Reach</td><td>none</td><td>9</td><td>Crush Critical Injury (leg, side rolled, cannot be lethal); Wreck</td><td>Thrash</td><td>no</td></tr>
 <tr><td>4</td><td>Shrug Off</td><td>Control</td><td>holder</td><td>On Body, Blind Spot</td><td>none</td><td>9</td><td>Knock loose (fall: Crush)</td><td>Thrash</td><td>no</td></tr>
-<tr><td>5</td><td>Bite</td><td>Kill</td><td>holder</td><td>On Body</td><td>none</td><td>12</td><td>Bite Critical Injury (torso, can be lethal)</td><td>Crush</td><td>no</td></tr>
+<tr><td>5</td><td>Bite</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>none</td><td>12</td><td>Bite Critical Injury (torso, can be lethal)</td><td>Crush</td><td>no</td></tr>
 <tr><td>6</td><td>Grab</td><td>Kill</td><td>holder</td><td>In Reach, On Body</td><td>arm</td><td>12</td><td>Grab (crush: Crush)</td><td>Thrash</td><td>yes</td></tr>
 <tr><td>never rolled</td><td>Thrash</td><td>Thrash</td><td>holder</td><td>Any</td><td>none</td><td>9</td><td>Knock loose (fall: Crush)</td><td>none</td><td>no</td></tr>
 </tbody></table></div>
@@ -4653,7 +4653,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Heavy Tread.</b> It walks straight at the soldier, and every step shakes the ground under everyone beside them.</li>
 <li><b>Crush.</b> It slams its bulk down beside the soldier, standing or fallen, and pins the soldier's legs under it.</li>
 <li><b>Shrug Off.</b> It heaves its shoulders and scrapes its back and neck along whatever stands near it.</li>
-<li><b>Bite.</b> It turns its head to the soldier clinging to its body and bites. A soldier In Reach is too far below its mouth, so it pins them under its bulk instead.</li>
+<li><b>Bite.</b> It stoops, turns its head to the soldier it has fixed on, and bites. It reaches a soldier clinging to its body without moving and folds almost double to reach one on the ground.</li>
 <li><b>Grab.</b> A hand bigger than the soldier closes around them and starts to lift.</li>
 <li><b>Thrash.</b> It heaves its whole body about, lashing at nothing in particular.</li>
 </ul>
@@ -4669,7 +4669,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Abnormal</dt><dd>yes</dd>
 <dt>Tempo</dt><dd>2</dd>
 <dt>Heave rating</dt><dd>3</dd>
-<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at the end of every even-numbered round, caps at 3, added to its behavior roll</dd>
 <dt>Hidden until Read</dt><dd>each Body Part's Toughness, Nape Depth, Regeneration clock length, Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4715,7 +4715,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Body Parts and Toughness</dt><dd>eyes 2, left arm 2, right arm 2, left leg 2, right leg 2</dd>
 <dt>Heave rating</dt><dd>3</dd>
 <dt>Attack Dice</dt><dd>by entry, on its public Behavior Table: Run Past 3, Veer 3, Trample 6, Pitch Headlong 3, Grab 6, Headlong Lunge 6, Thrash 6</dd>
-<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at the end of every even-numbered round, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Sprinting Abnormal Ladder</dd>
 <dt>Hidden until Read</dt><dd>each Body Part's Toughness, Nape Depth, Regeneration clock length, Attention Ladder</dd>
 </dl></div>
@@ -4822,7 +4822,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Attack Dice</dt><dd>The pool a Behavior Table entry or a Foe's weapon rolls when it resolves. A Titan's entry rolls 3, 6, 9, or 12 Titan Dice, set by its tier and Size Class; a Foe rolls its Attack Dice as base dice. An entry that only telegraphs rolls none.</dd>
 <dt>Titan Dice</dt><dd>The dice a Titan's Attack Dice are rolled with, in the open when its card comes up. Each succeeds on 5 or 6. They never Push and take no Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances. Use a colour no soldier's pool uses.</dd>
 <dt>Thrash</dt><dd>The default behavior every Behavior Table falls back to when no other entry can happen.</dd>
-<dt>Frenzy</dt><dd>A number each Focus Titan holds, starting at 0, rising by 1 at the end of each round, and capped at 3. It is added to the Titan's behavior roll, and a total above the table's highest result reads as that highest result. Every Behavior Table is ordered from terrorize to kill, so a Titan grows more dangerous the longer the fight lasts.</dd>
+<dt>Frenzy</dt><dd>A number each Focus Titan holds, starting at 0, rising by 1 at the end of every even-numbered round, and capped at 3. It is added to the Titan's behavior roll, and a total above the table's highest result reads as that highest result. Every Behavior Table is ordered from terrorize to kill, so a Titan grows more dangerous the longer the fight lasts.</dd>
 <dt>Retargeting</dt><dd>What a Focus Titan does when its Attention holder is not in a Position the rolled behavior needs: the Attention Ladder is read again over only the soldiers who are, the Titan's Attention moves to the one it picks, and the behavior resolves against them. The entry falls back only when no soldier qualifies.</dd>
 <dt>Next Behavior</dt><dd>A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden until it happens or is Read. Reading it reveals its Attack Dice.</dd>
 <dt>Telegraph</dt><dd>A behavior that announces what the Titan's next card will do.</dd>
@@ -5098,7 +5098,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <thead><tr><th>Field</th><th>A</th><th>B</th></tr></thead>
 <tbody>
 <tr><th>Size Class and stat block</th><td></td><td></td></tr>
-<tr><th>Frenzy, 0 to 3: +1 at each round end, added to the behavior roll</th><td></td><td></td></tr>
+<tr><th>Frenzy, 0 to 3: +1 at the end of every even-numbered round, added to the behavior roll</th><td></td><td></td></tr>
 <tr><th>Cards this round</th><td></td><td></td></tr>
 <tr><th>Attention: holder, or decoy and cards its hold has left</th><td></td><td></td></tr>
 <tr><th>Next Behavior, face down until revealed</th><td></td><td></td></tr>
