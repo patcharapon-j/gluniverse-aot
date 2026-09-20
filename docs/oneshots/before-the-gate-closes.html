@@ -148,6 +148,26 @@ body[data-lang="th"] .read .th{padding-top:0;border-top:0}
 .langpick button{flex:1;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:.28rem .2rem;border:1px solid var(--rule);background:none;color:var(--muted);cursor:pointer;border-radius:3px}
 .langpick button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-band)}
 
+/* ---------- music cues ---------- */
+:root{--cue:#3a5a7a;--cue-tint:#e7ecf1}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--cue:#8fb4d4;--cue-tint:#182027}}
+:root[data-theme="dark"]{--cue:#8fb4d4;--cue-tint:#182027}
+.cue{display:grid;grid-template-columns:2rem 1fr;gap:.1rem .7rem;align-items:start;
+  background:var(--cue-tint);border-left:4px solid var(--cue);padding:.6rem .85rem;margin:0}
+.cue>*{margin:0}
+.cue .mark{grid-column:1;grid-row:1;font-size:1.3rem;line-height:1;color:var(--cue);text-align:center}
+.cue>p{grid-column:2}
+.cue .lbl{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cue)}
+.cue .trk{font-family:var(--font-head);font-weight:600;font-size:1.02rem;line-height:1.25;color:var(--ink)}
+.cue .trk .no{color:var(--cue)}
+.cue .trk .len{font-family:var(--font-mono);font-weight:400;font-size:.76rem;color:var(--muted);white-space:nowrap}
+.cue .why{font-size:.9rem;padding-top:.15rem}
+.cue .why.th{font-size:.88rem}
+.cue.stop{border-left-color:var(--danger);background:transparent;border:1px dashed var(--danger)}
+.cue.stop .mark,.cue.stop .lbl,.cue.stop .trk .no{color:var(--danger)}
+.cue+.cue{margin-top:.4rem}
+@media (max-width:520px){.cue{grid-template-columns:1.4rem 1fr;gap:.1rem .5rem}.cue .mark{font-size:1.1rem}}
+
 /* ---------- side rail ---------- */
 .railnav{
   --rail-w:17rem;
@@ -214,7 +234,8 @@ body[data-rail="open"] .railscrim{display:block}
   body{padding-left:0}
   .tw{overflow:visible}
   .part,.actband{break-before:page}
-  tr,.clock,.read,dl,.steps>li{break-inside:avoid}
+  tr,.clock,.read,dl,.steps>li,.cue{break-inside:avoid}
+  .cue{background:none;border:1px solid var(--cue);border-left-width:4px}
   p,li{orphans:2;widows:2}
   h1,h2,h3,h4,caption{break-after:avoid}
   details{border:0;padding:0}
@@ -245,6 +266,8 @@ body[data-rail="open"] .railscrim{display:block}
       <li><a href="#injuries">Injuries</a></li>
       <li><a href="#p4">Titans</a></li>
       <li><a href="#tracker">Tracker</a></li>
+      <li><a href="#score">Cue sheet</a></li>
+      <li><a href="#playercard">Player card</a></li>
     </ul>
   </div>
 
@@ -255,6 +278,7 @@ body[data-rail="open"] .railscrim{display:block}
     <li><a href="#mood">Mood and tone</a></li>
     <li><a href="#gmjob">What the GM never decides</a></li>
     <li><a href="#budget">A time budget</a></li>
+    <li><a href="#score">Scoring the session</a></li>
   </ul>
 
   <p class="grp">Part One &middot; The Rules</p>
@@ -553,6 +577,65 @@ body[data-rail="open"] .railscrim{display:block}
     </tbody>
   </table></div>
   <p class="small mut">A round with four soldiers and one Focus Titan should take twelve to twenty minutes on a first night. If your third round is still running at thirty, you are describing too much between cards. Announce, roll, resolve, move on &mdash; the description goes on the <em>outcome</em>, not the set-up.</p>
+</section>
+
+<section id="score">
+  <h3>Scoring the session</h3>
+  <p>The whole one-shot is cued to the <b>Attack on Titan 2</b> game rip. Every scene carries a <span class="tag" style="color:var(--cue);border-color:var(--cue)">&#9834; Cue</span> callout with the track, its number and its runtime, so you can queue it without reading ahead. Bring your own copy of the music; the track numbers below follow <a href="https://downloads.khinsider.com/game-soundtracks/album/attack-on-titan-2-game-gamerip">the album&rsquo;s standard running order</a>.</p>
+  <div class="box">
+    <h4>Build the playlist before you sit down</h4>
+    <p class="small">Twenty-six cues, in play order. Queue them as one playlist in this sequence and you can mostly hit <em>next</em> rather than go hunting. Runtimes are given because several of them are timing devices, not atmosphere &mdash; track 6 is exactly the length of Voss&rsquo;s countdown, and track 86 is sixteen seconds for a reason.</p>
+    <div class="tw"><table>
+      <caption>Cue sheet &mdash; Before the Gate Closes</caption>
+      <thead><tr><th class="n">Act</th><th>Moment</th><th class="n">#</th><th>Track</th><th class="n">Length</th></tr></thead>
+      <tbody>
+        <tr><td class="n">Act I</td><td>Scene 1 &mdash; supply yard</td><td class="n">64</td><td>Inside the Wall &ndash;Daytime&ndash;</td><td class="n">6:55</td></tr>
+        <tr><td class="n"></td><td>Scene 2 &mdash; briefing and the gate</td><td class="n">76</td><td>The Walls</td><td class="n">2:29</td></tr>
+        <tr><td class="n"></td><td>Scene 3 &mdash; the road east</td><td class="n">68</td><td>The Middle of Nowhere</td><td class="n">4:13</td></tr>
+        <tr><td class="n"></td><td><i>or, for swagger</i></td><td class="n">55</td><td>Survey Corps</td><td class="n">4:07</td></tr>
+        <tr><td class="n"></td><td><b>The One in the Wheat</b></td><td class="n">1</td><td>Prepare to Fly, or Die</td><td class="n">4:15</td></tr>
+        <tr><td class="n"></td><td>&mdash; if the fight runs long</td><td class="n">2</td><td>Beat &rsquo;em with 1000 Metal Wings</td><td class="n">8:45</td></tr>
+        <tr><td class="n"></td><td>&mdash; on the killing blow</td><td class="n">26</td><td>End of the Clash</td><td class="n">1:51</td></tr>
+        <tr><td class="n">Act II</td><td>Scene 4 &mdash; arrival</td><td class="n">85</td><td>An Ominous Silence</td><td class="n">2:16</td></tr>
+        <tr><td class="n"></td><td>&mdash; while they search</td><td class="n">&mdash;</td><td><b>silence</b></td><td class="n">&mdash;</td></tr>
+        <tr><td class="n"></td><td>Scene 6 &mdash; Linne</td><td class="n">30</td><td>Contrition</td><td class="n">3:18</td></tr>
+        <tr><td class="n"></td><td>Scene 8 &mdash; the choice</td><td class="n">80</td><td>Oath</td><td class="n">2:19</td></tr>
+        <tr><td class="n">Act III</td><td>Scene 9 &mdash; the pasture</td><td class="n">50</td><td>Imminent Peril</td><td class="n">4:10</td></tr>
+        <tr><td class="n"></td><td><b>The Runner</b>, rounds 1&ndash;2</td><td class="n">6</td><td>Face the Approaching Fear</td><td class="n">7:15</td></tr>
+        <tr><td class="n"></td><td>&mdash; while it holds Voss</td><td class="n">&mdash;</td><td><b>fade out</b></td><td class="n">&mdash;</td></tr>
+        <tr><td class="n"></td><td>&mdash; the devour step</td><td class="n">86</td><td>Eaten</td><td class="n">0:16</td></tr>
+        <tr><td class="n"></td><td>&mdash; the witnesses&rsquo; Fear Rolls</td><td class="n">87</td><td>Goodbye</td><td class="n">2:10</td></tr>
+        <tr><td class="n"></td><td>&mdash; once the Grab resolves</td><td class="n">10</td><td>The Great Chase</td><td class="n">4:26</td></tr>
+        <tr><td class="n"></td><td>Scene 10 &mdash; the cellar <i>(optional)</i></td><td class="n">43</td><td>The Friend</td><td class="n">2:50</td></tr>
+        <tr><td class="n"></td><td>Round six &mdash; the retreat</td><td class="n">27</td><td>Run Away! Titan Come Hit!!</td><td class="n">1:51</td></tr>
+        <tr><td class="n"></td><td>&mdash; the walk out</td><td class="n">9</td><td>Survive A Death March</td><td class="n">3:57</td></tr>
+        <tr><td class="n">Home</td><td>Scene 12 &mdash; the run home</td><td class="n">84</td><td>The Twilight Moment</td><td class="n">3:27</td></tr>
+        <tr><td class="n"></td><td>Ending &mdash; in time</td><td class="n">23</td><td>A.O.T. Main Theme</td><td class="n">4:22</td></tr>
+        <tr><td class="n"></td><td>Ending &mdash; almost too late</td><td class="n">83</td><td>Bells Resounding Madly</td><td class="n">1:36</td></tr>
+        <tr><td class="n"></td><td>Ending &mdash; the closed gate</td><td class="n">31</td><td>Sounds of Lamentation Died Away</td><td class="n">4:59</td></tr>
+        <tr><td class="n"></td><td>The debrief</td><td class="n">77</td><td>Gone But Not Forgotten</td><td class="n">2:08</td></tr>
+        <tr><td class="n"></td><td>The barracks</td><td class="n">65</td><td>Inside the Wall &ndash;Night&ndash;</td><td class="n">3:49</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="two">
+    <div class="box">
+      <h4>Three rules that matter more than the track list</h4>
+      <ul class="small">
+        <li><b>Silence is a cue.</b> Two of the entries above are an instruction to turn the music <em>off</em>. Both are the scariest moments in the scenario. Do not fill them.</li>
+        <li><b>Never change the music mid-fight.</b> A track change tells the table that the beat has ended. If you swap songs while a Titan is still on the board, the fight stops feeling dangerous, whatever the dice are doing.</li>
+        <li><b>Start on the words, not after them.</b> Every cue is written to begin <em>as</em> you start reading, so the first line of boxed text lands on the first bar. Starting a track and then drawing breath wastes the best three seconds it has.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h4>If you would rather not cue by hand</h4>
+      <ul class="small">
+        <li>Queue only the six <b>bold</b> rows &mdash; the two fights, the two silences, the retreat and the ending &mdash; and leave everything else on one long ambient loop. You lose very little.</li>
+        <li>Put the player card and the cue sheet on the same side of the table as your phone. A GM reaching across the map to skip a track is a GM who has stopped narrating.</li>
+        <li>If a track ends and you are mid-sentence, let it end. Dead air in the middle of a Titan Engagement is free tension.</li>
+      </ul>
+    </div>
+  </div>
 </section>
 
 <!-- ============================================================ PART ONE -->
@@ -1389,6 +1472,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 1 &middot; The supply yard, Karanes District</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">64</span> &middot; Inside the Wall &ndash;Daytime&ndash; <span class="len">6:55</span></p>
+    <p class="why en">Loop it low under the whole yard scene, including the round-the-table questions. It is the sound of a place where nothing is happening, which is exactly what you want before anything does.</p>
+    <p class="why th" lang="th">เปิดวนเบา ๆ ตลอดฉากในลาน รวมถึงตอนถามคำถามรอบวง มันคือเสียงของสถานที่ที่ไม่มีอะไรเกิดขึ้น ซึ่งคือสิ่งที่คุณต้องการพอดีก่อนที่อะไรจะเริ่มเกิด</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>The supply yard smells of oiled leather and horse. Somebody is stencilling numbers onto crates that were stencilled yesterday. Two weeks ago you were cadets; eleven days ago you were posted here, east, while half your year went west to Trost, and since then you have done inventory.</p>
@@ -1416,6 +1506,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 2 &middot; The briefing</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">76</span> &middot; The Walls <span class="len">2:29</span></p>
+    <p class="why en">Start it as Weiss puts her finger on the map and let it run out under Klein at the gate. Two and a half minutes is about the whole briefing &mdash; if the track ends before she does, you are talking too much.</p>
+    <p class="why th" lang="th">เริ่มตอนไวส์เอานิ้วกดลงบนแผนที่ แล้วปล่อยให้มันจบลงในฉากไคลน์ที่ประตู สองนาทีครึ่งคือความยาวของการบรีฟทั้งหมดพอดี ถ้าเพลงจบก่อนเธอพูดจบ แปลว่าคุณพูดมากเกินไป</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>Lieutenant Weiss does not sit down and does not ask you to. She has a map already unrolled and one finger on it.</p>
@@ -1458,6 +1555,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 3 &middot; Leg 1 &mdash; the road east</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">68</span> &middot; The Middle of Nowhere <span class="len">4:13</span></p>
+    <p class="why en">The ride out. Start it the moment the gate is behind them, and do not talk over the first fifteen seconds. Use <b>55 &middot; Survey Corps</b> (4:07) instead if your table wants the ride to feel like an adventure rather than an exposure.</p>
+    <p class="why th" lang="th">ช่วงขี่ม้าออกไป เริ่มทันทีที่ประตูอยู่ข้างหลังพวกเขา และอย่าพูดทับสิบห้าวินาทีแรก ถ้าโต๊ะของคุณอยากให้การเดินทางรู้สึกเหมือนการผจญภัยมากกว่าการถูกเปิดโล่ง ใช้ <b>55 &middot; Survey Corps</b> (4:07) แทน</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>Outside, the world does not end &mdash; that is the thing nobody warns you about. It simply keeps going. Grass to the horizon, a road with wagon ruts in it, hedgerows running away east in long dark lines, and a sky with nothing in it at all. Behind you the wall gets smaller and does not stop getting smaller.</p>
@@ -1482,6 +1586,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3 id="enc1">Encounter &middot; The One in the Wheat <span class="tag bad">Titan Engagement</span></h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">1</span> &middot; Prepare to Fly, or Die <span class="len">4:15</span></p>
+    <p class="why en">Hit it <em>on</em> the boxed text, not after it. If the fight is still going when it ends, roll straight into <b>2 &middot; Beat &rsquo;em with 1000 Metal Wings</b> (8:45) &mdash; eight and a half minutes will outlast any first fight.</p>
+    <p class="why th" lang="th">กดเล่น<em>พร้อม</em>กับตอนอ่านบทบรรยาย ไม่ใช่หลังจากนั้น ถ้าการต่อสู้ยังไม่จบตอนเพลงหมด ให้ต่อด้วย <b>2 &middot; Beat &rsquo;em with 1000 Metal Wings</b> (8:45) ทันที แปดนาทีครึ่งยาวกว่าการต่อสู้ครั้งแรกของทุกโต๊ะ</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>The hedge on your left is two hundred metres of blackthorn and it has been the same hedge for twenty minutes. Then a section of it is not there any more.</p>
@@ -1524,6 +1635,13 @@ body[data-rail="open"] .railscrim{display:block}
       <li><b>When it dies:</b> everyone still in the fight loses 1 Stress for the Nape kill, and another 1 when the fight ends. Everyone On Body or at Blind Spot rolls on the steam table. The body comes down &mdash; <b>Leap Clear</b> for anyone On Body or at Blind Spot who is not airborne &mdash; and it destroys 1 Anchor, which at Sparse is the only one, except the Terrain Trait saves it if it is the first wrecking. Then run the end steps.</li>
     </ul>
   </div>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">26</span> &middot; End of the Clash <span class="len">1:51</span></p>
+    <p class="why en">Cut the combat track dead on the killing blow, and let two seconds of nothing sit there before you start this. The silence is the point; the track is the exhale.</p>
+    <p class="why th" lang="th">ตัดเพลงต่อสู้ทิ้งทันทีที่ดาบลงต้นคอ แล้วปล่อยความเงียบไว้สักสองวินาทีก่อนจะเริ่มเพลงนี้ ความเงียบคือหัวใจ ส่วนเพลงคือลมหายใจออก</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>The steam comes off it in a column you can see from the road, and the body goes soft at the edges before it hits the ground. In four minutes there will be a shape of flattened grass and nothing else.</p>
@@ -1553,6 +1671,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 4 &middot; Arrival <span class="tag gm">Fill one Sunset segment</span></h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">85</span> &middot; An Ominous Silence <span class="len">2:16</span></p>
+    <p class="why en">Two minutes sixteen &mdash; then let it stop, and leave it stopped while they search the station. An empty room with no music under it is the most frightening tool on this page.</p>
+    <p class="why th" lang="th">สองนาทีสิบหกวินาที แล้วปล่อยให้มันจบ และอย่าเปิดอะไรต่อระหว่างที่พวกเขาค้นสถานี ห้องว่างที่ไม่มีเพลงรองอยู่ข้างใต้คือเครื่องมือที่น่ากลัวที่สุดในหน้านี้</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>You smell it before you see it, and what you smell is mostly horse.</p>
@@ -1613,6 +1738,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 6 &middot; Linne Faber</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">30</span> &middot; Contrition <span class="len">3:18</span></p>
+    <p class="why en">Start it when she says her own name. Put nothing under the called roll that follows &mdash; when the dice come out for her leg, the room should be quiet.</p>
+    <p class="why th" lang="th">เริ่มตอนเธอเอ่ยชื่อตัวเอง และอย่าเปิดอะไรรองระหว่างการทอยที่ตามมา ตอนลูกเต๋าถูกหยิบขึ้นมาเพื่อขาของเธอ ห้องควรเงียบ</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>She is maybe twenty-five, and she has her own belt pulled tight around her right thigh above a dressing that was a shirt this morning. Her face is the colour of the sheet. She has her blades within reach of her hand and one of them is broken off halfway.</p>
@@ -1693,6 +1825,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 8 &middot; The choice</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">80</span> &middot; Oath <span class="len">2:19</span></p>
+    <p class="why en">Start it on Voss&rsquo;s second half &mdash; &ldquo;Other part.&rdquo; Two minutes nineteen is a fair amount of time to decide something in, and when it ends, ask them for an answer.</p>
+    <p class="why th" lang="th">เริ่มตอนโวสพูดครึ่งหลัง &mdash; &ldquo;อีกส่วนหนึ่ง&rdquo; สองนาทีสิบเก้าวินาทีคือเวลาที่พอเหมาะสำหรับการตัดสินใจ และเมื่อเพลงจบ ให้ถามคำตอบจากพวกเขา</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>Voss is standing in the yard with the log box under one arm, looking west, at two kilometres of grass with the light coming across it flat and orange.</p>
@@ -1737,6 +1876,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 9 &middot; The pasture</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">50</span> &middot; Imminent Peril <span class="len">4:10</span></p>
+    <p class="why en">For the crossing only. It has to still be running when they see the line in the grass.</p>
+    <p class="why th" lang="th">ใช้เฉพาะช่วงข้ามทุ่ง มันต้องยังเล่นอยู่ตอนที่พวกเขาเห็นรอยเส้นในหญ้า</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>Two kilometres of grass, and the light is going the colour of a bruise. Nobody talks. The hedgerows are behind you now and there is nothing between you and the hamlet but pasture and a drainage ditch and, about halfway across, a line in the grass where something very heavy went through at speed, in a straight line, without slowing for the ditch.</p>
@@ -1771,6 +1917,20 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3 id="enc3">Encounter &middot; The Runner <span class="tag bad">Titan Engagement</span></h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue &mdash; rounds 1 and 2</p>
+    <p class="trk"><span class="no">6</span> &middot; Face the Approaching Fear <span class="len">7:15</span></p>
+    <p class="why en">Seven and a quarter minutes covers rounds one and two almost exactly &mdash; the entire window Voss has. <b>Do not change it while the countdown is running.</b></p>
+    <p class="why th" lang="th">เจ็ดนาทีสิบห้าวินาทีครอบคลุมรอบที่หนึ่งและสองได้พอดี ซึ่งคือช่วงเวลาทั้งหมดที่โวสมี <b>อย่าเปลี่ยนเพลงระหว่างที่การนับถอยหลังยังเดินอยู่</b></p>
+  </div>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue &mdash; once Voss is free or gone</p>
+    <p class="trk"><span class="no">10</span> &middot; The Great Chase <span class="len">4:26</span></p>
+    <p class="why en">Switch the moment the Grab resolves, either way. This is the Abnormal&rsquo;s actual character: it does not trade blows, it runs things down.</p>
+    <p class="why th" lang="th">เปลี่ยนทันทีที่การจับจบลง ไม่ว่าจะจบทางไหน นี่คือนิสัยที่แท้จริงของไททันผิดปกติตัวนี้ มันไม่ได้ปะทะ มันไล่ล่า</p>
+  </div>
   <div class="enc">
     <h3>Setup</h3>
     <dl>
@@ -1794,6 +1954,19 @@ body[data-rail="open"] .railscrim{display:block}
       <li><b>While it holds him, every one of its cards resolves nothing.</b> No Ladder, no behavior, Next Behavior kept, flags standing. It is Tempo 2, so that is <b>two dead cards a round</b> &mdash; the Squad get two full rounds almost unopposed to do something about it. That is the deal, and it is a fair one.</li>
       <li><b>If he dies:</b> every witness makes a <b>comrade-dies</b> Fear Roll, and the Abnormal&rsquo;s next card evaluates its Ladder and resolves the behavior it has been holding. Round 3 is when this fight starts being a fight.</li>
     </ul>
+    <div class="cue stop">
+      <span class="mark" aria-hidden="true">&#9899;</span>
+      <p class="lbl">Cut the music</p>
+      <p class="why en">Every card the Titan takes while it holds him resolves nothing. Fade the music out across those cards and leave it off. A Titan that has gone quiet should <em>sound</em> like one.</p>
+      <p class="why th" lang="th">ทุกใบที่ไททันจั่วขณะที่มันยังถือเขาอยู่จะไม่เกิดอะไรขึ้นเลย ค่อย ๆ หรี่เพลงลงตลอดช่วงใบพวกนั้น แล้วปล่อยให้เงียบไว้ ไททันที่เงียบลงควรจะ<em>ฟังดู</em>เงียบจริง ๆ</p>
+    </div>
+    <div class="cue">
+      <span class="mark" aria-hidden="true">&#9834;</span>
+      <p class="lbl">Cue</p>
+      <p class="trk"><span class="no">86</span> &middot; Eaten <span class="len">0:16</span></p>
+      <p class="why en">Sixteen seconds. Hit it on the devour step, say <em>nothing at all</em> over it, and let it finish before anyone speaks. Then <b>87 &middot; Goodbye</b> (2:10) under the witnesses&rsquo; Fear Rolls.</p>
+      <p class="why th" lang="th">สิบหกวินาที กดเล่นตอนขั้นกลืนกิน <em>อย่าพูดอะไรเลย</em>ทับมัน และปล่อยให้มันจบก่อนที่ใครจะเอ่ยปาก จากนั้นใช้ <b>87 &middot; Goodbye</b> (2:10) รองตอนพยานทอย Fear Roll</p>
+    </div>
   </div>
 
   <div class="box">
@@ -1832,6 +2005,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 10 &middot; The cellar</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">43</span> &middot; The Friend <span class="len">2:50</span></p>
+    <p class="why en">Optional, and only if the fight is genuinely paused. If the Titan is still on the board, leave the combat track alone &mdash; changing music mid-fight tells the table the fight has stopped mattering.</p>
+    <p class="why th" lang="th">ใส่หรือไม่ก็ได้ และใส่ได้เฉพาะตอนที่การต่อสู้หยุดจริง ๆ ถ้าไททันยังอยู่บนโต๊ะ อย่าเปลี่ยนเพลงต่อสู้ การเปลี่ยนเพลงกลางการต่อสู้เท่ากับบอกโต๊ะว่าการต่อสู้นี้ไม่สำคัญแล้ว</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>The mill house cellar has a coal hatch at ground level and a bar across it on the inside. Behind the bar: a boy about your age with a sabre he does not know how to hold, and a young woman kneeling on the floor with both hands pressed into someone&rsquo;s leg.</p>
@@ -1859,6 +2039,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 11 &middot; Round six</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">27</span> &middot; Run Away! Titan Come Hit!! <span class="len">1:51</span></p>
+    <p class="why en">Cut to it the instant the retreat begins. It is short, and the shortness is useful, because the retreat is a countdown too. Then <b>9 &middot; Survive A Death March</b> (3:57) for the walk out.</p>
+    <p class="why th" lang="th">ตัดเข้าทันทีที่การถอยเริ่มขึ้น มันสั้น และความสั้นนั้นมีประโยชน์ เพราะการถอยเองก็เป็นการนับถอยหลัง จากนั้นใช้ <b>9 &middot; Survive A Death March</b> (3:57) สำหรับช่วงเดินออก</p>
+  </div>
   <div class="box warn">
     <h4>The wall</h4>
     <p class="small">At the <b>background-clocks end step of round 6</b>, two things happen in this order, and neither of them is yours to soften:</p>
@@ -1891,6 +2078,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section id="act3alt">
   <h3>Act III, the alternative &mdash; if they rode for Karanes</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">50</span> &middot; Imminent Peril <span class="len">4:10</span></p>
+    <p class="why en">Same shape as the main encounter: this over the road, then <b>10 &middot; The Great Chase</b> (4:26) the moment it turns to face them.</p>
+    <p class="why th" lang="th">รูปแบบเดียวกับการปะทะหลัก ใช้เพลงนี้ช่วงอยู่บนถนน แล้วเปลี่ยนเป็น <b>10 &middot; The Great Chase</b> (4:26) ทันทีที่มันหันมาทางพวกเขา</p>
+  </div>
   <div class="read">
   <div class="en">
     <p>The road bends south around the pasture, and the pasture is where it is standing.</p>
@@ -1915,6 +2109,13 @@ body[data-rail="open"] .railscrim{display:block}
 
 <section>
   <h3>Scene 12 &middot; Leg 2 &mdash; the run home</h3>
+  <div class="cue">
+    <span class="mark" aria-hidden="true">&#9834;</span>
+    <p class="lbl">Cue</p>
+    <p class="trk"><span class="no">84</span> &middot; The Twilight Moment <span class="len">3:27</span></p>
+    <p class="why en">Start it on the boxed text. If you are running the Leg roll, roll the dice <em>over</em> the music and do not pause it for them.</p>
+    <p class="why th" lang="th">เริ่มพร้อมบทบรรยาย ถ้าคุณจะทอย Leg roll ให้ทอย<em>ทับ</em>เสียงเพลงไปเลย และอย่าหยุดเพลงให้ลูกเต๋า</p>
+  </div>
   <div class="box">
     <h4>Run the Leg</h4>
     <ol class="steps">
@@ -1943,6 +2144,13 @@ body[data-rail="open"] .railscrim{display:block}
 
   <div class="box">
     <h4>7 or fewer &mdash; In time</h4>
+    <div class="cue">
+      <span class="mark" aria-hidden="true">&#9834;</span>
+      <p class="lbl">Cue</p>
+      <p class="trk"><span class="no">23</span> &middot; A.O.T. Main Theme <span class="len">4:22</span></p>
+      <p class="why en">The only time tonight the main theme is allowed. Start it on the flare crew waving, at a volume people will notice.</p>
+      <p class="why th" lang="th">ครั้งเดียวของคืนนี้ที่อนุญาตให้ใช้ธีมหลัก เริ่มตอนชุดพลุสัญญาณโบกมือ และเปิดดังพอที่คนจะสังเกตเห็น</p>
+    </div>
     <div class="read">
   <div class="en">
     <p>There is a flare crew on the parapet and one of them is waving with both arms, and the gate is open, and it stays open, and you go through it at a canter with the light still on the top of the wall.</p>
@@ -1957,6 +2165,13 @@ body[data-rail="open"] .railscrim{display:block}
 
   <div class="box">
     <h4>Exactly 8 as they arrive &mdash; Almost too late</h4>
+    <div class="cue">
+      <span class="mark" aria-hidden="true">&#9834;</span>
+      <p class="lbl">Cue</p>
+      <p class="trk"><span class="no">83</span> &middot; Bells Resounding Madly <span class="len">1:36</span></p>
+      <p class="why en">Under the counterweight and Klein counting. Then hard-cut to <b>23 &middot; A.O.T. Main Theme</b> (4:22) the instant the last rider is through.</p>
+      <p class="why th" lang="th">ใช้รองช่วงตุ้มถ่วงลงและไคลน์นับคน จากนั้นตัดเข้า <b>23 &middot; A.O.T. Main Theme</b> (4:22) ทันทีที่คนสุดท้ายลอดเข้ามาได้</p>
+    </div>
     <div class="read">
   <div class="en">
     <p>The counterweight is already moving. You can hear it before you can see the gate: a sound like a mill in the wall, and the gap getting shorter in a way you can measure against the horses.</p>
@@ -1975,6 +2190,13 @@ body[data-rail="open"] .railscrim{display:block}
 
   <div class="box warn">
     <h4>Filled before they reached the road &mdash; The closed gate</h4>
+    <div class="cue">
+      <span class="mark" aria-hidden="true">&#9834;</span>
+      <p class="lbl">Cue</p>
+      <p class="trk"><span class="no">31</span> &middot; Sounds of Lamentation Died Away <span class="len">4:59</span></p>
+      <p class="why en">No main theme. Five minutes is about how long the climb takes if you play it properly, one person at a time.</p>
+      <p class="why th" lang="th">ไม่มีธีมหลัก ห้านาทีคือเวลาที่การปีนใช้จริง ถ้าคุณเล่นฉากนี้อย่างที่ควรเล่น คือทีละคน</p>
+    </div>
     <div class="read">
   <div class="en">
     <p>The gate is shut. It has been shut for some time. There is no shouting and no flare, because the crew went off the parapet at seven o&rsquo;clock and that is the order.</p>
@@ -2003,6 +2225,13 @@ body[data-rail="open"] .railscrim{display:block}
 
   <div class="box gmbox">
     <h4>The debrief &mdash; play this out, it is worth four minutes</h4>
+    <div class="cue">
+      <span class="mark" aria-hidden="true">&#9834;</span>
+      <p class="lbl">Cue</p>
+      <p class="trk"><span class="no">77</span> &middot; Gone But Not Forgotten <span class="len">2:08</span></p>
+      <p class="why en">Start it on &ldquo;Names.&rdquo; Then stop talking and let the players do the counting.</p>
+      <p class="why th" lang="th">เริ่มตอนคำว่า &ldquo;ชื่อ&rdquo; จากนั้นหยุดพูด แล้วปล่อยให้ผู้เล่นเป็นคนนับเอง</p>
+    </div>
     <div class="read">
   <div class="en">
     <p>Weiss takes the box out of your hands before you are off the horse. She opens it there in the yard, in the lamplight, and thumbs through four sheets, and closes it.</p>
@@ -2027,6 +2256,13 @@ body[data-rail="open"] .railscrim{display:block}
 
   <div class="box">
     <h4>The last beat &mdash; the barracks</h4>
+    <div class="cue">
+      <span class="mark" aria-hidden="true">&#9834;</span>
+      <p class="lbl">Cue</p>
+      <p class="trk"><span class="no">65</span> &middot; Inside the Wall &ndash;Night&ndash; <span class="len">3:49</span></p>
+      <p class="why en">Under the whole epilogue. Let it keep playing after you say &ldquo;cut to black&rdquo; &mdash; the argument about Trost should still be going when the session is over.</p>
+      <p class="why th" lang="th">ใช้รองตลอดบทส่งท้าย ปล่อยให้มันเล่นต่อหลังจากคุณพูดว่า &ldquo;ตัดจบ&rdquo; แล้ว การเถียงกันเรื่องทรอสต์ควรจะยังดำเนินอยู่ตอนที่เกมจบลง</p>
+    </div>
     <div class="read">
   <div class="en">
     <p>Lamplight. Bunks. Somebody has put a plate out for you and it has gone cold. Your harness is in the corner where you dropped it and you are going to have to clean it before you sleep, and you are not going to.</p>
