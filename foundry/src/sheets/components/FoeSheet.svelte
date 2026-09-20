@@ -5,12 +5,13 @@
   import { MOTION } from '../../motion/tokens.ts';
   import { healthLostAfterClick } from '../../rules/harm.ts';
   import { motionMode } from '../../settings.svelte.ts';
-  import { proseMirror, tooltip } from '../actions.ts';
+  import { proseMirror } from '../actions.ts';
   import { setSheetContext, t } from '../context.ts';
   import type { FoeView } from '../foe-view.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import { icon } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
+  import Plate from './Plate.svelte';
   import Sec from './Sec.svelte';
   import Stepper from './Stepper.svelte';
 
@@ -68,10 +69,7 @@
 
 <div class="wof-sheet compact foe-sheet" data-motion={motionMode()}>
   <header class="hdr">
-    <figure class="plate">
-      <img src={view.img} alt={t('WOF.Sheet.header.portrait', { name: view.name })} data-edit="img" data-action={view.editable ? 'editImage' : undefined} use:tooltip={view.editable ? t('WOF.Sheet.header.portraitEdit') : null} />
-      <figcaption>{t('WOF.Sheet.header.plate')}</figcaption>
-    </figure>
+    <Plate {actor} src={view.img} alt={t('WOF.Sheet.header.portrait', { name: view.name })} caption={t('WOF.Sheet.header.plate')} editable={view.editable} />
     <div class="ident">
       <div class="kicker"><img class="ic s16" src={icon('harm-fear')} alt="" />{t('WOF.FoeSheet.kicker')}<span class="serial">{t('WOF.Card.Foe.group', { n: s.group_size })}</span></div>
       <input class="name" type="text" value={view.name} aria-label={t('WOF.FoeSheet.name')} disabled={ro} onchange={(e) => actor.update({ name: e.currentTarget.value.trim() || view.name })} />

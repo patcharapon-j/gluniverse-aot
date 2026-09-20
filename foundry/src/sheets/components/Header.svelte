@@ -3,11 +3,15 @@
   import { sheetContext, t } from '../context.ts';
   import { deleteItem, openItem, setField } from '../soldier-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
+  import ModeSwitch from './ModeSwitch.svelte';
+  import Plate from './Plate.svelte';
+  import TokenButton from './TokenButton.svelte';
 
   let { view }: { view: SoldierView } = $props();
   const { actor } = sheetContext();
   const s = $derived(view.system);
   const d = $derived(view.derived);
+  const ro = $derived(!view.statsEditable);
 
   const RANKS = ['private', 'squad-leader', 'section-commander'];
   const serial = $derived(`${t('WOF.Sheet.header.file')} ${view.id.slice(0, 3).toUpperCase()}-${view.id.slice(3, 5).toUpperCase()}`);
@@ -46,22 +50,13 @@
     id
       ? [
           { label: t('WOF.Sheet.menu.open'), icon: 'fa-solid fa-book-open', onClick: () => openItem(actor, id) },
-          { label: t('WOF.Sheet.menu.remove'), icon: 'fa-solid fa-trash', visible: view.editable, onClick: () => deleteItem(actor, id) },
+          { label: t('WOF.Sheet.menu.remove'), icon: 'fa-solid fa-trash', visible: view.statsEditable, onClick: () => deleteItem(actor, id) },
         ]
       : [];
 </script>
 
 <header class="hdr">
-  <figure class="plate">
-    <img
-      src={view.img}
-      alt={t('WOF.Sheet.header.portrait', { name: view.name })}
-      data-edit="img"
-      data-action={view.editable ? 'editImage' : undefined}
-      use:tooltip={view.editable ? t('WOF.Sheet.header.portraitEdit') : null}
-    />
-    <figcaption>{t('WOF.Sheet.header.plate')}</figcaption>
-  </figure>
+  <Plate {actor} src={view.img} alt={t('WOF.Sheet.header.portrait', { name: view.name })} caption={t('WOF.Sheet.header.plate')} editable={view.editable} />
 
   <div class="ident">
     <div class="kicker">
@@ -74,7 +69,7 @@
       type="text"
       value={view.name}
       aria-label={t('WOF.Sheet.header.name')}
-      disabled={!view.editable}
+      disabled={ro}
       onchange={(e) => actor.update({ name: e.currentTarget.value.trim() || view.name })}
     />
     <div class="meta line">
@@ -93,23 +88,23 @@
       <label class="grow" use:tooltip={t('WOF.Actor.Soldier.FIELDS.haven.label')}>
         <span class="cap">{t('WOF.Actor.Soldier.FIELDS.haven.label')}</span>
         {#if havens.length}
-          <select value={s.haven} disabled={!view.editable} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)}>
+          <select value={s.haven} disabled={ro} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)}>
             <option value="">{t('WOF.Sheet.choose')}</option>
             {#each havens as h (h)}<option value={h}>{h}</option>{/each}
           </select>
         {:else}
-          <input type="text" value={s.haven} disabled={!view.editable} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)} />
+          <input type="text" value={s.haven} disabled={ro} onchange={(e) => setField(actor, 'system.haven', e.currentTarget.value)} />
         {/if}
       </label>
       <label class="grow" use:tooltip={t('WOF.Actor.Soldier.FIELDS.canon_tie.label')}>
         <span class="cap">{t('WOF.Actor.Soldier.FIELDS.canon_tie.label')}</span>
-        <input type="text" value={s.canon_tie} placeholder={view.origin?.canonTie || ''} disabled={!view.editable} onchange={(e) => setField(actor, 'system.canon_tie', e.currentTarget.value)} />
+        <input type="text" value={s.canon_tie} placeholder={view.origin?.canonTie || ''} disabled={ro} onchange={(e) => setField(actor, 'system.canon_tie', e.currentTarget.value)} />
       </label>
       <!-- Rank and the Class Rank number read as one field, so the line stays five wide. -->
       <span class="rankf">
         <label use:tooltip={t('WOF.Actor.Soldier.FIELDS.rank.label')}>
           <span class="cap">{t('WOF.Actor.Soldier.FIELDS.rank.label')}</span>
-          <select value={s.rank} disabled={!view.editable} onchange={(e) => setField(actor, 'system.rank', e.currentTarget.value)}>
+          <select value={s.rank} disabled={ro} onchange={(e) => setField(actor, 'system.rank', e.currentTarget.value)}>
             {#each RANKS as r (r)}<option value={r}>{t(`WOF.Rank.${r}`)}</option>{/each}
           </select>
         </label>
@@ -121,7 +116,7 @@
           value={s.class_rank ?? ''}
           aria-label={t('WOF.Actor.Soldier.FIELDS.class_rank.label')}
           use:tooltip={classRankTip}
-          disabled={!view.editable}
+          disabled={ro}
           onchange={(e) => setField(actor, 'system.class_rank', e.currentTarget.value === '' ? null : Math.max(1, Math.round(Number(e.currentTarget.value))))}
         />
       </span>
@@ -131,5 +126,11 @@
     </div>
   </div>
 
-  <div class="crest"><img src={icon('brand-emblem')} alt={t('WOF.SystemTitle')} /></div>
+  <div class="crest">
+    <div class="hdr-acts">
+      <ModeSwitch mode={view.mode} editable={view.editable} />
+      <TokenButton {actor} editable={view.editable} />
+    </div>
+    <img class="emblem" src={icon('brand-emblem')} alt={t('WOF.SystemTitle')} />
+  </div>
 </header>

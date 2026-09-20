@@ -3,9 +3,12 @@
   import { reveal } from '../../motion/fx.ts';
   import { MOTION } from '../../motion/tokens.ts';
   import { motionMode, viewer } from '../../settings.svelte.ts';
-  import { setSheetContext, t } from '../context.ts';
+  import { setHoverCards, setSheetContext, t } from '../context.ts';
+  import { HoverCards } from '../hover.svelte.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import type { SoldierView } from '../soldier-view.ts';
+  import DetailCards from './DetailCards.svelte';
+  import EditBanner from './EditBanner.svelte';
   import Header from './Header.svelte';
   import LifepathBanner from './LifepathBanner.svelte';
   import TabKit from './TabKit.svelte';
@@ -19,6 +22,8 @@
 
   // svelte-ignore state_referenced_locally
   setSheetContext({ sheet, actor: sheet.document, state: sheetState, uid: `wof-${sheet.id}` });
+  const hover = new HoverCards();
+  setHoverCards(hover);
 
   const view = $derived(sheetState.view);
   const TABS = [
@@ -39,8 +44,9 @@
   }
 </script>
 
-<div class="wof-sheet" data-gore={viewer.gore} data-motion={motionMode()} style="--wof-loop: {MOTION.loop}ms">
+<div class="wof-sheet" data-gore={viewer.gore} data-motion={motionMode()} data-mode={view.mode} style="--wof-loop: {MOTION.loop}ms">
   <i class="eyelet e1"></i><i class="eyelet e2"></i><i class="eyelet e3"></i>
+  {#if view.mode === 'edit'}<EditBanner edge="top" text={t('WOF.Sheet.mode.bannerText')} label={t('WOF.Sheet.mode.bannerLabel')} />{/if}
   <Header {view} />
   <Vitals {view} />
   {#if view.lifepath}<LifepathBanner offer={view.lifepath} {sheet} />{/if}
@@ -60,4 +66,6 @@
   </div>
 
   <footer class="foot"><span class="lbl">{t('WOF.Sheet.foot.left')}</span><span class="lbl">{t('WOF.Sheet.foot.right')}</span></footer>
+  {#if view.mode === 'edit'}<EditBanner edge="bottom" text={t('WOF.Sheet.mode.bannerText')} label={t('WOF.Sheet.mode.bannerLabel')} />{/if}
 </div>
+<DetailCards {hover} />

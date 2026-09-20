@@ -8,6 +8,7 @@ import SquadmateSheetRoot from './components/SquadmateSheet.svelte';
 import { enrich, named, SvelteSheetMixin } from './svelte-sheet.ts';
 import { buildSoldierView } from './soldier-view.ts';
 import { chooseInjury, injuryData } from './soldier-ops.ts';
+import { BUILD_ITEM_TYPES } from './mode.ts';
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
@@ -15,10 +16,17 @@ const t = (key: string, data?: Record<string, unknown>): string => (data ? game.
  * Drop rules for a soldier or a Squadmate: Origin and Specialty replace; a held Talent levels up (a
  * Squadmate's one template Talent is replaced instead: data/character/squadmates.yaml); a Critical
  * Injury row asks for its type and side; one ODM Gear and one horse; a Blade Set fills empty handles.
+ *
+ * An Origin, a Specialty and a Talent are the character's own build, so they are taken in Edit mode
+ * only; gear and wounds arrive in play and are taken in either mode.
  */
 async function dropOnSoldier(sheet: any, item: any, squadmate: boolean) {
   const actor = sheet.document;
   if (!actor.isOwner || !sheet.isEditable) return null;
+  if (sheet.sheetMode === 'play' && (BUILD_ITEM_TYPES as readonly string[]).includes(item.type)) {
+    ui.notifications.warn(t('WOF.Sheet.mode.dropLocked', { type: t(`TYPES.Item.${item.type}`) }));
+    return null;
+  }
   const Item = foundry.documents.Item.implementation;
   const data = item.toObject();
   delete data._id;
@@ -101,10 +109,14 @@ export function defineSoldierSheet() {
       return 'soldier';
     }
 
+    get modeAware() {
+      return true;
+    }
+
     async buildView() {
       const actor = this.document;
       const notesHTML = await enrich(actor, actor.system.notes);
-      return buildSoldierView(actor, { editable: this.isEditable, notesHTML, bonus: this.svelteState?.bonus ?? 0 });
+      return buildSoldierView(actor, { editable: this.isEditable, notesHTML, bonus: this.svelteState?.bonus ?? 0, mode: this.sheetMode });
     }
 
     async _onDropItem(event: DragEvent, item: any) {
@@ -135,10 +147,14 @@ export function defineSquadmateSheet() {
       return 'stat';
     }
 
+    get modeAware() {
+      return true;
+    }
+
     async buildView() {
       const actor = this.document;
       const notesHTML = await enrich(actor, actor.system.notes);
-      return buildSoldierView(actor, { editable: this.isEditable, notesHTML, bonus: 0 });
+      return buildSoldierView(actor, { editable: this.isEditable, notesHTML, bonus: 0, mode: this.sheetMode });
     }
 
     async _onDropItem(event: DragEvent, item: any) {

@@ -36,6 +36,7 @@
         badge: own ? undefined : t('WOF.Lifepath.grad.generalBadge'),
         disabled: !open,
         note: t('WOF.Lifepath.year.capped'),
+        card: x.card,
       };
     }),
   );

@@ -25,3 +25,5 @@ This fixture validates rendering and motion, not live Foundry persistence or eng
 - TypeScript and Svelte checks pass; production code builds. Existing Titan wording synchronization warnings remain.
 - Browser exercises gas spend, partial and equal-level tank swaps, empty-tank replacement, blade break and magazine transfer, Reduced/Off motion, read-only controls, five widths from 400 to 1080px, and eight independently displayed spares.
 - Live Foundry interaction is not checked.
+
+Merge verification: main's Play/Edit header, portrait controls and hover-card styles are preserved. The full suite passes all 376 tests with six fixture files temporarily normalized to LF; their original bytes were restored afterward. Without that normalization, six existing string-replacement tests fail on this Windows checkout. TypeScript, Svelte and production build checks pass, and the regenerated equipment browser fixture passes.

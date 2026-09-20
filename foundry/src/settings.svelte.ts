@@ -7,6 +7,8 @@ import type { GoreLevel, MotionMode } from './motion/tokens.ts';
 import { APPLY_CATEGORIES, type ApplyCategory } from './rules/roll.ts';
 import { registerSettingsMenu } from './settings-menu.ts';
 import { registerCampaignSettings } from './lifepath/campaign.ts';
+import { MODE_SETTING } from './sheets/mode.ts';
+import { PORTRAIT_FOLDER_SETTING } from './sheets/portrait.ts';
 import { TRACKER_CATEGORIES, type TrackerCategory } from './rules/engagement/round.ts';
 
 export const viewer = $state({ motion: 'full' as MotionMode, gore: 'graphic' as GoreLevel, reducedByOS: false });
@@ -36,6 +38,18 @@ export function registerWorldSettings(): void {
     });
   }
   game.settings.register(SYSTEM_ID, 'hudFolded', { scope: 'client', config: false, type: Boolean, default: false });
+  // Edit or Play per actor, this browser's own (sheets/mode.ts): never the world's, never a player's.
+  game.settings.register(SYSTEM_ID, MODE_SETTING, { scope: 'client', config: false, type: Object, default: {} });
+  game.settings.register(SYSTEM_ID, PORTRAIT_FOLDER_SETTING, {
+    name: 'WOF.Settings.portraitFolder.name',
+    hint: 'WOF.Settings.portraitFolder.hint',
+    scope: 'world',
+    config: true,
+    restricted: true,
+    type: String,
+    filePicker: 'folder',
+    default: '',
+  });
   for (const cat of APPLY_CATEGORIES) {
     game.settings.register(SYSTEM_ID, `autoApply.${cat}`, {
       name: `WOF.Settings.autoApply.${cat}.name`,

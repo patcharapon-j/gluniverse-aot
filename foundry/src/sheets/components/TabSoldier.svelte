@@ -3,8 +3,8 @@
   import { MOTION } from '../../motion/tokens.ts';
   import { callRoll } from '../../dice/call.ts';
   import { rollAction } from '../../dice/roll-action.ts';
-  import { contextMenu, dragItem, tooltip } from '../actions.ts';
-  import { sheetContext, t } from '../context.ts';
+  import { contextMenu, detailHover, dragItem, tooltip } from '../actions.ts';
+  import { hoverCards, sheetContext, t } from '../context.ts';
   import { deleteItem, openItem, setField, setItem } from '../soldier-ops.ts';
   import { groupRollsByAttribute, icon, type RollView, type SoldierView } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
@@ -14,8 +14,11 @@
 
   let { view }: { view: SoldierView } = $props();
   const { actor, sheet, state: ss } = sheetContext();
+  const hover = hoverCards();
   const s = $derived(view.system);
   const ro = $derived(!view.editable);
+  /** The character's own build: locked in Play mode (mode.ts). */
+  const roStats = $derived(!view.statsEditable);
   const scaleMin = CONFIG.WOF.attributeScale.min;
 
   const attributes = CONFIG.WOF.attributes as { id: string; name: string; summary: string }[];
@@ -59,7 +62,7 @@
   const talentMenu = (id: string, used: boolean, hasLimit: boolean) => () => [
     { label: t('WOF.Sheet.menu.open'), icon: 'fa-solid fa-book-open', onClick: () => openItem(actor, id) },
     { label: t(used ? 'WOF.Sheet.talent.markReady' : 'WOF.Sheet.talent.markUsed'), icon: 'fa-solid fa-check', visible: view.editable && hasLimit, onClick: () => setItem(actor, id, { 'system.used': !used }) },
-    { label: t('WOF.Sheet.menu.remove'), icon: 'fa-solid fa-trash', visible: view.editable, onClick: () => deleteItem(actor, id) },
+    { label: t('WOF.Sheet.menu.remove'), icon: 'fa-solid fa-trash', visible: view.statsEditable, onClick: () => deleteItem(actor, id) },
   ];
 </script>
 
@@ -82,7 +85,7 @@
                 value={v}
                 max={view.attributeMax[a.id]}
                 min={scaleMin}
-                disabled={ro}
+                disabled={roStats}
                 label={t(`WOF.Attribute.${a.id}`)}
                 onset={(n) => setField(actor, `system.attributes.${a.id}`, n)}
               />
@@ -127,12 +130,8 @@
                   type="button"
                   class="roll {r.attribute ? `s-${r.attribute}` : ''}"
                   disabled={!!r.blockedReason}
-                  use:tooltip={[
-                    r.summary,
-                    r.pool.conditionalPenalties.length || r.pool.conditionalTalents.length
-                      ? [...r.pool.conditionalTalents.map((c) => `${c.name} +${c.dice}: ${c.condition}`), ...r.pool.conditionalPenalties.map((c) => `${c.source} −${c.dice}: ${c.condition}`)].join('; ')
-                      : r.summary ? '' : r.why,
-                  ].filter(Boolean).join(' ')}
+                  aria-describedby={hover.layers[0]?.card.id === r.id ? `${hover.uid}-0` : undefined}
+                  use:detailHover={{ hover, card: () => r.detail }}
                   onclick={(e) => roll(r, e.currentTarget)}
                 >
                   <span class="tile"><img src={r.icon} alt="" /></span>
@@ -163,7 +162,7 @@
     <div class="box">
       <Sec n="3" title={t('WOF.Sheet.soldier.talents')} />
       {#each view.talents as tal (tal.id)}
-        <div class="tal" data-item-id={tal.id} use:dragItem={{ item: actor.items.get(tal.id) }} use:contextMenu={talentMenu(tal.id, tal.used, tal.hasLimit)}>
+        <div class="tal" data-item-id={tal.id} use:dragItem={{ item: actor.items.get(tal.id) }} use:contextMenu={talentMenu(tal.id, tal.used, tal.hasLimit)} use:detailHover={{ hover, card: () => tal.detail }}>
           <div class="tal-h">
             <img class="ic" src={icon(tal.type === 'dice' ? 'talent-dice' : 'talent-rule')} alt="" />
             <strong><button type="button" class="link" onclick={() => openItem(actor, tal.id)}>{tal.name}</button></strong>
@@ -172,7 +171,7 @@
               max={tal.maxLevel}
               min={1}
               cls={tal.type === 'dice' ? 'dt' : 'da'}
-              disabled={ro || tal.maxLevel <= 1}
+              disabled={roStats || tal.maxLevel <= 1}
               label={tal.name}
               onset={(n) => setItem(actor, tal.id, { 'system.level': n })}
             />
@@ -192,16 +191,16 @@
       {:else}
         <p class="empty">{t('WOF.Sheet.soldier.noTalents')}</p>
       {/each}
-      <p class="dropzone">{t('WOF.Sheet.drop.talents')}</p>
+      {#if view.statsEditable}<p class="dropzone">{t('WOF.Sheet.drop.talents')}</p>{/if}
     </div>
 
     <div class="box">
       <Sec n="4" title={t('WOF.Sheet.soldier.enlistment')} />
       <dl class="facts">
         <dt>{t('WOF.Actor.Soldier.FIELDS.drive.label')}</dt>
-        <dd class="drive"><input type="text" value={s.drive} disabled={ro} onchange={(e) => setField(actor, 'system.drive', e.currentTarget.value)} /></dd>
+        <dd class="drive"><input type="text" value={s.drive} disabled={roStats} onchange={(e) => setField(actor, 'system.drive', e.currentTarget.value)} /></dd>
         <dt>{t('WOF.Actor.Soldier.FIELDS.drive_named_comrade.label')}</dt>
-        <dd><input type="text" value={s.drive_named_comrade} disabled={ro} onchange={(e) => setField(actor, 'system.drive_named_comrade', e.currentTarget.value)} /></dd>
+        <dd><input type="text" value={s.drive_named_comrade} disabled={roStats} onchange={(e) => setField(actor, 'system.drive_named_comrade', e.currentTarget.value)} /></dd>
         <dt>{t('WOF.Sheet.soldier.driveUsed')}</dt>
         <dd>
           <input

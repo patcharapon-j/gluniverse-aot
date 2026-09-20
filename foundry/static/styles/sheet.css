@@ -650,7 +650,7 @@
   .wof-sheet { --gl: 28px; --gr: 10px; }
   .wof-sheet .hdr { grid-template-columns: 64px minmax(0, 1fr); }
   .wof-sheet .plate { width: 64px; height: 84px; padding: 3px 3px 12px; }
-  .wof-sheet .crest { display: none; }
+  .wof-sheet .crest .emblem { display: none; }
   .wof-sheet .rolls { grid-template-columns: minmax(0, 1fr); }
   .wof-sheet .tabs button .tl { display: none; }
   .wof-sheet .eyelet { display: none; }
@@ -665,7 +665,7 @@
 /* Compact cards: no binder eyelets, a narrower gutter */
 .wof-sheet.compact { --gl: 16px; --gr: 16px; }
 .wof-sheet.compact::after { display: none; }
-.wof-sheet.compact .hdr { grid-template-columns: 68px minmax(0, 1fr); }
+.wof-sheet.compact .hdr { grid-template-columns: 68px minmax(0, 1fr) auto; }
 .wof-sheet.compact .plate { width: 68px; height: 88px; padding: 3px 3px 13px; }
 .wof-sheet.compact input.name { font-size: var(--t-xl); }
 .wof-sheet .mini.tiny { min-height: 20px; padding: 0 6px; }
@@ -875,6 +875,8 @@
 .wof-sheet.slip-sheet .body { padding-top: var(--s4); }
 .wof-sheet .chips { display: flex; flex-wrap: wrap; gap: var(--s1); align-items: center; min-width: 0; }
 .wof-sheet .chip { display: inline-flex; align-items: center; gap: var(--s1); padding: 2px 6px; border: 1px solid var(--ink3); background: var(--paper-hi); font: var(--t-sm)/1.3 var(--fb); }
+.wof-sheet .chip.named { cursor: help; border-style: dashed; }
+.wof-sheet .chip.named:hover { border-style: solid; border-color: var(--red); }
 .wof-sheet .chip button { font: var(--t-xs)/1 var(--fl); color: var(--ink3); padding: 0 2px; }
 .wof-sheet .chip button:hover { color: var(--red); }
 .wof-sheet .chips .adder { margin: 0; flex: 1 1 160px; }
@@ -1057,3 +1059,98 @@
   .wof-sheet .body-vitals .stressv .vhead, .wof-sheet .body-vitals .stressv .vchips { grid-column: 1 / -1; }
   .wof-sheet .body-vitals .resolvev { margin: 6px 0; }
 }
+/* ══ Edit mode and Play mode, the plate, and the Token door ═════════════ */
+
+/* The running strip that marks a sheet open for amendment: one along the top edge, one along the
+   bottom, each two identical runs of the same line. The track slides exactly one run's width and
+   starts over, so the text never breaks; Reduced and Off motion leave it standing still. */
+.wof-sheet .editbar {
+  position: relative; z-index: 3; flex: 0 0 auto; height: 18px; display: flex; align-items: center; overflow: hidden;
+  background: linear-gradient(var(--red-hi), var(--red)); color: var(--paper-hi);
+  border-top: 1px solid var(--red-lo); border-bottom: 1px solid var(--red-lo);
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .22em; text-transform: uppercase;
+}
+.wof-sheet .editbar::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(135deg, rgba(0, 0, 0, .16) 0 6px, transparent 6px 12px);
+}
+.wof-sheet .ebtrack { display: flex; width: max-content; will-change: transform; }
+.wof-sheet .ebrun { display: flex; gap: var(--s6); padding-right: var(--s6); white-space: nowrap; }
+.wof-sheet[data-motion=full] .ebtrack { animation: wof-marquee 34s linear infinite; }
+.wof-sheet[data-motion=full] .editbar[data-edge=bottom] .ebtrack { animation-direction: reverse; }
+@keyframes wof-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Header controls: the mode switch and the Token door, above the crest. */
+.wof-sheet .hdr-acts { display: flex; align-items: center; justify-content: flex-end; gap: var(--s1); flex-wrap: wrap; }
+.wof-sheet .hdr-acts.col { flex-direction: column; align-items: flex-end; justify-content: center; }
+.wof-sheet .modesw, .wof-sheet .tokbtn { display: inline-flex; }
+.wof-sheet .modesw .mini, .wof-sheet .tokbtn .mini { box-shadow: none; }
+.wof-sheet .modesw .mini:hover:not(:disabled), .wof-sheet .tokbtn .mini:hover:not(:disabled) { transform: none; box-shadow: inset 0 0 0 1px var(--ink2); }
+.wof-sheet .modesw .mini + .mini, .wof-sheet .tokbtn .mini + .mini { margin-left: -1px; }
+.wof-sheet .mini.tiny i { font-size: 10px; }
+.wof-sheet .mini.tiny.icon { width: 20px; padding: 0; }
+
+/* The plate: the portrait is the button that changes it, with browse, upload and Token under it. */
+.wof-sheet .plate-img { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; }
+.wof-sheet .plate-img img { display: block; width: 100%; height: 100%; }
+.wof-sheet .plate-acts {
+  position: absolute; left: 0; right: 0; bottom: 14px; z-index: 2;
+  display: flex; justify-content: center; gap: 2px; padding: 2px 0;
+  background: linear-gradient(transparent, rgba(36, 31, 27, .78)); opacity: 0; transition: opacity .15s var(--ease);
+}
+.wof-sheet .plate:hover .plate-acts, .wof-sheet .plate:focus-within .plate-acts { opacity: 1; }
+.wof-sheet .pbtn { width: 20px; height: 18px; display: grid; place-items: center; color: var(--paper-hi); font-size: 11px; }
+.wof-sheet .pbtn:hover:not(:disabled) { color: var(--brass-hi); }
+.wof-sheet .pbtn:disabled { opacity: .5; }
+/* A file dragged over the plate is an image on its way in. */
+.wof-sheet .plate.over { outline: 2px dashed var(--red); outline-offset: 3px; }
+.wof-sheet .plate.over img { filter: sepia(.35) brightness(1.08); }
+.wof-sheet .plate.busy { opacity: .7; }
+
+/* ══ The hover card: a Talent or an action read in full ════════════════ */
+
+/* The cards of one window live at the end of the document, so the paper's own edges, its scrolling
+   panels and its container query cannot clip them. The layer passes the pointer through; each card
+   takes it, so a card can be read and the names in it followed. */
+.wof-cards { position: fixed; inset: 0; z-index: 100000; pointer-events: none; }
+.wof-cards .dt-card {
+  position: absolute; pointer-events: auto; width: max-content; max-width: 360px; max-height: 62vh; overflow: hidden;
+  padding: var(--s2) var(--s3) var(--s3);
+  background: radial-gradient(ellipse at 18% 0%, rgba(255, 255, 255, .55), transparent 55%), var(--paper);
+  border: 1px solid var(--ink); box-shadow: 3px 3px 0 rgba(36, 31, 27, .5), 0 20px 44px rgba(0, 0, 0, .45);
+  font: var(--t-base)/1.5 var(--fb); color: var(--ink); text-align: left;
+}
+.wof-cards .dt-card[data-depth="1"] { max-width: 320px; border-color: var(--brass-lo); box-shadow: 2px 2px 0 rgba(36, 31, 27, .45), 0 14px 32px rgba(0, 0, 0, .4); }
+.wof-cards .dt-card[data-depth="2"] { max-width: 300px; }
+.wof-cards .dt-card.blocked { border-color: var(--red-lo); }
+.wof-cards .dt-card * { box-sizing: border-box; }
+.wof-cards .dt-h { display: flex; align-items: center; gap: var(--s2); padding-bottom: var(--s1); border-bottom: 2px solid var(--ink); }
+.wof-cards .dt-ic { width: 28px; height: 28px; flex: 0 0 28px; border: 0; object-fit: contain; mix-blend-mode: multiply; }
+.wof-cards .dt-nm { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.wof-cards .dt-kicker { font: var(--t-xs)/1.2 var(--fl); letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+.wof-cards .dt-nm strong { font: 700 var(--t-lg)/1.15 var(--fd); }
+.wof-cards .dt-stamp {
+  flex: 0 0 auto; align-self: flex-start; padding: 2px 4px; transform: rotate(-2deg); white-space: nowrap;
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); border: 1px solid var(--ink2);
+}
+.wof-cards .dt-lead { margin: var(--s2) 0 0; }
+.wof-cards .dt-blocked { margin: var(--s2) 0 0; font-style: italic; color: var(--red); }
+.wof-cards .dt-sec { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: var(--s2); margin-top: var(--s2); padding-top: var(--s1); border-top: 1px solid var(--rule); }
+.wof-cards .dt-lbl { font: var(--t-xs)/1.5 var(--fl); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+.wof-cards .dt-lines { display: flex; flex-direction: column; gap: 2px; font-size: var(--t-sm); }
+.wof-cards .dt-refs { display: flex; flex-wrap: wrap; gap: var(--s1); }
+.wof-cards .dt-ref {
+  display: inline-flex; align-items: center; gap: 4px; width: auto; height: auto; margin: 0; padding: 1px 6px 1px 3px; cursor: help;
+  font: var(--t-sm)/1.4 var(--fb); color: var(--ink); background: linear-gradient(var(--paper-hi), var(--paper-lo));
+  border: 1px solid var(--ink2); border-radius: 0; box-shadow: 1.5px 1.5px 0 var(--ink);
+}
+.wof-cards .dt-ref img { width: 14px; height: 14px; flex: 0 0 14px; border: 0; object-fit: contain; mix-blend-mode: multiply; }
+.wof-cards .dt-ref em { margin-left: 4px; font: italic var(--t-xs)/1.4 var(--fb); color: var(--ink3); }
+.wof-cards .dt-ref:hover:not(.plain) { border-color: var(--red); box-shadow: 2.5px 2.5px 0 var(--ink); }
+.wof-cards .dt-ref.plain { cursor: default; box-shadow: none; opacity: .75; }
+.wof-cards .dt-ref:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.wof-cards .dt-foot { margin: var(--s2) 0 0; padding-top: var(--s1); border-top: 1px dashed var(--rule); font: italic var(--t-sm)/1.4 var(--fb); color: var(--ink3); }
+.wof-cards .dt-hint { margin: var(--s1) 0 0; font: var(--t-xs)/1.4 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+/* The card fades up as it opens, and holds still under Reduced and Off motion. */
+.wof-cards[data-motion=full] .dt-card { animation: wof-card-in .14s var(--ease) both; }
+@keyframes wof-card-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }

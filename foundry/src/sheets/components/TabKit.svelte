@@ -13,6 +13,8 @@
   const s = $derived(view.system);
   const d = $derived(view.derived);
   const ro = $derived(!view.editable);
+  /** A piece of gear's Gear Dice rating is what it is, not how worn it is: an Edit-mode field. */
+  const roStats = $derived(!view.statsEditable);
   const POSITIONS = ['distant', 'in-reach', 'on-body', 'blind-spot'];
 
   let ledgerEl: HTMLElement | undefined = $state();
@@ -123,7 +125,7 @@
               </span>
               <div class="opts" style="justify-content:flex-end">
                 <span class="lbl">{t('WOF.Item.Gear.FIELDS.rating.label')}</span>
-                <Stepper value={g.rating} min={1} max={3} label={t('WOF.Item.Gear.FIELDS.rating.label')} disabled={ro} onset={(n) => setRating(g, n)} />
+                <Stepper value={g.rating} min={1} max={3} label={t('WOF.Item.Gear.FIELDS.rating.label')} disabled={roStats} onset={(n) => setRating(g, n)} />
               </div>
             {:else}<span class="note">{t('WOF.Sheet.kit.unrated')}</span>{/if}
           </td>

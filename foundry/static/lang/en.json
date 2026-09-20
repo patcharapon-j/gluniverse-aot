@@ -1057,6 +1057,10 @@
       "examBoard": {
         "name": "The Graduation Exam board",
         "hint": "The D66 each Exam Stage was rolled on, one per Stage, so every Cadet takes the same Trial under the same condition."
+      },
+      "portraitFolder": {
+        "name": "Character image folder",
+        "hint": "Where images uploaded from a sheet’s plate are saved. Left empty, each world keeps its own folder."
       }
     },
     "Sheet": {
@@ -1372,6 +1376,77 @@
         "spend": "Spend 1 Momentum",
         "gain": "Gain 1 Momentum",
         "hint": "Capped by the Anchors left in the Titan Engagement."
+      },
+      "mode": {
+        "label": "Sheet mode",
+        "play": "Play",
+        "edit": "Edit",
+        "playTip": "Play mode: the file is closed for amendment. Health, stress, gas, blades, wounds, kit and notes still move; the character’s own stats do not.",
+        "editTip": "Edit mode: the file is open for amendment. Name, attributes, career, Talents and service record may be rewritten.",
+        "bannerLabel": "Edit mode: this file is open for amendment",
+        "bannerText": "Edit mode · file open for amendment · personnel division",
+        "dropLocked": "This sheet is in Play mode: switch it to Edit to set a {type}."
+      },
+      "portrait": {
+        "browse": "Browse for an image",
+        "upload": "Upload an image",
+        "uploadTip": "Upload an image from this computer, or drop one on the plate",
+        "uploaded": "Saved a new image for {name}.",
+        "tokenBrowse": "Browse for a Token image",
+        "tokenFromPortrait": "Use this portrait for the Token too",
+        "reset": "Back to the default image",
+        "notImage": "{name} is not an image.",
+        "noUpload": "You are not allowed to upload files. Ask the GM for file upload permission, or browse for an image already in the world.",
+        "uploadFailed": "The image could not be uploaded to {folder}.",
+        "studioMissing": "Phil’s Token Studio is not installed, so Foundry’s own Token sheet opens instead.",
+        "studioFailed": "Phil’s Token Studio could not be opened, so Foundry’s own Token sheet opens instead."
+      },
+      "token": {
+        "open": "Token Studio",
+        "tip": "Draw and save this actor’s Token in Phil’s Token Studio",
+        "tipFallback": "Edit this actor’s Token. Install Phil’s Token Studio to draw one here instead.",
+        "prototype": "Foundry’s prototype Token sheet"
+      },
+      "detail": {
+        "level": "Level {level} of {max}",
+        "upToLevel": "Up to level {max}",
+        "trigger": "When",
+        "effect": "Effect",
+        "names": "Names",
+        "namedBy": "Talents",
+        "limit": "Limit",
+        "spent": "Its use is spent.",
+        "ready": "Its use is ready.",
+        "taught": "Taught by",
+        "dice": "Dice",
+        "talentDice": "+{dice} Talent dice on the entries it names",
+        "requires": "Requires",
+        "needs": "Needs",
+        "gear": "Gear",
+        "help": "Help",
+        "sometimes": "Sometimes",
+        "refHint": "Rest on a name to read it.",
+        "stampDice": "{dice} dice",
+        "stampD6": "{dice}D6",
+        "poolAttribute": "{attr} {dice}",
+        "poolTalent": "{name} +{dice}",
+        "poolBonus": "Bonus Dice +{dice}",
+        "poolGear": "{name} {dice}",
+        "poolPenalty": "{source} −{dice}",
+        "poolStress": "Stress {dice}",
+        "conditionalTalent": "{name} +{dice}: {condition}",
+        "conditionalPenalty": "{source} −{dice}: {condition}",
+        "kind": {
+          "action": "Action",
+          "reaction": "Reaction",
+          "roll": "Roll",
+          "option": "Option",
+          "fixed-roll": "Fixed roll"
+        },
+        "withoutGear": {
+          "not_possible": "Without one of its gear items it cannot be taken.",
+          "attribute_alone": "Without one of its gear items it is rolled on the attribute alone: no Talent dice, no Gear Dice."
+        }
       }
     },
     "BodyPart": {
