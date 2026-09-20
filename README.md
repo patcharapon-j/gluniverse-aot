@@ -7,6 +7,7 @@ This repo holds the game and the two products built from it.
 | Folder | What it is |
 | --- | --- |
 | `docs/rules/` | The rulebook drafts |
+| `docs/oneshots/` | Ready-to-run one-shots, as single self-contained HTML files |
 | `data/` | Every table in the game as YAML, the single source for all numbers |
 | `site/` | The player-facing compendium website (Astro) |
 | `foundry/` | The Foundry VTT v14 system |
