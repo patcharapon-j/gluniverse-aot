@@ -15,7 +15,7 @@ stat_block:
     - specialty          # from the template
     - attributes         # from the template; never change (ADR-0011)
     - talent             # one dice Talent at level 1, from the template
-    - health             # derived as for a player character (data/character/attributes.yaml), kept as a row of boxes (data/harm/health.yaml); 3 or 4 on the templates
+    - health             # derived as for a player character (data/character/attributes.yaml), kept as a row of boxes (data/harm/health.yaml); 5 or 6 on the templates
     - health_lost        # Health lost to damage; boxes crossed off are the untreated entries in critical_injuries
     - resolve            # derived as for a player character, including Scars and Grief
     - stress             # starts at 0
@@ -189,7 +189,7 @@ promotion:
 # Key attribute 4, four other attributes 3, one attribute 2: 18 points, the total of a
 # player character before any Top 10 bonus: ADR-0014's Rookie attributes, as amended. The
 # slayer template's attributes are the reference Rookie's (Strength 4, Agility 3, Wits 2,
-# Health 4; OQ-58, OQ-70). The reference Rookie has Talent 1 in the Talent that names the Nape
+# Health 6; OQ-58, OQ-70). The reference Rookie has Talent 1 in the Talent that names the Nape
 # strike, the Body Part strike, Break Free, or Treat Injury (decision batch 2b). No other roll a
 # target measures carries Talent dice, including the dodge, Fly, Break Attention, Ride, and Read
 # (OQ-94). Health and Resolve are precalculated.
@@ -201,53 +201,53 @@ templates:
     specialty: slayer
     attributes: {strength: 4, agility: 3, wits: 2, perception: 3, instinct: 3, empathy: 3}
     talent: {id: clean-cut, level: 1}
-    health: 4
+    health: 6
     resolve: 3
   - id: flier
     specialty: flier
     attributes: {strength: 3, agility: 4, wits: 2, perception: 3, instinct: 3, empathy: 3}
     talent: {id: slip-away, level: 1}
-    health: 4
+    health: 6
     resolve: 3
   - id: hunter
     specialty: hunter
     attributes: {strength: 3, agility: 3, wits: 3, perception: 4, instinct: 3, empathy: 2}
     talent: {id: lure, level: 1}
-    health: 3
+    health: 5
     resolve: 3
   - id: tactician
     specialty: tactician
     attributes: {strength: 3, agility: 2, wits: 3, perception: 3, instinct: 4, empathy: 3}
     talent: {id: titan-reader, level: 1}
-    health: 3
+    health: 5
     resolve: 4
   - id: leader
     specialty: leader
     attributes: {strength: 3, agility: 2, wits: 3, perception: 3, instinct: 3, empathy: 4}
     talent: {id: steady-voice, level: 1}
-    health: 3
+    health: 5
     resolve: 4
   - id: medic
     specialty: medic
     attributes: {strength: 3, agility: 2, wits: 4, perception: 3, instinct: 3, empathy: 3}
     talent: {id: field-medicine, level: 1}
-    health: 3
+    health: 5
     resolve: 3
   - id: engineer
     specialty: engineer
     attributes: {strength: 3, agility: 3, wits: 4, perception: 3, instinct: 3, empathy: 2}
     talent: {id: gearwright, level: 1}
-    health: 3
+    health: 5
     resolve: 3
   - id: rider
     specialty: rider
     attributes: {strength: 3, agility: 4, wits: 2, perception: 3, instinct: 3, empathy: 3}
     talent: {id: horsemanship, level: 1}
-    health: 4
+    health: 6
     resolve: 3
   - id: brawler
     specialty: brawler
     attributes: {strength: 4, agility: 3, wits: 2, perception: 3, instinct: 3, empathy: 3}
     talent: {id: grip-breaker, level: 1}
-    health: 4
+    health: 6
     resolve: 3

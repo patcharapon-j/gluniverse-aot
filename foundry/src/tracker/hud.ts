@@ -1,9 +1,14 @@
 /**
  * Mounts the HUD strip once into Foundry's interface and keeps it between the scene navigation and
  * the sidebar (owner decision: content-sized, about 800 px, at most 860, never over the sidebar).
+ *
+ * The strip is also where the engagement's own values live rather than the tokens': the anchor plate
+ * naming the rating and its Anchor count (batch D), because the rating belongs to the engagement and
+ * not to any one soldier, and the Direct Control toggle of ADR-0028, GM only.
  */
 import { mount } from 'svelte';
 import { SYSTEM_ID } from '../config.ts';
+import { DIRECT_SETTING } from '../settings-menu.ts';
 import HudRoot from './components/Hud.svelte';
 import { onRefresh, tracker } from './state.svelte.ts';
 
@@ -34,6 +39,8 @@ export function mountHud(): void {
   const iface = document.getElementById('interface');
   if (!iface) return;
   tracker.folded = !!game.settings.get(SYSTEM_ID, 'hudFolded');
+  // Direct Control is remembered per GM client, so a GM who left it on finds it on (ADR-0028).
+  tracker.direct = !!game.user?.isGM && !!game.settings.get(SYSTEM_ID, DIRECT_SETTING);
   host = document.createElement('section');
   host.id = 'wof-hud-host';
   host.setAttribute('aria-label', game.i18n.localize('WOF.Tracker.title'));

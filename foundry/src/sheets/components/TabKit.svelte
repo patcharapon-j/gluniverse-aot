@@ -86,7 +86,7 @@
                   <label class="lbl">{t('WOF.Item.Gear.FIELDS.position.label')}
                     <select value={g.position.position ?? ''} disabled={ro} onchange={(e) => setItem(actor, g.id, { 'system.position.position': e.currentTarget.value || null })}>
                       <option value="">—</option>
-                      {#each POSITIONS as p (p)}<option value={p}>{t(`WOF.Position.${p}`)}</option>{/each}
+                      {#each POSITIONS as p (p)}<option value={p} title={t(`WOF.PositionTip.${p}`)}>{t(`WOF.Position.${p}`)}</option>{/each}
                     </select>
                   </label>
                   <label class="lbl">{t('WOF.Item.Gear.FIELDS.position.titan.label')}
@@ -224,7 +224,7 @@
           <div class="row">
             <input type="text" style="width:48px" value={p.titan} placeholder="A" aria-label={t('WOF.Actor.Base.FIELDS.positions.entries.element.titan.label')} disabled={ro} onchange={(e) => setListEntry(actor, 'positions.entries', i, { titan: e.currentTarget.value })} />
             <select value={p.position} aria-label={t('WOF.Actor.Base.FIELDS.positions.entries.element.position.label')} disabled={ro} onchange={(e) => setListEntry(actor, 'positions.entries', i, { position: e.currentTarget.value })}>
-              {#each POSITIONS as pos (pos)}<option value={pos}>{t(`WOF.Position.${pos}`)}</option>{/each}
+              {#each POSITIONS as pos (pos)}<option value={pos} title={t(`WOF.PositionTip.${pos}`)}>{t(`WOF.Position.${pos}`)}</option>{/each}
             </select>
             <button type="button" class="mini icon" disabled={ro} aria-label={t('WOF.Sheet.menu.remove')} onclick={() => removeListEntry(actor, 'positions.entries', i)}>✕</button>
           </div>
@@ -239,7 +239,7 @@
         <span class="lbl">{t('WOF.Actor.Base.FIELDS.left_at.position.label')}</span>
         <select value={s.left_at.position ?? ''} disabled={ro} onchange={(e) => setField(actor, 'system.left_at.position', e.currentTarget.value || null)}>
           <option value="">—</option>
-          {#each POSITIONS as pos (pos)}<option value={pos}>{t(`WOF.Position.${pos}`)}</option>{/each}
+          {#each POSITIONS as pos (pos)}<option value={pos} title={t(`WOF.PositionTip.${pos}`)}>{t(`WOF.Position.${pos}`)}</option>{/each}
         </select>
         <span class="lbl">{t('WOF.Actor.Base.FIELDS.left_at.titan.label')}</span>
         <input type="text" value={s.left_at.titan} disabled={ro} onchange={(e) => setField(actor, 'system.left_at.titan', e.currentTarget.value)} />

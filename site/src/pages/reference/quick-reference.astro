@@ -10,6 +10,7 @@ import HarmTrack from '~/components/HarmTrack.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import MindPaths from '~/components/MindPaths.astro';
 import PoolBuild from '~/components/PoolBuild.astro';
+import PositionShapes from '~/components/PositionShapes.astro';
 import PositionsMap from '~/components/PositionsMap.astro';
 import PushSteps from '~/components/PushSteps.astro';
 import RoundDiagram from '~/components/RoundDiagram.astro';
@@ -199,6 +200,13 @@ const SECTIONS = [
 
       <CoreTable table="positions" />
 
+      <RuleBox variant="stop" title="On Body is on it. Blind Spot is not." icon="ph:tree-evergreen">
+        <p><b>On Body</b> means hooked into the Titan or standing on it, anywhere but the Nape. <b>Blind Spot</b> means anchored to terrain behind it, a tree or a roof, out of its sight with its Nape in reach and <em>not touching it</em>.</p>
+        <p>So steam at a Regeneration fill burns the soldiers On Body and not the Nape strikers, a Jam does not drop a soldier standing on an Urban roof, and ground with nothing to anchor to has no Blind Spot at all.</p>
+      </RuleBox>
+
+      <PositionShapes fig="Fig. 6" />
+
       <CoreTable table="position-steps" />
 
       <ul>
@@ -207,6 +215,11 @@ const SECTIONS = [
         <li><b>Close to one, loose from the other.</b> Coming to On Body or Blind Spot on one makes any other's In Reach.</li>
         <li><b>A fall from the body</b> lands you In Reach. From further out, your Position holds.</li>
       </ul>
+
+      <Subsection title="What changes a Position" id="what-changes-a-position">
+        <p><b>An action never does.</b> Not the Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, or anything else you roll. Neither does a Titan turning its Attention on you. Only your own move, and this closed list.</p>
+        <CoreTable table="position-changes" />
+      </Subsection>
 
       <Subsection title="The Flight" id="the-flight">
         <ul>
@@ -236,6 +249,11 @@ const SECTIONS = [
 
       <MarginNote stamp="Read twice">The soldier holding a Titan's Attention cannot make a Nape strike against it. Somebody has to be the one it is looking at.</MarginNote>
 
+      <ul>
+        <li><b>Frenzy.</b> Every Focus Titan starts a fight at 0 and gains <b>1 at the end of each round, to a cap of 3</b>. It is added to its behavior roll, and every table runs from terrorising to killing, so <b>it gets worse the longer you take</b>. A result past the table's last entry reads as that entry.</li>
+        <li><b>It turns on whoever it can reach.</b> If the soldier holding its Attention is not standing where the rolled behavior works, it takes the next candidate down the ladder who is, and its Attention goes with them. Only with nobody reachable does the behavior fall back.</li>
+      </ul>
+
       <CoreTable table="attention-ladder" />
 
       <CoreTable table="attention-marks" />
@@ -246,6 +264,7 @@ const SECTIONS = [
         <ul>
           <li><b>A Body Part strike</b> adds each success to the part's count; at its Toughness the part moves one state toward Broken and the count resets.</li>
           <li><b>A Nape strike</b> needs Blind Spot, not holding its Attention, not Grabbed, working ODM Gear unless grounded, and no retreat. <b>Reach the Nape Depth and it dies; fall short and each success becomes 1 Opening.</b></li>
+        <li><b>The strike leaves you at Blind Spot.</b> Hooking in counts for the Attention Ladder only. Draw its Attention onto yourself and you cannot strike again until the Attention moves.</li>
           <li><b>Openings</b> wait for a comrade — <b>never for the soldier who made them</b> — at 1 Bonus Die each.</li>
           <li><b>A grounded Titan</b> gives Nape strikes 2 Bonus Dice, needs no working ODM Gear, and puts the close steps on foot.</li>
           <li><b>Regeneration</b> fills 1 a round. Full: Openings erased, counts to 0, the most damaged part one state toward Intact, steam on everyone On Body, clock empty.</li>
@@ -254,13 +273,13 @@ const SECTIONS = [
 
       <CoreTable table="steam" />
 
-      <GrabCountdown fig="Fig. 6" />
+      <GrabCountdown fig="Fig. 7" />
 
       <CoreTable table="grab-escapes" />
 
       <SectionHead id="harm" eyebrow="9">Harm, Down, and Death</SectionHead>
 
-      <HarmTrack fig="Fig. 7" />
+      <HarmTrack fig="Fig. 8" />
 
       <CoreTable table="harm-kinds" />
 
@@ -291,15 +310,15 @@ const SECTIONS = [
 
       <p>An item's <b>Gear Dice are its current rating</b>, one item per roll. <b>At 0 it counts as not had.</b></p>
 
-      <StepFlow id="fig-wear" fig="Fig. 8" title="From a Push to a Jam" steps={wearFlow()} />
+      <StepFlow id="fig-wear" fig="Fig. 9" title="From a Push to a Jam" steps={wearFlow()} />
 
-      <StepFlow id="fig-gas" fig="Fig. 9" title="The Gas Roll, and running dry" steps={gasRollFlow()} />
+      <StepFlow id="fig-gas" fig="Fig. 10" title="The Gas Roll, and running dry" steps={gasRollFlow()} />
 
       <MarginNote stamp="Read twice">Dry is not Jammed. Dry, the harness is whole, one canister fixes it, and it never drops you. Jammed, only a repair or a new harness will do, and it drops you out of the air.</MarginNote>
 
       <CoreTable table="gear-items" />
 
-      <StepFlow id="fig-fall" fig="Fig. 10" title="A fall, band to landing" steps={fallFlow()} />
+      <StepFlow id="fig-fall" fig="Fig. 11" title="A fall, band to landing" steps={fallFlow()} />
 
       <CoreTable table="fall-bands" />
 
@@ -311,7 +330,7 @@ const SECTIONS = [
 
       <p><b>Engaged</b> or <b>Apart</b>, held separately for each Foe, and only a move changes it. A Skirmish has no Positions, no Anchor Rating, no ODM move, and nobody airborne.</p>
 
-      <StepFlow id="fig-skirmish-attack" fig="Fig. 11" title="An attack and its answer" steps={attackSteps()} />
+      <StepFlow id="fig-skirmish-attack" fig="Fig. 12" title="An attack and its answer" steps={attackSteps()} />
 
       <ul>
         <li><b>Block</b> (Strength, Blade Set) answers a Fight attack only. <b>Dodge</b> (Agility, ODM or horse) answers a Fight attack or a shot.</li>

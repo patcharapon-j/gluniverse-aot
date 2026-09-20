@@ -6,6 +6,7 @@
 import { actorPool } from './actor-pool.ts';
 import { answer, behaviorNoDice, behaviorRoll, cover, currentPushBlock, dodge, foeReact, gasFromFear, gallows, opsAction, push, pushBlockText, shrug } from './card-actions.ts';
 import { renderCard, type Card, type CardViewer } from './card.ts';
+import { pressPrompt } from './prompt.ts';
 import { armCard, CardMotion, cardSignature, playCard, whenShown } from './card-motion.ts';
 import { cardOf, ownSoldiers, readyTalent, t } from './post.ts';
 
@@ -36,6 +37,8 @@ function viewerFor(message: any, card: Card): CardViewer {
   }
   if (card.kind === 'table' && actor?.type === 'soldier') v.drive = !actor.system.drive_used_this_session;
   if (card.kind === 'foe-attack') v.canDodge = !!card.target && !!actorSync(card.target.actor)?.isOwner;
+  // A prompt card: only the named soldier's owner (and the GM) sees that row's button.
+  if (card.kind === 'prompt') v.promptOwn = card.entries.filter((e) => !!actorSync(e.actor)?.isOwner).map((e) => e.actor);
   if (card.kind === 'attack') {
     const mine = ownSoldiers();
     const targeted = card.targets.map((x) => x.actor);
@@ -58,6 +61,8 @@ const ACTIONS: Record<string, (m: any, button: HTMLButtonElement) => unknown> = 
   behaviorRoll,
   behaviorNoDice,
   gas: gasFromFear,
+  promptRoll: (m, b) => pressPrompt(m, Number(b.dataset.i ?? 0), false),
+  promptForThem: (m, b) => pressPrompt(m, Number(b.dataset.i ?? 0), true),
 };
 
 export function registerChat(): void {

@@ -8,7 +8,7 @@
   import { tick as settle } from 'svelte';
   import { fx, pulse } from '../../motion/fx.ts';
   import { MOTION } from '../../motion/tokens.ts';
-  import { act, pickCard, tracker } from '../state.svelte.ts';
+  import { act, pickCard, setDirect, tracker } from '../state.svelte.ts';
   import { swapReason, type Cell, type SoldierRow } from '../view.ts';
   import Clock from './Clock.svelte';
 
@@ -32,14 +32,29 @@
     });
   }
 
-  function move(to: string, way: string, carry = 0, charge = false) {
+  /** Direct Control is the GM's own client stepping over the rules checks (ADR-0028). */
+  const direct = $derived(isGM && tracker.direct);
+
+  function move(to: string, way: string, carry = 0, charge = false, force = false) {
     if (!menu) return;
     const { row, cell } = menu;
     menu = null;
-    void act('move', { soldier: row.id, key: cell.key, to, way, carry, charge }).then(() => {
+    void act('move', { soldier: row.id, key: cell.key, to, way, carry, charge, force }).then(() => {
       pulse(host?.querySelector(`[data-cell="${row.id}-${cell.key}"]`), MOTION.colors.notice);
     });
   }
+
+  /** One direct setter, run and the menu left open so the GM can set several things at once. */
+  function set(op: string, data: Record<string, unknown> = {}) {
+    if (!menu) return;
+    const { row, cell } = menu;
+    void act('direct', { op, soldier: row.id, key: cell.key, ...data }).then(() => {
+      pulse(host?.querySelector(`[data-cell="${row.id}-${cell.key}"]`), MOTION.colors.notice);
+    });
+  }
+
+  /** The Titan the open cell names, for the Openings setter and the Frenzy readout. */
+  const menuTitan = $derived(menu ? (v?.titans.find((x) => x.key === menu!.cell.key) ?? null) : null);
 
   function menuKey(e: KeyboardEvent) {
     const items = [...(host?.querySelectorAll<HTMLButtonElement>('.pop button:not(:disabled)') ?? [])];
@@ -72,7 +87,7 @@
 
 <svelte:window onclick={(e) => { if (menu && !(e.target as HTMLElement).closest('.pop, .pc')) menu = null; }} />
 
-<div class="wof-board" bind:this={host}>
+<div class="wof-board" class:direct bind:this={host}>
   {#if v || isGM}
   <div class="tabs" role="tablist" aria-label={t('board.kind')}>
     <button role="tab" type="button" aria-selected={v?.mode !== 'skirmish'} disabled={!!v && v.mode !== 'titan'} onclick={() => !v && act('setup', { mode: 'titan' })}><span class="n">A</span><span>{t('board.tabTitan')}</span></button>
@@ -113,9 +128,16 @@
         <div class="bsteps">
           {#each v.steps as s (s.id)}<span class="st {s.state}">{s.label}</span>{/each}
           <span class="sp"></span>
+          {#if isGM}
+            <!-- ADR-0028: automation assists the GM and never blocks them. The board is drawn
+                 visibly differently while this is on, so a player-facing table does not drift into
+                 it by habit. -->
+            <button type="button" class="directbtn" class:on={tracker.direct} aria-pressed={tracker.direct} title={t('direct.hint')} onclick={() => setDirect(!tracker.direct)}>{t('direct.toggle')}</button>
+          {/if}
           {#if v.canEnd}<button type="button" class="mini" onclick={() => act('end')}>{t('act.end')}</button>{/if}
           {#if v.primary}<button type="button" class="mini red" onclick={() => act(v.primary!.action)}>{v.primary.label}</button>{/if}
         </div>
+        {#if direct}<p class="directbar">{t('direct.banner')}</p>{/if}
         {#if v.ending.met}<p class="lognote red">{v.ending.text}</p>{/if}
 
         <h3 class="sec"><span class="n">§1</span>{v.mode === 'titan' ? t('board.matrix') : t('board.engaged')}<span class="hint">{v.mode === 'titan' ? t('board.matrixHint') : t('board.engagedHint')}</span></h3>
@@ -166,13 +188,16 @@
                   {#if v.mode === 'titan'}
                     {#each r.cells as c (c.key)}
                       <td>
-                        <button type="button" class="pc {c.colour}" class:close={c.close} class:grab={c.grab} class:none={!c.position} data-cell="{r.id}-{c.key}" disabled={c.grab && !isGM} aria-haspopup="menu" title={c.grab ? t('board.grabbedCell', { label: c.label }) : ''} aria-label="{r.name}, {c.label}: {c.text}" onclick={(e) => openMenu(e, r, c)}>
-                          {#if c.icon}<img src={c.icon} alt="" />{/if}<span>{c.text}{#if c.grab}<br />{t('grabbed')}{/if}</span>
+                        <button type="button" class="pc {c.colour}" class:close={c.close} class:grab={c.grab} class:none={!c.position} data-cell="{r.id}-{c.key}" disabled={c.grab && !isGM} aria-haspopup="menu" title={c.grab ? t('board.grabbedCell', { label: c.label }) : c.position ? t(`posTip.${c.position}`) : ''} aria-label="{r.name}, {c.label}: {c.text}" onclick={(e) => openMenu(e, r, c)}>
+                          {#if c.icon}<img src={c.icon} alt="" />{/if}<span>{c.text}{#if c.grab}<br />{t('grabbed')}{/if}</span>{#if c.hooked}<i class="hk" title={t('flag.hookedTip')} aria-label={t('flag.hookedTip')}>⌇</i>{/if}
                         </button>
                       </td>
                     {/each}
                     <td><span class="pips gas" title={t('board.gasTitle', { n: r.gas, of: r.gasMax })}>{#each pips(r.gas, r.gasMax) as on, k (k)}<i class:on></i>{/each}</span>{#if r.odm}<small class="odm" title={t('board.odmUsed')}>{t('board.odmShort')}</small>{/if}</td>
-                    <td><b title={t('momentum', { n: r.momentum, cap: r.momentumCap })}>{r.momentum}<small> {t('of')} {r.momentumCap}</small></b></td>
+                    <td>
+                      <span class="pips mo" title={t('momentum', { n: r.momentum, cap: r.momentumCap })} aria-label={t('momentum', { n: r.momentum, cap: r.momentumCap })}>{#each pips(r.momentum, r.momentumCap) as on, k (k)}<i class:on class:over={k >= r.momentumCap}></i>{/each}</span>
+                      <b class="mov">{r.momentum}<small> {t('of')} {r.momentumCap}</small></b>
+                    </td>
                   {:else}
                     {#each v.foes as f (f.id)}
                       {@const e = r.engaged.includes(f.id)}
@@ -261,6 +286,16 @@
                     {#if ti.flags}<span class="note">{ti.flags}</span>{/if}
                   </div>
                   <div class="cell">
+                    <!-- Frenzy rises 1 a round to its cap and is added to the behavior roll: the
+                         longer the fight runs, the worse the Titan gets (round 3, decision 12). -->
+                    <span class="lbl">{t('frenzy')}</span>
+                    <span class="frz big" title={ti.frenzyTitle} aria-label={ti.frenzyTitle}>
+                      {#each Array.from({ length: ti.frenzyCap }) as _, k (k)}<i class:on={k < ti.frenzy}></i>{/each}
+                      <b>+{ti.frenzy}</b>
+                    </span>
+                    <span class="note">{t('frenzyNote')}</span>
+                  </div>
+                  <div class="cell">
                     <span class="lbl">{t('board.regen')}</span>
                     <div class="clk"><Clock segments={ti.regen.length} filled={ti.regen.filled} tone={ti.colour === 'B' ? 'blue' : 'red'} unknown={ti.regen.hidden} label={t('board.regen')} /><span class="v">{ti.regen.filled}<small>{ti.regen.hidden ? '' : ` ${t('of')} ${ti.regen.length}`}</small></span></div>
                   </div>
@@ -316,10 +351,12 @@
       <div class="checks" class:closing={v.closing}>
         <div class="ttl"><span class="lbl">{v.closing ? t('board.engagementEnd') : t('board.roundEnd')}</span><strong>{t('board.checklist')}</strong><span class="note">{v.step === 'end' || v.closing ? (v.allStamped ? t('board.allStamped') : t('board.inOrder')) : t('board.afterLast')}</span></div>
         {#each v.checks as ck (ck.index)}
-          <div class="ck" class:done={ck.state === 'done' || ck.state === 'skipped'} class:next={ck.next}>
-            <span class="box">{ck.state === 'done' ? '✓' : ck.state === 'skipped' ? '–' : ck.index + 1}</span>
+          <div class="ck" class:done={ck.state === 'done' || ck.state === 'skipped'} class:next={ck.next} class:waiting={ck.waiting}>
+            <span class="box">{ck.state === 'done' ? '✓' : ck.state === 'skipped' ? '–' : ck.waiting ? '…' : ck.index + 1}</span>
             <strong>{ck.label}</strong>
             <span class="det" title={ck.lines.join(' ') || ck.detail}>{ck.lines.length ? ck.lines.join(' ') : ck.detail}</span>
+            <!-- A step out to a player's client is waiting, not stalled and not done (batch C). -->
+            {#if ck.waiting}<em class="wait">{t('check.waitingOn')}</em>{/if}
             {#if ck.canRun}
               <span class="ckacts">
                 {#if ck.off}<em class="note">{t('board.notApplied')}</em>{/if}
@@ -337,11 +374,12 @@
   {/if}
 
   {#if menu}
-    <div class="pop" role="menu" tabindex="-1" style="left:{menu.x}px;top:{menu.y}px" onkeydown={menuKey}>
+    <div class="pop" class:direct role="menu" tabindex="-1" style="left:{menu.x}px;top:{menu.y}px" onkeydown={menuKey}>
       <div class="pk">{t('board.menuTitle', { name: menu.row.name, label: menu.cell.label })}</div>
+      <!-- The legal path stays the default and stays first, so the system still teaches the rules. -->
       {#each menu.cell.options as o (o.to)}
         <div class="popt" class:current={o.current}>
-          <span class="pn"><img src={o.icon} alt="" />{o.label}</span>
+          <span class="pn" title={t(`posTip.${o.to}`)}><img src={o.icon} alt="" />{o.label}</span>
           {#if o.current}<em class="note">{t('board.current')}</em>{#if o.charge}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, 'mounted', 0, true)}>{t('move.chargeAct')}</button>{/if}
           {:else}
             {#each o.ways as w (w.kind)}
@@ -350,12 +388,62 @@
             {/each}
             {#if o.block}<em class="note">{o.block}</em>{/if}
             {#if isGM}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, 'rule')}>{t('move.byRule')}</button>{/if}
+            <!-- Direct Control: every Position, with no step check, no anchor check and no Grabbed
+                 check. The request carries `force` (ADR-0028). -->
+            {#if direct}<button type="button" role="menuitem" class="force" onclick={() => move(o.to, 'rule', 0, false, true)}>{t('direct.setPosition')}</button>{/if}
           {/if}
         </div>
       {/each}
       {#if !menu.cell.corpse}
         {#if !menu.cell.letGo}<button type="button" role="menuitem" onclick={() => menu && move('in-reach', 'letGo')}>{t('move.letGo')}</button>{/if}
         {#if !menu.cell.loud && v?.step === 'play'}<button type="button" role="menuitem" onclick={() => { const m = menu!; menu = null; void act('loud', { soldier: m.row.id, key: m.cell.key }); }}>{t('act.drawAttention')}</button>{/if}
+      {/if}
+
+      <!-- The shape of the Position map, read off the current Anchor Rating's own step rows, drawn
+           where the choice is made (ASSESSMENT item 11). Open has no Blind Spot while the Titan
+           stands; Sparse is a chain; Wooded, Urban and Giant Forest branch. -->
+      <div class="pmap">
+        <span class="pmh">{t('board.stepsHere', { anchor: v?.anchor ?? '' })}</span>
+        {#each menu.cell.steps as st, k (k)}
+          <span class="pstep" class:here={st.here}>{st.fromLabel} <i aria-hidden="true">—</i> {st.toLabel}<small>{st.ways}</small></span>
+        {:else}
+          <em class="note">{t('board.noSteps')}</em>
+        {/each}
+        <span class="pmn">{t('board.blindSpotNote')}</span>
+      </div>
+
+      {#if direct}
+        <!-- The second section: the direct setters the rules do not otherwise expose. Visually
+             distinct and below the legal options (ADR-0028). -->
+        <div class="pdirect">
+          <span class="pmh">{t('direct.section')}</span>
+          <div class="drow">
+            <button type="button" role="menuitem" aria-pressed={menu.cell.grab} onclick={() => set('grabbed', { on: !menu!.cell.grab })}>{t('direct.grabbed')}<small>{menu.cell.grab ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitem" aria-pressed={menu.cell.attention} onclick={() => set('attention', { on: !menu!.cell.attention })}>{t('direct.attention')}<small>{menu.cell.attention ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitem" aria-pressed={menu.cell.flagLoud} onclick={() => set('loud', { on: !menu!.cell.flagLoud })}>{t('direct.loud')}<small>{menu.cell.flagLoud ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitem" aria-pressed={menu.row.pinned} onclick={() => set('pinned', { on: !menu!.row.pinned })}>{t('direct.pinned')}<small>{menu.row.pinned ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitem" aria-pressed={menu.row.airborne} onclick={() => set('airborne', { on: !menu!.row.airborne })}>{t('direct.airborne')}<small>{menu.row.airborne ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitem" aria-pressed={menu.row.spent} onclick={() => set('spent', { on: !menu!.row.spent })}>{t('direct.spent')}<small>{menu.row.spent ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitem" aria-pressed={!menu.row.left} onclick={() => set('in-out', { in: menu!.row.left })}>{t('direct.inOut')}<small>{menu.row.left ? t('direct.out') : t('direct.in')}</small></button>
+          </div>
+          <div class="drow steps">
+            <span class="dlbl">{t('direct.momentum')}</span>
+            <button type="button" role="menuitem" aria-label={t('direct.less')} onclick={() => set('momentum', { value: Math.max(0, menu!.row.momentum - 1) })}>−</button>
+            <b>{menu.row.momentum}</b>
+            <button type="button" role="menuitem" aria-label={t('direct.more')} onclick={() => set('momentum', { value: menu!.row.momentum + 1 })}>+</button>
+            <span class="dlbl">{t('direct.openings')}</span>
+            <button type="button" role="menuitem" aria-label={t('direct.less')} onclick={() => set('openings', { value: Math.max(0, (menuTitan?.openings.length ?? 0) - 1) })}>−</button>
+            <b>{menuTitan?.openings.length ?? 0}</b>
+            <button type="button" role="menuitem" aria-label={t('direct.more')} onclick={() => set('openings', { value: (menuTitan?.openings.length ?? 0) + 1 })}>+</button>
+          </div>
+          <label class="drow">
+            <span class="dlbl">{t('direct.anchor')}</span>
+            <select value={v?.anchorId ?? ''} onchange={(e) => set('anchor', { rating: e.currentTarget.value })}>
+              {#each v?.ratings ?? [] as r (r.id)}<option value={r.id}>{r.name} ({r.anchors})</option>{/each}
+            </select>
+          </label>
+          <em class="note">{t('direct.logged')}</em>
+        </div>
       {/if}
     </div>
   {/if}

@@ -7,7 +7,7 @@ id: titan-format
 name: Titan Stat Blocks and Behavior Tables
 chapter: 05-titan-engagement
 adrs: [ADR-0001, ADR-0005, ADR-0007, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
-decided: [OQ-78, OQ-80, OQ-82, OQ-137, OQ-145]
+decided: [OQ-78, OQ-80, OQ-82, OQ-137, OQ-145, OQ-192, OQ-193]
 
 # ------------------------------------------------------------------ stat block
 stat_block:
@@ -38,9 +38,40 @@ stat_block:
     An Abnormal's stat block lists every field in full. Values that differ from its Size Class row
     are allowed only there.
 
+# ------------------------------------------------------------------ Frenzy (decision batch 13, 13-10; OQ-193)
+# A counter every Focus Titan carries. It is not a stat block field: it is not authored, it is not
+# read by a Read, and no Titan in data/titans/ lists it.
+frenzy:
+  what: A whole number each Focus Titan holds, from 0 to its cap.
+  cap: 3
+  starts_at: 0   # when the Titan becomes a Focus Titan, including the first Focus Titan of a Titan Engagement
+  rises: >-
+    By 1 at the frenzy end step of each round, for every living Focus Titan, never above the cap
+    (data/engagement/round.yaml, end_steps, frenzy). It never falls.
+  public: true   # it is on the GM's tracker (data/engagement/round.yaml, gm_tracker, focus_titan_row)
+  used_by: >-
+    The behavior roll, and nothing else (behavior_table, roll; data/engagement/behavior-procedure.yaml,
+    next_behavior, roll). Frenzy adds no dice, changes no Attack Dice, no need, and no effect, and it
+    moves no soldier (data/engagement/positions.yaml, changes_to_position, not_changed_by).
+  corpse: A corpse holds no Frenzy, as it holds nothing else (data/engagement/positions.yaml, corpse, nothing_else).
+  background_titan: >-
+    A Background Titan holds no Frenzy. It starts at 0 when the Titan becomes a Focus Titan, however
+    late in the Titan Engagement that is (data/engagement/background-titans.yaml).
+  gm: >-
+    none (ADR-0024, limit 8). The GM never raises, lowers, or spends Frenzy, and never re-rolls a
+    behavior roll it fed. It rises only at the end step.
+  why: >-
+    Every Behavior Table is ordered terrorize to kill by result (behavior_table, escalation), so
+    adding Frenzy walks a Titan up its own table as the fight drags: it postures in round 1 and is
+    trying to kill by round 3. A Squad that kills fast sees little of it.
+
 # ------------------------------------------------------------------ Behavior Table
 behavior_table:
-  roll: D6
+  roll: D6 plus the Titan's Frenzy (frenzy)
+  result_above_the_table: >-
+    A total above the table's highest result reads as that highest result, which is 6, since every
+    result from 1 to 6 belongs to exactly one entry (rows). So a Titan at Frenzy 3 rolling 5 reads 6
+    and takes the entry that holds result 6.
   rows: >-
     Every result from 1 to 6 belongs to exactly one entry. An entry may cover more than one result,
     but all of an entry's results lie within one tier's pair (escalation), so an entry has exactly
@@ -51,7 +82,9 @@ behavior_table:
   thrash: >-
     Every table has exactly one Thrash entry, with results [] and tier thrash. It is never rolled.
     It is what the table falls back to when no other entry can happen
-    (data/engagement/behavior-procedure.yaml).
+    (data/engagement/behavior-procedure.yaml). Since decision batch 13 (13-9; OQ-192) a Titan whose
+    Attention holder cannot meet a rolled entry's position_requirement retargets down the Attention
+    Ladder first, so a table falls back only when no soldier in the Titan Engagement meets it.
 
 # ------------------------------------------------------------------ Titan Dice
 # The die kind an entry's attack_dice are rolled with (ADR-0019; decision batch 8, 8-1; OQ-145).
@@ -80,15 +113,22 @@ titan_dice:
 entry_fields:
   id: The entry's id, unique in its table.
   name: The entry's name.
-  results: The D6 results that give this entry. [] for Thrash.
+  results: >-
+    The behavior roll's totals that give this entry, from 1 to 6. The roll is D6 plus the Titan's
+    Frenzy, and a total above 6 reads as 6 (behavior_table, roll, result_above_the_table). [] for
+    Thrash.
   tier: terrorize, control, kill, or thrash.
   targets: >-
     holder: only the soldier who holds the Titan's Attention. holder-and-position: that soldier and
     every other soldier who holds the same Position relative to the Titan, except a soldier who is
-    Grabbed.
+    Grabbed. Both are read from the Attention holder as the card's choose step leaves them, so an
+    entry that retargeted reads the soldier it retargeted onto (data/engagement/attention.yaml,
+    evaluation, retargeting).
   position_requirement: >-
     The Positions the Attention holder must hold relative to the Titan for the entry to happen.
-    Listing all four means any Position.
+    Listing all four means any Position. When the holder does not, the Titan retargets down the
+    Attention Ladder over the candidates who do, and falls back only when none does
+    (data/engagement/behavior-procedure.yaml, resolving_a_card, choose; decision batch 13, 13-9).
   # an entry a grounded Titan must not resolve lists leg twice (decision batch 4, OQ-109)
   body_parts_used: >-
     A list of Body Part kinds. The entry can happen only while, for each listed kind, the Titan
@@ -101,8 +141,10 @@ entry_fields:
     lists it. An entry whose only effect is telegraph lists none and rolls nothing (ADR-0019).
   effects: A list of effects from effect_types, applied in order to each target on which the behavior lands.
   fallback: >-
-    The id of another entry in the same table that happens instead when the Attention holder does
-    not meet position_requirement, or thrash. Thrash's own fallback is none.
+    The id of another entry in the same table that happens instead when no candidate for the Titan
+    meets position_requirement, or thrash. Thrash's own fallback is none. Since decision batch 13
+    (13-9; OQ-192) the fallback is reached only after retargeting has found nobody, so no table
+    needs re-authoring for it and every fallback value stands as written.
   text: >-
     What the soldiers see. Flavour only: no procedure step reads it (ADR-0024). It names none of the
     Titan's own Body Parts of a kind the entry does not list in body_parts_used (added for Chapter 6,

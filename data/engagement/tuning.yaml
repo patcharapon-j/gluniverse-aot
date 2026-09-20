@@ -8,7 +8,7 @@ id: tuning
 name: Chapter 5 Tuning Figures and Simulator Starting Values
 chapter: 05-titan-engagement
 adrs: [ADR-0014, ADR-0015, ADR-0019]
-decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127, OQ-145, OQ-187]
+decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127, OQ-145, OQ-187, OQ-190, OQ-192, OQ-193]
 
 # The probe figures below were measured with each Behavior Table entry's fixed need of dodge successes,
 # before Attack Dice replaced it at 3 dice per point (decision batch 8, 8-1), and stand as that record.
@@ -36,6 +36,21 @@ decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127
 # third, where today's rule reads 17.8% at rating 3 and 26.3% at the rating 2 it replaces; the rerun
 # must confirm that on the full model, and must re-read the reference builds, whose Rookie now
 # carries ODM Gear 3 (ADR-0014, builds).
+
+# Decision batch 13 (OQ-190, OQ-192, OQ-193) changed Health and what a Titan does with its card.
+# Health is now 2 + (strength + agility) / 2, rounded up, so the reference builds read Rookie 6,
+# Veteran 6, and Levi-grade 7, and a built soldier's Health runs 4 to 6 rather than 2 to 4 (builds,
+# below, carries the new values). A Titan whose Attention holder cannot meet the rolled entry's
+# Position requirement now retargets down the Attention Ladder instead of falling to Thrash, and each
+# Focus Titan carries Frenzy, rising 1 a round to a cap of 3 and added to its behavior roll.
+# EVERY FIGURE IN THIS FILE AND IN docs/reviews/simulator-report.md IS STALE UNTIL THAT RERUN, which
+# is the same rerun batches 10 and 11 schedule. It is a retune, and it measures batches A and F
+# together: Health pulls every lethality band down and the behavior fixes put lethality back through
+# what the monster does rather than through its dice. It must answer: the Expedition PC Critical
+# Injury and PC death targets, and every Critical Injury and deaths band of Chapter 6; the share of a
+# Titan's cards that resolve Thrash, before and after retargeting; the Frenzy rate and cap, which are
+# starting values the simulator moves; and the health_reports rows, whose reachable Health values are
+# now 4 to 8 rather than 2 to 6.
 
 # ------------------------------------------------------------------ starting values
 starting_values:
@@ -200,7 +215,7 @@ probes:
 builds:
   rookie:
     attributes: {strength: 4, agility: 3, wits: 2, every_other_attribute: 3}
-    health: 4
+    health: 6   # 4 before decision batch 13 (13-1; OQ-190)
     resolve: 3
     scars: 0
     minimum_stress: 0
@@ -209,7 +224,7 @@ builds:
     talent_level: 1
   veteran:
     attributes: {strength: 5, agility: 3, wits: 2, every_other_attribute: 3}
-    health: 4
+    health: 6   # 4 before decision batch 13 (13-1; OQ-190)
     resolve: 5
     scars: 2
     minimum_stress: 2
@@ -218,7 +233,7 @@ builds:
     talent_level: 2
   levi_grade:
     attributes: {strength: 6, agility: 4, every_other_attribute: 4}
-    health: 5
+    health: 7   # 5 before decision batch 13 (13-1; OQ-190)
     resolve: 4
     scars: 0
     minimum_stress: 0
@@ -1087,7 +1102,7 @@ simulator_cases:
   - The targets as amended, each judged Met or Missed against its tolerance with the second-seed rule for a figure past an edge by at most 2 standard errors (OQ-127), namely the lone Rookie's 8% to 14% band on the fresh cut and the Levi-grade soldier's about 50% (OQ-79), with the in-fight lone cut and the Stress it is made at reported beside them and the lone fight at Tempo 1 and 2 on the waiting and hurried lines with Change Canister and Field Repair (solo_nape, lone_fight), and comrades close as one comrade in reach with the reference Squad's Grab death share reported (OQ-95).
   - Eyes and arm Toughness for every Size Class, Large against the PC Critical Injury and PC death targets, and Medium at Tempo 2 and the other rejected alternatives as sensitivity rows (OQ-78).
   - The Jam test inside the full-fight model, with helpers' cards, Positions, and actions deciding who can Help and Cover (OQ-96).
-  - The reports ADR-0014 names, namely the Health 3 Squad, the Health 2, 5, and 6 builds, the template Squad, and the Flier template's dodge.
+  - The reports ADR-0014 names, namely the lowered-Health Squad (each soldier at Health 5, one below the Rookie's) and the Health 4, 7, and 8 builds, the template Squad, and the Flier template's dodge (ADR-0014, as amended in decision batch 13; the rows read Health 3 and the Health 2, 5, and 6 builds before it).
   - Round-time counters (tracker writes, ladder evaluations, pools, dodges, Fear Rolls, and Gas Rolls per round) for one and for two Focus Titans, beside the timed paper test (data/engagement/round.yaml, round_time; OQ-97).
   - Each Behavior Table's kill share by previous behavior and by Broken parts (data/engagement/behavior-procedure.yaml, move_up_shares; OQ-80).
   - The gap between these probes and the Opus review 1 model on the prepared-Squad kill (OQ-78).

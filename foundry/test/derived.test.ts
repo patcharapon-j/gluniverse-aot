@@ -32,16 +32,22 @@ describe('Health and Resolve (data/character/attributes.yaml)', () => {
 
   it('matches the reported Free Build Squads', () => {
     const built = (tables.attributes as any).creation.built.free_build;
-    for (const squad of [built.reported_squad, built.reported_squad_health_2]) {
+    for (const squad of [built.reported_squad, built.reported_squad_fragile]) {
       expect(health(squad.attributes)).toBe(squad.health);
       expect(resolve(squad.attributes, 0, 0)).toBe(squad.resolve);
     }
   });
 
-  it('rounds Health up', () => {
-    expect(health({ strength: 4, agility: 3 })).toBe(4);
-    expect(health({ strength: 2, agility: 2 })).toBe(2);
-    expect(health({ strength: 6, agility: 5 })).toBe(6);
+  // Round 3, decision 1: Health is 2 + (strength + agility) / 2, rounded up, so it runs 4 to 8.
+  it('adds 2 and rounds Health up, over the whole range', () => {
+    expect(health({ strength: 2, agility: 2 })).toBe(4);
+    expect(health({ strength: 4, agility: 3 })).toBe(6);
+    expect(health({ strength: 6, agility: 5 })).toBe(8);
+    // The odd sums round up, and the two ends of the attribute scale are the two ends of Health.
+    expect(health({ strength: 2, agility: 3 })).toBe(5);
+    expect(health({ strength: 4, agility: 4 })).toBe(6);
+    expect(health({ strength: 5, agility: 6 })).toBe(8);
+    expect(health({ strength: 6, agility: 6 })).toBe(8);
   });
 
   it('adds 1 per Scar and removes 1 per Grief, counting at most 3 Grief', () => {
@@ -168,11 +174,11 @@ describe('deriveSoldier', () => {
       horse: null,
     });
     expect(d).toMatchObject({
-      health: 4,
+      health: 6,
       resolve: 3,
       minimum_stress: 1,
       stress_effective: 3,
-      current_health: 3,
+      current_health: 5,
       down_by_rule: false,
       carrying_limit: 8,
       items_carried: 4,

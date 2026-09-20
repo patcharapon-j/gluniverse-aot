@@ -7,7 +7,7 @@ id: titan-tuning
 name: Chapter 6 Tuning Targets and Verdicts
 chapter: 06-standard-titans
 adrs: [ADR-0014, ADR-0015, ADR-0019]
-decided: [OQ-78, OQ-79, OQ-80, OQ-95, OQ-96, OQ-98, OQ-101, OQ-102, OQ-103, OQ-104, OQ-107, OQ-109, OQ-113, OQ-126, OQ-127, OQ-145]   # Chapter 5's values and readings, applied here; Chapter 6's entries (decision batch 4)
+decided: [OQ-78, OQ-79, OQ-80, OQ-95, OQ-96, OQ-98, OQ-101, OQ-102, OQ-103, OQ-104, OQ-107, OQ-109, OQ-113, OQ-126, OQ-127, OQ-145, OQ-190, OQ-192, OQ-193]   # Chapter 5's values and readings, applied here; Chapter 6's entries (decision batch 4)
 
 starting_values: >-
   Chapter 6 changes no Size Class value. Every number in a standard Titan's stat block is Chapter 5's
@@ -15,6 +15,18 @@ starting_values: >-
   starting_values). What Chapter 6 adds and tunes is each Behavior Table, and the Abnormal's values,
   which are reported and not tuned. The Phase 1 simulator re-measures all of them
   (data/engagement/tuning.yaml, simulator_cases; cases below).
+
+# Decision batch 13 (OQ-190, OQ-192, OQ-193): Health becomes 2 + (strength + agility) / 2, rounded
+# up, so every soldier carries two more boxes; a Titan whose Attention holder cannot meet the rolled
+# entry's Position requirement retargets down the Attention Ladder rather than falling to Thrash; and
+# each Focus Titan carries Frenzy, rising 1 at each round end to a cap of 3 and added to its behavior
+# roll, with a total above the table's highest result reading as that result. No Behavior Table in
+# data/titans/ is re-authored for any of it. EVERY FIGURE AND VERDICT IN THIS FILE, IN
+# data/titans/probe-figures.yaml, AND IN docs/reviews/simulator-report.md IS STALE UNTIL THE RERUN,
+# which is the same rerun batches 10 and 11 schedule and which measures batches A and F together:
+# Health pulls every Critical Injury and deaths band down and the two behavior fixes put lethality
+# back through what the monster does rather than through its dice. Each table's kill share by
+# previous behavior and by Broken parts is re-read under the Frenzy roll and the retarget.
 
 # ------------------------------------------------------------------ the probes
 probes:

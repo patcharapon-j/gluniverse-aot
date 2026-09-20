@@ -1061,6 +1061,14 @@
       "portraitFolder": {
         "name": "Character image folder",
         "hint": "Where images uploaded from a sheet’s plate are saved. Left empty, each world keeps its own folder."
+      },
+      "promptTimeout": {
+        "name": "Prompt timeout",
+        "hint": "Off by default: a live table waits for the player, and the GM’s “roll it for them” control is the escape hatch. Switch it on for an asynchronous table and an unanswered prompt card is rolled after the wait below."
+      },
+      "promptTimeoutSeconds": {
+        "name": "Prompt timeout, seconds",
+        "hint": "How long an unanswered prompt card waits before it is rolled. Only used while the prompt timeout is on. 60 seconds by default."
       }
     },
     "Sheet": {
@@ -1327,7 +1335,7 @@
       },
       "wounds": {
         "healthHint": "Down at 0",
-        "healthFormula": "ceil((Str <b>{str}</b> + Agi <b>{agi}</b>) / 2) = <b>{health}</b>",
+        "healthFormula": "2 + ceil((Str <b>{str}</b> + Agi <b>{agi}</b>) / 2) = <b>{health}</b>",
         "current": "Current Health {current} of {health}; {crossed} crossed off",
         "injuries": "Critical Injuries",
         "injuriesHint": "{held} held, {untreated} untreated",
@@ -2352,6 +2360,9 @@
       "titan": "Titan",
       "corpse": "Corpse",
       "tempo": "Tempo {n}",
+      "frenzy": "Frenzy",
+      "frenzyTitle": "Frenzy {n} of {cap}: added to its behavior roll",
+      "frenzyNote": "Rises 1 at each round end, to 3. Added to the behavior roll.",
       "of": "of",
       "none": "none",
       "used": "used",
@@ -2446,7 +2457,8 @@
       "flag": {
         "hurt": "just hurt: {name}",
         "loud": "loudest: {name}",
-        "hooked": "hooked: {name}"
+        "hooked": "hooked: {name}",
+        "hookedTip": "Hooked by a Nape strike: an Attention fact, not a Position. The striker is still at Blind Spot and meets the Attention Ladder’s first rung."
       },
       "cue": {
         "swap": "Swap step. Pick two soldiers' cards to swap: same Position or one step apart, not Down or Grabbed, one swap each.",
@@ -2474,6 +2486,12 @@
         "blind-spot": "Blind Spot",
         "none": "No Position",
         "noneDead": "No Position"
+      },
+      "posTip": {
+        "distant": "Distant: out of the Titan’s reach, and it out of yours.",
+        "in-reach": "In Reach: close enough to be struck, and to strike its legs.",
+        "on-body": "On Body: literally on the Titan, hooked into or standing on its body, anywhere but the Nape. It carries you with it.",
+        "blind-spot": "Blind Spot: anchored to terrain behind the Titan — a tree or a roof — out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
       },
       "stamp": {
         "dead": "Dead",
@@ -2643,7 +2661,8 @@
           "momentum": "Everyone who made no ODM move loses all their Momentum"
         },
         "momentum": "Momentum",
-        "momentumDue": "Losing it all: {who}"
+        "momentumDue": "Losing it all: {who}",
+        "waitingOn": "Waiting on a player"
       },
       "end": {
         "gasFor": "Gas Rolls for {who}.",
@@ -2772,8 +2791,8 @@
         "refused": "Not applied: {why}",
         "ignored": "The tracker ignored a card from {name}: {why}",
         "spent": "Openings spent: {n}.",
-        "kill": "{name} kills Titan {label}.",
-        "short": "{name} falls short. Openings left on {label}: {n}.",
+        "kill": "{name} kills Titan {label}, from Blind Spot.",
+        "short": "{name} falls short. Openings left on {label}: {n}. Still at Blind Spot, and now counts as hooked in: hooking in is an Attention fact, not a move, and holding its Attention locks them out of striking again.",
         "part": "{name}: {state}, count {count}.",
         "openings": "Openings made: {n}.",
         "grounded": "Titan {label} is grounded.",
@@ -2887,10 +2906,38 @@
         "done": "Done",
         "skipped": "Skipped",
         "menuTitle": "{name} toward {label}",
+        "stepsHere": "The steps this terrain allows ({anchor})",
+        "noSteps": "No step joins any two Positions here.",
+        "blindSpotNote": "Blind Spot is terrain behind the Titan, not a place on it. On Body is on it.",
         "current": "Here now",
         "engagementEnd": "Engagement end",
         "manual": "The table resolves this step; stamp it when done.",
         "momentum": "Mom."
+      },
+      "direct": {
+        "toggle": "Direct Control",
+        "hint": "ADR-0028: automation assists the GM and never blocks them. While it is on, every cell menu offers every value rather than only the legal ones, and the direct setters are offered under them. GM only.",
+        "banner": "Direct Control is on: the rules checks are stepped over, and every override is logged and can be undone.",
+        "section": "Direct Control — the GM’s own setters",
+        "setPosition": "Set directly",
+        "grabbed": "Grabbed",
+        "pinned": "Pinned",
+        "attention": "Attention",
+        "loud": "Loudest flag",
+        "airborne": "Airborne",
+        "spent": "Turn spent",
+        "inOut": "In the engagement",
+        "momentum": "Momentum",
+        "openings": "Openings",
+        "anchor": "Anchor Rating",
+        "more": "Raise",
+        "less": "Lower",
+        "on": "on",
+        "off": "off",
+        "in": "in",
+        "out": "out",
+        "logged": "Every override is written to the tracker note as a GM ruling, and Undo still works.",
+        "missing": "This build has no direct setter for {op}."
       },
       "setup": {
         "titleTitan": "Begin a Titan Engagement",
@@ -2968,6 +3015,12 @@
       "brace": "Brace: 1 Bonus Die on your next dodge this round.",
       "quiet": "Quiet: nothing you do this turn marks you loudest.",
       "clean-line": "Clean line: you make no Gas Roll this round."
+    },
+    "PositionTip": {
+      "distant": "Distant: out of the Titan’s reach, and it out of yours.",
+      "in-reach": "In Reach: close enough to be struck, and to strike its legs.",
+      "on-body": "On Body: literally on the Titan, hooked into or standing on its body, anywhere but the Nape. It carries you with it.",
+      "blind-spot": "Blind Spot: anchored to terrain behind the Titan — a tree or a roof — out of its sight with its Nape within reach. You are not on it. Steam at a Regeneration fill does not reach you, and a Titan that strides away leaves you behind."
     }
   }
 }

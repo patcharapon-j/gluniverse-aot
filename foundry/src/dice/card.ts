@@ -7,6 +7,7 @@
  */
 import { actionIcon, entryIcon, iconPath } from '../art.ts';
 import { faceLabel, kindPreset } from './kinds.ts';
+import type { PromptAsk, PromptEntry } from './prompt-state.ts';
 import { attackResult, finalSuccesses, rawSuccesses, undoButton, type DiceFaces, type DieKind, type Op } from '../rules/roll.ts';
 
 export const FLAG = 'card';
@@ -210,7 +211,33 @@ export interface FoeAttackCard extends CardBase {
   reactions: { actor: string; name: string; successes: number; message: string }[];
 }
 
-export type Card = ActionCard | TableCard | GasCard | AttackCard | BehaviorCard | CallCard | LifepathCard | FoeAttackCard;
+/**
+ * A prompt card (ADR-0026 as amended, batch C): what is happening, why, and to whom, with a button
+ * per soldier that only that soldier's owner (and the GM) may press. A fixed prompt's button rolls
+ * its die where it is pressed; an action prompt's button opens the ordinary roll dialog. The GM's
+ * "roll it for them" sits beside every unanswered button, so a prompt never blocks the table.
+ */
+export interface PromptCard extends CardBase {
+  kind: 'prompt';
+  ask: PromptAsk;
+  /** A fixed roll takes no Push, Help or Stress Dice; an action roll opens the dialog. */
+  mode: 'fixed' | 'action';
+  /** The engagement the answer is applied to. */
+  combat: string;
+  /** The one line of what is happening, and the cause under it. */
+  title: string;
+  cause: string;
+  /** What the button throws, named for the table it is read on. */
+  rolls: string;
+  entries: PromptEntry[];
+  /** What the GM's client needs to work each answer out. Written by the card's author, never by an answer. */
+  data: Record<string, unknown>;
+  /** When unanswered buttons roll themselves (the optional timeout setting), or null: the default is to wait. */
+  due: number | null;
+  closed: boolean;
+}
+
+export type Card = ActionCard | TableCard | GasCard | AttackCard | BehaviorCard | CallCard | LifepathCard | FoeAttackCard | PromptCard;
 
 /** What the viewer may do on this card, decided by the chat code from permissions. */
 export interface CardViewer {
@@ -230,6 +257,8 @@ export interface CardViewer {
   pushBlock: string | null;
   /** The reason text is informative (Stress 1, Down, all 6s) rather than a silent end. */
   showBlock: boolean;
+  /** A prompt card: the actor uuids this viewer owns, so only their own buttons are live. */
+  promptOwn?: string[];
 }
 
 type T = (key: string, data?: Record<string, unknown>) => string;
@@ -580,6 +609,42 @@ function lifepathCard(t: T, c: LifepathCard, v: CardViewer): string {
 </div>`;
 }
 
+/**
+ * The prompt card: the header says what is happening, the cause says why, and each row names one
+ * soldier, what is at stake for them, and their button. A row already answered shows what it gave.
+ */
+function promptCard(t: T, c: PromptCard, v: CardViewer): string {
+  const own = new Set(v.promptOwn ?? []);
+  const waiting = c.entries.filter((e) => e.state !== 'done').length;
+  const rows = c.entries
+    .map((e, i) => {
+      const faces = e.faces.map((f) => dieIcon(t, 'base', f, { plain: true })).join('');
+      if (e.state === 'done') {
+        const by = e.by && e.by !== 'owner' ? `<span class="flag">${esc(t(`WOF.Prompt.by.${e.by}`))}</span>` : '';
+        return `<li class="done"><b>${esc(e.name)}</b><span class="fx">${faces}${esc(e.line)}</span>${by}</li>`;
+      }
+      const mine = own.has(e.actor);
+      const label = c.mode === 'action' ? t('WOF.Prompt.roll') : t('WOF.Prompt.rollFixed', { rolls: c.rolls });
+      const own_ = mine && !c.closed ? `<button class="mini red" type="button" data-wof-act="promptRoll" data-i="${i}">${esc(label)}</button>` : '';
+      const gm = v.isGM && !c.closed ? `<button class="mini" type="button" data-wof-act="promptForThem" data-i="${i}">${esc(t('WOF.Prompt.forThem'))}</button>` : '';
+      const waitingFor = own_ || gm ? '' : `<span class="fx">${esc(t(e.state === 'claimed' ? 'WOF.Prompt.rolling' : 'WOF.Prompt.waitingFor', { name: e.name }))}</span>`;
+      return `<li><b>${esc(e.name)}</b><span class="fx">${esc(e.detail)}</span>${waitingFor}${own_}${gm}</li>`;
+    })
+    .join('');
+  const note = c.closed
+    ? `<p class="block-why quiet">${esc(t('WOF.Prompt.closed'))}</p>`
+    : waiting
+      ? `<p class="block-why quiet">${esc(c.due ? t('WOF.Prompt.dueNote', { n: waiting }) : t('WOF.Prompt.waitNote', { n: waiting }))}</p>`
+      : '';
+  const flag = `<span class="flag">${esc(t(`WOF.Prompt.ask.${c.ask}`))}</span>`;
+  return `${header(t, { img: c.img, name: c.title, time: c.time, who: c.actorName }, '', v.isGM, flag)}
+<div class="rc-b">
+  <p class="stakes"><b>${esc(t('WOF.Prompt.cause'))}</b>${esc(c.cause)}</p>
+  <ul class="prompt-rows">${rows}</ul>
+  ${note}
+</div>`;
+}
+
 export function renderCard(t: T, c: Card, v: CardViewer, deathRows: { id: string; min: number | null; max: number | null }[] = []): string {
   const body =
     c.kind === 'lifepath'
@@ -596,8 +661,10 @@ export function renderCard(t: T, c: Card, v: CardViewer, deathRows: { id: string
               ? behaviorCard(t, c, v)
               : c.kind === 'foe-attack'
                 ? foeAttackCard(t, c, v)
-                : callCard(t, c, v);
-  const titanic = c.kind === 'attack' || c.kind === 'foe-attack' || c.kind === 'behavior';
+                : c.kind === 'prompt'
+                  ? promptCard(t, c, v)
+                  : callCard(t, c, v);
+  const titanic = c.kind === 'attack' || c.kind === 'foe-attack' || c.kind === 'behavior' || (c.kind === 'prompt' && c.ask !== 'flight');
   return `<article class="wof-card rc${titanic ? ' titanic' : ''}${c.kind === 'behavior' ? ' gm-only' : ''}" data-kind="${c.kind}">${body}</article>`;
 }
 
@@ -620,5 +687,7 @@ export function plainSummary(c: Card): string {
       return `${c.actorName}: ${c.title}, ${c.big} ${c.text}`;
     case 'foe-attack':
       return `${c.actorName}: ${c.weapon}, ${c.severity}`;
+    case 'prompt':
+      return `${c.title}: ${c.entries.map((e) => `${e.name}${e.line ? ` ${e.line}` : ''}`).join(', ')}`;
   }
 }

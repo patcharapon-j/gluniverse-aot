@@ -207,6 +207,10 @@ export function defineActorModels() {
         next_behavior: new f.SchemaField({ entry: k.str(), revealed: k.bool() }),
         // behavior-procedure.yaml, next_behavior.previous_behavior: the next roll skips it
         previous_behavior: k.str(),
+        // Frenzy: 0 while a Focus Titan enters, 1 more at each round end to the cap of 3
+        // (rules/engagement/cards.ts, FRENZY_CAP), added to the behavior roll. Unbounded in the
+        // field so a GM may set any value (ADR-0028); the rules do the capping.
+        frenzy: k.nonNeg(),
         attention_holder: k.str(),
         focus_titan_label: k.str(),
         hidden_until_read: new f.SchemaField({

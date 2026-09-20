@@ -6,6 +6,7 @@
 import { SYSTEM_ID } from '../config.ts';
 import { FLAG, type Card } from '../dice/card.ts';
 import { cardAction } from '../dice/apply.ts';
+import { promptOpsOf } from '../dice/prompt.ts';
 import { revertValue, type TrackerOp } from '../rules/engagement/round.ts';
 
 const src = (doc: any, path: string) => foundry.utils.deepClone(foundry.utils.getProperty(doc._source ?? doc, path));
@@ -88,6 +89,9 @@ export async function revertOps(ops: readonly TrackerOp[]): Promise<string[]> {
       const message = game.messages.get(op.id);
       const card = message?.getFlag(SYSTEM_ID, FLAG) as Card | undefined;
       if (card?.ops?.some((o) => o.state === 'done')) await cardAction(card.ops, 'undo', message.id);
+      // A prompt card carries the ops of every answer it has had (src/dice/prompt.ts): the step
+      // that posted it takes those back first, so a half-answered prompt undoes cleanly.
+      kept.push(...(await revertOps(promptOpsOf(message))));
       if (message) await message.delete();
     }
   }

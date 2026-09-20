@@ -393,3 +393,82 @@ body.wof-hud-on #ui-middle #ui-top { padding-top: var(--wof-hud-h, 0); }
 .wof-setup .row2 { display: flex; gap: 4px; align-items: center; }
 .wof-setup .row2 select { flex: 1; min-width: 0; }
 .wof-setup .bglist { display: flex; flex-direction: column; gap: 4px; }
+
+/* ---------------------------------------------------------------- round 3: the new readouts */
+/* Momentum on the matrix: a pip track filled to the Momentum held and outlined to the cap, so the
+   cap the Anchors give reads at a glance (anchor-ratings.yaml, momentum). The tokens carry the same
+   track (src/tracker/badges.ts). */
+.wof-board-app .pips.mo i { width: 7px; height: 12px; border-color: var(--brass-lo); border-radius: 1px; }
+.wof-board-app .pips.mo i.on { background: radial-gradient(circle at 34% 28%, #f3dc9f, var(--brass) 55%, var(--brass-lo)); border-color: var(--brass-lo); }
+.wof-board-app .pips.mo i.over { border-style: dashed; opacity: .5; }
+.wof-board .mov { display: block; font: 700 var(--t-xs)/1.2 var(--fl); color: var(--ink3); }
+.wof-board .mov small { color: var(--ink3); }
+
+/* The hooked-by-strike flag on a Position cell: an Attention fact, not a Position (batch A9). */
+.wof-board .pc .hk { margin-left: auto; font-style: normal; font: 700 var(--t-md)/1 var(--fd); color: var(--brass-lo); }
+.wof-board .pc.grab .hk { color: var(--paper-hi); }
+
+/* Frenzy: a small rising track, read by the table as much as by the GM. */
+.wof-board .frz, .wof-hud .frz { display: inline-flex; align-items: center; gap: 3px; }
+.wof-board .frz i, .wof-hud .frz i { width: 8px; height: 14px; display: block; border: 1.5px solid var(--red-lo); background: var(--paper-hi); transform: skewX(-8deg); }
+.wof-board .frz i.on, .wof-hud .frz i.on { background: linear-gradient(160deg, var(--red-hi), var(--red) 60%, var(--red-lo)); }
+.wof-board .frz b { font: 900 var(--t-lg)/1 var(--fd); color: var(--red); margin-left: 2px; }
+.wof-hud .frz { grid-column: 1 / -1; }
+.wof-hud .frz i { width: 6px; height: 10px; border-color: rgba(226, 192, 120, .5); background: none; }
+.wof-hud .frz i.on { background: var(--red); border-color: var(--red); }
+.wof-hud .frz b { font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: #bfae8c; margin-right: 2px; }
+
+/* The anchor plate on the strip: the rating and its Anchor count belong to the engagement, so they
+   are read once here and not on every token (batch D). */
+.wof-hud .anchorplate { display: flex; flex-direction: column; gap: 1px; padding: 2px 5px; border: 1px solid rgba(226, 192, 120, .45); background: rgba(20, 16, 12, .45); }
+.wof-hud .anchorplate b { font: 700 var(--t-sm)/1 var(--fd); color: var(--paper-hi); }
+.wof-hud .anchorplate span { font: var(--t-xs)/1 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: #bfae8c; }
+.wof-hud .anchorplate small { color: #8e7f66; }
+
+/* A round-end step waiting on a player: waiting, not stalled and not done (batch C). */
+.wof-board .ck.waiting { border-style: solid; border-color: var(--brass-lo); background: rgba(185, 146, 74, .12); opacity: 1; }
+.wof-board .ck.waiting .box { border-color: var(--brass-lo); color: var(--brass-lo); }
+.wof-board .ck .wait { grid-column: 2; font: var(--t-xs)/1.3 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: #7a5812; font-style: normal; }
+.wof-board .ck .wait::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 5px; border-radius: 50%; background: var(--brass); animation: wof-wait 1.4s ease-in-out infinite; }
+@keyframes wof-wait { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .wof-board .ck .wait::after { animation: none; opacity: .8; } }
+
+/* The Position map in the move menu: the steps the current terrain allows, read off its own rows. */
+.wof-board .pop .pmap { border-top: 1px solid var(--ink2); margin-top: 2px; padding: 4px 4px 2px; display: flex; flex-direction: column; gap: 2px; }
+.wof-board .pop .pmh { font: var(--t-xs)/1.2 var(--fl); letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
+.wof-board .pop .pstep { display: flex; align-items: baseline; gap: 4px; font: var(--t-xs)/1.4 var(--fb); color: var(--ink3); }
+.wof-board .pop .pstep i { font-style: normal; color: var(--ink3); }
+.wof-board .pop .pstep small { margin-left: auto; font: var(--t-xs)/1.4 var(--fl); letter-spacing: .04em; color: var(--ink3); }
+.wof-board .pop .pstep.here { color: var(--ink); font-weight: 700; }
+.wof-board .pop .pstep.here i { color: var(--red); }
+.wof-board .pop .pmn { font: italic var(--t-xs)/1.3 var(--fb); color: var(--ink3); margin-top: 2px; }
+
+/* ---------------------------------------------------------------- Direct Control (ADR-0028) */
+/* The legal path stays first and stays the default; the override is the second section, and the
+   board is drawn visibly differently while it is on, so a player-facing table does not drift into
+   using it by habit. */
+.wof-hud .directbtn, .wof-board .directbtn {
+  margin: 0; padding: 0 6px; width: auto; min-height: 20px; border-radius: 0; cursor: pointer;
+  border: 1px dashed var(--brass-lo); background: none; color: #bfae8c;
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase;
+}
+.wof-board .directbtn { border-color: var(--ink3); color: var(--ink3); }
+.wof-hud .directbtn:hover, .wof-board .directbtn:hover { background: rgba(185, 146, 74, .16); }
+.wof-hud .directbtn.on, .wof-board .directbtn.on { border-style: solid; border-color: #b0842f; background: repeating-linear-gradient(-45deg, rgba(176, 132, 47, .5) 0 6px, rgba(36, 31, 27, .5) 6px 12px); color: var(--paper-hi); }
+.wof-hud.direct .hud-in { box-shadow: inset 0 0 0 2px #b0842f, 0 6px 16px rgba(0, 0, 0, .5); }
+.wof-board.direct .paper { background-image: repeating-linear-gradient(-45deg, rgba(176, 132, 47, .09) 0 12px, transparent 12px 24px); }
+.wof-board.direct .page.left, .wof-board.direct .page.right { box-shadow: inset 0 0 0 2px #b0842f; }
+.wof-board .directbar { margin: 0 0 var(--s2); padding: 3px var(--s2); border-left: 4px solid #b0842f; background: rgba(176, 132, 47, .14); font: var(--t-xs)/1.4 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: #6b4f16; }
+.wof-board .pop.direct { border-color: #b0842f; box-shadow: 3px 3px 0 #6b4f16, 0 10px 24px rgba(0, 0, 0, .35); }
+.wof-board .pop button.force { border-style: dashed; border-color: #b0842f; color: #6b4f16; }
+.wof-board .pop .pdirect { margin: 3px -4px -4px; padding: 4px 6px 6px; display: flex; flex-direction: column; gap: 3px; border-top: 2px solid #b0842f; background: repeating-linear-gradient(-45deg, rgba(176, 132, 47, .08) 0 8px, transparent 8px 16px), var(--paper); }
+.wof-board .pop .pdirect .pmh { color: #6b4f16; }
+.wof-board .pop .drow { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; }
+.wof-board .pop .drow button { flex: 0 1 auto; gap: 3px; }
+.wof-board .pop .drow button[aria-pressed="true"] { background: var(--ink); color: var(--paper-hi); border-color: var(--ink); }
+.wof-board .pop .drow button[aria-pressed="true"] small { color: var(--paper-lo); }
+.wof-board .pop .drow.steps button { min-width: 20px; justify-content: center; }
+.wof-board .pop .drow b { font: 900 var(--t-md)/1 var(--fd); min-width: 14px; text-align: center; }
+.wof-board .pop .dlbl { font: var(--t-xs)/1.2 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+.wof-board .pop .drow select { flex: 1; min-width: 0; height: 20px; font: var(--t-xs) var(--fl); }
+.wof-board .pop .pdirect .note { font: italic var(--t-xs)/1.3 var(--fb); color: var(--ink3); }

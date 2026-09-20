@@ -5,9 +5,9 @@
  */
 import { iconPath } from '../art.ts';
 import { evaluateLadder } from '../rules/engagement/attention.ts';
-import { tieCard } from '../rules/engagement/cards.ts';
+import { FRENZY_CAP, tieCard } from '../rules/engagement/cards.ts';
 import { grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
-import { comparisonLabel, isClose, leaveBlock, letGoBlock, moveOptions, returnBlock, stepsApart, stepRows } from '../rules/engagement/positions.ts';
+import { comparisonLabel, isClose, leaveBlock, letGoBlock, moveOptions, returnBlock, stepsApart, stepRows, waysOf } from '../rules/engagement/positions.ts';
 import { chargeBlock, chargeDoubleStep, momentumCap } from '../rules/engagement/momentum.ts';
 import { checksOf, endComplete, isManual, nextCheck, stayLimitLeft, stepsOf, wingsEditable, type EndEntry } from '../rules/engagement/round.ts';
 import { foeTurn } from '../rules/engagement/skirmish.ts';
@@ -64,6 +64,18 @@ export interface PosOption {
   block: string | null;
 }
 
+/** One step of the Anchor Rating's Position map, drawn in the move menu (anchor-ratings.yaml, steps). */
+export interface StepLine {
+  from: Position;
+  to: Position;
+  fromLabel: string;
+  toLabel: string;
+  /** The kinds of move that can make it, already named ("On foot", "Mounted", "ODM"). */
+  ways: string;
+  /** The step the soldier stands on one end of. */
+  here: boolean;
+}
+
 export interface Cell {
   key: string;
   label: string;
@@ -77,6 +89,18 @@ export interface Cell {
   options: PosOption[];
   letGo: string | null;
   loud: string | null;
+  /** The striker carries this Titan's hooked-by-strike flag (attention.yaml, flags; batch A9). */
+  hooked: boolean;
+  /** The soldier holds this Titan's Attention. */
+  attention: boolean;
+  /** The soldier is this Titan's loudest, or has just hurt it. */
+  flagLoud: boolean;
+  flagHurt: boolean;
+  /**
+   * Every step the current terrain allows relative to this body, so the shape of the Position map is
+   * visible where the choice is made (ASSESSMENT item 11, the fix, point 5).
+   */
+  steps: StepLine[];
 }
 
 export interface SoldierRow {
@@ -106,6 +130,11 @@ export interface SoldierRow {
   odm: boolean;
   engaged: string[];
   holds: string | null;
+  /** Read by the GM's Direct Control section (ADR-0028): what the direct setters would change. */
+  pinned: boolean;
+  airborne: boolean;
+  /** The soldier's move is spent this round (blade-sets.yaml, swap). */
+  spent: boolean;
 }
 
 export interface TitanView {
@@ -130,6 +159,14 @@ export interface TitanView {
   parts: { id: string; short: string; icon: string; state: number; letter: string; count: number; title: string }[];
   openings: { initial: string; name: string }[];
   openingsBy: string;
+  /**
+   * Frenzy (round 3, decision 12): it starts at 0, rises 1 at each round end to FRENZY_CAP, and is
+   * added to the behavior roll, so the longer the fight runs the worse the Titan gets. Public: it is
+   * the clock that tells the Squad to finish it.
+   */
+  frenzy: number;
+  frenzyCap: number;
+  frenzyTitle: string;
   flags: string;
   regen: { length: number; filled: number; hidden: boolean };
   heave: string;
@@ -151,6 +188,11 @@ export interface CheckView {
   canUndo: boolean;
   /** The table resolves it; the GM stamps it. */
   manual: boolean;
+  /**
+   * The step is under way and waiting on someone (batch C: a prompt card out to a player's client).
+   * A waiting row says so rather than looking stalled or done.
+   */
+  waiting: boolean;
 }
 
 export interface FoeView {
@@ -175,6 +217,9 @@ export interface TrackerView {
   round: number;
   title: string;
   anchor: string;
+  /** The rating's own id, and every rating the GM's Direct Control can set it to mid-fight. */
+  anchorId: string;
+  ratings: { id: string; name: string; anchors: number }[];
   steps: { id: string; label: string; short: string; state: string }[];
   primary: { action: string; label: string } | null;
   hint: string;
@@ -335,6 +380,9 @@ export function buildView(): TrackerView | null {
       odm: sys.odmUsed.includes(id),
       engaged: (sys.skirmish.engaged as any[]).filter((e) => e.soldier === id).map((e) => e.foe),
       holds: (sys.skirmish.holds as any[]).find((h) => h.soldier === id)?.foe ?? null,
+      pinned: !!s.pinned,
+      airborne: s.airborne,
+      spent: (sys.movesSpent as string[]).includes(id),
     };
   });
 
@@ -362,6 +410,9 @@ export function buildView(): TrackerView | null {
       manual: isManual(e.check),
       canRun: endFree && index === nc,
       canUndo: endFree && e.state === 'done',
+      // A step under way is waiting on someone: a prompt card out to a player's client, or the roll
+      // the GM has yet to make. The row says so rather than looking stalled or done (batch C).
+      waiting: checking && index === nc && endLock.held(combat.id),
     };
   });
   const allStamped = checking && endComplete(roundCore(combat));
@@ -474,6 +525,8 @@ export function buildView(): TrackerView | null {
     round: combat.round,
     title: snap.mode === 'titan' ? tr('board.titleTitan', { n: combat.round }) : tr('board.titleSkirmish', { n: combat.round }),
     anchor: rating?.name ?? '',
+    anchorId: rating?.id ?? '',
+    ratings: E().ratings.map((r: any) => ({ id: r.id, name: r.name, anchors: r.anchors })),
     steps,
     primary,
     hint,
@@ -542,6 +595,26 @@ export function swapReason(a: string, b: string): string | null {
   return tr(`swap.${why.key}`, { name: why.who ?? '' });
 }
 
+/**
+ * The steps the current terrain allows relative to one body, named for the move menu. The shape is a
+ * property of the Anchor Rating (anchor-ratings.yaml, ratings, steps): Open joins Distant, In Reach
+ * and On Body with no Blind Spot at all while the Titan stands; Sparse is a chain through On Body to
+ * Blind Spot; Wooded, Urban and Giant Forest let In Reach reach both On Body and Blind Spot. A
+ * grounded Titan or a corpse adds the on-foot permissions. Read from the data, never hard-coded.
+ */
+function stepLines(snap: Snapshot, t: TitanRow, from: Position | null): StepLine[] {
+  if (!snap.anchor) return [];
+  const grounded = t.grounded || t.status === 'corpse';
+  return stepRows(snap.anchor, grounded).map((row) => ({
+    from: row.a,
+    to: row.b,
+    fromLabel: tr(`pos.${row.a}`),
+    toLabel: tr(`pos.${row.b}`),
+    ways: waysOf(row).map((w) => tr(`move.way.${w.kind}`)).join(', '),
+    here: from === row.a || from === row.b,
+  }));
+}
+
 function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, colour: string, isGM: boolean, owner: boolean): Cell {
   const p = s.positions[t.label] ?? null;
   const corpse = t.status === 'corpse';
@@ -577,6 +650,11 @@ function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, c
     grab,
     colour,
     options: owner || isGM ? options : [],
+    hooked: t.flags.hooked.includes(s.id),
+    attention: t.holder === s.id,
+    flagLoud: t.flags.loud.includes(s.id),
+    flagHurt: t.flags.hurt.includes(s.id),
+    steps: stepLines(snap, t, p),
     letGo: blockText(letGoBlock(s, t.label, grabbedIn(snap)(s.id))),
     loud: corpse ? null : (() => {
       const why = drawAttentionBlock(s, t, grabbedIn(snap)(s.id));
@@ -631,6 +709,8 @@ function titanView(combat: any, snap: Snapshot, t: TitanRow, turns: any[], turnI
   const flags = [...t.flags.hurt.map((id) => tr('flag.hurt', { name: name(id) })), ...t.flags.loud.map((id) => tr('flag.loud', { name: name(id) })), ...t.flags.hooked.map((id) => tr('flag.hooked', { name: name(id) }))].join('; ');
   const hiddenClock = !!sys?.abnormal && !src.hidden_until_read?.regeneration_clock && !isGM;
   const kind = sys ? `${sys.abnormal ? `${tr('abnormal')}, ` : ''}${game.i18n.localize(`WOF.SizeClass.${sys.size_class}`)}` : '';
+  // Frenzy is held by the Focus Titan's row of the engagement, not by its actor, so a corpse keeps none.
+  const frenzy = t.status === 'focus' ? Math.max(0, Math.min(Number(row?.frenzy ?? (t as any).frenzy ?? 0), FRENZY_CAP)) : 0;
   return {
     key: t.key,
     label: t.label,
@@ -652,6 +732,9 @@ function titanView(combat: any, snap: Snapshot, t: TitanRow, turns: any[], turnI
     parts,
     openings,
     openingsBy: [...new Set(by.filter(Boolean).map(name))].join(', '),
+    frenzy,
+    frenzyCap: FRENZY_CAP,
+    frenzyTitle: tr('frenzyTitle', { n: frenzy, cap: FRENZY_CAP }),
     flags,
     regen: { length: sys?.regeneration_clock ?? 1, filled: sys?.regeneration ?? 0, hidden: hiddenClock },
     heave: sys ? `${sys.heave_count} ${tr('of')} ${sys.heave}` : '',

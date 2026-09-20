@@ -23,7 +23,7 @@ function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
 }
 
 function titan(label: string, extra: Partial<TitanRow> = {}): TitanRow {
-  return { key: `t${label}`, label, status: 'focus', tempo: 1, ladder: [], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
+  return { key: `t${label}`, label, status: 'focus', tempo: 1, frenzy: 0, ladder: [], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
 }
 
 const fs = (id: string, extra: Partial<FearSoldier> = {}): FearSoldier => ({ ...soldier(id), faced: true, numb: false, ...extra });

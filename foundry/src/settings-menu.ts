@@ -132,7 +132,55 @@ export function defineSettingsMenu() {
   return WofPreferences;
 }
 
+/** Direct Control (ADR-0028) is remembered per GM client, never per world, and never for a player. */
+export const DIRECT_SETTING = 'directControl';
+
+/** The optional prompt timeout (round 3, question 4): off by default, because waiting is the default at a live table. */
+export const PROMPT_TIMEOUT_SETTING = 'promptTimeout';
+export const PROMPT_TIMEOUT_SECONDS_SETTING = 'promptTimeoutSeconds';
+export const PROMPT_TIMEOUT_DEFAULT = 60;
+
+/**
+ * Settings the tracker and the prompt card own, registered here beside the preferences menu so they
+ * keep the file's conventions: world-scoped and GM-restricted where the table shares them, client
+ * where a single viewer's own client holds them, and none of them listed one by one in Configure
+ * Settings unless a GM is meant to find it there.
+ */
+function registerTrackerSettings(): void {
+  game.settings.register(SYSTEM_ID, DIRECT_SETTING, { scope: 'client', config: false, type: Boolean, default: false });
+  // The default is to wait: a live table has the GM's "roll it for them" control as the escape
+  // hatch, and auto-rolling by default would quietly restore the problem the prompt card exists to
+  // fix. The timeout is offered for asynchronous tables only.
+  game.settings.register(SYSTEM_ID, PROMPT_TIMEOUT_SETTING, {
+    name: 'WOF.Settings.promptTimeout.name',
+    hint: 'WOF.Settings.promptTimeout.hint',
+    scope: 'world',
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: false,
+  });
+  game.settings.register(SYSTEM_ID, PROMPT_TIMEOUT_SECONDS_SETTING, {
+    name: 'WOF.Settings.promptTimeoutSeconds.name',
+    hint: 'WOF.Settings.promptTimeoutSeconds.hint',
+    scope: 'world',
+    config: true,
+    restricted: true,
+    type: Number,
+    default: PROMPT_TIMEOUT_DEFAULT,
+    range: { min: 10, max: 600, step: 5 },
+  });
+}
+
+/** The prompt timeout in seconds, or null while the table waits (the default). */
+export function promptTimeoutSeconds(): number | null {
+  if (game.settings.get(SYSTEM_ID, PROMPT_TIMEOUT_SETTING) !== true) return null;
+  const n = Number(game.settings.get(SYSTEM_ID, PROMPT_TIMEOUT_SECONDS_SETTING));
+  return Number.isFinite(n) && n > 0 ? n : PROMPT_TIMEOUT_DEFAULT;
+}
+
 export function registerSettingsMenu(): void {
+  registerTrackerSettings();
   game.settings.registerMenu(SYSTEM_ID, 'preferences', {
     name: 'WOF.Settings.menu.name',
     label: 'WOF.Settings.menu.label',

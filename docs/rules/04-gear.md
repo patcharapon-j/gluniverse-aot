@@ -375,9 +375,9 @@ Because step 2 comes before the damage, a soldier whom the fall's own damage mak
 
 **After the fall.** Chapter 5 states which Position a fall from each Position leaves the soldier at, relative to the fall's reference Titan (section 5.2, `data/engagement/positions.yaml`, `falls_land`). A fall changes no gear rating, Gas Rating, or item. It is not a behavior, so no Reaction answers it, and it is not a Fear Roll trigger.
 
-> **Design note (OQ-62):** The trigger list, the three bands and how Position, Anchor Rating, and Size Class set them, the procedure's order, and the damage table are this chapter's; no ADR sets falls. Health 6 is a legal build and stays one: capping Health at 5 would add a rule for 0.8% of Lifepaths, and the damage table already covers current Health 1 to 6.
+> **Design note (OQ-62):** The trigger list, the three bands and how Position, Anchor Rating, and Size Class set them, the procedure's order, and the damage table are this chapter's; no ADR sets falls. A high Health is a legal build and stays one: the damage table is read against current Health and needs no cap, and since decision batch 13 (13-1; OQ-190) raised Health by 2 it covers current Health 1 to 8.
 
-> **Design note (Health boxes):** Falls are sized against current Health (Chapter 3, section 3.1), which runs from 1 to 6 for a soldier who is not yet Down, since Health itself runs from 2 to 6. A low fall does 1 damage on average (0 to 2), a high fall 2 (1 to 3), and an extreme fall 3 (2 to 4). Exact odds that the fall's damage alone brings the soldier to 0 and puts them Down:
+> **Design note (Health boxes, as amended by decision batch 13, 13-1; OQ-190):** Falls are sized against current Health (Chapter 3, section 3.1), which runs from 1 to 8 for a soldier who is not yet Down, since Health itself runs from 4 to 8. No fall damage changed; what changed is where a soldier starts on the table. A low fall does 1 damage on average (0 to 2), a high fall 2 (1 to 3), and an extreme fall 3 (2 to 4). Exact odds that the fall's damage alone brings the soldier to 0 and puts them Down:
 >
 > | Current Health | Low | High | Extreme |
 > |---|---|---|---|
@@ -385,9 +385,9 @@ Because step 2 comes before the damage, a soldier whom the fall's own damage mak
 > | 2 | 33.3% | 66.7% | 100% |
 > | 3 | 0% | 33.3% | 66.7% |
 > | 4 | 0% | 0% | 33.3% |
-> | 5 or 6 | 0% | 0% | 0% |
+> | 5 or more | 0% | 0% | 0% |
 >
-> So, from full Health, a fall Downs a Health 2 soldier often, a Health 3 or 4 soldier only from high or extreme, and a Health 5 or 6 soldier never. Damage that reaches 0 also gives an immediate Critical Injury, which at a rolled Injury Location with none held is lethal or instant death 15.3% of the time (Chapter 3, section 3.2). A soldier who falls when already at 0 current Health, for example Down from crossed-off boxes while airborne, gains a Critical Injury whenever the fall does any damage: 2 times in 3 from low, always from high or extreme. That is lethal or instant death about 10.2% and 15.3% of the time on a first Critical Injury at that Injury Location. The Down-while-airborne fall is the simulator case recorded in OQ-62.
+> So, from full Health, a fall now Downs nobody but a Health 4 soldier, and them only from an extreme fall: every other build starts at 5 or more. It is a soldier already hurt whom a fall puts Down, which is the point of the table. Damage that reaches 0 also gives an immediate Critical Injury, which at a rolled Injury Location with none held is lethal or instant death 15.3% of the time (Chapter 3, section 3.2). A soldier who falls when already at 0 current Health, for example Down from crossed-off boxes while airborne, gains a Critical Injury whenever the fall does any damage: 2 times in 3 from low, always from high or extreme. That is lethal or instant death about 10.2% and 15.3% of the time on a first Critical Injury at that Injury Location. The Down-while-airborne fall is the simulator case recorded in OQ-62.
 
 ## 4.7 Carrying
 
@@ -734,7 +734,7 @@ The new entries are options or unrolled actions, so Chapter 2's procedure for ac
 
 The Squad is fighting a Medium Focus Titan, labeled A on the Squad sheet, at Anchor Rating Wooded, at Funding 3. The example joins the fight partway through and numbers its rounds from there. The Squad sheet reads `Supply | Rations 8 | Flares 2 | Medical 2 | Shot 6`.
 
-- **Private Jonas Keller** has Strength 3 and Agility 3, so Health 3 and a carrying limit of 7. His Stress is 1. His ODM Gear is rated 2, but a Push earlier in the fight wore it to 1. He begins round 1 airborne at In Reach, and his horse holds Distant, where he dismounted earlier. His row is `Jonas | A In Reach | ODM 1/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 @Distant A | - | Load 3/7 | A`.
+- **Private Jonas Keller** has Strength 3 and Agility 3, so Health 5 and a carrying limit of 7. His Stress is 1. His ODM Gear is rated 2, but a Push earlier in the fight wore it to 1. He begins round 1 airborne at In Reach, and his horse holds Distant, where he dismounted earlier. His row is `Jonas | A In Reach | ODM 1/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 @Distant A | - | Load 3/7 | A`.
 - **Ilse**, a Squadmate on the Medic template, has Strength 3, Wits 4, and Stress 0. She begins mounted at Distant. Her row is `Ilse (Medic) | A Distant | ODM 2/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 M | Med 1/1 | Load 4/7 | -`.
 
 **Round 1.**
