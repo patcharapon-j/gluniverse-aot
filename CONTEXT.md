@@ -322,8 +322,12 @@ _Avoid_: monster dice, GM dice
 The default behavior every Behavior Table falls back to when no other entry can legally happen.
 
 **Next Behavior**:
-A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden until it happens or is Read. Reading it reveals its Attack Dice.
+A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden until it happens or is Read. It is rolled on D6 plus the Titan's Frenzy at the moment of the roll. Reading it reveals its Attack Dice.
 _Avoid_: queued attack
+
+**Frenzy**:
+A counter each Focus Titan holds, from 0 to 3. It starts at 0 when the Titan becomes a Focus Titan and rises by 1 at each round end, and it is added to the Titan's behavior roll, so the Titan walks up its own table as the fight drags. A total above the table's highest result reads as that result.
+_Avoid_: rage, enrage, escalation counter, anger
 
 **Telegraph**:
 A behavior that announces what the Titan's next card will do.
@@ -362,8 +366,8 @@ Where a soldier is relative to a Focus Titan: Distant, In Reach, On Body, or Bli
 _Avoid_: range, zone
 
 **Blind Spot**:
-The Position out of a Focus Titan's sight with its Nape within reach, anchored to terrain rather than hooked into the Titan, and the only Position a Nape strike can be made from. Making a Nape strike counts as hooking into the Titan.
-_Avoid_: rear, behind
+The Position out of a Focus Titan's sight with its Nape within reach, anchored to terrain behind the Titan and not on it, and the only Position a Nape strike can be made from. It is a place in the world, not a place on the monster: the soldier stands on a tree or a roof and is not touching the Titan. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and leaves the striker at Blind Spot.
+_Avoid_: rear, behind, a spot on the Titan
 
 **Opening**:
 A token on a Titan created by successes beyond Breaking a Body Part, extra successes on Break Attention, every success of a Nape strike that falls short, or a rule that names it, such as Relentless. Any comrade of the soldier who created it can spend it as a Bonus Die on a Nape strike until Regeneration erases it; its creator never can.

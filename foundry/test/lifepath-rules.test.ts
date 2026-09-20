@@ -125,8 +125,8 @@ describe('attributes', () => {
   });
 
   it('derives Health and Resolve from the final ratings, rounding up', () => {
-    expect(finishValues(A(5, 2, 2, 4, 2, 3))).toEqual({ health: 4, resolve: 3, stress: 0, minimumStress: 0 });
-    expect(finishValues(A(2, 2, 4, 3, 3, 4))).toMatchObject({ health: 2, resolve: 4 });
+    expect(finishValues(A(5, 2, 2, 4, 2, 3))).toEqual({ health: 6, resolve: 3, stress: 0, minimumStress: 0 });
+    expect(finishValues(A(2, 2, 4, 3, 3, 4))).toMatchObject({ health: 4, resolve: 4 });
   });
 });
 

@@ -83,6 +83,12 @@ th{background:var(--tint);font-weight:500}
 .form td{height:2.1rem;min-width:5rem}
 .log td{height:2.4rem}
 .lines{border-bottom:1px solid var(--rule);height:2rem}
+.hboxes{display:flex;flex-wrap:wrap;gap:.3rem;padding:.15rem 0}
+.hbox{width:1.5rem;height:1.5rem;border:1px solid var(--ink);flex:0 0 auto}
+figure.posmap{margin:0;display:flex;flex-direction:column;gap:.4rem;border:1px solid var(--rule);padding:.75rem 1rem}
+figure.posmap svg{display:block;width:100%;max-width:100%;height:auto;color:var(--ink)}
+figure.posmap figcaption{font-size:.92rem;color:var(--muted)}
+figure.posmap figcaption b{color:var(--ink)}
 
 @media (max-width:480px){html{font-size:16px}.statblock dl{grid-template-columns:1fr;gap:0 1rem}.statblock dd{padding-bottom:.3rem}}
 @media print{
@@ -103,7 +109,9 @@ th{background:var(--tint);font-weight:500}
   #quickref .qr-grid li{break-inside:avoid}
   #quickref .qr-tables>*{break-inside:avoid}
   #quickref td:first-child{white-space:nowrap}
-  .box,.example,.note,.statblock,tr{break-inside:avoid}
+  .box,.example,.note,.statblock,tr,figure.posmap,.hboxes{break-inside:avoid}
+  figure.posmap svg{max-width:150mm;margin-inline:auto}
+  .hbox{width:8mm;height:8mm;border-color:#1c2420}
   h1,h2,h3,h4,caption{break-after:avoid}
 }
 </style>
@@ -518,7 +526,7 @@ th{background:var(--tint);font-weight:500}
 <p>A Template Build or Free Build soldier has 18 points, every attribute rated 2 to 4, the key attribute at exactly 4, and at most two attributes at 4. There are no rolled points, no swap, no floor, and no Top 10 bonus. See <a href="#soldier-build">Building without the Lifepath</a>.</p>
 <h3>Derived values</h3>
 <ul>
-<li><b>Health</b> is half of Strength plus Agility, rounded up. Keep it as a row of that many boxes.</li>
+<li><b>Health</b> is 2 plus half of Strength plus Agility, rounded up. Halve Strength plus Agility, round up, then add 2. Keep it as a row of that many boxes. It runs 4 to 6 on a built soldier and as high as 8 on the Lifepath.</li>
 <li><b>Resolve</b> is half of Instinct plus Empathy, rounded up, plus 1 per Scar, minus 1 per point of Grief (at most 3 Grief counts).</li>
 <li><b>Stress</b> starts at 0, the minimum Stress of a soldier with no Scars.</li>
 <li><b>Carrying limit:</b> Strength + 4 items before you are Overloaded.</li>
@@ -694,7 +702,7 @@ th{background:var(--tint);font-weight:500}
 <li><b>Third Year</b> 34: Arguing with an instructor. Empathy 3, Silver Tongue 1, Merit 4. She rolls Empathy (3 dice) and scores 1 success: Merit 5.</li>
 <li><b>Graduation.</b> Merit 5 is Class Rank 25, not Top 10. She chooses Slayer. Strength is already her highest rating, so there is no swap. Her Specialty level raises Clean Cut to 2.</li>
 </ul>
-<p>Mira finishes with Strength 5, Agility 2, Wits 2, Perception 4, Instinct 2, and Empathy 3 (18 points); Clean Cut 2, Horsemanship 1, Keen Eyes 1, and Silver Tongue 1 (5 levels); Health 4 and Resolve 3. Had she chosen Tactician, her Instinct 2 would have swapped with her Strength 5.</p>
+<p>Mira finishes with Strength 5, Agility 2, Wits 2, Perception 4, Instinct 2, and Empathy 3 (18 points); Clean Cut 2, Horsemanship 1, Keen Eyes 1, and Silver Tongue 1 (5 levels); Health 6 and Resolve 3. Had she chosen Tactician, her Instinct 2 would have swapped with her Strength 5.</p>
 </div>
 
 <div class="box" id="soldier-exam">
@@ -770,12 +778,12 @@ th{background:var(--tint);font-weight:500}
 </ul>
 
 <h3>What only the Lifepath reaches</h3>
-<p>A built soldier always has 18 attribute points, a key attribute of 4, and Health and Resolve of 2 to 4 each. A Free Build soldier who places both 2s on Strength and Agility has Health 2 and is <b>fragile</b>: two untreated Critical Injuries put them Down.</p>
+<p>A built soldier always has 18 attribute points, a key attribute of 4, Health of 4 to 6, and Resolve of 2 to 4. A Free Build soldier who places both 2s on Strength and Agility has Health 4 and is <b>fragile</b>: they hold the fewest boxes in the Squad, and four untreated Critical Injuries put them Down.</p>
 <p>Only the Lifepath can give a key attribute of 5 or 6, a Top 10 Class Rank, or a place in the Graduation Exam. If you want that chance, roll.</p>
 
 <div class="example">
 <h4>Example: a Free Build</h4>
-<p>The campaign allows the Free Build. Tomas's player chooses Medic, whose key attribute is Wits, and the two-4s array: Wits 4, Empathy 4, Perception 3, Instinct 3, Strength 2, Agility 2. That gives Health 2, so Tomas is fragile, and Resolve 4.</p>
+<p>The campaign allows the Free Build. Tomas's player chooses Medic, whose key attribute is Wits, and the two-4s array: Wits 4, Empathy 4, Perception 3, Instinct 3, Strength 2, Agility 2. That gives Health 4, so Tomas is fragile, and Resolve 4.</p>
 <p>He chooses Doctor's Household as his Origin, takes his parent's clinic as his Haven and Careful Nursing 1, and records the Drive Duty. His Specialty level goes into Field Medicine. His 3 free levels raise Field Medicine to 2 and add Steady Voice 1 and Iron Nerve 1. That is 5 levels, with one Talent at level 2. He records Merit none and Class Rank none, then finishes like any other soldier.</p>
 </div>
 
@@ -978,17 +986,17 @@ th{background:var(--tint);font-weight:500}
 <div class="table-wrap"><table>
 <caption>Squadmate templates</caption>
 <thead><tr><th>Template</th><th>Strength</th><th>Agility</th><th>Wits</th><th>Perception</th><th>Instinct</th><th>Empathy</th><th>Talent</th><th>Health</th><th>Resolve</th></tr></thead><tbody>
-<tr><td>Slayer</td><td>4</td><td>3</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Clean Cut 1</td><td>4</td><td>3</td></tr>
-<tr><td>Flier</td><td>3</td><td>4</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Slip Away 1</td><td>4</td><td>3</td></tr>
-<tr><td>Hunter</td><td>3</td><td>3</td><td>3</td><td>4</td><td>3</td><td>2</td><td>Lure 1</td><td>3</td><td>3</td></tr>
-<tr><td>Tactician</td><td>3</td><td>2</td><td>3</td><td>3</td><td>4</td><td>3</td><td>Titan Reader 1</td><td>3</td><td>4</td></tr>
-<tr><td>Leader</td><td>3</td><td>2</td><td>3</td><td>3</td><td>3</td><td>4</td><td>Steady Voice 1</td><td>3</td><td>4</td></tr>
-<tr><td>Medic</td><td>3</td><td>2</td><td>4</td><td>3</td><td>3</td><td>3</td><td>Field Medicine 1</td><td>3</td><td>3</td></tr>
-<tr><td>Engineer</td><td>3</td><td>3</td><td>4</td><td>3</td><td>3</td><td>2</td><td>Gearwright 1</td><td>3</td><td>3</td></tr>
-<tr><td>Rider</td><td>3</td><td>4</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Horsemanship 1</td><td>4</td><td>3</td></tr>
-<tr><td>Brawler</td><td>4</td><td>3</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Grip Breaker 1</td><td>4</td><td>3</td></tr>
+<tr><td>Slayer</td><td>4</td><td>3</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Clean Cut 1</td><td>6</td><td>3</td></tr>
+<tr><td>Flier</td><td>3</td><td>4</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Slip Away 1</td><td>6</td><td>3</td></tr>
+<tr><td>Hunter</td><td>3</td><td>3</td><td>3</td><td>4</td><td>3</td><td>2</td><td>Lure 1</td><td>5</td><td>3</td></tr>
+<tr><td>Tactician</td><td>3</td><td>2</td><td>3</td><td>3</td><td>4</td><td>3</td><td>Titan Reader 1</td><td>5</td><td>4</td></tr>
+<tr><td>Leader</td><td>3</td><td>2</td><td>3</td><td>3</td><td>3</td><td>4</td><td>Steady Voice 1</td><td>5</td><td>4</td></tr>
+<tr><td>Medic</td><td>3</td><td>2</td><td>4</td><td>3</td><td>3</td><td>3</td><td>Field Medicine 1</td><td>5</td><td>3</td></tr>
+<tr><td>Engineer</td><td>3</td><td>3</td><td>4</td><td>3</td><td>3</td><td>2</td><td>Gearwright 1</td><td>5</td><td>3</td></tr>
+<tr><td>Rider</td><td>3</td><td>4</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Horsemanship 1</td><td>6</td><td>3</td></tr>
+<tr><td>Brawler</td><td>4</td><td>3</td><td>2</td><td>3</td><td>3</td><td>3</td><td>Grip Breaker 1</td><td>6</td><td>3</td></tr>
 </tbody></table></div>
-<p>A Squadmate's key attribute is 4, four others are 3, and one is 2, for 18 points. It has one dice Talent at level 1. A Template Build player character takes these same ratings, without the Talent.</p>
+<p>A Squadmate's key attribute is 4, four others are 3, and one is 2, for 18 points. Its Health is worked out from its own Strength and Agility like any soldier's, so it is 5 or 6. It has one dice Talent at level 1. A Template Build player character takes these same ratings, without the Talent.</p>
 
 <h3>Which rules apply</h3>
 <div class="table-wrap"><table>
@@ -1095,7 +1103,7 @@ th{background:var(--tint);font-weight:500}
 <caption>Titan Engagement entries</caption>
 <thead><tr><th>Entry</th><th>Type</th><th>Roll and Gear Dice</th><th>Needs</th><th>Requirements and effect</th></tr></thead>
 <tbody>
-<tr><td><a href="#fight-nape">Nape strike</a></td><td>action</td><td>Strength, with the Blade Set in your handles; without one you cannot strike</td><td>The Titan's Nape Depth</td><td>You hold Blind Spot, do not hold that Titan's Attention, and are not Grabbed. Your ODM Gear counts as had (not Jammed, Gas Rating above 0) unless the Titan is grounded. No retreat is under way. The strike counts as hooking into the Titan. Kills the Titan, or turns each success into an Opening.</td></tr>
+<tr><td><a href="#fight-nape">Nape strike</a></td><td>action</td><td>Strength, with the Blade Set in your handles; without one you cannot strike</td><td>The Titan's Nape Depth</td><td>You hold Blind Spot, do not hold that Titan's Attention, and are not Grabbed. Your ODM Gear counts as had (not Jammed, Gas Rating above 0) unless the Titan is grounded. No retreat is under way. You stay at Blind Spot. The strike counts as hooking into the Titan for the Attention Ladder only. Kills the Titan, or turns each success into an Opening.</td></tr>
 <tr><td><a href="#fight-body">Body Part strike</a></td><td>action</td><td>Strength, with the Blade Set in your handles; without one you cannot strike</td><td>1; successes add up toward the Body Part's Toughness</td><td>You hold a Position the Body Part can be struck from, the part is not Broken, and you are not Grabbed. From On Body or Blind Spot, your ODM Gear counts as had unless the Titan is grounded. Moves the part toward Broken, creates Openings, and frees a soldier held in a Broken hand. Striking the Body Part that Pins a soldier frees them when it becomes Broken (<a href="#fight-heave">cutting free</a>).</td></tr>
 <tr><td><a href="#fight-break">Break Attention</a></td><td>action</td><td>Perception, with ODM Gear or your horse; a Feint on foot uses none</td><td>1 if you hold the Titan's Attention, otherwise 2; 2 against a Titan holding a Grabbed soldier; 1 more for a Feint; 1 more for each decoy the Titan has fallen for since its last card that resolved a behavior</td><td>Shifts the Titan's Attention onto a decoy. Extra successes create Openings. Frees a Grabbed soldier.</td></tr>
 <tr><td><a href="#fight-draw">Draw Attention</a></td><td>action</td><td>not rolled</td><td>none</td><td>You hold a Position other than Distant and are not Grabbed. You become the loudest or brightest stimulus for that Titan until the end of its next card that resolves a behavior, and while you hold that mark you match every rung of its ladder any other candidate meets, except hooked into its body.</td></tr>
@@ -1290,7 +1298,7 @@ th{background:var(--tint);font-weight:500}
 <p>This chapter covers what the field does to a soldier's body and nerve. A rule or a called roll's stakes name every harm, and a table gives every result. The GM rules on harm only before the dice: the stakes of a called roll may name damage of 1 to 3 or a fall (see <a href="#harm-ruling">Harm a ruling names</a>), and outside a Titan Engagement the GM may call a Fear Roll for a horror no trigger lists. The GM never deals a Critical Injury or death directly, and never picks an Injury Location, a row, or how long an effect lasts.</p>
 
 <h2 id="harm-health">Health</h2>
-<p>Your <b>Health</b> is half of Strength plus Agility, rounded up, kept as a row of that many boxes. It never changes. Each box is clean, marked by damage, or crossed off by a Critical Injury.</p>
+<p>Your <b>Health</b> is 2 plus half of Strength plus Agility, rounded up, kept as a row of that many boxes: 4 to 6 on a standard build, and as high as 8 at the ceiling of the Lifepath. It never changes. Each box is clean, marked by damage, or crossed off by a Critical Injury.</p>
 <ul>
 <li><b>Crossed off.</b> Each untreated Critical Injury you hold crosses off one box. The boxes crossed off are the smaller of your untreated Critical Injuries and your Health, so extra ones cross off nothing.</li>
 <li><b>Health lost</b> is damage you have taken. It is never more than Health minus the boxes crossed off.</li>
@@ -2558,8 +2566,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ul>
 <li><b>Distant</b> is out of a standing Titan's reach. Even so, a Behavior Table entry whose needed Positions include Distant ("Any" includes it) still happens while its holder is there.</li>
 <li><b>In Reach</b> is within reach of its hands, on the ground or on anchors beside it.</li>
-<li><b>On Body</b> is hooked into the Titan's body or standing on it, anywhere but the Nape.</li>
-<li><b>Blind Spot</b> is out of its sight with its Nape within reach, anchored to the terrain rather than the Titan. It is the only Position a Nape strike can be made from.</li>
+<li><b>On Body</b> means literally on it: hooked into the Titan's body or standing on it, anywhere but the Nape.</li>
+<li><b>Blind Spot</b> is <b>not on the Titan at all</b>. You are anchored to terrain behind it, a tree or a roof, out of its sight with its Nape within reach. You are not touching it. The name sounds like a place on the monster and it is a place in the world behind the monster. It is the only Position a Nape strike can be made from.</li>
 </ul>
 <p>When a rule compares two soldiers' Positions, it compares them relative to one Titan or body:</p>
 <ul>
@@ -2567,6 +2575,30 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>Heave or a strike on a pinning Body Part, and Help or Covering on it, compares relative to that body, Titan or Corpse.</li>
 <li>Anything else compares relative to the living Focus Titan with the earliest label. When none is alive, it compares relative to the Corpse of the Focus Titan that died last.</li>
 </ul>
+
+<div class="box" id="fight-changes">
+<h4>An action never changes a Position</h4>
+<p>Your Position changes when <b>you move</b>, and otherwise only when one of the rules listed here says so. <b>No action moves you.</b> The Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other entry in the <a href="#actions-catalog">Action Catalog</a> leave you exactly where you stand. Taking a Titan's Attention does not move you either, and neither does losing it.</p>
+<div class="table-wrap"><table>
+<caption>Everything that changes a Position</caption>
+<thead><tr><th>What</th><th>Where it leaves you</th></tr></thead><tbody>
+<tr><td>Your own move</td><td>One Position step your kind of move can make, plus a mount, a dismount, or leaving. An ODM move is a <a href="#fight-flight">Flight</a>.</td></tr>
+<tr><td>Letting go, in place of your move</td><td>You fall from that height and land In Reach.</td></tr>
+<tr><td>Any fall</td><td>From On Body or Blind Spot to In Reach, relative to the fall's reference Titan. From In Reach or Distant it changes nothing.</td></tr>
+<tr><td>A knock loose effect</td><td>You fall, so you land In Reach.</td></tr>
+<tr><td>A Fear Roll's forced step</td><td>One step toward Distant, at the start of your next turn.</td></tr>
+<tr><td>A Grab landing</td><td>You hold On Body relative to the Titan holding you.</td></tr>
+<tr><td>Being freed from a Grab</td><td>In Reach, with a fall first if you had been lifted.</td></tr>
+<tr><td>The close rule</td><td>Coming to hold On Body or Blind Spot on one Focus Titan makes your On Body or Blind Spot on any other In Reach.</td></tr>
+<tr><td>A Titan becoming a Focus Titan</td><td>Everyone who holds a Position holds Distant relative to it.</td></tr>
+<tr><td>A Focus Titan dying</td><td>Positions become relative to its Corpse, and On Body and Blind Spot read In Reach.</td></tr>
+<tr><td>Being carried</td><td>You move with whoever carries you.</td></tr>
+<tr><td>The Fall Back Squad Tactic</td><td>At the wings step, In Reach instead of On Body or Blind Spot, with no fall.</td></tr>
+<tr><td>A grounded Titan standing again, at Open only</td><td>Blind Spot relative to it becomes On Body, with no fall.</td></tr>
+<tr><td>Starting placement, leaving, returning, and a retreat's forced moves</td><td>As each of those rules states.</td></tr>
+</tbody></table></div>
+<p>That is the whole list. If a rule is not on it, it does not move you.</p>
+</div>
 
 <h3>Anchor Ratings and Position steps</h3>
 <p>The <b>Anchor Rating</b> of the battlefield decides which <b>Position steps</b> exist and which kinds of move can make them: <b>on foot</b>, <b>mounted</b>, or <b>ODM</b> (on your own ODM Gear). Two Positions joined by a step are one step apart, whatever kind of move makes it; Help, Covering, Rally, and aftermath rolls count steps this way. A step is made in either direction, and no step calls for a roll of its own.</p>
@@ -2592,6 +2624,87 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <tr><td>Giant Forest</td><td>In Reach to Blind Spot</td><td>no</td><td>no</td><td>yes</td></tr>
 </tbody></table></div>
 <p>No rating reaches Blind Spot from Distant in one step, so a Nape is never less than two steps from the ground. At <b>Open</b> nothing reaches Blind Spot at all while the Titan stands, because there is nothing to anchor to but the Titan.</p>
+
+<h3 id="fight-maps">Where you can go: the Position map</h3>
+<p>The table above is the rule. These three pictures are the same rule, drawn. <b>The shape of the map is a property of the Anchor Rating</b>, so the first thing to ask at a new battlefield is which of the three you are standing in. A line joins two Positions that are one step apart, and every step is made in either direction.</p>
+
+<figure class="posmap">
+<svg viewBox="0 0 720 118" role="img" aria-label="Open ground: Distant joins In Reach, which joins On Body. There is no Blind Spot while the Titan stands." xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6">
+<rect x="10" y="24" width="150" height="46" rx="6"/>
+<rect x="295" y="24" width="150" height="46" rx="6"/>
+<rect x="580" y="24" width="150" height="46" rx="6"/>
+<line x1="168" y1="47" x2="287" y2="47" marker-start="url(#pm-a)" marker-end="url(#pm-a)"/>
+<line x1="453" y1="47" x2="572" y2="47" marker-start="url(#pm-a)" marker-end="url(#pm-a)"/>
+</g>
+<g fill="currentColor" font-family="inherit" text-anchor="middle">
+<text x="85" y="53" font-size="16">Distant</text>
+<text x="370" y="53" font-size="16">In Reach</text>
+<text x="655" y="53" font-size="16">On Body</text>
+<text x="227" y="93" font-size="13">on foot or mounted</text>
+<text x="512" y="93" font-size="13">ODM only</text>
+<text x="360" y="16" font-size="13">Open, 0 Anchors: no Blind Spot while it stands</text>
+</g>
+</svg>
+<figcaption><b>Open.</b> A plain holds nothing to anchor to but the Titan, so there is no Blind Spot at all while it stands, and <b>you cannot Nape strike a standing Titan on open ground</b>. Ground it and the map changes: the chain grows an On Body to Blind Spot step, and the Nape becomes reachable at last.</figcaption>
+</figure>
+
+<figure class="posmap">
+<svg viewBox="0 0 720 118" role="img" aria-label="Sparse ground: a chain from Distant to In Reach to On Body to Blind Spot. The Nape is reached by way of the body." xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="pm-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6">
+<rect x="5" y="24" width="140" height="46" rx="6"/>
+<rect x="195" y="24" width="140" height="46" rx="6"/>
+<rect x="385" y="24" width="140" height="46" rx="6"/>
+<rect x="575" y="24" width="140" height="46" rx="6"/>
+<line x1="153" y1="47" x2="187" y2="47" marker-start="url(#pm-b)" marker-end="url(#pm-b)"/>
+<line x1="343" y1="47" x2="377" y2="47" marker-start="url(#pm-b)" marker-end="url(#pm-b)"/>
+<line x1="533" y1="47" x2="567" y2="47" marker-start="url(#pm-b)" marker-end="url(#pm-b)"/>
+</g>
+<g fill="currentColor" font-family="inherit" text-anchor="middle">
+<text x="75" y="53" font-size="16">Distant</text>
+<text x="265" y="53" font-size="16">In Reach</text>
+<text x="455" y="53" font-size="16">On Body</text>
+<text x="645" y="53" font-size="16">Blind Spot</text>
+<text x="170" y="93" font-size="13">on foot, mounted, or ODM</text>
+<text x="360" y="93" font-size="13">ODM only</text>
+<text x="550" y="93" font-size="13">ODM only</text>
+<text x="360" y="16" font-size="13">Sparse, 1 Anchor: a chain</text>
+</g>
+</svg>
+<figcaption><b>Sparse.</b> One good tree. Nothing joins In Reach to Blind Spot, so <b>you reach the Nape by way of the body</b>: onto it, then around behind it, two Flights and two rounds of a Titan's cards spent on top of the thing.</figcaption>
+</figure>
+
+<figure class="posmap">
+<svg viewBox="0 0 720 210" role="img" aria-label="Wooded, Urban and Giant Forest: Distant joins In Reach, and In Reach branches to both On Body and Blind Spot, which also join each other." xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="pm-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6">
+<rect x="5" y="82" width="140" height="46" rx="6"/>
+<rect x="195" y="82" width="140" height="46" rx="6"/>
+<rect x="430" y="18" width="150" height="46" rx="6"/>
+<rect x="430" y="146" width="150" height="46" rx="6"/>
+<line x1="153" y1="105" x2="187" y2="105" marker-start="url(#pm-c)" marker-end="url(#pm-c)"/>
+<line x1="343" y1="98" x2="422" y2="52" marker-start="url(#pm-c)" marker-end="url(#pm-c)"/>
+<line x1="343" y1="112" x2="422" y2="158" marker-start="url(#pm-c)" marker-end="url(#pm-c)"/>
+<line x1="505" y1="72" x2="505" y2="138" marker-start="url(#pm-c)" marker-end="url(#pm-c)"/>
+</g>
+<g fill="currentColor" font-family="inherit" text-anchor="middle">
+<text x="75" y="111" font-size="16">Distant</text>
+<text x="265" y="111" font-size="16">In Reach</text>
+<text x="505" y="47" font-size="16">On Body</text>
+<text x="505" y="175" font-size="16">Blind Spot</text>
+<text x="170" y="145" font-size="13">on foot, mounted, or ODM</text>
+<text x="382" y="62" font-size="13">ODM</text>
+<text x="382" y="152" font-size="13">ODM</text>
+<text x="360" y="12" font-size="13">Wooded, Urban, Giant Forest, 2 to 3 Anchors: a branch</text>
+</g>
+<text x="518" y="109" font-size="13" fill="currentColor" text-anchor="start">ODM</text>
+</svg>
+<figcaption><b>Wooded, Urban, and Giant Forest.</b> From In Reach you may go onto the body <b>or</b> straight to the Blind Spot, and you may move between those two. <b>This is why the Corps fights in forests:</b> the trees are what let a soldier get behind a Titan without ever climbing it. At Urban the Distant to In Reach step cannot be made mounted; every other line is the same.</figcaption>
+</figure>
+
+<p><b>A grounded Titan changes every map.</b> While a Focus Titan has a Broken leg, every step joining two of In Reach, On Body, and Blind Spot can also be made on foot, and none of them mounted. The shape does not change, only the ways of making it, with one exception: at <b>Open</b> a grounded Titan gains an On Body to Blind Spot step, so the Open map becomes the Sparse chain and the Nape is reachable on a plain at last. A Corpse counts as a grounded Titan for as long as it lies on the field.</p>
 
 <h3 id="fight-flight">Flight</h3>
 <p><b>Every ODM move you make in a Titan Engagement is a Flight.</b> Roll <b>Fly</b> with your own ODM Gear. The roll needs nothing: the move's step happens whatever the dice give, so a Flight never leaves you short of the step. What the dice decide is what the flight was worth, and whether you arrived badly.</p>
@@ -2655,7 +2768,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </ul>
 
 <h3>What a move can do</h3>
-<p>A <b>move</b> changes your Position relative to one named Focus Titan or Corpse by one step your kind of move can make, or changes no Position, as when you land or mount where you are. A move can include one mount or dismount. It is the only way you change your own Position; falls, Grabs, Fall Back, and a Fear Roll's forced step are rules that move you.</p>
+<p>A <b>move</b> changes your Position relative to one named Focus Titan or Corpse by one step your kind of move can make, or changes no Position, as when you land or mount where you are. A move can include one mount or dismount. It is the only way you change your own Position; falls, Grabs, Fall Back, and a Fear Roll's forced step are rules that move you, and the whole list of them is in <a href="#fight-changes">An action never changes a Position</a>.</p>
 <ul>
 <li><b>An ODM move is a <a href="#fight-flight">Flight</a>,</b> and it crosses more than one step only by spending Momentum on Carry.</li>
 <li><b>Mounted:</b> you make a mounted step, or an ODM move that dismounts you first, which is a Flight.</li>
@@ -2697,7 +2810,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ol>
 <li>Every soldier who used ODM Gear this round makes a Gas Roll. If the Titan Engagement ends mid-round, these Gas Rolls are made at once.</li>
 <li>Each living Focus Titan's Regeneration clock fills 1 segment.</li>
-<li>Each Background Titan's clock fills 1 segment, and full clocks resolve. Then the retreat clock fills 1 segment; if it is full, the Titan Engagement becomes a retreat. During a retreat no Background Titan's clock fills and the retreat clock does not fill; step 2's Regeneration clocks still fill.</li>
+<li>Each living Focus Titan's <a href="#fight-frenzy">Frenzy</a> rises by 1, never above 3. It rises during a retreat as well.</li>
+<li>Each Background Titan's clock fills 1 segment, and full clocks resolve. Then the retreat clock fills 1 segment; if it is full, the Titan Engagement becomes a retreat. During a retreat no Background Titan's clock fills and the retreat clock does not fill; steps 2 and 3, the Regeneration clocks and Frenzy, still happen.</li>
 <li>Every soldier who made no ODM move this round loses all their <a href="#fight-momentum">Momentum</a>. A soldier who flew keeps what they hold, to the cap the Anchors left give.</li>
 <li>The round ends. Unspent moves and actions are lost.</li>
 </ol></li>
@@ -2754,6 +2868,22 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Tiers.</b> Low results terrorize (Stress, and perhaps a telegraph), middle results control (falls and Critical Injuries that cannot be lethal), and high results kill (lethal Critical Injuries and the Grab). <b>Thrash</b> is what a Titan does when nothing else fits. It is never rolled, works at any Position, uses no Body Parts, and is never lethal.</li>
 <li><b>Effects:</b> <i>Stress</i> (you gain that much, once, whatever the Net Successes); <i>Critical Injury</i> (a Titan attack at the Injury Location and of the Injury Type listed, lethal or not as listed; see <a href="#fight-dodge">Dodging a Titan</a> for what its Net Successes add); <i>knock loose</i> (if you are airborne, On Body, or at Blind Spot, you fall, whatever the Net Successes; a mounted target is not affected); <i>Grab</i> (see <a href="#fight-grab">The Grab</a>); <i>telegraph</i> (the Titan's new Next Behavior is revealed to every soldier, whether the card landed or whiffed); <i>Wreck</i> (the Titan Engagement loses 1 <a href="#fight-anchors">Anchor</a>, whether the card landed or whiffed, and whatever the Net Successes: it is the Titan going through the place, not an attack on anyone, so it touches no soldier, no horse, and no Position).</li>
 </ul>
+
+<h3 id="fight-retarget">It turns on whoever it can reach</h3>
+<p><b>When the soldier holding a Titan's Attention is not in a Position the rolled behavior needs</b>, the Titan does not simply flail at the air. It turns on whoever it can reach. The GM reads its <a href="#fight-ladder">Attention Ladder</a> again over only those soldiers who are in a Position the behavior needs, and its Attention moves to the one the ladder picks. The behavior then resolves against that soldier. Only when nobody in the Titan Engagement is in a Position the behavior needs does it fall back as its table says.</p>
+<p>So standing where a Titan cannot hurt you no longer keeps it from hurting anyone. It keeps it from hurting <b>you</b>, and it hands the thing to the comrade standing closest to its hands. Cover them.</p>
+
+<h3 id="fight-frenzy">Frenzy</h3>
+<p>A Titan gets worse the longer you let it live. Each Focus Titan holds <b>Frenzy</b>, a public number the GM keeps on the tracker.</p>
+<ul>
+<li>It starts at <b>0</b> when the Titan becomes a Focus Titan.</li>
+<li>It rises by <b>1</b> at the end of each round, and stops at <b>3</b>.</li>
+<li>Its behavior roll is <b>D6 plus its Frenzy</b>. A total above the highest result on its table reads as that highest result.</li>
+<li>The roll takes the Frenzy standing at the moment it is made. A Titan rolls its next behavior in advance, so an escalation reaches the table one card late, and a roll already made never changes.</li>
+<li>Frenzy rises during a retreat too. It never falls, and a Corpse holds none.</li>
+</ul>
+<p>Every Behavior Table is ordered the same way: the low results terrorize, the middle results control, the high results kill. Adding to the roll walks the Titan up its own table, toward the kill tier. In the first round it postures at you. By the third it is trying to eat you, and it stays there.</p>
+<p><b>Finish the fight, or it gets worse.</b> Every round you spend not killing it is a round it spends becoming more dangerous, and by the time the retreat clock fills you are running from something worse than the thing you closed with.</p>
 
 <h3 id="fight-dodge">Dodging a Titan</h3>
 <p><b>When a Titan's card scores 1 or more successes against you</b>, you may dodge. Roll Agility with your ODM Gear, or with your horse while mounted. Horsemanship adds its dice to a dodge made with your horse. Declare Help and Bonus Dice before you roll, and Push as usual.</p>
@@ -2887,6 +3017,12 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li>no retreat is under way.</li>
 </ul>
 <p>Your Bonus Dice can come from Openings, from a grounded Titan, and from Help, 4 at most. Every Nape strike, whatever its result, marks you as having struck the Titan's Nape.</p>
+<div class="box">
+<h4>Where the strike leaves you</h4>
+<p><b>A Nape strike does not move you.</b> You began at Blind Spot and you are still at Blind Spot when it is over, anchored to your tree or your roof behind the Titan, whether you killed it or fell short.</p>
+<p><b>The mark counts as hooking into the Titan, for the Attention Ladder and nothing else.</b> It puts you on the ladder's top rung, ahead of a comrade who is merely On Body. It does not put you on the Titan, and no other rule reads it: Steam at a Regeneration fill still passes you by, because you are not on the body.</p>
+<p><b>So a striker who pulls the Attention onto themselves cannot strike again.</b> The strike needs a soldier who does not hold that Titan's Attention, and the mark you just set is what turned it toward you. You are standing in exactly the right place and you are locked out of using it. Getting the Attention off you takes a comrade's Draw Attention, or a Break Attention with a decoy. That is the engine of the whole fight: the blade at the Nape is never the soldier the Titan is watching.</p>
+</div>
 <ul>
 <li><b>Reach its Nape Depth</b> and the Titan dies.</li>
 <li><b>Fall short</b> and each success becomes 1 Opening, created by you. Relentless adds 1 more.</li>
@@ -2924,6 +3060,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ul>
 <li><b>When a Titan dies,</b> every soldier who holds On Body or Blind Spot relative to it is scalded, including a soldier its death freed from its hand.</li>
 <li><b>When a Titan's Regeneration clock fills and a Body Part moves toward Intact,</b> every soldier who holds On Body relative to it is scalded. A fill that moves no Body Part releases no steam.</li>
+<li><b>A soldier at Blind Spot is not on the body</b>, so a Regeneration fill never scalds them. Only the Titan's death reaches them, because a dying body throws steam over the ground behind it as well.</li>
 <li>A soldier at In Reach or Distant, or holding no Position relative to the Titan, takes nothing.</li>
 </ul>
 <p><b>When you are scalded</b>, roll D6 once on the steam table and take the damage its row gives; a 0 does no harm. It is a fixed roll: no Push, Help, Stress Dice, or Talent changes it. A Critical Injury the damage inflicts has a rolled Injury Location, and no Net Successes add to it.</p>
@@ -3642,7 +3779,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <tr><td>Blade Set</td><td>Fight</td><td>2</td><td>Cut</td><td>Engaged only</td><td>Soldiers. The Blade Set in the handles gives the Gear Dice. A Pushed roll whose Gear Die shows 1 ruins it (see <a href="#gear-blades">Blade Sets</a>).</td></tr>
 <tr><td>Bare hands, or an object that is not a gear item</td><td>Fight</td><td>1</td><td>Crush</td><td>Engaged only</td><td>Soldiers and Foes. No Gear Dice. A Grapple is made with it and deals no damage. Bare hands never kill a Foe. Thrown at a Foe Engaged or Apart, such an object is an improvised act modelled on Shoot, at this damage and Injury Type.</td></tr>
 <tr><td>Flintlock pistol</td><td>Shoot</td><td>2</td><td>Pierce</td><td>Engaged or Apart</td><td>Soldiers and Foes. Spends its load; empty after the roll. A soldier's firearm gives its Gear Dice, and a Pushed 1 wears it.</td></tr>
-<tr><td>Musket</td><td>Shoot</td><td>4</td><td>Pierce</td><td>Apart only</td><td>Soldiers and Foes. Spends its load; empty after the roll. Gives its Gear Dice. Reload also spends the move. A ball that lands at 1 Net Success deals 4, which brings a Health 4 Rookie to 0 current Health: Down, with a Pierce Critical Injury.</td></tr>
+<tr><td>Musket</td><td>Shoot</td><td>4</td><td>Pierce</td><td>Apart only</td><td>Soldiers and Foes. Spends its load; empty after the roll. Gives its Gear Dice. Reload also spends the move. Damage is 4, plus 1 for each Net Success beyond the first, so a ball Downs a Health 6 soldier at 3 Net Successes rather than on any hit.</td></tr>
 <tr><td>Flare, fired at a person</td><td>Shoot</td><td>1</td><td>Burn</td><td>Engaged or Apart</td><td>Soldiers. Spends 1 flare of Squad Supply, no Shot, and no firearm. No Gear Dice. A flare is a signal first. Fire kills a Foe it brings to 0 Health.</td></tr>
 <tr><td>Sabre</td><td>Fight</td><td>2</td><td>Cut</td><td>Engaged only</td><td>Foes.</td></tr>
 <tr><td>Knife</td><td>Fight</td><td>1</td><td>Cut</td><td>Engaged only</td><td>Foes.</td></tr>
@@ -3785,10 +3922,10 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 
 <div class="example">
 <h4>Example: a Block against a trooper's sabre</h4>
-<p>Round 2 of a Skirmish against a Military Police patrol. Private Hanne Roth (Health 4, Strength 3, Stress 1, a Blade Set rated 1 in her handles) is Engaged with Trooper 1, and she struck at it last round. The Foe group's card comes up first.</p>
+<p>Round 2 of a Skirmish against a Military Police patrol. Private Hanne Roth (Health 5, Strength 3, Stress 1, a Blade Set rated 1 in her handles) is Engaged with Trooper 1, and she struck at it last round. The Foe group's card comes up first.</p>
 <p><b>Trooper 1 attacks.</b> By the foe rule it is Engaged with a candidate, and Hanne is its last attacker, so it Fights her with its sabre. The GM rolls its 7 Attack Dice in the open: 6, 6, 6, 5, 3, 2, 1. Only a 6 counts for a Foe, so the attack scores Severity 3.</p>
 <p><b>Hanne Blocks.</b> She has made no Reaction against Trooper 1 this round, and neither her move nor her action is spent, so the Block spends this round's turn. Her pool is 3 base dice, 1 Gear Die, and 1 Stress Die. She rolls base 6, 4, 2; Gear 6; Stress 3. Two successes. She does not Push.</p>
-<p><b>Net Successes.</b> 3 minus 2 leaves 1 Net Success, so the sabre lands. It deals its damage of 2, plus nothing, since there is no Net Success beyond the first: 2 Cut damage at a rolled Injury Location. Hanne's current Health falls from 4 to 2. Without the Block, all 3 successes would have been net: 2 + 2 = 4 damage, and she would be Down with a Cut Critical Injury. Her 2 Block successes also cancel against every later attack Trooper 1 makes on her this round.</p>
+<p><b>Net Successes.</b> 3 minus 2 leaves 1 Net Success, so the sabre lands. It deals its damage of 2, plus nothing, since there is no Net Success beyond the first: 2 Cut damage at a rolled Injury Location. Hanne's current Health falls from 5 to 3. Without the Block, all 3 successes would have been net: 2 + 2 = 4 damage, leaving her at 1 current Health, one graze from Down. Her 2 Block successes also cancel against every later attack Trooper 1 makes on her this round.</p>
 <p><b>Card 9: Private Dieter Lang.</b> Dieter is Engaged with Trooper 1 and Fights it with his Blade Set: Strength 4, Blade Set 1, Stress 1. He rolls base 6, 6, 3, 1; Gear 6; Stress 2. Three successes, and he does not Push. The GM rolls Trooper 1's Guard of 4 dice: 6, 5, 2, 1. One success cancels one of Dieter's, leaving 2 Net Successes. The Blade Set deals 2, plus 1 for the second Net Success: 3 Cut damage. Trooper 1 falls from Health 4 to 1.</p>
 </div>
 </section>
@@ -3811,6 +3948,16 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </div>
 
 <div>
+<h3>Health and Down</h3>
+<ul>
+<li><b>Health:</b> 2 plus half of Strength plus Agility, rounded up. Halve, round up, then add 2. It runs 4 to 6 on a standard build and as high as 8 at the Lifepath's ceiling. It never changes.</li>
+<li><b>Each untreated Critical Injury</b> crosses off 1 box, up to your Health. Damage marks the boxes left. <b>Current Health</b> is Health, minus the boxes crossed off, minus Health lost.</li>
+<li><b>Down</b> at 0 current Health, or on a row that says so. Damage that brings you to 0 also inflicts a Critical Injury of its Injury Type at once.</li>
+<li><b>A Titan attack</b> is always a Critical Injury and never damage, whatever your Health. Steam, a fall, and Corpse Heat are not Titan attacks.</li>
+</ul>
+</div>
+
+<div>
 <h3>A Titan attacks</h3>
 <ul>
 <li><b>Attack Dice</b> are Titan Dice, rolled by the GM in the open: 5 or 6 succeeds. Titan Dice never Push and take no Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances. The successes are the Severity; <b>0 is a whiff</b> on everyone.</li>
@@ -3819,6 +3966,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Critical Injury:</b> +1 to the roll per Net Success beyond the first. Never for the Grab's crush, a fall, damage, or a Stress gain.</li>
 <li><b>Knock loose:</b> a target airborne, On Body, or at Blind Spot falls. A mounted target is not affected.</li>
 <li><b>Wreck:</b> the fight loses 1 Anchor, whether the card landed or whiffed.</li>
+<li><b>Retargeting:</b> when the Attention holder is not in a Position the behavior needs, the Titan runs the Attention Ladder again over only the soldiers who are, its Attention moves to the one it picks, and the behavior lands on them. It falls back only when nobody qualifies.</li>
+<li><b>Frenzy:</b> each Focus Titan starts at 0, gains 1 at each round end, and caps at 3. Its behavior roll is D6 + Frenzy, and a total above its table's highest result reads as the highest. <b>Finish the fight, or it gets worse.</b></li>
 </ul>
 </div>
 
@@ -3829,8 +3978,18 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Deal</b> cards 1 to 20: one per player character, one per Squadmate on no Wing, and Tempo cards per Focus Titan.</li>
 <li><b>Swap:</b> both at the same Position or one step apart, or both have left; neither Down nor Grabbed; once each.</li>
 <li><b>Play</b> lowest first. Your turn is one move and one action, in either order. A Wing Squadmate acts right after its player character.</li>
-<li><b>End:</b> Gas Rolls; Regeneration +1; Background clocks +1, then the retreat clock +1 (neither during a retreat); everyone who made no ODM move loses all their Momentum.</li>
+<li><b>End:</b> Gas Rolls; Regeneration +1; Frenzy +1 (cap 3, during a retreat too); Background clocks +1, then the retreat clock +1 (neither during a retreat); everyone who made no ODM move loses all their Momentum.</li>
 </ol>
+</div>
+
+<div>
+<h3>Positions</h3>
+<ul>
+<li><b>An action never changes a Position.</b> Only your own move does, plus this closed list: letting go, any fall, a knock loose, a Fear Roll's forced step, a Grab landing or ending, the close rule, a Titan arriving or dying, being carried, Fall Back, a grounded Titan standing at Open, and starting placement, leaving, returning, and a retreat's forced moves. The Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, and Rally leave you where you stand.</li>
+<li><b>On Body</b> means literally on it. <b>Blind Spot is not on the Titan:</b> you are anchored to terrain behind it, a tree or a roof, out of its sight with its Nape in reach. Steam at a Regeneration fill hits On Body and not Blind Spot, because Blind Spot is not on it.</li>
+<li><b>The map's shape is the Anchor Rating's</b> (see <a href="#fight-maps">the Position map</a>). <b>Open:</b> Distant to In Reach to On Body, and no Blind Spot at all while it stands. <b>Sparse:</b> a chain, Distant to In Reach to On Body to Blind Spot, so the Nape is reached by way of the body. <b>Wooded, Urban, Giant Forest:</b> a branch, In Reach to either On Body or Blind Spot, and those two joined.</li>
+<li><b>Grounded:</b> every step among In Reach, On Body, and Blind Spot can also be made on foot, none mounted. At Open it adds an On Body to Blind Spot step, so a plain finally reaches the Nape.</li>
+</ul>
 </div>
 
 <div>
@@ -3850,6 +4009,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ul>
 <li><b>Working ODM Gear</b> (not Jammed, Gas Rating above 0) is needed for a Nape strike, and for a Body Part strike from On Body or Blind Spot, unless the Titan is grounded.</li>
 <li><b>Nape strike:</b> Strength + the Blade Set in your handles, from Blind Spot; + Openings (never your own); +2 if grounded. Not while you hold its Attention or are Grabbed, and never in a retreat. Nape Depth kills; short, each success is an Opening.</li>
+<li><b>After a Nape strike you are still at Blind Spot.</b> The strike counts as hooking into the Titan for the Attention Ladder only, so a striker who pulls the Attention onto themselves cannot strike again until it moves: a comrade's Draw Attention or a Break Attention gets it off them.</li>
 <li><b>Body Part strike:</b> eyes from On Body or Blind Spot; arms and legs from In Reach or On Body. Grounded: any part from In Reach, On Body, or Blind Spot, except a holding arm. Successes add to the count; at Toughness the part worsens one state; past Broken, Openings.</li>
 <li><b>Broken leg:</b> grounded, and its body falls. <b>Broken arm:</b> frees its soldier. <b>Broken eyes:</b> no flare or cloak decoy.</li>
 </ul>
@@ -4126,7 +4286,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ol>
 <li>Note the Anchor Rating, the Focus Titan, each Background Titan with its clock length, and the retreat clock. The retreat clock starts empty, and the rating's <a href="#fight-anchors">Anchors</a> go on the engagement line. No soldier holds Momentum yet.</li>
 <li>Label the Focus Titan A.</li>
-<li>Its Body Parts start Intact with a count of 0, it has no Openings and no previous behavior, and its Regeneration clock is empty. Roll its Next Behavior out of sight.</li>
+<li>Its Body Parts start Intact with a count of 0, it has no Openings and no previous behavior, its Regeneration clock is empty, and its <a href="#fight-frenzy">Frenzy</a> is 0. Roll its Next Behavior out of sight.</li>
 <li>Every soldier who takes part holds Distant relative to A, unless the starting rule names other Positions. Mounted soldiers stay mounted and dismounted soldiers stay dismounted, and no one is airborne. Each dismounted soldier's horse holds Distant, recorded with A.</li>
 <li>Check its Attention Ladder with no cards dealt. If one soldier meets a higher rung than every other, as the Straggler's victim at In Reach does, they hold its Attention. Otherwise nothing holds it, and its first card turns it: with everyone at the same Position, a Squad of two or more starts that way.</li>
 <li>Soldiers make the Fear Rolls for a first Titan Engagement and for an Abnormal.</li>
@@ -4139,15 +4299,15 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p>Keep one line for the Titan Engagement, one row for each Focus Titan, one row for each Corpse, and one row for each Background Titan. Everything on the tracker is public except an unrevealed Next Behavior and the values an Abnormal keeps hidden.</p>
 <ul>
 <li><b>Engagement line:</b> the Anchor Rating; the Anchors left of the number it started with, which is every soldier's Momentum cap; the round; the retreat clock's filled segments out of its length; whether a retreat is under way, and the round it began (the retreat's stay limit counts from it); the Squad Tactics and which are used; whose cloaks are thrown; and the round in which no soldier was left standing, while the ending waits.</li>
-<li><b>Focus Titan row:</b> its label, Size Class, and stat block; its cards this round; the Attention holder, or the decoy holding it and how many cards its hold has left, or nothing; the Next Behavior (face down), the previous behavior, and any Call It on the Next Behavior; each Body Part's state and count; Openings and who created each; the Regeneration clock (only its filled segments for an Abnormal whose clock length no Read has revealed); decoys in a row; any Grabbed soldier, with countdown turns and whether lifted; the marks standing on soldiers; its Heave count out of its Heave rating; and each soldier its body pins, by limb with the pinning Body Part (or none), or by the body.</li>
+<li><b>Focus Titan row:</b> its label, Size Class, and stat block; its <a href="#fight-frenzy">Frenzy</a>, 0 to 3, raised by 1 at each round end; its cards this round; the Attention holder, or the decoy holding it and how many cards its hold has left, or nothing; the Next Behavior (face down), the previous behavior, and any Call It on the Next Behavior; each Body Part's state and count; Openings and who created each; the Regeneration clock (only its filled segments for an Abnormal whose clock length no Read has revealed); decoys in a row; any Grabbed soldier, with countdown turns and whether lifted; the marks standing on soldiers; its Heave count out of its Heave rating; and each soldier its body pins, by limb with the pinning Body Part (or none), or by the body.</li>
 <li><b>Corpse row:</b> when a Focus Titan dies, its row stays for its Corpse, marked Corpse: each Body Part's state and count, which never regenerate; its Heave count out of its Heave rating; and each soldier it pins.</li>
 <li><b>Background Titan row:</b> its Size Class, its stat block, and its clock.</li>
 </ul>
 <p class="dice">Wooded | Anchors 1/2 | Round 3 | Retreat 2/8 | Retreat began: - | Tactics: Hook and Cut (used), Fall Back | Cloaks: - | No one standing since: -</p>
-<p class="dice">A Medium | cards 4 | Att: Jonas | Next: [hidden] | Prev: Bite | Eyes I0 LA W1 RA I0 LL B0 RL I1 | Op 2 (Mila, Mila) | Regen 1/3 | Decoys 0 | Grab: - | Marks: Mila struck its Nape | Heave 0/3 | Pins: -</p>
+<p class="dice">A Medium | Frenzy 2/3 | cards 4 | Att: Jonas | Next: [hidden] | Prev: Bite | Eyes I0 LA W1 RA I0 LL B0 RL I1 | Op 2 (Mila, Mila) | Regen 1/3 | Decoys 0 | Grab: - | Marks: Mila struck its Nape | Heave 0/3 | Pins: -</p>
 <p class="dice">A Corpse | Eyes I0 LA I0 RA I0 LL B0 RL W1 | Heave 1/3 | Pins: Mila (right arm, RA), Jonas (body)</p>
 <p class="dice">Background 1 Small | clock 4/6</p>
-<p class="small"><b>Reading the rows.</b> <b>Att</b> is the Attention holder, or the decoy with the cards its hold has left (Att: flare, 1 left). <b>Next</b> and <b>Prev</b> are the Next Behavior and the previous behavior. Each Body Part (Eyes; LA and RA for the arms; LL and RL for the legs) shows I, W, or B for Intact, Wounded, or Broken, then its count. <b>Op</b> is the Openings, with who created each. <b>Regen</b> is the Regeneration clock's filled segments of its length. <b>Decoys</b> is decoys in a row. <b>Grab</b> is a Grabbed soldier, with countdown turns and whether lifted. <b>Marks</b> are the marks standing on soldiers. <b>Heave</b> is the Heave count of the Heave rating. <b>Pins</b> lists each Pinned soldier with the pinned limb and the pinning Body Part, or "body" for a body pin.</p>
+<p class="small"><b>Reading the rows.</b> <b>Att</b> is the Attention holder, or the decoy with the cards its hold has left (Att: flare, 1 left). <b>Next</b> and <b>Prev</b> are the Next Behavior and the previous behavior. Each Body Part (Eyes; LA and RA for the arms; LL and RL for the legs) shows I, W, or B for Intact, Wounded, or Broken, then its count. <b>Frenzy</b> is the Titan's Frenzy of its cap of 3, added to its behavior roll. <b>Op</b> is the Openings, with who created each. <b>Regen</b> is the Regeneration clock's filled segments of its length. <b>Decoys</b> is decoys in a row. <b>Grab</b> is a Grabbed soldier, with countdown turns and whether lifted. <b>Marks</b> are the marks standing on soldiers. <b>Heave</b> is the Heave count of the Heave rating. <b>Pins</b> lists each Pinned soldier with the pinned limb and the pinning Body Part, or "body" for a body pin.</p>
 <p>Update it after the deal, after each Titan card, after each strike or Break Attention, after each counted turn of a Grabbed soldier, after each fall of a Titan's body and each Heave, and at the end steps. Update the Anchors whenever a Wreck effect resolves or a Titan's body falls. Players track everything else on their sheets: Positions relative to each Focus Titan and each Corpse, Momentum, mounted, airborne, carried and carrying, Pinned, turns and actions spent in advance, Stress, Stress Responses, Critical Injuries, Health, gear, and Gas Rating. The positions column of the Squad sheet is the record you read the Attention Ladder from.</p>
 <p>Roll together any rolls that do not depend on each other: the end-step Gas Rolls, and the Fear Rolls every witness makes for one event.</p>
 
@@ -4157,11 +4317,11 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <ul>
 <li><b>D6, Behavior, and Tier.</b> Results 1 and 2 terrorize, 3 and 4 control, 5 and 6 kill.</li>
 <li><b>Targets:</b> "holder" is the soldier holding the Titan's Attention; "holder and everyone at their Position" adds every other soldier at that Position who is not Grabbed.</li>
-<li><b>Holder's Position:</b> the Positions the holder must hold for the entry to happen. "Any" means all four.</li>
+<li><b>Holder's Position:</b> the Positions the holder must hold for the entry to happen. "Any" means all four. Remember that <b>Blind Spot is not on the Titan</b>: the soldier is anchored to terrain behind it, out of its sight with its Nape in reach, while On Body means literally on it. An entry that needs On Body does not reach a soldier at Blind Spot.</li>
 <li><b>Body Parts used:</b> the kinds the entry needs unbroken. "arm" needs one unbroken arm; "both legs" needs both legs unbroken.</li>
 <li><b>Attack Dice:</b> how many Titan Dice the entry rolls when a card resolves it. A telegraph-only entry rolls none.</li>
 <li><b>Effects,</b> applied in order to each target the card lands on. Every effect that harms names its Injury Type.</li>
-<li><b>Fallback:</b> the entry that happens instead when the holder's Position does not fit.</li>
+<li><b>Fallback:</b> the entry that happens instead when <b>no soldier at all</b> holds a Position this entry needs. While anyone does, the Titan retargets onto them rather than falling back (see <a href="#gm-ladder">Checking the Attention Ladder</a>).</li>
 <li><b>Grab:</b> "yes" marks an entry that starts the Grab. The Closing Hand Scar reads this mark.</li>
 </ul>
 <div class="box">
@@ -4196,12 +4356,14 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <div class="box">
 <h4>To roll it</h4>
 <ol>
-<li>Roll D6 and find the entry.</li>
+<li>Roll D6 and add the Titan's <a href="#fight-frenzy">Frenzy</a>. A total above the table's highest result reads as that highest result. Find the entry.</li>
 <li>The entry cannot be rolled if it was the Titan's previous behavior, or if it needs Body Parts the Titan no longer has unbroken.</li>
 <li>If it cannot, take the entry holding the next higher result, wrapping from 6 to 1, and test again.</li>
 <li>If no entry passes, the Next Behavior is Thrash.</li>
 </ol>
 </div>
+<p><b>Frenzy.</b> Each Focus Titan starts at Frenzy 0 and gains 1 at its own end step of each round, to a cap of 3, during a retreat as well. It is public: keep it on the tracker and say it aloud when it rises. It is added to the roll above, so a Titan at Frenzy 3 never rolls lower than its table's result 4. It adds no dice, changes no Attack Dice and no need, and moves no soldier.</p>
+<p><b>The Frenzy a roll takes</b> is the Frenzy standing when you roll, and nothing re-reads it afterwards. A Titan that has just become a Focus Titan is at 0, so its first Next Behavior is a plain D6. A Next Behavior rolled in one round and resolved in the next was rolled at the earlier round's Frenzy, so the escalation reaches the table one card late. The end step raises the counter and never touches a roll already made.</p>
 <p>Rolling never checks Positions; those are checked when the card comes up. A Read that reveals the Next Behavior reveals its whole row, Attack Dice included. Its Severity exists only once its card rolls.</p>
 
 <h2 id="gm-card">Resolving a Titan's card</h2>
@@ -4212,7 +4374,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>Holding.</b> If it holds a living Grabbed soldier, the card resolves nothing. Do not check the ladder. The Next Behavior and the marks stay.</li>
 <li><b>Decoy.</b> If a decoy holds its Attention, the card resolves nothing and the hold has one card fewer left. The Next Behavior counts as spent: it becomes the previous behavior, any Call It on it ends, and you roll a new one. If that was the hold's last card, the hold ends and you check the ladder; otherwise the decoy keeps its Attention. Either way the marks stay and decoys in a row does not change.</li>
 <li><b>Attention.</b> Otherwise, check the Attention Ladder. If nothing holds its Attention, the card resolves nothing, the Next Behavior is kept, and the marks stay.</li>
-<li><b>Choose.</b> Take the Next Behavior's entry. If the Titan lacks the Body Parts it uses, the behavior is Thrash. If the holder does not meet its Position requirement, it becomes its fallback. If the fallback repeats the previous behavior or fails either test, the behavior is Thrash. Thrash can always happen, and it is the only entry that can follow itself.</li>
+<li><b>Choose.</b> Take the Next Behavior's entry. If the Titan lacks the Body Parts it uses, the behavior is Thrash. <b>If the holder does not meet its Position requirement, the Titan retargets:</b> check the Attention Ladder again over only the candidates who do meet that requirement, move its Attention to the soldier the ladder picks, and resolve the entry against them. Only if no candidate meets the requirement does the entry become its fallback. If the fallback repeats the previous behavior or fails either test, the behavior is Thrash. Thrash can always happen, and it is the only entry that can follow itself.</li>
 <li><b>Roll and announce.</b> Announce the behavior's name, tier, and targets. Roll its Attack Dice as Titan Dice in the open and announce the successes: the card's Severity, the same for every target.</li>
 <li><b>Reactions.</b> On Severity 0 the card whiffs against every target, a target who cannot make a Reaction included, and no one dodges. Otherwise each target, knowing the Severity, chooses whether to dodge, or cancels with a dodge already made against this Titan this round. Each dodge success cancels one of the card's successes, separately for this card. The card lands on a target on 1 or more Net Successes and whiffs on 0. A target who makes no Reaction, or cannot make one, cancels nothing: every success is net against them. A Call It on this behavior adds its Bonus Dice to a dodge made against this card, never to an earlier dodge compared against it (see <a href="#fight-dodge">Dodging a Titan</a>).</li>
 <li><b>Effects.</b> For each target it lands on, apply the effects in order, targets in card order, a Wing Squadmate just after its player character. Only a Critical Injury reads the Net Successes. A telegraph and a Wreck apply whether the card landed or whiffed, and a Wreck applies even where the entry landed on no one. A target who dies receives none of the card's later effects; every other target still does.</li>
@@ -4227,7 +4389,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p><b>Roll and announce.</b> You announce Bite, a kill entry, against Lena, and roll its 9 Attack Dice in the open: 6, 2, 5, 3, 1, 4, 5, 2, 3. Three dice show 5 or 6: Severity 3.</p>
 <p><b>Reactions.</b> Lena's turn this round is unspent, so her dodge spends it. Agility 3, ODM Gear 3, and Stress 2 give 3 base dice, 3 Gear Dice, and 2 Stress Dice. She rolls base 6, 4, 1; Gear 6, 3, 2; Stress 5, 2. Two successes cancel two of the Bite's three, leaving 1 Net Success. The Bite lands.</p>
 <p><b>Effects.</b> Lena gains a Bite Critical Injury at the torso, which can be lethal. With 1 Net Success its roll adds nothing. Had she not dodged, all 3 successes would be net, and the roll would add 2.</p>
-<p><b>Next.</b> Bite becomes the previous behavior, decoys in a row returns to 0, the marks clear, and you roll a new Next Behavior out of sight.</p>
+<p><b>Next.</b> Bite becomes the previous behavior, decoys in a row returns to 0, the marks clear, and you roll a new Next Behavior out of sight. If this is the fight's third round the Titan sits at Frenzy 2, so that roll is D6 + 2, and any total of 7 or more reads as result 6.</p>
+<p><b>Had Lena been at Blind Spot.</b> Bite needs In Reach or On Body, so the Titan would retarget: you would check the ladder again over only the soldiers at In Reach or On Body, move its Attention to the one it picks, and bite them instead. Bite would fall back to Thrash only if nobody at all were standing there.</p>
 <p><b>Had the dice whiffed.</b> Had no Titan Die shown 5 or 6, the Bite would whiff against Lena, she would make no dodge and keep her turn, and the Next step would still happen in full: Bite the previous behavior, the marks cleared, a new Next Behavior rolled.</p>
 </div>
 
@@ -4245,6 +4408,17 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </ol>
 </div>
 <p><b>Down and carried soldiers</b> are candidates, but they meet only the rungs that allow it: on the standard ladder, only nearest. The Sprinting Abnormal's current holder rung also allows it, for a holder who is not at Distant.</p>
+<div class="box">
+<h4>Retargeting: the second check</h4>
+<p><b>When a card's entry needs a Position its Attention holder does not hold</b>, check the ladder a second time with a narrowed field. The candidates are only the soldiers who hold a Position the entry needs; everything else about the check is unchanged, tie-breaks included. The soldier it picks takes the Titan's Attention, and the entry resolves against them.</p>
+<ol>
+<li>Narrow the candidates to those who hold a Position the entry names.</li>
+<li>If none do, the entry becomes its fallback, and the Titan's Attention does not move. That is the only road to the fallback.</li>
+<li>Otherwise run the ladder over the narrowed field and move the Titan's Attention to the soldier it picks.</li>
+<li>Announce the behavior against that soldier, and resolve the card as usual. Its Attention stays with them until something moves it again.</li>
+</ol>
+<p>It is what a predator does: the thing it wanted is out of reach, so it takes what it can catch. Say it aloud, so the table sees the Titan turn.</p>
+</div>
 <p><b>Marks</b> (struck its Nape, hurt it, loud) are public. Each clears at the Next step of the Titan's next card that resolves a behavior, landed or whiffed. A card that resolves nothing leaves every mark standing: every card of a decoy's hold, the last included; a card while the Titan holds a Grabbed soldier; and a card with nothing holding its Attention.</p>
 
 <h2 id="gm-harm">Titan harm, clocks, and the end</h2>
@@ -4310,6 +4484,10 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <p><b>The next round.</b> At the start of Jonas's turn he gains a Burn Critical Injury at his right leg. He holds In Reach and keeps his action, so he strikes the right leg that pins him, needing no working ODM Gear. His first success reaches its Toughness of 2: the leg is Broken, and he is freed. No Focus Titan is alive and no soldier is Pinned, so the Titan Engagement ends.</p>
 </div>
 
+<h3 id="gm-frenzy-note">Frenzy at the table</h3>
+<p>Set each Focus Titan's Frenzy to 0 the moment it becomes one, a Background Titan that walks in included, and raise it by 1 at its own end step of each round, just after the Regeneration clocks, to a cap of 3. It is public. Say it when it rises, because it is the clock the players can do something about: it is the packet's promise that a fight they let run turns into one they cannot win.</p>
+<p>Two Focus Titans hold their own Frenzy each. A Titan that enters in round 4 starts at 0 while the first is at 3.</p>
+
 <h3>Background Titans and the retreat</h3>
 <ul>
 <li><b>Background Titan clocks</b> fill 1 segment at the end of each round, and 1 segment for each flare spent on Break Attention, once that Break Attention and any Hook and Cut it allows are resolved.</li>
@@ -4366,7 +4544,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <section class="chapter gm" id="titans">
 <h1>The Titans</h1>
 <p class="epigraph">"Small ones crawl, medium ones reach, large ones fall on you. All of them bite."<span>Garrison sergeant, Wall Rose</span></p>
-<p>Every page of this chapter is public: show it to any player who asks. A standard Titan takes every number from its Size Class and uses the standard Attention Ladder. <a href="#gm-legend">How to read a stat block and a Behavior Table</a> explains every column, every effect, and the Titan Dice. Below each table, a line for each entry describes the behavior for narration; the row is the rule.</p>
+<p>Every page of this chapter is public: show it to any player who asks. A standard Titan takes every number from its Size Class and uses the standard Attention Ladder. Every one of them starts at Frenzy 0, gains 1 at the end of each round, and caps at 3, and every behavior roll is D6 plus that Frenzy. <a href="#gm-legend">How to read a stat block and a Behavior Table</a> explains every column, every effect, and the Titan Dice. Below each table, a line for each entry describes the behavior for narration; the row is the rule.</p>
 <p>A Behavior Table kills only through a lethal Critical Injury, by its Death Roll or an instant-death row that the Net Success rider can reach; through the Grab's devour step; or through a fall one of its effects causes. A Titan's body also harms with Steam, its fall, and Corpse Heat, which no entry deals (see <a href="#gm-harm">Titan harm, clocks, and the end</a>). No entry affects a horse.</p>
 
 <section class="titan" id="titan-small">
@@ -4380,6 +4558,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Regeneration clock</dt><dd>2 segments</dd>
 <dt>Body Parts and Toughness</dt><dd>eyes 1, left arm 1, right arm 1, left leg 1, right leg 1</dd>
 <dt>Heave rating</dt><dd>2</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Standard Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4416,6 +4595,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Regeneration clock</dt><dd>3 segments</dd>
 <dt>Body Parts and Toughness</dt><dd>eyes 2, left arm 2, right arm 2, left leg 2, right leg 2</dd>
 <dt>Heave rating</dt><dd>3</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Standard Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4452,6 +4632,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Regeneration clock</dt><dd>4 segments</dd>
 <dt>Body Parts and Toughness</dt><dd>eyes 2, left arm 3, right arm 3, left leg 2, right leg 2</dd>
 <dt>Heave rating</dt><dd>4</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Standard Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4487,6 +4668,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Abnormal</dt><dd>yes</dd>
 <dt>Tempo</dt><dd>2</dd>
 <dt>Heave rating</dt><dd>3</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
 <dt>Hidden until Read</dt><dd>each Body Part's Toughness, Nape Depth, Regeneration clock length, Attention Ladder</dd>
 </dl></div>
 <div class="table-wrap"><table>
@@ -4512,7 +4694,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 </ul>
 <ul>
 <li><b>It runs through people.</b> Run Past and Trample work against a holder at Distant or In Reach, so a rider at Distant is not out of its path. Trample's leg Critical Injury cannot be lethal; a rider it puts Down falls.</li>
-<li><b>Its hands and jaws need you close.</b> Its Grab and Headlong Lunge need In Reach or On Body, and the Lunge falls back to Pitch Headlong. Both roll 6 Attack Dice.</li>
+<li><b>Its hands and jaws need you close.</b> Its Grab and Headlong Lunge need In Reach or On Body, so it retargets onto anyone standing there when its Attention holder is not. The Lunge falls back to Pitch Headlong only when nobody at all is. Both roll 6 Attack Dice.</li>
 <li><b>Cut one leg.</b> Run Past, Trample, and Headlong Lunge need both legs. With one leg Broken it is grounded: it only veers, pitches over, and grabs, and Nape strikes against it gain the grounded dice.</li>
 <li><b>Clinging to it is risky.</b> Pitch Headlong knocks loose the holder at On Body or Blind Spot, though its slow roll rolls only 3 Attack Dice.</li>
 </ul>
@@ -4532,6 +4714,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Body Parts and Toughness</dt><dd>eyes 2, left arm 2, right arm 2, left leg 2, right leg 2</dd>
 <dt>Heave rating</dt><dd>3</dd>
 <dt>Attack Dice</dt><dd>by entry, on its public Behavior Table: Run Past 3, Veer 3, Trample 6, Pitch Headlong 3, Grab 6, Headlong Lunge 6, Thrash 6</dd>
+<dt>Frenzy</dt><dd>starts at 0, rises 1 at each round end, caps at 3, added to its behavior roll</dd>
 <dt>Attention Ladder</dt><dd>Sprinting Abnormal Ladder</dd>
 <dt>Hidden until Read</dt><dd>each Body Part's Toughness, Nape Depth, Regeneration clock length, Attention Ladder</dd>
 </dl></div>
@@ -4616,7 +4799,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Fear Roll</dt><dd>A roll forced by a horrifying event on the closed list of triggers, such as a Titan seizing a comrade, rather than by the dice. Outside a Titan Engagement the GM may call one for an event as horrifying as a listed trigger; inside one, only the list does.</dd>
 <dt>Scar</dt><dd>A lasting named trauma with a mechanical effect, which also raises the soldier's minimum Stress and Resolve by 1.</dd>
 <dt>Grief</dt><dd>The weight a soldier carries after a comrade dies, gained by the fight's participants when it ends, or by the Squad after other deaths and any Fear Rolls they cause. Each point lowers Resolve by 1, up to 3 held, until dealt with during Downtime.</dd>
-<dt>Health</dt><dd>How much punishment a character can absorb before they can no longer act: half of Strength plus Agility, rounded up, kept as a row of boxes. Each untreated Critical Injury crosses off one box, up to Health; damage marks the boxes left; at 0 the soldier is Down.</dd>
+<dt>Health</dt><dd>How much punishment a character can absorb before they can no longer act: 2 plus half of Strength plus Agility, rounded up, kept as a row of boxes, from 4 to 8. Each untreated Critical Injury crosses off one box, up to Health; damage marks the boxes left; at 0 the soldier is Down.</dd>
 <dt>Critical Injury</dt><dd>A lasting injury with an Injury Location and an Injury Type, labeled with whether it puts the soldier Down, whether it is lethal and how fast, its effect, and its healing time. A Titan's attack inflicts one directly, without reducing Health first, adding 1 to the roll per Net Success beyond the first. Each untreated one crosses off a Health box, and a later injury to the same location and side is rolled with a worsening bonus.</dd>
 <dt>Down</dt><dd>The state of a human at 0 current Health, whether from damage, from untreated Critical Injuries crossing off every Health box, or both, or holding an untreated Critical Injury whose row says so, who can do little more than crawl. Reaching 0 current Health through damage also inflicts an immediate Critical Injury.</dd>
 <dt>Death Roll</dt><dd>The Strength roll, which cannot be Pushed, made each time a lethal Critical Injury's time limit runs out, to see whether the soldier dies.</dd>
@@ -4638,6 +4821,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Attack Dice</dt><dd>The pool a Behavior Table entry or a Foe's weapon rolls when it resolves. A Titan's entry rolls 3, 6, 9, or 12 Titan Dice, set by its tier and Size Class; a Foe rolls its Attack Dice as base dice. An entry that only telegraphs rolls none.</dd>
 <dt>Titan Dice</dt><dd>The dice a Titan's Attack Dice are rolled with, in the open when its card comes up. Each succeeds on 5 or 6. They never Push and take no Bonus Dice, Help, Gear Dice, Stress Dice, or Circumstances. Use a colour no soldier's pool uses.</dd>
 <dt>Thrash</dt><dd>The default behavior every Behavior Table falls back to when no other entry can happen.</dd>
+<dt>Frenzy</dt><dd>A number each Focus Titan holds, starting at 0, rising by 1 at the end of each round, and capped at 3. It is added to the Titan's behavior roll, and a total above the table's highest result reads as that highest result. Every Behavior Table is ordered from terrorize to kill, so a Titan grows more dangerous the longer the fight lasts.</dd>
+<dt>Retargeting</dt><dd>What a Focus Titan does when its Attention holder is not in a Position the rolled behavior needs: the Attention Ladder is read again over only the soldiers who are, the Titan's Attention moves to the one it picks, and the behavior resolves against them. The entry falls back only when no soldier qualifies.</dd>
 <dt>Next Behavior</dt><dd>A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden until it happens or is Read. Reading it reveals its Attack Dice.</dd>
 <dt>Telegraph</dt><dd>A behavior that announces what the Titan's next card will do.</dd>
 <dt>Wreck</dt><dd>A Behavior Table effect that destroys 1 of the battlefield's Anchors, whether the card landed or whiffed. A Titan's body falling destroys 1 as well.</dd>
@@ -4648,8 +4833,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <dt>Break Attention</dt><dd>An action that shifts a Focus Titan's Attention onto a decoy, such as a flare, a riderless horse, a thrown cloak, or the soldier's own Feint, for as many of its next cards as its Tempo. It is easiest for the soldier holding the Titan's Attention, and harder for each decoy the Titan has fallen for since one of its cards last resolved a behavior.</dd>
 <dt>Feint</dt><dd>A decoy for Break Attention: the soldier's own pass across a Focus Titan's face from In Reach or On Body, made with working ODM Gear, mounted on their own horse that is not lame, or on foot against a grounded Titan. It spends nothing and needs 1 more success.</dd>
 <dt>Severity</dt><dd>The successes an attack roll scored: a Titan's, a Foe's, or a soldier's against a Foe, announced to every target. A soldier's Reaction, or a Foe's Guard, must cancel every one of them to avoid the attack. A roll that scores 0 is a whiff against everyone.</dd>
-<dt>Position</dt><dd>Where a soldier is relative to a Focus Titan: Distant, In Reach, On Body, or Blind Spot.</dd>
-<dt>Blind Spot</dt><dd>The Position out of a Focus Titan's sight with its Nape within reach, anchored to terrain rather than hooked into the Titan, and the only Position a Nape strike can be made from. Making a Nape strike counts as hooking into the Titan.</dd>
+<dt>Position</dt><dd>Where a soldier is relative to a Focus Titan: Distant, In Reach, On Body, or Blind Spot. An action never changes one. Only the soldier's own move, and the closed list of rules that say so, do.</dd>
+<dt>Blind Spot</dt><dd>The Position out of a Focus Titan's sight with its Nape within reach. It is not on the Titan: the soldier is anchored to terrain behind it, a tree or a roof, and is not touching it. It is the only Position a Nape strike can be made from, and a soldier who makes one stays there. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only.</dd>
 <dt>Opening</dt><dd>A token on a Titan created by successes beyond Breaking a Body Part, extra successes on Break Attention, every success of a Nape strike that falls short, or a rule that names it, such as Relentless. Any comrade of the soldier who created it can spend it as a Bonus Die on a Nape strike until Regeneration erases it; its creator never can.</dd>
 <dt>Tempo</dt><dd>How many initiative cards a Titan draws each round.</dd>
 <dt>Titan Engagement</dt><dd>A scene in which the Squad confronts one or more Titans.</dd>
@@ -4773,7 +4958,8 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <div class="table-wrap"><table class="form">
 <caption>Health and mind</caption>
 <tbody>
-<tr><th>Health boxes: a slash for damage, an X for an untreated Critical Injury</th><td colspan="3"></td></tr>
+<tr><th>Health</th><td></td><th>Boxes past your Health: cross them out</th><td></td></tr>
+<tr><th>Health boxes: a slash for damage, an X for an untreated Critical Injury</th><td colspan="3"><span class="hboxes"><span class="hbox"></span><span class="hbox"></span><span class="hbox"></span><span class="hbox"></span><span class="hbox"></span><span class="hbox"></span><span class="hbox"></span><span class="hbox"></span></span></td></tr>
 <tr><th>Health lost</th><td></td><th>Down</th><td></td></tr>
 <tr><th>Stress</th><td></td><th>Minimum Stress</th><td></td></tr>
 <tr><th>Resolve</th><td></td><th>Grief</th><td></td></tr>
@@ -4911,6 +5097,7 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <thead><tr><th>Field</th><th>A</th><th>B</th></tr></thead>
 <tbody>
 <tr><th>Size Class and stat block</th><td></td><td></td></tr>
+<tr><th>Frenzy, 0 to 3: +1 at each round end, added to the behavior roll</th><td></td><td></td></tr>
 <tr><th>Cards this round</th><td></td><td></td></tr>
 <tr><th>Attention: holder, or decoy and cards its hold has left</th><td></td><td></td></tr>
 <tr><th>Next Behavior, face down until revealed</th><td></td><td></td></tr>
@@ -5037,6 +5224,9 @@ Outside a Titan Engagement there is no reference Titan and no Position to read, 
 <li><b>The interim day and its care window</b> at the start of a session played outside an Expedition and outside Downtime, with every soldier in scope and Field Repair allowed. Did gear and injuries carry over sensibly from one session to the next?</li>
 <li><b>The interim issue and Funding 3.</b> Did soldiers start each session or Expedition with too much gear, or too little?</li>
 <li><b>The setup table.</b> Which Anchor Ratings and Titans came up, and did any combination feel unfair or dull?</li>
+<li><b>Health.</b> Soldiers now hold 4 to 8 boxes. How many Critical Injuries did a soldier carry before going Down, and did any fight feel safe because of it?</li>
+<li><b>Retargeting and Frenzy.</b> How often did a Titan turn onto a second soldier because its holder was out of reach, and what Frenzy was it at when it died? Did any fight run long enough to reach 3, and did the table feel the pressure to finish?</li>
+<li><b>The Position map.</b> Did anyone need the diagram, and did the shape of the terrain change where the Squad chose to fight?</li>
 <li><b>The retreat clock.</b> Did a retreat begin? Who got out, who was carried, who stayed beside a Pinned comrade, and who was left behind? Did the stay limit end a stay, and did any arm or leg burn away under a Corpse?</li>
 <li><b>Expeditions.</b> Which Formation Posts, Paces, and hazard rows came up? Did rations run short? Did the Straggler row or the Night table feel unfair or dull?</li>
 <li><b>Downtime.</b> Did the infirmary's seven days send soldiers out fit enough? Which Downtime Actions and Squad Action did the table choose, and was one Downtime Action each enough?</li>

@@ -6,7 +6,7 @@ id: behavior-procedure
 name: Next Behavior and Titan Cards
 chapter: 05-titan-engagement
 adrs: [ADR-0001, ADR-0010, ADR-0015, ADR-0019, ADR-0024]
-decided: [OQ-80, OQ-107, OQ-145]
+decided: [OQ-80, OQ-107, OQ-145, OQ-192, OQ-193]
 
 # ------------------------------------------------------------------ the Next Behavior
 next_behavior:
@@ -15,6 +15,7 @@ next_behavior:
     tracker (data/engagement/round.yaml, gm_tracker). It is revealed only by a Read
     (data/engagement/read.yaml), by a telegraph effect, or when a card resolves it. The GM never
     re-rolls it, changes its row, or makes any choice this file does not name (ADR-0024, limit 8).
+    The roll is D6 plus the Titan's Frenzy at the moment it is rolled (roll; frenzy_when).
   rolled_when:
     - The Titan becomes a Focus Titan.
     - One of its cards has resolved a behavior (resolving_a_card, next).
@@ -25,9 +26,21 @@ next_behavior:
   previous_behavior: >-
     The entry the Titan most recently resolved, or the Next Behavior a decoy's card spent. A Titan
     that has just become a Focus Titan has none.
+  frenzy_when: >-
+    The Next Behavior is rolled in advance of the card that resolves it, so the roll takes the
+    Titan's Frenzy as it stands at the moment of the roll, and nothing re-reads it afterwards
+    (data/engagement/titan-format.yaml, frenzy; decision batch 13, 13-11; OQ-193). Three
+    consequences, and every step below reads them the same way. A Titan that has just become a Focus
+    Titan is at Frenzy 0, so its first Next Behavior is a plain D6. A Next Behavior rolled during one
+    round and resolved in the next was rolled at the earlier round's Frenzy, so the escalation
+    reaches the table one card late. And the roll, once made, stands as it fell (ADR-0024, limit 14):
+    the frenzy end step raises the counter and never touches a Next Behavior already rolled.
   roll:
     - id: roll
-      text: Roll D6 and find the entry whose results include it.
+      text: >-
+        Roll D6 and add the Titan's Frenzy as it stands now (frenzy_when). A total above 6 reads as
+        6 (data/engagement/titan-format.yaml, behavior_table, result_above_the_table). Find the entry
+        whose results include the total.
     - id: legal
       text: >-
         The entry can be rolled if it is not the previous behavior and the Titan meets its
@@ -81,9 +94,22 @@ resolving_a_card:
       text: >-
         Take the Next Behavior's entry. If the Titan does not meet its body_parts_used, the
         behavior is Thrash. Otherwise, if the Attention holder does not meet its
-        position_requirement, the behavior is its fallback entry. If that fallback is thrash, is
-        the previous behavior, or fails either test, the behavior is Thrash. Thrash can always
-        happen, and it is the only entry that can follow itself.
+        position_requirement, re-evaluate the Attention Ladder over only those of the Titan's
+        candidates who do meet it (data/engagement/attention.yaml, evaluation, retargeting;
+        decision batch 13, 13-9; OQ-192). The soldier that evaluation returns holds the Titan's
+        Attention from that moment, and the entry resolves against them: the entry's targets are
+        read from the new holder. Only if no candidate meets the position_requirement is the
+        behavior its fallback entry; and if that fallback is thrash, is the previous behavior, or
+        fails either test, the behavior is Thrash. Thrash can always happen, and it is the only
+        entry that can follow itself. The Titan wanted one soldier and could not reach them, so it
+        takes what it can catch rather than flailing.
+      retarget: >-
+        The Ladder's own evaluation and tie-breaks, over the narrowed set and nothing else: no new
+        rule of selection is added, the choice stays deterministic, and the GM picks nothing
+        (ADR-0024, limit 8; ADR-0010). It changes Attention only, and moves no soldier
+        (data/engagement/positions.yaml, changes_to_position, not_changed_by). The flags for this
+        Titan stand until the next step, as they do through any evaluation
+        (data/engagement/attention.yaml, flag_duration).
     - id: roll-and-announce
       text: >-
         Announce the behavior's name, tier, and targets to every soldier. If the entry lists
@@ -114,7 +140,9 @@ resolving_a_card:
     - id: next
       text: >-
         The card has resolved a behavior whether it landed or whiffed (ADR-0024, limit 2; decision
-        batch 8, 8-1). The behavior becomes the previous behavior, the Titan's decoys in a row returns to 0
+        batch 8, 8-1). The new Next Behavior rolled here takes the Titan's Frenzy as it stands at
+        this moment (next_behavior, frenzy_when).
+        The behavior becomes the previous behavior, the Titan's decoys in a row returns to 0
         (data/engagement/attention.yaml, break_attention, needs_rule), and every flag for this Titan
         clears (data/engagement/attention.yaml, flag_duration; decision batch 3e). Roll the new Next Behavior
         (next_behavior, roll). If the behavior had a telegraph effect, reveal the new Next Behavior to every

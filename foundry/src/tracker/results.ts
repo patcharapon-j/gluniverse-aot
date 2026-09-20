@@ -21,7 +21,8 @@ import { showDice, WofRoll } from '../dice/terms.ts';
 import { clock, postCard } from '../dice/post.ts';
 import { enterTitan, isActiveGM, isGM, markOdm, recordRelease, skirmishFoes, titanDies, wingEvent, wreck } from './engine.ts';
 import { fearRolls, trackerDeaths } from './fear.ts';
-import { rollFall } from './harm.ts';
+import { healthLine, rollFall } from './harm.ts';
+import { postPrompt, registerPromptResolver, type PromptResolver } from '../dice/prompt.ts';
 import { tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
 import { E, grabbedBy, partsOf, snapshot, soldierState, titanActor, titanRow } from './snapshot.ts';
@@ -65,10 +66,6 @@ async function writeResult(message: any, result: Result): Promise<void> {
 }
 const actorSync = (uuid: string) => foundry.utils.fromUuidSync(uuid, { strict: false });
 const rows = (combat: any) => combat.system.toObject().titans as any[];
-const rollD6 = async (n: number) => {
-  const roll = await new foundry.dice.Roll(`${n}d6`).evaluate({ allowInteractive: false });
-  return roll.dice.flatMap((d: any) => d.results.map((r: any) => r.result as number)) as number[];
-};
 
 // ---------------------------------------------------------------- the hooks
 
@@ -380,6 +377,8 @@ async function attackEffects(card: AttackCard, rec: Recorder): Promise<void> {
     }
     rec.line(tr('result.lands', { name: actor.name, n: net }));
     for (const e of entry.effects) {
+      // A death from a Critical Injury now lands when the injured player answers their prompt
+      // (gainOn), so this reads the deaths already recorded rather than one this card just caused.
       if (actor.statuses.has('dead')) break;
       await effect(combat, key, label, actor, e, net, rec);
     }
@@ -458,36 +457,79 @@ async function grab(combat: any, key: string, label: string, actor: any, rec: Re
   if (!land.crushOnly && !actor.statuses.has('dead')) await fearRolls(combat, { kind: 'grabbed', soldier: actor.id }, rec);
 }
 
-/** Gains a Critical Injury (critical-injuries.yaml, gaining) and records it on the soldier. */
+/**
+ * A Critical Injury (critical-injuries.yaml, gaining). The dice are the injured soldier's own, so
+ * this posts a prompt card naming what hurt them and waits for their owner to roll it (batch C,
+ * item 5). The step that caused it records only the card: the injury, the death it may be, and the
+ * Fear Rolls that death causes all land in the prompt's own transaction (dice/prompt.ts).
+ */
 export async function gainOn(combat: any, actor: any, x: { location: Location | 'rolled'; type: string; cannotBeLethal: boolean; net: number }, rec: Recorder): Promise<void> {
-  const [loc] = await rollD6(1);
-  const dice = (await rollD6(2)) as [number, number];
-  const held = [...actor.items].filter((i: any) => i.type === 'critical-injury').map((i: any) => ({ row: i.system.row, location: i.system.location, side: i.system.side ?? null }));
-  const healed = (actor.system.toObject().healed_permanent_injuries ?? []) as { row: string; side: 'left' | 'right' | null }[];
-  const g = gainInjury(E().injury as never, { location: x.location, cannotBeLethal: x.cannotBeLethal, net: x.net, held, healedPermanent: healed }, { location: loc, dice });
-  const where = game.i18n.localize(`WOF.InjuryLocation.${g.location}`) + (g.side ? ` (${game.i18n.localize(`WOF.Side.${g.side}`)})` : '');
-  const pack = game.packs.get(`${SYSTEM_ID}.critical-injuries`);
-  const id = CONFIG.WOF.packIds.criticalInjuries?.[g.row];
-  const item = id ? await pack?.getDocument(id) : null;
-  if (!item) return void rec.line(tr('result.injuryMissing', { row: g.row }));
-  const data = injuryData(item, { type: x.type as never, side: g.side });
-  rec.line(tr('result.injury', { name: actor.name, where, total: g.total, injury: data.name }));
-  if (g.instant) {
+  if (!actor) return;
+  await rec.commit();
+  const message = await postPrompt({
+    ask: 'injury',
+    combat: combat?.id ?? '',
+    title: tr('prompt.injuryTitle', { name: actor.name }),
+    cause: tr('prompt.injuryCause', { name: actor.name, type: game.i18n.localize(`WOF.InjuryType.${x.type}`) }),
+    rolls: tr('prompt.injuryRolls'),
+    asked: [{ actor, detail: healthLine(actor) }],
+    data: { ...x },
+    speaker: actor,
+  });
+  if (message) rec.message(message.id);
+  rec.line(tr('result.injuryAsked', { name: actor.name }));
+}
+
+/** The GM's side of an answered Critical Injury prompt: the row, the item, the death, the Fear Rolls. */
+const injuryResolver: PromptResolver = {
+  // The location die, then the 2D6 of the table (critical-injuries.yaml, gaining).
+  dice: 3,
+  async apply(ctx, roll) {
+    const combat = game.combats.get(ctx.card.combat);
+    const actor = await foundry.utils.fromUuid(ctx.entry.actor);
+    if (!actor) return null;
+    const faces = roll.faces ?? [];
+    const loc = faces[0] ?? 1;
+    const dice = [faces[1] ?? 1, faces[2] ?? 1] as [number, number];
+    const x = ctx.card.data as unknown as { location: Location | 'rolled'; type: string; cannotBeLethal: boolean; net: number };
+    const held = [...actor.items].filter((i: any) => i.type === 'critical-injury').map((i: any) => ({ row: i.system.row, location: i.system.location, side: i.system.side ?? null }));
+    const healed = (actor.system.toObject().healed_permanent_injuries ?? []) as { row: string; side: 'left' | 'right' | null }[];
+    const g = gainInjury(E().injury as never, { location: x.location, cannotBeLethal: x.cannotBeLethal, net: x.net, held, healedPermanent: healed }, { location: loc, dice });
+    const where = game.i18n.localize(`WOF.InjuryLocation.${g.location}`) + (g.side ? ` (${game.i18n.localize(`WOF.Side.${g.side}`)})` : '');
+    const pack = game.packs.get(`${SYSTEM_ID}.critical-injuries`);
+    const id = CONFIG.WOF.packIds.criticalInjuries?.[g.row];
+    const item = id ? await pack?.getDocument(id) : null;
+    if (!item) return { line: tr('result.injuryMissing', { row: g.row }), ops: [] };
+    const data = injuryData(item, { type: x.type as never, side: g.side });
+    const rec = new Recorder();
+    rec.line(tr('result.injury', { name: actor.name, where, total: g.total, injury: data.name }));
+    if (g.instant) {
+      await rec.commit();
+      trackerDeaths.add(actor.id);
+      const effect = await actor.toggleStatusEffect('dead', { active: true, overlay: true });
+      if (effect?.uuid) rec.ops.push({ t: 'create', uuid: effect.uuid, parent: actor.uuid, collection: 'ActiveEffect', data: effect.toObject() });
+      rec.line(tr('result.dies', { name: actor.name }));
+      if (combat) {
+        await wingEvent(combat, { kind: 'death', soldier: actor.id }, rec);
+        await fearRolls(combat, { kind: 'dies', soldier: actor.id }, rec);
+      }
+      await rec.commit();
+      return { line: rec.lines.join(' '), ops: rec.ops };
+    }
+    await rec.create(actor, 'Item', [data]);
+    if (actor.system.derived?.down_by_rule && !actor.system.down) {
+      rec.set(actor, 'system.down', true);
+      rec.line(tr('result.down', { name: actor.name }));
+      if (combat) await wingEvent(combat, { kind: 'down', soldier: actor.id }, rec);
+    }
     await rec.commit();
-    trackerDeaths.add(actor.id);
-    const effect = await actor.toggleStatusEffect('dead', { active: true, overlay: true });
-    if (effect?.uuid) rec.ops.push({ t: 'create', uuid: effect.uuid, parent: actor.uuid, collection: 'ActiveEffect', data: effect.toObject() });
-    rec.line(tr('result.dies', { name: actor.name }));
-    await wingEvent(combat, { kind: 'death', soldier: actor.id }, rec);
-    await fearRolls(combat, { kind: 'dies', soldier: actor.id }, rec);
-    return;
-  }
-  await rec.create(actor, 'Item', [data]);
-  if (actor.system.derived?.down_by_rule && !actor.system.down) {
-    rec.set(actor, 'system.down', true);
-    rec.line(tr('result.down', { name: actor.name }));
-    await wingEvent(combat, { kind: 'down', soldier: actor.id }, rec);
-  }
+    return { line: rec.lines.join(' '), ops: rec.ops };
+  },
+};
+
+/** Registered with the rest of the tracker's prompts (requests.ts). */
+export function registerResultPrompts(): void {
+  registerPromptResolver('injury', injuryResolver);
 }
 
 // ---------------------------------------------------------------- a Skirmish

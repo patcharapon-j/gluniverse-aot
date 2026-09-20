@@ -2,6 +2,12 @@
   /**
    * The Health row as square track boxes: held boxes are red stamps, damage is an inked slash, and a
    * box an untreated Critical Injury crosses off is barred dark with the injury's glyph.
+   *
+   * The Health formula is `2 + ceil((Strength + Agility) / 2)` (round 3, decision 1), so the row is 4
+   * to 8 boxes rather than 2 to 4. A row of 8 at this box size is wider than the Health column of the
+   * vitals strip, so a long row lays out as two even rows of at most four rather than stretching the
+   * column or leaving one box hanging: the pairs stay easy to count at the table, and the strip's
+   * proportions are untouched.
    */
   import { tick } from 'svelte';
   import { inkIn, inkOut } from '../../motion/fx.ts';
@@ -19,6 +25,12 @@
 
   let el: HTMLElement | undefined = $state();
   let prev: string[] | null = null;
+
+  /**
+   * Boxes a row. The large row of the Wounds tab has the width for all eight on one line; the row in
+   * the vitals strip does not, so it lays out as two even rows of at most four.
+   */
+  const cols = $derived(size === 'lg' || cells.length <= 4 ? Math.max(1, cells.length) : Math.min(4, Math.ceil(cells.length / 2)));
 
   const where = (w: InjuryView) => [w.side ? t(`WOF.Side.${w.side}`) : '', w.locationLabel].filter(Boolean).join(' ');
   const label = (c: HealthCell<InjuryView>, i: number) =>
@@ -41,7 +53,7 @@
   });
 </script>
 
-<div class="boxes track-row {size}" role="group" aria-label={t('WOF.Sheet.health.boxes')} bind:this={el}>
+<div class="boxes track-row health-row {size}" style="--track-cols:{cols}" role="group" aria-label={t('WOF.Sheet.health.boxes')} bind:this={el}>
   {#each cells as c, i (i)}
     <button
       type="button"

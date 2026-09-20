@@ -1,4 +1,4 @@
-export type SectionKey = 'home' | 'learn' | 'guide' | 'compendium' | 'gm' | 'reference';
+export type SectionKey = 'home' | 'learn' | 'guide' | 'compendium' | 'gm' | 'reference' | 'updates';
 
 export interface NavItem {
   key: SectionKey;
@@ -14,6 +14,7 @@ export const MAIN_NAV: NavItem[] = [
   { key: 'compendium', href: '/compendium/', label: 'Compendium' },
   { key: 'gm', href: '/gm/', label: "GM's Guide" },
   { key: 'reference', href: '/reference/', label: 'Reference' },
+  { key: 'updates', href: '/updates/', label: 'Updates' },
 ];
 
 export interface IndexTab {

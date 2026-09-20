@@ -13,9 +13,13 @@ export type Attributes = Record<AttributeId, number>;
 /** How many points of Grief count against Resolve (attributes.yaml: "at most 3 points count"). */
 export const MAX_GRIEF_COUNTED = 3;
 
-/** Health: (strength + agility) / 2, rounded up. */
+/**
+ * Health: 2 + (strength + agility) / 2, rounded up (round 3, decision 1; ADR-0005 amended). Health
+ * runs 4 to 8. An untreated Critical Injury still crosses off one box; no damage value changes.
+ */
+export const HEALTH_BASE = 2;
 export function health(a: Pick<Attributes, 'strength' | 'agility'>): number {
-  return Math.ceil((a.strength + a.agility) / 2);
+  return HEALTH_BASE + Math.ceil((a.strength + a.agility) / 2);
 }
 
 /** The lowest Resolve the system shows and rolls with (owner decision; docs/rules-questions.md). */

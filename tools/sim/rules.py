@@ -857,11 +857,13 @@ class Rules:
             return dict(soldiers=fb["soldiers"], attributes=dict(fb["attributes"]), health=fb["health"],
                         resolve=fb["resolve"], specialty=fb["specialty"], talent_entries=[e for e, _ in pairs])
         self.free_build = reported("reported_squad")
-        # decision batch 8, 8-3: the Free Build Squad at Health 2 (Strength 2 and Agility 2), beside the Health-dependent
-        # targets, when attributes.yaml writes it; cases.py adds its row only then
-        self.free_build_h2 = reported("reported_squad_health_2") if "reported_squad_health_2" in built["free_build"] else None
-        if self.free_build_h2 is not None and self.free_build_h2["health"] != 2:
-            raise ValueError("attributes.yaml reported_squad_health_2: its Health is not 2 (decision batch 8, 8-3)")
+        # decision batch 8, 8-3: the most fragile Free Build Squad (Strength 2 and Agility 2), beside the
+        # Health-dependent targets, when attributes.yaml writes it; cases.py adds its row only then.
+        # Renamed from reported_squad_health_2 in decision batch 13: Health is 2 + (Strength + Agility) / 2
+        # rounded up, so the same array now reads Health 4 rather than 2.
+        self.free_build_h2 = reported("reported_squad_fragile") if "reported_squad_fragile" in built["free_build"] else None
+        if self.free_build_h2 is not None and self.free_build_h2["health"] != 4:
+            raise ValueError("attributes.yaml reported_squad_fragile: its Health is not 4 (decision batch 13)")
         # decision batch 7, 7-11: outside an Expedition, a player with no Squadmate to promote gets a new character who
         # joins at the start of the next Titan Engagement (families.sequence_job)
         guard(r"the start of the next Titan Engagement while no Expedition is under way", sq["promotion"]["no_squadmate"]["joins"],

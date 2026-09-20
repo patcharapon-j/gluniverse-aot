@@ -68,6 +68,9 @@ export function titanRow(combat: any, row: any): TitanRow {
     flags: { hooked: [...row.flags.hooked], hurt: [...row.flags.hurt], loud: [...row.flags.loud] },
     grounded: !!sys?.grounded,
     entered: row.entered,
+    // Frenzy rises at the round's frenzy end step and feeds the behavior roll
+    // (data/engagement/round.yaml, end_steps, frenzy; titan-format.yaml).
+    frenzy: row.frenzy ?? 0,
   };
 }
 

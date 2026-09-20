@@ -39,7 +39,7 @@ function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
 }
 
 function titan(extra: Partial<TitanRow> = {}): TitanRow {
-  return { key: 'tA', label: 'A', status: 'focus', tempo: 1, ladder: [], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
+  return { key: 'tA', label: 'A', status: 'focus', tempo: 1, frenzy: 0, ladder: [], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
 }
 
 function snap(soldiers: SoldierState[], titans: TitanRow[] = [titan()]): Snapshot {

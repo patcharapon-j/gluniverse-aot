@@ -2,12 +2,15 @@
  * The GM screen's client side. It holds one state object in localStorage and redraws from it.
  *
  * Two procedures are automated, and both are the ones the chapters give:
- *  - Rolling the Next Behavior: a D6, then move up through the results, wrapping 6 to 1, past any
- *    entry that is the previous behavior or that needs Body Parts the Titan no longer has
- *    unbroken; Thrash if nothing passes. The result is kept face down until the GM reveals it.
- *  - Resolving a card: the entry becomes Thrash without its Body Parts, its fallback when the
- *    Attention holder's Position does not fit, and Thrash again when that fallback repeats the
- *    previous behavior.
+ *  - Rolling the Next Behavior: a D6 plus the Titan's Frenzy, read as the table's last entry if it
+ *    runs past it, then move up through the results, wrapping 6 to 1, past any entry that is the
+ *    previous behavior or that needs Body Parts the Titan no longer has unbroken; Thrash if
+ *    nothing passes. The result is kept face down until the GM reveals it.
+ *  - Resolving a card: the entry becomes Thrash without its Body Parts. When the Attention holder
+ *    is not standing where the entry reaches, the screen names the soldiers who are and the GM
+ *    reads the ladder among them, because the ladder is theirs to read and not the screen's. Only
+ *    with nobody reachable does the entry fall back, and Thrash again when that fallback repeats
+ *    the previous behavior.
  * Nothing else is decided here. Attack Dice are rolled in the open and stand as they fall.
  */
 
@@ -53,12 +56,16 @@ interface TitanState {
   parts: Record<string, { count: number; state: 'intact' | 'wounded' | 'broken' }>;
   openings: number;
   regen: number;
+  /** 0 to 3, rising 1 at each round's end step and added to the behavior roll. */
+  frenzy: number;
   holder: string;
   next: string | null;
   revealed: boolean;
   resolved: string | null;
   previous: string | null;
   dice: number[] | null;
+  /** The soldiers a retargeting card could reach, while the GM reads the ladder among them. */
+  retarget: string[] | null;
 }
 interface Soldier {
   key: string;
@@ -98,7 +105,7 @@ export function mountScreen(): void {
     const titan = titanById(id);
     const parts: TitanState['parts'] = {};
     for (const p of titan.parts) parts[p.id] = { count: 0, state: 'intact' };
-    return { label, id, parts, openings: 0, regen: 0, holder: '', next: null, revealed: false, resolved: null, previous: null, dice: null };
+    return { label, id, parts, openings: 0, regen: 0, frenzy: 0, holder: '', next: null, revealed: false, resolved: null, previous: null, dice: null, retarget: null };
   }
 
   function fresh(): State {
@@ -120,7 +127,15 @@ export function mountScreen(): void {
   function load(): State {
     try {
       const saved = localStorage.getItem(KEY);
-      if (saved) return { ...fresh(), ...(JSON.parse(saved) as State) };
+      if (saved) {
+        const st = { ...fresh(), ...(JSON.parse(saved) as State) };
+        // A fight saved before Frenzy carries neither it nor a pending retarget.
+        for (const ts of st.titans) {
+          if (typeof ts.frenzy !== 'number') ts.frenzy = 0;
+          if (ts.retarget === undefined) ts.retarget = null;
+        }
+        return st;
+      }
     } catch {
       /* a blocked or cleared store just means a new fight */
     }
@@ -159,37 +174,49 @@ export function mountScreen(): void {
     return Object.entries(need).every(([kind, n]) => (have[kind] ?? 0) >= n);
   }
 
-  /** The D6 roll, then up through the results until an entry can be rolled. Thrash if none can. */
-  function rollNext(ts: TitanState): { die: number; id: string } {
+  /**
+   * A D6 plus the Titan's Frenzy, read as the table's last entry if it runs past it, then up
+   * through the results until an entry can be rolled. Thrash if none can.
+   */
+  function rollNext(ts: TitanState): { die: number; total: number; id: string } {
     const titan = titanById(ts.id);
     const die = 1 + Math.floor(Math.random() * 6);
+    const highest = Math.max(...titan.behaviors.flatMap((b) => b.results));
+    const total = Math.min(die + (ts.frenzy || 0), highest);
     const byResult = (n: number) => titan.behaviors.find((b) => b.results.includes(n));
     for (let step = 0; step < 6; step++) {
-      const n = ((die - 1 + step) % 6) + 1;
+      const n = ((total - 1 + step) % 6) + 1;
       const entry = byResult(n);
       if (!entry) continue;
       if (entry.id === ts.previous) continue;
       if (!hasParts(ts, entry)) continue;
-      return { die, id: entry.id };
+      return { die, total, id: entry.id };
     }
-    return { die, id: titan.thrash?.id ?? '' };
+    return { die, total, id: titan.thrash?.id ?? '' };
   }
 
-  /** What the card actually resolves, given the holder's Position and the Titan's Body Parts. */
-  function resolveEntry(ts: TitanState, holderPos: string): Behavior | null {
+  /**
+   * What the card resolves, given the holder's Position and the Titan's Body Parts, and which
+   * soldiers a retarget could land on. The screen never picks one: the Attention Ladder is the
+   * GM's to read.
+   */
+  function resolveEntry(ts: TitanState, holderPos: string): { entry: Behavior | null; retarget: string[] } {
     const titan = titanById(ts.id);
     const thrash = titan.thrash;
     const find = (id: string | null) => (id ? (titan.behaviors.find((b) => b.id === id) ?? (thrash?.id === id ? thrash : null)) : null);
+    const plain = (entry: Behavior | null) => ({ entry, retarget: [] as string[] });
     const entry = find(ts.next);
-    if (!entry) return null;
-    if (!hasParts(ts, entry)) return thrash;
+    if (!entry) return plain(null);
+    if (!hasParts(ts, entry)) return plain(thrash);
     if (holderPos && !entry.positions.includes(holderPos)) {
+      const reachable = state.squad.filter((s) => s.key !== ts.holder && entry.positions.includes(s.pos[ts.label] ?? ''));
+      if (reachable.length) return { entry, retarget: reachable.map((s) => s.key) };
       const back = find(entry.fallback);
-      if (!back || back.id === ts.previous || !hasParts(ts, back)) return thrash;
-      if (holderPos && !back.positions.includes(holderPos)) return thrash;
-      return back;
+      if (!back || back.id === ts.previous || !hasParts(ts, back)) return plain(thrash);
+      if (!back.positions.includes(holderPos)) return plain(thrash);
+      return plain(back);
     }
-    return entry;
+    return plain(entry);
   }
 
   // ------------------------------------------------------------------ drawing
@@ -314,6 +341,19 @@ export function mountScreen(): void {
         }),
       );
       row.append(regenBox);
+      const frenzyBox = document.createElement('span');
+      frenzyBox.className = 'scr-clock';
+      const frenzyLabel = document.createElement('span');
+      frenzyLabel.className = 'lbl';
+      frenzyLabel.textContent = 'Frenzy';
+      frenzyBox.append(
+        frenzyLabel,
+        stepper('Frenzy', ts.frenzy, (d) => {
+          ts.frenzy = Math.min(3, Math.max(0, ts.frenzy + d));
+          commit();
+        }),
+      );
+      row.append(frenzyBox);
       card.append(row);
 
       // Body Parts
@@ -414,6 +454,7 @@ export function mountScreen(): void {
           ts.revealed = false;
           ts.resolved = null;
           ts.dice = null;
+          ts.retarget = null;
           commit();
         }),
       );
@@ -422,10 +463,11 @@ export function mountScreen(): void {
         buttons.append(
           button('Resolve card', () => {
             const holderPos = holderPosition(ts);
-            const entry = resolveEntry(ts, holderPos);
+            const { entry, retarget } = resolveEntry(ts, holderPos);
             ts.resolved = entry?.id ?? null;
             ts.revealed = true;
             ts.dice = null;
+            ts.retarget = retarget.length ? retarget : null;
             commit();
           }),
         );
@@ -446,12 +488,33 @@ export function mountScreen(): void {
           cardText.innerHTML =
             `<b>${entry.name}</b> · ${entry.tier}${entry.isGrab ? ' · <b>Grab</b>' : ''}` +
             (fellBack ? ' <span class="scr-hidden">(fallback)</span>' : '') +
+            (ts.retarget?.length ? ' <span class="scr-hidden">(retargeting)</span>' : '') +
             `<br /><span class="scr-hidden">${entry.targets}. ${entry.attackDice ?? 0} Attack Dice.</span>` +
             (entry.effects.filter((x) => !x.startsWith('Wreck')).length
               ? `<br />${entry.effects.filter((x) => !x.startsWith('Wreck')).join(' · ')}`
               : '') +
             (entry.wrecks ? '<br /><b>Wrecks 1 Anchor</b>, landed or whiffed.' : '') +
             `<br /><em>${entry.text}</em>`;
+          if (ts.retarget?.length) {
+            const names = state.squad.filter((sol) => ts.retarget?.includes(sol.key));
+            const prompt = document.createElement('div');
+            prompt.className = 'scr-hint';
+            prompt.innerHTML =
+              '<b>It cannot reach the soldier it is fixed on.</b> Read the ladder again among the soldiers standing where this behavior works, and move its Attention to the one it picks. The entry then resolves against them.';
+            cardText.append(prompt);
+            const picks = document.createElement('div');
+            picks.className = 'scr-row';
+            for (const sol of names) {
+              picks.append(
+                button(`Attention to ${sol.name}`, () => {
+                  ts.holder = sol.key;
+                  ts.retarget = null;
+                  commit();
+                }),
+              );
+            }
+            cardText.append(picks);
+          }
           if (entry.attackDice) {
             const roll = button(`Roll ${entry.attackDice} Attack Dice`, () => {
               ts.dice = Array.from({ length: entry.attackDice as number }, () => 1 + Math.floor(Math.random() * 6));
@@ -481,6 +544,7 @@ export function mountScreen(): void {
             ts.revealed = false;
             ts.resolved = null;
             ts.dice = null;
+            ts.retarget = null;
             commit();
           });
           cardText.append(document.createElement('br'), done);

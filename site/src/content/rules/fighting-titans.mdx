@@ -6,23 +6,23 @@ order: 5
 tab: Titans
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "5c95ad800656daab91067381d47a68bc2f5979fb"
+    sha: "302daca974f8a68305f92fe90c88f5fb1718501b"
   - path: docs/rules/06-standard-titans.md
-    sha: "85b11f59f9291c70668a96582005fdeaeea05a49"
+    sha: "de99c51273438fe68db52607ce85c21a2d7d5a93"
   - path: data/engagement/positions.yaml
-    sha: "4eac4e97d240d727a024183dc8bb5b95d55158cb"
+    sha: "01a0ba44084e8e796baf551212419c7365e3b0a0"
   - path: data/engagement/anchor-ratings.yaml
-    sha: "435c03b33fab67afc94c2b444c20dbed52ec1b0e"
+    sha: "a6ef21ee521348ecbf0f398797b7725bd49b1fef"
   - path: data/engagement/round.yaml
-    sha: "49d3a172e4a7ca7e0bbbaa7f5d74c9e3887b40d7"
+    sha: "a6d51d5d3d3a3c8348bf0659e4dabd35c28df781"
   - path: data/engagement/size-classes.yaml
     sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
   - path: data/engagement/titan-format.yaml
-    sha: "26070cd3777b81d2fe28e4de4932383531bf1719"
+    sha: "fd5d90796bc295112a1bfecdd5e106a4d437025b"
   - path: data/engagement/behavior-procedure.yaml
-    sha: "64aea8898bffe969c1ef291ad04dbe163f63c5a4"
+    sha: "8993831871f8fb548e3b489378607927bccc11ab"
   - path: data/engagement/attention.yaml
-    sha: "3d64d61249c17643e00e10197041a9dc0cd9b798"
+    sha: "a01305bb80f454c445be1d37ab633b85d0027c5d"
   - path: data/engagement/titan-harm.yaml
     sha: "286457b6cca7e728c54919581b96ed55c24dbe45"
   - path: data/engagement/read.yaml
@@ -38,7 +38,7 @@ sources:
   - path: data/harm/effect-types.yaml
     sha: "09be8cce7c8f1b04b114c49c0e31106a5729cc3d"
   - path: data/character/action-catalog.yaml
-    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
+    sha: "747752afe49fd764d041b05362412356a62fe355"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -52,6 +52,7 @@ import IconKey from '~/components/IconKey.astro';
 import InkVignette from '~/components/InkVignette.astro';
 import MarginNote from '~/components/MarginNote.astro';
 import Plate from '~/components/Plate.astro';
+import PositionShapes from '~/components/PositionShapes.astro';
 import PositionsMap from '~/components/PositionsMap.astro';
 import RoundDiagram from '~/components/RoundDiagram.astro';
 import RuleBox from '~/components/RuleBox.astro';
@@ -77,7 +78,7 @@ import plate from '~/assets/plates/plate-fighting-titans.webp';
   { id: 'how-a-titan-fight-works', title: 'How a Titan Fight Works', note: 'Starting, the round' },
   { id: 'positions-and-moves', title: 'Positions and Moves', note: 'Four Positions, Flights, Momentum' },
   { id: 'reading-a-titan', title: 'Reading a Titan', note: 'Stat blocks, Behavior Tables' },
-  { id: 'when-a-titan-acts', title: 'When a Titan Acts', note: 'A card resolving, and the dodge' },
+  { id: 'when-a-titan-acts', title: 'When a Titan Acts', note: 'Frenzy, a card resolving, the dodge' },
   { id: 'attention', title: 'Attention', note: 'The ladder, marks, decoys' },
   { id: 'cutting-titans-down', title: 'Cutting Titans Down', note: 'Body Parts, the Nape' },
   { id: 'read-and-call-it', title: 'Read and Call It', note: 'Learning what comes next' },
@@ -130,6 +131,22 @@ Fights run at Standard <GlossaryTerm term="Circumstances" />, and the step never
 <CoreTable table="positions" />
 
 **One Position per Focus Titan and per corpse.** Holding one is the test for being in the fight.
+
+<RuleBox variant="stop" title="Blind Spot is not on the Titan" icon="ph:tree-evergreen">
+
+**On Body means on it.** Hooked into the body or standing on it, holding on to the thing that is trying to kill you.
+
+**Blind Spot does not.** You are anchored to terrain *behind* the Titan, a tree or a roof or a beam, out of its sight with its Nape within reach. You are not touching it. The name sounds like a place on the monster and it is a place in the world.
+
+Everything follows from that one fact. Steam at a Regeneration fill burns the soldiers On Body and leaves the Nape strikers alone. A Jam does not drop a soldier standing on an Urban roof. And on ground with nothing to anchor to, there is no Blind Spot at all.
+
+</RuleBox>
+
+<Subsection title="The shape of the map" id="the-shape-of-the-map">
+
+<PositionShapes fig="Fig. 3" />
+
+</Subsection>
 
 <CoreTable table="position-steps" />
 
@@ -190,6 +207,16 @@ Each rating carries one **Terrain Trait**; Wooded has none, and is the plain gro
 
 </FinePrint>
 
+<Subsection title="What changes a Position" id="what-changes-a-position">
+
+**An action never changes a Position.** Only your own move does, plus the rules on this list. Nothing else in the game moves anyone between Distant, In Reach, On Body, and Blind Spot.
+
+<CoreTable table="position-changes" />
+
+Not on the list, and this is the half nobody can see: the **Nape strike**, the **Body Part strike**, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other action you can take. **None of them moves you,** whatever it rolls. Neither does a Titan turning its Attention onto you: Attention is not a Position, and the two never move each other.
+
+</Subsection>
+
 <Subsection title="Comparing two soldiers" id="comparing-positions">
 
 Help, Covering, Treat Injury, and Rally all ask whether two soldiers share a Position or stand one step apart. Compare relative to **the Titan the act is made against** — for a <GlossaryTerm term="Heave" /> or a pinning part, **that body**; failing both, the earliest-labelled living Titan.
@@ -248,7 +275,7 @@ A **standard Titan** takes every number from its Size Class row, and all of it i
 
 <Subsection title="The Behavior Table" id="the-behavior-table">
 
-Titans take no turns. Each acts from a **D6 <GlossaryTerm term="Behavior Table" />** whose results escalate, plus a <GlossaryTerm term="Thrash" /> entry that is never rolled.
+Titans take no turns. Each acts from a **<GlossaryTerm term="Behavior Table" />** whose results escalate, rolled on **a D6 plus its <GlossaryTerm term="Frenzy" />**, plus a <GlossaryTerm term="Thrash" /> entry that is never rolled.
 
 <IconKey title="The three tiers" items={[
   { icon: 'tier-terrorize', label: 'Terrorize', note: 'Stress, and what it shows you.' },
@@ -278,7 +305,25 @@ Each row gives its D6 result, name and tier, **targets**, the **holder's Positio
 
 Every Focus Titan holds a hidden **Next Behavior**, rolled out of sight and never changed. You learn it when a card resolves it, a telegraph shows it, or a Read buys it.
 
-<StepFlow id="fig-card" fig="Fig. 3" title="A Titan's card resolves" steps={[
+<Subsection title="Frenzy, and why time is not on your side" id="frenzy">
+
+Every Focus Titan starts a fight at **Frenzy 0**, and gains **1 at the end of each round, to a cap of 3**. Its Frenzy is added to its behavior roll, and a result past the bottom of its table reads as the bottom.
+
+Every Behavior Table runs the same way, from terrorising you to killing you. So the longer a Titan is alive, the further down its own table it rolls. **Round one it postures. By round three it is trying to kill you.** Frenzy is public, and it never falls.
+
+</Subsection>
+
+<Subsection title="It turns on whoever it can reach" id="retargeting">
+
+A Titan does not waste a card because the soldier it wants is standing somewhere it cannot be touched. **If the soldier holding its Attention is not in a Position the rolled behavior reaches, it turns on somebody who is** — the next candidate down the same Attention Ladder, and its Attention goes with it.
+
+Only when **nobody** in the fight is standing where that behavior can reach does the card fall back, and a fallback that repeats the last behavior is a Thrash.
+
+**So a safe Position is only ever safe for you.** Hanging at Blind Spot with its Attention on you used to be a place the monster could not answer. It answers now, by taking whoever is nearest to hand.
+
+</Subsection>
+
+<StepFlow id="fig-card" fig="Fig. 4" title="A Titan's card resolves" steps={[
   {
     title: "Dead, or holding.",
     icon: "ph:hand-grabbing",
@@ -300,8 +345,8 @@ Every Focus Titan holds a hidden **Next Behavior**, rolled out of sight and neve
   {
     title: "Choose the entry.",
     icon: "ph:list-numbers",
-    text: "The Next Behavior's entry. Lacking the Body Parts it Thrashes; a Position that does not fit takes the fallback.",
-    exit: { kind: "note", label: "Thrash", text: "A fallback repeating the previous behavior is Thrash too." },
+    text: "The Next Behavior's entry. Lacking the Body Parts it Thrashes. If the holder is not where that behavior reaches, it turns on the next soldier down the ladder who is, and its Attention goes with them.",
+    exit: { kind: "stop", label: "Nobody in reach", text: "Only with no soldier anywhere it can reach does the entry fall back, and a fallback repeating the previous behavior is Thrash." },
   },
   {
     title: "Roll and announce.",
@@ -441,6 +486,8 @@ Strength on a <GlossaryTerm term="Blade Set" />, needing **Blind Spot**, **not h
 
 **Reach the Nape Depth and it dies. Fall short and each success becomes 1 Opening.** Every Nape strike marks you *hooked in by a strike* whatever it rolls, so a striker who falls short draws the next behavior.
 
+**The strike does not move you.** Hooking in is an Attention fact and nothing else: you are still at Blind Spot, anchored to the same tree, not on the Titan. And since the strike needs a soldier who does **not** hold its Attention, a striker who has pulled that Attention onto themselves is standing in exactly the right place and **cannot strike again until it moves** — which takes a comrade's shout, or a Break Attention with a decoy.
+
 An **Opening** is a public token recording who made it, worth 1 Bonus Die to a Nape striker — **never to the soldier who made it**. It waits for a comrade even if you die or leave, and Regeneration and death erase them.
 
 </Subsection>
@@ -505,7 +552,7 @@ Called once per behavior. It gives the reader nothing, and nothing to a target c
 
 <SectionHead id="the-grab" eyebrow="Section 8">The Grab</SectionHead>
 
-<GrabCountdown fig="Fig. 4" />
+<GrabCountdown fig="Fig. 5" />
 
 <Subsection title="Grabbed" id="grabbed">
 

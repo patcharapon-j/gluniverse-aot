@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { chooseEntry, drawAttentionBlock, enteringAttention, entryTargets, evaluateLadder, type LadderInput } from '../src/rules/engagement/attention.ts';
-import { dealBlock, dealCards, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
+import { chooseEntry, drawAttentionBlock, enteringAttention, entryTargets, evaluateLadder, retargetForEntry, type LadderInput } from '../src/rules/engagement/attention.ts';
+import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_CAP, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
 import { breakFreeNeeds, countTurn, grabLands, holdingArm, holdingArmReach, release } from '../src/rules/engagement/grab.ts';
-import { checkTrackerRequest, coreOf, fallBackBlock, type TrackerWorld } from '../src/rules/engagement/guard.ts';
+import { checkTrackerPermission, checkTrackerRequest, checkTrackerRules, coreOf, fallBackBlock, type TrackerRequest, type TrackerWorld } from '../src/rules/engagement/guard.ts';
 import { gainInjury } from '../src/rules/engagement/injury.ts';
 import {
   carryCost,
@@ -104,7 +104,7 @@ function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
 }
 
 function titan(label: string, extra: Partial<TitanRow> = {}): TitanRow {
-  return { key: `t${label}`, label, status: 'focus', tempo: 1, ladder: [...ladder('standard')], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
+  return { key: `t${label}`, label, status: 'focus', tempo: 1, frenzy: 0, ladder: [...ladder('standard')], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
 }
 
 const partsOf = (states: Partial<Record<string, BodyPart['state']>> = {}): BodyPart[] => medium.body_parts.map((b) => ({ ...b, state: states[b.id] ?? 'intact', progress: 0 }));
@@ -464,6 +464,111 @@ describe('Attention (attention.yaml, evaluation)', () => {
     expect(drawAttentionBlock(soldier('a', { positions: { A: 'in-reach' } }), titan('A'), true)).toBe('grabbed');
     expect(drawAttentionBlock(soldier('a', { positions: { A: 'in-reach' } }), titan('A'), false)).toBeNull();
   });
+
+  // Retargeting (round 3, decision 12, part 1): a Titan that cannot reach its fixation turns on
+  // whoever it can reach, chosen by the Ladder it already uses.
+  describe('retargeting an entry the holder cannot meet (behavior-procedure.yaml, choose)', () => {
+    const entry = (id: string) => medium.behavior_table.entries.find((e: any) => e.id === id)!;
+    const bite = entry('bite'); // in-reach, on-body
+    const shakeOff = entry('shake-off'); // on-body, blind-spot
+    const grin = entry('fixed-grin'); // every Position
+    const at = (id: string, p: Position, extra: Partial<SoldierState> = {}) => soldier(id, { positions: { A: p }, ...extra });
+
+    it('keeps the holder wherever they already meet the requirement', () => {
+      const near = at('h', 'in-reach');
+      const body = at('h', 'on-body');
+      expect(retargetForEntry(input(titan('A', { holder: 'h' }), [near]), bite, 'h')).toBe('h');
+      expect(retargetForEntry(input(titan('A', { holder: 'h' }), [body]), bite, 'h')).toBe('h');
+      expect(retargetForEntry(input(titan('A', { holder: 'h' }), [body]), shakeOff, 'h')).toBe('h');
+      // An entry every Position meets never retargets, from Distant or the Blind Spot.
+      expect(retargetForEntry(input(titan('A', { holder: 'h' }), [at('h', 'distant')]), grin, 'h')).toBe('h');
+      expect(retargetForEntry(input(titan('A', { holder: 'h' }), [at('h', 'blind-spot')]), grin, 'h')).toBe('h');
+    });
+
+    // The case that motivated the change: the Nape striker who fell short holds the Attention from
+    // the Blind Spot, where the Titan could Bite and Grab no one for the rest of the fight.
+    it('turns a Bite on the soldier In Reach when its fixation is in its Blind Spot', () => {
+      const t = titan('A', { holder: 's', flags: { hooked: ['s'], hurt: [], loud: [] } });
+      const s = at('s', 'blind-spot');
+      const near = at('n', 'in-reach');
+      const far = at('f', 'distant');
+      expect(evaluateLadder(input(t, [s, near, far])).holder).toBe('s');
+      expect(retargetForEntry(input(t, [s, near, far]), bite, 's')).toBe('n');
+    });
+
+    it('turns Shake Off on the soldier in its Blind Spot when its fixation is In Reach', () => {
+      const t = titan('A', { holder: 'n' });
+      expect(retargetForEntry(input(t, [at('n', 'in-reach'), at('b', 'blind-spot')]), shakeOff, 'n')).toBe('b');
+    });
+
+    it('takes the one On Body over the one In Reach, by the Ladder’s own rungs', () => {
+      const t = titan('A', { holder: 'f' });
+      const set = [at('f', 'distant'), at('n', 'in-reach'), at('o', 'on-body')];
+      expect(retargetForEntry(input(t, set), bite, 'f')).toBe('o');
+    });
+
+    it('reuses the Ladder’s tie-breaks: the lower rungs, then the holder, then the card', () => {
+      const hurt = titan('A', { holder: 'f', flags: { hooked: [], hurt: ['y'], loud: [] } });
+      const set = [at('f', 'distant'), at('x', 'in-reach'), at('y', 'in-reach')];
+      // just-hurt-it narrows the two In Reach down to one.
+      expect(retargetForEntry(input(hurt, set), bite, 'f')).toBe('y');
+      // With nothing to narrow them, the round's cards break the tie, lowest first.
+      expect(retargetForEntry(input(titan('A', { holder: 'f' }), set, { x: 9, y: 4 }), bite, 'f')).toBe('y');
+      expect(retargetForEntry(input(titan('A', { holder: 'f' }), set, { x: 2, y: 4 }), bite, 'f')).toBe('x');
+    });
+
+    it('holds nobody when no one in the fight meets the requirement (the behavior is Thrash)', () => {
+      const t = titan('A', { holder: 'f' });
+      expect(retargetForEntry(input(t, [at('f', 'distant'), at('b', 'blind-spot')]), bite, 'f')).toBeNull();
+      expect(retargetForEntry(input(t, [at('f', 'distant')]), shakeOff, 'f')).toBeNull();
+      // The dead, the departed and those held by another Focus Titan are no candidates either.
+      const inp = input(t, [at('n', 'in-reach'), at('d', 'in-reach', { alive: false }), at('l', 'in-reach', { left: true })]);
+      inp.grabbedBy = (id) => (id === 'n' ? 'B' : null);
+      expect(retargetForEntry(inp, bite, 'f')).toBeNull();
+    });
+
+    it('picks from the qualifying soldiers when the Titan holds nobody at all', () => {
+      expect(retargetForEntry(input(titan('A'), [at('f', 'distant'), at('n', 'in-reach')]), bite, null)).toBe('n');
+      expect(retargetForEntry(input(titan('A'), [at('f', 'distant')]), bite, '')).toBeNull();
+    });
+  });
+});
+
+// ------------------------------------------------------------------ Frenzy
+
+describe('Frenzy (behavior-procedure.yaml, roll; round 3, decision 12)', () => {
+  const entries = medium.behavior_table.entries;
+
+  it('rises 1 at each round end and stops at the cap of 3', () => {
+    expect(FRENZY_CAP).toBe(3);
+    expect(frenzyAfterRound(0)).toBe(1);
+    expect(frenzyAfterRound(1)).toBe(2);
+    expect(frenzyAfterRound(2)).toBe(3);
+    expect(frenzyAfterRound(3)).toBe(3);
+    expect(frenzyAfterRound(FRENZY_CAP)).toBe(FRENZY_CAP);
+    // A Focus Titan enters at 0, so four round ends walk it up and hold it there.
+    let f = 0;
+    for (let round = 0; round < 6; round++) f = frenzyAfterRound(f);
+    expect(f).toBe(3);
+  });
+
+  it('adds Frenzy to the D6 and reads a total above the table as the table’s highest', () => {
+    expect(behaviorResult(1, 0, entries)).toBe(1);
+    expect(behaviorResult(4, 0, entries)).toBe(4);
+    expect(behaviorResult(1, 2, entries)).toBe(3);
+    expect(behaviorResult(5, 1, entries)).toBe(6);
+    // Above the top of the table (6 on the Standard Medium) reads as the top.
+    expect(behaviorResult(5, 2, entries)).toBe(6);
+    expect(behaviorResult(6, 3, entries)).toBe(6);
+    expect(behaviorResult(6, FRENZY_CAP, sprinter.behavior_table.entries)).toBe(6);
+    // Thrash claims no result, so it never becomes the top the total clamps to.
+    expect(Math.max(...entries.flatMap((e: any) => e.results))).toBe(6);
+  });
+
+  it('leaves the total alone when no entry of the table claims a result', () => {
+    expect(behaviorResult(4, 2, [])).toBe(6);
+    expect(behaviorResult(4, 2, [{ id: 'thrash', name: 'Thrash', results: [], tier: 'thrash', body_parts_used: [] }])).toBe(6);
+  });
 });
 
 // ------------------------------------------------------------------ the Grab
@@ -585,7 +690,8 @@ describe('the round (round.yaml, round_steps and end_steps)', () => {
     let c = core();
     for (const a of ['keep-wings', 'deal', 'begin-play', 'finish-play'] as const) c = roundNext(c, a);
     expect(c.step).toBe('end');
-    expect(c.endLog.map((e) => e.check)).toEqual(['gas-rolls', 'regeneration', 'background-clocks', 'retreat-clock', 'momentum', 'round-ends']);
+    // The frenzy end step sits between regeneration and the clocks (round.yaml, end_steps, frenzy).
+    expect(c.endLog.map((e) => e.check)).toEqual(['gas-rolls', 'regeneration', 'frenzy', 'background-clocks', 'retreat-clock', 'momentum', 'round-ends']);
     expect(roundBlock(c, 'next-round')).toBe('endOpen');
     c = { ...c, endLog: c.endLog.map((e) => ({ ...e, state: 'done' })) };
     expect(endComplete(c)).toBe(true);
@@ -681,7 +787,7 @@ describe('the round (round.yaml, round_steps and end_steps)', () => {
   it('runs the switched-on checks in order and stops at a switched-off one', () => {
     const log: EndEntry[] = checksOf('titan').map((check) => ({ check, state: 'waiting', ops: [], lines: [] }));
     const on = Object.fromEntries(TRACKER_CATEGORIES.map((c) => [c, true])) as Record<TrackerCategory, boolean>;
-    expect(autoChecks(log, on)).toEqual([0, 1, 2, 3, 4, 5]);
+    expect(autoChecks(log, on)).toEqual([0, 1, 2, 3, 4, 5, 6]);
     expect(autoChecks(log, { ...on, regeneration: false })).toEqual([0]);
     const partly = log.map((e, i) => (i < 2 ? { ...e, state: 'done' as const } : e));
     expect(nextCheck(partly)).toBe(2);
@@ -1085,6 +1191,59 @@ describe('tracker requests (the GM proxy guard)', () => {
     expect(checkTrackerRequest(w(['a'], ['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Held/);
     expect(checkTrackerRequest({ ...w(['a']), snapshot: () => ({ ...sk, soldiers: [soldier('a', { down: true })] }) }, { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Down/);
     expect(checkTrackerRequest(world(snap({ step: 'play' }), ['a']), { act: 'engage', combat: 'C', soldier: 'a', foe: 'f1' })).toMatch(/Skirmish/);
+  });
+
+  // ADR-0028: automation assists the GM and never blocks them. The permission checks are the ones
+  // about who is asking; the rules checks are the ones a GM steps over.
+  describe('permission and rules apart (ADR-0028)', () => {
+    const acts: TrackerRequest[] = [
+      { act: 'wing', combat: 'C', mate: 'm', pc: 'a' },
+      { act: 'swap-propose', combat: 'C', a: 'a', b: 'b' },
+      { act: 'odm', combat: 'C', soldier: 'a' },
+      { act: 'left', combat: 'C', soldier: 'a' },
+      { act: 'loud', combat: 'C', soldier: 'c', titan: 'tA' },
+      { act: 'loud-move', combat: 'C', soldier: 'a', titan: 'tA' },
+      { act: 'move-spent', combat: 'C', soldier: 'a' },
+      { act: 'fall-back', combat: 'C', soldier: 'a', titan: 'tA' },
+      { act: 'let-go', combat: 'C', soldier: 'a', titan: 'tA' },
+    ];
+
+    it('is the permission check followed by the rules check, for every act and every step', () => {
+      for (const step of ['setup', 'wings', 'deal', 'swap', 'play', 'end', 'closing'] as Snapshot['step'][]) {
+        const w = world(snap({ step }), ['a', 'b', 'c', 'm']);
+        for (const req of acts) {
+          expect(checkTrackerRequest(w, req), `${req.act}@${step}`).toBe(checkTrackerPermission(w, req) ?? checkTrackerRules(w, req));
+        }
+      }
+    });
+
+    it('keeps the reasons about who is asking, and only those', () => {
+      const mine = world(snap({ step: 'play' }), ['a', 'b', 'c', 'm']);
+      const theirs = world(snap({ step: 'play' }), ['b']);
+      // Ownership, the engagement existing, and the ids naming people taking part.
+      expect(checkTrackerPermission(theirs, { act: 'odm', combat: 'C', soldier: 'a' })).toMatch(/owner/);
+      expect(checkTrackerPermission(mine, { act: 'odm', combat: 'X', soldier: 'a' })).toMatch(/no such engagement/);
+      expect(checkTrackerPermission(mine, { act: 'odm', combat: 'C', soldier: 'z' })).toMatch(/taking part/);
+      expect(checkTrackerPermission(mine, { act: 'loud', combat: 'C', soldier: 'a', titan: 'tZ' })).toMatch(/no such Titan/);
+      expect(checkTrackerPermission(mine, { act: 'nope' } as never)).toMatch(/malformed|unknown/);
+      expect(checkTrackerPermission(mine, { act: 'swap-accept', combat: 'C' })).toMatch(/no swap/);
+    });
+
+    it('lets the GM past the rules ones: the step, the Position, Grabbed', () => {
+      const gm = world(snap(), ['a', 'b', 'c', 'm']); // the swap step, so ODM and moves are out of step
+      for (const req of acts) expect(checkTrackerPermission(gm, req), req.act).toBeNull();
+      // The same requests are refused a player by the rules checks alone.
+      expect(checkTrackerRequest(gm, { act: 'odm', combat: 'C', soldier: 'a' })).toMatch(/during play/);
+      expect(checkTrackerRules(gm, { act: 'odm', combat: 'C', soldier: 'a' })).toMatch(/during play/);
+      expect(checkTrackerRules(gm, { act: 'move-spent', combat: 'C', soldier: 'a' })).toMatch(/during play/);
+      // Draw Attention from Distant, and Fall Back from In Reach, are rules reasons, not permission.
+      const play = world(snap({ step: 'play' }), ['a', 'b', 'c', 'm']);
+      expect(checkTrackerPermission(play, { act: 'loud', combat: 'C', soldier: 'c', titan: 'tA' })).toBeNull();
+      expect(checkTrackerRules(play, { act: 'loud', combat: 'C', soldier: 'c', titan: 'tA' })).toMatch(/distant/);
+      const fb = world(snap({ step: 'wings' }), ['a']);
+      expect(checkTrackerPermission(fb, { act: 'fall-back', combat: 'C', soldier: 'a', titan: 'tA' })).toBeNull();
+      expect(checkTrackerRules(fb, { act: 'fall-back', combat: 'C', soldier: 'a', titan: 'tA' })).toMatch(/notClose/);
+    });
   });
 });
 

@@ -21,3 +21,11 @@ The owner picked **Personnel File** (`foundry/design/preview-v2-1-personnel-file
 - Static mockups: rejected; the motion has to be felt.
 - One renderer per sheet: rejected; browsers cap WebGL contexts near 16 and Foundry's canvas already holds one.
 - UI sound from CC0 libraries: rejected by the owner.
+
+## Amended
+
+After decision batch 13 (2026-09-20, the owner's decisions on playtest feedback round 3, item 9; decision batch 13, 13-14): the **engagement board** is a new surface, and it is added to this record rather than folded into the sheet's budget. It is a custom PIXI board that takes over the canvas area during a Titan Engagement, not Foundry's token layer, and it has **its own performance and art budget**, separate from the sheet's and the tracker's.
+
+It is held to the **locked art language of this record**: painted plates and inked figures in the paper palette, the locked tokens and fonts above, CSS-only or generated textures, and Codex-generated art in the website's locked plate style (ADR-0022), from the list in `docs/playtest/feedback/round-3/zone-combat-design.md`, section 7.7. A style-lock set is approved on a contact sheet before any batch, as every other batch is. The board reads as the same product as the sheet; a board in another visual language would undo the pick this record made.
+
+Two locks continue to govern the rest of the system and are not widened by the board. The **flat-and-paper lock** still governs the sheet and the tracker: they are HTML and CSS animated with anime.js, not a 3D scene. The **two-widget WebGL scope** still governs three.js use: only the gas canisters and the blade sets, through one shared renderer, torn down on close, with `prefers-reduced-motion` respected and a Full, Reduced, or Off setting. The board is PIXI and its own surface; it adds no three.js widget and it does not make the sheet a scene. No sound.

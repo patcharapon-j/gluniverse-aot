@@ -8,7 +8,7 @@ id: action-catalog
 name: Action Catalog
 chapter: 02-character-creation
 adrs: [ADR-0006, ADR-0010, ADR-0015, ADR-0018, ADR-0019, ADR-0024]
-decided: [OQ-11, OQ-25, OQ-26, OQ-27, OQ-33, OQ-35, OQ-141, OQ-142, OQ-143, OQ-146, OQ-176, OQ-179]
+decided: [OQ-11, OQ-25, OQ-26, OQ-27, OQ-33, OQ-35, OQ-141, OQ-142, OQ-143, OQ-146, OQ-176, OQ-179, OQ-191]
 
 # kind:
 #   action      Taken as a soldier's action in a Titan Engagement or a Skirmish (Chapter 1,
@@ -139,11 +139,18 @@ entries:
       the Titan is grounded (data/engagement/titan-harm.yaml, grounded). No retreat is under way
       (data/engagement/background-titans.yaml, retreat, actions). Making the strike counts as
       hooking into the Titan.
+    notes: >-
+      Making the strike counts as hooking into the Titan for the Attention Ladder only: it sets the
+      hooked-by-strike flag (data/engagement/attention.yaml, flags), the striker's Position does not
+      change, and they are still at Blind Spot (data/engagement/positions.yaml, changes_to_position,
+      not_changed_by). Because this entry requires that the soldier does not hold the struck Titan's
+      Attention, a striker who draws that Attention onto themselves cannot strike again until the
+      Attention moves (decision batch 13, 13-7; OQ-191).
     needs: the struck Titan's Nape Depth
     changes: [titan-kill, openings-create]
     help_outside_titan_engagement: not taken outside a Titan Engagement
     rules: [05-titan-engagement, 04-gear]
-    decided: [OQ-60]
+    decided: [OQ-60, OQ-191]
     adrs: [ADR-0007, ADR-0010]
 
   - id: body-part-strike

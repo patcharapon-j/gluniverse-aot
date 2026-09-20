@@ -59,6 +59,8 @@ export interface TitanRow {
   label: string;
   status: 'focus' | 'corpse';
   tempo: number;
+  /** Frenzy held: 0 on entry, 1 more at each round end to FRENZY_CAP, added to the behavior roll. */
+  frenzy: number;
   /** The Attention Ladder's rungs, highest first. */
   ladder: string[];
   /** A soldier id, 'decoy', or '' (nothing). */

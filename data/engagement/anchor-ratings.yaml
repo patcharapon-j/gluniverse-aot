@@ -6,7 +6,7 @@ id: anchor-ratings
 name: Anchor Ratings, Position Steps, and Anchors
 chapter: 05-titan-engagement
 adrs: [ADR-0010, ADR-0024]
-decided: [OQ-74, OQ-99, OQ-182, OQ-183]   # OQ-182: Flight, Momentum, and Anchors; OQ-183: the mounted charge (decision batch 10)
+decided: [OQ-74, OQ-99, OQ-182, OQ-183, OQ-191]   # OQ-182: Flight, Momentum, and Anchors; OQ-183: the mounted charge (decision batch 10); OQ-191: the Position maps (decision batch 13)
 
 # The four Positions (data/engagement/positions.yaml gives their meanings).
 positions: [distant, in-reach, on-body, blind-spot]
@@ -102,6 +102,58 @@ ratings:
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
       - {between: [on-body, blind-spot], on_foot: false, mounted: false, odm: true}
       - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
+
+# ------------------------------------------------------------------ the Position maps
+# The shape the step rows above make, named and drawn, one per shape of Anchor Rating (decision
+# batch 13, 13-7; OQ-191). This adds no step and changes no row: every map is read off ratings,
+# steps, and it is wrong if it ever disagrees with them. docs/rules/05-titan-engagement.md
+# (section 5.2) draws these maps from this block.
+position_maps:
+  reads: ratings, steps
+  adds_no_step: true
+  maps:
+    - id: open-map
+      name: Open
+      ratings: [open]
+      anchors: 0
+      shape: chain
+      reaches_blind_spot: false
+      diagram: "Distant --- In Reach --- On Body"
+      says: >-
+        There is nothing to anchor to but the Titan, so there is no Blind Spot at all while the
+        Titan stands, and no Nape strike can be made against a standing Titan on a plain.
+    - id: sparse-map
+      name: Sparse
+      ratings: [sparse]
+      anchors: 1
+      shape: chain
+      reaches_blind_spot: true
+      diagram: "Distant --- In Reach --- On Body --- Blind Spot"
+      says: >-
+        One good tree. Nothing joins In Reach and Blind Spot, so the Nape is reached by way of the
+        body.
+    - id: branch-map
+      name: Wooded, Urban, and Giant Forest
+      ratings: [wooded, urban, giant-forest]
+      anchors: 2 to 3
+      shape: branch
+      reaches_blind_spot: true
+      diagram_lines:
+        - "                      /--- On Body ----\\"
+        - "Distant --- In Reach -                  - (joined)"
+        - "                      \\--- Blind Spot -/"
+      says: >-
+        From In Reach a soldier may go onto the body or straight to the Blind Spot, and may move
+        between those two. This is why the Corps fights in forests and towns.
+  grounded_titan: >-
+    A grounded Titan changes every map (grounded_titan). Every step joining two of in-reach,
+    on-body, and blind-spot can then also be made on foot, and none of them mounted, so the shape
+    is the same and the ways of making it widen. At the Open rating a grounded Titan also gains an
+    on-body to blind-spot step, so the Open map becomes the Sparse map's chain and a Nape strike
+    becomes possible on a plain at last (grounded_titan, open_rating). When the Titan has no Broken
+    leg the permissions end, and a soldier who holds blind-spot relative to it at the Open rating
+    then holds on-body instead (grounded_titan, ends). A corpse counts as a grounded Titan for as
+    long as it lies on the field, and for it the permissions never end (grounded_titan, corpse).
 
 # ------------------------------------------------------------------ Anchors (decision batch 10, OQ-182)
 # The battlefield's own resource: what the ground offers a soldier on the wires, and what a Titan

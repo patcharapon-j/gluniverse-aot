@@ -4,9 +4,9 @@
  * round-end automation with Undo. Every rule decision is a pure function in src/rules/engagement/.
  */
 import { SYSTEM_ID } from '../config.ts';
-import { evaluateLadder, chooseEntry, enteringAttention, entryTargets } from '../rules/engagement/attention.ts';
-import { dealBlock, dealCards, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
-import { countTurn, release } from '../rules/engagement/grab.ts';
+import { evaluateLadder, chooseEntry, enteringAttention, entryTargets, retargetForEntry } from '../rules/engagement/attention.ts';
+import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_CAP, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
+import { countTurn, holdingArm, release } from '../rules/engagement/grab.ts';
 import { coreOf, grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { comparisonLabel, entering, focusLabels, holdsAPosition, isClose, leaveBlock, letGoBlock, moveOptions, nextLabel, returnBlock, returning, withPosition, type MoveKind } from '../rules/engagement/positions.ts';
 import { changeEffects, chargeBlock, chargeDoubleStep, flightResult, momentumCap, momentumEnd, startingAnchors, trimToCap, wreckAnchor } from '../rules/engagement/momentum.ts';
@@ -39,6 +39,7 @@ import { foeCandidates, groupBroken, skirmishEnding, rollFightWeapon } from '../
 import { emptyFlags, type Position, type Snapshot, type SoldierState } from '../rules/engagement/types.ts';
 import { isGrounded, nextBehaviorFor, type BodyPart } from '../rules/titan.ts';
 import { rollGas } from '../dice/tables.ts';
+import { answerCardOf, postPrompt, promptOpsOf, PROMPT_OPS_FLAG, recordOpsOnMessage, registerPromptResolver, type PromptResolver } from '../dice/prompt.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { CARD, ENGAGEMENT, engagementTurns, isEngagement } from './combat.ts';
 import { KeyedLock } from './busy.ts';
@@ -127,7 +128,10 @@ export function titanStartPatch(actor: any, label: string): Record<string, unkno
   };
 }
 
-const titanRowData = (key: string, label: string, round: number) => ({ key, label, status: 'focus', entered: round, grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), dodges: [], pending: '', clearTheHand: false });
+const titanRowData = (key: string, label: string, round: number) => ({ key, label, status: 'focus', entered: round, grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), dodges: [], pending: '', clearTheHand: false, frenzy: 0 });
+
+/** A Focus Titan's Frenzy, which is added to its behavior roll (batch F2). */
+export const frenzyOf = (combat: any, key: string): number => Number((plain(combat).titans as any[]).find((t) => t.key === key)?.frenzy ?? 0);
 
 export async function startEngagement(choice: SetupChoice): Promise<any> {
   if (!isGM()) return null;
@@ -450,10 +454,15 @@ async function countGrabbedTurn(combat: any, soldierId: string): Promise<void> {
 
 const entryOf = (actor: any, id: string) => (actor.system.toObject().behavior_table.entries as any[]).find((e) => e.id === id);
 
-async function rollNext(actor: any, previous: string, rec: Recorder, reveal: boolean): Promise<string> {
+/**
+ * The behavior roll (behavior-procedure.yaml, next_behavior.roll, as amended by batch F2): D6 plus
+ * the Focus Titan's Frenzy, a result above the table's highest entry reading as the highest.
+ */
+async function rollNext(actor: any, previous: string, rec: Recorder, reveal: boolean, frenzy = 0): Promise<string> {
   const s = actor.system.toObject();
   const parts = rec.get(actor, 'system.body_parts') as BodyPart[];
-  const next = nextBehaviorFor(s.behavior_table.entries, parts, previous, d6());
+  const result = behaviorResult(d6(), frenzy, s.behavior_table.entries);
+  const next = nextBehaviorFor(s.behavior_table.entries, parts, previous, result);
   rec.set(actor, 'system.next_behavior', { entry: next, revealed: reveal });
   return next;
 }
@@ -488,7 +497,7 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
     const left = Math.max(0, row.decoy.left - 1);
     const prevEntry = actor.system.next_behavior.entry;
     rec.set(actor, 'system.previous_behavior', prevEntry);
-    await rollNext(actor, prevEntry, rec, false);
+    await rollNext(actor, prevEntry, rec, false, frenzyOf(combat, key));
     const lines = [tr('note.decoyCard', { decoy: row.decoy.name, left })];
     let decoy: any = { ...row.decoy, left };
     if (left === 0) {
@@ -510,8 +519,26 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
     await postNote({ title, lines: [tr('note.noAttention'), tr('note.nextKept')], titan: true, round: combat.round });
     return;
   }
-  const holder = snap.soldiers.find((s) => s.id === ev.holder)!;
+  let holder = snap.soldiers.find((s) => s.id === ev.holder)!;
   const s = actor.system.toObject();
+  const retargetLines: string[] = [];
+  // batch F1: a Titan that cannot reach its Attention holder takes the next candidate down the
+  // Attention Ladder who does meet the rolled entry's requirement, and its Attention moves with it.
+  const rolled = (s.behavior_table.entries as any[]).find((e) => e.id === s.next_behavior.entry);
+  if (rolled) {
+    const moved = retargetForEntry(
+      { titan: tRow, soldiers: snap.soldiers, grabbedBy: (id: string) => grabbedBy(snap, id), downCanMeet: E().downCanMeet, cardOf: (id: string) => tieCard(id, snap.cards, snap.wings), useCards: true },
+      rolled,
+      holder.id,
+    );
+    const to = moved ? snap.soldiers.find((x) => x.id === moved) : null;
+    if (to && to.id !== holder.id) {
+      holder = to;
+      tRow.holder = to.id;
+      rec.set(actor, 'system.attention_holder', to.id);
+      retargetLines.push(tr('note.retargeted', { name: to.name, entry: rolled.name ?? rolled.id }));
+    }
+  }
   const entry = chooseEntry(s.behavior_table.entries, s.next_behavior.entry, s.previous_behavior, s.body_parts, holder.positions[label]);
   const targets = entryTargets(entry, holder.id, tRow, snap.soldiers, grabbedIn(snap));
   targets.sort((a, b) => (tieCard(a, snap.cards, snap.wings) ?? 99) - (tieCard(b, snap.cards, snap.wings) ?? 99));
@@ -535,7 +562,7 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
   const wrecksAnchor = (full?.effects ?? []).some((e: any) => e.type === 'wreck');
   const titans = (plain(combat).titans as any[]).map((t) => (t.key === key ? { ...t, pending: JSON.stringify({ entry: entry.id, message: '', telegraph, wreck: wrecksAnchor, behavior: message?.id ?? '' }) } : t));
   await writeSystem(combat, { titans });
-  await postNote({ title, lines: [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), tr('note.behaviorWaits')], titan: true, round: combat.round });
+  await postNote({ title, lines: [tr('note.attentionRung', { name: holder.name, rung: game.i18n.localize(`WOF.Rung.${ev.rung}`) }), ...retargetLines, tr('note.behaviorWaits')], titan: true, round: combat.round });
 }
 
 async function titanCardEnd(combat: any, combatant: any): Promise<void> {
@@ -566,7 +593,7 @@ async function titanCardEnd(combat: any, combatant: any): Promise<void> {
   // (titan-format.yaml, effect_types, wreck).
   if (pending.wreck) wreck(combat, rec);
   rec.set(actor, 'system.previous_behavior', pending.entry);
-  const next = await rollNext(actor, pending.entry, rec, pending.telegraph);
+  const next = await rollNext(actor, pending.entry, rec, pending.telegraph, frenzyOf(combat, key));
   rec.set(combat, 'system.titans', (after.titans as any[]).map((t) => (t.key === key ? { ...t, pending: '', decoysInRow: 0, flags: emptyFlags() } : t)));
   await rec.commit();
   if (pending.telegraph) {
@@ -594,6 +621,11 @@ export interface MoveRequest {
    * and no loudest flag is set.
    */
   kind?: MoveKind;
+  /**
+   * The GM's Direct Control (ADR-0028): the rules checks are skipped and the Position is written as
+   * told. Only the permission check still applies, so a player's request can never carry it.
+   */
+  force?: boolean;
 }
 
 /** A change of Position (positions.yaml, moves). Returns false when the rules refuse it. */
@@ -603,6 +635,13 @@ export async function movePosition(combat: any, req: MoveRequest): Promise<boole
   const t = snap.titans.find((x) => x.key === req.key);
   if (!s || !t || !snap.anchor) return false;
   const grabbed = grabbedIn(snap)(s.id);
+  // ADR-0028: automation assists the GM and never blocks them. Under force the one-step check, the
+  // anchor check and the Grabbed check are all skipped, and the move is written as a GM ruling.
+  if (req.force) {
+    if (!isGM()) return warn('move.forceGM');
+    await applyPosition(combat, req.actor, s, t.label, req.to, 'rule', { kind: req.kind, ruling: true });
+    return true;
+  }
   if (req.way === 'rule') {
     if (!isGM()) return false;
     await applyPosition(combat, req.actor, s, t.label, req.to, 'rule', { kind: req.kind });
@@ -658,25 +697,65 @@ function warn(key: string): false {
 
 /**
  * A Flight (positions.yaml, moves, flight): every ODM move rolls for fly with the soldier's own ODM
- * Gear. The step happens whatever the roll gives, each success is 1 Momentum to the cap, and no
- * successes sets the loudest flag on the Focus Titan the move named, from any Position.
+ * Gear, which means the soldier's own Circumstances, Stress Dice, Talents, Help, Push and Cover. It
+ * is therefore never rolled by whichever client called for the move (the bug of item 6): the move
+ * posts an action prompt and the moving soldier's owner rolls it from their own client. The step,
+ * the Momentum and the loudest flag all land when the card is answered.
  */
 async function flight(combat: any, req: MoveRequest, s: SoldierState, label: string): Promise<boolean> {
-  const { rollAction } = await import('../dice/roll-action.ts');
-  const { successesOf } = await import('../dice/card.ts');
-  const message = await rollAction(req.actor, 'fly', {});
-  const card = message?.getFlag(SYSTEM_ID, 'card');
-  // The move is the soldier's whether or not the roll was made; with no card nothing is gained.
-  const successes = card ? successesOf(card) : 0;
-  const snap = snapshot(combat);
-  const flown = flightResult(successes, s.momentum, snap.anchors);
-  await applyPosition(combat, req.actor, s, label, req.to, 'odm', { carry: req.carry ?? 0, flight: { successes, ...flown } });
+  const message = await postPrompt({
+    ask: 'flight',
+    mode: 'action',
+    combat: combat.id,
+    title: tr('prompt.flightTitle', { name: req.actor.name }),
+    cause: tr('prompt.flightCause', { name: req.actor.name, label, from: tr(`pos.${s.positions[label] ?? 'none'}`), to: tr(`pos.${req.to}`) }),
+    rolls: tr('prompt.flightRolls'),
+    asked: [{ actor: req.actor, detail: tr('prompt.flightDetail', { n: s.momentum, cap: momentumCap(snapshot(combat).anchors) }) }],
+    data: { key: req.key, label, to: req.to, carry: req.carry ?? 0, charge: !!req.charge },
+    speaker: req.actor,
+  });
+  if (!message) return false;
+  await postNote({ title: tr('note.flightAsked', { name: req.actor.name }), lines: [tr('note.flightAskedLine', { label, to: tr(`pos.${req.to}`) })], round: combat.round });
   return true;
 }
+
+/**
+ * The answered Flight: the roll is the soldier's own card, and the active GM's client writes the
+ * step. Every success is 1 Momentum to the cap, and no successes sets the loudest flag on the Focus
+ * Titan the move named, from any Position.
+ */
+const flightResolver: PromptResolver = {
+  async roll(ctx) {
+    const { rollAction } = await import('../dice/roll-action.ts');
+    const actor = await foundry.utils.fromUuid(ctx.entry.actor);
+    if (!actor) return null;
+    const message = await rollAction(actor, 'fly', {});
+    // A cancelled dialog gives the button back; the GM can still roll it for them.
+    return message ? { message: message.id } : null;
+  },
+  async apply(ctx, roll) {
+    const combat = game.combats.get(ctx.card.combat);
+    const actor = await foundry.utils.fromUuid(ctx.entry.actor);
+    if (!combat || !actor) return null;
+    const { successesOf } = await import('../dice/card.ts');
+    const answer = answerCardOf(roll);
+    const successes = answer ? successesOf(answer) : 0;
+    const snap = snapshot(combat);
+    const s = snap.soldiers.find((x) => x.id === actor.id);
+    const data = ctx.card.data as { key: string; label: string; to: Position; carry: number; charge: boolean };
+    const t = snap.titans.find((x) => x.key === data.key);
+    if (!s || !t) return { line: tr('prompt.flightGone', { name: actor.name }), ops: [] };
+    const flown = flightResult(successes, s.momentum, snap.anchors);
+    await applyPosition(combat, actor, s, t.label, data.to, 'odm', { carry: data.carry ?? 0, flight: { successes, ...flown } });
+    return { line: tr('prompt.flightDone', { name: actor.name, n: successes, gained: flown.gained }), ops: [] };
+  },
+};
 
 interface MoveExtras {
   carry?: number;
   charge?: boolean;
+  /** A GM override: the note says so, and the same line the rules path writes is kept. */
+  ruling?: boolean;
   /** With way 'rule', the kind of step the rule's forced change makes (moves, forced_step). */
   kind?: MoveKind;
   flight?: { successes: number; momentum: number; gained: number; loud: boolean };
@@ -703,8 +782,9 @@ async function applyPosition(combat: any, actor: any, s: SoldierState, label: st
   if (how.odmUse) await markOdm(combat, actor.id);
   if (way !== 'rule' && way !== 'letGo') await markMoveSpent(combat, actor.id);
   if (extra.flight?.loud || extra.charge) await markLoud(combat, label, actor.id);
-  const wayText = way === 'rule' ? tr('move.byRule') : tr(`move.way.${way}`);
+  const wayText = extra.ruling ? tr('gm.byRuling') : way === 'rule' ? tr('move.byRule') : tr(`move.way.${way}`);
   const lines = [tr('note.movedLine', { label, from: tr(`pos.${s.positions[label] ?? 'none'}`), to: tr(`pos.${to}`), kind: wayText })];
+  if (extra.ruling) lines.unshift(tr('gm.ruling'));
   if (extra.flight) {
     lines.push(extra.flight.gained ? tr('note.flightMomentum', { n: extra.flight.gained, held: after }) : tr('note.flightNone'));
     if (extra.flight.loud) lines.push(tr('note.flightLoud', { label }));
@@ -875,7 +955,7 @@ export async function titanDies(combat: any, key: string, rec: Recorder): Promis
     // A fall the release makes them take is resolved first, from On Body (titan_death, freed).
     if (row.grab.lifted) await rollFall(combat, game.actors.get(plan.freed), { positions: { ...snap.soldiers.find((x) => x.id === plan.freed)?.positions, [row.label]: 'on-body' }, causing: row.label }, rec);
   }
-  if (plan.steam.length) await rollSteam(combat, plan.steam, rec);
+  if (plan.steam.length) await rollSteam(combat, plan.steam, rec, { trigger: 'kill', label: row.label, key });
   // The falling body destroys 1 Anchor where it lands, whether or not anyone is in the path
   // (titan-harm.yaml, falling_titan, wrecks_an_anchor). A Titan already grounded does not fall.
   if (!isGrounded(partsOf(actor))) wreck(combat, rec);
@@ -967,18 +1047,36 @@ export async function undoCheck(combat: any, index: number): Promise<void> {
   });
 }
 
+/**
+ * The frenzy end step (round.yaml, end_steps, frenzy; batch F2): every living Focus Titan's Frenzy
+ * rises by 1, never above FRENZY_CAP. A corpse has none, and a Next Behavior already rolled is not
+ * touched: a behavior roll takes the Frenzy that stood when it was rolled (behavior-procedure.yaml,
+ * next_behavior, frenzy_when).
+ */
+function raiseFrenzy(combat: any, rec: Recorder): void {
+  const rows = rec.get(combat, 'system.titans') as any[];
+  const focus = rows.filter((r) => r.status === 'focus');
+  if (!focus.length) {
+    rec.line(tr('end.noFocus'));
+    return;
+  }
+  const next = rows.map((r) => (r.status === 'focus' ? { ...r, frenzy: frenzyAfterRound(Number(r.frenzy ?? 0)) } : r));
+  rec.set(combat, 'system.titans', next);
+  for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzy', { label: r.label, n: r.frenzy, cap: FRENZY_CAP }));
+}
+
 async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): Promise<void> {
   const sys = plain(combat);
   const snap = snapshot(combat);
   switch (check) {
+    case 'frenzy':
+      raiseFrenzy(combat, rec);
+      return;
     case 'gas-rolls': {
       const due = gasRollsDue(sys.odmUsed, (id) => !!snap.soldiers.find((s) => s.id === id)?.alive, sys.cleanLine ?? []);
-      for (const id of due) {
-        const actor = game.actors.get(id);
-        const message = actor ? await rollGas(actor, { silent: true }) : null;
-        if (message) rec.message(message.id);
-      }
-      rec.line(due.length ? tr('end.gasFor', { who: due.map(nameOf).join(', ') }) : tr('end.gasNone'));
+      const message = await askGasRolls(combat, due);
+      if (message) rec.message(message.id);
+      rec.line(due.length ? tr('end.gasAsked', { who: due.map(nameOf).join(', ') }) : tr('end.gasNone'));
       return;
     }
     case 'regeneration': {
@@ -1003,7 +1101,7 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
         rec.line(tr('end.regenFull', { label }));
         if (p.result.healed) {
           rec.line(tr('end.regenHealed', { label, part: game.i18n.localize(`WOF.BodyPart.${p.result.healed.id}`) }));
-          await rollSteam(combat, steamRollers('regeneration-fill', snap.soldiers, label), rec);
+          await rollSteam(combat, steamRollers('regeneration-fill', snap.soldiers, label), rec, { trigger: 'regeneration-fill', label, key: p.key });
         }
         if (p.result.stands) {
           rec.set(a, 'system.heave_count', 0);
@@ -1092,6 +1190,48 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
       return;
     }
   }
+}
+
+// ---------------------------------------------------------------- the Gas Rolls (odm-gear.yaml, gas_roll)
+
+/**
+ * The round's owed Gas Rolls: one card listing everyone who used their ODM Gear, each rolling their
+ * own from their own client (batch C, item 5). Returns the card's message, or null when none is due.
+ */
+export async function askGasRolls(combat: any, due: readonly string[]): Promise<any> {
+  const asked = [...due].map((id) => game.actors.get(id)).filter(Boolean);
+  if (!asked.length) return null;
+  return postPrompt({
+    ask: 'gas',
+    combat: combat.id,
+    title: tr('prompt.gasTitle'),
+    cause: tr('prompt.gasCause'),
+    rolls: tr('prompt.gasRolls'),
+    asked: asked.map((actor: any) => ({ actor, detail: tr('prompt.gasRating', { n: actor.system.gas_rating ?? 0 }) })),
+  });
+}
+
+const gasResolver: PromptResolver = {
+  // The Gas Roll is its own card, with its own dice, its own ops and its own Undo (dice/tables.ts).
+  async roll(ctx) {
+    const actor = await foundry.utils.fromUuid(ctx.entry.actor);
+    if (!actor) return null;
+    const message = await rollGas(actor, { silent: ctx.by !== 'owner' });
+    return message ? { message: message.id } : null;
+  },
+  async apply(ctx, roll) {
+    const actor = await foundry.utils.fromUuid(ctx.entry.actor);
+    const card = roll.message ? game.messages.get(roll.message)?.getFlag(SYSTEM_ID, 'card') : null;
+    const line = card?.kind === 'gas' ? tr('prompt.gasDone', { name: actor?.name ?? '', from: card.from, to: card.to }) : tr('prompt.gasNone', { name: actor?.name ?? '' });
+    // The Gas card is the answer: the step's Undo takes it back with everything it applied.
+    return { line, ops: roll.message ? [{ t: 'message', id: roll.message }] : [] };
+  },
+};
+
+/** Registered with the rest of the tracker's prompts (requests.ts). */
+export function registerEnginePrompts(): void {
+  registerPromptResolver('flight', flightResolver);
+  registerPromptResolver('gas', gasResolver);
 }
 
 // ---------------------------------------------------------------- the engagement-end steps (engagement-end.yaml)
@@ -1199,6 +1339,213 @@ export async function toggleEngaged(combat: any, soldier: string, foe: string): 
   await writeSystem(combat, { 'skirmish.engaged': next });
 }
 
+// ---------------------------------------------------------------- the GM's direct setters (ADR-0028)
+
+/**
+ * Automation assists the GM and never blocks them. These setters write the state the rules would
+ * otherwise write for themselves, because the GM ruled that it is so: "this creature is Grabbed
+ * because of what just happened in the fiction". Each one is GM only, runs through a `Recorder` so
+ * it is one transaction, writes the same note the rules path writes marked as a GM ruling, and
+ * keeps its ops on that note (`undoRuling`) so Undo still works. None of them is reachable from a
+ * player's request: they are called from the tracker's override menu on the GM's own client.
+ */
+function gmOnly(): boolean {
+  if (isGM()) return true;
+  ui.notifications.warn(tr('gm.onlyGM'));
+  return false;
+}
+
+/** Commits the ruling, posts its note, and keeps the ops on that note for Undo. */
+async function ruling(combat: any, title: string, lines: string[], rec: Recorder): Promise<boolean> {
+  await rec.commit();
+  const message = await postNote({ title, lines: [tr('gm.ruling'), ...lines, ...rec.lines], round: combat.round });
+  if (message && rec.ops.length) await recordOpsOnMessage(message, rec.ops);
+  return true;
+}
+
+/** Takes one GM ruling back: the ops kept on its note, in reverse (the tracker's Undo control). */
+export async function undoRuling(combat: any, message: any): Promise<boolean> {
+  if (!gmOnly() || !message) return false;
+  const ops = promptOpsOf(message);
+  if (!ops.length) return false;
+  const kept = await revertOps(ops);
+  if (kept.length) ui.notifications.warn(tr('end.kept', { list: kept.join(', ') }));
+  await message.unsetFlag(SYSTEM_ID, PROMPT_OPS_FLAG);
+  await postNote({ title: tr('gm.undone'), lines: [], round: combat?.round });
+  return true;
+}
+
+const titansOf = (rec: Recorder, combat: any) => rec.get(combat, 'system.titans') as any[];
+const setTitans = (rec: Recorder, combat: any, rows: any[]) => rec.set(combat, 'system.titans', rows);
+
+/**
+ * Grabbed, set or cleared by ruling (grab.yaml). Setting it writes the Focus Titan's `grab` row (a
+ * free arm where the Titan has one), moves the soldier On Body relative to it, takes their airborne
+ * away, and gives the Titan its Attention. Clearing it runs the rules' own release, so a lifted
+ * soldier still falls.
+ */
+export async function setGrabbed(combat: any, soldierId: string, key: string, on: boolean): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const rec = new Recorder();
+  const rows = titansOf(rec, combat);
+  const row = rows.find((r) => r.key === key);
+  const actor = game.actors.get(soldierId);
+  const titan = titanActor(combat, key);
+  if (!row || !actor) return false;
+  if (!on) {
+    if (row.grab?.soldier !== soldierId) return false;
+    await recordRelease(combat, key, rec);
+    return ruling(combat, tr('gm.grabCleared', { name: actor.name, label: row.label }), [], rec);
+  }
+  const snap = snapshot(combat);
+  const s = soldierState(actor);
+  const arm = titan ? holdingArm(rec.get(titan, 'system.body_parts') as BodyPart[]) : null;
+  // A Titan with no arm left still holds by ruling: the row names no part, and nothing is counted off it.
+  setTitans(rec, combat, rows.map((r) => (r.key === key ? { ...r, grab: { soldier: soldierId, counted: 0, lifted: false, arm: arm?.id ?? '' } } : r)));
+  if (titan) {
+    rec.set(titan, 'system.attention_holder', soldierId);
+    if (arm) rec.set(titan, 'system.body_parts', (rec.get(titan, 'system.body_parts') as BodyPart[]).map((p) => (p.id === arm.id ? { ...p, progress: 0 } : p)));
+  }
+  recordPositions(rec, actor, withPosition(s.positions, row.label, 'on-body', focusLabels(snap.titans)));
+  rec.set(actor, 'system.airborne', false);
+  await wingEvent(combat, { kind: 'grabbed', soldier: soldierId }, rec);
+  return ruling(combat, tr('gm.grabbed', { name: actor.name, label: row.label }), [], rec);
+}
+
+/**
+ * Pinned, set or cleared by ruling (titan-harm.yaml, a fallen body): writes the soldier's
+ * `system.pinned` (active, the Focus Titan label that pins them, the limb, and whether it is a corpse).
+ */
+export async function setPinned(combat: any, soldierId: string, pin: { label: string; limb: 'arm' | 'leg' | 'body'; corpse?: boolean } | null): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const actor = game.actors.get(soldierId);
+  if (!actor) return false;
+  const rec = new Recorder();
+  rec.set(actor, 'system.pinned.active', !!pin);
+  rec.set(actor, 'system.pinned.body', pin?.label ?? '');
+  rec.set(actor, 'system.pinned.limb', pin?.limb ?? null);
+  rec.set(actor, 'system.pinned.corpse', !!pin?.corpse);
+  return ruling(combat, tr(pin ? 'gm.pinned' : 'gm.pinCleared', { name: actor.name, label: pin?.label ?? '' }), [], rec);
+}
+
+/** Momentum, set by ruling (anchor-ratings.yaml, momentum): the soldier's `system.momentum`, never above the field's cap. */
+export async function setMomentum(combat: any, soldierId: string, n: number): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const actor = game.actors.get(soldierId);
+  if (!actor) return false;
+  const cap = momentumCap(snapshot(combat).anchors);
+  const value = Math.max(0, Math.min(Math.round(n), cap));
+  const rec = new Recorder();
+  rec.set(actor, 'system.momentum', value);
+  return ruling(combat, tr('gm.momentum', { name: actor.name, n: value, cap }), [], rec);
+}
+
+/** Airborne, set or cleared by ruling (positions.yaml, conditions): the soldier's `system.airborne`. */
+export async function setAirborne(combat: any, soldierId: string, on: boolean): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const actor = game.actors.get(soldierId);
+  if (!actor) return false;
+  const rec = new Recorder();
+  rec.set(actor, 'system.airborne', on);
+  return ruling(combat, tr(on ? 'gm.airborne' : 'gm.grounded', { name: actor.name }), [], rec);
+}
+
+/**
+ * The anchor rating, changed mid-fight by ruling (anchor-ratings.yaml): the engagement's
+ * `system.anchor`, its Anchor pool reset to the new rating's, and every soldier trimmed to the new cap.
+ */
+export async function setAnchorRating(combat: any, ratingId: string): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const rating = ratingOf(ratingId);
+  if (!rating) return false;
+  const rec = new Recorder();
+  const anchors = { left: startingAnchors(rating).anchors, wrecks: 0 };
+  rec.set(combat, 'system.anchor', ratingId);
+  rec.set(combat, 'system.anchors', anchors);
+  for (const [id, value] of Object.entries(trimToCap(snapshot(combat).soldiers, anchors.left))) {
+    rec.set(game.actors.get(id), 'system.momentum', value);
+    rec.line(tr('end.momentumTrim', { name: nameOf(id), n: value }));
+  }
+  return ruling(combat, tr('gm.anchor', { name: rating.name ?? ratingId, n: anchors.left }), [], rec);
+}
+
+/** The loudest flag, set or cleared by ruling (attention.yaml, flags): the Focus Titan row's `flags.loud`. */
+export async function setLoudest(combat: any, soldierId: string, key: string, on: boolean): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const rec = new Recorder();
+  const rows = titansOf(rec, combat);
+  const row = rows.find((r) => r.key === key);
+  if (!row) return false;
+  const loud = on ? [...new Set([...row.flags.loud, soldierId])] : row.flags.loud.filter((x: string) => x !== soldierId);
+  setTitans(rec, combat, rows.map((r) => (r.key === key ? { ...r, flags: { ...r.flags, loud } } : r)));
+  return ruling(combat, tr(on ? 'gm.loud' : 'gm.loudCleared', { name: nameOf(soldierId), label: row.label }), [], rec);
+}
+
+/**
+ * An Opening, set or cleared by ruling (strikes.yaml, openings): the Titan's `system.openings` and
+ * the `openings_by` list it is counted from, so a Nape strike may spend it.
+ */
+export async function setOpening(combat: any, key: string, on: boolean, byId = ''): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const titan = titanActor(combat, key);
+  const row = (plain(combat).titans as any[]).find((r) => r.key === key);
+  if (!titan || !row) return false;
+  const rec = new Recorder();
+  const held = [...((rec.get(titan, 'system.openings_by') as string[]) ?? [])];
+  const next = on ? [...held, byId] : held.slice(0, -1);
+  rec.set(titan, 'system.openings_by', next);
+  rec.set(titan, 'system.openings', next.length);
+  return ruling(combat, tr(on ? 'gm.opening' : 'gm.openingCleared', { label: row.label, n: next.length }), [], rec);
+}
+
+/** Attention, set or cleared by ruling (attention.yaml): the Titan's `system.attention_holder`. */
+export async function setAttention(combat: any, key: string, soldierId: string | null): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const titan = titanActor(combat, key);
+  const row = (plain(combat).titans as any[]).find((r) => r.key === key);
+  if (!titan || !row) return false;
+  const rec = new Recorder();
+  rec.set(titan, 'system.attention_holder', soldierId ?? '');
+  return ruling(combat, tr(soldierId ? 'gm.attention' : 'gm.attentionCleared', { label: row.label, name: soldierId ? nameOf(soldierId) : '' }), [], rec);
+}
+
+/** A soldier's move this round, marked spent or given back by ruling: the engagement's `system.movesSpent`. */
+export async function setTurnSpent(combat: any, soldierId: string, spent: boolean): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const rec = new Recorder();
+  const held = (rec.get(combat, 'system.movesSpent') as string[]) ?? [];
+  rec.set(combat, 'system.movesSpent', spent ? [...new Set([...held, soldierId])] : held.filter((x) => x !== soldierId));
+  return ruling(combat, tr(spent ? 'gm.spent' : 'gm.unspent', { name: nameOf(soldierId) }), [], rec);
+}
+
+/**
+ * A soldier put into or out of the engagement by ruling (engagement-flow.yaml, taking part): the
+ * engagement's `system.soldiers`, the soldier's Positions (Distant relative to every Focus Titan, or
+ * cleared), and their card combatant.
+ */
+export async function setInEngagement(combat: any, soldierId: string, taking: boolean): Promise<boolean> {
+  if (!gmOnly()) return false;
+  const actor = game.actors.get(soldierId);
+  if (!actor) return false;
+  const rec = new Recorder();
+  const held = (rec.get(combat, 'system.soldiers') as string[]) ?? [];
+  const snap = snapshot(combat);
+  if (taking) {
+    if (!held.includes(soldierId)) rec.set(combat, 'system.soldiers', [...held, soldierId]);
+    recordPositions(rec, actor, combat.system.mode === 'titan' ? returning(snap.titans) : {}, false);
+    await rec.commit();
+    if (![...combat.combatants].some((c: any) => c.actorId === soldierId && c.system.kind !== 'titan')) {
+      const token = combat.scene?.tokens.find((t: any) => t.actorId === soldierId);
+      await rec.create(combat, 'Combatant', [{ type: CARD, actorId: soldierId, tokenId: token?.id ?? null, sceneId: combat.scene?.id, initiative: null, system: { kind: 'soldier' } }]);
+    }
+  } else {
+    rec.set(combat, 'system.soldiers', held.filter((x) => x !== soldierId));
+    recordPositions(rec, actor, {}, true);
+    await wingEvent(combat, { kind: 'left', soldier: soldierId }, rec);
+  }
+  return ruling(combat, tr(taking ? 'gm.joins' : 'gm.leaves', { name: actor.name }), [], rec);
+}
+
 // ---------------------------------------------------------------- the ending
 
 export interface EndingState {
@@ -1229,7 +1576,7 @@ export async function endEngagement(combat: any): Promise<void> {
       ui.notifications.warn(tr('ending.notMet'));
       return;
     }
-    if (sys.step !== 'end') for (const id of gasRollsDue(sys.odmUsed, (x) => !!snap.soldiers.find((s) => s.id === x)?.alive)) await rollGas(game.actors.get(id), { silent: true });
+    if (sys.step !== 'end') await askGasRolls(combat, gasRollsDue(sys.odmUsed, (x) => !!snap.soldiers.find((s) => s.id === x)?.alive));
     await postNote({ title: tr('ending.title'), lines: [tr(test.noFocusTitan ? 'ending.byNoFocus' : 'ending.byNoStanding'), tr('ending.steps')], round: combat.round });
   } else {
     await postNote({ title: tr('ending.skirmishTitle'), lines: [tr('ending.steps')], round: combat.round });

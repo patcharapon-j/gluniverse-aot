@@ -136,7 +136,7 @@ function checkLifepathSoldier(r: Replay, seed: number) {
     expect(f.attributes[key]).toBeGreaterThanOrEqual(f.attributes[a]);
   }
   expect(f.attributes[key]).toBeGreaterThanOrEqual(4);
-  expect(f.health).toBe(Math.ceil((f.attributes.strength + f.attributes.agility) / 2));
+  expect(f.health).toBe(2 + Math.ceil((f.attributes.strength + f.attributes.agility) / 2));
   expect(f.resolve).toBe(Math.ceil((f.attributes.instinct + f.attributes.empathy) / 2));
   expect(f.classRank).toBe(classRankFor(t.classRank, f.merit!).rank);
   expect(f.declined).toBe(top10);
@@ -197,7 +197,7 @@ describe('a soldier built by rolling', () => {
       merit: 5,
       classRank: 25,
       declined: false,
-      health: 4,
+      health: 6,
       resolve: 3,
       haven: 'The family farm',
       origin: 'wall-rose-farm',
@@ -333,7 +333,7 @@ describe('a soldier built by choosing', () => {
       merit: null,
       classRank: null,
       declined: false,
-      health: 4,
+      health: 6,
       resolve: 3,
     });
     expect(r.final!.stories).toEqual([

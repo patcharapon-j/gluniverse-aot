@@ -6,7 +6,7 @@ order: 3
 tab: Wounds
 sources:
   - path: docs/rules/03-harm-and-mind.md
-    sha: "025a6bc7ad2b6ac60a7e3cefeb7dfb011ee58c92"
+    sha: "d1f65237b73bbcb776e1b08bed5b9e64f34ad796"
   - path: data/harm/health.yaml
     sha: "8faf7ebabffd9190a59a30ba3c4830eff0509c49"
   - path: data/harm/critical-injuries.yaml
@@ -32,7 +32,7 @@ sources:
   - path: data/mind/grief.yaml
     sha: "35aa2e0d22c9f4ad9e6c66f902b6eeb28b9d3e42"
   - path: data/character/action-catalog.yaml
-    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
+    sha: "747752afe49fd764d041b05362412356a62fe355"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -93,13 +93,13 @@ export const TYPE_NOTES = {
 
 <Subsection title="The row of boxes" id="the-row-of-boxes">
 
-**<GlossaryTerm term="Health" />** is half of Strength plus Agility, rounded up, and it never changes. Keep it as a row of boxes, each clean, marked by damage, or crossed off.
+**<GlossaryTerm term="Health" />** is **2 plus half of Strength plus Agility, rounded up**, and it never changes. Most soldiers have 4 to 6 boxes, and the strongest and quickest have 8. Keep it as a row, each box clean, marked by damage, or crossed off.
 
 - **Each untreated <GlossaryTerm term="Critical Injury" /> crosses off one box.** Hold more than your Health and the extras cross off nothing.
 - **Health lost** is what damage has marked.
 - **<GlossaryTerm term="Current Health" />** is Health, less crossed-off boxes, less Health lost. At 0 you are <GlossaryTerm term="Down" />.
 
-Health is small on purpose, because a <GlossaryTerm term="Titan attack" /> goes around it.
+Those boxes still will not save you from a Titan, because a <GlossaryTerm term="Titan attack" /> goes around them.
 
 </Subsection>
 

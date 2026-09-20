@@ -6,7 +6,7 @@ id: positions
 name: Positions and Moves
 chapter: 05-titan-engagement
 adrs: [ADR-0009, ADR-0010, ADR-0019, ADR-0024]
-decided: [OQ-74, OQ-75, OQ-76, OQ-146, OQ-182, OQ-183]
+decided: [OQ-74, OQ-75, OQ-76, OQ-146, OQ-182, OQ-183, OQ-191]
 
 # ------------------------------------------------------------------ the Positions
 positions:
@@ -24,10 +24,129 @@ positions:
   - id: blind-spot
     name: Blind Spot
     meaning: >-
-      Out of the Titan's sight with its Nape within reach, anchored to terrain rather than hooked
-      into the Titan. The only Position a Nape strike can be made from (ADR-0010). Making a Nape
-      strike counts as hooking into the Titan (data/engagement/attention.yaml, flags,
-      hooked-by-strike).
+      Out of the Titan's sight with its Nape within reach, anchored to terrain behind the Titan and
+      not on it. The soldier stands on a tree, a roof, or whatever else the Anchor Rating gives, and
+      is not touching the Titan. It is a place in the world, not a place on the monster. It is the
+      only Position a Nape strike can be made from (ADR-0010). Making a Nape strike counts as
+      hooking into the Titan for the Attention Ladder only (data/engagement/attention.yaml, flags,
+      hooked-by-strike): the striker's Position does not change and they are still at Blind Spot
+      (changes_to_position, not_changed_by; data/character/action-catalog.yaml, nape-strike, notes).
+    not_on_the_titan: >-
+      Every rule that reads on-body reads on-body alone. Steam at a Regeneration fill burns the
+      soldiers On Body and not those at Blind Spot, because Blind Spot is not on it
+      (data/engagement/titan-harm.yaml, steam); the Urban Terrain Trait says a Blind Spot soldier is
+      anchored to a roof and is not airborne, because they are standing on one
+      (data/engagement/anchor-ratings.yaml, urban); and the Anchor Rating decides whether a Blind
+      Spot exists at all while the Titan stands, because it is the terrain that makes it
+      (data/engagement/anchor-ratings.yaml, ratings, open). Decision batch 13, 13-6; OQ-191.
+
+# ------------------------------------------------------------------ what changes a Position
+# A closed list (decision batch 13, 13-5; OQ-191). It states rules that already hold; it changes
+# none of them. Each row names the rule that makes the change, which stays the source for how.
+changes_to_position:
+  principle: >-
+    An action never changes a Position. Only the soldier's own move changes it, plus the rules
+    listed here. Nothing else in the game moves a soldier between Distant, In Reach, On Body, and
+    Blind Spot.
+  closed: true
+  list:
+    - id: own-move
+      what: The soldier's own move
+      effect: >-
+        One step the Anchor Rating allows for that kind of move, or a mount, a dismount, or leaving
+        the Titan Engagement. An ODM move is a Flight, and crosses more than one step only by
+        spending Momentum on Carry (moves, what_a_move_does; moves, flight; leaving).
+    - id: letting-go
+      what: Letting go
+      effect: >-
+        Instead of a move: the soldier falls, and holds in-reach relative to the fall's reference
+        Titan once the fall is resolved (moves, letting_go; falls_land).
+    - id: fall
+      what: Any fall
+      effect: >-
+        A soldier who falls while holding on-body or blind-spot relative to the fall's reference
+        Titan holds in-reach relative to that Titan. Their Positions relative to any other Focus
+        Titan do not change (falls_land; data/gear/falls.yaml).
+    - id: fear-roll-forced-move
+      what: A Fear Roll result's forced move
+      effect: >-
+        One step at the start of the soldier's next turn, toward distant or toward the nearest
+        comrade. It is a rule's change, not the soldier's own move (moves, forced_step;
+        data/harm/effect-types.yaml, forced-move).
+    - id: grab-lands
+      what: A Grab landing
+      effect: >-
+        The Grabbed soldier holds on-body relative to the Titan that holds them, and the close rule
+        applies (two_focus_titans, grabbed; data/engagement/grab.yaml, grab_lands).
+    - id: freed-from-a-grab
+      what: Being freed from a Grab
+      effect: >-
+        The soldier holds in-reach relative to the holding Titan, with a fall first if they had been
+        lifted (data/engagement/grab.yaml, release).
+    - id: knock-loose
+      what: A Behavior Table knock loose
+      effect: >-
+        A target who is airborne or holds on-body or blind-spot relative to the Titan falls, and so
+        holds in-reach relative to it (data/engagement/titan-format.yaml, effect_types, knock-loose;
+        falls_land).
+    - id: close-rule
+      what: The close rule
+      effect: >-
+        A soldier whose Position relative to one Focus Titan becomes on-body or blind-spot holds
+        in-reach relative to every other Focus Titan they held on-body or blind-spot relative to
+        (two_focus_titans, close_rule).
+    - id: titan-becomes-focus
+      what: A Titan becoming a Focus Titan
+      effect: Every soldier who holds a Position holds distant relative to it (two_focus_titans, entering).
+    - id: focus-titan-dies
+      what: A Focus Titan dying
+      effect: >-
+        Positions become relative to its corpse, except that on-body and blind-spot read in-reach
+        (two_focus_titans, a_focus_titan_dies; corpse, positions).
+    - id: fall-back
+      what: The Fall Back Squad Tactic
+      effect: >-
+        At the wings step, each soldier who holds on-body or blind-spot relative to a Focus Titan and
+        is not Down, Grabbed, or carried may instead hold in-reach relative to that Titan, their own
+        player choosing. The change is made by that rule and not by the soldier's own move; it is not
+        a fall, not ODM use, and does not change airborne
+        (data/engagement/squad-tactics.yaml, fall-back).
+    - id: titan-stands-up
+      what: A grounded Titan standing up, at the Open rating
+      effect: >-
+        When a Titan has no Broken leg its grounded permissions end, and at the Open rating a soldier
+        who holds blind-spot relative to it then holds on-body instead, because that rating has no
+        blind-spot while the Titan stands. It is a change of Position made by that rule and not a
+        fall (data/engagement/anchor-ratings.yaml, grounded_titan, ends). At every other rating a
+        soldier keeps the Position they hold.
+    - id: carried
+      what: Being carried
+      effect: >-
+        The carried soldier changes Position with their carrier, and their own move changes nothing
+        (moves, carried_soldier; data/gear/carrying.yaml, carrying_a_comrade).
+    - id: placement-leaving-returning-retreat
+      what: Starting placement, leaving, returning, and a retreat's compelled moves
+      effect: >-
+        As each rule states: placement at the start (placement), leaving and returning (leaving,
+        how; leaving, returning), and, in a retreat, the soldier's own move narrowed to the
+        retreat's options, which they cannot decline (data/engagement/background-titans.yaml,
+        retreat, moves). A retreat narrows the soldier's own move; it adds no other change.
+  not_changed_by: >-
+    No Action Catalog entry changes a Position (data/character/action-catalog.yaml). The Nape
+    strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally,
+    and every other entry in the Catalog leave every soldier exactly where they stand, whatever they
+    roll. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and
+    the striker is still at Blind Spot (positions, blind-spot). Attention is not a Position: a Titan
+    turning its Attention onto a soldier, by the Attention Ladder, by a retarget
+    (data/engagement/attention.yaml, changes, retarget), by a decoy, or by a flag, moves nobody.
+    Frenzy moves nobody (data/engagement/titan-format.yaml, frenzy). Becoming Down, Pinned, or
+    Grabbed changes a Position only as a row above states, and a Pinned soldier's Position never
+    changes at all while they are Pinned (moves, pinned_soldier).
+  gm: >-
+    none (ADR-0024, limit 8). The GM never places a soldier, never names a step, and never moves one
+    between Positions. A ruling's time or position cost touches nothing the fight tracks, a Position
+    included (ADR-0024, limit 17; decision batch 9, 9-36), and a fall a ruling stakes lands as the
+    fall rule gives, which is the fall's change and not the ruling's (decision batch 9, 9-44).
 
 relative_to: >-
   A soldier holds a Position relative to each Focus Titan in the Titan Engagement, and relative to each corpse on the field (corpse), and to no other Titan. The first Focus Titan of a Titan Engagement is labelled A, the next B

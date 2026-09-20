@@ -1,0 +1,35 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { render } from 'astro:content';
+import UpdatePage from '~/layouts/UpdatePage.astro';
+import { issued, releaseLink, releaseTabs, releases } from '~/lib/updates';
+
+export const getStaticPaths = (async () => {
+  const entries = await releases();
+  const tabs = releaseTabs(entries);
+  return entries.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      tabs,
+      // Newest first, so the entry after this one in the list is the older release.
+      prev: releaseLink(entries[i + 1]),
+      next: releaseLink(entries[i - 1]),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry, tabs, prev, next } = Astro.props as Props;
+const { Content } = await render(entry);
+---
+<UpdatePage
+  title={entry.data.title}
+  summary={entry.data.summary}
+  issued={issued(entry.data.date)}
+  tabs={tabs}
+  prev={prev}
+  next={next}
+>
+  <Content />
+</UpdatePage>

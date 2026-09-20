@@ -156,7 +156,9 @@ export interface EntryLike {
 /**
  * resolving_a_card, choose: the Next Behavior's entry; Thrash when the Titan lacks its Body Parts;
  * its fallback when the holder does not meet the requirement; Thrash when that fallback is thrash,
- * is the previous behavior, or fails either test.
+ * is the previous behavior, or fails either test. Since decision batch 13 (13-9) the card retargets
+ * first: call retargetForEntry and pass the Position of the soldier it returns, so the fallback is
+ * reached only where no candidate meets the requirement at all.
  */
 export function chooseEntry(entries: readonly EntryLike[], next: string, previous: string, parts: readonly BodyPart[], holderPosition: Position): EntryLike {
   const thrash = entries.find((e) => e.tier === 'thrash')!;
@@ -167,6 +169,38 @@ export function chooseEntry(entries: readonly EntryLike[], next: string, previou
   const f = entries.find((x) => x.id === e.fallback);
   if (!f || f.id === previous || !meetsBodyParts(f, parts) || !f.position_requirement.includes(holderPosition)) return thrash;
   return f;
+}
+
+/**
+ * Everything the Attention Ladder is evaluated with. Retargeting reads the same context the choose
+ * step already built, so it re-runs the Ladder rather than inventing a second selection rule.
+ */
+export type LadderContext = LadderInput;
+
+/** What retargeting reads off a Behavior Table entry (titan-format.yaml, entry_fields). */
+export interface RetargetEntry {
+  position_requirement?: readonly string[];
+}
+
+/**
+ * Retargeting (round 3, decision 12, part 1; behavior-procedure.yaml, choose): a Focus Titan whose
+ * Attention holder does not meet the rolled entry's position_requirement turns on whoever it can
+ * reach. The holder is returned unchanged when they already meet the requirement; otherwise the
+ * Attention Ladder is evaluated again over only those soldiers who do meet it, with its own rungs
+ * and tie-breaks, and the soldier it picks is returned. Null when nobody qualifies (the behavior is
+ * then Thrash) or when the restricted Ladder ties with nothing left to break it. An entry with no
+ * requirement at all is reachable from anywhere, so the holder keeps it. Pure.
+ */
+export function retargetForEntry(ctx: LadderContext, entry: RetargetEntry, holder: string | null): string | null {
+  const need = entry.position_requirement;
+  if (!need || need.length === 0) return holder;
+  const label = ctx.titan.label;
+  const meets = (s: SoldierState) => need.includes(s.positions[label]);
+  const held = holder ? ctx.soldiers.find((s) => s.id === holder) : undefined;
+  if (held && meets(held)) return holder;
+  const able = ctx.soldiers.filter(meets);
+  if (!able.length) return null;
+  return evaluateLadder({ ...ctx, soldiers: able }).holder;
 }
 
 /**

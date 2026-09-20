@@ -1,0 +1,32 @@
+---
+/** One release of the manual, written for players: the same sheet a chapter uses, dated. */
+import '~/styles/rules.css';
+import BaseLayout from './BaseLayout.astro';
+import ChapterNav from '~/components/ChapterNav.astro';
+import type { ChapterLink } from '~/lib/chapters';
+import type { IndexTab } from '~/lib/nav';
+
+interface Props {
+  title: string;
+  summary: string;
+  issued: string;
+  tabs: IndexTab[];
+  prev?: ChapterLink;
+  next?: ChapterLink;
+}
+const { title, summary, issued, tabs, prev, next } = Astro.props;
+---
+<BaseLayout title={title} description={summary} section="updates" tabs={tabs} tabsLabel="Releases">
+  <article class="sheet sheet--light rules" aria-labelledby="page-title">
+    <div class="runhead lbl"><span>Updates · Issued {issued}</span><span>{title}</span></div>
+    <header class="rules-head">
+      <p class="lbl eyebrow">Issued {issued}</p>
+      <h1 class="h1" id="page-title">{title}</h1>
+      <p class="lede">{summary}</p>
+    </header>
+    <div class="rules-body">
+      <slot />
+    </div>
+    <ChapterNav prev={prev} next={next} />
+  </article>
+</BaseLayout>

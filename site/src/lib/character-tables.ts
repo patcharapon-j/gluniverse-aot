@@ -521,7 +521,8 @@ export function squadmateTemplatesTable(): CoreTableData {
             if (v == null) throw new Error(`${T}: "${t.id}" has no ${id} rating.`);
             return v;
           };
-          const health = Math.ceil((rating('strength') + rating('agility')) / 2);
+          // Health is 2 plus half of Strength and Agility, rounded up (data/character/attributes.yaml).
+          const health = 2 + Math.ceil((rating('strength') + rating('agility')) / 2);
           const resolve = Math.ceil((rating('instinct') + rating('empathy')) / 2);
           if (health !== t.health || resolve !== t.resolve) throw new Error(`${T}: "${t.id}" records a Health or Resolve its ratings do not give.`);
           return {

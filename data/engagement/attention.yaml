@@ -6,7 +6,7 @@ id: attention
 name: Attention
 chapter: 05-titan-engagement
 adrs: [ADR-0010, ADR-0024]
-decided: [OQ-75, OQ-81, OQ-87, OQ-99, OQ-102, OQ-111]
+decided: [OQ-75, OQ-81, OQ-87, OQ-99, OQ-102, OQ-111, OQ-192]
 
 holder: >-
   A Focus Titan's Attention is held by exactly one soldier, by a decoy, or by nothing. The soldier
@@ -47,6 +47,17 @@ changes:
       Titan's grip, is Grabbed by another Focus Titan, or stops holding a Position relative to the
       Titan (decision batch 4, 4-13).
     effect: The Titan's Attention is held by nothing until its next evaluation.
+  - id: retarget
+    when: >-
+      A card's choose step finds that the Attention holder does not meet the rolled entry's
+      position_requirement (data/engagement/behavior-procedure.yaml, resolving_a_card, choose;
+      decision batch 13, 13-9; OQ-192).
+    effect: >-
+      Evaluate the Attention Ladder again over only those candidates who meet that
+      position_requirement (evaluation, retargeting). The soldier it returns holds the Titan's
+      Attention from that moment, and the entry resolves against them. If no candidate meets the
+      requirement, Attention does not change and the behavior falls back as behavior-procedure.yaml
+      states. The Titan wanted one soldier and could not reach them, so it takes what it can catch.
   - id: nothing-else
     when: Any other time.
     effect: >-
@@ -227,7 +238,40 @@ evaluation:
         the Titan's next card evaluates the ladder with that round's cards dealt. The order of the
         Squad sheet chooses nothing (ADR-0024 and ADR-0010, as amended in decision batch 4; OQ-81, as
         revised in decision batch 4, 4-3; decision batch 4b, 4b-3).
-  gm_choices: none (ADR-0024, limit 8; ADR-0010)   # the GM never picks the holder; no ruling picks Attention or a target (decision batch 9, 9-4)
+  # The Ladder is read a second way, for one purpose only (decision batch 13, 13-9; OQ-192).
+  retargeting:
+    read_when: >-
+      A card's choose step finds that the Attention holder does not meet the rolled entry's
+      position_requirement (data/engagement/behavior-procedure.yaml, resolving_a_card, choose).
+    candidates: >-
+      The Titan's candidates (candidates) narrowed to those who hold a Position the entry's
+      position_requirement lists, relative to that Titan. Nothing else about candidates changes: a
+      soldier who has left, a soldier Grabbed by another Focus Titan, and a horse are still never
+      candidates, and a Down or carried soldier still meets only the tests whose row says
+      down_can_meet true.
+    how: >-
+      Exactly as any evaluation: the same rungs of the Titan's ladder, in order, and the same steps
+      (top, loudest-matches, struck-first, narrow, holder, card, none), over that narrowed set. No
+      new rule of selection is added, so the choice stays deterministic and the GM still picks
+      nothing (ADR-0024, limit 8). The holder step keeps the soldier who held the Titan's Attention
+      before this evaluation only if they are in the narrowed set, and a holder who fails the
+      position_requirement never is.
+    attention_moves: >-
+      The soldier the evaluation returns holds the Titan's Attention from that moment, for every
+      rule that reads it, and the entry resolves against them: the entry's targets are read from
+      the new holder (data/engagement/titan-format.yaml, entry_fields, targets). Attention stays
+      with them until it changes again (changes).
+    none: >-
+      If no candidate meets the position_requirement, nothing is evaluated, Attention does not
+      change, and the behavior falls back as it did before this rule
+      (data/engagement/behavior-procedure.yaml, resolving_a_card, choose).
+    not_a_position_change: >-
+      Retargeting moves no soldier. It changes Attention and nothing else
+      (data/engagement/positions.yaml, changes_to_position, not_changed_by).
+    flags: >-
+      The flags for this Titan stand until the card's next step, as they do through any evaluation
+      (flag_duration).
+  gm_choices: none (ADR-0024, limit 8; ADR-0010)   # the GM never picks the holder, on a first evaluation or a retarget; no ruling picks Attention or a target (decision batch 9, 9-4)
 
 # ------------------------------------------------------------------ Draw Attention
 draw_attention:

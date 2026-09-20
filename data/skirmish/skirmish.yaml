@@ -263,8 +263,10 @@ weapons:
       spends: its load; the firearm is empty after the roll
       wielded_by: [soldier, foe]
       notes: >-
-        Reload also spends the move. A ball that lands at 1 Net Success deals 4, which brings a Health 4
-        Rookie to 0 current Health: Down, with a Pierce Critical Injury.
+        Reload also spends the move. A ball deals 4 at 1 Net Success, 5 at 2, and 6 at 3
+        (damage, amount, per_net_success_beyond_the_first), so it Downs a Health 6 Rookie at 3 Net
+        Successes, with a Pierce Critical Injury. A well-aimed shot still drops a soldier; a graze no
+        longer does (decision batch 13, 13-8; OQ-194).
     - id: fired-flare
       name: Flare, fired at a person
       used_with: shoot

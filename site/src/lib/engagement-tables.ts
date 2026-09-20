@@ -62,7 +62,8 @@ const POSITION_WORDING: Record<string, string> = {
   distant: "Out of a standing Titan's reach. A few behaviors still reach you here.",
   'in-reach': "Within reach of its hands, on the ground or on anchors beside it.",
   'on-body': 'Hooked into the Titan or standing on it, anywhere but the Nape.',
-  'blind-spot': "Out of its sight with its Nape within reach, anchored to the ground or the trees rather than to the Titan. The only Position a Nape strike is made from, and making one counts as hooking in.",
+  'blind-spot':
+    "Out of its sight with its Nape within reach. You are anchored to terrain behind the Titan, a tree or a roof, and you are not touching it: Blind Spot is a place in the world, not a place on the monster. The only Position a Nape strike is made from.",
 };
 
 /** The icon for each Position, from the site's Position set. */
@@ -77,13 +78,63 @@ export function positionsTable(): CoreTableData {
   const T = 'Positions';
   return {
     caption: 'The four Positions',
-    note: 'You hold one Position relative to each Focus Titan, and one relative to each corpse on the field.',
+    note: 'You hold one Position relative to each Focus Titan, and one relative to each corpse on the field. On Body means on the Titan. Blind Spot does not.',
     columns: ['Position', 'Where you are'],
     see: false,
     groups: [
       {
         rows: positionDoc.positions.map((p) => ({
           cells: [p.name, wording(POSITION_WORDING, p.id, T)],
+        })),
+      },
+    ],
+  };
+}
+
+// ---------------------------------------------------------------- what changes a Position
+
+interface RawPositionChange {
+  id: string;
+  what: string;
+  effect: string;
+}
+
+/**
+ * What each entry of the closed list does, written for players. The list, its order, and the
+ * principle at its head come from the Positions table; a new entry with no wording fails the build.
+ */
+const POSITION_CHANGE_WORDING: Record<string, string> = {
+  'own-move': 'One step the ground allows, or a mount, a dismount, or leaving. An ODM move is a Flight, and crosses two steps only by spending Momentum on Carry.',
+  'letting-go': 'Taken instead of a move: you fall, and land In Reach.',
+  fall: 'Any fall from On Body or Blind Spot leaves you In Reach of the Titan the fall is read against. From further out, your Position holds.',
+  'fear-roll-forced-move': 'One step at the start of your next turn. It is the result moving you, not a move of your own.',
+  'grab-lands': 'The Grabbed soldier holds On Body relative to the hand that holds them.',
+  'freed-from-a-grab': 'In Reach, with a fall first if you had already been lifted.',
+  'knock-loose': 'A target who is airborne or on the body falls, and lands In Reach.',
+  'close-rule': "Coming to On Body or Blind Spot on one Titan makes every other Titan's On Body or Blind Spot read In Reach.",
+  'titan-becomes-focus': 'Everyone holding a Position holds Distant relative to it.',
+  'focus-titan-dies': 'Your Positions carry over to its corpse, with On Body and Blind Spot reading In Reach.',
+  'fall-back': 'At the Wings step, each soldier on the body or at Blind Spot may take In Reach instead, their own choice. It is not a fall and it is not ODM use.',
+  'titan-stands-up': 'On Open ground only: a Titan that gets its legs back has no Blind Spot to stand behind, so a soldier there holds On Body instead. Everywhere else you keep the Position you hold.',
+  carried: 'You move with whoever carries you, and your own move changes nothing.',
+  'placement-leaving-returning-retreat': 'As each rule states. A retreat narrows the move you may make; it moves nobody by itself.',
+};
+
+const positionChangeDoc = parse(positionsText) as {
+  changes_to_position: { list: RawPositionChange[] };
+};
+
+export function positionChangesTable(): CoreTableData {
+  const T = 'What changes a Position';
+  return {
+    caption: 'Everything that changes a Position',
+    note: 'A closed list. An action is never on it: nothing you roll moves you, whatever it rolls.',
+    columns: ['What', 'Where it leaves you'],
+    see: false,
+    groups: [
+      {
+        rows: positionChangeDoc.changes_to_position.list.map((change) => ({
+          cells: [change.what, wording(POSITION_CHANGE_WORDING, change.id, T)],
         })),
       },
     ],
@@ -887,6 +938,7 @@ export function squadTacticsTable(): CoreTableData {
 
 export const ENGAGEMENT_TABLES = {
   positions: positionsTable,
+  'position-changes': positionChangesTable,
   'position-steps': positionStepsTable,
   anchors: anchorsTable,
   momentum: momentumTable,
@@ -939,7 +991,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   end: {
     title: 'End the round.',
     icon: 'ph:hourglass',
-    text: 'Work through the five end steps below, then begin the next round at its Wings step.',
+    text: 'Work through the end steps below, then begin the next round at its Wings step.',
   },
   'gas-rolls': {
     title: 'Gas Rolls.',
@@ -962,6 +1014,12 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
     icon: 'ph:wind',
     text: 'Everyone who made no ODM move this round loses all their Momentum. Anyone who flew keeps what they hold, up to the Anchors left.',
     exit: { kind: 'stop', label: 'Keep flying', text: 'A round spent standing still costs you everything you were carrying.' },
+  },
+  frenzy: {
+    title: 'Frenzy.',
+    icon: 'ph:flame',
+    text: 'Every living Focus Titan gains 1 Frenzy, up to 3. Frenzy is added to its next behavior roll, and every table runs from terrorising to killing.',
+    exit: { kind: 'stop', label: 'It gets worse', text: 'Round one it postures. By round three it is trying to kill you. A long fight is a losing one.' },
   },
   'round-ends': {
     title: 'Round ends.',
@@ -1006,6 +1064,94 @@ export function positionsMap(): {
       })),
     })),
   };
+}
+
+/**
+ * The Position maps: the shape the step rows make, one per shape of ground.
+ *
+ * The named maps, the ground each covers, and the sentence each carries come from the Anchor
+ * Ratings table. The nodes and the links are derived here from that same table's own step rows,
+ * so a drawn map can never disagree with the rows it is drawn from: a rating whose rows do not
+ * match the others its map covers fails the build.
+ */
+export interface PositionShape {
+  id: string;
+  name: string;
+  /** "chain" or "branch", as the table names it. */
+  shape: string;
+  anchors: string;
+  ratings: string[];
+  says: string;
+  /** The Positions this ground reaches, in the order a soldier closes on a Titan. */
+  nodes: { id: string; name: string; icon: string }[];
+  /** Each step row of this ground, as a pair of Position ids. */
+  links: { from: string; to: string }[];
+  reachesBlindSpot: boolean;
+}
+
+export function positionShapes(): PositionShape[] {
+  const doc = parse(anchorText) as {
+    ratings: RawRating[];
+    position_maps: {
+      maps: {
+        id: string;
+        name: string;
+        ratings: string[];
+        anchors: number | string;
+        shape: string;
+        reaches_blind_spot: boolean;
+        says: string;
+      }[];
+    };
+  };
+  const T = 'Position maps';
+  const maps = doc.position_maps?.maps;
+  if (!Array.isArray(maps) || maps.length === 0) throw new Error(`${T}: the table draws no maps.`);
+
+  /** A ground's step rows as a sorted, comparable list of Position pairs. */
+  const edgesOf = (ratingId: string) => {
+    const rating = doc.ratings.find((r) => r.id === ratingId);
+    if (!rating) throw new Error(`${T}: a map names a ground, "${ratingId}", the table does not rate.`);
+    return rating.steps.map((s) => [s.between[0], s.between[1]].sort().join('>')).sort();
+  };
+
+  /** Left to right, the way a soldier closes on a Titan. */
+  const LANE = ['distant', 'in-reach', 'on-body', 'blind-spot'];
+
+  return maps.map((map) => {
+    const edges = edgesOf(map.ratings[0]);
+    for (const other of map.ratings.slice(1)) {
+      if (edgesOf(other).join('|') !== edges.join('|')) {
+        throw new Error(`${T}: "${map.name}" draws one shape for grounds whose step rows differ ("${map.ratings[0]}" and "${other}").`);
+      }
+    }
+    const links = edges
+      .map((edge) => {
+        const [a, b] = edge.split('>');
+        return LANE.indexOf(a) < LANE.indexOf(b) ? { from: a, to: b } : { from: b, to: a };
+      })
+      .sort((x, y) => LANE.indexOf(x.from) - LANE.indexOf(y.from) || LANE.indexOf(x.to) - LANE.indexOf(y.to));
+    const reached = new Set(links.flatMap((l) => [l.from, l.to]));
+    if (reached.has('blind-spot') !== map.reaches_blind_spot) {
+      throw new Error(`${T}: "${map.name}" says whether it reaches the Blind Spot, and its step rows say otherwise.`);
+    }
+    const nodes = LANE.filter((id) => reached.has(id)).map((id) => ({
+      id,
+      name: position(id, T),
+      icon: wording(POSITION_ICONS, id, T),
+    }));
+    return {
+      id: map.id,
+      name: map.name,
+      shape: map.shape,
+      anchors: String(map.anchors),
+      ratings: map.ratings,
+      says: map.says.replace(/\s+/g, ' ').trim(),
+      nodes,
+      links,
+      reachesBlindSpot: map.reaches_blind_spot,
+    };
+  });
 }
 
 /** The Grab countdown, for the countdown drawing. */

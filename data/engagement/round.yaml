@@ -6,7 +6,7 @@ id: round
 name: The Round
 chapter: 05-titan-engagement
 adrs: [ADR-0001, ADR-0010, ADR-0014, ADR-0015, ADR-0019, ADR-0024]
-decided: [OQ-77, OQ-90, OQ-97, OQ-119, OQ-126, OQ-163, OQ-182]
+decided: [OQ-77, OQ-90, OQ-97, OQ-119, OQ-126, OQ-163, OQ-182, OQ-193]
 
 initiative_cards:
   set: >-
@@ -62,6 +62,15 @@ end_steps:
       in data/harm/engagement-end.yaml (data/gear/odm-gear.yaml, gas_roll, when).
   - id: regeneration
     text: Fill 1 segment of every living Focus Titan's Regeneration clock (data/engagement/titan-harm.yaml, regeneration).
+  - id: frenzy
+    text: >-
+      Raise every living Focus Titan's Frenzy by 1, never above its cap of 3
+      (data/engagement/titan-format.yaml, frenzy). A Titan that became a Focus Titan this round is
+      at 0 and rises to 1 here. It rises during a retreat as well, as the Regeneration clock does
+      (data/engagement/background-titans.yaml, ticks, stopped). It never falls, and a corpse has
+      none. This step changes no Next Behavior already rolled: a behavior roll takes the Frenzy that
+      stood when it was rolled (data/engagement/behavior-procedure.yaml, next_behavior, frenzy_when;
+      decision batch 13, 13-10 and 13-11; OQ-193).
   - id: background-clocks
     text: >-
       Fill 1 segment of every Background Titan's clock and resolve full clocks. Then fill 1 segment
@@ -167,9 +176,13 @@ gm_tracker:
       - Grabbed soldier held, with countdown turns and lifted
       - flags this Titan has set, by soldier (hooked-by-strike, just-hurt, loudest)
       - >-
+        Frenzy, from 0 to 3, raised by 1 at the frenzy end step and added to every behavior roll the
+        Titan makes from that moment on (data/engagement/titan-format.yaml, frenzy;
+        data/engagement/behavior-procedure.yaml, next_behavior, frenzy_when)
+      - >-
         heave count of its Heave rating, cleared when it stands (decision batch 8, 8-22), and each soldier its body pins, by limb with the pinning Body
         Part or none, or by the body (data/engagement/titan-harm.yaml, falling_titan; decision batch 8, 8-9, 8-17)
-    example: "A Medium | cards 4 | Att: Jonas | Next: [hidden] | Prev: Bite | Eyes I0 LA W1 RA I0 LL B0 RL I1 | Op 2 (Mila, Mila) | Regen 1/3 | Decoys 0 | Grab: - | Flags: hooked Mila | Heave 0/3 | Pins: -"
+    example: "A Medium | cards 4 | Att: Jonas | Next: [hidden] | Prev: Bite | Eyes I0 LA W1 RA I0 LL B0 RL I1 | Op 2 (Mila, Mila) | Regen 1/3 | Decoys 0 | Grab: - | Flags: hooked Mila | Frenzy 2/3 | Heave 0/3 | Pins: -"
   corpse_row:
     # A dead Focus Titan's row stays, as its corpse's, for the rest of the Titan Engagement
     # (data/engagement/positions.yaml, corpse; decision batch 8, 8-9).
@@ -186,12 +199,13 @@ gm_tracker:
     example: "Background 1 Small | clock 4/6"
   per_round_order: >-
     Each round the GM updates the tracker at these moments: after the deal (cards), after each
-    Titan card (Attention or the hold's cards left, previous and Next Behavior, decoys in a row,
-    and the flags cleared when the card resolved a behavior, data/engagement/attention.yaml,
-    flag_duration), after each strike or Break Attention (Body Part counts, Openings, flags, the
+    Titan card (Attention, which a retarget may have moved at the choose step, or the hold's cards
+    left, previous and Next Behavior, decoys in a row, and the flags cleared when the card resolved
+    a behavior, data/engagement/attention.yaml, flag_duration; data/engagement/behavior-procedure.yaml,
+    resolving_a_card, choose), after each strike or Break Attention (Body Part counts, Openings, flags, the
     decoy and decoys in a row), after each counted turn of a
     Grabbed soldier (the countdown and lifted), after each fall of a Titan's body and each Heave (pins
-    and the heave count; decision batch 8, 8-9), and at the end steps (Regeneration, Background, and
+    and the heave count; decision batch 8, 8-9), and at the end steps (Regeneration, Frenzy, Background, and
     retreat clocks).
   titan_card_checklist: >-
     On a Focus Titan's card the GM reads its row left to right in the order of

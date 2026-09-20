@@ -35,7 +35,7 @@ sources:
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/character/action-catalog.yaml
-    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
+    sha: "747752afe49fd764d041b05362412356a62fe355"
 
 items:
   odm-gear:

@@ -6,9 +6,9 @@ order: 2
 tab: Soldier
 sources:
   - path: docs/rules/02-character-creation.md
-    sha: "9e0516ac5e70fc27a182a2ca095d11f945a99f6f"
+    sha: "dc4482cc27e0389331abae8536dd0aaeab8bd76b"
   - path: data/character/attributes.yaml
-    sha: "a096bb9f1ef8eb9690180527a6d22807d2db3b04"
+    sha: "3076c9d67ebde5dcf87c6af69517b7fa5fb50148"
   - path: data/character/lifepath.yaml
     sha: "432a3f8a2e6020f3e8e4cf2efc8fd4d362257431"
   - path: data/character/origins.yaml
@@ -24,11 +24,11 @@ sources:
   - path: data/character/specialties.yaml
     sha: "e2a9ac2e3ba1f33ed573570291b89f769aa1118c"
   - path: data/character/squadmates.yaml
-    sha: "35cc08512631fad8bfc02ad44269ed888e401dc7"
+    sha: "932ce68e89e982d46de78a64dddf5ddaa1d4dfc1"
   - path: data/character/talents.yaml
     sha: "4d63533a7910acc0dcb8bb0ee1f5e6e5b0340c4b"
   - path: data/character/action-catalog.yaml
-    sha: "91c7e088ceb576b6f7021ac698a7b90ab33bb953"
+    sha: "747752afe49fd764d041b05362412356a62fe355"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -94,7 +94,7 @@ Every player character is a Training Corps graduate in the Survey Corps. Three p
 Attributes are rated **2 to 5**, and only your Specialty's key attribute can reach **6**. **They never rise after creation** — a soldier grows through Talents and Scars.
 
 <FactTable compact caption="The derived numbers" columns={['Value', 'How it is found']} rows={[
-  ['Health', 'Half of Strength + Agility, rounded up, as a row of boxes. Each untreated Critical Injury crosses one off; at 0 you are <GlossaryTerm term="Down" />.'],
+  ['Health', '<b>2 plus half of Strength + Agility, rounded up</b>, as a row of boxes. Each untreated Critical Injury crosses one off; at 0 you are <GlossaryTerm term="Down" />.'],
   ['Resolve', 'Half of Instinct + Empathy, rounded up, +1 per Scar, −1 per point of Grief (3 at most).'],
   ['Stress', 'Starts at 0, which is the minimum for a soldier with no Scars.'],
   ['Carrying limit', 'Strength + 4 items, before you are <GlossaryTerm term="Overloaded" />.'],
@@ -597,7 +597,7 @@ Both builds run the same way and differ only at step 3.
 </RuleBox>
 <RuleBox variant="stop" title="What only the Lifepath reaches" icon="ph:prohibit">
 
-A built soldier always has 18 points and a key attribute of 4. A Free Build with 2s on both Strength and Agility has **Health 2**: two untreated Critical Injuries and they are Down, and a Squad of four such soldiers loses about four times as many soldiers a fight.
+A built soldier always has 18 points and a key attribute of 4. A Free Build with 2s on both Strength and Agility has **Health 4**, against the **6** of a soldier who put a 4 on each. Two boxes is two more Titan attacks before you are Down, which is the difference between a Squad that carries its casualties home and one that leaves them.
 
 Only the Lifepath gives a key attribute of 5 or 6, a Top 10 Class Rank, or a place in the Exam. A player who wants that chance rolls.
 

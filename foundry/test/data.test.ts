@@ -40,7 +40,7 @@ describe('the live data/', () => {
     // The two new Bonus Dice sources.
     expect(t.bonusDice.sources.map((x) => x.id)).toEqual(expect.arrayContaining(['momentum', 'terrain-trait']));
     // The round's momentum end step, and the wreck effect type.
-    expect(c.engagement.endSteps).toEqual(['gas-rolls', 'regeneration', 'background-clocks', 'momentum', 'round-ends']);
+    expect(c.engagement.endSteps).toEqual(['gas-rolls', 'regeneration', 'frenzy', 'background-clocks', 'momentum', 'round-ends']);
     expect(t.titanFormat.effect_types.map((x) => x.id)).toContain('wreck');
     // No step row asks for a Fly roll of its own any more.
     expect(c.engagement.ratings.every((r) => r.steps.every((x) => !('fly' in x)))).toBe(true);
@@ -64,7 +64,7 @@ describe('a changed shape fails loudly', () => {
 
   it('a changed Health formula', () => {
     expectShapeError(
-      altered('data/character/attributes.yaml', (s) => s.replace('formula: (strength + agility) / 2', 'formula: (strength + agility + 1) / 2')),
+      altered('data/character/attributes.yaml', (s) => s.replace('formula: 2 + (strength + agility) / 2', 'formula: 2 + (strength + agility + 1) / 2')),
       /attributes\.yaml[\s\S]*derived_values/,
     );
   });

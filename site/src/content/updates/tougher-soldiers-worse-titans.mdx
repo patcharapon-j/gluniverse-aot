@@ -1,0 +1,186 @@
+---
+title: Tougher Soldiers, Worse Titans
+date: "2026-09-20"
+tab: Sept 2026
+summary: Soldiers take about twice as much punishment before they go down, and Titans stop wasting their turns. Both landed together, on purpose.
+sources:
+  - path: docs/playtest/feedback/round-3/OWNER-DECISIONS.md
+    sha: "7958128f53b5ec6e954fb430da0a8a626b1547bb"
+  - path: data/character/attributes.yaml
+    sha: "3076c9d67ebde5dcf87c6af69517b7fa5fb50148"
+  - path: data/character/squadmates.yaml
+    sha: "932ce68e89e982d46de78a64dddf5ddaa1d4dfc1"
+  - path: data/engagement/positions.yaml
+    sha: "01a0ba44084e8e796baf551212419c7365e3b0a0"
+  - path: data/engagement/anchor-ratings.yaml
+    sha: "a6ef21ee521348ecbf0f398797b7725bd49b1fef"
+  - path: data/character/action-catalog.yaml
+    sha: "747752afe49fd764d041b05362412356a62fe355"
+  - path: data/engagement/behavior-procedure.yaml
+    sha: "8993831871f8fb548e3b489378607927bccc11ab"
+  - path: data/engagement/attention.yaml
+    sha: "a01305bb80f454c445be1d37ab633b85d0027c5d"
+  - path: data/engagement/titan-format.yaml
+    sha: "fd5d90796bc295112a1bfecdd5e106a4d437025b"
+  - path: data/engagement/round.yaml
+    sha: "a6d51d5d3d3a3c8348bf0659e4dabd35c28df781"
+  - path: data/skirmish/skirmish.yaml
+    sha: "3fda64d21fc4e62d2ea7754b0efd3aecb7882fa0"
+---
+
+import ChapterContents from '~/components/ChapterContents.astro';
+import FactTable from '~/components/FactTable.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Subsection from '~/components/Subsection.astro';
+
+<FieldQuote cite="Quartermaster's slip, pasted inside every field copy">Amend your copy in ink, tonight. The copy you did not amend is the one you will be reading in the dark.</FieldQuote>
+
+This release does two things at once. Your soldier can take about **twice as much punishment** before going down, and the Titans **stop wasting their turns**. Neither change makes sense without the other, and they were written to be read together.
+
+<ChapterContents label="What changed" items={[
+  { id: 'your-soldier', title: 'Your Soldier', note: 'Health, and being shot at' },
+  { id: 'fighting-titans', title: 'Fighting Titans', note: 'Positions, and Titans that act' },
+  { id: 'at-the-virtual-table', title: 'At the Virtual Table', note: 'What the screen now does for you' },
+  { id: 'where-these-came-from', title: 'Where These Came From', note: 'The first session' },
+]} />
+
+<SectionHead id="your-soldier" eyebrow="Part 1">Your Soldier</SectionHead>
+
+<Subsection title="Health goes up, and nothing else about harm moves" id="health">
+
+**Health is 2 plus half of Strength plus Agility, rounded up.** That is the whole change.
+
+Most soldiers now have **4 to 6 boxes** where they had 2 to 4, and a soldier who put a high rating on both Strength and Agility reaches **8**. Everything else stands exactly as it did: an untreated Critical Injury still crosses off one box, damage still marks the boxes that are left, and not one damage value anywhere in the game changed.
+
+**At the table** it means about twice as much before you go Down. The hand that used to be your second-to-last mistake is now closer to your fourth. You will still bleed in most fights, and a Grab will still kill you if nobody comes.
+
+**Why.** Because the first session at the table said soldiers felt breakable in a way that was not exciting. A soldier who goes down to the second thing that touches them never gets to be a character. Making them stand up longer is the cheapest honest fix there is, and it costs no new rule at all.
+
+<MarginNote>Health, the boxes, and what crosses them off: <a href="/guide/wounds-and-fear/#health-and-harm">Wounds &amp; Fear</a>.</MarginNote>
+
+</Subsection>
+
+<Subsection title="Being shot at, restated" id="the-musket">
+
+**No change here.** It is written down because it kept surprising people.
+
+A firearm's damage **grows with the roll**: a musket deals 4, and **1 more for each Net Success beyond the first**. A ball that lands well deals 5 or 6.
+
+**At the table** that means a graze no longer drops a soldier with six boxes, and a well-aimed shot still does. Muskets did not get weaker. Soldiers got tougher, and the shot has to be good now.
+
+</Subsection>
+
+<SectionHead id="fighting-titans" eyebrow="Part 2">Fighting Titans</SectionHead>
+
+<Subsection title="Blind Spot is not on the Titan" id="blind-spot">
+
+**No rule changed. The rule is written down properly for the first time,** and it is the one thing at the table that was most often read backwards.
+
+- **On Body** means on it. Hooked into the body or standing on it.
+- **Blind Spot** means anchored to terrain **behind** it, a tree or a roof or a beam, out of its sight with its Nape within reach. You are not touching the Titan at all.
+
+**At the table** everything follows from that. Steam at a Regeneration fill burns the soldiers On Body and leaves the Nape strikers alone. A Jam does not drop a soldier standing on a roof. And on open ground, where there is nothing to anchor to, there is **no Blind Spot at all** while the Titan is standing, which is why nobody can cut the Nape of a standing Titan on a plain.
+
+<MarginNote>The Positions, the map, and what a move can do: <a href="/guide/fighting-titans/#positions-and-moves">Fighting Titans</a>.</MarginNote>
+
+</Subsection>
+
+<Subsection title="An action never moves you" id="positions">
+
+**Also not a change, also never written down.** Only your own move changes your Position, plus a short closed list of rules that say so: a fall, letting go, a Grab landing or ending, being knocked loose, a second Titan arriving or one dying, being carried, and the forced moves of a retreat.
+
+**Nothing you roll moves you.** Not the Nape strike, not a Body Part strike, not Break Attention, Draw Attention, Read, Heave, Treat Injury, or Rally. Neither does a Titan turning its Attention onto you, which is a different fact about you entirely.
+
+The full list is on <a href="/guide/fighting-titans/#what-changes-a-position">Fighting Titans</a>, and on the <a href="/reference/quick-reference/#what-changes-a-position">Quick Reference</a>.
+
+</Subsection>
+
+<Subsection title="The ground decides the shape of the map" id="the-map">
+
+**Drawn at last.** How many stops there are between you and the Nape, and whether they branch, is a property of the ground you are fighting on.
+
+<FactTable compact caption="What each kind of ground gives you" columns={['Ground', 'The route to the Nape']} rows={[
+  ['Open', 'Distant, In Reach, On Body, and <b>no Blind Spot</b> while it stands. There is nothing to anchor to.'],
+  ['Sparse', 'A chain. You reach the Nape by way of the body.'],
+  ['Wooded, Urban, Giant Forest', 'A branch. From In Reach you can go onto the body <b>or</b> straight to the Blind Spot, and move between the two.'],
+]} />
+
+**At the table** this is why the Corps fights in forests. The terrain decides whether you can get behind the thing at all. The three shapes are drawn on <a href="/guide/fighting-titans/#the-shape-of-the-map">Fighting Titans</a>.
+
+</Subsection>
+
+<Subsection title="The Nape strike leaves you where you are" id="the-nape-strike">
+
+Making a Nape strike counts as hooking into the Titan **for the Attention Ladder only**. You do not move. You are still at Blind Spot, on the same tree.
+
+**At the table** there is a sharp consequence, and it is the engine of the whole game. The strike needs a soldier who does **not** hold the Titan's Attention. So a striker who falls short, pulls its Attention onto themselves, and stays hanging at the Nape is standing in exactly the right place and **cannot strike again until the Attention moves.** Getting it off them takes a comrade's shout, or a decoy. That is what the game means when it says you cannot do this alone.
+
+</Subsection>
+
+<Subsection title="A Titan turns on whoever it can reach" id="retargeting">
+
+**This is a real change, and it is the big one.**
+
+Before, a Titan whose Attention was on a soldier it could not get at would flail and do nothing. Now it takes the next soldier down the same Attention Ladder who it **can** reach, its Attention moves to them, and the behavior resolves against them. Only when nobody in the fight is reachable does it fall back to thrashing.
+
+**At the table** it means the safe Position is only ever safe for you. Hanging behind a Titan used to switch the whole fight off. Now it hands the bite to whoever is standing by its knee. Cover your comrades or watch them pay for where you are standing.
+
+</Subsection>
+
+<Subsection title="Titans get worse the longer you take" id="frenzy">
+
+Every Focus Titan now carries a **Frenzy**. It starts a fight at **0** and gains **1 at the end of each round, to a cap of 3**, and that number is added to its behavior roll.
+
+Every Behavior Table already runs the same way, from terrorising you to killing you. So Frenzy walks the Titan down its own table.
+
+**At the table** the fight finally has a shape. **Round one it postures. By round three it is trying to kill you.** A Squad that commits and kills fast will hardly see Frenzy. A Squad that kites, hesitates, or spends rounds on a leg it did not need is choosing the worse half of the table. Frenzy is public and it never falls.
+
+</Subsection>
+
+<RuleBox variant="stop" title="These two cut in opposite directions, on purpose" icon="ph:scales">
+
+Health going up makes soldiers much harder to kill. Retargeting and Frenzy make Titans much more dangerous, especially in a long fight.
+
+They shipped in the same release **because neither one is safe alone.** Tougher soldiers with the old Titans would have made fights toothless. Worse Titans with the old Health would have made them a meat grinder. Expect the harm to come from the monster doing its job, not from your soldier having nothing to spend. If it still feels wrong in either direction, say so after a session and it will be tuned.
+
+</RuleBox>
+
+<SectionHead id="at-the-virtual-table" eyebrow="Part 3">At the Virtual Table</SectionHead>
+
+<Subsection title="Nothing happens to your soldier in silence" id="prompt-cards">
+
+Steam, falls, Critical Injuries, Gas Rolls, and a Flight now all reach you the same way: as a card in front of you, naming what happened and what it costs, waiting for you to answer it. No more harm arriving quietly in a log nobody read.
+
+</Subsection>
+
+<Subsection title="Rolls about your soldier are yours" id="your-rolls">
+
+If the dice are about your soldier, they are rolled by you, on your screen. That includes the Flight, which used to be rolled by whoever happened to trigger the move rather than by the soldier making it. If somebody is away from the table, the GM can still roll it for them.
+
+</Subsection>
+
+<Subsection title="The table shows you what you are carrying" id="readouts">
+
+Momentum now reads off your own token, Openings read off the Titan, and how much the ground still holds is on screen where you can see it. These were all numbers you were meant to be watching and had to ask about.
+
+</Subsection>
+
+<Subsection title="The GM is never locked out" id="gm-controls">
+
+Where the table is automated, the GM can step over it: take direct control, set any value by hand, and undo anything the table did on its own. Automation helps the GM run the fight. It never tells them no.
+
+</Subsection>
+
+<SectionHead id="where-these-came-from" eyebrow="Part 4">Where These Came From</SectionHead>
+
+Most of this came out of the first session played at a table rather than off a page.
+
+- **Nobody could tell where Blind Spot was.** The name sounds like a place on the monster. It is a place in the world. Everything unclear about Positions traced back to that one misreading, including why steam did not burn the Nape strikers.
+- **The Titans never got to be dangerous.** The better the Squad played, the more the monster flailed, because a Titan fixed on somebody it could not reach had nothing it was allowed to do. Fights ended with the Titan dead and nobody able to remember a thing it did.
+- **Soldiers went down before the fight got going.** Two or three boxes meant the second wound was often the last one.
+- **Harm arrived without anyone noticing it.** The rules were firing correctly. The table simply could not see them fire.
+
+Every one of those has an answer above. What is still being watched: whether firearms frighten anyone now, whether a fight against people drags with tougher soldiers on both sides, and whether Frenzy rises at the right speed. Play it and say what you find.

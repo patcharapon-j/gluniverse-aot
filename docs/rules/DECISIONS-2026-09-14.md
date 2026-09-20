@@ -3854,3 +3854,161 @@ Rulings on the owner's instruction of 2026-09-18: the Talent options at each Lif
 **Files.** `data/character/graduation-exam.yaml`, `data/character/lifepath.yaml`, `CONTEXT.md`, `docs/rules/02-character-creation.md` (2.4), `tools/render/render.py`, `tools/probes/lifepath-exam/exam.py`, `foundry/tools/data/schemas.ts`, `foundry/tools/data/load.ts`, `foundry/tools/config-data.ts`, `foundry/src/rules/lifepath.ts`, `foundry/src/rules/lifepath-state.ts`, `foundry/src/lifepath/` (the wizard, its campaign settings, and the Exam step), `site/src/lib/character-tables.ts`, `site/src/lib/glossary.ts`, `site/src/content/rules/making-your-soldier.mdx`.
 
 **Out of scope:** the Foundry system's GM overrides on a Lifepath file, which are a tool and not a rule (ADR-0024). The rules still give the GM no part in the Lifepath.
+
+---
+
+## Batch 13: Health, Position clarity, and Titans that act
+
+Rulings on the owner's decisions of 2026-09-20, after the first session at the table with the Foundry system. The verbatim notes are in `docs/playtest/feedback/round-3/OWNER-FEEDBACK.md`, the analysis in `ASSESSMENT.md`, and the settled record, which this batch applies, in `OWNER-DECISIONS.md`. Made 2026-09-20. Fifteen items, OQ-190 to OQ-194. This batch is the rules half of the round: batches A and F of `OWNER-DECISIONS.md`, plus the ADRs for the Foundry batches B, C, and D, whose code lands separately. Batch E, zone combat, is settled and is not in this change.
+
+### Summary table
+
+| Item | Source | Decision (one line) | ADR change | Glossary change | Chapter impact |
+|---|---|---|---|---|---|
+| 13-1 | Owner (OQ-190) | Health becomes 2 plus half of Strength plus Agility, rounded up; an untreated Critical Injury still crosses off one box and no damage value changes | amends ADR-0005 | none | Ch2 2.2, 2.10, 2.11 and the worked example; Ch3 3.1, 3.2 and the worked example; Ch4 4.6, 4.12; Ch5 5.13; `attributes.yaml` |
+| 13-2 | 13-1 | The reference builds read Health 6, 6, and 7; the reported rows read Health set to 5 and the Health 4, 7, and 8 builds; every tuned figure is stale until one retune that measures batches A and F together | amends ADR-0014 | none | Ch3 3.2; Ch5 5.13; `tuning.yaml` in `data/engagement/` and `data/titans/` |
+| 13-3 | 13-1 | Every Squadmate template's Health recomputed from its own Strength and Agility: 5 or 6 by template | none | none | Ch2 2.10; `squadmates.yaml` |
+| 13-4 | 13-1 | The fragile Free Build reported row keeps its role and is keyed `reported_squad_fragile`, at Health 4 | none | none | Ch2 2.11; `attributes.yaml` |
+| 13-5 | Owner (OQ-191) | A closed list of what changes a Position, headed by "an action never changes a Position" | none | none | Ch5 5.2; `positions.yaml` |
+| 13-6 | Owner (OQ-191) | Blind Spot is anchored to terrain behind the Titan and is not on it, said wherever it is introduced | amends ADR-0010 | **Blind Spot** reworded | Ch5 5.2; `positions.yaml`; `CONTEXT.md` |
+| 13-7 | Owner (OQ-191) | The three Position maps drawn, one per shape of Anchor Rating; and the Nape strike's hooking in is an Attention fact that leaves the striker at Blind Spot | amends ADR-0010 | none | Ch5 5.2, 5.7; `anchor-ratings.yaml`, `action-catalog.yaml` |
+| 13-8 | Owner (OQ-194) | The musket note rewritten: 4 at 1 Net Success, 5 at 2, 6 at 3, so it Downs a Rookie at 3 | none | none | Ch7 7.4; `skirmish.yaml` |
+| 13-9 | Owner (OQ-192) | A Titan whose Attention holder cannot meet a rolled entry's Position requirement retargets down the Attention Ladder, and Attention moves with it | amends ADR-0001, ADR-0010 | none | Ch5 5.4, 5.5, 5.6; `behavior-procedure.yaml`, `attention.yaml`, `titan-format.yaml` |
+| 13-10 | Owner (OQ-193) | Frenzy: 0 to 3, rising 1 at a new round-end step, added to the behavior roll, with a total above the table's highest result reading as that result | amends ADR-0001 | new **Frenzy** | Ch5 5.3, 5.4, 5.5; `titan-format.yaml`, `round.yaml`, `behavior-procedure.yaml` |
+| 13-11 | Drafting (OQ-193) | Frenzy counts as of the moment the Next Behavior is rolled, not the moment the card resolves it | amends ADR-0001 | none | Ch5 5.5; `behavior-procedure.yaml` |
+| 13-12 | Owner | **New ADR-0028:** Foundry automation assists the GM and never blocks them | new ADR-0028 | none | none (Foundry) |
+| 13-13 | Owner | Automatic application is a default the GM can step over, and a consequence about a soldier is rolled by that soldier's owner through a prompt card | amends ADR-0026 | none | none (Foundry) |
+| 13-14 | Owner | The engagement board is a new surface with its own budget, held to the locked art language | amends ADR-0027 | none | none (Foundry) |
+| 13-15 | Scope | Batches B, C, and D (Foundry only) and batch E (zone combat) are settled in `OWNER-DECISIONS.md` and are not part of this rules change | none | none | none |
+
+### 13-1: The Health formula (OQ-190)
+
+**Decision.** Health is **2 plus half of Strength plus Agility, rounded up**, written `2 + ceil((strength + agility) / 2)`. The rounding applies to the halved attributes; the 2 is added after. Nothing else about harm moves. **An untreated Critical Injury still crosses off exactly one Health box**, and `boxes_crossed_off`, the damage procedure, Treat Injury, healing, and every damage value in the game stand as written. One line of the ruleset changes: `data/character/attributes.yaml`, `derived_values`, `health`.
+
+**The new ranges.** A Free Build soldier has **4 to 6**. The Lifepath ceiling, Strength 6 with Agility 5, gives **8**, so a rolled soldier has 4 to 8. The reference builds read **Rookie 6** (Strength 4, Agility 3), **Veteran 6** (Strength 5, Agility 3), and **Levi-grade 7** (Strength 6, Agility 4).
+
+**Why.** The first session found soldiers too fragile. The target this moves away from (OQ-140) was set before anyone had played; play beats projection.
+
+**What it costs, said once.** Titan attacks bypass Health and inflict Critical Injuries directly (ADR-0005), so two more boxes are two more Titan attacks survived: **Critical Injury tolerance rises by 2 for every build**, and every Critical Injury band and death band falls. **Damage's weight falls** with it, because damage reaches 0 Health less often and so inflicts fewer Critical Injuries of its own. The spread compresses toward survivability, so Strength and Agility buy relatively less than they did. Lethality is put back on the Titans, not on Health, and on their behavior before their dice: 13-9 and 13-10 are the levers, and Attack Dice, Nape Depth, and Tempo stay in reserve behind the report.
+
+**ADR.** Amends ADR-0005, which keeps its founding reason: a soldier still cannot shrug off a Titan's swat because they have Health left.
+
+**Files.** `data/character/attributes.yaml`, `data/character/squadmates.yaml` (13-3), `data/engagement/tuning.yaml`, `data/titans/tuning.yaml`, `data/skirmish/skirmish.yaml` (13-8), `docs/adr/0005`, `docs/adr/0014`, `docs/rules/02-character-creation.md`, `03-harm-and-mind.md`, `04-gear.md` (falls against the new range), `05-titan-engagement.md` (the reference builds), `07-playtest-rules.md` (the musket design note), the packet, the site sheet, `foundry/src/rules/derived.ts`, and the Health box row on all three sheets, now 4 to 8 boxes.
+
+### 13-2: The reference builds, the reported rows, and the retune (OQ-190)
+
+**Decision.** ADR-0014 is amended, and no target changes. The three reference builds read **Health 6, 6, and 7**. The Health-dependent reported rows move with the range: the row that read "the reference Squad with each soldier's Health set to 3" reads **Health set to 5**, one below the Rookie's, which is what it always meant; the row that read "the Health 2, 5, and 6 builds Chapter 3 quotes" reads **the Health 4, 7, and 8 builds**, the new floor and the two values only the Lifepath reaches.
+
+**Stale.** **Every figure in ADR-0014, in `data/engagement/tuning.yaml`, in `data/titans/tuning.yaml`, in `data/titans/probe-figures.yaml`, and in `docs/reviews/simulator-report.md` is stale until the rerun.** The rerun is a **retune**, not a check, and it is **one run that measures batches A and F together**, because the two pull in opposite directions and neither figure means anything alone: Health takes every band down and the behavior fixes put lethality back. It runs in the same rerun batches 10 and 11 schedule. It must answer every Critical Injury and deaths band at the new Health; the share of a Titan's cards that resolve Thrash before and after retargeting; each table's kill share by previous behavior and by Broken parts under the Frenzy roll; the Frenzy rate and cap, which are starting values the simulator moves; the musket against the new Health; and the `health_reports` rows, whose reachable Health values are now 4 to 8.
+
+**Measurement.** Required, as above. Chapter 3's exact "Injuries before Down" figures at Health 4, 5, and 6 are arithmetic about a Health value, not about a build, so they stand; what moved is which builds reach them. The Health 7 and 8 rows are measured in the rerun and are not guessed here, and the Health 2 and 3 rows describe values no soldier can now have.
+
+**ADR.** Amends ADR-0014. Target B (OQ-140) stays a target in waiting and is read again after the report.
+
+### 13-3: Squadmate template Health (OQ-190)
+
+**Decision.** Every template's Health is derived from that template's own Strength and Agility, and none of their attributes changes. Slayer, Flier, Rider, and Brawler read **6**; Hunter, Tactician, Leader, Medic, and Engineer read **5**. The stat block's note reads "5 or 6 on the templates".
+
+**Measurement.** None of its own; the template Squad is a reported row and is re-read in 13-2's rerun.
+
+### 13-4: The fragile Free Build reported row (OQ-190)
+
+**Decision.** The row of decision batch 8, 8-3 keeps its role, which is the most fragile legal build reported beside the Health-dependent targets, and its Health reads **4**, the lowest a built soldier can have. Its key becomes **`reported_squad_fragile`**, because `reported_squad_health_2` named a number the row no longer has and would mislead every reader of the file. The role-named key cannot go stale again. `reported_squad`, the Free Build Squad of 7-1, reads Health **6**.
+
+**Readers.** Under `data/` and `docs/rules/` every reader is updated with the rename. **`tools/sim/rules.py` and `foundry/test/derived.test.ts` still read the old key**, and `tools/sim/rules.py` additionally raises if that row's Health is not 2; both are outside this change's files and are listed for the packages that own them. The simulator is not run in this change.
+
+### 13-5: What changes a Position (OQ-191)
+
+**Decision.** `data/engagement/positions.yaml` gains a `changes_to_position` block: a **closed list**, headed by the principle **"An action never changes a Position. Only the soldier's own move changes it, plus the rules listed here."** The list is the soldier's own move (one step, or a mount, a dismount, or leaving; an ODM move is a Flight); letting go, instead of a move, which is a fall and then In Reach; any fall, from On Body or Blind Spot to In Reach relative to the fall's reference Titan; a Fear Roll's forced move; a Grab landing, which puts the Grabbed soldier On Body relative to the holding Titan; being freed from a Grab, which is In Reach, with a fall first if they had been lifted; a Behavior Table knock loose, which is a fall and so In Reach; the close rule; a Titan becoming a Focus Titan; a Focus Titan dying; the Fall Back Squad Tactic, which lets a soldier at On Body or Blind Spot hold In Reach instead at the wings step; a grounded Titan standing up, which at the Open rating alone moves a Blind Spot soldier to On Body because that rating has no Blind Spot while the Titan stands; being carried; and starting placement, leaving, returning, and a retreat's compelled moves, which narrow the soldier's own move rather than adding a change.
+
+An explicit `not_changed_by` line names what does not: the Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and **every other Action Catalog entry**. Attention is not a Position, so a retarget (13-9), a decoy, or a flag moves nobody, and neither does Frenzy. The GM never places a soldier and never names a step (ADR-0024, limit 8).
+
+**Why.** Every one of these was already true and findable nowhere. This changes no rule; it makes the rule legible.
+
+### 13-6: Blind Spot is a place in the world (OQ-191)
+
+**Decision.** Wherever Blind Spot is introduced, it says plainly that a soldier there is **anchored to terrain behind the Titan and is not on it**: on a tree or a roof, not touching the Titan. It is a place in the world, not a place on the monster.
+
+**Why.** This is the single most misread thing in the rules, and the misreading explains the steam incident: if Blind Spot sounds like a spot on the body, then "steam hits everyone On Body" sounds as if it should catch the Nape strikers, and it does not. Three existing rules only make sense on the correct reading: steam at a Regeneration fill burns On Body and not Blind Spot; the Urban Terrain Trait says a Blind Spot soldier is anchored to a roof and is not airborne; and the Anchor Rating decides whether a Blind Spot exists at all while the Titan stands.
+
+**ADR.** Amends ADR-0010, which states it without changing it.
+
+### 13-7: The three Position maps, and the Nape strike sentence (OQ-191)
+
+**Decision, the maps.** Chapter 5, section 5.2 draws **three Position maps**, one per shape of Anchor Rating, and their shape is held in `data/engagement/anchor-ratings.yaml` (`position_maps`), read off the same step rows the chapter already renders. They add no step and change no row, and a map that ever disagrees with the step rows is wrong.
+
+- **Open** (0 anchors): `Distant - In Reach - On Body`, with **no Blind Spot at all** while the Titan stands, so no Nape strike can be made against a standing Titan on a plain.
+- **Sparse** (1 anchor): a chain, `Distant - In Reach - On Body - Blind Spot`, so the Nape is reached by way of the body.
+- **Wooded, Urban, and Giant Forest** (2 to 3 anchors): a branch, where In Reach joins both On Body and Blind Spot and those two also join each other.
+
+A **grounded Titan** changes every map: every step among In Reach, On Body, and Blind Spot can then be made on foot and none mounted, and at the Open rating a grounded Titan gains an On Body to Blind Spot step, so the Open map becomes the Sparse chain. A corpse counts as grounded for as long as it lies on the field.
+
+**Decision, the Nape strike.** `data/character/action-catalog.yaml`, `nape-strike`, gains one sentence in its `notes`: making the strike counts as hooking into the Titan **for the Attention Ladder only**, so it sets the `hooked-by-strike` flag, the striker's **Position does not change**, and they are still at Blind Spot. Because the entry requires a soldier who does not hold the struck Titan's Attention, a striker who draws that Attention onto themselves **cannot strike again until the Attention moves**. That is ADR-0010's engine working as designed, and the way out of it is a comrade's Draw Attention or a Break Attention with a decoy.
+
+**A follow-up outside this change's files.** `position_maps` is data that no renderer reads: `tools/render/render.py` has no block for it, and `tools/` belongs to another package. Chapter 5 draws the maps by hand from that block until a renderer is added, which is recorded here so the gap is not silent.
+
+**ADR.** Amends ADR-0010, stating existing rules rather than changing them.
+
+### 13-8: The musket note (OQ-194)
+
+**Decision.** The Coriolis-style rider is unchanged: `damage.amount.per_net_success_beyond_the_first: 1` stands, and the musket's base damage stays 4. The row's note is rewritten for the new Health range: a ball deals **4 at 1 Net Success, 5 at 2, and 6 at 3**, so it **Downs a Health 6 Rookie at 3 Net Successes**, with a Pierce Critical Injury. A well-aimed shot still drops a soldier; a graze no longer does.
+
+**Held.** Whether a firearm still frightens anyone is read from 13-2's rerun. The levers, both single numbers, are the Skirmish rider at 2 per Net Success beyond the first, ahead of the musket's base damage, and neither is taken now.
+
+### 13-9: A Titan that cannot reach its fixation retargets (OQ-192)
+
+**Decision.** In `data/engagement/behavior-procedure.yaml`, the `choose` step: when the Attention holder does not meet the rolled entry's `position_requirement`, **re-run the Attention Ladder over only those soldiers who do meet it**. The soldier that evaluation returns becomes the Titan's Attention holder, and the entry resolves against them, its targets read from the new holder. **Only when no soldier in the Titan Engagement meets the requirement** does the behavior fall back as it does today.
+
+**How the Ladder is read.** The Ladder's existing evaluation and tie-breaks in `data/engagement/attention.yaml`, restricted to the qualifying candidates, and nothing else. The candidate rules are untouched. No new rule of selection is invented, so the choice stays deterministic and the GM still picks nothing (ADR-0024, limit 8). `attention.yaml` records that the Ladder is read for this purpose and that Attention moves with it. Retargeting moves no soldier: it is not a change of Position (13-5).
+
+**Why.** Every fallback in every table written is `thrash`. With Attention on a soldier at Distant or Blind Spot a Medium Titan could not Bite or Grab **at all**, and two cards in three became Thrash, so the better the Squad played the more inert the monster became. That is what the first session felt. No Behavior Table is re-authored, and every `fallback` value stands.
+
+**Rejected, and kept in the file.** Keeping the target and downgrading the entry to the highest-numbered one at or below the roll whose requirement the holder meets. It is workable and worse, because it keeps the Titan fixated on the person deliberately standing where it cannot hurt them, which is the problem. It stays as the alternative if retargeting measures badly.
+
+**ADR.** Amends ADR-0001 and ADR-0010.
+
+### 13-10: Frenzy (OQ-193)
+
+**Decision.** Each Focus Titan holds **Frenzy**: a whole number that **starts at 0** when it becomes a Focus Titan, **rises by 1 at a new round-end step**, and is **capped at 3**. Its behavior roll is **D6 plus Frenzy**, and **a result above the table's highest entry reads as the highest entry**, which is the entry holding result 6. Frenzy is public and sits on the Titan's tracker row. It adds no dice, changes no Attack Dice, no need, and no effect, and it moves no soldier. It never falls, a corpse has none, and a Background Titan has none until it becomes a Focus Titan. The GM never raises, lowers, or spends it (ADR-0024, limit 8).
+
+**The end step.** A new `frenzy` step sits between the regeneration step and the background-clocks step, so a Titan that entered at the end of the previous round starts its first full round clean and leaves the end step at Frenzy 1. Frenzy rises during a retreat, as Regeneration does.
+
+**Why.** Every Behavior Table is already ordered terrorize to kill by result, so adding to the roll walks a Titan up its own table as a fight drags: it postures in round 1 and is trying to kill by round 3. It gives a fight a shape it did not have and gives the Squad a reason to commit rather than kite. It is self-correcting in the direction the design wants: a Squad that kills fast sees little Frenzy, and a Squad that grinds gets eaten.
+
+**No table is re-authored.** No file in `data/titans/` changes for this, and no `fallback` value or comment became wrong.
+
+**Measurement.** The rate and the cap are starting values the simulator moves in 13-2's rerun; the shape is settled.
+
+### 13-11: When Frenzy counts (OQ-193)
+
+**Decision.** The Next Behavior is rolled in advance of the card that resolves it, so the roll takes the Titan's Frenzy **as it stands at the moment of the roll**, and nothing re-reads it afterwards. Every step of the procedure reads it that way, and three consequences are stated rather than left to inference:
+
+1. A Titan that has just become a Focus Titan is at Frenzy 0, so its **first Next Behavior is a plain D6**.
+2. A Next Behavior rolled during one round and resolved in the next was rolled at the **earlier round's Frenzy**, so the escalation reaches the table one card late.
+3. The roll **stands as it fell** (ADR-0024, limit 14): the frenzy end step raises the counter and never touches a Next Behavior already rolled.
+
+**Why this reading and not the other.** Reading Frenzy at the card would make the hidden roll two events instead of one, would let a counter change a result already rolled, and would make a Read reveal a row that could still move. Limit 14 settles it: the Next Behavior is the Titan's one hidden roll, rolled once, and it stands. **No open question is logged**, because the settled design answers it.
+
+### 13-12: Automation assists the GM and never blocks them (new ADR-0028)
+
+**Decision.** A new ADR records that the Foundry system's automation is a **default the GM can always step over**. A **Direct Control** mode offers **every** value rather than only the legal ones; **direct setters** exist for Grabbed, Pinned, Momentum, airborne, the anchor rating, the flags, Openings, Attention, turn spent, and in or out of the fight; **every override writes the same note the rules path writes**, marked as a ruling, and **stays undoable**; and the **legal path remains the default and stays first in every menu**. Rules checks and permission checks are separated, because "this is not what the rules would do" and "you may not do this" are different statements. ADR-0024 is cited as the tabletop counterpart of the same principle.
+
+**Scope.** The ADR only. The code is batch B and lands separately.
+
+### 13-13: The prompt card, and application as a default (ADR-0026)
+
+**Decision.** ADR-0026 is amended twice. Automatic application is a **default the GM can step over** (ADR-0028), and an override writes the same note the automatic path writes, marked as a ruling, with the same Undo. And **a consequence about a soldier is rolled by that soldier's owner, on their own client, through a prompt card**, rather than by whichever client happened to trigger the step. The cases named are **steam, falls, Critical Injuries, Gas Rolls, and the Flight**; the Flight prompting the moving soldier's owner is the bug fix. **An unanswered prompt waits by default**, the GM has a **"roll it for them"** control, and an optional timeout is **off by default**, 60 seconds when switched on, because auto-rolling by default would quietly restore the problem the prompt card exists to fix.
+
+**Scope.** The ADR only. The code is batch C.
+
+### 13-14: The engagement board (ADR-0027)
+
+**Decision.** ADR-0027 is amended: the **engagement board is a new surface with its own performance and art budget**, separate from the sheet's, and it is held to the **locked art language**, painted plates and inked figures in the paper palette, with Codex art in the locked plate style (ADR-0022). The **flat-and-paper lock** and the **two-widget WebGL scope** continue to govern the sheet and the tracker: the board is PIXI, its own surface, and it adds no three.js widget.
+
+**Scope.** The ADR only. The board is part of batch E.
+
+### 13-15: What is settled and is not in this change
+
+**Recorded.** Batches **B** (the GM is never blocked), **C** (the prompt card), and **D** (token readouts) are settled in `docs/playtest/feedback/round-3/OWNER-DECISIONS.md` and are **Foundry only**: this batch writes their ADRs (13-12, 13-13, 13-14) and nothing else. Batch **E**, zone combat, is settled in the same record, with its design in `zone-combat-design.md`, and is **not part of this rules change**: its rules and its retune wait until batches A and F have been played, because E changes the tempo of every fight and its numbers must build on A and F's measured ones. **No ADR for zones is written here**; ADR-0029 lands with batch E.
+
+**Out of scope:** the simulator rerun itself, the Foundry and site code, the packet, and the zone rules.

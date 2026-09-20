@@ -5,6 +5,7 @@
  * data/skirmish/skirmish.yaml: rounds, grit; ADR-0026). Pure and unit tested.
  */
 import { fillRegeneration, type BodyPart, type RegenerationResult } from '../titan.ts';
+import { frenzyAfterRound } from './cards.ts';
 import { CLOSING_CHECKS, MANUAL_CLOSING, type ClosingCheck } from './closing.ts';
 import type { Mode, Step } from './types.ts';
 
@@ -13,10 +14,10 @@ import type { Mode, Step } from './types.ts';
 export const TITAN_STEPS: readonly Step[] = ['wings', 'deal', 'swap', 'play', 'end'];
 export const SKIRMISH_STEPS: readonly Step[] = ['deal', 'play', 'end'];
 
-export type EndCheck = 'gas-rolls' | 'regeneration' | 'background-clocks' | 'retreat-clock' | 'momentum' | 'round-ends' | 'broken-leave' | 'ending' | ClosingCheck;
+export type EndCheck = 'gas-rolls' | 'regeneration' | 'frenzy' | 'background-clocks' | 'retreat-clock' | 'momentum' | 'round-ends' | 'broken-leave' | 'ending' | ClosingCheck;
 
 /** The round-end checklist (end_steps; the background-clocks step's retreat clock is its own check). */
-export const TITAN_CHECKS: readonly EndCheck[] = ['gas-rolls', 'regeneration', 'background-clocks', 'retreat-clock', 'momentum', 'round-ends'];
+export const TITAN_CHECKS: readonly EndCheck[] = ['gas-rolls', 'regeneration', 'frenzy', 'background-clocks', 'retreat-clock', 'momentum', 'round-ends'];
 export const SKIRMISH_CHECKS: readonly EndCheck[] = ['broken-leave', 'ending'];
 
 export type TrackerCategory = 'roundGas' | 'regeneration' | 'clocks' | 'momentum' | 'strikes' | 'attacks' | 'skirmish';
@@ -29,6 +30,7 @@ export function checkCategory(check: EndCheck): TrackerCategory | null {
       return 'roundGas';
     case 'regeneration':
       return 'regeneration';
+    case 'frenzy':
     case 'background-clocks':
     case 'retreat-clock':
       return 'clocks';
@@ -236,6 +238,21 @@ export function planRegeneration(titans: readonly RegenInput[]): RegenPlan[] {
     const r = fillRegeneration(t.filled, t.clock, t.parts, t.openingsBy.length);
     return { key: t.key, filled: r.filled, parts: r.parts, openingsBy: r.result ? [] : [...t.openingsBy], result: r.result };
   });
+}
+
+export interface FrenzyInput {
+  key: string;
+  frenzy: number;
+}
+
+/**
+ * frenzy (end_steps, frenzy; titan-format.yaml, frenzy): 1 more on every living Focus Titan's
+ * Frenzy, never above the cap. A Titan that entered this round is at 0 and rises to 1 here; it
+ * rises during a retreat as well, and a corpse holds none, so only living Focus Titans are passed
+ * in. No Next Behavior already rolled changes: a roll took the Frenzy that stood when it was made.
+ */
+export function planFrenzy(titans: readonly FrenzyInput[]): FrenzyInput[] {
+  return titans.map((t) => ({ key: t.key, frenzy: frenzyAfterRound(t.frenzy) }));
 }
 
 export interface ClockRow {

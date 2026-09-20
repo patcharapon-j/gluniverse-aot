@@ -104,16 +104,17 @@ creation:
       # The Squad ADR-0014 (as amended in batch 7) reports beside the Talent-dependent targets
       # and does not tune: four identical Free Build soldiers in the two-fours shape with the
       # key attribute, Strength, at 4. Agility takes the second 4 and Wits and Empathy take
-      # the 2s, so the dodge and Fly gain a die, Health is 4, Resolve stays 3, and no other
+      # the 2s, so the dodge and Fly gain a die, Health is 6, Resolve stays 3, and no other
       # roll a target measures changes from the reference Rookie. Each soldier is a legal Free
       # Build Slayer: the Origin gives Grip Breaker or Field Medicine, the Specialty gives
       # Clean Cut or Hamstringer, and the three any-Talent levels complete the set.
+      # Health was 4 before decision batch 13 (13-1; OQ-190) changed the formula.
       reported_squad:
         soldiers: 4
         shape: two-fours
         specialty: slayer
         attributes: {strength: 4, agility: 4, wits: 2, perception: 3, instinct: 3, empathy: 2}
-        health: 4
+        health: 6
         resolve: 3
         talent_levels:
           level_2: >-
@@ -123,17 +124,19 @@ creation:
           level_1: the dice Talents that name the other three of those four entries
           total: 5
         talent_dice_on_other_rolls: none   # as the reference Rookie: none on dodge, fly, break-attention, ride, or read
-      # The Health 2 Squad (decision batch 8, 8-3), reported beside the Health-dependent targets and not tuned:
-      # the same two-fours array with its 2s on Strength and Agility, so Health is 2. The key attribute is
-      # Wits, at 4 (a Medic), and Empathy takes the second 4, so Resolve is 4. The Talents mirror
-      # reported_squad: each is a legal Free Build Medic, the Origin giving Grip Breaker, the Specialty Field
-      # Medicine, and the three any-Talent levels completing the set.
-      reported_squad_health_2:
+      # The fragile Squad (decision batch 8, 8-3), reported beside the Health-dependent targets and not
+      # tuned: the same two-fours array with its 2s on Strength and Agility, which is the lowest Health a
+      # built soldier can have. The key attribute is Wits, at 4 (a Medic), and Empathy takes the second 4,
+      # so Resolve is 4. The Talents mirror reported_squad: each is a legal Free Build Medic, the Origin
+      # giving Grip Breaker, the Specialty Field Medicine, and the three any-Talent levels completing the
+      # set. Its key was reported_squad_health_2 until decision batch 13 (13-1; OQ-190) raised its Health
+      # from 2 to 4 and the name stopped being true; the new key names its role and not its number.
+      reported_squad_fragile:
         soldiers: 4
         shape: two-fours
         specialty: medic
         attributes: {strength: 2, agility: 2, wits: 4, perception: 3, instinct: 3, empathy: 4}
-        health: 2
+        health: 4
         resolve: 4
         talent_levels:
           level_2: >-
@@ -143,21 +146,32 @@ creation:
           level_1: the dice Talents that name the other three of those four entries
           total: 5
         talent_dice_on_other_rolls: none   # as reported_squad
-        # The reported row seats these 4 soldiers beside 2 helper Squadmates (tools/sim/cases.py, the Free Build
-        # Squad at Health 2 and 2 helper Squadmates; Chapter 2, section 2.11). Review round 1, R43.
+        # The reported row seats these 4 soldiers beside 2 helper Squadmates (tools/sim/cases.py, the Free
+        # Build Squad at the lowest built Health and 2 helper Squadmates; Chapter 2, section 2.11).
+        # Review round 1, R43.
         helper_squadmates: 2
-    decided: [OQ-135]
+    decided: [OQ-135, OQ-190]
 
 # Values the soldier writes down at the end of creation. Formulas round as stated.
 derived_values:
   - id: health
     name: Health
-    formula: (strength + agility) / 2
-    rounding: up
-    source: settled design summary (docs/reviews/2026-09-14-final-review-brief.md)
+    formula: 2 + (strength + agility) / 2
+    rounding: up    # applies to the halved attributes, before the 2 is added
+    range: >-
+      4 to 6 for a built soldier (built, min 2 and max 4), and 4 to 8 for a rolled one, whose
+      Lifepath ceiling is Strength 6 with Agility 5. The reference builds are Rookie 6, Veteran 6,
+      and Levi-grade 7 (ADR-0014, as amended in decision batch 13).
+    source: >-
+      settled design summary (docs/reviews/2026-09-14-final-review-brief.md); the plus 2 is the
+      owner's decision of 2026-09-20 after the first session (decision batch 13, 13-1; OQ-190)
+    unchanged_by_it: >-
+      Everything about damage, healing, Treat Injury, and the boxes an untreated Critical Injury
+      crosses off (data/harm/health.yaml). An untreated Critical Injury still crosses off exactly
+      one Health box.
     rules: [03-harm-and-mind]
     adrs: [ADR-0005]
-    decided: [OQ-24]
+    decided: [OQ-24, OQ-190]
   - id: resolve
     name: Resolve
     formula: (instinct + empathy) / 2, plus 1 per Scar, minus 1 per point of Grief (at most 3 points count)

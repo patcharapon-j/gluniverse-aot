@@ -7,7 +7,7 @@
   import { tick as settle } from 'svelte';
   import { fx } from '../../motion/fx.ts';
   import { MOTION } from '../../motion/tokens.ts';
-  import { act, pickCard, tracker } from '../state.svelte.ts';
+  import { act, pickCard, setDirect, tracker } from '../state.svelte.ts';
   import { swapReason, type Chip } from '../view.ts';
   import Clock from './Clock.svelte';
 
@@ -70,7 +70,7 @@
   });
 </script>
 
-<div class="wof-hud" class:collapsed={tracker.folded} bind:this={root}>
+<div class="wof-hud" class:collapsed={tracker.folded} class:direct={isGM && tracker.direct} bind:this={root}>
   {#if !v}
     {#if isGM}
       <div class="hud-in idle">
@@ -110,6 +110,17 @@
         {:else}
           <span class="hint" title={v.hint}>{v.hint}</span>
         {/if}
+        <!-- The anchor rating belongs to the engagement, not to a soldier, so it is read here and
+             not on every token; the Momentum pip track on the tokens carries its cap (batch D). -->
+        {#if v.mode === 'titan'}
+          <span class="anchorplate" title="{v.anchors.text}{v.anchors.trait ? `. ${v.anchors.trait}` : ''}">
+            <b>{v.anchor}</b><span>{t('line.anchors')} {v.anchors.left}<small>&thinsp;{t('of')}&thinsp;</small>{v.anchors.full}</span>
+          </span>
+        {/if}
+        {#if isGM}
+          <!-- ADR-0028: automation assists the GM and never blocks them. -->
+          <button type="button" class="directbtn" class:on={tracker.direct} aria-pressed={tracker.direct} title={t('direct.hint')} onclick={() => setDirect(!tracker.direct)}>{t('direct.toggle')}</button>
+        {/if}
       </div>
       <div class="h-cards" role="group" aria-label={t('cardOrder')} bind:this={row}>
         {#each v.chips as c, i (c.key)}
@@ -143,6 +154,13 @@
                 {#each ti.cards as cd, k (k)}<i class:done={cd.done} class:now={cd.now}>{cd.n}</i>{/each}
               </span>
               <span class="att">{ti.corpse ? '' : ti.att}</span>
+              <!-- Frenzy: a rising track everyone can read, because it is the clock that says finish the fight. -->
+              {#if !ti.corpse}
+                <span class="frz" title={ti.frenzyTitle} aria-label={ti.frenzyTitle}>
+                  <b>{t('frenzy')}</b>
+                  {#each Array.from({ length: ti.frenzyCap }) as _, k (k)}<i class:on={k < ti.frenzy}></i>{/each}
+                </span>
+              {/if}
             </button>
           {/each}
         {:else}

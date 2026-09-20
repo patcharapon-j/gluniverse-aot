@@ -43,7 +43,7 @@ export const attributesFile = z.looseObject({
     )
     .length(6),
   derived_values: z.tuple([
-    z.looseObject({ id: z.literal('health'), formula: z.literal('(strength + agility) / 2'), rounding: z.literal('up') }),
+    z.looseObject({ id: z.literal('health'), formula: z.literal('2 + (strength + agility) / 2'), rounding: z.literal('up') }),
     z.looseObject({
       id: z.literal('resolve'),
       formula: z.literal('(instinct + empathy) / 2, plus 1 per Scar, minus 1 per point of Grief (at most 3 points count)'),
@@ -1121,7 +1121,7 @@ export const roundFile = z.looseObject({
   id: z.literal('round'),
   initiative_cards: z.looseObject({ set: text.refine((x) => /Twenty cards numbered 1 to 20/.test(x), 'the card set changed; update src/rules/engagement/cards.ts') }),
   round_steps: z.array(z.looseObject({ id, text })).refine((x) => x.map((s) => s.id).join() === 'wings,deal,swap,play,end', 'the round steps changed; update src/rules/engagement/round.ts'),
-  end_steps: z.array(z.looseObject({ id, text })).refine((x) => x.map((s) => s.id).join() === 'gas-rolls,regeneration,background-clocks,momentum,round-ends', 'the end steps changed; update src/rules/engagement/round.ts'),
+  end_steps: z.array(z.looseObject({ id, text })).refine((x) => x.map((s) => s.id).join() === 'gas-rolls,regeneration,frenzy,background-clocks,momentum,round-ends', 'the end steps changed; update src/rules/engagement/round.ts'),
   wings: z.looseObject({ when: text, assign: text.refine((x) => /at most one Squadmate/.test(x), 'a Wing holds a different number of Squadmates') }),
   swapping: z.looseObject({ who: text, limit: text.refine((x) => /at most one swap each round/.test(x), 'the swap limit changed'), titans: text }),
 });

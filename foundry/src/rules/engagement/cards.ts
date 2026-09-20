@@ -2,6 +2,7 @@
  * Initiative cards (data/engagement/round.yaml: initiative_cards, round_steps deal and play,
  * swapping, wings; data/skirmish/skirmish.yaml: rounds, ambush). Pure and unit tested.
  */
+import type { BehaviorEntry } from '../titan.ts';
 import type { Slot, SoldierState, TitanRow } from './types.ts';
 
 /** A holder and how many cards it is dealt. */
@@ -120,6 +121,30 @@ export function tieCard(id: string, soldiers: Record<string, number | null>, win
   const pc = wings[id];
   const theirs = pc ? soldiers[pc] : null;
   return theirs === null || theirs === undefined ? null : theirs + 0.5;
+}
+
+/**
+ * Frenzy (round 3, decision 12, part 2; behavior-procedure.yaml, roll): each Focus Titan holds
+ * Frenzy, starting at 0 and rising by 1 at the end of each round, to this cap.
+ */
+export const FRENZY_CAP = 3;
+
+/** A Focus Titan's Frenzy after a round ends: one more, never past the cap. Pure. */
+export function frenzyAfterRound(frenzy: number): number {
+  return Math.min(frenzy + 1, FRENZY_CAP);
+}
+
+/**
+ * The Behavior Table result a roll reads as: the D6 face plus the Titan's Frenzy, and a total above
+ * the table's highest entry reads as the highest (titan-format.yaml, the result-above-the-table
+ * rule). Tables are ordered terrorize to kill by result, so Frenzy walks a Titan up its own table.
+ * Pure. A table whose entries claim no result at all leaves the total alone.
+ */
+export function behaviorResult(face: number, frenzy: number, entries: readonly BehaviorEntry[]): number {
+  const raw = face + frenzy;
+  let top = -Infinity;
+  for (const e of entries) for (const r of e.results) if (r > top) top = r;
+  return top === -Infinity ? raw : Math.min(raw, top);
 }
 
 export interface SwapInput {

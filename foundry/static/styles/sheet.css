@@ -242,6 +242,10 @@
   max-width: calc(var(--track-cols) * var(--box) + (var(--track-cols) - 1) * var(--bgap));
 }
 .wof-sheet .track-row.lg { --box: 24px; --bgap: 6px; --track-cols: 12; }
+/* Health is 4 to 8 boxes since round 3 (2 + ceil((Strength + Agility) / 2)). The component sets
+   --track-cols, so a long row wraps into two even rows inside the Health column rather than
+   stretching the vitals strip; the large row on the Wounds tab has the width for one line of eight. */
+.wof-sheet .track-row.health-row { row-gap: var(--bgap); }
 /* Stress past the last box drawn: the rest counted on one tally chip. */
 .wof-sheet .sover {
   flex: 0 0 auto; display: inline-grid; place-items: center; min-width: var(--box); height: var(--box); padding: 0 3px;

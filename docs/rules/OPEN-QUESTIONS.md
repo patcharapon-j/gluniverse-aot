@@ -3812,3 +3812,71 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Why the conditions table exists:** it carries the parity tuning. Its six rows are worth about +0.19 Merit across a whole Exam, which is what brings a Stage schedule of 2, 2, and 3 successes back to the roll it replaces.
 - **ADR:** none.
 - **Simulator case:** `tools/probes/lifepath-exam/exam.py`, which rolls whole Lifepaths from the tables. Measured: the Year 3 roll pays about 0.584 Merit; the expanded Exam pays 0.484 to 0.527 for 1 to 6 Cadets (delta -0.06 to -0.10) and moves the Top 10 share by -0.21 to +0.12 points. Both targets hold. The three fixed Trials it replaces paid 0.354 to 0.401 under the same model and cost 0.9 to 1.2 points of Top 10 share.
+
+### OQ-190: Soldiers are too fragile at the table
+
+- **Type:** Design change (owner instruction, 2026-09-20, after the first session: Health is too small)
+- **Arose in:** play. `docs/playtest/feedback/round-3/OWNER-FEEDBACK.md`; `ASSESSMENT.md`, item 1; `OWNER-DECISIONS.md`, decision 1. `data/character/attributes.yaml` (`derived_values`, `health`); `data/character/squadmates.yaml`; `data/harm/health.yaml`.
+- **Related:** OQ-24, OQ-58, OQ-71, OQ-132, OQ-140, OQ-135.
+- **Question:** Health was half of Strength plus Agility, rounded up, which is 2 to 6 and most often 3 or 4. Titan attacks bypass Health and cross off a box each (ADR-0005), so a soldier was Down by their third or fourth untreated Critical Injury and the table felt it. How much Health is added, and what else moves with it?
+- **Options:** (a) Leave it. (b) Add 2 to the formula and change nothing else. (c) Add 2 and soften what an untreated Critical Injury crosses off. (d) Raise it by attribute rather than by a flat amount.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 13*, 13-1 to 13-4)
+- **Decision:** (b). Health is **2 plus half of Strength plus Agility, rounded up**, the rounding applying to the halved attributes. **An untreated Critical Injury still crosses off exactly one box**, and every damage value, the damage procedure, healing, and Treat Injury are unchanged: one line of the ruleset moves. A built soldier has 4 to 6 and a rolled one 4 to 8; the reference builds read Rookie 6, Veteran 6, Levi-grade 7, and the Squadmate templates 5 or 6. The fragile Free Build reported row is Health 4 and is keyed `reported_squad_fragile`.
+- **Costs recorded:** a large, deliberate reduction in Titan lethality. Critical Injury tolerance rises by 2 for every build, every Critical Injury band and deaths band falls, and damage's weight falls with them because damage reaches 0 Health less often. The spread compresses toward survivability, so Strength and Agility buy relatively less. It moves away from the lethality target in waiting (OQ-140); that target was set before anyone had played, and lethality is put back on the Titans, not on Health (OQ-192, OQ-193).
+- **ADR:** amends ADR-0005 (the formula and the reason) and ADR-0014 (the reference builds, the reported rows, and the retune).
+- **Simulator case:** required, as a retune, in one run that measures batches A and F together. Every figure in ADR-0014, `data/engagement/tuning.yaml`, `data/titans/tuning.yaml`, `data/titans/probe-figures.yaml`, and `docs/reviews/simulator-report.md` is stale until it. Chapter 3's exact Injuries-before-Down figures at Health 4, 5, and 6 stand, because they are arithmetic about a Health value; the Health 7 and 8 rows are measured in the rerun.
+
+### OQ-191: Positions are correct in the rules and findable nowhere
+
+- **Type:** Design change (owner questions, 2026-09-20: what is a Blind Spot striker's status, is On Body literally on the body, and is the map a tier or a branch)
+- **Arose in:** play. `ASSESSMENT.md`, item 11; `OWNER-DECISIONS.md`, decision 11. `data/engagement/positions.yaml`; `data/engagement/anchor-ratings.yaml`; `data/character/action-catalog.yaml` (`nape-strike`).
+- **Related:** OQ-74, OQ-75, OQ-81, OQ-111, OQ-182.
+- **Question:** Every answer to the owner's three questions is already correct in the rules and is written in no one place. What is stated, and does anything change?
+- **Options:** (a) Leave it and answer at the table. (b) State each answer where it is asked. (c) State them and add a closed list of what changes a Position, with the maps drawn.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 13*, 13-5 to 13-7)
+- **Decision:** (c), and **no rule changes**. A `changes_to_position` block in `positions.yaml` holds the closed list, headed by "an action never changes a Position; only the soldier's own move changes it, plus the rules listed here", with an explicit `not_changed_by` line naming the whole Action Catalog. Blind Spot is described everywhere it is introduced as **anchored to terrain behind the Titan and not on it**, a place in the world and not a place on the monster. The three Position maps are drawn in Chapter 5, one per shape of Anchor Rating, with their shape held in `anchor-ratings.yaml` (`position_maps`): Open is a chain with no Blind Spot at all while the Titan stands, Sparse is a chain reaching the Nape by way of the body, and Wooded, Urban, and Giant Forest branch. The Nape strike's entry gains one sentence: hooking in is an Attention fact only, the striker is still at Blind Spot, and a striker who draws the Titan's Attention cannot strike again until it moves.
+- **Costs recorded:** none. Every statement was verified against the data before it was written, and the closed list names every rule in `data/` that changes a Position, including the Fall Back Squad Tactic and a grounded Titan standing up at the Open rating.
+- **ADR:** amends ADR-0010, which states these rules without changing them.
+- **Simulator case:** none.
+- **Follow-up outside this change:** `position_maps` is data no renderer reads. `tools/render/render.py` has no block for it and belongs to another package, so Chapter 5 draws the maps by hand from that block until a renderer is added.
+
+### OQ-192: A Titan whose Attention cannot reach it flails for the whole fight
+
+- **Type:** Design change (owner instruction, 2026-09-20: "sometimes it lands false as titan only do 1, 2 whatever, never grabbing or going for a kill before it dies")
+- **Arose in:** play. `ASSESSMENT.md`, item 12, part 1; `OWNER-DECISIONS.md`, decision 12. `data/engagement/behavior-procedure.yaml` (`resolving_a_card`, `choose`); `data/engagement/attention.yaml`.
+- **Related:** OQ-80, OQ-81, OQ-101, OQ-112, OQ-140.
+- **Question:** Every `fallback` in every Behavior Table written is `thrash`, so when the Attention holder does not meet a rolled entry's `position_requirement` the Titan flails. With Attention on a soldier at Distant or Blind Spot a Medium Titan is mechanically incapable of Biting or Grabbing anyone for the whole fight, and the Attention Ladder's first rung puts Attention exactly there whenever a Nape striker falls short. The better the Squad plays, the more inert the monster becomes. What replaces the fallback?
+- **Options:** (a) Leave it. (b) Retarget: the Titan takes the next candidate down the Attention Ladder who meets the entry, and Attention moves with it. (c) Downgrade: keep the target and use the highest-numbered entry at or below the roll whose requirement the holder meets. (d) Re-author every table's fallbacks.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 13*, 13-9)
+- **Decision:** (b). When the Attention holder does not meet the rolled entry's `position_requirement`, the Attention Ladder is re-run **over only those soldiers who do meet it**, using its existing evaluation and tie-breaks restricted to that set. That soldier becomes the Titan's Attention holder and the entry resolves against them. Only when no soldier in the Titan Engagement meets the requirement does the behavior fall back as before. No new rule of selection is invented, so the choice stays deterministic and the GM still picks nothing (ADR-0024, limit 8). No Behavior Table is re-authored and every `fallback` value stands.
+- **Costs recorded:** a real rise in lethality, which is the point: it converts wasted cards into real ones, and it makes one soldier's safe Position stop being everyone's safe Position. Retargeting moves no soldier; it changes Attention only.
+- **Rejected and kept:** (c), which is workable and worse, because it keeps the Titan fixated on the person deliberately standing where it cannot hurt them. It stays in the file as the alternative if retargeting measures badly.
+- **ADR:** amends ADR-0001 (the table's fallback) and ADR-0010 (the Ladder is read for this, and Attention moves with it).
+- **Simulator case:** required, in the same retune as OQ-190 and OQ-193. It must read the share of a Titan's cards that resolve Thrash before and after, and each table's kill share by previous behavior and by Broken parts.
+
+### OQ-193: A fight has no shape, and Frenzy's ordering against the Next Behavior
+
+- **Type:** Design change (owner instruction, 2026-09-20, decision 12, part 2)
+- **Arose in:** play. `ASSESSMENT.md`, item 12, part 2; `OWNER-DECISIONS.md`, decision 12 and the settled question 2. `data/engagement/titan-format.yaml`; `data/engagement/round.yaml`; `data/engagement/behavior-procedure.yaml`.
+- **Related:** OQ-80, OQ-101, OQ-140, OQ-192.
+- **Question:** A fight has no escalation: round 5 is the same table as round 1. Frenzy is settled in shape (plus 1 at each round end, capped at 3, added to the behavior roll), but the Next Behavior is rolled in advance of the card that resolves it, so the procedure has to say **when** Frenzy counts.
+- **Options:** (a) Frenzy applies as of the moment the Next Behavior is rolled. (b) Frenzy applies as of the moment the card resolves it, re-reading the counter and re-finding the entry. (c) Roll the behavior at the card instead of in advance.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 13*, 13-10 and 13-11)
+- **Decision:** the shape as settled, and **(a)** for the ordering. Each Focus Titan holds Frenzy from 0 to 3, starting at 0 when it becomes a Focus Titan, rising by 1 at a new `frenzy` round-end step between regeneration and the background clocks, and added to its behavior roll; a total above the table's highest result reads as that result. The roll takes the Titan's Frenzy **as it stands at the moment of the roll**, and nothing re-reads it: a Titan's first Next Behavior is a plain D6, a Next Behavior rolled in one round and resolved in the next was rolled at the earlier round's Frenzy, and the roll stands as it fell.
+- **Why (a):** (b) would make the Titan's one hidden roll two events, let a counter change a result already rolled, and let a Read reveal a row that could still move, all against ADR-0024, limit 14. (c) would throw away the Read and the telegraph. No open question is left: the settled design answers it.
+- **Costs recorded:** the escalation reaches the table one card late, which is stated in the rules rather than discovered. Frenzy adds no dice, changes no Attack Dice, no need, and no effect, and moves no soldier. No Behavior Table is re-authored.
+- **ADR:** amends ADR-0001.
+- **Simulator case:** required, in the same retune as OQ-190 and OQ-192. The rate and the cap are starting values the simulator moves; the shape is settled.
+
+### OQ-194: The musket note quotes a Health that no longer exists
+
+- **Type:** Consequential fix (from OQ-190)
+- **Arose in:** `ASSESSMENT.md`, item 1, *The musket, and the rider that is already there*. `data/skirmish/skirmish.yaml` (the musket row's `notes`).
+- **Related:** OQ-143, OQ-164, OQ-190.
+- **Question:** The musket row's note read that a ball at 1 Net Success brings a Health 4 Rookie to 0. At the new Health that is false, and the row's Coriolis-style rider (`per_net_success_beyond_the_first: 1`) is what now carries the threat. What does the note say?
+- **Options:** (a) Rewrite the note only. (b) Raise the musket's base damage. (c) Raise the Skirmish rider to 2 per Net Success beyond the first.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 13*, 13-8)
+- **Decision:** (a). The rider and the base damage of 4 are unchanged. The note reads that a ball deals 4 at 1 Net Success, 5 at 2, and 6 at 3, so it **Downs a Health 6 Rookie at 3 Net Successes**, with a Pierce Critical Injury: a well-aimed shot still drops a soldier and a graze no longer does.
+- **Costs recorded:** a real change in threshold. Whether a firearm still frightens anyone is read from the rerun, and two single-number levers are held in reserve behind it: the Skirmish rider at 2 per Net Success beyond the first, ahead of the musket's base damage (b).
+- **ADR:** none.
+- **Simulator case:** read from the retune of OQ-190, which must re-read the musket against the new Health and the Skirmish probe's reported figures.
