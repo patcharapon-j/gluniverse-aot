@@ -24,6 +24,29 @@ const page = z.object({
     .min(1),
 });
 
+/**
+ * A release of the manual, written for players: what changed, what it means at the table, and
+ * why. One entry per release, newest first by `date`.
+ */
+const release = z.object({
+  /** The release's name, as the page and the list show it. */
+  title: z.string(),
+  /** The day it was issued, as YYYY-MM-DD. The list and the tabs read it for order. */
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be written YYYY-MM-DD'),
+  /** One sentence, for the list and the page's lede. */
+  summary: z.string(),
+  /** A short label for the tab strip, such as "Sept 2026". */
+  tab: z.string(),
+  sources: z
+    .array(
+      z.object({
+        path: z.string(),
+        sha: z.string().regex(/^[0-9a-f]{40}$/, 'sha must be a 40-character git blob sha'),
+      }),
+    )
+    .min(1),
+});
+
 const rules = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/rules' }),
   schema: page,
@@ -32,6 +55,11 @@ const rules = defineCollection({
 const gm = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/gm' }),
   schema: page,
+});
+
+const updates = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/updates' }),
+  schema: release,
 });
 
 const named = z.object({ slug: z.string(), name: z.string(), order: z.number() });
@@ -125,4 +153,4 @@ const titans = defineCollection({ loader: titansLoader('squad'), schema: titan }
 /** The Commander's copy: every value, for the GM's Guide only. */
 const titanDossiers = defineCollection({ loader: titansLoader('gm'), schema: titan });
 
-export const collections = { rules, gm, talents, actions, specialties, titans, titanDossiers };
+export const collections = { rules, gm, updates, talents, actions, specialties, titans, titanDossiers };

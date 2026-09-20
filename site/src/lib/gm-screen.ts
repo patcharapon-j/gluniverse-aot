@@ -191,6 +191,7 @@ export const END_STEPS = [
   { id: 'regen', text: "Fill 1 segment of every living Focus Titan's Regeneration clock." },
   { id: 'clocks', text: 'Fill every Background clock and resolve any that is full. Then the retreat clock — last.' },
   { id: 'momentum', text: 'Everyone who made no ODM move loses all their Momentum.' },
+  { id: 'frenzy', text: 'Every living Focus Titan gains 1 Frenzy, to a cap of 3. Say the new number aloud.' },
   { id: 'round', text: 'Unspent moves and actions are lost, and round-long effects end.' },
 ];
 
@@ -204,7 +205,7 @@ export const LADDER_STEPS = [
 ];
 
 export const NEVER_YOURS = [
-  "A Titan's numbers, and the rows its tables give.",
+  "A Titan's numbers, the rows its tables give, and its Frenzy.",
   'Any die once it is rolled, yours or theirs.',
   'The hidden Next Behavior, rolled once and standing.',
   'Anchors and Momentum — the players hold those.',

@@ -170,7 +170,7 @@ All in `src/rules/derived.ts` as pure functions, called from `prepareDerivedData
 
 | Value | Rule | Source |
 | --- | --- | --- |
-| health | ceil((strength + agility) / 2) | attributes.yaml derived_values.health |
+| health | 2 + ceil((strength + agility) / 2) | attributes.yaml derived_values.health |
 | resolve | max(0, ceil((instinct + empathy) / 2) + Scars - min(Grief, 3)) (owner: never below 0; docs/rules-questions.md 1) | derived_values.resolve |
 | minimum_stress | number of Scars | derived_values.minimum-stress |
 | boxes_crossed_off | min(untreated Critical Injuries, health) | harm sheet-fields derived.current_health |

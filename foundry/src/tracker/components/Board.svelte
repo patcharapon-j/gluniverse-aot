@@ -418,13 +418,13 @@
         <div class="pdirect">
           <span class="pmh">{t('direct.section')}</span>
           <div class="drow">
-            <button type="button" role="menuitem" aria-pressed={menu.cell.grab} onclick={() => set('grabbed', { on: !menu!.cell.grab })}>{t('direct.grabbed')}<small>{menu.cell.grab ? t('direct.on') : t('direct.off')}</small></button>
-            <button type="button" role="menuitem" aria-pressed={menu.cell.attention} onclick={() => set('attention', { on: !menu!.cell.attention })}>{t('direct.attention')}<small>{menu.cell.attention ? t('direct.on') : t('direct.off')}</small></button>
-            <button type="button" role="menuitem" aria-pressed={menu.cell.flagLoud} onclick={() => set('loud', { on: !menu!.cell.flagLoud })}>{t('direct.loud')}<small>{menu.cell.flagLoud ? t('direct.on') : t('direct.off')}</small></button>
-            <button type="button" role="menuitem" aria-pressed={menu.row.pinned} onclick={() => set('pinned', { on: !menu!.row.pinned })}>{t('direct.pinned')}<small>{menu.row.pinned ? t('direct.on') : t('direct.off')}</small></button>
-            <button type="button" role="menuitem" aria-pressed={menu.row.airborne} onclick={() => set('airborne', { on: !menu!.row.airborne })}>{t('direct.airborne')}<small>{menu.row.airborne ? t('direct.on') : t('direct.off')}</small></button>
-            <button type="button" role="menuitem" aria-pressed={menu.row.spent} onclick={() => set('spent', { on: !menu!.row.spent })}>{t('direct.spent')}<small>{menu.row.spent ? t('direct.on') : t('direct.off')}</small></button>
-            <button type="button" role="menuitem" aria-pressed={!menu.row.left} onclick={() => set('in-out', { in: menu!.row.left })}>{t('direct.inOut')}<small>{menu.row.left ? t('direct.out') : t('direct.in')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={menu.cell.grab} onclick={() => set('grabbed', { on: !menu!.cell.grab })}>{t('direct.grabbed')}<small>{menu.cell.grab ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={menu.cell.attention} onclick={() => set('attention', { on: !menu!.cell.attention })}>{t('direct.attention')}<small>{menu.cell.attention ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={menu.cell.flagLoud} onclick={() => set('loud', { on: !menu!.cell.flagLoud })}>{t('direct.loud')}<small>{menu.cell.flagLoud ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={menu.row.pinned} onclick={() => set('pinned', { on: !menu!.row.pinned })}>{t('direct.pinned')}<small>{menu.row.pinned ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={menu.row.airborne} onclick={() => set('airborne', { on: !menu!.row.airborne })}>{t('direct.airborne')}<small>{menu.row.airborne ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={menu.row.spent} onclick={() => set('spent', { on: !menu!.row.spent })}>{t('direct.spent')}<small>{menu.row.spent ? t('direct.on') : t('direct.off')}</small></button>
+            <button type="button" role="menuitemcheckbox" aria-checked={!menu.row.left} onclick={() => set('in-out', { in: menu!.row.left })}>{t('direct.inOut')}<small>{menu.row.left ? t('direct.out') : t('direct.in')}</small></button>
           </div>
           <div class="drow steps">
             <span class="dlbl">{t('direct.momentum')}</span>

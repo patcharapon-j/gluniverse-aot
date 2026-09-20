@@ -465,8 +465,8 @@ body.wof-hud-on #ui-middle #ui-top { padding-top: var(--wof-hud-h, 0); }
 .wof-board .pop .pdirect .pmh { color: #6b4f16; }
 .wof-board .pop .drow { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; }
 .wof-board .pop .drow button { flex: 0 1 auto; gap: 3px; }
-.wof-board .pop .drow button[aria-pressed="true"] { background: var(--ink); color: var(--paper-hi); border-color: var(--ink); }
-.wof-board .pop .drow button[aria-pressed="true"] small { color: var(--paper-lo); }
+.wof-board .pop .drow button[aria-checked="true"] { background: var(--ink); color: var(--paper-hi); border-color: var(--ink); }
+.wof-board .pop .drow button[aria-checked="true"] small { color: var(--paper-lo); }
 .wof-board .pop .drow.steps button { min-width: 20px; justify-content: center; }
 .wof-board .pop .drow b { font: 900 var(--t-md)/1 var(--fd); min-width: 14px; text-align: center; }
 .wof-board .pop .dlbl { font: var(--t-xs)/1.2 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }

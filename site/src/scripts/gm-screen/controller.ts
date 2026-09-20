@@ -488,12 +488,33 @@ export function mountScreen(): void {
           cardText.innerHTML =
             `<b>${entry.name}</b> · ${entry.tier}${entry.isGrab ? ' · <b>Grab</b>' : ''}` +
             (fellBack ? ' <span class="scr-hidden">(fallback)</span>' : '') +
+            (ts.retarget?.length ? ' <span class="scr-hidden">(retargeting)</span>' : '') +
             `<br /><span class="scr-hidden">${entry.targets}. ${entry.attackDice ?? 0} Attack Dice.</span>` +
             (entry.effects.filter((x) => !x.startsWith('Wreck')).length
               ? `<br />${entry.effects.filter((x) => !x.startsWith('Wreck')).join(' · ')}`
               : '') +
             (entry.wrecks ? '<br /><b>Wrecks 1 Anchor</b>, landed or whiffed.' : '') +
             `<br /><em>${entry.text}</em>`;
+          if (ts.retarget?.length) {
+            const names = state.squad.filter((sol) => ts.retarget?.includes(sol.key));
+            const prompt = document.createElement('div');
+            prompt.className = 'scr-hint';
+            prompt.innerHTML =
+              '<b>It cannot reach the soldier it is fixed on.</b> Read the ladder again among the soldiers standing where this behavior works, and move its Attention to the one it picks. The entry then resolves against them.';
+            cardText.append(prompt);
+            const picks = document.createElement('div');
+            picks.className = 'scr-row';
+            for (const sol of names) {
+              picks.append(
+                button(`Attention to ${sol.name}`, () => {
+                  ts.holder = sol.key;
+                  ts.retarget = null;
+                  commit();
+                }),
+              );
+            }
+            cardText.append(picks);
+          }
           if (entry.attackDice) {
             const roll = button(`Roll ${entry.attackDice} Attack Dice`, () => {
               ts.dice = Array.from({ length: entry.attackDice as number }, () => 1 + Math.floor(Math.random() * 6));
