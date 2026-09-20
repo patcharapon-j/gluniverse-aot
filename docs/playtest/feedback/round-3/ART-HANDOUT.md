@@ -1,10 +1,35 @@
-# Art handout: batch 1 icons, and the engagement board set
+# Art handout: the assets wanted now, and the engagement board set
 
 A handout for the session that runs on the owner's machine, where the Codex CLI lives. Everything
 below is assembled from `site/design/art-style.md`, `docs/adr/0022-*`, `docs/adr/0027-*`,
 `foundry/design/asset-inventory.md`, `foundry/src/art.ts`, `foundry/tools/import-art.sh`, and
 sections 2 and 7 of `docs/playtest/feedback/round-3/zone-combat-design.md`. You should not need any
 of that conversation, only those files.
+
+## 0. How to start this
+
+**For the owner.** Open a Claude Code session in this repository on the machine that has the Codex
+CLI, and paste this as the first message:
+
+> Read `docs/playtest/feedback/round-3/ART-HANDOUT.md` and run it. Start with batch 1, which is the
+> four website and tracker assets wanted now, and stop at the contact sheet so I can approve it
+> before you touch batch 2. Follow `site/design/art-style.md` exactly and ask me about anything in
+> section 8 rather than deciding it yourself. Do not commit; report back in the shape section 9 asks
+> for.
+
+Nothing else from the conversation that produced this handout is needed. Everything the session must
+know is in this file and in the files section 2 tells it to read.
+
+**Two things to decide before batch 2**, both in section 8: whether the board gets its own style
+block and its own approved style lock, which ADR-0022 requires of every other family, and whether the
+hexes are flat-top. The second one is cheap to answer and expensive to get wrong, because fifteen
+tiles are drawn to it.
+
+**Do batch 1 first even if batch 2 is the interesting one.** Batch 1 is four files, all fully covered
+by the locked style, and three of them unblock interface work that has already shipped and is
+currently drawing state with no icon.
+
+---
 
 ## 1. Context
 
@@ -135,7 +160,9 @@ Put that sentence in `foundry/art-src/blocks/refline-icon.txt`, written as this 
 REFERENCE IMAGES: the attached colour plates are world reference only. They show what ODM gear, wire, and blades look like in this world; they are not how to render this icon. The attached icons are approved icons from this same set: keep the frame exactly as in the attached references, and match their stroke weight, canvas margin, and stamp texture.
 ```
 
-## 3. Batch 1: the icons needed now
+## 3. Batch 1: the assets wanted now
+
+Three tracker state marks and one website plate. All four are fully covered by the locked style.
 
 ### 3.1 What already exists
 
@@ -349,6 +376,43 @@ disc filling 70 percent of the canvas, with the stamp's rough broken edge and fa
 transparent", attached with `$REFS_PLATE` plus two approved icons. But ask before spending the run.
 Note that art-style.md's icon system block assumes every icon has a frame, so a frameless pip is
 already a deviation, which is another reason to keep them in code.
+
+### 3.3 E. The Updates opener plate, `plate-updates.webp`
+
+Not a tracker icon: a website colour plate, and the only asset here that `art-style.md` covers
+completely with no open question. The site's new Updates section, the player-facing changelog at
+`/updates/`, renders its opener frame empty because no plate exists yet. The page is not broken, and
+this is worth understanding before you generate: `art` on the plate is only a slot name
+(`data-art-slot`), and the image arrives through a separate `image` prop, so an unfilled frame
+renders as an empty figure with its aria-label and the build passes. The frame is simply blank.
+
+- **Family and blocks:** a chapter opener plate. Use the **colour plate** style block and the
+  **world** block, both verbatim, in the order section 2 gives.
+- **Aspect and size:** 16:9, about 1672x941, per the Sizes table. Web copy WebP, 1600 px long edge,
+  quality 82.
+- **References:** attach both style-lock plates with `-i`, and open the prompt with the REFERENCE
+  IMAGES line, exactly as `art-style.md` requires for every plate.
+- **Shipped path:** `site/src/assets/plates/plate-updates.webp`, beside `plate-reference.webp` and
+  the rest. Note the file naming follows the existing plates and does **not** match the page's slot
+  name, which is `updates-opener`. That is correct: the slot name and the file name are different
+  things here.
+- **Subject**, taken from the page's own caption and alt text so the plate matches what the page
+  already says it is:
+
+  > A typed amendment slip pasted inside the front cover of a Survey Corps field manual. The slip is
+  > a small sheet of paper, typewritten, stamped once, with a dated signature in ink beneath it. It
+  > lies slightly askew on the inside board of a worn leather-bound manual, the cover open and the
+  > edges of its pages showing. Lit as a document on a desk, from one side, with the dust and grain
+  > the other plates carry. No people, no Titans, no ODM gear.
+
+- **Acceptance:** it must read as paperwork, not as a scene. The failure to watch for is the model
+  filling the desk with props, or drifting photoreal on the leather and paper, which is the same
+  drift the reference images exist to stop. If it comes back photoreal, check the references were
+  actually attached before you change the prompt.
+- **Wiring afterwards, one line for the report:** the page needs `import plate from
+  '~/assets/plates/plate-updates.webp'` and `image: plate` added to its `plate={{ ... }}` block, the
+  same as `site/src/pages/reference/index.astro` does. Do not make that edit yourself; name it in
+  your report and the wiring session will do it.
 
 ### 3.4 After the batch 1 generations
 
