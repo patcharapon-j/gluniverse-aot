@@ -111,10 +111,10 @@ const POSITION_CHANGE_WORDING: Record<string, string> = {
   'grab-lands': 'The Grabbed soldier holds On Body relative to the hand that holds them.',
   'freed-from-a-grab': 'In Reach, with a fall first if you had already been lifted.',
   'knock-loose': 'A target who is airborne or on the body falls, and lands In Reach.',
-  'close-rule': "Coming to On Body or Blind Spot on one Titan makes every other Titan's On Body or Blind Spot read In Reach.",
+  'close-rule': 'Coming to On Body or Blind Spot on one Titan drops you to In Reach of every other Titan you were On Body or at Blind Spot of. A Titan you were Distant or In Reach of does not change.',
   'titan-becomes-focus': 'Everyone holding a Position holds Distant relative to it.',
   'focus-titan-dies': 'Your Positions carry over to its corpse, with On Body and Blind Spot reading In Reach.',
-  'titan-body-comes-down': 'When the body comes down, by its death or by a living Titan losing a leg, everyone on it or behind it who is not airborne ends up In Reach of the body, whether they leap clear or are pinned under it. If you were in the air, you swing clear and keep your Position.',
+  'titan-body-comes-down': 'Everyone on it or behind it who is not airborne ends up In Reach of the body, whether they leap clear or are pinned under it. If you were in the air, you swing clear and keep your Position.',
   'fall-back': 'At the Wings step, each soldier on the body or at Blind Spot may take In Reach instead, their own choice. It is not a fall and it is not ODM use.',
   'titan-stands-up': 'On Open ground only: a Titan that gets its legs back has no Blind Spot to stand behind, so a soldier there holds On Body instead. Everywhere else you keep the Position you hold.',
   carried: 'You move with whoever carries you, and your own move changes nothing.',
@@ -129,7 +129,7 @@ export function positionChangesTable(): CoreTableData {
   const T = 'What changes a Position';
   return {
     caption: 'Everything that changes a Position',
-    note: 'A closed list. An action is never on it: nothing you roll moves you, whatever it rolls.',
+    note: 'A closed list. No action is on it: nothing you roll moves you, whatever it rolls. Fly, Leap Clear, and Mount or Dismount are not actions, and each is a row of the list.',
     columns: ['What', 'Where it leaves you'],
     see: false,
     groups: [

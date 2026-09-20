@@ -43,14 +43,34 @@ Process changes (2026-09-14, during Chapter 3 round 3): fixes driven by a later 
 > typecheck clean, 407 of 407 Foundry tests, the packs build, `check:data`, every rendered block
 > matching its data, and the site's build, links, tests and sync check.
 >
-> Still open from this round: the **retune**, which is the next package and needs `tools/sim` taught
-> Frenzy and retargeting before it can measure either; a renderer in `tools/render/render.py` for
-> `anchor-ratings.yaml` `position_maps`, which Chapter 5 draws by hand meanwhile and which ADR-0012
-> wants rendered from the data; the **batch 1 art**, which runs on the owner's machine from
-> `docs/playtest/feedback/round-3/ART-HANDOUT.md`; the packet's **print layout**, verified so far by
-> rule inspection and arithmetic rather than by rendering; a **review round** under the HANDOFF
-> feedback loop; and **batch E**, zone combat, whose rules, ADR-0029, board and retune wait until
-> batches A and F have been played.
+> **Round 3 review 1 is done and applied (2026-09-21).** `wof-reviewer` on Opus reviewed the whole
+> batch 13 change: **6 Critical, 6 Major, 7 Minor**
+> (`docs/reviews/round-3-rule-change-review-1.md`). Five findings were design calls and went to a
+> Fable decider (`docs/reviews/round-3-review-decisions.md`); the rest were applied directly. The
+> whole round is recorded as **decision batch 14** and **OQ-195 to OQ-197**, with the fix plan in
+> `docs/playtest/feedback/round-3/REVIEW-FIX-PLAN.md`. The two that changed a rule: the move-up
+> wrap from 6 to 1 is keyed to **Frenzy 0** and is gone above it, because the old unconditional
+> wrap made a Titan at Frenzy 3 posture *more* than one at Frenzy 0 (14-3, amends ADR-0001); and a
+> Titan's **fallback entry is retargeted in its turn**, so the standard Large's Crush and the
+> Sprinting Abnormal's Pitch Headlong are reachable at all (14-7). ADR-0010's promise that a failed
+> Nape striker draws the Titan's next behavior is narrowed honestly to its Attention (14-6). Two
+> things the review did not raise and applying it uncovered: Chapter 5's worked example resolved a
+> Swat as Thrash while two soldiers stood In Reach, and **Chapter 6 had not been touched by batch 13
+> at all**, so its Thrash shares, its D6 column and its procedure list all described the old rules
+> (14-14, 14-15).
+>
+> Also done this round: `tools/render/render.py` gained a **renderer for the Position maps**, which
+> derives every node and line from the Anchor Ratings' own step rows and refuses a map that
+> disagrees with them, so Chapter 5 no longer draws them by hand and the authored `diagram` keys are
+> gone from the data (59 rendered blocks). The packet's **print layout is verified in a browser**
+> against its own print stylesheet: nothing overflows the 190mm content width, the three Position
+> maps each fit one page, and the Health row is eight 8mm boxes on one line. `tools/sim` was taught
+> **Frenzy and retargeting**, including the Frenzy-aware move-up rule and the retargeted fallback.
+>
+> Still open from this round: the **retune** itself, now that the simulator can measure both rules;
+> the **batch 1 art**, which runs on the machine with the Codex CLI from
+> `docs/playtest/feedback/round-3/ART-HANDOUT.md`; and **batch E**, zone combat, whose rules,
+> ADR-0029, board and retune wait until batches A and F have been played.
 
 | # | Chapter | Chapter file | Status | Review round | Open Critical | Open Major | Latest review |
 |---|---------|--------------|--------|--------------|---------------|------------|---------------|
