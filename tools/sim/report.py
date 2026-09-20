@@ -54,6 +54,12 @@ OQ_NOT_MEASURED = {
 MISSED_OQ = {
     # decision batch 8, 8-31 decided OQ-132 anew: the Medium deaths band reads at most 0.08 through the end (targets.py),
     # the owner's chosen lethality, so no missed result maps to it
+    # round 3 retune, R7: the bar's Critical Injuries floor against the strongest support; logged, not retuned before
+    # the playtest
+    "bar/bar/full/support: sprinting-abnormal: 4 player characters and 2 Squadmates screening beside the holder, "
+    "Hook and Cut and Hamstring Line, with the escapes/cutters_first/Critical Injuries floor": "OQ-199",
+    "bar/bar/full/support: sprinting-abnormal: 4 player characters and 2 Squadmates screening beside the holder, "
+    "Hook and Cut and Hamstring Line, with the escapes/strikers_first/Critical Injuries floor": "OQ-199",
 }
 # Files of the rules snapshot that changed while the run was going, each with the change as read from a diff of the
 # file before and after the run. run.py --report accepts a file listed here while it still matches the snapshot
@@ -112,9 +118,12 @@ SNAPSHOT_CHANGE_NOTES = {
                                        "engine models no lost limbs and keeps a pinned soldier pinned",
     "data/engagement/tuning.yaml": "verdict sentences rewritten from the final rerun (R22, R23) by the verdict "
                                    "drafter; the targets and tolerances read the same",
-    "data/titans/tuning.yaml": "verdict sentences rewritten from the final rerun (R22, R23) by the verdict drafter; the "
-                               "targets and tolerances read the same, and the Grab-alone variant's pools read 6 and 9 "
-                               "as before",
+    "data/titans/tuning.yaml": "round 3 retune, R7 and R6: `reported_rows` and the `missed` note under "
+                               "`targets.abnormals`, and the `verdicts` paragraphs re-rendered from this run; no case "
+                               "reads these words, and rules.py's parses of the block (`fights_per_row`, "
+                               "`standard_errors`, the median bounds) are unchanged. Earlier: verdict sentences "
+                               "rewritten from the final rerun (R22, R23) by the verdict drafter; the targets and "
+                               "tolerances read the same, and the Grab-alone variant's pools read 6 and 9 as before",
     "data/expedition/hazards.yaml": "package D (R05 by 8-37, R52): the Night table's retreat and glossary capitals; no "
                                     "case runs an Expedition",
     "data/expedition/legs.yaml": "package D (R01 by 8-35, R05 by 8-37, R07 by 8-39, R52): Expedition rules; no case "
@@ -1214,8 +1223,11 @@ def write(res, full=True, render=None, stale=()):
     LIMITS = ("Critical Injuries floor", "winnable", "ceiling", "reference deaths")
 
     def bar_table(prefix, reading, title, judged):
-        out_rows, fails = [], []
+        out_rows, fails, reported_past = [], [], []
         for r in rows_def:
+            # Round 3 retune, R7: a row that gives the Abnormal a ladder it does not have is run with its twins and
+            # rendered with its z, but never judged, so a limit past on it is reported and is no Missed result.
+            reported_row = r["abnormal"] in R.bar_reported_rows
             for order, _, _ in C.ORDERS:
                 keys = [f"{prefix}/{order}/{r['abnormal']}", f"bar/{order}/{r['medium']}", f"bar/{order}/{r['large']}",
                         f"bar/{order}/{ref_bar}"]
@@ -1239,38 +1251,57 @@ def write(res, full=True, render=None, stale=()):
                             cell += "; no second seed run"
                             failed = True
                     if failed:
-                        fails.append((r["abnormal"], order, name))
-                        if judged:
-                            cell += "; " + result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/{name}", False,
-                                                  f"bar ({prefix}, {reading}): {r['abnormal']}, {order}, {name}")
+                        if reported_row:
+                            reported_past.append((r["abnormal"], order, name, second[name][1] if second else zz))
+                            cell += "; past (reported: a ladder it does not have, R7)"
                         else:
-                            cell += "; past (reported)"
+                            fails.append((r["abnormal"], order, name))
+                            if judged:
+                                cell += "; " + result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/{name}", False,
+                                                      f"bar ({prefix}, {reading}): {r['abnormal']}, {order}, {name}")
+                            else:
+                                cell += "; past (reported)"
                     cells_.append(cell)
                 if first["median"][2] == "past":
-                    fails.append((r["abnormal"], order, "median"))
-                    if judged:
-                        result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/median", False,
-                               f"bar ({prefix}): {r['abnormal']}, {order}, median {first['median'][0]}")
+                    if reported_row:
+                        reported_past.append((r["abnormal"], order, "median", None))
+                    else:
+                        fails.append((r["abnormal"], order, "median"))
+                        if judged:
+                            result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/median", False,
+                                   f"bar ({prefix}): {r['abnormal']}, {order}, median {first['median'][0]}")
                 out_rows.append([r["abnormal"].replace("sprinting-abnormal: ", ""), order.replace("_", " "),
                                  first["median"][0]] + cells_)
         w(f"### {title}\n")
         w(table(["Abnormal row", "Order", "Median", "Critical Injuries vs Medium twin", "No kill, % vs Large twin",
                  "Deaths vs Large twin", "Reference deaths vs Medium reference"], out_rows))
         w("")
-        return fails
+        return fails, reported_past
 
     def fails_txt(fl):
         return ("every row holds every limit in both orders" if not fl else
                 "fails " + "; ".join(f"{a.replace('sprinting-abnormal: ', '')} ({o.replace('_', ' ')}, {n})" for a, o, n in fl))
-    bar_full = bar_table("bar", "full", "5.1 The bar, deaths through the end of the Titan Engagement (the verdict)", True)
+
+    def reported_txt(rp):
+        """Round 3 retune, R7: the ladder rows are run with their twins and reported beside the bar, never judged."""
+        head = "Reported beside the bar, not judged (`tuning.yaml`, `reported_rows`): "
+        if not rp:
+            return head + "every limit of the two ladder rows holds in both orders"
+        parts = []
+        for a, o, n, zz in rp:
+            pooled_note = f" (pooled over two seeds, {zf(zz)})" if zz is not None else ""
+            parts.append(f"{a.replace('sprinting-abnormal: ', '')}, {o.replace('_', ' ')}, {n} past{pooled_note}")
+        return head + "; ".join(parts) + "; every other limit of the two ladder rows holds in both orders"
+    bar_full, bar_full_reported = bar_table("bar", "full", "5.1 The bar, deaths through the end of the Titan Engagement (the verdict)", True)
     w(f"**Verdict:** {fails_txt(bar_full)}.\n")
-    bar_fight = bar_table("bar", "in_fight", "5.2 The bar, deaths during the fight (the probes' reading)", False)
+    w(f"{reported_txt(bar_full_reported)}.\n")
+    bar_fight, _ = bar_table("bar", "in_fight", "5.2 The bar, deaths during the fight (the probes' reading)", False)
     w(f"**Under the probes' reading:** {fails_txt(bar_fight)}.\n")
     over, gsev, lsev = C.grab_alone_over()
-    g_full = bar_table("grab_alone", "full", f"5.3 Variant: the Grab alone at {gsev} Attack Dice, Headlong Lunge at "
+    g_full, _ = bar_table("grab_alone", "full", f"5.3 Variant: the Grab alone at {gsev} Attack Dice, Headlong Lunge at "
                                               f"{over['headlong-lunge']['attack_dice']}, deaths through the end", False)
     w(f"**Variant, deaths through the end:** {fails_txt(g_full)}.\n")
-    g_fight = bar_table("grab_alone", "in_fight", "5.4 The same variant, deaths during the fight", False)
+    g_fight, _ = bar_table("grab_alone", "in_fight", "5.4 The same variant, deaths during the fight", False)
     w(f"**Variant, deaths during the fight:** {fails_txt(g_fight)}. Chapter 6's verdict "
       "(`data/titans/tuning.yaml`, `verdicts`, `sprinting_abnormal`) reports this variant on the drafter's "
       "seeds.\n")

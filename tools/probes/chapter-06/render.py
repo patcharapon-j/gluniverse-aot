@@ -377,8 +377,12 @@ def bar_block(tid):
     """The bar in both Squad sheet orders (decision batch 4, 4-4): each Abnormal row and its twins run with the
     player characters listed cutters first, and again strikers first."""
     bar = figures()["bar"]
-    rule = titans.load("data", "titans", "tuning.yaml")["targets"]["abnormals"]["sampling"]
+    ab = titans.load("data", "titans", "tuning.yaml")["targets"]["abnormals"]
+    rule = ab["sampling"]
     k = rule["standard_errors"]
+    # Round 3 retune, R7: a row that gives the Abnormal a ladder it does not have is run with its twins and
+    # reported beside the bar, never judged by it, so its Bar column reads "reported:" and carries no verdict.
+    reported_rows = set(ab.get("reported_rows", ()))
     out = [f"| Row ({bar['fights']:,} fights each) | Squad sheet order | Median kill round | Critical Injuries per fight: it; standard Medium Titan's row | "
            "Deaths per fight during the fight: it; standard Medium Titan's row (reference only) | No kill: it; standard Large Titan's row | "
            "Deaths per fight during the fight: it; standard Large Titan's row | Bar |",
@@ -407,6 +411,8 @@ def bar_block(tid):
                 verdict = "holds (" + ", ".join(near) + " within sampling" + pooled_note + ")"
             else:
                 verdict = "holds" + (f" ({pooled_note[2:]})" if pooled_note else "")
+            if row["abnormal"] in reported_rows:
+                verdict = "reported: " + verdict
             dfloor = f"{a['deaths']:.3f}; {med['deaths']:.3f}" if ref else "not read"
             out.append(f"| {name} | {order} | {a['median']} | {a['cis']:.2f}; {med['cis']:.2f} | {dfloor} | "
                        f"{pct(a['nokill'])}; {pct(lg['nokill'])} | {a['deaths']:.3f}; {lg['deaths']:.3f} | {verdict} |")

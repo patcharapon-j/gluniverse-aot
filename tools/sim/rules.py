@@ -1206,6 +1206,13 @@ class Rules:
         ab = t6["targets"]["abnormals"]
         self.bar_fights = ab["sampling"]["fights_per_row"]
         self.bar_standard_errors = ab["sampling"]["standard_errors"]
+        # Rows run with their twins and reported beside the bar, never judged by it (round 3 retune, R7).
+        self.bar_reported_rows = tuple(ab.get("reported_rows", ()))
+        bar_labels = {r["abnormal"] for r in load("titans/probe-figures.yaml")["bar"]["rows"]}
+        for label in self.bar_reported_rows:
+            if label not in bar_labels:
+                raise ValueError(f"tuning.yaml abnormals reported_rows: {label!r} is no bar row of "
+                                 "data/titans/probe-figures.yaml (bar, rows)")
         self.bar_median_min = int(parse(r"median kill round is (\d+) or later", " ".join(ab["not_trivial"]),
                                         "the bar's median floor").group(1))
         self.bar_median_max = int(parse(r"median kill round is (\d+) or sooner", " ".join(ab["winnable"]),
