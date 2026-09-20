@@ -89,7 +89,9 @@ call_it:
     The Called behavior is the Next Behavior the Read revealed. Each target other than the soldier
     who made the Read, who makes a dodge against the card that resolves it, gains the call-it Bonus
     Dice on that dodge (data/core/bonus-dice-sources.yaml, call-it). This holds when the card
-    resolves it as its fallback or as Thrash.
+    resolves it as its fallback or as Thrash, and when a retarget moves its targets
+    (data/engagement/behavior-procedure.yaml, resolving_a_card, choose): the Called behavior is the entry,
+    not the soldier it lands on.
   reader: >-
     The soldier who made the Read gains no Bonus Dice from their own Call It. Calling It helps
     comrades only, as teamwork (ADR-0010); a soldier who Reads for themselves already knows what

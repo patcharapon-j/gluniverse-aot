@@ -255,7 +255,11 @@ evaluation:
       new rule of selection is added, so the choice stays deterministic and the GM still picks
       nothing (ADR-0024, limit 8). The holder step keeps the soldier who held the Titan's Attention
       before this evaluation only if they are in the narrowed set, and a holder who fails the
-      position_requirement never is.
+      position_requirement never is. The narrowed set bounds every step, loudest-matches included:
+      it is the one step that adds, and on a retarget it adds only candidates who are in the narrowed
+      set, so a loud soldier who does not meet the position_requirement is never added and the entry
+      can never resolve against a soldier it is not allowed to reach (steps, loudest-matches; round 3
+      review 1, C5).
     attention_moves: >-
       The soldier the evaluation returns holds the Titan's Attention from that moment, for every
       rule that reads it, and the entry resolves against them: the entry's targets are read from
@@ -264,7 +268,10 @@ evaluation:
     none: >-
       If no candidate meets the position_requirement, nothing is evaluated, Attention does not
       change, and the behavior falls back as it did before this rule
-      (data/engagement/behavior-procedure.yaml, resolving_a_card, choose).
+      (data/engagement/behavior-procedure.yaml, resolving_a_card, choose). If the narrowed
+      evaluation does run and reaches its own none step, read it the same way: Attention does not
+      change and the behavior falls back. So a retarget always returns either one soldier or nothing,
+      never an undefined holder (steps, none; round 3 review 1, m5).
     not_a_position_change: >-
       Retargeting moves no soldier. It changes Attention and nothing else
       (data/engagement/positions.yaml, changes_to_position, not_changed_by).

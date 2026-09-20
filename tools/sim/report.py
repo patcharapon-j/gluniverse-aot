@@ -1719,13 +1719,15 @@ def write(res, full=True, render=None, stale=()):
         w("")
 
     w("### 6.15 Retargeting and Frenzy, the two Titan rules of round 3\n")
-    w("Decision batch 13 (13-9 and 13-10; OQ-192 and OQ-193). *Retargeted* is the share of resolved cards whose "
-      "Attention holder could not meet the rolled entry's Position requirement and the Attention Ladder, read again "
-      "over the soldiers who could, found one: the card resolves the entry it rolled, against a soldier it moved its "
-      "Attention to. *No one in reach* is the share where no soldier met it, so the card fell back or Thrashed as it "
-      "did before the rule. Every one of those two shares was a fallback or a Thrash in the previous run. *Thrash* is "
-      "the share of resolved cards that Thrashed, the figure the rule set out to cut. *Frenzy lifted* is the share of "
-      "behavior rolls whose total was higher than the face the die showed.\n")
+    w("Decision batch 13 (13-9 and 13-10; OQ-192 and OQ-193), with the fallback retargeted as well (round 3 review "
+      "1, M1). *Retargeted* is the share of resolved cards on which a retarget moved the Titan's Attention, for the "
+      "rolled entry or for its fallback: the card resolves that entry against a soldier the Ladder, read again over "
+      "the soldiers who could meet its Position requirement, turned the Titan onto. Every one of those cards was a "
+      "fallback or a Thrash before the rule. *Rolled entry reached no one* is the share on which no soldier met the "
+      "rolled entry, so the fallback ran; a card counted there may still appear under *Retargeted*, if the fallback "
+      "then found someone, so the two shares are not exclusive. *Thrash* is the share of resolved cards that "
+      "Thrashed, the figure the rule set out to cut. *Frenzy lifted* is the share of behavior rolls whose total was "
+      "higher than the face the die showed.\n")
     rows = []
     for c in res["cases"]:
         if c["family"] != "fight" or "retarget_share" not in c["summary"]:
@@ -1735,7 +1737,7 @@ def write(res, full=True, render=None, stale=()):
                      f1(s_["thrash_share"]),
                      f1(s_["frenzy_lift_share"]), f2(s_["rounds_per_fight"])])
     if rows:
-        w(table(["Case", "Retargeted, % of cards", "No one in reach, % of cards", "Thrash, % of cards",
+        w(table(["Case", "Retargeted, % of cards", "Rolled entry reached no one, % of cards", "Thrash, % of cards",
                  "Frenzy lifted, % of rolls", "Rounds a fight"], rows))
         w("")
 

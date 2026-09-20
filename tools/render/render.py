@@ -963,6 +963,92 @@ def b_position_steps():
             table(["Anchor Rating", "Anchors", "Terrain Trait"], field))
 
 
+# The Position map (decision batch 13, 13-6; OQ-191): left to right, the way a soldier closes on a Titan.
+POSITION_LANE = ["distant", "in-reach", "on-body", "blind-spot"]
+
+
+def _map_links(rating_id, where):
+    """One ground's step rows as ordered Position pairs, read off the same rows the step table renders."""
+    rating = next((r for r in load(ANCH)["ratings"] if r["id"] == rating_id), None)
+    if rating is None:
+        raise RenderError(f"{where}: names a ground {rating_id!r}, which anchor-ratings.yaml does not rate")
+    links = []
+    for st in rating["steps"]:
+        a, b = st["between"]
+        for pid in (a, b):
+            if pid not in POSITION_LANE:
+                raise RenderError(f"{where}: a step reaches {pid!r}, which the map has no place for")
+        if POSITION_LANE.index(a) > POSITION_LANE.index(b):
+            a, b = b, a
+        if (a, b) not in links:
+            links.append((a, b))
+    return sorted(links, key=lambda ab: (POSITION_LANE.index(ab[0]), POSITION_LANE.index(ab[1])))
+
+
+def _chain_diagram(names):
+    return [" --- ".join(names)]
+
+
+def _branch_diagram(names, links, joined):
+    """Two arms off the last node of the stem, drawn to one width so the arms close in the same column.
+
+    Distant --- In Reach -                  - (joined)
+    is the stem; the arms carry the two Positions the fork reaches, and the closing dash appears only
+    when a step joins those two to each other.
+    """
+    stem_ids = [pid for pid in POSITION_LANE if pid not in links["fork"]]
+    stem = " --- ".join(names[pid] for pid in stem_ids)
+    arms = [names[pid] for pid in links["fork"]]
+    width = max(len(a) for a in arms) + 1
+    body = ["--- " + a + " " + "-" * (width - len(a)) for a in arms]
+    pad = " " * (len(stem) + 2)
+    # The right-hand corners close onto one another when a step joins the two Positions the fork reaches, so the
+    # join is drawn as a wire and never as a labelled node, which read as a further place to stand (round 3 review
+    # 1, m2). When no step joins them the arms simply end.
+    join = "|" if joined else " "
+    return [pad + "/" + body[0] + ("\\" if joined else ""),
+            (stem + " -" + " " * (len(body[0]) + 1) + join).rstrip(),
+            pad + "\\" + body[1] + ("/" if joined else "")]
+
+
+def b_position_maps():
+    """The three Position maps (decision batch 13, 13-6; OQ-191). Every node and every line is derived from the
+    Anchor Ratings' own step rows, so a map can never draw a route the rules do not have: the maps add no step and
+    change no row, and a map that disagrees with its step rows raises here rather than drifting quietly."""
+    out = []
+    for m in load(ANCH)["position_maps"]["maps"]:
+        where = f"{ANCH} position_maps {m.get('id')}"
+        expect_keys(m, {"id", "name", "ratings", "anchors", "shape", "reaches_blind_spot", "says"}, where,
+                    required=("id", "name", "ratings", "anchors", "shape", "reaches_blind_spot", "says"))
+        links = _map_links(m["ratings"][0], where)
+        for other in m["ratings"][1:]:
+            if _map_links(other, where) != links:
+                raise RenderError(f"{where}: draws one map for {m['ratings'][0]!r} and {other!r}, whose step rows differ")
+        reached = [pid for pid in POSITION_LANE if any(pid in ab for ab in links)]
+        if ("blind-spot" in reached) != bool(m["reaches_blind_spot"]):
+            raise RenderError(f"{where}: reaches_blind_spot is {m['reaches_blind_spot']}, and its step rows say otherwise")
+        names = {pid: position_name(pid) for pid in reached}
+        if m["shape"] == "chain":
+            for a, b in links:
+                if POSITION_LANE.index(b) - POSITION_LANE.index(a) != 1:
+                    raise RenderError(f"{where}: shape chain, and a step joins {a} to {b}, which is not the next stop")
+            if len(links) != len(reached) - 1:
+                raise RenderError(f"{where}: shape chain, and its step rows fork")
+            lines = _chain_diagram([names[pid] for pid in reached])
+        elif m["shape"] == "branch":
+            fork = [pid for pid in ("on-body", "blind-spot") if pid in reached]
+            if len(fork) != 2 or not any(ab == ("in-reach", "blind-spot") for ab in links):
+                raise RenderError(f"{where}: shape branch, and its step rows do not fork at In Reach")
+            joined = ("on-body", "blind-spot") in links
+            lines = _branch_diagram(names, {"fork": fork}, joined)
+        else:
+            raise RenderError(f"{where}: shape {m['shape']!r} has no drawing")
+        n = m["anchors"]
+        anchors = f"{n} {'Anchor' if n == 1 else 'Anchors'}"
+        out.append(f"**{m['name']}** ({anchors}). {folded(m['says'])}\n\n```\n" + "\n".join(lines) + "\n```")
+    return "\n\n".join(out)
+
+
 # ------------------------------------------------------------------ Chapter 7
 # The prosthetic items (decision batch 8, 8-10; data/gear/items.yaml), whose Requisition row is one row at Limited.
 PROSTHETIC_ITEMS = {"prosthetic-arm", "prosthetic-leg"}
@@ -1432,6 +1518,7 @@ block("standard-issue", CH4, ISSUE, b_standard_issue)
 block("squad-supply", CH4, SUP, b_squad_supply)
 block("interim-setup", CH5, SETUP, b_interim_setup)
 block("position-steps", CH5, ANCH, b_position_steps)
+block("position-maps", CH5, ANCH, b_position_maps)
 block("pinned-entries", CH5, EFF, b_pinned_entries)
 block("interim-route", CH7, ROUTE, b_interim_route)
 block("waypoint-kinds", CH7, ROUTE, b_waypoint_kinds)

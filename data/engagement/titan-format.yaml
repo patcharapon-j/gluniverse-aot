@@ -144,7 +144,10 @@ entry_fields:
     The id of another entry in the same table that happens instead when no candidate for the Titan
     meets position_requirement, or thrash. Thrash's own fallback is none. Since decision batch 13
     (13-9; OQ-192) the fallback is reached only after retargeting has found nobody, so no table
-    needs re-authoring for it and every fallback value stands as written.
+    needs re-authoring for it and every fallback value stands as written. The fallback is retargeted
+    in its turn, over the candidates who meet its own position_requirement, so a real fallback is
+    reachable rather than tested against a holder the rolled entry has already failed against
+    (data/engagement/behavior-procedure.yaml, resolving_a_card, choose; round 3 review 1, M1).
   text: >-
     What the soldiers see. Flavour only: no procedure step reads it (ADR-0024). It names none of the
     Titan's own Body Parts of a kind the entry does not list in body_parts_used (added for Chapter 6,

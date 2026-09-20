@@ -50,7 +50,11 @@ decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127
 # Injury and PC death targets, and every Critical Injury and deaths band of Chapter 6; the share of a
 # Titan's cards that resolve Thrash, before and after retargeting; the Frenzy rate and cap, which are
 # starting values the simulator moves; and the health_reports rows, whose reachable Health values are
-# now 4 to 8 rather than 2 to 6.
+# now 4 to 8 rather than 2 to 6. Round 3 review 1 adds two cases it must also answer: the share of
+# retargeted kill-tier cards that land on a Down soldier, who makes no Reaction so every success is
+# net and who would have drawn a Thrash before retargeting (m1); and the share of cards on which the
+# fallback itself retargets, which is the part of 13-9 that reaches standard-large's Crush and the
+# Sprinting Abnormal's Pitch Headlong (M1).
 
 # ------------------------------------------------------------------ starting values
 starting_values:
@@ -930,8 +934,10 @@ grab:
   model: >-
     Rule (e) of OQ-85: the Grab spends the action of the victim's first counted turn, and a failed
     dodge that spent a later turn gets it back. Victim: the
-    reference Rookie (Strength 4, Health 4, Resolve 3, Blade Set 1, Grip Breaker 1, Stress 1) with no
-    earlier Critical Injury unless a row says otherwise. The crush comes from the torso rows with the
+    reference Rookie at the Health, Strength, and Resolve builds, rookie gives it, with Blade Set 1,
+    Grip Breaker 1, and Stress 1, and no earlier Critical Injury unless a row says otherwise. The
+    Health is read from builds and never restated here, so it cannot go stale again (decision batch
+    13, 13-4's reasoning; round 3 review 1, M6). The crush comes from the torso rows with the
     non-lethal cap, with their Break Free penalties and Down. Unless a row says otherwise, the
     victim's dodge against the Grab failed and spent a turn. Break Free needs 2, with a 2-die penalty
     once lifted, Pushing when short. The Medium Titan and every soldier come up in random card order
@@ -957,7 +963,7 @@ grab:
       - {case: "Brawler (Strength 4, Grip Breaker 1)", death: 69.5%}
       - {case: "Slayer (Strength 4, no Break Free Talent)", death: 75.0%}
       - {case: "Flier (Strength 3, no Break Free Talent)", death: 76.3%}
-      - {case: "Hunter (Strength 3, Health 3, no Break Free Talent)", death: 76.3%}
+      - {case: "Hunter (Strength 3, no Break Free Talent)", death: 76.3%}
   comrades_close:
     trials: 40,000 per cell
     cells: [stress_1_grief_0, stress_2_grief_0, stress_3_grief_0, stress_1_grief_1, stress_2_grief_1, stress_3_grief_1]
@@ -972,16 +978,29 @@ grab:
   health_reports:
     model: >-
       As above. The earlier injuries are untreated leg Critical Injuries that give no Break Free
-      penalty: two at Health 3 to 6, and one at Health 2 so the victim starts with a box left. The
-      comrade row has one comrade at Stress 2 with Grief 0.
+      penalty: two at Health 5 to 8, and one at Health 4 so the victim starts with a box left. The
+      comrade row has one comrade at Stress 2 with Grief 0. The rows ran Health 2 to 6 until decision
+      batch 13 (13-1; OQ-190) raised the formula and put a built soldier at 4 to 6 and a rolled one at
+      4 to 8, so the rows no longer describe Health values a soldier can have (round 3 review 1, M6).
     columns: [lone, one_comrade]
+    # Every figure below is stale until the batch 13 rerun (the file header). Each row carries the
+    # pre-batch-13 figure measured at the row that played the same part, so the comparison still runs:
+    # health_4 is the one-earlier-injury row, as health_2 was, and health_5 to 8 are the two-injury
+    # rows, as health_3 to 6 were. The rerun replaces all ten numbers.
     with_earlier_injuries:
-      health_2: [100%, 47.9%]
-      health_3: [100%, 47.9%]
-      health_4: [69.8%, 33.1%]
-      health_5: [69.7%, 33.7%]
-      health_6: [69.7%, 33.2%]
-    fresh_victim_lone: {health_2: 70.0%, health_3: 69.9%, health_4: 69.9%, health_5: 69.5%, health_6: 69.8%}
+      health_4: [100%, 47.9%]
+      health_5: [100%, 47.9%]
+      health_6: [69.8%, 33.1%]
+      health_7: [69.7%, 33.7%]
+      health_8: [69.7%, 33.2%]
+    fresh_victim_lone: {health_4: 70.0%, health_5: 69.9%, health_6: 69.9%, health_7: 69.5%, health_8: 69.8%}
+    history:
+      measured_before_batch_13: >-
+        The rows as measured when a built soldier ran Health 2 to 4: two earlier injuries at Health 3
+        to 6 and one at Health 2. with_earlier_injuries read health_2 [100%, 47.9%], health_3
+        [100%, 47.9%], health_4 [69.8%, 33.1%], health_5 [69.7%, 33.7%], health_6 [69.7%, 33.2%], and
+        fresh_victim_lone read health_2 70.0%, health_3 69.9%, health_4 69.9%, health_5 69.5%,
+        health_6 69.8%.
   turn_debt:
     model: >-
       As the lone and one-comrade rows, but the victim's card comes after the Titan's and their turn

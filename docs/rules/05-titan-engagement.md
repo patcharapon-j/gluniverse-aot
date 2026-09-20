@@ -205,15 +205,16 @@ That last clause is worth reading twice, because everything about the Blind Spot
 | A Grab landing | The Grabbed soldier holds On Body relative to the holding Titan (section 5.9) |
 | Being freed from a Grab | In Reach, with a fall first if they had been lifted (section 5.9) |
 | A Behavior Table knock loose | The target falls, and so holds In Reach (section 5.4) |
-| The close rule | Becoming On Body or Blind Spot of one Titan sets the other Titan's Position to In Reach (*Two Focus Titans*, below) |
+| The close rule | Becoming On Body or Blind Spot of one Titan sets the soldier's Position to In Reach relative to every other Focus Titan they held On Body or Blind Spot relative to, and changes nothing relative to a Titan they were Distant or In Reach of (*Two Focus Titans*, below) |
 | A Titan becoming a Focus Titan | Everyone who holds a Position holds Distant relative to it |
 | A Focus Titan dying | Positions become relative to its corpse; On Body and Blind Spot read In Reach (*A corpse*, below) |
+| A Titan's body coming down, by its death or by a living Titan becoming grounded | Every soldier On Body or at Blind Spot relative to it who is not airborne holds In Reach relative to its body, whether they Leap Clear or are Pinned; an airborne soldier swings clear and keeps their Position (section 5.7) |
 | The Fall Back Squad Tactic | At the wings step, a soldier at On Body or Blind Spot may instead hold In Reach relative to that Titan, by their own player's choice; not a fall (section 5.12) |
 | A grounded Titan standing up | At the Open rating only, a soldier at Blind Spot relative to it then holds On Body, because that rating has no Blind Spot while the Titan stands; not a fall (*A grounded Titan*, above) |
 | Being carried | The carried soldier moves with their carrier (Chapter 4, section 4.7) |
 | Starting placement, leaving, returning, a retreat's compelled moves | As each rule states (*sections 5.1, 5.10, and 5.11*) |
 
-**Not on the list**, and this is the half nobody can see: the Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other entry in the Action Catalog. None of them moves anyone, whatever it rolls. Attention is not a Position either: a Titan turning its Attention onto a soldier, by the ladder, by a retarget (section 5.6), by a decoy, or by a flag, moves nobody, and neither does Frenzy. The GM never places a soldier and never names a step (ADR-0024, limit 8).
+**Not on the list**, and this is the half nobody can see: the Nape strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other Action Catalog entry that is an **action**. None of them moves anyone, whatever it rolls. Three Catalog entries are not actions and are on the list above rather than here: Fly, which is the soldier's own move; Leap Clear, which is the Falling Titan's roll; and Mount or Dismount, which rides along with a move. Attention is not a Position either: a Titan turning its Attention onto a soldier, by the ladder, by a retarget (section 5.6), by a decoy, or by a flag, moves nobody, and neither does Frenzy. The GM never places a soldier and never names a step (ADR-0024, limit 8).
 
 When a rule compares two soldiers' Positions, it compares them relative to one Titan (`comparison`). Help, Covering, Treat Injury, Rally, Pass Item, Take Item, Field Repair, Lift Comrade, and Pry Loose all compare this way:
 - **A roll or act against one Focus Titan** (a strike, Break Attention, Draw Attention, a Read, Break Free, or a dodge), and Help or Covering on it, compares relative to that Titan.
@@ -278,25 +279,27 @@ Each rating also gives the Titan Engagement a pool of **Anchors** and one **Terr
 
 The step rows above make one of three shapes, and which shape a fight has is the Anchor Rating's answer, not the Titan's. The maps are held in `anchor-ratings.yaml` (`position_maps`), read off the same step rows the table above renders; they add no step and change no row.
 
-**Open** (0 anchors). There is nothing to anchor to but the Titan, so there is **no Blind Spot at all** while the Titan stands, and no Nape strike can be made against a standing Titan on a plain.
+<!-- BEGIN RENDERED: position-maps from data/engagement/anchor-ratings.yaml -->
+**Open** (0 Anchors). There is nothing to anchor to but the Titan, so there is no Blind Spot at all while the Titan stands, and no Nape strike can be made against a standing Titan on a plain.
 
 ```
 Distant --- In Reach --- On Body
 ```
 
-**Sparse** (1 anchor). One good tree. Nothing joins In Reach and Blind Spot, so the Nape is reached by way of the body.
+**Sparse** (1 Anchor). One good tree. Nothing joins In Reach and Blind Spot, so the Nape is reached by way of the body.
 
 ```
 Distant --- In Reach --- On Body --- Blind Spot
 ```
 
-**Wooded, Urban, and Giant Forest** (2 to 3 anchors). A branch: from In Reach a soldier may go onto the body **or** straight to the Blind Spot, and may move between those two.
+**Wooded, Urban, and Giant Forest** (2 to 3 Anchors). From In Reach a soldier may go onto the body or straight to the Blind Spot, and may move between those two. This is why the Corps fights in forests and towns.
 
 ```
                       /--- On Body ----\
-Distant --- In Reach -                  - (joined)
+Distant --- In Reach -                 |
                       \--- Blind Spot -/
 ```
+<!-- END RENDERED: position-maps -->
 
 So "can a soldier go from In Reach to Blind Spot without going On Body first?" is answered **yes** in Wooded, Urban, and Giant Forest, **no** in Sparse, and **there is no Blind Spot** in Open. Terrain decides whether the Squad can get behind the thing, which is why the Corps fights in forests.
 
@@ -628,7 +631,8 @@ When a Focus Titan's card comes up (`resolving_a_card`):
    - If the Titan lacks the Body Parts it uses, the behavior is Thrash.
    - If the holder does not meet its Position requirement, the Titan **retargets**: evaluate the Attention Ladder again over only those candidates who do meet it (section 5.6). The soldier that evaluation returns holds the Titan's Attention from that moment, and the entry resolves against them, its targets read from the new holder.
    - Only if **no** candidate meets the Position requirement does the entry become its fallback.
-   - If that fallback repeats the previous behavior or fails either test, the behavior is Thrash.
+   - Test the fallback the same way. If it is Thrash, repeats the previous behavior, or needs Body Parts the Titan lacks, the behavior is Thrash. Otherwise, if the holder does not meet the fallback's own Position requirement, the Titan retargets over the candidates who do, by the same evaluation.
+   - Only when nobody meets the fallback either is the behavior Thrash.
 6. **Roll and announce.** Announce the behavior's name, tier, and targets to every soldier, then roll its Attack Dice as Titan Dice in the open and announce the successes: the card's Severity, the same for every target. The roll takes no Circumstances, and the GM never re-rolls or adjusts it (ADR-0024, limit 8; ADR-0019).
 7. **Reactions.** On 0 successes the card whiffs against every target, and no one dodges. Otherwise each target dodges, or cancels with an earlier dodge against this Titan, by Chapter 1's *Attack and Reaction* (below). The card lands on a target on 1 or more Net Successes and whiffs on 0.
 8. **Effects.** For each target it lands on, apply the effects in order, targets in card order. Only a Critical Injury reads the Net Successes. A telegraph applies whether the card landed or whiffed, and so does a wreck, which is the one effect that lands on nobody: it destroys 1 Anchor once, however many targets the card had (section 5.2). A target who dies receives none of the card's later effects; every other target still does (decision batch 4, OQ-107).
@@ -707,7 +711,9 @@ When a card's Choose step finds that the Attention holder does not meet the roll
 - **The ladder is the same ladder.** The same rungs in the same order, the same loudest match, the same struck-first rule, the same tie-breaks. No new rule of selection is added, so the choice stays deterministic and the GM picks nothing (ADR-0024, limit 8; ADR-0010). The step that keeps the current holder in a tie cannot fire here, because a holder who fails the Position requirement is never in the narrowed set.
 - **Attention moves with it.** The soldier the evaluation returns holds the Titan's Attention from that moment, for every rule that reads it, and the entry's targets are read from them.
 - **Nobody moves.** Retargeting changes Attention and nothing else; it is not a change of Position (section 5.2). The flags for this Titan stand until the card's Next step, as they do through any evaluation.
-- **When nobody qualifies,** the entry falls back as it always did, and Thrash is what is left.
+- **The fallback is retargeted too.** When nobody meets the rolled entry, the Titan takes the entry's fallback and tests that the same way, retargeting over the candidates who meet the fallback's own Position requirement. Only when nobody meets that either is the behavior Thrash. A fallback tested against the holder the rolled entry already failed against would be the same inertness this rule exists to remove.
+- **When nobody qualifies at all,** Thrash is what is left, as it always was.
+- **A Down comrade is a candidate.** Down soldiers meet the nearest rung like anyone else, so a narrowed set can hold nothing but Down soldiers, and the Titan will turn a kill-tier entry onto one of them. A Down soldier makes no Reaction, so every success of that card is net. Before this rule the Titan would have Thrashed instead. Keeping a Down comrade off the floor is now worth a turn.
 
 ### Draw Attention
 

@@ -103,6 +103,17 @@ changes_to_position:
       effect: >-
         Positions become relative to its corpse, except that on-body and blind-spot read in-reach
         (two_focus_titans, a_focus_titan_dies; corpse, positions).
+    - id: titan-body-comes-down
+      what: A Titan's body coming down, by its death or by a living Titan becoming grounded
+      effect: >-
+        Every soldier who holds on-body or blind-spot relative to that Titan and is not airborne
+        holds in-reach relative to its body, whether they Leap Clear or are Pinned; an airborne
+        soldier swings clear and keeps their Position. Pinning does not change a Position again:
+        a Pinned soldier holds in-reach relative to the body and their Position never changes while
+        they are Pinned (data/engagement/titan-harm.yaml, falling_titan, when, path, leap_clear,
+        pinned; moves, pinned_soldier). The death trigger also makes every Position relative to the
+        corpse (focus-titan-dies); the grounding trigger does not, because a grounded Titan is alive
+        and is not a corpse. Round 3 review 1, M2.
     - id: fall-back
       what: The Fall Back Squad Tactic
       effect: >-
@@ -132,10 +143,13 @@ changes_to_position:
         retreat's options, which they cannot decline (data/engagement/background-titans.yaml,
         retreat, moves). A retreat narrows the soldier's own move; it adds no other change.
   not_changed_by: >-
-    No Action Catalog entry changes a Position (data/character/action-catalog.yaml). The Nape
-    strike, the Body Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally,
-    and every other entry in the Catalog leave every soldier exactly where they stand, whatever they
-    roll. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and
+    No entry of kind action in the Action Catalog changes a Position
+    (data/character/action-catalog.yaml). The Nape strike, the Body Part strike, Break Attention,
+    Draw Attention, Read, Heave, Treat Injury, Rally, and every other entry of that kind leave every
+    soldier exactly where they stand, whatever they roll. Three Catalog entries are not actions and
+    are covered by rows above rather than by this paragraph: fly, which is the soldier's own move
+    (own-move); leap-clear, which is the Falling Titan's roll (titan-body-comes-down); and
+    mount-or-dismount, which is an option of a move. Round 3 review 1, M3. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and
     the striker is still at Blind Spot (positions, blind-spot). Attention is not a Position: a Titan
     turning its Attention onto a soldier, by the Attention Ladder, by a retarget
     (data/engagement/attention.yaml, changes, retarget), by a decoy, or by a flag, moves nobody.

@@ -224,7 +224,7 @@ _Avoid_: mental trauma, madness
 The weight a soldier carries after a comrade dies, gained by the fight's participants when it ends, or by the Squad after other deaths and any Fear Rolls they cause. Each point lowers Resolve by 1, up to 3 held, until dealt with during Downtime.
 
 **Health**:
-How much punishment a character can absorb before they can no longer act: half of Strength plus Agility, rounded up, kept as a row of boxes. Each untreated Critical Injury crosses off one box, up to Health; damage marks the boxes left; at 0 the soldier is Down.
+How much punishment a character can absorb before they can no longer act: 2 plus half of Strength plus Agility, where the rounding up applies to the halved attributes and the 2 is added after, kept as a row of boxes. That is 4 to 6 for a built soldier and 4 to 8 for a rolled one (`data/character/attributes.yaml`, `derived_values`, `health`). Each untreated Critical Injury crosses off one box, up to Health; damage marks the boxes left; at 0 the soldier is Down.
 _Avoid_: HP, hit points
 
 **Critical Injury**:
@@ -342,8 +342,12 @@ The one soldier or decoy a Focus Titan is fixed on at any moment, which its Beha
 _Avoid_: aggro, threat, focus
 
 **Attention Ladder**:
-The ranked stimuli a Focus Titan turns its Attention toward each time it acts. The standard order is: hooked into its body, nearest person in reach, just hurt it (until the end of its next card that resolves a behavior), loudest or brightest, nearest (the closest Position). Abnormals have their own ladder.
+The ranked stimuli a Focus Titan turns its Attention toward each time it acts. The standard order is: hooked into its body, nearest person in reach, just hurt it (until the end of its next card that resolves a behavior), loudest or brightest, nearest (the closest Position). Abnormals have their own ladder. It is read a second time, over the soldiers who meet a rolled entry's Position requirement, when its holder does not meet it, and the Titan's Attention moves to the soldier that reading returns (see **Retarget**).
 _Avoid_: priority list, aggro table
+
+**Retarget**:
+What a Focus Titan does when its Attention holder cannot meet the Position requirement of the entry its behavior roll came up with: the Attention Ladder is read again over only the soldiers who can meet it, its Attention moves to the soldier that reading returns, and the entry resolves against them. Only when no soldier meets the requirement does the behavior fall back. A retarget moves no soldier and changes no Position.
+_Avoid_: re-aggro, switch target, pick a new victim
 
 **Draw Attention**:
 An action, or a Fear Roll result, that makes the soldier the loudest or brightest stimulus on the Attention Ladder until the end of the Titan's next card that resolves a behavior. Never from Distant.

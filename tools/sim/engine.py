@@ -1280,14 +1280,33 @@ class Fight:
         if h.pos in e["position_requirement"]:
             return t.nb, h
         # the holder cannot meet it: narrow the candidates and read the Ladder again over them
-        narrowed = [c for c in self.present() if c.pos in e["position_requirement"]]
-        if narrowed:
-            self.evaluate(only=narrowed)
+        if self._retarget(e):
             self.stats["retargets"] += 1
             return t.nb, t.holder
         # attention.yaml, evaluation, retargeting, none: nothing is evaluated and Attention does not change
         self.stats["retarget_misses"] += 1
-        return t.choose(h.pos), h
+        # the fallback is tested the same way, retargeting in its turn (round 3 review 1, M1)
+        fb = e["fallback"]
+        if fb in (t.thrash, "none") or fb == t.prev:
+            return t.thrash, h
+        fe = t.entries[fb]
+        if not t.parts_ok(fe):
+            return t.thrash, h
+        if h.pos in fe["position_requirement"]:
+            return fb, h
+        if self._retarget(fe):
+            self.stats["retargets"] += 1
+            return fb, t.holder
+        return t.thrash, h
+
+    def _retarget(self, entry):
+        """attention.yaml, evaluation, retargeting: narrow the candidates to those who meet the entry's
+        position_requirement and read the Ladder again over them. True when Attention moved."""
+        narrowed = [c for c in self.present() if c.pos in entry["position_requirement"]]
+        if not narrowed:
+            return False
+        self.evaluate(only=narrowed)
+        return True
 
     def titan_card(self):
         t = self.t

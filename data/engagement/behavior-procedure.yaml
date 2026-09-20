@@ -99,8 +99,13 @@ resolving_a_card:
         decision batch 13, 13-9; OQ-192). The soldier that evaluation returns holds the Titan's
         Attention from that moment, and the entry resolves against them: the entry's targets are
         read from the new holder. Only if no candidate meets the position_requirement is the
-        behavior its fallback entry; and if that fallback is thrash, is the previous behavior, or
-        fails either test, the behavior is Thrash. Thrash can always happen, and it is the only
+        behavior its fallback entry, and the fallback is tested the same way: if it is thrash, is the
+        previous behavior, or the Titan does not meet its body_parts_used, the behavior is Thrash;
+        otherwise, if the Attention holder does not meet the fallback's own position_requirement, the
+        Titan retargets over the candidates who do, by the same evaluation, and the behavior is
+        Thrash only when no candidate meets that either (decision batch 13, 13-9, completed after
+        round 3 review 1, M1). A fallback tested against a holder the rolled entry has already failed
+        against is the inertness 13-9 exists to remove. Thrash can always happen, and it is the only
         entry that can follow itself. The Titan wanted one soldier and could not reach them, so it
         takes what it can catch rather than flailing.
       retarget: >-

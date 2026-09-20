@@ -118,7 +118,6 @@ position_maps:
       anchors: 0
       shape: chain
       reaches_blind_spot: false
-      diagram: "Distant --- In Reach --- On Body"
       says: >-
         There is nothing to anchor to but the Titan, so there is no Blind Spot at all while the
         Titan stands, and no Nape strike can be made against a standing Titan on a plain.
@@ -128,7 +127,6 @@ position_maps:
       anchors: 1
       shape: chain
       reaches_blind_spot: true
-      diagram: "Distant --- In Reach --- On Body --- Blind Spot"
       says: >-
         One good tree. Nothing joins In Reach and Blind Spot, so the Nape is reached by way of the
         body.
@@ -138,10 +136,6 @@ position_maps:
       anchors: 2 to 3
       shape: branch
       reaches_blind_spot: true
-      diagram_lines:
-        - "                      /--- On Body ----\\"
-        - "Distant --- In Reach -                  - (joined)"
-        - "                      \\--- Blind Spot -/"
       says: >-
         From In Reach a soldier may go onto the body or straight to the Blind Spot, and may move
         between those two. This is why the Corps fights in forests and towns.
