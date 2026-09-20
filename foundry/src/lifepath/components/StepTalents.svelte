@@ -1,13 +1,15 @@
 <script lang="ts">
   /** A build's Talents (built_steps.talent_levels): one level from the Specialty's list, then three in any Talents. */
+  import { detailHover } from '../../sheets/actions.ts';
   import Sec from '../../sheets/components/Sec.svelte';
-  import { t } from '../../sheets/context.ts';
+  import { hoverCards, t } from '../../sheets/context.ts';
   import type { WizardView } from '../wizard-app.ts';
   import { talentInfo } from './helpers.ts';
   import Pick from './Pick.svelte';
   import WordText from './WordText.svelte';
 
   let { view, n }: { view: WizardView; n: number } = $props();
+  const hover = hoverCards();
   const s = $derived(view.state);
   const r = $derived(view.r);
   const act = $derived(view.act);
@@ -33,6 +35,7 @@
         badge: own ? undefined : t('WOF.Lifepath.grad.generalBadge'),
         disabled: !open,
         note: t('WOF.Lifepath.talents.cannot'),
+        card: x.card,
       };
     }),
   );
@@ -62,7 +65,7 @@
   <ol class="any-list">
     {#each any as id, k (k)}
       {@const x = talentInfo(tables, id)}
-      <li><img class="ic s16" src={x.icon} alt="" /><b>{x.name}</b><span class="note">{x.names}</span>
+      <li use:detailHover={{ hover, card: () => x.card }}><img class="ic s16" src={x.icon} alt="" /><b>{x.name}</b><span class="note">{x.names}</span>
         {#if k === any.length - 1}<button type="button" class="mini" disabled={ro} onclick={() => act.choose('built.any', any.slice(0, -1))}>{t('WOF.Lifepath.talents.remove')}</button>{/if}
       </li>
     {/each}

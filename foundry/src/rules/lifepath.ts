@@ -22,6 +22,14 @@ export interface LpTalent {
   /** Entries this Talent adds dice to only under a condition. */
   conditional: string[];
   specialties: string[];
+  /** The website's wording, so a choice can be read in full before it is made (sheets/detail.ts). */
+  description: string;
+  trigger: string | null;
+  effect: string;
+  /** The website's line for the once-per limit, or null. */
+  limit: string | null;
+  /** The entries the Talent names, worded, with the condition that narrows each. */
+  actions: { id: string; name: string; condition: string | null }[];
 }
 export interface LpOrigin {
   id: string;

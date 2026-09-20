@@ -3,8 +3,8 @@
   import { MOTION } from '../../motion/tokens.ts';
   import { callRoll } from '../../dice/call.ts';
   import { rollAction } from '../../dice/roll-action.ts';
-  import { contextMenu, dragItem, tooltip } from '../actions.ts';
-  import { sheetContext, t } from '../context.ts';
+  import { contextMenu, detailHover, dragItem, tooltip } from '../actions.ts';
+  import { hoverCards, sheetContext, t } from '../context.ts';
   import { deleteItem, openItem, setField, setItem } from '../soldier-ops.ts';
   import { groupRollsByAttribute, icon, type RollView, type SoldierView } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
@@ -14,6 +14,7 @@
 
   let { view }: { view: SoldierView } = $props();
   const { actor, sheet, state: ss } = sheetContext();
+  const hover = hoverCards();
   const s = $derived(view.system);
   const ro = $derived(!view.editable);
   /** The character's own build: locked in Play mode (mode.ts). */
@@ -129,12 +130,8 @@
                   type="button"
                   class="roll {r.attribute ? `s-${r.attribute}` : ''}"
                   disabled={!!r.blockedReason}
-                  use:tooltip={[
-                    r.summary,
-                    r.pool.conditionalPenalties.length || r.pool.conditionalTalents.length
-                      ? [...r.pool.conditionalTalents.map((c) => `${c.name} +${c.dice}: ${c.condition}`), ...r.pool.conditionalPenalties.map((c) => `${c.source} −${c.dice}: ${c.condition}`)].join('; ')
-                      : r.summary ? '' : r.why,
-                  ].filter(Boolean).join(' ')}
+                  aria-describedby={hover.layers[0]?.card.id === r.id ? `${hover.uid}-0` : undefined}
+                  use:detailHover={{ hover, card: () => r.detail }}
                   onclick={(e) => roll(r, e.currentTarget)}
                 >
                   <span class="tile"><img src={r.icon} alt="" /></span>
@@ -165,7 +162,7 @@
     <div class="box">
       <Sec n="3" title={t('WOF.Sheet.soldier.talents')} />
       {#each view.talents as tal (tal.id)}
-        <div class="tal" data-item-id={tal.id} use:dragItem={{ item: actor.items.get(tal.id) }} use:contextMenu={talentMenu(tal.id, tal.used, tal.hasLimit)}>
+        <div class="tal" data-item-id={tal.id} use:dragItem={{ item: actor.items.get(tal.id) }} use:contextMenu={talentMenu(tal.id, tal.used, tal.hasLimit)} use:detailHover={{ hover, card: () => tal.detail }}>
           <div class="tal-h">
             <img class="ic" src={icon(tal.type === 'dice' ? 'talent-dice' : 'talent-rule')} alt="" />
             <strong><button type="button" class="link" onclick={() => openItem(actor, tal.id)}>{tal.name}</button></strong>

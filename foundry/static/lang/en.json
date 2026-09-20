@@ -1406,6 +1406,47 @@
         "tip": "Draw and save this actor’s Token in Phil’s Token Studio",
         "tipFallback": "Edit this actor’s Token. Install Phil’s Token Studio to draw one here instead.",
         "prototype": "Foundry’s prototype Token sheet"
+      },
+      "detail": {
+        "level": "Level {level} of {max}",
+        "upToLevel": "Up to level {max}",
+        "trigger": "When",
+        "effect": "Effect",
+        "names": "Names",
+        "namedBy": "Talents",
+        "limit": "Limit",
+        "spent": "Its use is spent.",
+        "ready": "Its use is ready.",
+        "taught": "Taught by",
+        "dice": "Dice",
+        "talentDice": "+{dice} Talent dice on the entries it names",
+        "requires": "Requires",
+        "needs": "Needs",
+        "gear": "Gear",
+        "help": "Help",
+        "sometimes": "Sometimes",
+        "refHint": "Rest on a name to read it.",
+        "stampDice": "{dice} dice",
+        "stampD6": "{dice}D6",
+        "poolAttribute": "{attr} {dice}",
+        "poolTalent": "{name} +{dice}",
+        "poolBonus": "Bonus Dice +{dice}",
+        "poolGear": "{name} {dice}",
+        "poolPenalty": "{source} −{dice}",
+        "poolStress": "Stress {dice}",
+        "conditionalTalent": "{name} +{dice}: {condition}",
+        "conditionalPenalty": "{source} −{dice}: {condition}",
+        "kind": {
+          "action": "Action",
+          "reaction": "Reaction",
+          "roll": "Roll",
+          "option": "Option",
+          "fixed-roll": "Fixed roll"
+        },
+        "withoutGear": {
+          "not_possible": "Without one of its gear items it cannot be taken.",
+          "attribute_alone": "Without one of its gear items it is rolled on the attribute alone: no Talent dice, no Gear Dice."
+        }
       }
     },
     "BodyPart": {

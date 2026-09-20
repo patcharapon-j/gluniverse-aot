@@ -1,8 +1,11 @@
 /**
  * Small Svelte actions that hand Foundry's own UX to the Svelte sheet: drag an embedded Item,
- * open a Foundry context menu, and show a Foundry tooltip. Each cleans up on destroy.
+ * open a Foundry context menu, show a Foundry tooltip, and raise the sheet's own hover card.
+ * Each cleans up on destroy.
  */
 import type { Action } from 'svelte/action';
+import type { DetailCard } from './detail.ts';
+import type { HoverCards } from './hover.svelte.ts';
 
 /** Makes an element drag its embedded Item the way Foundry's sheets do (Item drag data). */
 export const dragItem: Action<HTMLElement, { item: any } | null> = (node, param) => {
@@ -121,6 +124,50 @@ export const proseMirror: Action<HTMLElement, ProseMirrorParam> = (node, p) => {
     destroy() {
       editor.removeEventListener('change', onChange);
       editor.remove();
+    },
+  };
+};
+
+export interface DetailHover {
+  hover: HoverCards;
+  /** Read when the card opens, so the row always raises its current text. */
+  card: () => DetailCard | null;
+  /** 0 for a row on the page, deeper for a reference named inside an open card. */
+  depth?: number;
+}
+
+/**
+ * Raises this row's hover card (hover.svelte.ts): the pointer opens it after a rest, the keyboard
+ * on focus, and anything that moves the row — a click, a drag, a scroll, Escape — closes it again.
+ */
+export const detailHover: Action<HTMLElement, DetailHover> = (node, param) => {
+  let p = param;
+  const depth = () => p.depth ?? 0;
+  const rest = () => p.hover.show(node, p.card(), depth());
+  const now = () => p.hover.open(node, p.card(), depth());
+  const leave = () => p.hover.leave(depth());
+  const hide = () => p.hover.hide();
+  const onKey = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') p.hover.hide();
+  };
+  const listeners: [string, EventListener][] = [
+    ['pointerenter', rest],
+    ['pointerleave', leave],
+    ['pointerdown', hide],
+    ['dragstart', hide],
+    ['focusin', now],
+    ['focusout', leave],
+    ['keydown', onKey as EventListener],
+  ];
+  for (const [name, fn] of listeners) node.addEventListener(name, fn);
+  return {
+    update(next) {
+      p = next;
+      p.hover.refresh(node, p.card(), depth());
+    },
+    destroy() {
+      for (const [name, fn] of listeners) node.removeEventListener(name, fn);
+      p.hover.hide();
     },
   };
 };

@@ -2,11 +2,13 @@
   /** The running file: the soldier as the steps up to this one leave them. */
   import type { Attributes } from '../../rules/derived.ts';
   import { attributeTotal, classRankFor, levelTotal, type Levels } from '../../rules/lifepath.ts';
-  import { t } from '../../sheets/context.ts';
+  import { detailHover } from '../../sheets/actions.ts';
+  import { hoverCards, t } from '../../sheets/context.ts';
   import type { WizardView } from '../wizard-app.ts';
   import { ATTRS, attrIcon, attrName, specialtyIcon, talentInfo } from './helpers.ts';
 
   let { view }: { view: WizardView } = $props();
+  const hover = hoverCards();
   const r = $derived(view.r);
   const s = $derived(view.state);
   const tables = $derived(view.tables);
@@ -76,7 +78,7 @@
 
   <h4 class="lbl lf-h">{t('WOF.Lifepath.file.talents', { n: levelTotal(levels) })}</h4>
   {#each talents as x (x.id)}
-    <div class="lf-tal">
+    <div class="lf-tal" use:detailHover={{ hover, card: () => x.card }}>
       <img class="ic s16" src={x.icon} alt="" />
       <span>{x.name}</span>
       <span class="dots sm" role="img" aria-label={t('WOF.Lifepath.file.level', { name: x.name, level: x.level })}><span class="grp">{#each Array.from({ length: Math.min(2, x.maxLevel) }) as _, i (i)}<i class="dt{i < x.level ? '' : ' o'}"></i>{/each}</span></span>

@@ -60,6 +60,26 @@ The plate in the header holds three buttons, and the same entries sit in its rig
   does. The plate menu also copies the portrait onto the Token, browses for a Token image on its
   own, and puts both back to the system's default art.
 
+### Reading a Talent or an action in full
+
+A sheet row has space for a line. Resting the pointer on one raises a card beside it with the rest:
+
+- A **Talent** gives its description, its trigger and effect, the once-per limit and whether that
+  use is spent, the Specialties that teach it, and the Talent dice it is worth.
+- An **action** gives what it does, what it requires, what it needs, its gear requirement, how it
+  is helped, and the pool this character would throw — attribute, Talent, Bonus Dice, Gear Dice,
+  penalties and Stress, one line each — or why it cannot be rolled at all.
+
+Names inside a card are cards of their own: rest on the action a Talent names to read that action,
+or on a Talent listed under an action to read the Talent. The pointer can travel onto a card to
+follow them; moving off, clicking, scrolling or pressing Escape closes it. Keyboard focus raises
+the same card, and a screen reader reads it with the row.
+
+The same cards sit behind the Lifepath wizard's own choices — the Talents offered by an Origin, a
+Training Year, the Graduation Exam and the build steps, and the entries a Trial can be attempted
+with — and behind the named chips on a Talent, Specialty or Origin slip, so a choice can be read in
+full before it is made. Cards hold still under the Reduced and Off motion settings.
+
 ## Local development
 
 This package lives in `foundry/` inside the main repo and is built with

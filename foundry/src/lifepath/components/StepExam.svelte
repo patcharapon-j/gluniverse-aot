@@ -9,6 +9,7 @@
   import Sec from '../../sheets/components/Sec.svelte';
   import { t } from '../../sheets/context.ts';
   import type { WizardView } from '../wizard-app.ts';
+  import { actionCard } from '../../sheets/catalog-cards.ts';
   import { attrName, die, entryIcon, entryName, signed } from './helpers.ts';
   import { slideIn, tumble } from './motion.ts';
   import Pick from './Pick.svelte';
@@ -93,7 +94,7 @@
         {#if d.trial.choices.length > 1}
           <h5 class="lp-q">{t('WOF.Lifepath.exam.entry', { needs: d.needs })}</h5>
           <Pick
-            options={d.trial.choices.map((c) => ({ id: c.entry, title: entryName(c.entry), sub: (d.condition?.noGear ? null : c.gear) ?? t('WOF.Lifepath.exam.noGear'), meta: attrName(view.tables.entryAttributes[c.entry]), icon: entryIcon(c.entry) }))}
+            options={d.trial.choices.map((c) => ({ id: c.entry, title: entryName(c.entry), sub: (d.condition?.noGear ? null : c.gear) ?? t('WOF.Lifepath.exam.noGear'), meta: attrName(view.tables.entryAttributes[c.entry]), icon: entryIcon(c.entry), card: actionCard(c.entry) }))}
             value={ts.entry}
             label={t('WOF.Lifepath.exam.entry', { needs: d.needs })}
             locked={locks.has(`trials.${k}.entry`)}
