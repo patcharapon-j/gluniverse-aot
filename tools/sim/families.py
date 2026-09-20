@@ -138,6 +138,12 @@ def summarize_fight(acc):
     out["devour_share"] = 100 * s.get("devours", 0) / max(1, s.get("grabs", 0))
     out["grab_death_share"] = 100 * s.get("grab_deaths", 0) / max(1, s.get("grabs", 0))
     out["thrash_share"] = 100 * s.get("thrash", 0) / max(1, s.get("resolved", 0))
+    # decision batch 13 (13-9, 13-10): the share of resolved cards whose entry retargeted down the Attention Ladder,
+    # the share that found no soldier who met it and so fell back or Thrashed, and the share of behavior rolls the
+    # Titan's Frenzy lifted off the face the die showed
+    out["retarget_share"] = 100 * s.get("retargets", 0) / max(1, s.get("resolved", 0))
+    out["retarget_miss_share"] = 100 * s.get("retarget_misses", 0) / max(1, s.get("resolved", 0))
+    out["frenzy_lift_share"] = 100 * s.get("frenzy_lifts", 0) / max(1, s.get("nb_rolls", 0))
     # round-time counters, per round, and per round with a Grab and without one
     per = {"tracker_writes": "grab_round_writes", "ladder_evals": "grab_round_evals", "dodges": "grab_round_dodges",
            "fear_rolls": "grab_round_fears", "gas_rolls": "grab_round_gas"}
@@ -723,6 +729,11 @@ def jam_job(args):
                     break
             if jammed:
                 break
+            # round.yaml, end_steps, frenzy (decision batch 13, 13-10): the Jam test's rounds are rounds, so every
+            # living Focus Titan's Frenzy rises here and the next round's behavior rolls read it
+            for t in titans:
+                if t.frenzy < R.frenzy_cap:
+                    t.frenzy += 1
         acc["n"] += 1
         add(acc, "jammed", jammed)
     return acc

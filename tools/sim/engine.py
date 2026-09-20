@@ -99,6 +99,9 @@ STAT_KEYS = ("cis", "pc_cis", "deaths", "pc_deaths", "grabs", "devours", "grab_d
              # fights that ran on after the kill for a Pinned soldier (8-9)
              "titan_rolls", "whiffs", "lands", "rider_cis", "steam_kill", "steam_regen", "steam_cis", "leap_rolls",
              "leap_clears", "pins", "heat_cis", "heat_deaths", "heaves", "freed", "ran_on",
+             # decision batch 13 (13-9, 13-10): cards whose behavior retargeted down the Attention Ladder, cards that
+             # fell back or Thrashed because no soldier met the entry, and behavior rolls a Titan's Frenzy lifted
+             "retargets", "retarget_misses", "frenzy_lifts", "nb_rolls",
              # soldiers freed by cutting the pinning Body Part, and grab effects that landed only their crush (8-17, 8-18)
              "cut_free", "pinned_crushes",
              # turns taken while Pinned, and Pinned soldiers who died left under the body at the end (8-21, 8-26)
@@ -175,6 +178,8 @@ class Titan:
         self.dead = False
         self.decoys_in_a_row = 0
         self.hold_left = 0
+        # decision batch 13, 13-10 (OQ-193): every Focus Titan starts at Frenzy 0 and rises at the frenzy end step
+        self.frenzy = R.frenzy_start
 
     def tough(self, p):
         if self.grab and self.grab["arm"] == p:
@@ -197,13 +202,19 @@ class Titan:
             need[k] = need.get(k, 0) + 1
         return all(self.unbroken(k) >= n for k, n in need.items())
 
-    def roll_nb(self, rng):
-        """behavior-procedure.yaml, next_behavior, roll: D6, moving up past the previous behavior and entries
-        whose Body Parts are Broken; Thrash when none can be rolled."""
+    def roll_nb(self, rng, stats=None):
+        """behavior-procedure.yaml, next_behavior, roll: D6 plus the Titan's Frenzy as it stands at this moment, a
+        total above 6 reading as 6, then moving up past the previous behavior and entries whose Body Parts are
+        Broken; Thrash when none can be rolled (decision batch 13, 13-10 and 13-11; OQ-193)."""
         self.nb_serial += 1
         self.nb_revealed = False
         self.called = None
-        r = rng.randint(1, 6)
+        die = rng.randint(1, 6)
+        r = min(die + self.frenzy, 6)    # titan-format.yaml, behavior_table, result_above_the_table
+        if stats is not None:
+            stats["nb_rolls"] += 1
+            if r != die:
+                stats["frenzy_lifts"] += 1
         for i in range(6):
             eid = self.by_result[(r - 1 + i) % 6 + 1]
             if eid != self.prev and self.parts_ok(self.entries[eid]):
@@ -211,7 +222,9 @@ class Titan:
         return self.thrash
 
     def choose(self, pos):
-        """behavior-procedure.yaml, resolving_a_card, choose."""
+        """behavior-procedure.yaml, resolving_a_card, choose, without the retargeting step, which needs the Titan
+        Engagement's soldiers and so lives on Fight.choose_behavior (decision batch 13, 13-9). This is the tail of
+        that step: the fallback a Titan reaches when no soldier in the fight meets the entry."""
         if self.nb == self.thrash:
             return self.thrash
         e = self.entries[self.nb]
@@ -1146,10 +1159,12 @@ class Fight:
             return s.down
         raise ValueError(rung)
 
-    def evaluate(self, end_step=False):
+    def evaluate(self, end_step=False, only=None):
+        """attention.yaml, evaluation. `only` narrows the candidates to a retargeting evaluation's set: the same
+        rungs, the same steps, no new rule of selection (evaluation, retargeting; decision batch 13, 13-9)."""
         t = self.t
         self.stats["ladder_evals"] += 1
-        cands = self.present()
+        cands = self.present() if only is None else list(only)
         if not cands:
             t.holder = None
             return
@@ -1198,7 +1213,7 @@ class Fight:
 
     def begin(self):
         t = self.t
-        t.nb = t.roll_nb(self.rng)
+        t.nb = t.roll_nb(self.rng, self.stats)   # a new Focus Titan is at Frenzy 0, so this is a plain D6
         self.evaluate(end_step=True)
         trig = self.start_triggers()
         if trig:
@@ -1247,6 +1262,33 @@ class Fight:
         return True
 
     # ------------------------------------------------------------------ a Titan's card
+    def choose_behavior(self):
+        """behavior-procedure.yaml, resolving_a_card, choose, in full (decision batch 13, 13-9; OQ-192).
+
+        The Attention holder who does not meet the rolled entry's position_requirement no longer drops the Titan to
+        its fallback. The Attention Ladder is evaluated again over only the candidates who do meet it, and the
+        soldier it returns holds the Titan's Attention from that moment, so the entry's targets are read from them
+        (attention.yaml, evaluation, retargeting). Only when no candidate meets it does the fallback run, exactly as
+        it did before, with Attention unchanged."""
+        t = self.t
+        h = t.holder
+        if t.nb == t.thrash:
+            return t.thrash, h
+        e = t.entries[t.nb]
+        if not t.parts_ok(e):
+            return t.thrash, h
+        if h.pos in e["position_requirement"]:
+            return t.nb, h
+        # the holder cannot meet it: narrow the candidates and read the Ladder again over them
+        narrowed = [c for c in self.present() if c.pos in e["position_requirement"]]
+        if narrowed:
+            self.evaluate(only=narrowed)
+            self.stats["retargets"] += 1
+            return t.nb, t.holder
+        # attention.yaml, evaluation, retargeting, none: nothing is evaluated and Attention does not change
+        self.stats["retarget_misses"] += 1
+        return t.choose(h.pos), h
+
     def titan_card(self):
         t = self.t
         self.stats["tracker_writes"] += 1       # round.yaml, gm_tracker, per_round_order: after each Titan card
@@ -1258,7 +1300,7 @@ class Fight:
         if t.holder == "decoy":
             t.hold_left -= 1
             t.prev = t.nb
-            t.nb = t.roll_nb(self.rng)          # a decoy's card spends the Next Behavior, and any Call It on it
+            t.nb = t.roll_nb(self.rng, self.stats)   # a decoy's card spends the Next Behavior, and any Call It on it
             self.stats["decoy_cards"] += 1
             if t.hold_left > 0:
                 return
@@ -1270,7 +1312,7 @@ class Fight:
         if h is None:
             return
         called = t.called if (t.called and t.called["serial"] == t.nb_serial) else None
-        beh = t.choose(h.pos)
+        beh, h = self.choose_behavior()     # the choose step may move Attention (decision batch 13, 13-9)
         entry = t.entries[beh]
         dice = entry.get("attack_dice") or 0
         effects = entry["effects"]
@@ -1367,7 +1409,7 @@ class Fight:
         t.prev = beh
         t.decoys_in_a_row = 0
         self.clear_flags()
-        t.nb = t.roll_nb(self.rng)        # Call It ends when the card that resolves it is finished
+        t.nb = t.roll_nb(self.rng, self.stats)   # Call It ends when the card that resolves it is finished
         self.stats["resolved"] += 1
 
     # ------------------------------------------------------------------ the Grab
@@ -1929,6 +1971,10 @@ class Fight:
                 t.state[p] -= 1
                 self.steam(STEAM_AT_REGEN, "steam_regen")     # decision batch 8, 8-7: a fill that recovers a Body Part
             t.regen = 0
+        # round.yaml, end_steps, frenzy (decision batch 13, 13-10): every living Focus Titan's Frenzy rises by 1 to
+        # its cap, during a retreat as well, and never touches a Next Behavior already rolled
+        if not t.dead and t.frenzy < R.frenzy_cap:
+            t.frenzy += 1
         if was_grounded and not t.grounded():
             self.free_pinned()      # decision batch 8, 8-9: a living Titan that stops being grounded frees its Pinned
             t.heave_count = 0       # decision batch 8, 8-22: and its heave count clears

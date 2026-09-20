@@ -1718,6 +1718,27 @@ def write(res, full=True, render=None, stale=()):
                  "Foes out cold", "Capped, %"], rows))
         w("")
 
+    w("### 6.15 Retargeting and Frenzy, the two Titan rules of round 3\n")
+    w("Decision batch 13 (13-9 and 13-10; OQ-192 and OQ-193). *Retargeted* is the share of resolved cards whose "
+      "Attention holder could not meet the rolled entry's Position requirement and the Attention Ladder, read again "
+      "over the soldiers who could, found one: the card resolves the entry it rolled, against a soldier it moved its "
+      "Attention to. *No one in reach* is the share where no soldier met it, so the card fell back or Thrashed as it "
+      "did before the rule. Every one of those two shares was a fallback or a Thrash in the previous run. *Thrash* is "
+      "the share of resolved cards that Thrashed, the figure the rule set out to cut. *Frenzy lifted* is the share of "
+      "behavior rolls whose total was higher than the face the die showed.\n")
+    rows = []
+    for c in res["cases"]:
+        if c["family"] != "fight" or "retarget_share" not in c["summary"]:
+            continue
+        s_ = c["summary"]
+        rows.append([c.get("label") or c["key"], f1(s_["retarget_share"]), f1(s_["retarget_miss_share"]),
+                     f1(s_["thrash_share"]),
+                     f1(s_["frenzy_lift_share"]), f2(s_["rounds_per_fight"])])
+    if rows:
+        w(table(["Case", "Retargeted, % of cards", "No one in reach, % of cards", "Thrash, % of cards",
+                 "Frenzy lifted, % of rolls", "Rounds a fight"], rows))
+        w("")
+
     w("## 7. Sensitivity rows for the rules this simulator adds\n")
     w("Each row against a twin with the same Squad and start without the rule. z is against the twin. The counters "
       "show that the rule fires.\n")

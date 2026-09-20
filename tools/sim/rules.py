@@ -713,6 +713,40 @@ class Rules:
         self.heat_body_loc = "torso"      # 8-7: corpse heat lands at the torso for a body pin (guarded above)
         self.heave_heat_loc = "arm"       # 8-7: a Heave's heat at 0 Health lands at an arm, side rolled
 
+        # ------------------------------------------------------ Frenzy (decision batch 13, 13-10 and 13-11; OQ-193)
+        # A counter every Focus Titan carries: 0 when it becomes a Focus Titan, plus 1 at the frenzy end step to a
+        # cap, added to the behavior roll and to nothing else. engine.Titan.roll_nb and engine.Fight.end_steps.
+        fz = tf["frenzy"]
+        self.frenzy_cap = int(fz["cap"])
+        self.frenzy_start = int(fz["starts_at"])
+        if self.frenzy_start != 0 or self.frenzy_cap < 1:
+            raise ValueError(f"titan-format.yaml frenzy: starts_at {self.frenzy_start} cap {self.frenzy_cap} "
+                             "(decision batch 13, 13-10)")
+        guard(r"By 1 at the frenzy end step of each round, for every living Focus Titan, never above the cap",
+              fz["rises"], "when Frenzy rises")
+        guard(r"The behavior roll, and nothing else", fz["used_by"], "what Frenzy is used by")
+        guard(r"A total above the table's highest result reads as that highest result, which is 6",
+              tf["behavior_table"]["result_above_the_table"], "a behavior roll above the table")
+        bp = load("engagement/behavior-procedure.yaml")
+        guard(r"Roll D6 and add the Titan's Frenzy as it stands now",
+              next(r["text"] for r in bp["next_behavior"]["roll"] if r["id"] == "roll"), "the behavior roll")
+        guard(r"the roll takes the Titan's Frenzy as it stands at the moment of the roll",
+              bp["next_behavior"]["frenzy_when"], "when a behavior roll reads Frenzy")
+        # ------------------------------------------------------ retargeting (decision batch 13, 13-9; OQ-192)
+        # engine.Fight.choose_behavior re-evaluates the Attention Ladder over the candidates who meet the entry's
+        # position_requirement before it considers the fallback, and Attention moves with it.
+        ch = next(st for st in bp["resolving_a_card"]["steps"] if st["id"] == "choose")
+        guard(r"if the Attention holder does not meet its position_requirement, re-evaluate the Attention Ladder over "
+              r"only those of the Titan's candidates who do meet it", ch["text"], "retargeting before the fallback")
+        guard(r"Only if no candidate meets the position_requirement is the behavior its fallback entry",
+              ch["text"], "the fallback after retargeting")
+        at = load("engagement/attention.yaml")
+        rt = at["evaluation"]["retargeting"]
+        guard(r"Exactly as any evaluation: the same rungs of the Titan's ladder, in order, and the same steps",
+              rt["how"], "how a retargeting evaluation runs")
+        guard(r"holds the Titan's Attention from that moment", rt["attention_moves"], "Attention moving on a retarget")
+        guard(r"nothing is evaluated, Attention does not change", rt["none"], "a retarget with no candidate")
+
     def steam_damage(self, face):
         """titan-harm.yaml, steam: the damage a D6 face gives (decision batch 8, 8-7)."""
         return next(dmg for res, dmg in self.steam_rows if covers(res, face))
@@ -981,6 +1015,17 @@ class Rules:
     def _round_and_setup(self):
         rd = load("engagement/round.yaml")
         self.round_steps = [s["id"] for s in rd["round_steps"]]
+        # decision batch 13, 13-10: the frenzy end step, between regeneration and background-clocks
+        self.round_end_steps = [s["id"] for s in rd["end_steps"]]
+        for need in ("regeneration", "frenzy", "background-clocks"):
+            if need not in self.round_end_steps:
+                raise ValueError(f"round.yaml: end step {need} is gone")
+        if not (self.round_end_steps.index("regeneration") < self.round_end_steps.index("frenzy")
+                < self.round_end_steps.index("background-clocks")):
+            raise ValueError("round.yaml end_steps: frenzy no longer sits between regeneration and background-clocks "
+                             "(decision batch 13, 13-10); engine.Fight.end_steps follows the old order")
+        guard(r"Raise every living Focus Titan's Frenzy by 1, never above its cap",
+              next(s["text"] for s in rd["end_steps"] if s["id"] == "frenzy"), "the frenzy end step")
         for need in ("wings", "deal", "swap", "play", "end"):
             if need not in self.round_steps:
                 raise ValueError(f"round.yaml: round step {need} is gone")
