@@ -60,6 +60,22 @@ The plate in the header holds three buttons, and the same entries sit in its rig
   does. The plate menu also copies the portrait onto the Token, browses for a Token image on its
   own, and puts both back to the system's default art.
 
+### Building a Squadmate
+
+A Squadmate's compact sheet carries the same **Play / Edit** switch, and Edit opens its stat block
+the same way. In Edit mode:
+
+- The **stat block template** picker sits in the header, where the template's name reads in Play.
+  Picking one writes that template's attributes and replaces the Specialty and the Talent with the
+  template's, taken from the system's own compendia; what it is about to change is listed first and
+  nothing is written until you say yes. The kit ledger is left alone, so Standard Issue and anything
+  else the Squadmate carries survives a change of template.
+- The **attributes** and the **Talent level** are pips you click, as on a Soldier sheet, for a
+  Squadmate built by hand rather than from a template.
+
+Dropping a Specialty or a Talent on the sheet still works in Edit mode: a dropped Talent replaces
+the template Talent at level 1, and an Origin is declined, because a Squadmate records none.
+
 ### Reading a Talent or an action in full
 
 A sheet row has space for a line. Resting the pointer on one raises a card beside it with the rest:

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { previewPool, type PoolInputs } from '../src/rules/pool.ts';
 import { groupRollsByAttribute } from '../src/sheets/soldier-view.ts';
 import { changeCanister, gainedInjuryState, healingDaysTotal, healthCells, healthLostAfterClick, stressAfterClick } from '../src/rules/harm.ts';
+import { planIsEmpty, planTemplate } from '../src/rules/squadmate.ts';
 import { loadTables } from '../tools/data/load.ts';
 import { buildTestConfig } from './wording-fixture.ts';
 
@@ -203,5 +204,47 @@ describe('the quick rolls laid out by attribute', () => {
   it('gathers a roll on no known attribute under its own heading', () => {
     const groups = groupRollsByAttribute([row('odd', 'luck')], attributes, labels);
     expect(groups.map((g) => [g.id, g.label])).toEqual([['other', 'Anywhere']]);
+  });
+});
+
+describe('setting a Squadmate stat block template (data/character/squadmates.yaml)', () => {
+  const template = config.squadmateTemplates.find((m) => m.id === 'medic')!;
+  const built = (over: Partial<{ specialty: string; talent: string }> = {}) => [
+    { id: 'sp1', type: 'specialty', key: over.specialty ?? template.specialty },
+    { id: 'ta1', type: 'talent', key: over.talent ?? template.talent.id },
+  ];
+
+  it('ships the nine templates with their Specialty, their Talent, and their attributes', () => {
+    expect(config.squadmateTemplates).toHaveLength(tables.squadmates.templates.length);
+    expect(template).toMatchObject({ specialty: 'medic', talent: { id: 'field-medicine', level: 1 } });
+    expect(Object.keys(template.attributes).sort()).toEqual(config.attributes.map((a) => a.id).sort());
+  });
+
+  it('writes the attributes and takes the Specialty and the Talent from the compendia', () => {
+    const plan = planTemplate(template, built({ specialty: 'slayer', talent: 'clean-cut' }), { ...template.attributes, wits: 2 });
+    expect(plan.update).toMatchObject({ 'system.template': 'medic', 'system.attributes.wits': template.attributes.wits });
+    expect(plan.remove).toEqual(['sp1', 'ta1']);
+    expect(plan.create).toEqual([
+      { pack: 'specialties', key: 'medic', system: {} },
+      { pack: 'talents', key: 'field-medicine', system: { level: 1, used: false } },
+    ]);
+    expect(plan.changes).toEqual(['attributes', 'specialty', 'talent']);
+    expect(planIsEmpty(plan)).toBe(false);
+  });
+
+  it('changes nothing but the name when the file already reads as the template', () => {
+    const plan = planTemplate(template, built(), { ...template.attributes });
+    expect(plan).toEqual({ update: { 'system.template': 'medic' }, remove: [], create: [], changes: [] });
+    expect(planIsEmpty(plan)).toBe(true);
+  });
+
+  it('replaces the Talent of a file that carries more than one, and builds a blank file from nothing', () => {
+    const two = planTemplate(template, [...built(), { id: 'ta2', type: 'talent', key: 'lure' }], { ...template.attributes });
+    expect(two.remove).toEqual(['ta1', 'ta2']);
+    expect(two.changes).toEqual(['talent']);
+    const blank = planTemplate(template, [], {});
+    expect(blank.remove).toEqual([]);
+    expect(blank.create.map((c) => c.pack)).toEqual(['specialties', 'talents']);
+    expect(blank.changes).toEqual(['attributes', 'specialty', 'talent']);
   });
 });
