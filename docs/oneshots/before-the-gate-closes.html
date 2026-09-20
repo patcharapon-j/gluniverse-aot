@@ -28,6 +28,7 @@
 
 *,*::before,*::after{box-sizing:border-box}
 html{font-size:17px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+[id]{scroll-margin-top:1rem}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.55}
 main{max-width:46em;margin-inline:auto;padding-inline:max(16px,1.25rem);padding-block:1.5rem 6rem;display:flex;flex-direction:column;gap:1.1rem}
 main>*,section>*,.box>*,.read>*,.note>*,.statblock>*,.cover>*,.part>*,.npc>*,.enc>*,.grid>div>*{margin:0}
@@ -124,8 +125,44 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
 .steps>li{counter-increment:s;position:relative}
 .steps>li::before{content:counter(s);position:absolute;left:-2.2rem;top:.16em;width:1.6rem;font-family:var(--font-mono);font-size:.78rem;line-height:1.5;color:var(--on-band);background:var(--accent);text-align:center;border-radius:2px}
 .steps.gmsteps>li::before{background:var(--gm)}
-.topjump{position:fixed;right:14px;bottom:14px;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:var(--on-band);text-decoration:none;padding:.45rem .6rem;border-radius:3px;opacity:.9}
+.topjump{position:fixed;right:14px;bottom:14px;border:0;cursor:pointer;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:var(--on-band);text-decoration:none;padding:.45rem .6rem;border-radius:3px;opacity:.9}
 .topjump:hover{opacity:1}
+
+/* ---------- side rail ---------- */
+.railnav{
+  --rail-w:17rem;
+  position:fixed;top:0;bottom:0;left:0;width:min(var(--rail-w),86vw);z-index:40;
+  display:none;flex-direction:column;gap:.55rem;
+  background:var(--paper);border-right:1px solid var(--rule);
+  overflow-y:auto;overscroll-behavior:contain;
+  padding:1rem .75rem 3rem;
+  font-size:.8rem;line-height:1.32;
+}
+.railnav>*{margin:0}
+.railnav .railhead{display:flex;flex-direction:column;gap:.1rem;padding:0 .4rem .5rem;border-bottom:1px solid var(--rule)}
+.railnav .railhead .t{font-family:var(--font-head);font-weight:600;font-size:1rem;line-height:1.1;color:var(--ink)}
+.railnav .railhead .s{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.railnav .grp{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);padding:.65rem .4rem .15rem}
+.railnav ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:1px}
+.railnav a{display:block;padding:.2rem .4rem;border-left:2px solid transparent;border-radius:0 2px 2px 0;color:var(--ink);text-decoration:none}
+.railnav a:hover{background:var(--tint)}
+.railnav a.on{border-left-color:var(--accent);background:var(--tint);color:var(--accent);font-weight:600}
+.railnav .hot{padding:.1rem 0 .2rem}
+.railnav .hot ul{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.railnav .hot a{border:1px solid var(--rule);border-radius:3px;text-align:center;padding:.28rem .2rem;font-family:var(--font-head);font-weight:600;font-size:.74rem;color:var(--gm)}
+.railnav .hot a:hover{border-color:var(--gm);background:var(--tint)}
+.railnav .railclose{display:block;align-self:flex-start;margin:0 .4rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--rule);border-radius:3px;padding:.25rem .5rem;cursor:pointer}
+.railscrim{position:fixed;inset:0;background:rgba(10,14,12,.5);z-index:35;display:none}
+body[data-rail="open"] .railnav,body[data-rail="open"] .railscrim{display:flex}
+body[data-rail="open"] .railscrim{display:block}
+
+@media (min-width:1200px){
+  body{padding-left:17rem}
+  .railnav{display:flex}
+  .railnav .railclose{display:none}
+  .topjump{display:none}
+  body[data-rail="open"] .railscrim{display:none}
+}
 
 @media (max-width:520px){
   html{font-size:16px}
@@ -150,7 +187,8 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   li+li{margin-top:.18rem}
   .toc ol{display:block}
   a{color:inherit;text-decoration:none}
-  .topjump{display:none}
+  .topjump,.railnav,.railscrim{display:none!important}
+  body{padding-left:0}
   .tw{overflow:visible}
   .part,.actband{break-before:page}
   tr,.clock,.read,dl,.steps>li{break-inside:avoid}
@@ -161,6 +199,98 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   details:not([open])>*{display:block}
 }
 </style>
+<div class="railscrim" hidden></div>
+<nav class="railnav" id="rail" aria-label="Jump to section">
+  <button type="button" class="railclose" data-rail-close>Close</button>
+  <div class="railhead">
+    <span class="s">Wings of Freedom</span>
+    <a class="t" href="#top">Before the Gate Closes</a>
+  </div>
+
+  <div class="hot">
+    <p class="grp" style="padding-left:.4rem">At the table</p>
+    <ul>
+      <li><a href="#cardref">Titan card</a></li>
+      <li><a href="#ladder">Ladder</a></li>
+      <li><a href="#grabrules">The Grab</a></li>
+      <li><a href="#injuries">Injuries</a></li>
+      <li><a href="#p4">Titans</a></li>
+      <li><a href="#tracker">Tracker</a></li>
+    </ul>
+  </div>
+
+  <p class="grp">Part Zero &middot; Before You Play</p>
+  <ul>
+    <li><a href="#need">What you need</a></li>
+    <li><a href="#squad">The Squad and their gear</a></li>
+    <li><a href="#mood">Mood and tone</a></li>
+    <li><a href="#gmjob">What the GM never decides</a></li>
+    <li><a href="#budget">A time budget</a></li>
+  </ul>
+
+  <p class="grp">Part One &middot; The Rules</p>
+  <ul>
+    <li><a href="#roll">1 &middot; The roll</a></li>
+    <li><a href="#circ">2 &middot; Circumstances</a></li>
+    <li><a href="#push">3 &middot; Push and Cover</a></li>
+    <li><a href="#stress">4 &middot; Stress and Fear</a></li>
+    <li><a href="#bonus">5 &middot; Bonus Dice and Help</a></li>
+    <li><a href="#round">6 &middot; The round</a></li>
+    <li><a href="#pos">7 &middot; Positions and the Flight</a></li>
+    <li><a href="#card">8 &middot; The Titan&rsquo;s card</a></li>
+    <li><a href="#ladder">9 &middot; The Attention Ladder</a></li>
+    <li><a href="#cut">10 &middot; Cutting a Titan down</a></li>
+    <li><a href="#grabrules">11 &middot; The Grab</a></li>
+    <li><a href="#harm">12 &middot; Harm and death</a></li>
+    <li><a href="#gear">13 &middot; Gas, wear, falls</a></li>
+    <li><a href="#called">14 &middot; Called and Leg rolls</a></li>
+    <li><a href="#worked">15 &middot; One round, played out</a></li>
+  </ul>
+
+  <p class="grp">Part Two &middot; The Scenario</p>
+  <ul>
+    <li><a href="#truth">What is actually true</a></li>
+    <li><a href="#sunset">The Sunset Clock</a></li>
+    <li><a href="#route">The route</a></li>
+    <li><a href="#act1"><b>Act I</b> &middot; Orders Outside the Gate</a></li>
+    <li><a href="#enc1">&mdash; The One in the Wheat</a></li>
+    <li><a href="#act2"><b>Act II</b> &middot; Relay Station 18</a></li>
+    <li><a href="#act3"><b>Act III</b> &middot; Brandt&rsquo;s Hollow</a></li>
+    <li><a href="#enc3">&mdash; The Runner</a></li>
+    <li><a href="#act3alt">&mdash; If they rode for Karanes</a></li>
+    <li><a href="#endings">Endings</a></li>
+    <li><a href="#after">Afterwards</a></li>
+  </ul>
+
+  <p class="grp">Part Three &middot; The Cast</p>
+  <ul><li><a href="#p3">Voss, Linne, Anka, Tomas&hellip;</a></li></ul>
+
+  <p class="grp">Part Four &middot; The Titans</p>
+  <ul>
+    <li><a href="#titan-small">Standard Small</a></li>
+    <li><a href="#titan-abnormal">Sprinting Abnormal</a></li>
+    <li><a href="#titan-medium">Standard Medium</a></li>
+  </ul>
+
+  <p class="grp">Part Five &middot; GM&rsquo;s Screen</p>
+  <ul>
+    <li><a href="#cardref">The card and the Ladder</a></li>
+    <li><a href="#numbers">Numbers you will be asked for</a></li>
+    <li><a href="#injuries">Critical Injuries &mdash; all four</a></li>
+    <li><a href="#scarsref">Scars</a></li>
+  </ul>
+
+  <p class="grp">Part Six &middot; Handouts</p>
+  <ul>
+    <li><a href="#playercard">The player card</a></li>
+    <li><a href="#tracker">The GM tracker</a></li>
+    <li><a href="#orderslip">The order slip</a></li>
+  </ul>
+
+  <p class="grp">Appendix</p>
+  <ul><li><a href="#p7">Art prompts</a></li></ul>
+</nav>
+
 <main>
 
 <header class="cover" id="top">
@@ -248,7 +378,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   </ol>
 </nav>
 
-<a class="topjump" href="#contents">Contents</a>
+<button type="button" class="topjump" id="railtoggle" aria-controls="rail" aria-expanded="false">Contents</button>
 
 <!-- ============================================================ PART ZERO -->
 <div class="part" id="p0">
@@ -1293,7 +1423,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
 </section>
 
 <section>
-  <h3>Encounter &middot; The One in the Wheat <span class="tag bad">Titan Engagement</span></h3>
+  <h3 id="enc1">Encounter &middot; The One in the Wheat <span class="tag bad">Titan Engagement</span></h3>
   <div class="read">
     <p>The hedge on your left is two hundred metres of blackthorn and it has been the same hedge for twenty minutes. Then a section of it is not there any more.</p>
     <p>It comes out sideways, through the hedge rather than around it, the way weather comes through a hedge. Four metres, maybe five. Small enough that your first thought is that it is a person, and that thought lasts about half a second, because it is grinning, and the grin does not come off, and nothing about how it walks belongs to a person.</p>
@@ -1520,7 +1650,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
 </section>
 
 <section>
-  <h3>Encounter &middot; The Runner <span class="tag bad">Titan Engagement</span></h3>
+  <h3 id="enc3">Encounter &middot; The Runner <span class="tag bad">Titan Engagement</span></h3>
   <div class="enc">
     <h3>Setup</h3>
     <dl>
@@ -1860,7 +1990,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
 </div>
 
 <section>
-  <div class="statblock">
+  <div class="statblock" id="titan-small">
     <h3>Standard Small Titan <span class="tag bad">Act I</span></h3>
     <p class="flavor">Three to five metres. Small enough that the first look reads as a person, which is the worst thing about it.</p>
     <dl>
@@ -1898,7 +2028,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
     </div>
   </div>
 
-  <div class="statblock">
+  <div class="statblock" id="titan-abnormal">
     <h3>Sprinting Abnormal <span class="tag bad">Act III</span></h3>
     <p class="flavor">Seven metres of Medium-class body that has never once walked. Long legs, a head that lolls, and a way of going from full speed to completely still with nothing in between.</p>
     <div class="box gmbox" style="border-top-color:var(--gm)">
@@ -1950,7 +2080,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
     </div>
   </div>
 
-  <div class="statblock">
+  <div class="statblock" id="titan-medium">
     <h3>Standard Medium Titan <span class="tag bad">Act III &middot; Background</span></h3>
     <p class="flavor">Six to ten metres. The ordinary horror. It does not run and it does not need to.</p>
     <dl>
@@ -1995,7 +2125,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   <p>Print these pages. Everything you will actually reach for mid-round, and the four injury tables in full.</p>
 </div>
 
-<section>
+<section id="cardref">
   <h3>The card, and the Ladder</h3>
   <div class="two">
     <div class="box gmbox">
@@ -2028,7 +2158,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   </div>
 </section>
 
-<section>
+<section id="numbers">
   <h3>Numbers you will be asked for</h3>
   <div class="grid">
     <div class="box">
@@ -2099,7 +2229,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   </div>
 </section>
 
-<section>
+<section id="injuries">
   <h3>Critical Injuries &mdash; 2D6, all four tables</h3>
   <p class="small">The <b>non-lethal cap</b> is the row used when the rule says the injury cannot be lethal and the roll came up worse. Effects are dice penalties unless stated. <b>Down</b> means Down until treated.</p>
 
@@ -2164,7 +2294,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   <p class="small mut"><b>Burn</b> injuries &mdash; steam, corpse heat &mdash; use the same rows: double the healing days, every lethal row takes a <b>day</b> limit instead, and Treat Injury on one needs a medical kit or a spent medical unit.</p>
 </section>
 
-<section>
+<section id="scarsref">
   <h3>Scars &mdash; D66</h3>
   <p class="small">Gained when a Fear Roll row says so, and when a lethal Critical Injury is stabilized while you are alive. Re-roll a row you already hold. <b>Every Scar raises minimum Stress by 1 and Resolve by 1.</b> Five Scars and the soldier retires.</p>
   <div class="tw"><table>
@@ -2251,7 +2381,7 @@ pre{margin:0;font-family:var(--font-mono);font-size:.76rem;line-height:1.45;whit
   </div>
 </section>
 
-<section>
+<section id="tracker">
   <h3>The GM tracker</h3>
   <p class="small mut">One Engagement line, one row per Titan. Copy it out before you sit down.</p>
   <pre>ENGAGEMENT   Rating ________  Anchors ___/___   Round ___   Retreat ___/___   Retreat began: ___
@@ -2283,7 +2413,7 @@ SUPPLY       Rations ___   Flares ___   Medical ___   Shot ___
 SUNSET       [ ][ ][ ][ ][ ][ ][ ][ ]</pre>
 </section>
 
-<section>
+<section id="orderslip">
   <h3>Handout &mdash; the order slip</h3>
   <p class="small mut">Put this on the table face down at the start and turn it over when Weiss rolls up the map.</p>
   <div class="box">
@@ -2371,4 +2501,94 @@ TIMING:  Sunset 19:00. The east gate closes at 19:00 and is not held.
 </footer>
 
 </main>
+
+<script>
+(function () {
+  var rail = document.getElementById('rail');
+  var toggle = document.getElementById('railtoggle');
+  var scrim = document.querySelector('.railscrim');
+  var body = document.body;
+  if (!rail) return;
+
+  /* ---- open / close, narrow screens only ---- */
+  function wide() { return window.matchMedia('(min-width:1200px)').matches; }
+  function setOpen(on) {
+    body.setAttribute('data-rail', on ? 'open' : 'closed');
+    if (toggle) toggle.setAttribute('aria-expanded', on ? 'true' : 'false');
+    if (scrim) { if (on) { scrim.removeAttribute('hidden'); } else { scrim.setAttribute('hidden', ''); } }
+  }
+  setOpen(false);
+
+  if (toggle) toggle.addEventListener('click', function () {
+    setOpen(body.getAttribute('data-rail') !== 'open');
+  });
+  if (scrim) scrim.addEventListener('click', function () { setOpen(false); });
+  rail.addEventListener('click', function (e) {
+    var el = e.target.closest ? e.target.closest('a,[data-rail-close]') : null;
+    if (el && !wide()) setOpen(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && body.getAttribute('data-rail') === 'open') setOpen(false);
+  });
+  window.addEventListener('resize', function () { if (wide()) setOpen(false); });
+
+  /* ---- scroll spy ---- */
+  var links = Array.prototype.slice.call(rail.querySelectorAll('a[href^="#"]'));
+  var byId = {};
+  var items = [];
+  links.forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    (byId[id] = byId[id] || []).push(a);
+    if (items.indexOf(id) === -1) items.push(id);
+  });
+
+  var tops = [];
+  function measure() {
+    tops = items.map(function (id) {
+      var el = document.getElementById(id);
+      return { id: id, top: el.getBoundingClientRect().top + window.pageYOffset };
+    }).sort(function (a, b) { return a.top - b.top; });
+  }
+
+  var current = null;
+  function paint(id) {
+    if (id === current) return;
+    if (current && byId[current]) byId[current].forEach(function (a) { a.classList.remove('on'); a.removeAttribute('aria-current'); });
+    current = id;
+    if (!id || !byId[id]) return;
+    byId[id].forEach(function (a) { a.classList.add('on'); a.setAttribute('aria-current', 'true'); });
+    /* keep the active link in view inside the rail, without moving the page */
+    if (rail.scrollHeight > rail.clientHeight + 4) {
+      var a = byId[id][0];
+      var y = a.offsetTop;
+      if (y < rail.scrollTop + 24 || y > rail.scrollTop + rail.clientHeight - 48) {
+        rail.scrollTop = Math.max(0, y - rail.clientHeight / 2);
+      }
+    }
+  }
+
+  var queued = false;
+  function spy() {
+    queued = false;
+    if (!tops.length) return;
+    var y = window.pageYOffset + 140;
+    var id = null;
+    for (var i = 0; i < tops.length; i++) { if (tops[i].top <= y) id = tops[i].id; else break; }
+    if (window.innerHeight + window.pageYOffset >= document.documentElement.scrollHeight - 4) {
+      id = tops[tops.length - 1].id;
+    }
+    paint(id);
+  }
+  function onScroll() { if (!queued) { queued = true; window.requestAnimationFrame(spy); } }
+
+  measure(); spy();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { measure(); onScroll(); });
+  window.addEventListener('load', function () { measure(); onScroll(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); onScroll(); });
+})();
+</script>
 </html>
