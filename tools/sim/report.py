@@ -670,6 +670,17 @@ COVERAGE = {
          "other than Distant (section 6.7); the Grab's hold before its crush (`engine.Fight.grab_lands`). Not "
          "measured: the fall's reference Titan among two Focus Titans; with one Focus Titan it is always that Titan.",
          ["two_titans"]),
+        ("Failed Nape strikes", "Not measured",
+         "Round 3 review 1 (C6) added this case with ADR-0010's amendment and nothing measures it yet: the engine "
+         "counts no failed-strike outcome, so neither the share of failed strikes whose striker takes the Titan's "
+         "next resolved behavior nor the striker's second-strike rate is reported. It is read against the "
+         "lone-strike band when the instrumentation lands.", []),
+        ("The behavior roll under Frenzy", "Partly measured",
+         "Section 6.15 reports, per case, the share of resolved cards that retargeted, the share whose rolled entry "
+         "reached nobody, the Thrash share, and the share of behavior rolls Frenzy lifted off the die's face. Not "
+         "measured: the kill share by previous behavior and Broken parts broken out by Frenzy, and the share of "
+         "rolls resolving each table's result-1 entry by Frenzy, which section 4.1 still reports at Frenzy 0 only.",
+         []),
         ("The Expedition targets, once the Expedition rules exist.", "Deferred", "No Expedition rules in Phase 1.", []),
     ],
 }
