@@ -27,3 +27,6 @@ This fixture validates rendering and motion, not live Foundry persistence or eng
 - Live Foundry interaction is not checked.
 
 Merge verification: main's Play/Edit header, portrait controls and hover-card styles are preserved. The full suite passes all 376 tests with six fixture files temporarily normalized to LF; their original bytes were restored afterward. Without that normalization, six existing string-replacement tests fail on this Windows checkout. TypeScript, Svelte and production build checks pass, and the regenerated equipment browser fixture passes.
+
+## Compact header follow-up
+The PC resource strip stays on one row at the default 860px window width, verified down to 760px. Below 700px of sheet container space it uses the stacked layout. Fitted equipment is 56px tall; spare caps are 34px and the blade magazine is 43px. Browser checks cover eight widths from 400 to 1080px, animations and resource actions. Production build passes with the existing wording sync warnings. Live Foundry verification remains outstanding.

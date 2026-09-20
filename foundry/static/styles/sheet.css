@@ -958,7 +958,7 @@
 /* ODM mechanisms fitted into a worn equipment cradle. */
 .wof-sheet .vitals { grid-template-columns: minmax(0,.8fr) minmax(0,.8fr) minmax(0,.55fr) minmax(0,1.5fr) minmax(0,1.5fr); }
 .wof-sheet .gasv, .wof-sheet .bladev { padding: 8px; }
-.wof-sheet .odm-rig { overflow: hidden; position: relative; width: 100%; min-width: 0; padding: 7px 8px 9px; border: 1px solid #252c20; border-radius: 3px;
+.wof-sheet .odm-rig { overflow: hidden; position: relative; width: 100%; min-width: 0; padding: 5px 6px 6px; border: 1px solid #252c20; border-radius: 3px;
   background: repeating-linear-gradient(96deg, #b4ae8510 0 1px, transparent 1px 9px), linear-gradient(110deg,#454a38,#303a2b 45%,#414635);
   box-shadow: inset 0 1px 1px #b4ac7b80, inset 0 -2px 3px #111c15, 0 2px 3px #29231970; }
 .wof-sheet .odm-rig::before { content: ''; position: absolute; inset: 5px; border: 1px solid #8b8d6338; pointer-events: none; }
@@ -966,27 +966,27 @@
 .wof-sheet .rig-rivet { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: linear-gradient(120deg,#b5ae88,#404831); box-shadow: 0 1px 1px #131b11; }
 .wof-sheet .top-left { top: 3px; left: 3px; }.wof-sheet .top-right { top: 3px; right: 3px; }
 .wof-sheet .bottom-left { bottom: 3px; left: 3px; }.wof-sheet .bottom-right { bottom: 3px; right: 3px; }
-.wof-sheet .fitted-vessel, .wof-sheet .blade-assembly { position: relative; height: 76px; display: grid; align-items: center; }
-.wof-sheet .fitted-vessel svg, .wof-sheet .blade-assembly svg { max-height: 76px; }
+.wof-sheet .fitted-vessel, .wof-sheet .blade-assembly { position: relative; height: 56px; display: grid; align-items: center; }
+.wof-sheet .fitted-vessel svg, .wof-sheet .blade-assembly svg { max-height: 56px; }
 .wof-sheet .fitted-vessel { overflow: hidden; }
 .wof-sheet .rig-caption { display: flex; justify-content: space-between; align-items: center; font: 10px/1.4 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: #d0c6a5; padding: 0 5px 2px; }
 .wof-sheet .rig-caption span:last-child { font: 12px monospace; }
 .wof-sheet .tank-bay { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; padding: 4px; background: #17251980; border: 1px solid #697150; box-shadow: inset 0 2px 5px #0c190f; }
-.wof-sheet .tank-socket { min-width: 0; height: 43px; display: grid; place-items: center; background: linear-gradient(135deg,#35432f,#202c20); border: 1px solid #64704d; box-shadow: inset 1px 1px 2px #101c10; }
-.wof-sheet button.tank-cap { display: block; width: min(44px, 100%); height: 43px; min-height: 0; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; cursor: pointer; }
+.wof-sheet .tank-socket { min-width: 0; height: 34px; display: grid; place-items: center; background: linear-gradient(135deg,#35432f,#202c20); border: 1px solid #64704d; box-shadow: inset 1px 1px 2px #101c10; }
+.wof-sheet button.tank-cap { display: block; width: min(35px, 100%); height: 34px; min-height: 0; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; cursor: pointer; }
 .wof-sheet button.tank-cap svg { width: 100%; height: 100%; }
 .wof-sheet button.tank-cap:hover:not(:disabled) { filter: brightness(1.25); background: #7e8c5130; }
 .wof-sheet button.tank-cap:focus-visible { outline: 2px solid #e6d09a; outline-offset: 1px; }
 .wof-sheet button.tank-cap:disabled { cursor: default; }
 .wof-sheet .empty-socket { width: 29px; height: 29px; border-radius: 50%; background: radial-gradient(circle,#0f1c13 45%,#253721 60%,#0e190f 65%,#546040 70%,#23331e 77%); box-shadow: inset 0 2px 5px #070f09; }
 .wof-sheet .rig-empty-note { display: block; font: 10px var(--fb); color: #c9b995; text-align: center; padding-top: 3px; }
-.wof-sheet .blade-magazine { position: relative; height: 53px; display: grid; align-items: center; }
-.wof-sheet .blade-magazine > svg { max-height: 53px; }
+.wof-sheet .blade-magazine { position: relative; height: 43px; display: grid; align-items: center; }
+.wof-sheet .blade-magazine > svg { max-height: 43px; }
 .wof-sheet .equipment-status { display: flex; align-items: center; gap: 8px; }
 .wof-sheet .vitals .gasv .acts, .wof-sheet .vitals .bladev .acts { margin-top: auto; }
 .wof-sheet .rig-ghost { pointer-events: none; }
 .wof-sheet .vessel-out, .wof-sheet .gas-vent { position: absolute; inset: 0; }
-.wof-sheet .gas-vent { height: 76px !important; }
+.wof-sheet .gas-vent { height: 56px !important; }
 .wof-sheet .magazine-transfer { position: absolute; inset: 0; z-index: 2; }
 .wof-sheet .tank-swap .vessel-current { animation: odm-tank-in 850ms cubic-bezier(.2,.7,.3,1) both; }
 .wof-sheet .tank-swap .vessel-out { animation: odm-tank-out 700ms ease-in both; }
@@ -1015,7 +1015,7 @@
   .wof-sheet .odm-rig * { animation: none !important; }
   .wof-sheet .odm-rig .rig-ghost { display: none; }
 }
-@container wofsheet (max-width: 860px) {
+@container wofsheet (max-width: 700px) {
   .wof-sheet:not(.compact) .vitals { grid-template-columns: repeat(6,minmax(0,1fr)); }
   .wof-sheet:not(.compact) .vitals .vit { grid-column: span 2; padding: 8px; }
   .wof-sheet:not(.compact) .vitals .gasv, .wof-sheet:not(.compact) .vitals .bladev { grid-column: span 3; border-top: 1px solid var(--rule); }
@@ -1033,10 +1033,10 @@
 /* Health above Stress; Resolve belongs beside the Stress readout. */
 .wof-sheet .vitals { grid-template-columns: minmax(0,1.05fr) minmax(0,1fr) minmax(0,1fr); }
 .wof-sheet .body-vitals { display: grid; grid-template-rows: 1fr 1fr; min-width: 0; border-right: 1px solid var(--rule); }
-.wof-sheet .body-vitals .vit { padding: 10px 12px; border: 0; justify-content: center; gap: 5px; }
+.wof-sheet .body-vitals .vit { padding: 6px 8px; border: 0; justify-content: center; gap: 3px; }
 .wof-sheet .body-vitals .healthv { border-bottom: 1px solid var(--rule); }
 .wof-sheet .stress-resolve { display: grid; grid-template-columns: minmax(0,1fr) 72px; min-width: 0; }
-.wof-sheet .body-vitals .resolvev { border-left: 1px solid var(--rule); padding: 10px 8px; align-items: center; justify-content: start; margin: 10px 0; }
+.wof-sheet .body-vitals .resolvev { border-left: 1px solid var(--rule); padding: 6px; align-items: center; justify-content: start; margin: 6px 0; }
 .wof-sheet .resolvev .vhead { justify-content: center; }
 .wof-sheet:not(.compact) .body-vitals .vit .vhead,
 .wof-sheet:not(.compact) .body-vitals .vit > :last-child:not(.vhead) { margin-bottom: 0; }
@@ -1047,7 +1047,7 @@
 .wof-sheet.compact .body-vitals .vit { grid-column: auto; }
 .wof-sheet.compact .body-vitals .healthv { border-bottom: 1px solid var(--rule); }
 .wof-sheet.compact .body-vitals .resolvev { border-left: 1px solid var(--rule); }
-@container wofsheet (max-width: 860px) {
+@container wofsheet (max-width: 700px) {
   .wof-sheet:not(.compact) .vitals { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .wof-sheet:not(.compact) .vitals > .body-vitals { grid-column: 1 / -1; border-right: 0; grid-template-rows: auto auto; }
   .wof-sheet:not(.compact) .vitals .body-vitals .vit { grid-column: auto; padding: 8px 12px; }
