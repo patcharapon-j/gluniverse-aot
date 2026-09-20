@@ -6,6 +6,7 @@
   import { clickHealthBox, clickStressBox, fitBladeSet, fitCanister, openItem, ruinBladeInHandles, setField, spendGas, stepStress } from '../soldier-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
   import Dots from './Dots.svelte';
+  import EquipmentRig from './EquipmentRig.svelte';
   import HealthTrack from './HealthTrack.svelte';
   import StressTrack from './StressTrack.svelte';
 
@@ -30,6 +31,23 @@
   const STRIP_BOXES = 24;
   const stressBoxes = $derived(Math.max(6, d.stress_effective + 1));
   const bestSpare = $derived(s.spare_canisters.length ? s.spare_canisters.indexOf(Math.max(...s.spare_canisters)) : -1);
+
+  let equipmentBusy = $state(false);
+  let gasSwap = $state({ id: 0, index: -1, oldLevel: 0 });
+  async function swapTank(index: number) {
+    const oldLevel = s.gas_rating;
+    await equipmentAction(async () => {
+      const result = await fitCanister(actor, index);
+      if (result) gasSwap = { id: gasSwap.id + 1, index, oldLevel };
+    });
+  }
+  async function equipmentAction(action: () => Promise<unknown> | null | undefined) {
+    if (equipmentBusy || ro) return;
+    equipmentBusy = true;
+    try { await action(); } finally { equipmentBusy = false; }
+  }
+
+  const resolveTip = $derived([t('WOF.Sheet.resolve.short', { base: Math.ceil((s.attributes.instinct + s.attributes.empathy) / 2), scars: s.scars.length, grief: Math.min(s.grief, 3) }), d.resolve_unclamped < 0 ? t('WOF.Sheet.resolve.floorTip', { n: d.resolve_unclamped }) : ''].filter(Boolean).join('. '));
 
   const dry = $derived(s.gas_rating <= 0 || d.jammed || !odm);
 
@@ -68,8 +86,9 @@
 </script>
 
 <div class="vitals">
+  <div class="body-vitals">
   <!-- Health -->
-  <div class="vit" bind:this={hpEl}>
+  <div class="vit healthv" bind:this={hpEl}>
     <div class="vhead">
       <span class="lbl"><img class="ic s16" src={icon('harm-health')} alt="" />{t('WOF.Derived.health')}</span>
       <span class="down">
@@ -98,8 +117,9 @@
     {/if}
   </div>
 
+  <div class="stress-resolve">
   <!-- Stress -->
-  <div class="vit" bind:this={stEl}>
+  <div class="vit stressv" bind:this={stEl}>
     <div class="vhead">
       <span class="lbl"><img class="ic s16" src={icon('die-stress')} alt="" />{t('WOF.Derived.stress')}</span>
       <span class="note red">{t('WOF.Sheet.stress.min', { n: d.minimum_stress })}</span>
@@ -132,12 +152,16 @@
   </div>
 
   <!-- Resolve -->
-  <div class="vit" bind:this={rsEl}>
+  <div class="vit resolvev" bind:this={rsEl}>
     <div class="vhead"><span class="lbl">{t('WOF.Derived.resolve')}</span></div>
-    <div class="vrow"><span class="big" class:red={d.resolve <= 0}>{d.resolve}</span></div>
-    <span class="note" use:tooltip={d.resolve_unclamped < 0 ? t('WOF.Sheet.resolve.floorTip', { n: d.resolve_unclamped }) : null}>
-      {t('WOF.Sheet.resolve.short', { base: Math.ceil((s.attributes.instinct + s.attributes.empathy) / 2), scars: s.scars.length, grief: Math.min(s.grief, 3) })}
-    </span>
+    <div class="vrow">
+      <span class="big" class:red={d.resolve <= 0} role="img"
+        aria-label={t('WOF.Derived.resolve') + ': ' + d.resolve + '. ' + resolveTip}
+        use:tooltip={resolveTip}
+      >{d.resolve}</span>
+    </div>
+  </div>
+  </div>
   </div>
 
   <!-- Gas: the fitted canister's gauge, then the spares as tanks a click fits. -->
@@ -148,36 +172,17 @@
         {#if !odm}{t('WOF.Sheet.gas.noOdm')}{:else if d.jammed}{t('WOF.Derived.jammed')}{:else if s.gas_rating <= 0}{t('WOF.Sheet.gas.dry')}{:else}{t('WOF.Sheet.gas.odm', { current: odm.current, rating: odm.rating })}{/if}
       </span>
     </div>
-    <div class="vrow">
-      <span class="big" class:red={s.gas_rating <= 0}>{s.gas_rating}<small>/{view.fullGas}</small></span>
-      <span class="canister fitted" class:dry role="img" aria-label={t('WOF.Sheet.gas.level', { current: s.gas_rating, full: view.fullGas })}>
-        {#each Array.from({ length: view.fullGas }) as _, i (i)}<i class="gasbar" class:on={i < s.gas_rating}></i>{/each}
-      </span>
-      {#if odm}<Dots size="sm" groups={[{ cls: 'dg', n: odm.current }, { cls: 'dg o', n: odm.rating - odm.current }]} label={t('WOF.Sheet.gas.odmDice', { current: odm.current, rating: odm.rating })} />{/if}
-    </div>
-    <div class="tanks">
-      {#if s.spare_canisters.length}<span class="lbl">{t('WOF.Sheet.gas.spareTanks')}</span>{/if}
-      {#each s.spare_canisters as g, i (i)}
-        <button
-          type="button"
-          class="canister"
-          disabled={ro}
-          aria-label={t('WOF.Sheet.gas.fitThis', { n: i + 1, current: g, full: view.fullGas })}
-          use:tooltip={t('WOF.Sheet.gas.changeTip')}
-          onclick={() => after(fitCanister(actor, i), () => pulse(gasEl))}
-        >
-          {#each Array.from({ length: view.fullGas }) as _, j (j)}<i class="gasbar" class:on={j < g}></i>{/each}
-        </button>
-      {:else}<span class="note">{t('WOF.Sheet.gas.noSpare')}</span>{/each}
-    </div>
+    <EquipmentRig kind="gas" level={s.gas_rating} full={view.fullGas} spares={s.spare_canisters}
+      unavailable={dry} swapEvent={gasSwap} disabled={ro || equipmentBusy} onfit={swapTank} />
+    {#if odm}<Dots size="sm" groups={[{ cls: 'dg', n: odm.current }, { cls: 'dg o', n: odm.rating - odm.current }]} label={t('WOF.Sheet.gas.odmDice', { current: odm.current, rating: odm.rating })} />{/if}
     <div class="acts">
-      <button type="button" class="mini" disabled={ro || s.gas_rating <= 0} onclick={() => after(spendGas(actor), () => jolt(gasEl))}>{t('WOF.Sheet.gas.spend')}</button>
+      <button type="button" class="mini" disabled={ro || equipmentBusy || s.gas_rating <= 0} onclick={() => equipmentAction(() => spendGas(actor))}>{t('WOF.Sheet.gas.spend')}</button>
       <button
         type="button"
         class="mini"
-        disabled={ro || bestSpare < 0}
+        disabled={ro || equipmentBusy || bestSpare < 0}
         use:tooltip={t('WOF.Sheet.gas.changeTip')}
-        onclick={() => after(fitCanister(actor, bestSpare), () => pulse(gasEl))}
+        onclick={() => swapTank(bestSpare)}
       >{t('WOF.Sheet.gas.change')}</button>
     </div>
   </div>
@@ -188,23 +193,15 @@
       <span class="lbl"><img class="ic s16" src={icon('gear-blades')} alt="" />{t('WOF.Sheet.blades.title')}</span>
       {#if discipline}<span class="note">{discipline.used ? t('WOF.Sheet.blades.disciplineUsed') : t('WOF.Sheet.blades.disciplineReady')}</span>{/if}
     </div>
-    <div class="slots">
-      <span class="slot" class:on={!!inHandles} class:bad={!inHandles}>
-        <i class="blade" aria-hidden="true"></i>
-        <span class="note">{t('WOF.Sheet.blades.hand')}</span>
-        {#if inHandles}
-          <Dots size="sm" groups={[{ cls: 'dg', n: inHandles.rating }]} label={t('WOF.Sheet.blades.handDice', { current: inHandles.rating })} />
-        {:else}<b>{t('WOF.Sheet.blades.handEmpty')}</b>{/if}
-      </span>
-      <span class="slot">
-        <i class="box" aria-hidden="true"></i>
-        <span class="note">{t('WOF.Sheet.blades.stored')}</span>
-        <b>{carried.length}</b>
-      </span>
+    <EquipmentRig kind="blades" fitted={!!inHandles} carried={carried.length} />
+    <div class="equipment-status">
+      <span class="note">{t('WOF.Sheet.blades.hand')}</span>
+      {#if inHandles}<Dots size="sm" groups={[{ cls: 'dg', n: inHandles.rating }]} label={t('WOF.Sheet.blades.handDice', { current: inHandles.rating })} />
+      {:else}<b class="note red">{t('WOF.Sheet.blades.handEmpty')}</b>{/if}
     </div>
     <div class="acts">
-      <button type="button" class="mini" disabled={ro || !inHandles} use:tooltip={t('WOF.Sheet.blades.ruinTip')} onclick={() => after(ruinBladeInHandles(actor), () => jolt(bladeEl))}>{t('WOF.Sheet.blades.ruin')}</button>
-      <button type="button" class="mini" disabled={ro || !!inHandles || !carried.length} onclick={() => after(fitBladeSet(actor), () => pulse(bladeEl))}>{t('WOF.Sheet.blades.swap')}</button>
+      <button type="button" class="mini" disabled={ro || equipmentBusy || !inHandles} use:tooltip={t('WOF.Sheet.blades.ruinTip')} onclick={() => equipmentAction(() => ruinBladeInHandles(actor))}>{t('WOF.Sheet.blades.ruin')}</button>
+      <button type="button" class="mini" disabled={ro || equipmentBusy || !!inHandles || !carried.length} onclick={() => equipmentAction(() => fitBladeSet(actor))}>{t('WOF.Sheet.blades.swap')}</button>
     </div>
   </div>
 </div>
