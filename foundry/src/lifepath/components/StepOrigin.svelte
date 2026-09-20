@@ -35,7 +35,7 @@
   const talentOptions = $derived(
     (row?.talents ?? []).map((id) => {
       const x = talentInfo(tables, id);
-      return { id, title: x.name, sub: x.names, meta: t(`WOF.Lifepath.talentType.${x.type}`), icon: x.icon };
+      return { id, title: x.name, sub: x.names, meta: t(`WOF.Lifepath.talentType.${x.type}`), icon: x.icon, card: x.card };
     }),
   );
   const havenOptions = $derived((row?.havens ?? []).map((h) => ({ id: h, title: h })));

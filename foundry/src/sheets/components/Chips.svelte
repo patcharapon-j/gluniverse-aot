@@ -1,6 +1,8 @@
 <script lang="ts">
   /** A list of named ids as removable chips, with a picker to add one. */
-  import { t } from '../context.ts';
+  import { detailHover } from '../actions.ts';
+  import { hoverCards, t } from '../context.ts';
+  import type { DetailCard } from '../detail.ts';
 
   let {
     items,
@@ -8,7 +10,18 @@
     label,
     disabled = false,
     onchange,
-  }: { items: { id: string; name: string }[]; options: { id: string; name: string }[]; label: string; disabled?: boolean; onchange: (ids: string[]) => void } = $props();
+    card,
+  }: {
+    items: { id: string; name: string }[];
+    options: { id: string; name: string }[];
+    label: string;
+    disabled?: boolean;
+    onchange: (ids: string[]) => void;
+    /** The hover card of what a chip names, where it has one (detail.ts). */
+    card?: (id: string) => DetailCard | null;
+  } = $props();
+
+  const hover = hoverCards();
 
   let pick = $state('');
   const held = $derived(new Set(items.map((i) => i.id)));
@@ -17,7 +30,7 @@
 
 <span class="chips" role="group" aria-label={label}>
   {#each items as c (c.id)}
-    <span class="chip">
+    <span class="chip" class:named={!!card} use:detailHover={{ hover, card: () => card?.(c.id) ?? null }}>
       {c.name}
       {#if !disabled}<button type="button" aria-label={t('WOF.ItemSheet.removeNamed', { name: c.name })} onclick={() => onchange(ids.filter((x) => x !== c.id))}>✕</button>{/if}
     </span>

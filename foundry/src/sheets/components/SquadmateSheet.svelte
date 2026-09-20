@@ -8,11 +8,13 @@
   import { MOTION } from '../../motion/tokens.ts';
   import { rollAction } from '../../dice/roll-action.ts';
   import { motionMode, viewer } from '../../settings.svelte.ts';
-  import { contextMenu, dragItem, proseMirror, tooltip } from '../actions.ts';
-  import { setSheetContext, t } from '../context.ts';
+  import { contextMenu, detailHover, dragItem, proseMirror, tooltip } from '../actions.ts';
+  import { setHoverCards, setSheetContext, t } from '../context.ts';
+  import { HoverCards } from '../hover.svelte.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import { deleteItem, openItem, setField, setItem } from '../soldier-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
+  import DetailCards from './DetailCards.svelte';
   import Dots from './Dots.svelte';
   import EditBanner from './EditBanner.svelte';
   import ModeSwitch from './ModeSwitch.svelte';
@@ -27,6 +29,8 @@
   let { sheetState, sheet }: { sheetState: SheetState<SoldierView>; sheet: any } = $props();
   // svelte-ignore state_referenced_locally
   setSheetContext({ sheet, actor: sheet.document, state: sheetState, uid: `wof-${sheet.id}` });
+  const hover = new HoverCards();
+  setHoverCards(hover);
   // svelte-ignore state_referenced_locally
   const actor = sheet.document;
 
@@ -173,7 +177,7 @@
           <div class="block">
             <Sec n="2" title={t('TYPES.Item.talent')} hint={t('WOF.Squad.talentHint')} />
             {#if talent}
-              <div class="tal" data-item-id={talent.id} use:dragItem={{ item: actor.items.get(talent.id) }} use:contextMenu={itemMenu(talent.id, true)}>
+              <div class="tal" data-item-id={talent.id} use:dragItem={{ item: actor.items.get(talent.id) }} use:contextMenu={itemMenu(talent.id, true)} use:detailHover={{ hover, card: () => talent.detail }}>
                 <div class="tal-h">
                   <img class="ic" src={icon(talent.type === 'dice' ? 'talent-dice' : 'talent-rule')} alt="" />
                   <strong><button type="button" class="link" onclick={() => openItem(actor, talent.id)}>{talent.name}</button></strong>
@@ -245,3 +249,4 @@
   <footer class="foot"><span class="lbl">{t('WOF.Squad.footLeft')}</span><span class="lbl">{t('WOF.Sheet.foot.right')}</span></footer>
   {#if view.mode === 'edit'}<EditBanner edge="bottom" text={t('WOF.Sheet.mode.bannerText')} label={t('WOF.Sheet.mode.bannerLabel')} />{/if}
 </div>
+<DetailCards {hover} />

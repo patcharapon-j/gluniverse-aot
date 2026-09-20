@@ -211,7 +211,24 @@ export function lifepathTables(t: Tables, site: SiteWording): LpTables {
     performanceMerit: bands(t.trainingYears.performance_roll.merit_from_successes),
     classRank: t.classRank.rows.map((r) => ({ min: r.merit_min, max: r.merit_max, rank: r.class_rank, top10: r.top_10 })),
     exam: { stages, conditions: examConditions, responseCost: 1 },
-    talents: t.talents.talents.map((x) => ({ id: x.id, name: x.name, type: x.type, maxLevel: x.max_level ?? 1, names: x.names, conditional: Object.keys(x.condition ?? {}), specialties: x.specialties })),
+    talents: t.talents.talents.map((x) => {
+      const w = site.talents[x.id];
+      if (!w) throw new Error(`The website has no Talent "${x.id}". Fix data/character/talents.yaml or the website's loaders.`);
+      return {
+        id: x.id,
+        name: x.name,
+        type: x.type,
+        maxLevel: x.max_level ?? 1,
+        names: x.names,
+        conditional: Object.keys(x.condition ?? {}),
+        specialties: x.specialties,
+        description: w.description,
+        trigger: w.trigger,
+        effect: w.effect,
+        limit: w.limit,
+        actions: w.actions.map((a) => ({ id: a.slug, name: a.name, condition: a.condition })),
+      };
+    }),
     specialties: t.specialties.specialties.map((sp) => {
       const tmpl = templates.get(sp.squadmate_template);
       if (!tmpl) throw new Error(`The Specialty "${sp.id}" has no Squadmate template.`);
@@ -561,6 +578,7 @@ export function sweepConfigText(config: WofConfig, t: Tables): number {
   }
   for (const c of lp.exam.conditions) [c.name, c.description].forEach((x) => check(`The exam condition "${c.name}"`, x));
   for (const sp of lp.specialties) check(`The Specialty "${sp.name}"`, sp.summary);
+  for (const x of lp.talents) [x.description, x.trigger, x.effect, x.limit, ...x.actions.map((a) => a.condition)].forEach((v) => check(`The Talent "${x.name}"`, v));
   for (const [where, x] of wordingTexts(config.lifepathPage)) check(where, x);
   return n;
 }

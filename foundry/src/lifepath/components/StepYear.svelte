@@ -38,6 +38,7 @@
         icon: x.icon,
         badge: d.event!.talents.includes(id) ? undefined : t('WOF.Lifepath.year.curriculumBadge'),
         disabled: !open,
+        card: x.card,
         note: open ? undefined : t('WOF.Lifepath.year.capped'),
       };
     });

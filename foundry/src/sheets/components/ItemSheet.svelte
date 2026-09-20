@@ -9,12 +9,15 @@
   import { gainedInjuryState, type InjuryType } from '../../rules/harm.ts';
   import { motionMode } from '../../settings.svelte.ts';
   import { proseMirror, tooltip } from '../actions.ts';
-  import { setSheetContext, t } from '../context.ts';
+  import { actionCard, talentCard } from '../catalog-cards.ts';
+  import { setHoverCards, setSheetContext, t } from '../context.ts';
   import type { ItemView } from '../item-view.ts';
   import { TALENT_LIMITS } from '../item-view.ts';
+  import { HoverCards } from '../hover.svelte.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import { icon } from '../soldier-view.ts';
   import Chips from './Chips.svelte';
+  import DetailCards from './DetailCards.svelte';
   import Pips from './Pips.svelte';
   import Sec from './Sec.svelte';
   import Stepper from './Stepper.svelte';
@@ -22,6 +25,8 @@
   let { sheetState, sheet }: { sheetState: SheetState<ItemView>; sheet: any } = $props();
   // svelte-ignore state_referenced_locally
   setSheetContext({ sheet, actor: sheet.document, state: sheetState, uid: `wof-${sheet.id}` });
+  const hover = new HoverCards();
+  setHoverCards(hover);
   // svelte-ignore state_referenced_locally
   const item = sheet.document;
 
@@ -155,7 +160,7 @@
             <label class="check"><input type="checkbox" checked={s.used} disabled={ro} onchange={(e) => set('system.used', e.currentTarget.checked)} />{t('WOF.Item.Talent.FIELDS.used.hint')}</label>
           {/if}
           <span class="lbl">{t('WOF.Item.Talent.FIELDS.names.label')}</span>
-          <Chips items={view.entries} options={entryOptions} label={t('WOF.Item.Talent.FIELDS.names.label')} disabled={ro} onchange={(ids) => set('system.names', ids)} />
+          <Chips items={view.entries} options={entryOptions} label={t('WOF.Item.Talent.FIELDS.names.label')} disabled={ro} card={actionCard} onchange={(ids) => set('system.names', ids)} />
           <span class="lbl">{t('WOF.Item.Talent.FIELDS.specialties.label')}</span>
           <Chips items={view.specialties} options={specialtyOptions} label={t('WOF.Item.Talent.FIELDS.specialties.label')} disabled={ro} onchange={(ids) => set('system.specialties', ids)} />
         </div>
@@ -177,7 +182,7 @@
             {#each attributeOptions as a (a.id)}<option value={a.id}>{a.name}</option>{/each}
           </select>
           <span class="lbl">{t('WOF.Item.Specialty.FIELDS.talents.label')}</span>
-          <Chips items={view.talents} options={talentOptions} label={t('WOF.Item.Specialty.FIELDS.talents.label')} disabled={ro} onchange={(ids) => set('system.talents', ids)} />
+          <Chips items={view.talents} options={talentOptions} label={t('WOF.Item.Specialty.FIELDS.talents.label')} disabled={ro} card={talentCard} onchange={(ids) => set('system.talents', ids)} />
           {#if game.user?.isGM && view.editable}
             <span class="lbl">{t('WOF.Item.Specialty.FIELDS.squadmate_template.label')}</span>
             <input type="text" value={s.squadmate_template} onchange={(e) => set('system.squadmate_template', e.currentTarget.value.trim())} />
@@ -195,7 +200,7 @@
           <span class="lbl">{t('WOF.Item.Origin.FIELDS.attributes.label')}</span>
           <Chips items={view.attributes} options={attributeOptions} label={t('WOF.Item.Origin.FIELDS.attributes.label')} disabled={ro} onchange={(ids) => set('system.attributes', ids)} />
           <span class="lbl">{t('WOF.Item.Origin.FIELDS.talent_choice.label')}</span>
-          <Chips items={view.talents} options={talentOptions} label={t('WOF.Item.Origin.FIELDS.talent_choice.label')} disabled={ro} onchange={(ids) => set('system.talent_choice', ids)} />
+          <Chips items={view.talents} options={talentOptions} label={t('WOF.Item.Origin.FIELDS.talent_choice.label')} disabled={ro} card={talentCard} onchange={(ids) => set('system.talent_choice', ids)} />
           <span class="lbl">{t('WOF.Item.Origin.FIELDS.haven_choice.label')}</span>
           <textarea rows={Math.max(2, s.haven_choice.length)} value={s.haven_choice.join('\n')} placeholder={t('WOF.ItemSheet.lineList')} disabled={ro} onchange={(e) => set('system.haven_choice', e.currentTarget.value.split('\n').map((x) => x.trim()).filter(Boolean))}></textarea>
           <span class="lbl">{t('WOF.Item.Origin.FIELDS.canon_tie.character.label')}</span>
@@ -338,3 +343,4 @@
     {#if !descFirst}{@render entry(view.type === 'critical-injury' ? 4 : view.type === 'gear' ? 3 : 2)}{/if}
   </div>
 </div>
+<DetailCards {hover} />

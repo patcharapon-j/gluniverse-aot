@@ -9,6 +9,7 @@ import { healingDaysTotal, healthCells, type HealthCell, type InjuryType, type T
 import { actorPool, entryBlock, poolInputs } from '../dice/actor-pool.ts';
 import { previewPool, type PoolPreview } from '../rules/pool.ts';
 import type { MindEffect } from '../../tools/config-data.ts';
+import { actionDetail, talentDetail, type CatalogEntry, type DetailCard, type DetailRef, type TalentDetailInput } from './detail.ts';
 import { severityOf, type Severity } from './figure.ts';
 import type { SheetMode } from './mode.ts';
 import { lifepathOffer } from '../lifepath/wizard.ts';
@@ -30,6 +31,8 @@ export interface TalentView {
   hasLimit: boolean;
   text: string;
   forLine: string;
+  /** The card the row raises under the pointer (detail.ts). */
+  detail: DetailCard;
 }
 
 export interface GearView {
@@ -95,6 +98,8 @@ export interface RollView {
   icon: string;
   /** What the entry does, the website's first sentence, for the row's tooltip. */
   summary: string;
+  /** The card the row raises under the pointer (detail.ts). */
+  detail: DetailCard;
 }
 
 /** The quick rolls under one heading: an attribute, or the fixed rolls. */
@@ -279,28 +284,61 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
   );
 
   const talentItems = items.filter((i) => i.type === 'talent');
-  const talents: TalentView[] = talentItems.map((i) => {
+  const talentIcon = (i: any) => icon(i.system.type === 'dice' ? 'talent-dice' : 'talent-rule');
+  const forLine = (s: any) =>
+    s.type === 'dice'
+      ? t('WOF.Sheet.talentDice', { dice: s.effective_level, entries: entryNames(s.names) })
+      : s.limit !== 'none'
+        ? t(`WOF.TalentLimit.${s.limit}`)
+        : entryNames(s.names);
+  const talentInput = (i: any, entries: DetailRef[]): TalentDetailInput => {
     const s = i.system;
-    const isDice = s.type === 'dice';
     return {
       id: i.id,
-      talentId: s.talent_id,
       name: i.name,
-      img: i.img,
+      icon: talentIcon(i),
       type: s.type,
+      description: s.description ?? '',
+      trigger: s.trigger ?? '',
+      effect: s.effect ?? '',
       level: s.level,
       maxLevel: s.max_level,
+      effectiveLevel: s.effective_level,
+      limit: s.limit !== 'none' ? t(`WOF.TalentLimit.${s.limit}`) : '',
       used: s.used,
-      limit: s.limit,
-      hasLimit: s.limit !== 'none',
-      text: isDice ? s.effect : [s.trigger, s.effect].filter(Boolean).join(' '),
-      forLine: isDice
-        ? t('WOF.Sheet.talentDice', { dice: s.effective_level, entries: entryNames(s.names) })
-        : s.limit !== 'none'
-          ? t(`WOF.TalentLimit.${s.limit}`)
-          : entryNames(s.names),
+      entries,
+      specialties: ((s.specialties ?? []) as string[]).map((id) => (W.specialties as { id: string; name: string }[]).find((x) => x.id === id)?.name ?? id),
+      forLine: forLine(s),
+    };
+  };
+  // Two passes, so a card can name a card: each Talent first gets a card of its own with nothing
+  // named, which the action rows point at; the Talents' own cards then point back at those rows.
+  const talentRows = talentItems.map((i) => {
+    const s = i.system;
+    return {
+      item: i,
+      leaf: talentDetail(talentInput(i, [])),
+      row: {
+        id: i.id,
+        talentId: s.talent_id,
+        name: i.name,
+        img: i.img,
+        type: s.type as 'dice' | 'rule',
+        level: s.level,
+        maxLevel: s.max_level,
+        used: s.used,
+        limit: s.limit,
+        hasLimit: s.limit !== 'none',
+        text: s.type === 'dice' ? s.effect : [s.trigger, s.effect].filter(Boolean).join(' '),
+        forLine: forLine(s),
+      },
     };
   });
+  /** The character's own Talents that name an entry, each with its card. */
+  const talentRefs = (entryId: string): DetailRef[] =>
+    talentRows
+      .filter((r) => ((r.item.system.names ?? []) as string[]).includes(entryId))
+      .map((r) => ({ id: r.item.id, name: r.item.name, icon: talentIcon(r.item), note: (r.item.system.condition ?? {})[entryId] ?? '', card: r.leaf }));
 
   const gearItems = items.filter((i) => i.type === 'gear');
   const gear: GearView[] = gearItems.map((i) => {
@@ -402,8 +440,35 @@ export function buildSoldierView(actor: any, opts: { editable: boolean; notesHTM
       blockedReason,
       icon: actionIcon(e.id),
       summary: e.text?.does?.[0] ?? '',
+      detail: actionDetail({
+        entry: e as CatalogEntry,
+        icon: actionIcon(e.id),
+        rollLabel: fixed ? t('WOF.Sheet.rolls.fixed') : attrName(e.attribute ?? null),
+        pool,
+        why,
+        blockedReason,
+        fixed,
+        fixedDice: e.id === 'gas-roll' ? W.gas.rollDice : 1,
+        talents: talentRefs(e.id),
+      }),
     });
   }
+
+  // The Talents' own cards, now that the entries they name have theirs.
+  const rollCards = new Map(rolls.map((r) => [r.id, r.detail]));
+  const catalogById = W.actionCatalogById as Record<string, CatalogEntry>;
+  const entryRefs = (i: any): DetailRef[] =>
+    ((i.system.names ?? []) as string[]).map((id) => {
+      const entry = catalogById[id];
+      return {
+        id,
+        name: entry?.name ?? id,
+        icon: actionIcon(id),
+        note: (i.system.condition ?? {})[id] ?? '',
+        card: rollCards.get(id) ?? (entry ? actionDetail({ entry, icon: actionIcon(id), rollLabel: entry.attribute ? attrName(entry.attribute) : t('WOF.Sheet.rolls.fixed'), talents: talentRefs(id) }) : null),
+      };
+    });
+  const talents: TalentView[] = talentRows.map((r) => ({ ...r.row, detail: talentDetail(talentInput(r.item, entryRefs(r.item))) }));
 
   const scars: MindRowView[] = (source.scars as { row: string }[]).map((s, index) => {
     const row = scarRows.get(s.row);

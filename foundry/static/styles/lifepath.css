@@ -84,8 +84,8 @@
   transition: transform .12s var(--ease), box-shadow .12s var(--ease), border-color .12s var(--ease);
 }
 .wof-sheet .pick:not(:has(.pk-ic)) { grid-template-columns: minmax(0, 1fr); }
-.wof-sheet .pick:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--ink2); box-shadow: 0 3px 0 rgba(36, 31, 27, .2), 0 6px 10px rgba(60, 40, 20, .12); }
-.wof-sheet .pick:disabled { opacity: .5; cursor: default; }
+.wof-sheet .pick:hover:not(:disabled):not([aria-disabled=true]) { transform: translateY(-1px); border-color: var(--ink2); box-shadow: 0 3px 0 rgba(36, 31, 27, .2), 0 6px 10px rgba(60, 40, 20, .12); }
+.wof-sheet .pick:disabled, .wof-sheet .pick[aria-disabled=true] { opacity: .5; cursor: default; }
 .wof-sheet .pick.on { border: 1.5px solid var(--ink); background: var(--paper-hi); box-shadow: 2px 2px 0 var(--ink); opacity: 1; }
 .wof-sheet .pk-ic { width: 28px; height: 28px; mix-blend-mode: multiply; }
 .wof-sheet .pk-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-right: var(--s5); }

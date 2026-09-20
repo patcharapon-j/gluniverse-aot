@@ -4,7 +4,9 @@ import { dieIcon, esc } from '../../dice/card.ts';
 import type { AttributeId } from '../../rules/derived.ts';
 import type { LpTables } from '../../rules/lifepath.ts';
 import type { DieKind } from '../../rules/roll.ts';
+import { talentCard } from '../../sheets/catalog-cards.ts';
 import { t } from '../../sheets/context.ts';
+import type { DetailCard } from '../../sheets/detail.ts';
 
 export const attrName = (id: string): string => t(`WOF.Attribute.${id}`);
 export const attrIcon = (id: string): string => iconPath(`attr-${id}`);
@@ -30,12 +32,14 @@ export interface TalentInfo {
   names: string;
   maxLevel: number;
   specialties: string;
+  /** The hover card the choice raises, so a Talent is read in full before it is taken. */
+  card: DetailCard | null;
 }
 
 export function talentInfo(tables: LpTables, id: string): TalentInfo {
   const x = tables.talents.find((y) => y.id === id);
   const cat = CONFIG.WOF.actionCatalogById as Record<string, { name: string }>;
-  if (!x) return { id, name: id, type: 'rule', icon: iconPath('talent-rule'), names: '', maxLevel: 1, specialties: '' };
+  if (!x) return { id, name: id, type: 'rule', icon: iconPath('talent-rule'), names: '', maxLevel: 1, specialties: '', card: null };
   return {
     id,
     name: x.name,
@@ -44,6 +48,7 @@ export function talentInfo(tables: LpTables, id: string): TalentInfo {
     names: x.names.map((n) => cat[n]?.name ?? n).join(', '),
     maxLevel: x.maxLevel,
     specialties: x.specialties.map((s) => tables.specialties.find((sp) => sp.id === s)?.name ?? s).join(', '),
+    card: talentCard(id),
   };
 }
 
@@ -65,4 +70,6 @@ export interface PickOption {
   badge?: string;
   disabled?: boolean;
   note?: string;
+  /** The hover card this choice raises, where the thing chosen has one (sheets/detail.ts). */
+  card?: DetailCard | null;
 }

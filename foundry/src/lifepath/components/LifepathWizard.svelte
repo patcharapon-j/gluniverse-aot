@@ -5,7 +5,9 @@
   import { reveal } from '../../motion/fx.ts';
   import { MOTION } from '../../motion/tokens.ts';
   import { motionMode, viewer } from '../../settings.svelte.ts';
-  import { setSheetContext, t } from '../../sheets/context.ts';
+  import DetailCards from '../../sheets/components/DetailCards.svelte';
+  import { setHoverCards, setSheetContext, t } from '../../sheets/context.ts';
+  import { HoverCards } from '../../sheets/hover.svelte.ts';
   import type { SheetState } from '../../sheets/sheet-state.svelte.ts';
   import type { StepId } from '../../rules/lifepath-state.ts';
   import type { WizardView } from '../wizard-app.ts';
@@ -31,6 +33,8 @@
 
   // svelte-ignore state_referenced_locally
   setSheetContext({ sheet, actor: sheet.document, state: sheetState as any, uid: `wof-lp-${sheet.id}` });
+  const hover = new HoverCards();
+  setHoverCards(hover);
 
   const view = $derived(sheetState.view);
   const s = $derived(view.state);
@@ -141,3 +145,4 @@
     {/if}
   </footer>
 </div>
+<DetailCards {hover} />
