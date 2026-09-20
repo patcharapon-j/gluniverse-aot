@@ -113,7 +113,9 @@ export interface SetupChoice {
 export function titanStartPatch(actor: any, label: string): Record<string, unknown> {
   const s = actor.system.toObject();
   const parts = (s.body_parts as BodyPart[]).map((p) => ({ ...p, state: 'intact' as const, progress: 0 }));
-  const next = nextBehaviorFor(s.behavior_table.entries, parts, '', d6());
+  // A Titan that has just become a Focus Titan is at Frenzy 0 (behavior-procedure.yaml, next_behavior,
+  // frenzy_when), so its first Next Behavior is a plain D6 with no Frenzy to pass.
+  const next = nextBehaviorFor(s.behavior_table.entries, parts, '', d6(), 0);
   return {
     'system.body_parts': parts,
     'system.openings': 0,
@@ -462,7 +464,7 @@ async function rollNext(actor: any, previous: string, rec: Recorder, reveal: boo
   const s = actor.system.toObject();
   const parts = rec.get(actor, 'system.body_parts') as BodyPart[];
   const result = behaviorResult(d6(), frenzy, s.behavior_table.entries);
-  const next = nextBehaviorFor(s.behavior_table.entries, parts, previous, result);
+  const next = nextBehaviorFor(s.behavior_table.entries, parts, previous, result, frenzy);
   rec.set(actor, 'system.next_behavior', { entry: next, revealed: reveal });
   return next;
 }
@@ -522,15 +524,12 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
   let holder = snap.soldiers.find((s) => s.id === ev.holder)!;
   const s = actor.system.toObject();
   const retargetLines: string[] = [];
+  const ladderCtx = { titan: tRow, soldiers: snap.soldiers, grabbedBy: (id: string) => grabbedBy(snap, id), downCanMeet: E().downCanMeet, cardOf: (id: string) => tieCard(id, snap.cards, snap.wings), useCards: true };
   // batch F1: a Titan that cannot reach its Attention holder takes the next candidate down the
   // Attention Ladder who does meet the rolled entry's requirement, and its Attention moves with it.
   const rolled = (s.behavior_table.entries as any[]).find((e) => e.id === s.next_behavior.entry);
   if (rolled) {
-    const moved = retargetForEntry(
-      { titan: tRow, soldiers: snap.soldiers, grabbedBy: (id: string) => grabbedBy(snap, id), downCanMeet: E().downCanMeet, cardOf: (id: string) => tieCard(id, snap.cards, snap.wings), useCards: true },
-      rolled,
-      holder.id,
-    );
+    const moved = retargetForEntry(ladderCtx, rolled, holder.id);
     const to = moved ? snap.soldiers.find((x) => x.id === moved) : null;
     if (to && to.id !== holder.id) {
       holder = to;
@@ -539,7 +538,21 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
       retargetLines.push(tr('note.retargeted', { name: to.name, entry: rolled.name ?? rolled.id }));
     }
   }
-  const entry = chooseEntry(s.behavior_table.entries, s.next_behavior.entry, s.previous_behavior, s.body_parts, holder.positions[label]);
+  // resolving_a_card, choose, completed after round 3 review 1, M1: a fallback entry the holder
+  // cannot meet retargets the same way, over the candidates who meet the fallback's own
+  // position_requirement, and the move is real: Attention (and the note) move with it.
+  const entry = chooseEntry(s.behavior_table.entries, s.next_behavior.entry, s.previous_behavior, s.body_parts, holder.positions[label], (fallback) => {
+    const moved = retargetForEntry(ladderCtx, fallback, holder.id);
+    const to = moved ? snap.soldiers.find((x) => x.id === moved) : null;
+    if (!to) return null;
+    if (to.id !== holder.id) {
+      holder = to;
+      tRow.holder = to.id;
+      rec.set(actor, 'system.attention_holder', to.id);
+      retargetLines.push(tr('note.retargeted', { name: to.name, entry: fallback.name ?? fallback.id }));
+    }
+    return holder.positions[label];
+  });
   const targets = entryTargets(entry, holder.id, tRow, snap.soldiers, grabbedIn(snap));
   targets.sort((a, b) => (tieCard(a, snap.cards, snap.wings) ?? 99) - (tieCard(b, snap.cards, snap.wings) ?? 99));
   await rec.commit();

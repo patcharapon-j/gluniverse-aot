@@ -230,15 +230,23 @@ export function meetsBodyParts(entry: Pick<BehaviorEntry, 'body_parts_used'>, pa
 }
 
 /**
- * behavior-procedure.yaml, next_behavior.roll: the entry holding the D6 result, moved up (after 6
- * comes 1, skipping entries already checked) past any entry that is the previous behavior or whose
- * Body Parts the Titan lacks; Thrash when none can be rolled.
+ * behavior-procedure.yaml, next_behavior, roll, move-up (as amended after round 3 review 1, C3):
+ * the entry holding the total, moved up past any entry that is the previous behavior or whose Body
+ * Parts the Titan lacks. At Frenzy 0 the wrap stands (after 6 comes 1). At Frenzy 1 or more the roll
+ * never wraps: denied the top of the table, it turns back down from the total instead, to 1. Thrash
+ * when none can be rolled.
  */
-export function nextBehaviorFor(entries: readonly BehaviorEntry[], parts: readonly BodyPart[], previous: string, d6: number): string {
+export function nextBehaviorFor(entries: readonly BehaviorEntry[], parts: readonly BodyPart[], previous: string, total: number, frenzy = 0): string {
   const thrash = entries.find((e) => e.tier === 'thrash')?.id ?? 'thrash';
+  const order: number[] = [];
+  if (frenzy > 0) {
+    for (let r = total; r <= 6; r++) order.push(r);
+    for (let r = total - 1; r >= 1; r--) order.push(r);
+  } else {
+    for (let step = 0; step < 6; step++) order.push(((total - 1 + step) % 6) + 1);
+  }
   const checked = new Set<string>();
-  for (let step = 0; step < 6; step++) {
-    const result = ((d6 - 1 + step) % 6) + 1;
+  for (const result of order) {
     const entry = entries.find((e) => e.results.includes(result));
     if (!entry || checked.has(entry.id)) continue;
     checked.add(entry.id);

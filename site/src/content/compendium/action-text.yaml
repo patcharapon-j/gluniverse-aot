@@ -60,7 +60,7 @@ actions:
     does:
       - If the successes reach the Nape Depth, the Titan dies. If they fall short, each success creates 1 Opening, which your comrades can spend and you never can.
       - Openings, a grounded Titan, and Help can add Bonus Dice, up to the cap of 4. Its successes never count toward a later Nape strike, except as Openings.
-      - Making the strike counts as hooking into the Titan for the Attention Ladder only. It does not move you, and you are still at Blind Spot, anchored to the terrain behind the Titan and not on it. Because this roll needs a soldier who does not hold the Titan's Attention, a striker who draws that Attention onto themselves cannot strike again until the Attention moves.
+      - Making the strike counts as hooking into the Titan for the Attention Ladder only. It does not move you, and you are still at Blind Spot, anchored to the terrain behind the Titan and not on it. Because this roll needs a soldier who does not hold the Titan's Attention, a striker who draws that Attention onto themselves cannot strike again until the Attention moves: by a comrade's Draw Attention, by a decoy, or by the Titan retargeting to someone it can reach.
     pages: [fighting-titans, gear-and-odm]
 
   body-part-strike:

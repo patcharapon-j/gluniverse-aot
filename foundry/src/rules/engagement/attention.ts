@@ -155,20 +155,34 @@ export interface EntryLike {
 
 /**
  * resolving_a_card, choose: the Next Behavior's entry; Thrash when the Titan lacks its Body Parts;
- * its fallback when the holder does not meet the requirement; Thrash when that fallback is thrash,
- * is the previous behavior, or fails either test. Since decision batch 13 (13-9) the card retargets
- * first: call retargetForEntry and pass the Position of the soldier it returns, so the fallback is
- * reached only where no candidate meets the requirement at all.
+ * its fallback when the holder does not meet the requirement. Since decision batch 13 (13-9) the
+ * card retargets first: call retargetForEntry and pass the Position of the soldier it returns, so
+ * the fallback is reached only where no candidate meets the rolled entry's requirement at all. The
+ * fallback is then tested the same way (completed after round 3 review 1, M1): Thrash if it is
+ * thrash, is the previous behavior, or the Titan lacks its Body Parts; otherwise, if the holder does
+ * not meet the fallback's own position_requirement, `retarget` is asked whether any candidate does
+ * (the same Attention Ladder evaluation, over the narrowed set) — Thrash only when nobody meets that
+ * either. `retarget` is optional so this stays testable without a Ladder context; omitting it when a
+ * fallback needs one is the same as no candidate qualifying.
  */
-export function chooseEntry(entries: readonly EntryLike[], next: string, previous: string, parts: readonly BodyPart[], holderPosition: Position): EntryLike {
+export function chooseEntry(
+  entries: readonly EntryLike[],
+  next: string,
+  previous: string,
+  parts: readonly BodyPart[],
+  holderPosition: Position,
+  retarget?: (entry: EntryLike) => Position | null,
+): EntryLike {
   const thrash = entries.find((e) => e.tier === 'thrash')!;
   const e = entries.find((x) => x.id === next);
   if (!e || !meetsBodyParts(e, parts)) return thrash;
   if (e.position_requirement.includes(holderPosition)) return e;
   if (e.fallback === 'thrash' || e.fallback === 'none') return thrash;
   const f = entries.find((x) => x.id === e.fallback);
-  if (!f || f.id === previous || !meetsBodyParts(f, parts) || !f.position_requirement.includes(holderPosition)) return thrash;
-  return f;
+  if (!f || f.id === previous || !meetsBodyParts(f, parts)) return thrash;
+  if (f.position_requirement.includes(holderPosition)) return f;
+  if (retarget && retarget(f) !== null) return f;
+  return thrash;
 }
 
 /**

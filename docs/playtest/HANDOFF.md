@@ -11,8 +11,10 @@ State on 2026-09-15: Phase 1 is complete (`docs/rules/PROGRESS.md`). **Owner fee
 | Drafter brief: structure and voice | `docs/playtest/process/packet-brief.md` |
 | Review brief: checks and severity | `docs/playtest/process/packet-review-brief.md` |
 | Review task template (last used for round 3) | `docs/playtest/process/packet-review-task-template.md` |
+| Rule change review task (round 3's rules, not the packet) | `docs/playtest/process/round-3-rule-review-task.md` |
 | Codex review runner | `tools/codex/run-review.sh` |
 | Packet reviews | `docs/reviews/playtest-packet-review-1.md` to `-3.md`, each with `-codex.md`; `-3-fable.md` |
+| Round 3 rule change review, and the decider's rulings on it | `docs/reviews/round-3-rule-change-review-1.md`, `docs/reviews/round-3-review-decisions.md`; fix plan `docs/playtest/feedback/round-3/REVIEW-FIX-PLAN.md` |
 | Progress, open questions, decisions | `docs/rules/PROGRESS.md`, `docs/rules/OPEN-QUESTIONS.md` (197 entries), `docs/rules/DECISIONS-2026-09-14.md` (through batch 14) |
 | Simulator and report | `tools/sim/`, `docs/reviews/simulator-report.md` |
 

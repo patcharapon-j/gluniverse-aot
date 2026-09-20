@@ -87,7 +87,7 @@ export async function rollNextBehavior(actor: any): Promise<{ d6: number; entry:
   const rng = CONFIG.Dice?.randomUniform ? CONFIG.Dice.randomUniform() : Math.random();
   const d6 = Math.floor(rng * 6) + 1;
   const s = actor.system;
-  const entry = nextBehaviorFor(s.behavior_table.entries, s.body_parts, s.previous_behavior, d6);
+  const entry = nextBehaviorFor(s.behavior_table.entries, s.body_parts, s.previous_behavior, d6, s.frenzy);
   await actor.update({ 'system.next_behavior.entry': entry, 'system.next_behavior.revealed': false });
   return { d6, entry };
 }

@@ -63,7 +63,7 @@ const POSITION_WORDING: Record<string, string> = {
   'in-reach': "Within reach of its hands, on the ground or on anchors beside it.",
   'on-body': 'Hooked into the Titan or standing on it, anywhere but the Nape.',
   'blind-spot':
-    "Out of its sight with its Nape within reach. You are anchored to terrain behind the Titan, a tree or a roof, and you are not touching it: Blind Spot is a place in the world, not a place on the monster. The only Position a Nape strike is made from.",
+    "Out of its sight with its Nape within reach. You are anchored to terrain behind the Titan, hanging from a tree on your lines or standing on a roof, and you are not touching it: Blind Spot is a place in the world, not a place on the monster. Whether you are airborne follows the move that brought you there. The only Position a Nape strike is made from.",
 };
 
 /** The icon for each Position, from the site's Position set. */
