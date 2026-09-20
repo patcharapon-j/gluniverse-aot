@@ -29,3 +29,13 @@ Scope named by the owner for the work that follows: "the rule. Website and found
 | R3 | New, item 11 | "also i want to be more clabout after a nape strike. Is that people still in blind spot or on body. What actiom cause positiom changes. This might solve the steam issue." |
 | R4 | Item 9 | "for isometrix zone convat display i want it tobe on foundry canvas dirwctly. Make it a hero feature of this game system. So it must looks good like a game as well." |
 | R5 | Items 8 and 9 | "Also we might need to consider how the titian will move across the zone now that it is zone based as well." |
+
+## Owner decisions, 2026-09-20 (third pass)
+
+| # | Item | Owner's words | Status |
+|---|---|---|---|
+| D1 | Health | "for health I mean keep the orginal rules (crit cross off 1 box, like we just keep the current rule just add 2 to all starting heath)" | Settled |
+| D2 | Steam | "in that case keeping the current steam damage for now (orignial) player might just be frustred because they dont know the rules and I just roll 6 on that" | Settled, A4 withdrawn |
+| D3 | Positions | "ah then I run it wrong then, so it is right the stay in blind spot then on their turn the atten laddter focus on then, then what will be thier status? on body is the literally on body right? then characcter can goes form in reach to blind spot directly without going on body first? ... but please make it more clear" | Answered in ASSESSMENT item 11; clarity work is batch A |
+| D4 | The board | "we can ither used foundry canvas or custom ui entirely up to you, art twill be handled codex to generate later" | Our call: a custom board taking over the canvas area. Art list specified for Codex |
+| D5 | Titan movement | "please reinvent titan movment as suggested" | The Stride accepted, `zone-combat-design.md` section 3 |

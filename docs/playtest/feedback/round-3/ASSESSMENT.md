@@ -17,214 +17,96 @@ Two framing notes before the items.
 
 ---
 
-## 1. Health: 2 plus the current formula
+## 1. Health: add 2, and change nothing else
 
-**Owner's revision, 2026-09-20:** not `strength + agility`, but `2 + (strength + agility) / 2` rounded
-up. Everything else as proposed: an untreated Critical Injury crosses off two boxes, every damage
-value unchanged.
+**Owner's final form, 2026-09-20:** Health = `2 + (strength + agility) / 2` rounded up. An untreated
+Critical Injury crosses off **one** box, exactly as today. Every damage value unchanged.
 
-### What it gives
+### This is the smallest version of the change that exists
 
-Health becomes 4 to 6 buildable (Free Build), 6 for both the Rookie and the Veteran reference builds,
-7 for the Levi-grade, and 8 at the lifepath ceiling. Damage tolerance rises by a flat 2, which is a
-100% increase for the most fragile soldier and 50% for a Rookie. That is a real and legible buffer, and
-the numbers stay small enough to print as a single row of boxes. On the damage axis this does exactly
-what was asked.
+One line of the ruleset moves: the formula in `data/character/attributes.yaml`. `boxes_crossed_off`,
+Treat Injury, healing, the damage procedure and ADR-0005's Health paragraph are all untouched. Nothing
+new has to be explained at the table: every soldier simply has two more boxes.
 
-### What it costs, and this one matters
+| Strength + Agility | Health today | Health new | Untreated crits to Down | Damage to Down |
+|---|---|---|---|---|
+| 4 | 2 | 4 | 2 to **4** | 2 to **4** |
+| 5 or 6 | 3 | 5 | 3 to **5** | 3 to **5** |
+| 7 or 8 (Rookie, Veteran) | 4 | 6 | 4 to **6** | 4 to **6** |
+| 9 or 10 (Levi-grade) | 5 | 7 | 5 to **7** | 5 to **7** |
+| 11 | 6 | 8 | 6 to **8** | 6 to **8** |
 
-The version we assessed first (`strength + agility`, crits at two boxes) had one property that made it
-free: the number of untreated Critical Injuries that puts a soldier Down did not change for any build.
-**The `+2` version does not have that property.** With crits crossing two boxes, the count is
-`ceil(Health / 2)`, and adding a flat 2 to a halved value does not track it.
+Both axes soften by a flat 2.
 
-| Strength + Agility | Health today | Crits to Down today | Health at +2 | Crits to Down at +2 | Damage to Down today | at +2 |
-|---|---|---|---|---|---|---|
-| 4 | 2 | 2 | 4 | 2 | 2 | 4 |
-| 5 or 6 | 3 | 3 | 5 | 3 | 3 | 5 |
-| 7 or 8 | 4 | **4** | 6 | **3** | 4 | 6 |
-| 9 or 10 | 5 | **5** | 7 | **4** | 5 | 7 |
-| 11 | 6 | **6** | 8 | **4** | 6 | 8 |
+### What it costs, stated once and then left alone
 
-Read the bold rows. **Every build at today's Health 4 or above loses one Critical Injury of
-tolerance.** That covers the Rookie (Strength 4, Agility 3), the Veteran, the Levi-grade, and most Free
-Builds. A Rookie today goes Down on the fourth untreated Critical Injury; under this formula, the
-third.
+This is a **large reduction in Titan lethality**, and it should be said plainly so it is a choice rather
+than a surprise. Titan attacks bypass Health and inflict Critical Injuries directly (ADR-0005), so two
+extra boxes are two extra Titan attacks survived: 50% more for a Rookie, 100% more for the most fragile
+build. Every Critical Injury band and death band in ADR-0014 falls, and it moves **away** from the
+lethality target held in waiting under 7-12 (OQ-140), which wants roughly 0.125 PC deaths a fight
+against the 0.058 measured today.
 
-Since Titan attacks bypass Health and inflict Critical Injuries directly (ADR-0005), that is a **25%
-increase in Titan lethality for the reference Squad**, on the axis all the lethality bands are measured
-against. Two knock-on effects:
+**We still recommend taking it**, for a reason that outranks the target: the target was set before
+anyone had played, and the first session said soldiers felt too fragile. Play beats projection.
 
-- The simulator rerun stops being a check and becomes a **retune**. Every Critical Injury band, every
-  death band, and every bar limit in ADR-0014 moves.
-- It also **compresses the spread**. Crits to Down runs 2 to 6 today and 2 to 4 under this formula, so
-  buying Strength and Agility buys noticeably less survivability than it does now.
+What follows from that is a recommendation about the retune rather than about Health. **When lethality
+is put back, put it on the Titans, not on Health.** The levers are the Attack Dice pools (already the
+tuned value, keyed at 3 dice per former Severity point), Nape Depth, and Tempo. Keeping Health as a
+stable, generous, player-facing number and making the monsters carry the danger is the healthier split
+in any case: dying because the thing is strong reads better than dying because you had three boxes.
 
-### Our recommendation: take it anyway, knowingly, and measure it
+Two smaller effects, for the record:
 
-The direction is not wrong. Decision 7-12 (OQ-140) records a lethality target **in waiting** that the
-owner has already chosen: the default Squad should lose a PC about every 8 typical fights, roughly
-0.125 deaths a fight, against the 0.058 measured today. Nothing found so far reaches that by dice. A
-formula that raises Titan lethality about 25% for the builds actually in play is a step toward a target
-the owner already wants, arriving as a side effect of a change made for a different reason.
+- **The spread compresses toward survivability.** The most fragile build doubles its tolerance while
+  the Levi-grade gains 40%, so Strength and Agility buy relatively less than they do now.
+- **Damage-sourced Critical Injuries get rarer**, since damage reaches 0 Health less often.
 
-So: **take the `+2` formula as instructed.** Treat the simulator run as a retune rather than a check,
-and read the Medium death band first, since it sits at 0.058 against a cap of 0.06 and this change
-pushes it up.
+### Still open
 
-If the band overshoots and the owner does not want the lethality yet, there is one clean lever that
-needs no further design: **Health = 2 x today's Health** (that is, Strength plus Agility rounded up to
-an even number: 4, 6, 8, 10). The right-hand columns of the table above show it restores the old crits
-to Down at every total exactly, while still halving damage's weight. It is the same change with the
-numbers moved two steps, so it can be swapped in after the run without reopening anything.
-
-### Consequences that hold either way
-
-- **Healing is unaffected.** `data/harm/healing.yaml` `each_day` restores all Health lost to damage
-  when a day passes, so a bigger pool costs no extra recovery time. Only crossed-off boxes persist.
-- **Skirmish gets less lethal, and it is still the owner's call.** The musket deals 4 damage
-  (`data/skirmish/skirmish.yaml`), tuned against Health 4. At Health 6 no human weapon in the list can
-  Down a soldier in one hit. Options unchanged from the first pass: accept it, scale human weapon
-  damage, or decide after the Skirmish has been played. Note this one cuts against the lethality
-  direction of the Health change itself, so the two should be read together in the report.
-- **Damage-sourced Critical Injuries become rarer**, since damage reaches 0 Health less often.
-- **Sheet layout.** A row of 4 to 8 boxes. Easier than the 4 to 10 of the first proposal, but still a
-  change in three places.
+**Skirmish.** The musket deals 4 damage against a Rookie's new pool of 6, so no human weapon in the
+list can Down a soldier in one hit. Accept it, scale human weapon damage, or decide after the Skirmish
+has been played. Unchanged from the first pass, and now the only question left on this item.
 
 ### Files
 
 `data/character/attributes.yaml` (the formula, `reported_squad`, `reported_squad_health_2`),
-`data/harm/health.yaml` (`boxes_crossed_off`, `current`, restoring),
-`data/harm/critical-injuries.yaml` and `treat-injury.yaml` (two boxes crossed, two given back),
-`data/character/squadmates.yaml` (template Health recomputed), ADR-0005 (an amendment),
-ADR-0014 (reference build Health, the Health-dependent reported rows, and the retune),
-`docs/rules/02-character-creation.md` and `03-harm-and-mind.md`, the packet, the site sheet,
-`foundry/src/rules/derived.ts` and the actor sheet's box row.
+`data/character/squadmates.yaml` (template Health recomputed), ADR-0005 (a one-paragraph amendment),
+ADR-0014 (the reference build Health figures and the Health-dependent reported rows),
+`docs/rules/02-character-creation.md` and `03-harm-and-mind.md` (every quoted Health range), the packet,
+the site sheet, `foundry/src/rules/derived.ts`, and the Health box row on all three sheets, now 4 to 8
+boxes.
 
 ### Risk
 
-Low on the rules. **Moderate on the tuning**, which is new since the first pass: this is now a retune
-of the lethality bands rather than a check of them.
+Lowest possible on the rules, one line. **Moderate on the tuning**: a retune of every lethality band,
+downward.
 
 ---
 
-## 2. Steam at a Regeneration fill: keep it, make it gentler
+## 2. Steam: leave it exactly as it is
 
-**Owner's revision, 2026-09-20:** keep the trigger, reduce the severity. The owner also suspects the
-session's steam was their own error, because the soldiers were all On Body.
+**Owner's decision, 2026-09-20:** keep the current steam, both triggers and the current table. The
+frustration was that the table did not know the rule, and a 6 came up.
 
-### What actually happened
+We agree, and we would have argued for this once the diagnosis was clear. Three reasons:
 
-Worth saying plainly: **the rule fired correctly, and it was not a GM error.** The fill trigger names
-"every soldier who holds On Body relative to the Titan"
-(`data/engagement/titan-harm.yaml` `steam.triggers.regeneration-fill`). Blind Spot is deliberately not
-in that list. So the Nape strikers were never exposed to it; only soldiers who had climbed onto the
-body were, and they took it as written.
+1. **The rule was working.** The fill trigger names On Body only, so the Nape strikers were never
+   exposed; the soldiers who were scalded had climbed onto the body, which is what the rule taxes.
+2. **The Health change already softens it.** Against a Rookie's new pool of 6, the 6-face two-damage
+   result is a third of their Health rather than half, and the average fill costs 0.67 against 6 rather
+   than against 4. The number moved without touching the table.
+3. **The real fix is information, not arithmetic.** A card that says "the Titan's arm knits back
+   together. Everyone on its body is scalded", with the roll made by the players it affects (item 4),
+   and a board that shows who is on the body and who is behind it (item 11), turns an unexplained
+   two points of damage into a consequence the table saw coming.
 
-That means the design intent is already the right one: **fill steam is a tax on climbing the body, not
-on attacking the Nape.** What went wrong at the table was not the rule but the visibility of who was
-where, which is item 11 below, and the silence with which it applied, which is item 4. Both are being
-fixed. There is a good chance the fill steam reads completely differently once a card says "the Titan's
-arm knits back together. Everyone on its body is scalded" and the board shows who that is.
-
-### Recommendation
-
-Reduce it, and reduce it on the table rather than the trigger, so the rule stays one sentence.
-
-| Roll | Kill steam (unchanged) | Fill steam today | Fill steam proposed |
-|---|---|---|---|
-| 1 to 3 | 0 | 0 | 0 |
-| 4 | 1 | 1 | 0 |
-| 5 | 1 | 1 | 1 |
-| 6 | 2 | 2 | 1 |
-
-Average damage per fill drops from 0.67 to 0.33, and the two-point spike disappears, so a fill can
-never take a soldier from two boxes to Down. Combined with the Health change, the fill's weight against
-a Rookie's pool falls from one sixth of their Health to one eighteenth, which is a texture rather than a
-threat. The kill steam keeps its current table: a Titan's death should still be dangerous to be standing
-on.
-
-Implementation: `steam` gains a `rows` set per trigger rather than one shared table, which is a small
-schema change and makes future tuning of either one independent.
+If it still bites after those two land, the gentler fill table we drafted is in the history and can be
+dropped in without reopening anything.
 
 ### Files
 
-`data/engagement/titan-harm.yaml` (`steam.table` becomes per trigger), `docs/rules/05-titan-engagement.md`
-section 5.7, the packet, `foundry/src/rules/engagement/harm-rolls.ts` and `foundry/src/tracker/harm.ts`
-(`steamDamage` takes the trigger), `data/titans/tuning.yaml` (the reported rows).
-
-### Risk
-
-Very low.
-
----
-
-## 11. Where a soldier is after a Nape strike, and what changes a Position
-
-Raised by the owner alongside item 2, and we think it is the most valuable small item on the list,
-because it is the thing that made item 2 look like a bug.
-
-### The rules answer, which is unambiguous but nowhere stated in one place
-
-**A Nape strike does not move you. The striker is still in the Blind Spot afterwards.**
-
-`data/character/action-catalog.yaml` `nape-strike.requirements` ends with "Making the strike counts as
-hooking into the Titan". That sentence sets the `hooked-by-strike` flag
-(`data/engagement/attention.yaml`), which exists for exactly one purpose: the Attention Ladder's first
-rung is `hooked-into-its-body`, and the flag makes a striker meet it so a Nape striker who falls short
-draws the Titan onto themselves rather than onto a comrade. It is an Attention fact. It is not a
-Position change, and nothing in `positions.yaml` reads it.
-
-More generally, and this is the principle that should be written down:
-
-> **An action never changes a Position.** Only the soldier's own move changes it, plus the closed list
-> of rules that name a change.
-
-The complete list of what changes a Position today, gathered from `positions.yaml`, `grab.yaml`,
-`titan-harm.yaml`, `falls.yaml` and `carrying.yaml`:
-
-| What | Effect |
-|---|---|
-| The soldier's own move | One step, or a mount, dismount, or leave. An ODM move is a Flight |
-| Letting go | Instead of a move: fall, then In Reach |
-| Any fall | From On Body or Blind Spot to In Reach relative to the fall's reference Titan |
-| A Fear Roll's forced move | One step at the start of the next turn |
-| A Grab landing | The Grabbed soldier holds On Body relative to the holding Titan |
-| Being freed from a Grab | In Reach, with a fall first if they had been lifted |
-| A Behavior Table knock loose | Close to In Reach, with a fall |
-| The close rule | Becoming On Body or Blind Spot of one Titan sets the other Titan's close Position to In Reach |
-| A Titan becoming a Focus Titan | Everyone holds Distant relative to it |
-| A Focus Titan dying | Positions become relative to its corpse; On Body and Blind Spot read In Reach |
-| Being carried | The carried soldier moves with the carrier |
-| Starting placement, leaving, returning, a retreat's forced moves | As each rule states |
-
-And what does **not** change a Position, which is the half nobody can see: the Nape strike, the Body
-Part strike, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other action
-in the Catalog.
-
-### Recommendation
-
-1. **State the principle in the data.** A `changes_to_position` block in
-   `data/engagement/positions.yaml` holding the table above as a closed list, with the one-line
-   principle at the top. Nothing about the rules changes; the rule becomes findable.
-2. **Say it where the Nape strike is defined.** One sentence on the Catalog entry and in Chapter 5:
-   the striker stays in the Blind Spot, and hooking in is an Attention fact only.
-3. **A "where am I now" table in the packet and the quick reference**, built from the same block.
-4. **Make it visible in Foundry.** The tracker note after a Nape strike should say the striker is still
-   at Blind Spot and now counts as hooked in; `hooked-by-strike` should show as its own badge rather
-   than being invisible; and the Position cell should never look like it might have changed. Under item
-   8 this gets much better still, because the board draws the striker behind the Titan and the climber
-   on it, and the difference stops being a word.
-
-### Files
-
-`data/engagement/positions.yaml` (the new block), `data/character/action-catalog.yaml` (one sentence),
-`docs/rules/05-titan-engagement.md` sections 5.2 and 5.5, the packet and the quick reference, the site,
-`foundry/src/tracker/badges.ts` and the tracker notes.
-
-### Risk
-
-None. This is documentation of rules that already work, plus one badge.
+None. A6 is withdrawn from batch A.
 
 ---
 
@@ -425,25 +307,174 @@ rerun, and the Foundry display of item 9 to land with it rather than after it.
 
 ---
 
-## 9. The isometric hex display, on the canvas, as the hero feature
+## 9. The engagement board, as the hero feature
 
-**Owner's direction, 2026-09-20:** it goes on the Foundry canvas directly, not in a panel, and it has
-to look like a game.
+**Owner, 2026-09-20: on the Foundry canvas directly, a hero feature, and it has to look like a game.
+Then, on the second pass: canvas or custom UI is our call, and Codex will generate the art.**
 
-That settles the open question we had flagged, and it settles it the more ambitious way. It also makes
-items 8 and 9 one piece of work rather than two, because a canvas board is only truthful if the rules
-underneath it have a shared space to draw. Section 7 of `zone-combat-design.md` is rewritten around
-this: a native Foundry hexagonal grid where one hex is one zone, painted terrain tiles, a vertical
-layer that draws the attachment (on the Titan, in its blind spot, airborne on a tether, in its hand),
-Flights that animate along their route instead of teleporting, and drag-to-zone movement with the legal
-destinations and their Momentum costs lit up.
+**Our call: a custom board that takes over the canvas area during a Titan Engagement.** Not Foundry's
+token layer, not a separate window. Outside an engagement Foundry behaves exactly as it does today.
 
-One thing this touches that the other items do not: **ADR-0027 locks the system's look as flat and
-paper, with WebGL scoped to two small vitals widgets.** A canvas hero feature is not a contradiction of
-that, because the canvas is a different surface from the sheet, but it does need the ADR amended to say
-so and to set the canvas its own budget. The art language should stay the one that is already locked,
-painted plates and inked figures in the paper palette, so the board reads as the same product rather
-than a different game bolted on.
+The short reason: **Foundry's canvas has no vertical axis, and the vertical axis is this game.** On
+Body, Blind Spot, airborne on a tether, Grabbed in a hand, Pinned under a corpse are the most important
+facts on the screen, and a token on a 2D grid cannot express any of them. Meanwhile nothing the canvas
+is good at is wanted here: zones are 13 discrete cells, so continuous positioning, walls and vision are
+mostly things we would switch off. And the objection that first pushed us toward the canvas, that
+tokens standing on a map would contradict the rules, is answered better by replacement than adoption:
+during an engagement there is exactly one picture of the fight, because the other one is not on screen.
+
+It is built in PIXI, which ships inside Foundry and which the system already uses for token badges, and
+it renders from the same snapshot the tracker reads, so it is a renderer over the existing engine
+rather than a second source of truth. Full detail, the art list for Codex, and the two set pieces (the
+Flight arc and the Titan's Stride) are in section 7 of `zone-combat-design.md`.
+
+One thing this touches: **ADR-0027 locks the look as flat and paper, with WebGL scoped to two small
+vitals widgets.** The board is a new surface and needs the ADR amended to give it its own budget, with
+the art held to the locked language so it reads as the same product.
+
+---
+
+## 11. Positions made clear: Blind Spot, On Body, and what moves you
+
+The owner's questions, answered in order, then the fix. This turned out to be the most valuable item on
+the list, because every one of these answers is correct in the rules today and findable nowhere.
+
+### "So they stay in the Blind Spot, then the Attention Ladder focuses on them. What is their status?"
+
+**Their Position does not change. They are still at Blind Spot.** Attention and Position are two
+different facts about a soldier and neither one moves the other.
+
+What changed is that they now hold the Titan's Attention, and that has one sharp consequence:
+
+> A Nape strike requires that the soldier holds Blind Spot **and does not hold the struck Titan's
+> Attention** (`data/character/action-catalog.yaml`, `nape-strike.requirements`; ADR-0010).
+
+So the striker who draws Attention onto themselves is standing in exactly the right place and **cannot
+strike again** until the Attention moves. That is not a bug; it is the engine of the whole game. Getting
+it off them needs a comrade to Draw Attention, or a Break Attention roll with a decoy. This is what
+ADR-0010 means when it says teamwork comes from Titan Attention.
+
+The mechanism that put Attention on them is the `hooked-by-strike` flag. Making a Nape strike "counts
+as hooking into the Titan", which makes the striker meet the Attention Ladder's first rung
+(`hooked-into-its-body`), so a striker who falls short of the Nape Depth pulls the Titan onto themselves
+instead of onto a comrade. It is an Attention fact only. Nothing in `positions.yaml` reads it.
+
+**Their full status after a failed strike: Blind Spot, holding Attention, flagged as hooked in, locked
+out of the Nape strike until Attention moves, and the target of the Titan's next card.**
+
+### "On Body is literally on the body, right?"
+
+Yes. On Body is hooked into or standing on the Titan's body, anywhere but the Nape.
+
+**And here is the trap: Blind Spot is not on the Titan at all.** A soldier at Blind Spot is anchored to
+*terrain*, a tree or a roof, out of the Titan's sight with its Nape within reach. They are not touching
+it. The name sounds like a place on the monster and it is a place in the world behind the monster.
+
+We think this single misreading explains most of the confusion, including the steam incident: if you
+believe Blind Spot is a spot on the body, then "steam hits everyone On Body" sounds like it should hit
+the Nape strikers, and it does not.
+
+Everything follows from that one fact:
+
+- Steam at a Regeneration fill hits On Body and not Blind Spot, because Blind Spot is not on it.
+- The Urban terrain trait says a Blind Spot soldier "is anchored to a roof and is not airborne, so a Jam
+  does not drop them". They are on a roof.
+- Under zones (item 8) a Titan that strides away **leaves a Blind Spot soldier behind**, because they
+  were never attached to it, while an On Body soldier travels with it.
+
+### "Is it a tier, In Reach then On Body then Blind Spot, or do they branch?"
+
+**Both, depending on the terrain.** This is the honest answer and it is stated nowhere: the shape of the
+Position map is a property of the Anchor Rating, and the rows are buried in
+`data/engagement/anchor-ratings.yaml`.
+
+**Open** (0 anchors). There is nothing to anchor to, so the Blind Spot does not exist while the Titan
+stands. You cannot Nape strike a standing Titan on a plain:
+
+```
+Distant --- In Reach --- On Body
+```
+
+**Sparse** (1 anchor). One good tree. A chain: you reach the Nape by way of the body.
+
+```
+Distant --- In Reach --- On Body --- Blind Spot
+```
+
+**Wooded, Urban, Giant Forest** (2 to 3 anchors). A branch: from In Reach you may go onto the body
+**or** straight to the Blind Spot, and you can move between the two.
+
+```
+                      /--- On Body ---\
+Distant --- In Reach -                  - (joined)
+                      \--- Blind Spot -/
+```
+
+So the answer to "can a character go from In Reach to Blind Spot directly without going On Body first?"
+is **yes in Wooded, Urban and Giant Forest, no in Sparse, and there is no Blind Spot at all in Open.**
+A grounded Titan changes this again: every step among In Reach, On Body and Blind Spot can then be made
+on foot, and at the Open rating a grounded body finally joins On Body to Blind Spot.
+
+That is a real rule doing real work. Terrain decides whether you can get behind the thing, which is why
+the Corps fights in forests. It has simply never been drawn.
+
+### What changes a Position
+
+The closed list, and the principle that should head it:
+
+> **An action never changes a Position.** Only the soldier's own move, plus the rules named here.
+
+| What | Effect |
+|---|---|
+| The soldier's own move | One step, or a mount, dismount, or leave. An ODM move is a Flight |
+| Letting go | Instead of a move: a fall, then In Reach |
+| Any fall | From On Body or Blind Spot to In Reach relative to the fall's reference Titan |
+| A Fear Roll's forced move | One step at the start of the next turn |
+| A Grab landing | The Grabbed soldier holds On Body relative to the holding Titan |
+| Being freed from a Grab | In Reach, with a fall first if they had been lifted |
+| A Behavior Table knock loose | Close to In Reach, with a fall |
+| The close rule | Becoming On Body or Blind Spot of one Titan sets the other Titan's close Position to In Reach |
+| A Titan becoming a Focus Titan | Everyone holds Distant relative to it |
+| A Focus Titan dying | Positions become relative to its corpse; On Body and Blind Spot read In Reach |
+| Being carried | The carried soldier moves with the carrier |
+| Starting placement, leaving, returning, a retreat's forced moves | As each rule states |
+
+Not on the list, and this is the half nobody can see: the Nape strike, the Body Part strike, Break
+Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other action in the Catalog.
+None of them moves you.
+
+### The fix
+
+1. **A `changes_to_position` block** in `data/engagement/positions.yaml` holding the table above as a
+   closed list, with the principle at its head.
+2. **Say what Blind Spot is every time it is introduced.** "Anchored to terrain behind the Titan, not
+   on it." One clause, in the Position list, in Chapter 5, in the packet, and in the Foundry tooltip.
+3. **Draw the three maps.** The Open, Sparse and branching diagrams above belong in Chapter 5, on the
+   site, and in the packet's quick reference, one per Anchor Rating, next to the terrain that produces
+   them. This is the single highest-value page of the packet that does not exist yet.
+4. **One sentence on the Nape strike entry**: the striker stays at Blind Spot, hooking in is an
+   Attention fact, and holding Attention locks them out of striking again.
+5. **In Foundry**, show `hooked-by-strike` as its own badge, have the tracker note say the striker is
+   still at Blind Spot, and put the legal steps for the current terrain in the move menu so the shape
+   of the map is visible where the choice is made.
+
+### How item 8 finishes the job
+
+Under zones this stops being a diagram and becomes the picture. Blind Spot is a soldier standing behind
+the Titan in its zone, anchored to a roof; On Body is a figure on the Titan itself. The terrain
+dependence survives and becomes legible, because the Blind Spot's availability reads off the zone's own
+anchor rating, which is drawn on the tile: no anchors, no Blind Spot. The clarity work below is worth
+doing now regardless, because batch A ships long before batch E.
+
+### Files
+
+`data/engagement/positions.yaml`, `data/character/action-catalog.yaml`, `docs/rules/05-titan-engagement.md`
+sections 5.1, 5.2 and 5.5, the packet and its quick reference, the site's Chapter 5 pages and the
+diagrams, `foundry/src/tracker/badges.ts`, `view.ts` and the language file.
+
+### Risk
+
+None to the rules. This documents behaviour that already works, plus one badge and three diagrams.
 
 ---
 
@@ -451,18 +482,20 @@ than a different game bolted on.
 
 Grouped into the batches we would ship them in.
 
-### Batch A: harm numbers (rules, site, Foundry, packet)
+### Batch A: Health and Position clarity (rules, site, Foundry, packet)
 
 | # | Change | Where |
 |---|---|---|
-| A1 | Health formula becomes `2 + (strength + agility) / 2`, rounded up | `data/character/attributes.yaml`, ADR-0005, ADR-0014, Chapters 2 and 3, packet, site, `foundry/src/rules/derived.ts` |
-| A2 | An untreated Critical Injury crosses off two Health boxes; treating one gives two back | `data/harm/health.yaml`, `critical-injuries.yaml`, `treat-injury.yaml`, ADR-0005, Chapter 3, packet |
-| A3 | Every damage value unchanged; Skirmish lethality re-measured and reported | `data/skirmish/*` untouched, `data/titans/tuning.yaml` reported rows |
-| A4 | Squadmate template Health recomputed | `data/character/squadmates.yaml` |
-| A5 | Health box row re-laid out for up to 8 boxes | printed sheet, site sheet, Foundry actor sheet |
-| A6 | Steam keeps both triggers; the fill gets its own gentler table (0/0/0/0/1/1) | `data/engagement/titan-harm.yaml`, Chapter 5, packet, `foundry/src/rules/engagement/harm-rolls.ts` |
-| A7 | The closed list of what changes a Position, and the Nape strike sentence | `data/engagement/positions.yaml`, `action-catalog.yaml`, Chapter 5, packet, quick reference, site |
-| A8 | **Retune**, not a check: every Critical Injury and death band re-measured, Medium deaths read first | `tools/sim`, `docs/reviews/simulator-report.md`, `data/titans/tuning.yaml`, ADR-0014 |
+| A1 | Health formula becomes `2 + (strength + agility) / 2`, rounded up. Nothing else about harm changes | `data/character/attributes.yaml`, ADR-0005, ADR-0014, Chapters 2 and 3, packet, site, `foundry/src/rules/derived.ts` |
+| A2 | Squadmate template Health recomputed | `data/character/squadmates.yaml` |
+| A3 | Health box row re-laid out for up to 8 boxes | printed sheet, site sheet, Foundry actor sheet |
+| A4 | ~~Steam softened~~ **Withdrawn.** Steam keeps both triggers and its current table | none |
+| A5 | The closed list of what changes a Position, headed by "an action never changes a Position" | `data/engagement/positions.yaml` |
+| A6 | Blind Spot described as anchored to terrain behind the Titan, not on it, everywhere it is introduced | `positions.yaml`, Chapter 5, packet, site, Foundry tooltips |
+| A7 | The three Position maps drawn, one per Anchor Rating shape (Open, Sparse, branching) | Chapter 5, packet quick reference, site |
+| A8 | The Nape strike sentence: still at Blind Spot, hooking in is an Attention fact, Attention locks out the next strike | `data/character/action-catalog.yaml`, Chapter 5, packet |
+| A9 | `hooked-by-strike` badge, the striker's tracker note, legal steps shown in the move menu | `foundry/src/tracker/badges.ts`, `view.ts` |
+| A10 | **Retune**, downward: every Critical Injury and death band re-measured. Lethality goes back on the Titans, not on Health | `tools/sim`, `docs/reviews/simulator-report.md`, `data/titans/tuning.yaml`, ADR-0014 |
 
 ### Batch B: the GM is never blocked (Foundry)
 
@@ -504,7 +537,7 @@ Grouped into the batches we would ship them in.
 | E4 | Moves become zone steps, with the flying-over-terrain choice | `data/engagement/anchor-ratings.yaml`, `positions.yaml` |
 | E4b | **Titan movement**: the Stride toward the Attention holder, `stride` per Size Class, grounded Stride 0, wrecking made local, Blind Spot does not travel with the Titan | `data/engagement/size-classes.yaml`, `positions.yaml`, `titan-harm.yaml`, `titan-format.yaml`, `anchor-ratings.yaml`, Chapter 5, packet, Foundry |
 | E5 | Every rule that reads a Position re-checked against the derivation | falls, grab, retreat, carrying, attention, engagement-flow, engagement-end |
-| E6 | The isometric hex board | `foundry/src/tracker/components/Board.svelte` and a new zone layer |
+| E6 | The engagement board: a custom PIXI board taking over the canvas area during an engagement, with the Flight arc and the Stride animated | a new `foundry/src/board/`, `foundry/src/tracker/snapshot.ts`, ADR-0027 amended |
 | E7 | Retune and rerun: step counts change the tempo of closing to the Nape, and fallbacks fire less often once Titans close | `tools/sim`, ADR-0014 |
 | E8 | The simulator gains a spatial model, which it has none of today | `tools/sim` |
 
@@ -512,30 +545,24 @@ Grouped into the batches we would ship them in.
 
 ## Questions still open
 
-Answered on 2026-09-20: the Health formula (`+2`), steam kept and softened, the Position clarity work,
-and the canvas board. What is left:
+Settled on 2026-09-20: the Health formula (add 2, crits stay at one box), steam left exactly as it is,
+the Position clarity work, the Stride for Titan movement, and a custom board rather than the Foundry
+canvas. What is left:
 
-1. **Skirmish lethality.** With damage values unchanged, no human weapon can Down a soldier in one hit
-   any more. Accept, scale human weapon damage, or decide after the Skirmish has been played? Our
-   recommendation is to accept for this batch and read it in the report.
-2. **The lethality retune.** The `+2` formula raises Titan lethality about 25% for the reference builds
-   and moves the Medium death band, which sits at 0.058 against a cap of 0.06. If it overshoots, do we
-   take the step toward the OQ-140 target in waiting and re-cut the band, or swap in `Health = 2 x
-   today's Health`, which restores the old crits to Down exactly?
+1. **Skirmish lethality.** With damage unchanged and a Rookie at Health 6, no human weapon can Down a
+   soldier in one hit. Accept, scale human weapon damage, or decide after the Skirmish has been played?
+   We recommend accepting for this batch and reading it in the report.
+2. **Where lethality goes back.** The Health change lowers every band and moves away from the target in
+   waiting (7-12, OQ-140). We recommend putting it back on the Titans when the retune comes, through
+   the Attack Dice pools, Nape Depth and Tempo, rather than on Health. Confirm that direction?
 3. **Prompt timeout.** How long should an unanswered prompt card wait before the system rolls it, and
    should the default be "wait forever" at a live table?
-4. **Zones, the size of the step.** The smaller version keeps the four Position names as values derived
-   from zone plus attachment and is roughly one batch; the full version replaces them and is a redesign
-   with its own retune. We recommend the smaller. Confirm?
-5. **Field size.** Our proposal is 13 hexes as the default, 7 for a corridor fight and 19 for a set
-   piece. Confirm, or pick another default?
-6. **Titan reach and Size Class.** Does a Large Titan threaten adjacent zones, or does Size Class only
-   govern how far it moves? We lean on the simple version first.
-6b. **Titan movement.** Zones need a movement rule, because Titans have none today. We propose the
-   Stride: the Titan moves toward its Attention holder, up to its Size Class's Stride, before its card
-   resolves. Confirm the shape, and the starting Stride values (Small 1, Medium 2, Large 2, Abnormal 3).
-7. **Art budget for the board.** The canvas board needs a terrain tile set, Titan figures at three Size
-   Classes, and soldier pieces, all in the locked style. That is a real art batch and it gates the hero
-   feature. Confirm it goes in the same cycle?
+4. **Zones, the size of the step.** Derived Positions (our recommendation, roughly one batch) or a full
+   replacement (a redesign with its own retune)?
+5. **Field size.** 13 hexes as the default, 7 for a corridor fight, 19 for a set piece?
+6. **Stride values.** Small 1, Medium 2, Large 2, Abnormal 3, against a soldier's 1 zone on foot. The
+   rule is accepted; these are the numbers the simulator will move.
+7. **Does striding wreck the zones it crosses**, or only the `wreck` effect on the Titan's own zone? We
+   recommend the latter first, so the tuning lever stays where it already is.
 8. **Sequencing.** Batches A to D could be at the table within one cycle. Does E start in parallel, or
    after A to D have been played?
