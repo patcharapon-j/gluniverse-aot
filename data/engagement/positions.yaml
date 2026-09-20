@@ -25,8 +25,14 @@ positions:
     name: Blind Spot
     meaning: >-
       Out of the Titan's sight with its Nape within reach, anchored to terrain behind the Titan and
-      not on it. The soldier stands on a tree, a roof, or whatever else the Anchor Rating gives, and
-      is not touching the Titan. It is a place in the world, not a place on the monster. It is the
+      not on it. The soldier is anchored to a tree, a roof, or whatever else the Anchor Rating
+      gives, hanging from it on their lines or standing on it, and is not touching the Titan.
+      Whether they are airborne follows the move that brought them there, not the Position: an ODM
+      move leaves them airborne, as anywhere (data/gear/odm-gear.yaml, airborne), so a Jam drops
+      them (data/gear/odm-gear.yaml, jam) and a falling Titan's body misses them
+      (data/engagement/titan-harm.yaml, falling_titan, path, airborne); the Urban Terrain Trait
+      alone says the roof holds them and they are not airborne
+      (data/engagement/anchor-ratings.yaml, ratings, urban, terrain_trait). It is a place in the world, not a place on the monster. It is the
       only Position a Nape strike can be made from (ADR-0010). Making a Nape strike counts as
       hooking into the Titan for the Attention Ladder only (data/engagement/attention.yaml, flags,
       hooked-by-strike): the striker's Position does not change and they are still at Blind Spot
@@ -35,7 +41,9 @@ positions:
       Every rule that reads on-body reads on-body alone. Steam at a Regeneration fill burns the
       soldiers On Body and not those at Blind Spot, because Blind Spot is not on it
       (data/engagement/titan-harm.yaml, steam); the Urban Terrain Trait says a Blind Spot soldier is
-      anchored to a roof and is not airborne, because they are standing on one
+      anchored to a roof and is not airborne, because there they are standing on one, where at every
+      other rating they hang from their anchor and stay airborne (decision batch 13, 13-6, as read
+      after round 3 review 1, M4)
       (data/engagement/anchor-ratings.yaml, urban); and the Anchor Rating decides whether a Blind
       Spot exists at all while the Titan stands, because it is the terrain that makes it
       (data/engagement/anchor-ratings.yaml, ratings, open). Decision batch 13, 13-6; OQ-191.

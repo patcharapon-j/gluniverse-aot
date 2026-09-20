@@ -47,7 +47,9 @@ frenzy:
   starts_at: 0   # when the Titan becomes a Focus Titan, including the first Focus Titan of a Titan Engagement
   rises: >-
     By 1 at the frenzy end step of each round, for every living Focus Titan, never above the cap
-    (data/engagement/round.yaml, end_steps, frenzy). It never falls.
+    (data/engagement/round.yaml, end_steps, frenzy). It never falls. A Titan that enters at the
+    background-clocks end step enters after this step has run, so it stays at 0 through its first
+    full round; a Titan a flare brings in mid-round rises at that round's end.
   public: true   # it is on the GM's tracker (data/engagement/round.yaml, gm_tracker, focus_titan_row)
   used_by: >-
     The behavior roll, and nothing else (behavior_table, roll; data/engagement/behavior-procedure.yaml,
@@ -71,7 +73,9 @@ behavior_table:
   result_above_the_table: >-
     A total above the table's highest result reads as that highest result, which is 6, since every
     result from 1 to 6 belongs to exactly one entry (rows). So a Titan at Frenzy 3 rolling 5 reads 6
-    and takes the entry that holds result 6.
+    and takes the entry that holds result 6. If that entry cannot be rolled, a frenzied Titan's roll
+    turns back down the table and never wraps to 1 (data/engagement/behavior-procedure.yaml,
+    next_behavior, move-up).
   rows: >-
     Every result from 1 to 6 belongs to exactly one entry. An entry may cover more than one result,
     but all of an entry's results lie within one tier's pair (escalation), so an entry has exactly

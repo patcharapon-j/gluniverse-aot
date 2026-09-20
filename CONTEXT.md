@@ -326,7 +326,7 @@ A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden unt
 _Avoid_: queued attack
 
 **Frenzy**:
-A counter each Focus Titan holds, from 0 to 3. It starts at 0 when the Titan becomes a Focus Titan and rises by 1 at each round end, and it is added to the Titan's behavior roll, so the Titan walks up its own table as the fight drags. A total above the table's highest result reads as that result.
+A counter each Focus Titan holds, from 0 to 3. It starts at 0 when the Titan becomes a Focus Titan and rises by 1 at each round end, and it is added to the Titan's behavior roll, so the Titan walks up its own table as the fight drags. A total above the table's highest result reads as that result. An illegal result at the top of a frenzied Titan's table turns back down the table, never round to 1.
 _Avoid_: rage, enrage, escalation counter, anger
 
 **Telegraph**:
@@ -370,7 +370,7 @@ Where a soldier is relative to a Focus Titan: Distant, In Reach, On Body, or Bli
 _Avoid_: range, zone
 
 **Blind Spot**:
-The Position out of a Focus Titan's sight with its Nape within reach, anchored to terrain behind the Titan and not on it, and the only Position a Nape strike can be made from. It is a place in the world, not a place on the monster: the soldier stands on a tree or a roof and is not touching the Titan. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and leaves the striker at Blind Spot.
+The Position out of a Focus Titan's sight with its Nape within reach, anchored to terrain behind the Titan and not on it, and the only Position a Nape strike can be made from. It is a place in the world, not a place on the monster: the soldier is anchored to a tree or a roof, hanging from it or standing on it, and is not touching the Titan; whether they are airborne follows the move that brought them there. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and leaves the striker at Blind Spot.
 _Avoid_: rear, behind, a spot on the Titan
 
 **Opening**:

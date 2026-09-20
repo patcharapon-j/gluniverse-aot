@@ -208,7 +208,9 @@ evaluation:
         If the highest rung met is hooked-into-its-body and at least one soldier in the tied set
         holds the hooked-by-strike flag, keep only those soldiers. A soldier who has just struck
         the Nape comes before one who is only On Body, so a striker who falls short draws the
-        Titan's next behavior (ADR-0010; flag_duration).
+        Titan's Attention, and its next behavior when that behavior's position_requirement includes
+        blind-spot; when it does not, the card's choose step retargets (retargeting; ADR-0010, as
+        amended after round 3 review 1, C6; flag_duration).
     - id: narrow
       text: >-
         Take the ladder's lower rungs in order. At each, if at least one soldier in the tied set

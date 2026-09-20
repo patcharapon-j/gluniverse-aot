@@ -65,8 +65,11 @@ end_steps:
   - id: frenzy
     text: >-
       Raise every living Focus Titan's Frenzy by 1, never above its cap of 3
-      (data/engagement/titan-format.yaml, frenzy). A Titan that became a Focus Titan this round is
-      at 0 and rises to 1 here. It rises during a retreat as well, as the Regeneration clock does
+      (data/engagement/titan-format.yaml, frenzy). It raises only a Titan that is a Focus
+      Titan when this step runs, as the regeneration step fills only their clocks: a Titan that
+      entered mid-round when a flare filled its clock rises to 1 here, and a Titan that enters at
+      the background-clocks step, which comes after this one, enters at 0 and stays at 0 through
+      its first full round (data/engagement/background-titans.yaml, ticks; full_clock). It rises during a retreat as well, as the Regeneration clock does
       (data/engagement/background-titans.yaml, ticks, stopped). It never falls, and a corpse has
       none. This step changes no Next Behavior already rolled: a behavior roll takes the Frenzy that
       stood when it was rolled (data/engagement/behavior-procedure.yaml, next_behavior, frenzy_when;

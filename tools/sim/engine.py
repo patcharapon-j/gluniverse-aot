@@ -215,11 +215,23 @@ class Titan:
             stats["nb_rolls"] += 1
             if r != die:
                 stats["frenzy_lifts"] += 1
-        for i in range(6):
-            eid = self.by_result[(r - 1 + i) % 6 + 1]
+        for result in self.move_up_order(r):
+            eid = self.by_result[result]
             if eid != self.prev and self.parts_ok(self.entries[eid]):
                 return eid
         return self.thrash
+
+    def move_up_order(self, r):
+        """behavior-procedure.yaml, next_behavior, roll, move-up: the results tested, in order, from the total r.
+
+        The roll climbs the table from r. What happens at the top depends on Frenzy (decision batch 13, as amended
+        after round 3 review 1, C3). At Frenzy 0 it wraps, after 6 comes 1, as it always has. At Frenzy 1 or more it
+        never wraps: from 6 it turns back down, to the result below the total and on to 1, because Frenzy piles up
+        to four faces onto result 6 and a wrap would land every one of them on the table's weakest entry.
+        """
+        up = list(range(r, 7))
+        down = list(range(r - 1, 0, -1))
+        return up + (down[::-1] if self.frenzy == 0 else down)
 
     def choose(self, pos):
         """behavior-procedure.yaml, resolving_a_card, choose, without the retargeting step, which needs the Titan
@@ -1991,7 +2003,9 @@ class Fight:
                 self.steam(STEAM_AT_REGEN, "steam_regen")     # decision batch 8, 8-7: a fill that recovers a Body Part
             t.regen = 0
         # round.yaml, end_steps, frenzy (decision batch 13, 13-10): every living Focus Titan's Frenzy rises by 1 to
-        # its cap, during a retreat as well, and never touches a Next Behavior already rolled
+        # its cap, during a retreat as well, and never touches a Next Behavior already rolled. It raises only a Titan
+        # that is a Focus Titan when the step runs (round 3 review 1, C2), which this model cannot distinguish because
+        # it has no Background Titans: the one Focus Titan is present from the start.
         if not t.dead and t.frenzy < R.frenzy_cap:
             t.frenzy += 1
         if was_grounded and not t.grounded():

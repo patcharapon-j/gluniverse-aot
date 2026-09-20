@@ -3927,7 +3927,7 @@ An explicit `not_changed_by` line names what does not: the Nape strike, the Body
 
 ### 13-6: Blind Spot is a place in the world (OQ-191)
 
-**Decision.** Wherever Blind Spot is introduced, it says plainly that a soldier there is **anchored to terrain behind the Titan and is not on it**: on a tree or a roof, not touching the Titan. It is a place in the world, not a place on the monster.
+**Decision.** Wherever Blind Spot is introduced, it says plainly that a soldier there is **anchored to terrain behind the Titan and is not on it**: anchored to a tree or a roof, hanging from it or standing on it, not touching the Titan. It is a place in the world, not a place on the monster. Whether the soldier is airborne is not a property of the Position: it follows the move that brought them there, and only the Urban Terrain Trait says otherwise, so the Jam and the Falling Titan read exactly as they did (round 3 review 1, M4; `docs/reviews/round-3-review-decisions.md`).
 
 **Why.** This is the single most misread thing in the rules, and the misreading explains the steam incident: if Blind Spot sounds like a spot on the body, then "steam hits everyone On Body" sounds as if it should catch the Nape strikers, and it does not. Three existing rules only make sense on the correct reading: steam at a Regeneration fill burns On Body and not Blind Spot; the Urban Terrain Trait says a Blind Spot soldier is anchored to a roof and is not airborne; and the Anchor Rating decides whether a Blind Spot exists at all while the Titan stands.
 
@@ -3961,23 +3961,23 @@ A **grounded Titan** changes every map: every step among In Reach, On Body, and 
 
 **How the Ladder is read.** The Ladder's existing evaluation and tie-breaks in `data/engagement/attention.yaml`, restricted to the qualifying candidates, and nothing else. The candidate rules are untouched. No new rule of selection is invented, so the choice stays deterministic and the GM still picks nothing (ADR-0024, limit 8). `attention.yaml` records that the Ladder is read for this purpose and that Attention moves with it. Retargeting moves no soldier: it is not a change of Position (13-5).
 
-**Why.** Every fallback in every table written is `thrash`. With Attention on a soldier at Distant or Blind Spot a Medium Titan could not Bite or Grab **at all**, and two cards in three became Thrash, so the better the Squad played the more inert the monster became. That is what the first session felt. No Behavior Table is re-authored, and every `fallback` value stands.
+**Why.** Every fallback in every table written is `thrash`, but two. With Attention on a soldier at Distant or Blind Spot a Medium Titan could not Bite or Grab **at all**, and two cards in three became Thrash, so the better the Squad played the more inert the monster became. That is what the first session felt. No Behavior Table is re-authored, and every `fallback` value stands.
 
 **Rejected, and kept in the file.** Keeping the target and downgrading the entry to the highest-numbered one at or below the roll whose requirement the holder meets. It is workable and worse, because it keeps the Titan fixated on the person deliberately standing where it cannot hurt them, which is the problem. It stays as the alternative if retargeting measures badly.
 
-**ADR.** Amends ADR-0001 and ADR-0010.
+**ADR.** Amends ADR-0001 and ADR-0010. ADR-0010's batch 4b promise is narrowed by this, recorded after round 3 review 1 (C6; `docs/reviews/round-3-review-decisions.md`): a failed striker draws the Titan's Attention on every ladder, and its next behavior when that behavior can reach Blind Spot.
 
 ### 13-10: Frenzy (OQ-193)
 
 **Decision.** Each Focus Titan holds **Frenzy**: a whole number that **starts at 0** when it becomes a Focus Titan, **rises by 1 at a new round-end step**, and is **capped at 3**. Its behavior roll is **D6 plus Frenzy**, and **a result above the table's highest entry reads as the highest entry**, which is the entry holding result 6. Frenzy is public and sits on the Titan's tracker row. It adds no dice, changes no Attack Dice, no need, and no effect, and it moves no soldier. It never falls, a corpse has none, and a Background Titan has none until it becomes a Focus Titan. The GM never raises, lowers, or spends it (ADR-0024, limit 8).
 
-**The end step.** A new `frenzy` step sits between the regeneration step and the background-clocks step, so a Titan that entered at the end of the previous round starts its first full round clean and leaves the end step at Frenzy 1. Frenzy rises during a retreat, as Regeneration does.
+**The end step.** A new `frenzy` step sits between the regeneration step and the background-clocks step, and it raises only a Titan that is a Focus Titan when it runs, as the regeneration step fills only their clocks. So a Titan that enters at the background-clocks step of one round starts its first full round clean on both counts, its clock empty and its Frenzy 0, and first rises at the end of that round; a Titan a flare brings in mid-round rises with the others at that round's end. Frenzy rises during a retreat, as Regeneration does. (Corrected after round 3 review 1, C2, in `docs/reviews/round-3-review-decisions.md`: as first written this paragraph said the entrant left the end step at Frenzy 1, which the step order it chose does not produce.)
 
 **Why.** Every Behavior Table is already ordered terrorize to kill by result, so adding to the roll walks a Titan up its own table as a fight drags: it postures in round 1 and is trying to kill by round 3. It gives a fight a shape it did not have and gives the Squad a reason to commit rather than kite. It is self-correcting in the direction the design wants: a Squad that kills fast sees little Frenzy, and a Squad that grinds gets eaten.
 
 **No table is re-authored.** No file in `data/titans/` changes for this, and no `fallback` value or comment became wrong.
 
-**Measurement.** The rate and the cap are starting values the simulator moves in 13-2's rerun; the shape is settled.
+**Measurement.** The rate and the cap are starting values the simulator moves in 13-2's rerun; the shape is settled. The move-up rule's wrap is keyed to Frenzy 0 after round 3 review 1 (C3; `docs/reviews/round-3-review-decisions.md`).
 
 ### 13-11: When Frenzy counts (OQ-193)
 

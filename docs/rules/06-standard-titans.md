@@ -99,7 +99,7 @@ When an effect kills its target, that target receives none of the card's later e
 >
 > Titans go for people, not pain and not animals, so every entry acts on soldiers, and none on a horse.
 >
-> Read strictly, the Chapter 6 constraint says no state of previous behavior and Broken parts may push the kill share past one half. The Chapter 5 reference table would fail that reading (4 results in 6 with both arms Broken after Shake Off), so every table here was built to pass it. On the standard tables the kill results are 5 and 6, a control entry at 3 uses a Body Part kind only if the entry at 6 uses it too, and the entries at 4 and 5 use none. That layout is why several entries use no Body Part, and why their lines describe acts that need none. Giving those entries the part their first lines described breaks the limit:
+> Read strictly, the Chapter 6 constraint says no state of previous behavior and Broken parts may push the kill share past one half at Frenzy 0; Frenzy 1 to 3 climb past it by design (Chapter 5, section 5.4). The Chapter 5 reference table would fail that reading (4 results in 6 with both arms Broken after Shake Off), so every table here was built to pass it. On the standard tables the kill results are 5 and 6, a control entry at 3 uses a Body Part kind only if the entry at 6 uses it too, and the entries at 4 and 5 use none. That layout is why several entries use no Body Part, and why their lines describe acts that need none. Giving those entries the part their first lines described breaks the limit:
 > - **Small, Lurch Closer with a leg:** 0.67, after Scrabble with both arms and both legs Broken.
 > - **Medium, Snap Short with an arm** (it was a groping hand): 1.00, after Shake Off with the eyes and both arms Broken.
 > - **Medium, Shake Off with an arm:** 1.00.
@@ -385,7 +385,7 @@ Sensitivity rows name what they add. Beside them, every table reports ADR-0014's
 | Sprinting Abnormal | 0.50 | previous Pitch Headlong; nothing Broken | 1 | 5 of 6 |
 <!-- END RENDERED: shares -->
 
-Every table peaks at exactly one half. The Sprinting Abnormal can be left with one legal entry: after Veer, with both arms and a leg Broken, every result moves up to Pitch Headlong, which falls back to Thrash unless the holder is On Body or at Blind Spot. Every result still resolves.
+Every table peaks at exactly one half. That is at Frenzy 0, where the constraint binds. Frenzy adds to the roll and lifts every peak past one half by design, to every result in six at Frenzy 3 after the entry at result 4 (Chapter 5, section 5.4). The Sprinting Abnormal can be left with one legal entry: after Veer, with both arms and a leg Broken, every result moves up to Pitch Headlong, which falls back to Thrash unless the holder is On Body or at Blind Spot. Every result still resolves.
 
 The results each entry receives, by previous behavior, with nothing Broken, and by Broken parts, with no previous behavior:
 

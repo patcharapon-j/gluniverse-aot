@@ -1128,4 +1128,12 @@ simulator_cases:
   - Every case Chapter 6 adds (data/titans/tuning.yaml, simulator_cases), including the start-of-fight Fear Rolls for a first Titan Engagement and for an Abnormal, which fight.py does not make (OQ-105).
   - The four-striker Squad (4 eager strikers and no cutters) beside the baseline Squad on the reference Titan and every Chapter 6 table, reported beside every target as a sensitivity row; the prepared-Squad target is read under the baseline policy, and the simulator's report is the input to the open question on cutting legs (ADR-0014, as amended in decision batch 4b; decision batch 4b, 4b-2; OQ-112).
   - Horsemanship's dice on a dodge made with the horse only, never on foot (decision batch 5, OQ-121); Draw Attention only from a Position other than Distant (OQ-113); a Grab's hold before its crush (OQ-124); and a fall read relative to its reference Titan (OQ-123).
+  - "Failed Nape strikes: of strikes that fall short, the share whose striker is the target of the Titan's next
+    resolved behavior, and the striker's second-strike rate, a second Nape strike before the Titan's Attention
+    returns to them, by table and by Anchor Rating, read against the lone-strike band (ADR-0014; round 3
+    review 1, C6)."
+  - "The behavior roll under Frenzy: the share of rolls resolving each table's result-1 entry by Frenzy, which
+    the move-up rule's wrap at Frenzy 0 and its turn back down at Frenzy 1 or more decide (round 3 review 1,
+    C3); and the kill share by previous behavior, Broken parts, and Frenzy, read as a figure and not as a pass
+    or a fail (round 3 review 1, C4)."
   - The Expedition targets, once the Expedition rules exist.

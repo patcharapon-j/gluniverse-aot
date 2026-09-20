@@ -145,7 +145,9 @@ entries:
       change, and they are still at Blind Spot (data/engagement/positions.yaml, changes_to_position,
       not_changed_by). Because this entry requires that the soldier does not hold the struck Titan's
       Attention, a striker who draws that Attention onto themselves cannot strike again until the
-      Attention moves (decision batch 13, 13-7; OQ-191).
+      Attention moves: by a comrade's Draw Attention, by a decoy, or by the Titan retargeting to
+      someone it can reach (data/engagement/attention.yaml, evaluation, retargeting; decision batch
+      13, 13-7 and 13-9; OQ-191, OQ-192).
     needs: the struck Titan's Nape Depth
     changes: [titan-kill, openings-create]
     help_outside_titan_engagement: not taken outside a Titan Engagement

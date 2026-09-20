@@ -219,9 +219,13 @@ targets:
   every_standard_table:
     - The Jam test's worst cell stays under a third, for one and for two Titans of that class (OQ-72, OQ-96).
     - >-
-      No kill share by previous behavior exceeds one half at any state. Chapter 6 reads "any state" as
-      every previous behavior with every count of Broken eyes, arms, and legs, not only an unbroken
-      Titan (decision batch 4, OQ-101).
+      No kill share by previous behavior exceeds one half at any state at Frenzy 0. Chapter 6 reads
+      "any state" as every previous behavior with every count of Broken eyes, arms, and legs, not
+      only an unbroken Titan (decision batch 4, OQ-101). At Frenzy 1 to 3 the kill share rises past
+      one half by design, since that is the escalation decision batch 13 (13-10) intends: those
+      shares are figures the rerun reports by table, previous behavior, Broken parts, and Frenzy,
+      not constraints an author checks, and Frenzy's rate and cap are the levers if they read too
+      high (round 3 review 1, C4).
     - At most one result gives a grab effect and at most one a Critical Injury that can be lethal.
     - A holder at In Reach meets the Position requirement of at least four results in six.
   adr_0014_targets_quoted:

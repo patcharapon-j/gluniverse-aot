@@ -68,7 +68,9 @@ full_clock:
     text: >-
       The Background Titan becomes a Focus Titan with the next letter not yet used as a label in
       this Titan Engagement. It starts as data/engagement/engagement-flow.yaml (starting,
-      titan-values) states. Every soldier who holds a Position holds distant relative to it
+      titan-values) states. Its Frenzy is 0. When the clock filled at the background-clocks end
+      step, the frenzy step of that round has already run, so it stays at 0 through its first full
+      round (data/engagement/round.yaml, end_steps, frenzy). Every soldier who holds a Position holds distant relative to it
       (data/engagement/positions.yaml, two_focus_titans, entering). Evaluate its Attention Ladder:
       at the background-clocks end step no cards choose, and mid-round, after a flare, that round's
       cards break a tie (data/engagement/attention.yaml, evaluation, card and none; decision batch 4b,

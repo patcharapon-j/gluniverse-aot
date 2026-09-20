@@ -47,23 +47,35 @@ next_behavior:
         body_parts_used (data/engagement/titan-format.yaml, entry_fields).
     - id: move-up
       text: >-
-        If it cannot, take the entry that holds the next higher result (after 6 comes 1), skipping
-        entries already checked, and test it the same way. Repeat until an entry can be rolled.
+        If it cannot, take the entry that holds the next higher result, skipping entries already
+        checked, and test it the same way. Repeat until an entry can be rolled. What happens at the
+        top of the table depends on the Titan's Frenzy at the roll. At Frenzy 0, after 6 comes 1, as
+        it always has. At Frenzy 1 or more the roll never wraps: if the entry at 6 cannot be rolled,
+        turn back down and take the entry that holds the next result below the total, then the next
+        below that, to 1 (decision batch 13, as amended after round 3 review 1, C3). A frenzied
+        Titan denied the top of its table takes the most dangerous thing left to it, never the
+        bottom.
     - id: thrash
       text: If no entry can be rolled, the Next Behavior is Thrash.
   positions_not_checked: >-
     Rolling never checks Positions or Attention, because Attention is evaluated only when a card
     comes up.
   move_up_shares: >-
-    For Chapter 6's authors: an entry that cannot be rolled passes its share of results to the
-    entry above it. So the entry after the previous behavior, and the entry after one whose Body
+    For Chapter 6's authors: at Frenzy 0 an entry that cannot be rolled passes its share of results
+    to the entry above it, and the entry at 6 passes its share to the entry at 1. At Frenzy 1 or
+    more the entry at 6 passes its share to the entry at 5 instead, and so on down, so the faces
+    Frenzy piles onto result 6 never land on the table's weakest entry. So the entry after the previous behavior, and the entry after one whose Body
     Parts are Broken, are rolled more often until that changes. On the reference Titan with both
     arms Broken, Bite takes Grab's share. The simulator reports each table's kill share by previous
     behavior and by Broken parts (data/engagement/tuning.yaml, simulator_cases). Chapter 6 reads
     "any state" in its constraint as every previous behavior combined with every count of Broken
-    eyes, arms, and legs. Under that reading the reference Titan's table reaches a kill share of 4
-    in 6 (previous behavior Shake Off, both arms Broken), and every table in data/titans/ stays at or
-    under one half (data/titans/tuning.yaml, targets, every_standard_table; OQ-101).
+    eyes, arms, and legs. Under that reading, at Frenzy 0, the reference Titan's table reaches a kill
+    share of 4 in 6 (previous behavior Shake Off, both arms Broken), and every table in
+    data/titans/ stays at or under one half (data/titans/tuning.yaml, targets,
+    every_standard_table; OQ-101). The constraint is checked at Frenzy 0 only. At Frenzy 1 to 3
+    every table's kill share by previous behavior climbs past one half and reaches 6 in 6 at
+    Frenzy 3 after its result-4 entry, which is what Frenzy is for; the rerun reports those shares,
+    and no author checks them (round 3 review 1, C4).
 
 # ------------------------------------------------------------------ one Titan card
 resolving_a_card:
