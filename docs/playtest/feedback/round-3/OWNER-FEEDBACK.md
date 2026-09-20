@@ -28,3 +28,4 @@ Scope named by the owner for the work that follows: "the rule. Website and found
 | R2 | Item 2 | "keep the steam on regen but make it less severe. Maybe the reason player got it is my mistake because i think they got hit when they are all on body." |
 | R3 | New, item 11 | "also i want to be more clabout after a nape strike. Is that people still in blind spot or on body. What actiom cause positiom changes. This might solve the steam issue." |
 | R4 | Item 9 | "for isometrix zone convat display i want it tobe on foundry canvas dirwctly. Make it a hero feature of this game system. So it must looks good like a game as well." |
+| R5 | Items 8 and 9 | "Also we might need to consider how the titian will move across the zone now that it is zone based as well." |

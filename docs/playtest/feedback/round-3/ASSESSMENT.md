@@ -432,7 +432,7 @@ to look like a game.
 
 That settles the open question we had flagged, and it settles it the more ambitious way. It also makes
 items 8 and 9 one piece of work rather than two, because a canvas board is only truthful if the rules
-underneath it have a shared space to draw. Section 6 of `zone-combat-design.md` is rewritten around
+underneath it have a shared space to draw. Section 7 of `zone-combat-design.md` is rewritten around
 this: a native Foundry hexagonal grid where one hex is one zone, painted terrain tiles, a vertical
 layer that draws the attachment (on the Titan, in its blind spot, airborne on a tether, in its hand),
 Flights that animate along their route instead of teleporting, and drag-to-zone movement with the legal
@@ -502,9 +502,11 @@ Grouped into the batches we would ship them in.
 | E2 | The zone model: a hex field, per-zone terrain and anchor rating, occupants and effects | new `data/engagement/zones.yaml` |
 | E3 | Positions derived from zone plus attachment; the close rule and the comparison block retired | `data/engagement/positions.yaml` |
 | E4 | Moves become zone steps, with the flying-over-terrain choice | `data/engagement/anchor-ratings.yaml`, `positions.yaml` |
+| E4b | **Titan movement**: the Stride toward the Attention holder, `stride` per Size Class, grounded Stride 0, wrecking made local, Blind Spot does not travel with the Titan | `data/engagement/size-classes.yaml`, `positions.yaml`, `titan-harm.yaml`, `titan-format.yaml`, `anchor-ratings.yaml`, Chapter 5, packet, Foundry |
 | E5 | Every rule that reads a Position re-checked against the derivation | falls, grab, retreat, carrying, attention, engagement-flow, engagement-end |
 | E6 | The isometric hex board | `foundry/src/tracker/components/Board.svelte` and a new zone layer |
-| E7 | Retune and rerun: step counts change the tempo of closing to the Nape | `tools/sim`, ADR-0014 |
+| E7 | Retune and rerun: step counts change the tempo of closing to the Nape, and fallbacks fire less often once Titans close | `tools/sim`, ADR-0014 |
+| E8 | The simulator gains a spatial model, which it has none of today | `tools/sim` |
 
 ---
 
@@ -529,6 +531,9 @@ and the canvas board. What is left:
    piece. Confirm, or pick another default?
 6. **Titan reach and Size Class.** Does a Large Titan threaten adjacent zones, or does Size Class only
    govern how far it moves? We lean on the simple version first.
+6b. **Titan movement.** Zones need a movement rule, because Titans have none today. We propose the
+   Stride: the Titan moves toward its Attention holder, up to its Size Class's Stride, before its card
+   resolves. Confirm the shape, and the starting Stride values (Small 1, Medium 2, Large 2, Abnormal 3).
 7. **Art budget for the board.** The canvas board needs a terrain tile set, Titan figures at three Size
    Classes, and soldier pieces, all in the locked style. That is a real art batch and it gates the hero
    feature. Confirm it goes in the same cycle?

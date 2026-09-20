@@ -160,7 +160,151 @@ knowingly, not a silent change to every fight's tempo.
 
 ---
 
-## 3. The alternative we are not recommending
+## 3. How a Titan moves, which is a rule that does not exist yet
+
+Raised by the owner, 2026-09-20, and it is the most consequential thing anyone has found in this
+design. It needs its own section because the answer is not an adjustment. It is a new rule.
+
+### 3.1 Today, a Titan never moves. At all.
+
+This is worth stating flatly, because it is easy to miss and it is true. The closed list of behavior
+effects in `data/engagement/titan-format.yaml` `effect_types` is: stress, critical-injury, knock-loose,
+grab, wreck, telegraph. **None of them changes anyone's Position, and there is no Titan movement rule
+anywhere else in the ruleset.**
+
+The Large Titan's Heavy Tread entry reads "It walks straight at the soldier, and every step shakes the
+ground under everyone beside them", and mechanically it deals 1 Stress and a wreck. The walking is
+flavour. The Titan does not close.
+
+That is not an oversight. It is the necessary consequence of relative Positions: if every soldier's
+location is defined relative to the Titan, then the Titan is the origin of the coordinate system and it
+cannot move relative to itself. Instead, a Titan that cannot reach its Attention holder resolves its
+entry's **fallback** (usually Thrash). "The Titan is too far away to do this" is expressed as the card
+doing something else.
+
+### 3.2 Why zones break it
+
+Once there is a shared map, "the Titan never moves" stops being invisible and becomes absurd. A soldier
+who stands two zones away is permanently, provably safe. Every entry whose `position_requirement`
+includes Distant becomes nonsense, because the Titan can never arrive. The monster becomes scenery.
+
+So Titan movement is not an optional extra for the zone model. **The zone model cannot ship without
+it.** Good catch.
+
+### 3.3 The proposal: a Titan strides toward its Attention holder
+
+The design constraints are tight and they point at one answer:
+
+- **Titans do not roll** (ADR-0018), so movement cannot be a roll.
+- **Titans act from Behavior Tables** (ADR-0001), so movement should come from the cards.
+- **The GM never picks a row, a fallback, a target, or an order** (ADR-0024, limit 8), so the GM must
+  not be choosing where the Titan walks either.
+
+All three are satisfied if movement has a determined destination, and the game already has exactly one:
+**Attention**.
+
+> **The Stride.** When a Focus Titan's card resolves and its Attention holder is not in its zone, the
+> Titan first moves toward that soldier by the shortest route, up to its **Stride** in zones. The
+> entry's `position_requirement` is then checked as it is today: if the Stride brought the holder into
+> reach, the entry happens; if not, the fallback happens.
+
+Stride by Size Class, as a starting value for the simulator to move:
+
+| Class | Tempo | Stride | Zones per round |
+|---|---|---|---|
+| Small | 2 | 1 | 2 |
+| Medium | 1 | 2 | 2 |
+| Large | 1 | 2 | 2 |
+| Sprinting Abnormal | 2 | 3 | 6 |
+
+The Abnormal's number is the point of the Abnormal. It should cross the field.
+
+### 3.4 Why this is the right answer and not just a workable one
+
+- **It needs no new decision from anybody.** The destination is derived, so ADR-0024 is untouched and
+  the GM does not become a chess player.
+- **It makes Attention physical.** Drawing Attention already takes the Titan off a comrade; now it
+  drags fifteen metres of monster across the map. A decoy does not redirect an abstraction, it moves the
+  thing. This is the single biggest upgrade the zone model gives the existing teamwork loop, and it
+  costs nothing because the Attention Ladder is unchanged.
+- **Every existing Behavior Table keeps working, unedited.** Entries requiring Distant describe what
+  happens as it closes; entries requiring In Reach happen once it has. The stat blocks in `data/titans/`
+  do not need reopening, which was the same reason we recommended deriving Positions rather than
+  replacing them.
+- **The fiction already says it.** Heavy Tread and Run Past are written as the Titan crossing ground.
+  The rule finally does what the text has always claimed.
+
+### 3.5 The consequences, which are mostly gifts
+
+**Breaking a leg pins it in place.** A grounded Titan is one with at least one Broken leg
+(`data/engagement/titan-harm.yaml` `grounded`), and the data already notes that a grounded Titan does
+not walk (OQ-109). So **Stride 0 while grounded.** Today breaking a leg changes which Position steps
+are available; under zones it stops the monster from following you. That is an enormous increase in the
+value of an existing mechanic, for free, and it gives a Squad a real answer to "we need to get out of
+here".
+
+**On foot, you cannot escape, and that is the premise of the game.** A Titan covering 2 zones a round
+against a soldier's 1 zone on foot means fleeing on foot fails. ODM with Momentum spent on Carry, and a
+horse, are what let you outpace it. The setting's central claim, that ODM gear is the only reason
+humans can fight these things, becomes a mechanical fact rather than a flavour note.
+
+**The Blind Spot becomes genuinely precarious.** A soldier at Blind Spot is anchored to terrain, not
+hooked into the Titan (`positions.yaml`), so **they do not move with it.** If the Titan strides away,
+it walks out from under them and they are left anchored in the zone it left, now Distant. A soldier On
+Body or Grabbed does move with it. That is a legible risk-reward split between the two ways of being
+close, and it feeds directly into the clarity work of item 11: on the canvas board you would watch it
+happen.
+
+**Wrecking becomes spatial.** The `wreck` effect currently removes 1 Anchor from the whole engagement.
+Under zones it should remove one anchor-rating step from **the Titan's current zone**, so the monster
+flattens the ground it is standing on and the battlefield degrades where it has been. Fighting it in
+the ruins it already levelled is worse than fighting it in the part of town it has not reached. We
+recommend that striding through a zone does **not** wreck by itself, so the tuning lever stays on the
+entries that carry the effect, but it is an obvious thing to try later.
+
+**Passing through a zone harms nobody.** A soldier standing in a zone the Titan enters is simply In
+Reach now, which is dangerous enough. We do not want a trample rule: harm outside the Behavior Tables
+is exactly what ADR-0005 and ADR-0019 are careful about, and Run Past already exists as a card.
+
+### 3.6 The consequence that is not a gift
+
+**Fallbacks will fire far less often.** Today, a Titan whose Attention holder is out of position
+resolves Thrash instead of its real entry, and that is a meaningful share of a fight's cards. Once the
+Titan closes first, most entries reach their requirement and resolve as written. That is a **rise in
+Titan effectiveness**, on top of the rise already coming from the Health change in batch A.
+
+Two lethality increases stacking in the same retune is the thing most likely to overshoot the bands. It
+should be measured as its own row, with Stride values as the first lever if it does. It is also an
+argument for keeping the default start at one zone, per section 2.7, so round one is unchanged and only
+the later rounds carry the difference.
+
+### 3.7 Smaller questions this opens
+
+- **Background Titans.** Today they are an off-map clock that promotes one to Focus. With a map they
+  could walk in from an edge and be visible as they come, which would make the retreat clock something
+  you watch rather than something you are told. Tempting, and out of scope for the first version. Place
+  a newly promoted Titan in an edge zone and leave the clock alone.
+- **The retreat.** Retreating currently moves soldiers a step toward Distant on a clock. With a Titan
+  that follows, a retreat becomes a chase. That is better, and it needs checking that the retreat's
+  forced moves and its ending conditions still terminate.
+- **Two Focus Titans** each stride toward their own Attention holder. No interaction needed.
+- **Does the Stride happen before or after the card resolves?** Before, as written above: the Titan
+  arrives, then swings. It also animates well on the canvas board.
+- **Does a soldier get to react to the Stride?** No. The dodge answers the attack, as it does now.
+
+### 3.8 What this costs
+
+A new `stride` field on `data/engagement/size-classes.yaml` and on the Abnormal; the Stride rule in
+`data/engagement/positions.yaml` or a new `titan-movement` block; the grounded Stride 0 line in
+`titan-harm.yaml`; the local wreck in `anchor-ratings.yaml` and `titan-format.yaml`; the Blind Spot
+"does not travel with it" line; Chapter 5 sections 5.2, 5.4 and 5.6; the packet and the GM section; the
+Foundry engine and the board's stride animation. And, the large one: **the simulator has no concept of
+space at all today**, so the movement model is the biggest single piece of new simulator work in the
+whole package.
+
+---
+
+## 4. The alternative we are not recommending
 
 Replace Positions outright: zones and conditions are the only location facts, and every rule is
 rewritten to read them. It is cleaner on paper, it removes the derived layer, and it would read better
@@ -173,24 +317,25 @@ carry no weight at the table, deleting it later is a clean, mechanical change. D
 
 ---
 
-## 4. What this costs
+## 5. What this costs
 
 | Area | Work |
 |---|---|
 | ADRs | One new ADR for the model; amendments to ADR-0009 and ADR-0010 |
+| Titan movement | The Stride rule, `stride` on every Size Class and the Abnormal, grounded Stride 0, the local wreck, the Blind Spot line (section 3) |
 | Data | New `data/engagement/zones.yaml`; rewrite of `positions.yaml`; changes to `anchor-ratings.yaml`, `engagement-setup.yaml`, `engagement-flow.yaml`, `background-titans.yaml` (retreat), `grab.yaml`, `titan-harm.yaml` (corpse), `attention.yaml`, `harm/engagement-end.yaml`, `gear/falls.yaml`, `gear/carrying.yaml`, `gear/horses.yaml` |
 | Chapters | Chapter 5 sections 5.1, 5.2, 5.7, 5.11 rewritten; smaller edits in 1, 3, 4 |
 | Site | The Chapter 5 pages and a zone diagram |
 | Foundry | `rules/engagement/positions.ts` rewritten around zones; the board (section 6); setup gains a field builder |
 | Packet | The Titan Engagement section, the quick reference, the map |
-| Tuning | Rerun as a check, with rounds to the Nape and gas per fight watched specifically |
+| Tuning | A retune. Titan movement is new simulator work from nothing, and fallbacks firing less often raises Titan effectiveness on top of batch A |
 
 Honest estimate: this is the largest single package since the round 1 batches, and larger than the
 whole of batches A to D in `ASSESSMENT.md` put together.
 
 ---
 
-## 5. Open design questions
+## 6. Open design questions
 
 1. **Titan reach and Size Class.** A Large Titan plausibly reaches into adjacent zones. Simplest model:
    it does not, and Size Class instead governs how many zones it crosses in a move. More faithful:
@@ -202,10 +347,16 @@ whole of batches A to D in `ASSESSMENT.md` put together.
 3. **Zone shape on the table.** Hexes are right for Foundry. For play without Foundry, the packet needs
    a printable field. A 13-hex sheet with dry-wipe markers is the cheapest answer.
 4. **Do soldiers block zones?** We recommend no. Zones hold any number of occupants.
+5. **Stride values.** Small 1, Medium 2, Large 2, Abnormal 3, against a soldier's 1 zone on foot. These
+   are starting values for the simulator to move, not settled numbers.
+6. **Does striding wreck the zones it crosses**, or only the `wreck` effect on the Titan's own zone? We
+   recommend the latter first, because it keeps the tuning lever where it already is.
+7. **Do Background Titans walk in visibly**, or stay an off-map clock until promoted? We recommend the
+   clock for the first version.
 
 ---
 
-## 6. The board on the canvas (item 9)
+## 7. The board on the canvas (item 9)
 
 **Owner's direction, 2026-09-20: it goes on the Foundry canvas directly, and it is a hero feature of
 the system. It has to look like a game.**
@@ -215,7 +366,7 @@ are drawn on the canvas and a soldier's zone is where their token actually stand
 lying, there is exactly one answer to "where am I", and the GM moves people by dragging tokens on the
 surface they already use. The tracker board becomes a readout rather than the control.
 
-### 6.1 How it is built, and what it does not fight
+### 7.1 How it is built, and what it does not fight
 
 Foundry supports **hexagonal grids natively**, so the field is a scene on a hex grid where one hex is
 one zone. Everything the engine already does well keeps working: drag and drop, targeting, vision and
@@ -233,7 +384,7 @@ transform. In practice that means:
 - **A custom overlay layer for the vertical axis**, which is the part Foundry has no concept of and the
   part this game most needs.
 
-### 6.2 The vertical layer, which is the whole trick
+### 7.2 The vertical layer, which is the whole trick
 
 A soldier's zone is a flat fact the grid can hold. Their attachment is not, and it is the more
 important of the two. The overlay layer draws it:
@@ -247,7 +398,7 @@ important of the two. The overlay layer draws it:
   is hanging from, and a shadow on the tile below.
 - **Grabbed**: in the Titan's hand. **Pinned**: under the corpse.
 
-### 6.3 The set piece: a Flight that is actually a flight
+### 7.3 The set piece: a Flight that is actually a flight
 
 Round 2's note was "in the show the ODM gear is quite a set piece but in the game the move just
 happens". A canvas board is the chance to answer that literally. When a Flight resolves, the token
@@ -258,7 +409,7 @@ past the Titan looks like flying the short way past the Titan.
 This is the single most valuable piece of juice on the list, because it is the only one that makes the
 game's signature move feel like its signature move.
 
-### 6.4 The rest of the canvas presence
+### 7.4 The rest of the canvas presence
 
 - **The Titan** is a large token scaled by Size Class, with Openings and Broken Body Parts marked on
   the figure itself (this is where item 7's Openings badge naturally lives), and an Attention line
@@ -271,7 +422,7 @@ game's signature move feel like its signature move.
 - **Momentum pips and a small gas gauge** under each figure, matching the token badges of item 7 so the
   two readouts never disagree.
 
-### 6.5 Interaction
+### 7.5 Interaction
 
 - **Drag a token to a zone to move.** Legal destinations light up, each labelled with the Momentum cost
   and the roll the move will ask for. Drop it and the Flight prompt goes to that player (item 6).
@@ -282,7 +433,7 @@ game's signature move feel like its signature move.
   and it should be visibly on while it is on.
 - **Hover a zone** for its terrain, anchor rating, occupants and effects.
 
-### 6.6 What makes or breaks it
+### 7.6 What makes or breaks it
 
 - **Scene setup must be nearly free.** If building a field is work, the hero feature will not get used.
   It needs a generator: pick a field size and a terrain mix, and it produces the scene, the hex grid,
@@ -300,7 +451,7 @@ game's signature move feel like its signature move.
   Full, Reduced and Off setting, with Off leaving a clean static board that is still completely
   playable.
 
-### 6.7 What the tracker becomes
+### 7.7 What the tracker becomes
 
 The ledger spread keeps its right page (the Titan blocks, the clocks, the round-end checklist) and its
 left page becomes a compact readout of the field rather than the matrix: who is in which zone, with
