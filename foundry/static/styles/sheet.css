@@ -955,6 +955,110 @@
 .wof-prefs .pbtn:hover { background: var(--red-hi); transform: translate(-1px, -1px); box-shadow: 2.5px 2.5px 0 var(--ink); }
 @media (prefers-reduced-motion: reduce) { .wof-prefs .pc-body, .wof-prefs .pbtn { transition: none; } }
 
+/* ODM mechanisms fitted into a worn equipment cradle. */
+.wof-sheet .vitals { grid-template-columns: minmax(0,.8fr) minmax(0,.8fr) minmax(0,.55fr) minmax(0,1.5fr) minmax(0,1.5fr); }
+.wof-sheet .gasv, .wof-sheet .bladev { padding: 8px; }
+.wof-sheet .odm-rig { overflow: hidden; position: relative; width: 100%; min-width: 0; padding: 7px 8px 9px; border: 1px solid #252c20; border-radius: 3px;
+  background: repeating-linear-gradient(96deg, #b4ae8510 0 1px, transparent 1px 9px), linear-gradient(110deg,#454a38,#303a2b 45%,#414635);
+  box-shadow: inset 0 1px 1px #b4ac7b80, inset 0 -2px 3px #111c15, 0 2px 3px #29231970; }
+.wof-sheet .odm-rig::before { content: ''; position: absolute; inset: 5px; border: 1px solid #8b8d6338; pointer-events: none; }
+.wof-sheet .odm-rig svg { display: block; width: 100%; height: auto; overflow: visible; }
+.wof-sheet .rig-rivet { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: linear-gradient(120deg,#b5ae88,#404831); box-shadow: 0 1px 1px #131b11; }
+.wof-sheet .top-left { top: 3px; left: 3px; }.wof-sheet .top-right { top: 3px; right: 3px; }
+.wof-sheet .bottom-left { bottom: 3px; left: 3px; }.wof-sheet .bottom-right { bottom: 3px; right: 3px; }
+.wof-sheet .fitted-vessel, .wof-sheet .blade-assembly { position: relative; height: 76px; display: grid; align-items: center; }
+.wof-sheet .fitted-vessel svg, .wof-sheet .blade-assembly svg { max-height: 76px; }
+.wof-sheet .fitted-vessel { overflow: hidden; }
+.wof-sheet .rig-caption { display: flex; justify-content: space-between; align-items: center; font: 10px/1.4 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: #d0c6a5; padding: 0 5px 2px; }
+.wof-sheet .rig-caption span:last-child { font: 12px monospace; }
+.wof-sheet .tank-bay { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; padding: 4px; background: #17251980; border: 1px solid #697150; box-shadow: inset 0 2px 5px #0c190f; }
+.wof-sheet .tank-socket { min-width: 0; height: 43px; display: grid; place-items: center; background: linear-gradient(135deg,#35432f,#202c20); border: 1px solid #64704d; box-shadow: inset 1px 1px 2px #101c10; }
+.wof-sheet button.tank-cap { display: block; width: min(44px, 100%); height: 43px; min-height: 0; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; cursor: pointer; }
+.wof-sheet button.tank-cap svg { width: 100%; height: 100%; }
+.wof-sheet button.tank-cap:hover:not(:disabled) { filter: brightness(1.25); background: #7e8c5130; }
+.wof-sheet button.tank-cap:focus-visible { outline: 2px solid #e6d09a; outline-offset: 1px; }
+.wof-sheet button.tank-cap:disabled { cursor: default; }
+.wof-sheet .empty-socket { width: 29px; height: 29px; border-radius: 50%; background: radial-gradient(circle,#0f1c13 45%,#253721 60%,#0e190f 65%,#546040 70%,#23331e 77%); box-shadow: inset 0 2px 5px #070f09; }
+.wof-sheet .rig-empty-note { display: block; font: 10px var(--fb); color: #c9b995; text-align: center; padding-top: 3px; }
+.wof-sheet .blade-magazine { position: relative; height: 53px; display: grid; align-items: center; }
+.wof-sheet .blade-magazine > svg { max-height: 53px; }
+.wof-sheet .equipment-status { display: flex; align-items: center; gap: 8px; }
+.wof-sheet .vitals .gasv .acts, .wof-sheet .vitals .bladev .acts { margin-top: auto; }
+.wof-sheet .rig-ghost { pointer-events: none; }
+.wof-sheet .vessel-out, .wof-sheet .gas-vent { position: absolute; inset: 0; }
+.wof-sheet .gas-vent { height: 76px !important; }
+.wof-sheet .magazine-transfer { position: absolute; inset: 0; z-index: 2; }
+.wof-sheet .tank-swap .vessel-current { animation: odm-tank-in 850ms cubic-bezier(.2,.7,.3,1) both; }
+.wof-sheet .tank-swap .vessel-out { animation: odm-tank-out 700ms ease-in both; }
+.wof-sheet .tank-swap .returned .tank-cap { animation: odm-cap-return 900ms ease-out both; }
+.wof-sheet .gas-spend .vessel-current { animation: odm-pressure 450ms ease-out; }
+.wof-sheet .gas-vent { animation: odm-vent 550ms ease-out both; }
+.wof-sheet .broken-blade { transform-box: fill-box; transform-origin: left center; animation: odm-blade-break 750ms ease-in both; }
+.wof-sheet .blade-fit .live-blade { animation: odm-blade-seat 950ms cubic-bezier(.2,.7,.3,1) both; }
+.wof-sheet .magazine-transfer { animation: odm-magazine-draw 950ms cubic-bezier(.2,.7,.3,1) both; }
+@keyframes odm-tank-in { 0%,35% { transform: translate(35px,-52px) rotate(-8deg); opacity: 0; } 65% { opacity: 1; } 85% { transform: translate(0,2px); } 100% { transform: none; opacity: 1; } }
+@keyframes odm-tank-out { 0% { transform: none; opacity: 1; } 60% { opacity: .9; } 100% { transform: translate(-45px,48px) rotate(12deg); opacity: 0; } }
+@keyframes odm-cap-return { 0%,60% { transform: translateY(-16px) scale(.65); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes odm-pressure { 0%,100% { transform: none; } 20% { transform: translateX(-2px); filter: brightness(1.18); } 45% { transform: translateX(1px); } }
+@keyframes odm-vent { from { opacity: .8; transform: translateY(0); } to { opacity: 0; transform: translateY(-9px); } }
+@keyframes odm-blade-break { 0% { transform: none; opacity: 1; } 15% { transform: translate(3px,-2px) rotate(-2deg); } 100% { transform: translate(22px,45px) rotate(18deg); opacity: 0; } }
+@keyframes odm-blade-seat { 0%,70% { opacity: 0; transform: translateX(25px); } 72% { opacity: 1; } 95% { transform: translateX(-2px); } 100% { transform: none; opacity: 1; } }
+@keyframes odm-magazine-draw { 0% { transform: translate(-28px,0) scaleX(.8); opacity: 1; } 35% { transform: translate(26px,0) scaleX(.8); opacity: 1; } 70% { transform: translate(20px,-80px); opacity: 1; } 75%,100% { transform: translate(20px,-80px); opacity: 0; } }
+.wof-sheet .odm-rig[data-motion='off'] * { animation: none !important; }
+.wof-sheet .odm-rig[data-motion='off'] .rig-ghost { display: none; }
+.wof-sheet .odm-rig[data-motion='reduced'] * { animation: none !important; }
+.wof-sheet .odm-rig[data-motion='reduced'] .rig-ghost { display: none; }
+.wof-sheet .odm-rig[data-motion='reduced'].gas-spend, .wof-sheet .odm-rig[data-motion='reduced'].tank-swap,
+.wof-sheet .odm-rig[data-motion='reduced'].blade-fit, .wof-sheet .odm-rig[data-motion='reduced'].blade-break { animation: odm-soft-change 120ms linear; }
+@keyframes odm-soft-change { from { filter: brightness(1.15); } to { filter: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .wof-sheet .odm-rig * { animation: none !important; }
+  .wof-sheet .odm-rig .rig-ghost { display: none; }
+}
+@container wofsheet (max-width: 860px) {
+  .wof-sheet:not(.compact) .vitals { grid-template-columns: repeat(6,minmax(0,1fr)); }
+  .wof-sheet:not(.compact) .vitals .vit { grid-column: span 2; padding: 8px; }
+  .wof-sheet:not(.compact) .vitals .gasv, .wof-sheet:not(.compact) .vitals .bladev { grid-column: span 3; border-top: 1px solid var(--rule); }
+  .wof-sheet:not(.compact) .vitals .gasv { border-left: 0; }
+  .wof-sheet:not(.compact) .vitals .bladev { border-left: 1px solid var(--rule); }
+}
+.wof-sheet .tank-socket { position: relative; }
+.wof-sheet .cap-lift { position: absolute; z-index: 3; width: 34px; height: 34px; border: 3px solid #9caa80; border-radius: 50%; background: #3b4b30; color: #eee5c6; display: grid; place-items: center; font: 11px monospace; animation: odm-cap-lift 700ms ease-in-out both; }
+.wof-sheet .fragment-b { animation-name: odm-blade-tip; }
+@keyframes odm-cap-lift { 0% { opacity: 1; transform: none; } 60% { opacity: 1; transform: translateY(-48px) scale(.8); } 100% { opacity: 0; transform: translateY(-65px) scale(.6); } }
+@keyframes odm-blade-tip { 0% { transform: none; opacity: 1; } 15% { transform: translate(4px,-3px) rotate(3deg); } 100% { transform: translate(35px,24px) rotate(-22deg); opacity: 0; } }
+@keyframes odm-tank-in { 0%,35% { transform: translate(20px,55px) rotate(-25deg); opacity: 0; } 65% { opacity: 1; } 85% { transform: translate(0,2px); } 100% { transform: none; opacity: 1; } }
+
+
+/* Health above Stress; Resolve belongs beside the Stress readout. */
+.wof-sheet .vitals { grid-template-columns: minmax(0,1.05fr) minmax(0,1fr) minmax(0,1fr); }
+.wof-sheet .body-vitals { display: grid; grid-template-rows: 1fr 1fr; min-width: 0; border-right: 1px solid var(--rule); }
+.wof-sheet .body-vitals .vit { padding: 10px 12px; border: 0; justify-content: center; gap: 5px; }
+.wof-sheet .body-vitals .healthv { border-bottom: 1px solid var(--rule); }
+.wof-sheet .stress-resolve { display: grid; grid-template-columns: minmax(0,1fr) 72px; min-width: 0; }
+.wof-sheet .body-vitals .resolvev { border-left: 1px solid var(--rule); padding: 10px 8px; align-items: center; justify-content: start; margin: 10px 0; }
+.wof-sheet .resolvev .vhead { justify-content: center; }
+.wof-sheet:not(.compact) .body-vitals .vit .vhead,
+.wof-sheet:not(.compact) .body-vitals .vit > :last-child:not(.vhead) { margin-bottom: 0; }
+.wof-sheet .resolvev .big { font-size: var(--t-2xl); cursor: help; }
+.wof-sheet .vitals > .gasv { border-left: 0; }
+.wof-sheet .body-vitals .vchips { width: auto; }
+.wof-sheet.compact .body-vitals { grid-column: 1 / -1; border-right: 0; }
+.wof-sheet.compact .body-vitals .vit { grid-column: auto; }
+.wof-sheet.compact .body-vitals .healthv { border-bottom: 1px solid var(--rule); }
+.wof-sheet.compact .body-vitals .resolvev { border-left: 1px solid var(--rule); }
+@container wofsheet (max-width: 860px) {
+  .wof-sheet:not(.compact) .vitals { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .wof-sheet:not(.compact) .vitals > .body-vitals { grid-column: 1 / -1; border-right: 0; grid-template-rows: auto auto; }
+  .wof-sheet:not(.compact) .vitals .body-vitals .vit { grid-column: auto; padding: 8px 12px; }
+  .wof-sheet:not(.compact) .vitals > .gasv, .wof-sheet:not(.compact) .vitals > .bladev { grid-column: span 1; }
+  .wof-sheet .stress-resolve { grid-template-columns: minmax(0,1fr) 72px; }
+  .wof-sheet .body-vitals .healthv { display: grid; grid-template-columns: auto minmax(0,1fr); column-gap: 12px; align-items: center; }
+  .wof-sheet .body-vitals .healthv .vhead, .wof-sheet .body-vitals .healthv .vchips { grid-column: 1 / -1; }
+  .wof-sheet .body-vitals .stressv { display: grid; grid-template-columns: auto minmax(0,1fr); column-gap: 12px; align-items: center; }
+  .wof-sheet .body-vitals .stressv .vhead, .wof-sheet .body-vitals .stressv .vchips { grid-column: 1 / -1; }
+  .wof-sheet .body-vitals .resolvev { margin: 6px 0; }
+}
 /* ══ Edit mode and Play mode, the plate, and the Token door ═════════════ */
 
 /* The running strip that marks a sheet open for amendment: one along the top edge, one along the
