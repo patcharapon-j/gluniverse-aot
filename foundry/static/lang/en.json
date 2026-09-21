@@ -282,6 +282,9 @@
             },
             "items": {
               "label": "Items"
+            },
+            "zone": {
+              "label": "Zone"
             }
           },
           "positions": {
@@ -312,6 +315,12 @@
           },
           "notes": {
             "label": "Notes"
+          },
+          "zone": {
+            "label": "Zone"
+          },
+          "attachment": {
+            "label": "Attachment"
           }
         }
       },
@@ -484,6 +493,9 @@
           },
           "notes": {
             "label": "Notes"
+          },
+          "stride": {
+            "label": "Stride"
           }
         }
       },
@@ -1298,10 +1310,12 @@
         "loadAria": "{items} items carried of {limit}",
         "engagement": "Titan Engagement",
         "engagementHint": "Positions by Focus Titan",
-        "noPositions": "No Position recorded.",
+        "noPositions": "Not in a Titan Engagement.",
         "addPosition": "Add a Position",
         "leftAtHint": "After death in a Titan Engagement",
-        "commaList": "Items, separated by commas"
+        "commaList": "Items, separated by commas",
+        "positionsShown": "Positions (derived)",
+        "horseZone": "Horse"
       },
       "status": {
         "carried": "Carried",
@@ -2383,7 +2397,7 @@
         "gasDone": "{name}: Gas {from} to {to}.",
         "gasNone": "{name} rolled nothing.",
         "flightTitle": "{name} takes a Flight",
-        "flightCause": "{name} moves relative to {label}, {from} to {to}, on their ODM Gear.",
+        "flightCause": "{name} flies from {from} to {to} on their ODM Gear.",
         "flightRolls": "your Fly",
         "flightDetail": "Momentum {n} of {cap}",
         "flightGone": "{name} is no longer where the move began: nothing moved.",
@@ -2488,7 +2502,8 @@
         "fallBack": "Fall Back: {name} to In Reach of {label}",
         "foeAct": "Act",
         "close": "Close the engagement",
-        "stamp": "Stamp"
+        "stamp": "Stamp",
+        "returnTo": "Return to zone {n}"
       },
       "chip": {
         "card": "{name}, card {card}",
@@ -2564,7 +2579,9 @@
         "foes": "Foes",
         "ambush": "Ambush",
         "retreatActive": "under way since round {round}, stay limit {stay}",
-        "anchors": "Anchors"
+        "anchors": "Anchors",
+        "fieldRating": "Field rating",
+        "field": "Field"
       },
       "sk": {
         "grit": "Grit {grit}, {out} out",
@@ -2598,7 +2615,7 @@
         "already": "{name} has already swapped this round.",
         "oneLeft": "A soldier who has left swaps only with another who has left.",
         "far": "They are more than one Position step apart.",
-        "farDetail": "{a} and {b} are {n} steps apart relative to {label} under {anchor}.",
+        "farDetail": "{a} and {b} are {n} zones apart: a swap needs the same or an adjacent zone.",
         "unknown": "No engagement is running."
       },
       "move": {
@@ -2615,7 +2632,7 @@
         "kind": "No move the soldier can make reaches it.",
         "notDistant": "Leaving needs Distant toward every body.",
         "notLeft": "The soldier has not left.",
-        "retreat": "No one returns during a retreat.",
+        "retreat": "The retreat does not allow that move.",
         "notClose": "Letting go needs On Body or Blind Spot.",
         "byRule": "Set by a rule",
         "letGo": "Let go and fall",
@@ -2633,7 +2650,13 @@
         "noMomentum": "The soldier holds too little Momentum for the extra steps.",
         "chargeReach": "A charge is a mounted step between Distant and In Reach.",
         "chargeAct": "Mounted, and charge",
-        "forceGM": "Only the GM steps over the rules."
+        "forceGM": "Only the GM steps over the rules.",
+        "noField": "This engagement has no field.",
+        "notLegal": "That is not a move their own move can make.",
+        "notFree": "Only a soldier on the ground or anchored can step off the field.",
+        "notEdge": "Only an edge zone leads off the field.",
+        "bodyInZone": "A Focus Titan or corpse stands in this zone: step off the field from another edge zone.",
+        "returnZone": "A returner enters an edge zone with no Focus Titan and no corpse."
       },
       "block": {
         "corpse": "That body is a corpse.",
@@ -2743,13 +2766,14 @@
         "goesOn": "The Skirmish goes on.",
         "momentumLost": "No ODM move this round, so all Momentum is lost: {who}.",
         "momentumNone": "Nobody loses Momentum.",
-        "momentumKept": "Kept, to a cap of {cap}: {who}.",
-        "wrecked": "An Anchor is wrecked. {n} left.",
-        "wreckIgnored": "One good tree survives: the first Anchor is not lost.",
+        "momentumKept": "Kept, each to the cap of their zone: {who}.",
+        "wrecked": "Zone {zone} is wrecked: {from} to {to}.",
+        "wreckIgnored": "Zone {zone} is Sparse and its one good tree survives: no step lost.",
         "momentumTrim": "{name} is over the new cap and holds {n}.",
         "frenzy": "{label} Frenzy {n} of {cap}.",
         "frenzyHeld": "{label} Frenzy unchanged: it rises at the end of even-numbered rounds.",
-        "gasAsked": "Gas Rolls owed by {who}: each rolls their own."
+        "gasAsked": "Gas Rolls owed by {who}: each rolls their own.",
+        "wreckOpen": "Zone {zone} is already Open: nothing more to wreck."
       },
       "note": {
         "startTitle": "Titan Engagement begins",
@@ -2804,7 +2828,21 @@
         "chargeDouble": "A charge in and out again on the plain: {label} hears them, and they end where they began.",
         "retargeted": "It cannot reach its holder, so it turns on {name} for {entry}.",
         "flightAsked": "{name} takes a Flight",
-        "flightAskedLine": "Relative to {label}, to {to}: their own client rolls the Fly."
+        "flightAskedLine": "To {to}, {n} Carries for {m} Momentum: their own client rolls the Fly.",
+        "zoneMoved": "{from} to {to}, {kind}.",
+        "crossed": "Crossed the zone of {labels}.",
+        "flightShort": "The Momentum ran out: the Flight ends where it could pay.",
+        "leftField": "Off the field: they have left the Titan Engagement.",
+        "flightStays": "The Flight could not pay its way and ends where it began.",
+        "loudSet": "Heard, and marked loudest, by {labels}.",
+        "letGo": "Lets go from {from} and falls, landing in {zone}.",
+        "strode": "{label} strides: zones {route}.",
+        "strideLeft": "Left behind at the Blind Spot: {who}.",
+        "strideCarried": "Carried with it: {who}.",
+        "enteredZone": "{label} enters at zone {zone}.",
+        "startField": "{size}: {zones}.",
+        "quiet": "Quiet: they come in unheard this turn.",
+        "quietTitle": "{name} goes quiet"
       },
       "death": {
         "relief": "Nape-kill Stress relief: {who}.",
@@ -2839,7 +2877,11 @@
         "spent": "{name} has spent their move this round",
         "unspent": "{name} has their move back",
         "joins": "{name} joins the engagement",
-        "leaves": "{name} is out of the engagement"
+        "leaves": "{name} is out of the engagement",
+        "zoneRating": "Zone {zone} is now {name}.",
+        "placed": "{name} placed: {to}.",
+        "titanPlaced": "{label} placed in zone {zone}.",
+        "horsePlaced": "{name}'s horse: {zone}."
       },
       "ending": {
         "notMet": "No ending test is met yet.",
@@ -2999,7 +3041,14 @@
         "current": "Here now",
         "engagementEnd": "Engagement end",
         "manual": "The table resolves this step; stamp it when done.",
-        "momentum": "Mom."
+        "momentum": "Mom.",
+        "field": "The field",
+        "fieldHint": "each zone's rating, and who stands in it",
+        "wasRating": "was {name}",
+        "zone": "Zone",
+        "airborneShort": "airborne",
+        "mountedShort": "mounted",
+        "movesOnBoard": "Moves are made on the engagement board."
       },
       "direct": {
         "toggle": "Direct Control",
@@ -3023,7 +3072,12 @@
         "off": "off",
         "in": "in",
         "out": "out",
-        "logged": "Every override is written to the tracker note as a GM ruling, and Undo still works."
+        "logged": "Every override is written to the tracker note as a GM ruling, and Undo still works.",
+        "place": "Place",
+        "attachment": "Attachment",
+        "zoneRating": "Zone {n} rating",
+        "titanZone": "{label} stands in",
+        "horse": "Horse"
       },
       "setup": {
         "titleTitan": "Begin a Titan Engagement",
@@ -3050,7 +3104,13 @@
         "nightHint": "At night: a Bandit's club is a firebrand.",
         "start": "Begin",
         "footTitan": "Everyone starts at Distant. Round 1 begins at its Wings step.",
-        "footSkirmish": "Everyone starts Apart. Round 1 begins at its deal."
+        "footSkirmish": "Everyone starts Apart. Round 1 begins at its deal.",
+        "fieldSize": "Field",
+        "fieldRating": "Field rating",
+        "namedZones": "Zones named",
+        "zone": "Zone",
+        "nameZone": "Name a zone",
+        "terrainMix": "Every zone not named, but the centre and the Squad's start zone, rolls on the terrain mix at Start."
       },
       "fear": {
         "title": "Fear Rolls",
@@ -3089,6 +3149,39 @@
         "noBlades": "The soldier carries no Blade Set to fit.",
         "grabbed": "A Grabbed soldier cannot fit a Blade Set.",
         "moveSpent": "Fitting a Blade Set spends the move, and this turn’s move is gone."
+      },
+      "zone": {
+        "off": "off field",
+        "n": "zone {n}",
+        "horse": "horse in {n}",
+        "openOnBody": "{name}'s Blind Spot on {label} is gone: now On Body.",
+        "openGround": "{name} is on the ground, no longer airborne."
+      },
+      "attach": {
+        "ground": "on the ground",
+        "anchored": "anchored",
+        "on-body": "On Body",
+        "blind-spot": "Blind Spot",
+        "grabbed": "Grabbed",
+        "pinned": "Pinned",
+        "groundOf": "on the ground",
+        "anchoredOf": "anchored",
+        "on-bodyOf": "On Body {label}",
+        "blind-spotOf": "Blind Spot {label}",
+        "grabbedOf": "Grabbed by {label}",
+        "pinnedOf": "Pinned under {label}"
+      },
+      "field": {
+        "skirmish": "Skirmish field",
+        "standard": "Standard field",
+        "set-piece": "Set piece"
+      },
+      "fieldPlate": "{rating}, {size}",
+      "quietBlock": {
+        "dead": "The soldier is dead.",
+        "left": "The soldier has left.",
+        "cannotHold": "The soldier holds no Momentum in this state.",
+        "noMomentum": "Quiet costs 1 Momentum, and the soldier holds none."
       }
     },
     "TerrainTrait": {
@@ -3104,6 +3197,36 @@
       "brace": "Brace: 1 Bonus Die on your next dodge this round.",
       "quiet": "Quiet: nothing you do this turn marks you loudest.",
       "clean-line": "Clean line: you make no Gas Roll this round."
+    },
+    "Board": {
+      "title": "Engagement board",
+      "zone": "Zone {n}",
+      "ratingWas": "{rating}, was {start}",
+      "occupants": "Here: {names}",
+      "empty": "Nobody here",
+      "titan": "Titan",
+      "corpse": "Corpse",
+      "fly": "Fly",
+      "free": "No Momentum",
+      "momentum": "{n} Momentum",
+      "crosses": "crosses {labels}",
+      "leave": "Leave the field",
+      "letGo": "Let go",
+      "letGoTitle": "Let go",
+      "letGoWarn": "Letting go of {body} is a fall. Let go?",
+      "choose": "How do you go?",
+      "direct": "Direct Control",
+      "setRating": "Zone {n}: set the rating",
+      "kind": {
+        "onFoot": "On foot",
+        "mounted": "Mounted",
+        "odm": "ODM Gear"
+      },
+      "effect": {
+        "steam": "Steam",
+        "dust": "Dust",
+        "fire": "Fire"
+      }
     }
   }
 }

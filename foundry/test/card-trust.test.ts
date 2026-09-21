@@ -35,18 +35,18 @@ const foeAttack: FoeAttackCard = {
 };
 
 function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
-  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'in-reach' }, momentum: 0, untreated: 0, ...extra };
+  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, zone: 7, attachment: { kind: 'ground', body: null }, horseZone: null, positions: { A: 'in-reach' }, momentum: 0, untreated: 0, ...extra };
 }
 
 function titan(extra: Partial<TitanRow> = {}): TitanRow {
-  return { key: 'tA', label: 'A', status: 'focus', tempo: 1, frenzy: 0, ladder: [], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
+  return { key: 'tA', label: 'A', status: 'focus', tempo: 1, frenzy: 0, ladder: [], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, zone: 7, stride: 2, figure: 'medium', ...extra };
 }
 
 function snap(soldiers: SoldierState[], titans: TitanRow[] = [titan()]): Snapshot {
   return {
     combat: 'C', mode: 'titan', step: 'play', round: 1, anchor: null, soldiers, titans, wings: {}, cards: {}, titanCards: {}, swapped: [], proposal: null,
     retreat: false, wingsSet: true, wingsOpen: false, reassign: [], tactics: { held: [], used: [] }, cloaks: [],
-      anchors: 2, wrecks: 0, odmUsed: [], movesSpent: [],
+      field: null, leftItems: [], arrivals: {}, odmUsed: [], movesSpent: [],
   };
 }
 

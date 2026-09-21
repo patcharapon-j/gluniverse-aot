@@ -74,7 +74,9 @@ export function fieldKit() {
   const gearState = (fullGasRating: number) => ({
     gas_rating: nonNeg(0, { max: fullGasRating }),
     spare_canisters: new f.ArrayField(int(1, { min: 1, max: fullGasRating })),
-    left_at: new f.SchemaField({ position: choice(POSITIONS, null), titan: str(), items: strings() }),
+    // Where a dead soldier's left items lie: a zone number since decision batch 16 (16-25); position and
+    // titan are kept for the records made before it.
+    left_at: new f.SchemaField({ zone: nullableInt({ min: 1 }), position: choice(POSITIONS, null), titan: str(), items: strings() }),
     positions: new f.SchemaField({
       left: bool(),
       entries: new f.ArrayField(new f.SchemaField({ titan: str(), position: choice(POSITIONS, 'distant') })),

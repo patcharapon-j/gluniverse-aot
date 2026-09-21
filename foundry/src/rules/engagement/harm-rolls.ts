@@ -4,7 +4,8 @@
  * falls_land), and damage on a soldier (data/harm/health.yaml, harm_kinds, damage). Pure and unit tested.
  */
 import { isClose } from './positions.ts';
-import type { Position } from './types.ts';
+import type { Position, TitanRow } from './types.ts';
+import { zoneDistance, type Attachment, type FieldState, type ZoneId } from './zones.ts';
 
 export interface DamageRow {
   min: number | null;
@@ -35,6 +36,7 @@ export type Band = 'low' | 'high' | 'extreme';
 export interface FallInput {
   /** The Position held relative to the reference Titan when the soldier fell, or null outside one. */
   position: Position | null;
+  /** The rating of the zone the soldier falls in (the Giant Forest raise, 16-22). */
   anchor: string | null;
   referenceSize: string | null;
   fromHorse?: boolean;
@@ -56,29 +58,21 @@ export function fallBand(x: FallInput): Band {
 /** The fall damage roll: D6 plus the band's adds on the damage table. */
 export const fallDamage = (rows: readonly DamageRow[], adds: Record<Band, number>, band: Band, d6: number) => tableDamage(rows, d6 + adds[band]);
 
-/** Where the fall lands (positions.yaml, falls_land): On Body and Blind Spot become In Reach. */
-export const fallLands = (p: Position | undefined): Position | undefined => (isClose(p) ? 'in-reach' : p);
-
 /**
- * The reference Titan (falls.yaml, height): the Focus Titan the soldier held the closest Position to,
- * On Body, Blind Spot, In Reach, Distant; on a tie the causing Titan, else the earliest label.
+ * The reference body (falls.yaml, height, steps; decision batch 16, 16-22): the body the soldier's
+ * attachment named when they fell (on-body, blind-spot, or grabbed); otherwise the Focus Titan whose
+ * card, Grab, or effect caused the fall; otherwise the Focus Titan nearest the soldier's zone, a tie
+ * going to the earliest label. The soldier lands in the zone they are in, with attachment ground.
  */
-export function referenceLabel(positions: Record<string, Position>, focusLabels: readonly string[], causing: string | null): string | null {
-  const order: Position[] = ['on-body', 'blind-spot', 'in-reach', 'distant'];
-  let best: string[] = [];
-  let rank = Infinity;
-  for (const l of [...focusLabels].sort()) {
-    const p = positions[l];
-    if (!p) continue;
-    const r = order.indexOf(p);
-    if (r < rank) {
-      rank = r;
-      best = [l];
-    } else if (r === rank) best.push(l);
-  }
-  if (!best.length) return null;
-  if (causing && best.includes(causing)) return causing;
-  return best[0];
+export function referenceBody(attachment: Attachment, causing: string | null, zone: ZoneId | null, titans: readonly Pick<TitanRow, 'label' | 'status' | 'zone'>[], field: FieldState | null): string | null {
+  if ((attachment.kind === 'on-body' || attachment.kind === 'blind-spot' || attachment.kind === 'grabbed') && attachment.body) return attachment.body;
+  if (causing) return causing;
+  const focus = titans.filter((t) => t.status === 'focus').sort((a, b) => a.label.localeCompare(b.label));
+  if (!focus.length) return null;
+  if (zone === null || !field) return focus[0].label;
+  let best = focus[0];
+  for (const t of focus) if (zoneDistance(field, zone, t.zone) < zoneDistance(field, zone, best.zone)) best = t;
+  return best.label;
 }
 
 export interface DamageResult {

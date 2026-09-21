@@ -8,6 +8,7 @@ import { SYSTEM_ID } from '../config.ts';
 import { isGrounded, meetsBodyParts, publicFacts, type BehaviorRow, type BodyPart, type TitanFacts } from '../rules/titan.ts';
 import { titanRegions } from './figure.ts';
 import { icon } from './soldier-view.ts';
+import { strideOfActor } from '../tracker/snapshot.ts';
 
 const t = (key: string, data?: Record<string, unknown>): string => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
 
@@ -62,6 +63,8 @@ export interface TitanView {
   regenClock: number | null;
   regeneration: number;
   heave: number;
+  /** Its Stride (size-classes.yaml, stride; 16-16): the actor's own value, else its stat block's from the data. */
+  stride: number;
   heaveCount: number;
   openings: number;
   corpse: boolean;
@@ -202,6 +205,7 @@ export function buildTitanView(actor: any, opts: { editable: boolean; notesHTML:
     regenClock: shown.regeneration_clock ? src.regeneration_clock : null,
     regeneration: src.regeneration,
     heave: src.heave,
+    stride: strideOfActor(actor),
     heaveCount: src.heave_count,
     openings: src.openings,
     corpse: src.corpse,

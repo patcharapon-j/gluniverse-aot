@@ -34,6 +34,17 @@ export class Recorder {
     else this.ops.push({ t: 'set', uuid: doc.uuid, path, from: src(doc, path), to: foundry.utils.deepClone(value) });
   }
 
+  /**
+   * Writes a value in the same update as the recorded changes but records no op, so Undo never writes
+   * it back: the board's event (combat.system.boardEvent), whose seq only rises.
+   */
+  setUnrecorded(doc: any, path: string, value: unknown): void {
+    if (!doc) return;
+    let patch = this.#patches.get(doc);
+    if (!patch) this.#patches.set(doc, (patch = {}));
+    patch[path] = foundry.utils.deepClone(value);
+  }
+
   line(text: string): void {
     this.lines.push(text);
   }

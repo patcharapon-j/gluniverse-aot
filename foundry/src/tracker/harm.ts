@@ -7,9 +7,8 @@
  * (the reasoning is written at the top of prompt.ts). A Critical Injury the damage inflicts at 0
  * current Health is asked for the same way (results.ts, gainOn).
  */
-import { damageSoldier, fallBand, fallDamage, referenceLabel, steamDamage, type Band } from '../rules/engagement/harm-rolls.ts';
-import { focusLabels } from '../rules/engagement/positions.ts';
-import type { Position } from '../rules/engagement/types.ts';
+import { damageSoldier, fallBand, fallDamage, referenceBody, steamDamage, type Band } from '../rules/engagement/harm-rolls.ts';
+import { derivePosition, type Attachment, type ZoneId } from '../rules/engagement/zones.ts';
 import { postPrompt, registerPromptResolver, type PromptResolver } from '../dice/prompt.ts';
 import { tr } from './notes.ts';
 import { Recorder } from './recorder.ts';
@@ -92,8 +91,9 @@ const steamResolver: PromptResolver = {
 // ---------------------------------------------------------------- falls
 
 export interface FallInput {
-  /** The soldier's Positions when they fell. */
-  positions: Record<string, Position>;
+  /** The soldier's attachment and zone when they fell (falls.yaml, height; 16-22). */
+  attachment: Attachment;
+  zone: ZoneId | null;
   /** The label of the Titan whose card, Grab, or effect caused the fall. */
   causing: string | null;
   band?: Band | null;
@@ -106,11 +106,14 @@ export interface FallInput {
 export async function rollFall(combat: any, actor: any, x: FallInput, rec: Recorder): Promise<void> {
   if (!actor || actor.statuses?.has?.('dead')) return;
   const snap = snapshot(combat);
-  const labels = focusLabels(snap.titans);
-  const ref = referenceLabel(x.positions, labels.length ? labels : x.causing ? [x.causing] : [], x.causing);
+  const ref = referenceBody(x.attachment, x.causing, x.zone, snap.titans, snap.field);
   const row = ref ? snap.titans.find((t) => t.label === ref) : null;
   const size = row ? (titanActor(combat, row.key)?.system.size_class ?? null) : null;
-  const band = fallBand({ position: ref ? (x.positions[ref] ?? null) : null, anchor: combat.system.anchor, referenceSize: size, named: x.band ?? null });
+  // The band reads the soldier's Position relative to the reference body as they fell, and the Giant
+  // Forest raise reads the zone they fall in.
+  const position = row ? (derivePosition({ zone: x.zone, attachment: x.attachment, alive: true, left: false }, row) ?? null) : null;
+  const zoneRating = snap.field && x.zone !== null ? (snap.field.zones.find((z) => z.n === x.zone)?.rating ?? null) : null;
+  const band = fallBand({ position, anchor: zoneRating, referenceSize: size, named: x.band ?? null });
   const bandName = tr(`harm.band.${band}`);
   const message = await postPrompt({
     ask: 'fall',

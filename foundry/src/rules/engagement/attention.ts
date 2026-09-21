@@ -5,8 +5,8 @@
  */
 import { meetsBodyParts, type BodyPart } from '../titan.ts';
 import { tieCard } from './cards.ts';
-import { entering, holdsAPosition } from './positions.ts';
 import type { Position, Snapshot, SoldierState, TitanRow } from './types.ts';
+import { derivePosition } from './zones.ts';
 
 /** tests.nearest: the order Positions count as close. */
 const NEAREST_ORDER: readonly Position[] = ['on-body', 'in-reach', 'blind-spot', 'distant'];
@@ -218,14 +218,14 @@ export function retargetForEntry(ctx: LadderContext, entry: RetargetEntry, holde
 }
 
 /**
- * entry_fields.targets: the holder, or the holder and every other soldier who holds the same
- * Position relative to the Titan, except a Grabbed soldier.
+ * entry_fields.targets: the holder, or the holder and every other soldier in the holder's zone who
+ * holds the same Position relative to the Titan, except a Grabbed soldier (decision batch 16, 16-18).
  */
 export function entryTargets(entry: Pick<EntryLike, 'targets'>, holder: string, titan: TitanRow, soldiers: readonly SoldierState[], grabbed: (id: string) => boolean): string[] {
   if (entry.targets !== 'holder-and-position') return [holder];
   const h = soldiers.find((s) => s.id === holder);
   const p = h?.positions[titan.label];
-  const others = soldiers.filter((s) => s.id !== holder && s.alive && !s.left && p !== undefined && s.positions[titan.label] === p && !grabbed(s.id));
+  const others = soldiers.filter((s) => s.id !== holder && s.alive && !s.left && p !== undefined && s.zone === h?.zone && s.positions[titan.label] === p && !grabbed(s.id));
   return [holder, ...others.map((s) => s.id)];
 }
 
@@ -242,11 +242,17 @@ export function drawAttentionBlock(s: SoldierState, titan: TitanRow, grabbed: bo
 
 /**
  * A Titan that enters as a Focus Titan evaluates its Attention Ladder at once (background-titans.yaml,
- * full_clock): every soldier who holds a Position holds distant relative to it, and only mid-round do
- * this round's cards break a tie (evaluation, card and none).
+ * full_clock): every soldier's Position relative to it is derived from its entry zone (so one in another
+ * zone holds distant), and only mid-round do this round's cards break a tie (evaluation, card and none).
  */
 export function enteringAttention(snap: Snapshot, titan: TitanRow, downCanMeet: Record<string, boolean>): LadderResult {
-  const soldiers = snap.soldiers.map((s) => ({ ...s, positions: entering(s, titan.label, holdsAPosition(s, snap.titans)) }));
+  const soldiers = snap.soldiers.map((s) => {
+    const p = derivePosition(s, titan);
+    const positions = { ...s.positions };
+    if (p === undefined) delete positions[titan.label];
+    else positions[titan.label] = p;
+    return { ...s, positions };
+  });
   const held = (id: string) => snap.titans.find((t) => t.status === 'focus' && t.grab?.soldier === id)?.label ?? null;
   return evaluateLadder({
     titan,

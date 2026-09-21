@@ -3,8 +3,9 @@
  * two_focus_titans a_focus_titan_dies; grab.yaml, release titan_dead). Pure and unit tested; the
  * engine (src/tracker/engine.ts, titanDies) writes the plan.
  */
-import { corpsePosition, holdsAPosition, isClose } from './positions.ts';
-import type { Position, SoldierState, TitanRow } from './types.ts';
+import { holdsAPosition, isClose } from './positions.ts';
+import type { SoldierState, TitanRow } from './types.ts';
+import { detached, type Placement } from './zones.ts';
 
 /** One of the Titan's cards: its place in this round's turn order, or null when it is not in it. */
 export interface DeathCard {
@@ -24,8 +25,12 @@ export interface DeathInput {
 }
 
 export interface DeathPlan {
-  /** Soldier id to their Positions after the death. */
-  positions: Record<string, Record<string, Position>>;
+  /**
+   * Soldier id to their placement after the death, for every soldier whose attachment named the body
+   * (but pinned), after its steam and fall steps (positions.yaml, corpse, 16-24): ground after a fall,
+   * else the detach rule. Their Positions relative to the corpse are then derived.
+   */
+  placements: Record<string, Placement>;
   /** Cards taken out of this round: the Titan's cards after the current one. */
   clearCards: string[];
   /** Soldiers who feel the relief (everyone holding a Position). */
@@ -44,18 +49,19 @@ export function planTitanDeath(x: DeathInput): DeathPlan | null {
   const label = row.label;
   const freed = row.grab?.soldier ?? null;
   const close = x.soldiers.filter((s) => s.alive && (isClose(s.positions[label]) || s.id === freed)).map((s) => s.id);
-  const positions: DeathPlan['positions'] = {};
+  const placements: DeathPlan['placements'] = {};
+  const falls = !x.grounded;
   for (const s of x.soldiers) {
-    const p = { ...s.positions };
-    // The freed soldier's last Position relative to the body is on-body (grab.yaml, release, titan_dead).
-    if (s.id === freed) p[label] = corpsePosition('on-body')!;
-    else if (p[label] !== undefined) p[label] = corpsePosition(p[label])!;
-    positions[s.id] = p;
+    if (!s.alive || s.attachment.body !== label || s.attachment.kind === 'pinned') continue;
+    // The freed soldier holds on-body for the steam and fall steps, then ground in the corpse's zone
+    // (grab.yaml, release, titan_dead); a soldier who falls with the body lands on the ground (16-22).
+    const attachment = s.id === freed || falls ? { kind: 'ground' as const, body: null } : detached(s.airborne);
+    placements[s.id] = { zone: row.zone, attachment };
   }
   // Played cards stay in the turn order, so the current turn's index does not move (core keeps combat.turn).
   const clearCards = x.cards.filter((c) => c.titan === x.key && c.order !== null && (x.turn === null || c.order > x.turn)).map((c) => c.id);
   return {
-    positions,
+    placements,
     clearCards,
     relief: x.soldiers.filter((s) => holdsAPosition(s, x.titans)).map((s) => s.id),
     freed,

@@ -170,6 +170,9 @@ export function defineActorModels() {
         nape_depth: k.int(4, { min: 1 }),
         regeneration_clock: k.int(3, { min: 1 }),
         heave: k.int(3, { min: 1 }),
+        // Its Stride (size-classes.yaml, stride; decision batch 16, 16-16). Null reads the stat block's
+        // value from the data by the Titan's id or Size Class (src/tracker/snapshot.ts, strideOfActor).
+        stride: k.nullableInt({ min: 0 }),
         body_parts: new f.ArrayField(
           new f.SchemaField({
             id: k.str(),

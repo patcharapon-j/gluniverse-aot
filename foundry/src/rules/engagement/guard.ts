@@ -5,9 +5,12 @@
  */
 import { drawAttentionBlock } from './attention.ts';
 import { swapBlock } from './cards.ts';
-import { comparisonLabel, isClose, letGoBlock, nearEachOther } from './positions.ts';
+import { isClose, letGoBlock, moveContext, ratingRows, returnBlock, returnZones, routeOption, type MoveKind } from './positions.ts';
+import { spendBlock } from './momentum.ts';
+import { retreatBinds, retreatOptions } from './retreat.ts';
 import { wingBlock, type RoundCore } from './round.ts';
 import type { Snapshot } from './types.ts';
+import { withinZones, type Placement } from './zones.ts';
 
 export type TrackerRequest =
   | { act: 'wing'; combat: string; mate: string; pc: string | null }
@@ -20,7 +23,10 @@ export type TrackerRequest =
   | { act: 'loud-move'; combat: string; soldier: string; titan: string }
   | { act: 'move-spent'; combat: string; soldier: string }
   | { act: 'fall-back'; combat: string; soldier: string; titan: string }
-  | { act: 'let-go'; combat: string; soldier: string; titan: string }
+  | { act: 'let-go'; combat: string; soldier: string; titan?: string }
+  | { act: 'zone-move'; combat: string; soldier: string; kind: MoveKind; steps: Placement[]; charge?: string[]; quiet?: boolean }
+  | { act: 'quiet'; combat: string; soldier: string }
+  | { act: 'return'; combat: string; soldier: string; zone: number }
   | { act: 'engage'; combat: string; soldier: string; foe: string };
 
 export interface TrackerWorld {
@@ -41,10 +47,9 @@ export const grabbedIn = (s: Snapshot) => (id: string) => s.titans.some((t) => t
 export function swapCheck(s: Snapshot, a: string, b: string) {
   const sa = s.soldiers.find((x) => x.id === a);
   const sb = s.soldiers.find((x) => x.id === b);
-  if (!sa || !sb || !s.anchor) return { key: 'unknown' };
-  const label = comparisonLabel(s.titans);
-  const rating = s.anchor;
-  return swapBlock({ step: s.step, a: sa, b: sb, cards: s.cards, swapped: s.swapped, wings: s.wings, grabbed: grabbedIn(s), near: (x, y) => nearEachOther(x, y, label, rating, s.titans) });
+  if (!sa || !sb) return { key: 'unknown' };
+  // One Position step between two soldiers reads the same zone or an adjacent one (16-11).
+  return swapBlock({ step: s.step, a: sa, b: sb, cards: s.cards, swapped: s.swapped, wings: s.wings, grabbed: grabbedIn(s), near: (x, y) => withinZones(s.field, x, y, 1) });
 }
 
 /**
@@ -106,8 +111,12 @@ export function checkTrackerPermission(w: TrackerWorld, req: TrackerRequest): st
       return w.owns(req.soldier) ? null : 'only the soldier’s owner chooses Fall Back';
     case 'let-go':
       if (!taking(req.soldier)) return 'the soldier is not taking part';
-      if (!w.owns(req.soldier)) return 'only the soldier’s owner lets go';
-      return titanOf(req.titan) ? null : 'no such Titan';
+      return w.owns(req.soldier) ? null : 'only the soldier’s owner lets go';
+    case 'zone-move':
+    case 'quiet':
+    case 'return':
+      if (!taking(req.soldier)) return 'the soldier is not taking part';
+      return w.owns(req.soldier) ? null : 'only the soldier’s owner makes their move';
     case 'engage':
       if (!taking(req.soldier)) return 'the soldier is not taking part';
       return w.owns(req.soldier) ? null : 'only the soldier’s owner moves them';
@@ -175,7 +184,7 @@ export function checkTrackerRules(w: TrackerWorld, req: TrackerRequest): string 
       if (!soldier || !titan) return null;
       if (titan.status !== 'focus') return 'no such Focus Titan';
       if (!soldier.alive || soldier.left) return 'the soldier is not in the fight';
-      if (soldier.positions[titan.label] === undefined) return 'the soldier holds no Position toward it';
+      if (soldier.zone === null) return 'the soldier is off field';
       return grabbedIn(s)(soldier.id) ? 'a Grabbed soldier’s move changes nothing' : null;
     }
     case 'move-spent':
@@ -186,10 +195,39 @@ export function checkTrackerRules(w: TrackerWorld, req: TrackerRequest): string 
     }
     case 'let-go': {
       const soldier = soldierOf(req.soldier);
-      const titan = titanOf(req.titan);
-      if (!soldier || !titan) return null;
-      const why = letGoBlock(soldier, titan.label, grabbedIn(s)(soldier.id));
+      if (!soldier) return null;
+      const why = letGoBlock(soldier, grabbedIn(s)(soldier.id));
       return why ? `letting go is not allowed (${why})` : null;
+    }
+    case 'zone-move': {
+      if (s.mode !== 'titan' || s.step !== 'play') return 'a move is made during play';
+      const soldier = soldierOf(req.soldier);
+      if (!soldier) return null;
+      if (!Array.isArray(req.steps) || !req.steps.length) return 'the move names no step';
+      const ctx = moveContext(s, soldier, ratingRows());
+      if (!ctx) return 'the engagement has no field';
+      const o = routeOption(soldier, ctx, req.kind, req.steps);
+      if (!o) return 'the move is not one the soldier’s move can make';
+      // A retreat narrows the soldier's own move (background-titans.yaml, retreat, moves; 16-27).
+      if (retreatBinds(soldier, { clock: { length: 0, filled: 0, active: s.retreat, began: 0 }, grabbedBy: (id) => (grabbedIn(s)(id) ? 'x' : null) })) {
+        const same = (a: Placement, b: Placement) => a.zone === b.zone && a.attachment.kind === b.attachment.kind && a.attachment.body === b.attachment.body;
+        if (!retreatOptions(soldier, s).some((r) => r.kind === o.kind && same(r.to, o.to) && r.steps.length === o.steps.length)) return 'the retreat does not allow that move';
+      }
+      return null;
+    }
+    case 'quiet': {
+      if (s.mode !== 'titan' || s.step !== 'play') return 'Momentum is spent during play';
+      const soldier = soldierOf(req.soldier);
+      if (!soldier) return null;
+      const why = spendBlock(soldier, 'quiet', grabbedIn(s)(soldier.id));
+      return why ? `quiet cannot be spent (${why})` : null;
+    }
+    case 'return': {
+      const soldier = soldierOf(req.soldier);
+      if (!soldier || !s.field) return null;
+      const why = returnBlock(soldier, s.retreat);
+      if (why) return `returning is not allowed (${why})`;
+      return returnZones(s.field, s.titans).includes(req.zone) ? null : 'a returner enters an edge zone holding no Focus Titan and no corpse';
     }
     case 'engage': {
       if (s.mode !== 'skirmish' || s.step !== 'play') return 'Engaged and Apart change during a Skirmish’s play';

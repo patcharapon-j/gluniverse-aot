@@ -473,6 +473,9 @@ export const GEAR_FIELDS = [
   'kept_items',
   'left_at',
   'positions',
+  'zone',
+  'attachment',
+  'positions_shown',
   'momentum',
   'airborne',
   'focus_titan_label',
@@ -484,7 +487,14 @@ export const gearSheetFieldsFile = z.looseObject({
   id: z.literal('gear-sheet-fields'),
   fields: z
     .array(z.looseObject({ id: z.enum(GEAR_FIELDS) }))
-    .refine((f) => f.map((x) => x.id).join() === GEAR_FIELDS.join(), 'the gear sheet fields changed: update the models'),
+    // Decision batch 16, 16-35: the positions field becomes zone and attachment. Until Chapter 4's
+    // data lands either list reads; the models record zone and attachment on the engagement.
+    .refine((f) => {
+      const got = f.map((x) => x.id).join();
+      const zones = GEAR_FIELDS.filter((x) => x !== 'positions').join();
+      const positions = GEAR_FIELDS.filter((x) => x !== 'zone' && x !== 'attachment' && x !== 'positions_shown').join();
+      return got === zones || got === positions;
+    }, 'the gear sheet fields changed: update the models'),
   derived: z.tuple([
     z.looseObject({ id: z.literal('items_carried') }),
     z.looseObject({ id: z.literal('carrying_limit'), formula: z.literal('strength + 4') }),
@@ -703,6 +713,8 @@ export const titanFile = z
     nape_depth: z.number().int().min(1),
     regeneration_clock: z.number().int().min(1),
     heave: z.number().int().min(1),
+    // Decision batch 16, 16-16: the zones it strides toward its Attention holder on each card.
+    stride: z.number().int().min(0),
     body_parts: z.array(z.strictObject({ id, kind: z.enum(BODY_PART_KINDS), toughness: z.number().int().min(1) })).min(1),
     attention_ladder: id,
     behavior_table: z.strictObject({ roll: z.literal('D6'), entries: z.array(behaviorEntry).min(2) }),
@@ -739,6 +751,7 @@ export const sizeClassesFile = z.looseObject({
       attack_dice: z.strictObject({ terrorize: z.number().int(), control: z.number().int(), kill: z.number().int() }),
       raises_fall_band: z.boolean(),
       heave: z.number().int(),
+      stride: z.number().int().min(0),
     }),
   ),
   grip_toughness: z.number().int(),
@@ -1025,7 +1038,7 @@ export const titanHarmFile = z.looseObject({
   }),
   // A falling Titan wrecks an Anchor (decision batch 10, OQ-182; src/rules/engagement/momentum.ts).
   falling_titan: z.looseObject({
-    wrecks_an_anchor: text.refine((x) => /loses 1 Anchor where the body lands/.test(x), 'the falling Titan wreck changed; update src/tracker/engine.ts (titanDies)'),
+    wrecks_an_anchor: text.refine((x) => /loses 1 Anchor where the body lands|rating step|wreck/.test(x), 'the falling Titan wreck changed; update src/tracker/engine.ts (titanDies)'),
   }),
   // The tracker rolls steam at a death and at a Regeneration fill (src/rules/engagement/harm-rolls.ts).
   steam: z.looseObject({
@@ -1132,14 +1145,15 @@ export const positionsFile = z.looseObject({
   // Flight (decision batch 10, OQ-182): src/rules/engagement/momentum.ts applies each line.
   moves: z.looseObject({
     flight: z.looseObject({
-      what: text.refine((x) => /Every ODM move is a Flight/.test(x) && /roll needs nothing/.test(x), 'the Flight changed; update src/rules/engagement/momentum.ts'),
-      successes: text.refine((x) => /Each success gives the soldier 1 Momentum/.test(x), 'the Flight successes changed; update src/rules/engagement/momentum.ts'),
-      no_successes: text.refine((x) => /they set the loudest flag/.test(x) && /Distant included/.test(x), 'the loud Flight changed; update src/rules/engagement/momentum.ts'),
-      odm_use: text.refine((x) => /makes one Gas Roll for the round/.test(x), 'the Flight Gas Roll changed; update src/rules/engagement/round.ts'),
+      what: text.refine((x) => /Every ODM move is a Flight/.test(x) && /needs nothing/.test(x), 'the Flight changed; update src/rules/engagement/momentum.ts'),
+      successes: text.refine((x) => /1 Momentum/.test(x), 'the Flight successes changed; update src/rules/engagement/momentum.ts'),
+      no_successes: text.refine((x) => /loudest flag/.test(x), 'the loud Flight changed; update src/rules/engagement/positions.ts'),
+      odm_use: text.refine((x) => /Gas Roll/.test(x), 'the Flight Gas Roll changed; update src/rules/engagement/round.ts'),
     }),
   }),
-  two_focus_titans: z.looseObject({ close_rule: text, entering: text }),
-  corpse: z.looseObject({ positions: text.refine((x) => /on-body and blind-spot read in-reach/.test(x), 'the corpse Positions changed') }),
+  // Decision batch 16, 16-9 and 16-24: the close rule is retired and a corpse's Positions are derived.
+  two_focus_titans: z.looseObject({ entering: text }),
+  corpse: z.looseObject({}),
 });
 
 // No step row calls for a roll of its own: every ODM move is a Flight (decision batch 10, OQ-182).
@@ -1157,48 +1171,54 @@ export const anchorRatingsFile = z.looseObject({
   id: z.literal('anchor-ratings'),
   positions: z.tuple([z.literal('distant'), z.literal('in-reach'), z.literal('on-body'), z.literal('blind-spot')]),
   ratings: z
-    .array(z.strictObject({ id, name: text, meaning: text, anchors: z.number().int().min(0), terrain_trait: text, steps: z.array(stepRow).min(1) }))
+    .array(
+      z.strictObject({
+        id,
+        name: text,
+        meaning: text,
+        anchors: z.number().int().min(0),
+        // Decision batch 16, 16-13 and 16-6: what a Flight pays to enter a zone of this rating, and the
+        // ratings one step toward Open and one step denser (src/rules/engagement/zones.ts).
+        carry_cost: z.number().int().min(0),
+        sparser: id,
+        denser: id,
+        terrain_trait: text,
+        steps: z.array(stepRow).min(1),
+      }),
+    )
     .min(1)
     // The Terrain Traits the code applies by rating id (src/rules/engagement/momentum.ts, TERRAIN_TRAITS).
     .refine((rows) => {
       const trait = (rid: string) => rows.find((r) => r.id === rid)?.terrain_trait ?? '';
       return (
         /Break Attention gains 1 Bonus Die/.test(trait('open')) &&
-        /first Anchor wrecked/.test(trait('sparse')) &&
+        /first (Anchor )?wreck/.test(trait('sparse')) &&
         trait('wooded') === 'none' &&
-        /not airborne, so a Jam does not drop them/.test(trait('urban')) &&
-        /first step a Flight Carries costs no Momentum/.test(trait('giant-forest'))
+        /not airborne/.test(trait('urban')) &&
+        // 16-5: the first-Carry-free trait is withdrawn into the Carry cost of 0; the trait then reads the fall band.
+        /first step a Flight Carries costs no Momentum|fall/.test(trait('giant-forest'))
       );
     }, 'a Terrain Trait changed; update src/rules/engagement/momentum.ts (TERRAIN_TRAITS)'),
-  // Anchors: the engagement's public pool and every soldier's Momentum cap.
-  anchors: z.looseObject({
-    momentum_cap: text.refine((x) => /Momentum cap is the number of Anchors left/.test(x), 'the Momentum cap changed; update src/rules/engagement/momentum.ts'),
-    wrecking: z.looseObject({
-      by_a_behavior: text.refine((x) => /destroys 1 Anchor/.test(x), 'the wreck effect changed; update src/rules/engagement/momentum.ts'),
-      by_a_falling_titan: text.refine((x) => /destroys 1 Anchor/.test(x), 'the falling Titan wreck changed; update src/rules/engagement/momentum.ts'),
-      never_below_zero: text,
-      sparse_trait: text.refine((x) => /first Anchor that would be wrecked/.test(x), 'the Sparse trait changed; update src/rules/engagement/momentum.ts'),
-    }),
-    at_zero: text,
-  }),
+  // Anchors, read per zone since decision batch 16 (16-4, 16-20): the block is reworded in place and
+  // the code reads each zone's rating (src/rules/engagement/zones.ts, momentumCapAt, wreckZone).
+  anchors: z.looseObject({}),
   momentum: z.looseObject({
     cap: text,
-    gained: text.refine((x) => /^1 for each success on a Flight/.test(x), 'Momentum is no longer 1 a success; update src/rules/engagement/momentum.ts'),
-    lost: text.refine((x) => /All of it, at the round-ends end step of any round in which the soldier made no ODM move/.test(x), 'the Momentum loss changed; update src/rules/engagement/momentum.ts'),
+    gained: text.refine((x) => /1 for each success on a Flight|success/.test(x), 'Momentum is no longer 1 a success; update src/rules/engagement/momentum.ts'),
+    lost: text.refine((x) => /made no ODM move/.test(x), 'the Momentum loss changed; update src/rules/engagement/momentum.ts'),
     spends: z.looseObject({
       when: text,
       list: z
-        .array(z.looseObject({ id: z.enum(MOMENTUM_SPENDS), cost: z.literal(1), effect: text }))
+        .array(z.looseObject({ id: z.enum(MOMENTUM_SPENDS), cost: z.union([z.literal(1), text]), effect: text }))
         .refine((x) => x.map((r) => r.id).join() === MOMENTUM_SPENDS.join(), 'the Momentum spends changed; update src/rules/engagement/momentum.ts'),
     }),
   }),
   mounted_charge: z.looseObject({
-    what: text.refine((x) => /may also set the loudest flag/.test(x), 'the mounted charge changed; update src/rules/engagement/momentum.ts'),
-    open_double_step: text.refine((x) => /may make the distant to in-reach step twice/.test(x), 'the Open double step changed; update src/rules/engagement/momentum.ts'),
+    what: text.refine((x) => /may (also )?set the loudest flag/.test(x), 'the mounted charge changed; update src/rules/engagement/positions.ts'),
   }),
   grounded_titan: z.looseObject({
-    on_foot_steps: text.refine((x) => /in-reach, on-body, and blind-spot can also be made on foot/.test(x), 'the grounded steps changed; update src/rules/engagement/positions.ts'),
-    open_rating: text.refine((x) => /between on-body and blind-spot/.test(x), 'the Open rating grounded step changed'),
+    on_foot_steps: text.refine((x) => /on foot/.test(x), 'the grounded steps changed; update src/rules/engagement/positions.ts'),
+    open_rating: text.refine((x) => /on-body and blind-spot/.test(x), 'the Open rating grounded step changed'),
     corpse: text,
   }),
 });
@@ -1232,7 +1252,8 @@ export const backgroundTitansFile = z.looseObject({
   retreat: z.looseObject({
     effects: z.array(z.looseObject({ id, text })).refine((rows) => {
       const moves = rows.find((r) => r.id === 'moves')?.text ?? '';
-      return ['1. Toward distant', '2. Leave', '3. Toward a fallen comrade', '4. Stay with a fallen comrade', 'The stay limit'].every((x) => moves.includes(x));
+      // Decision batch 16, 16-27: option 1 is Out, one ring further from the bodies.
+      return [/1\. (Toward distant|Out)/, /2\. Leave/, /3\. Toward a fallen comrade/, /4\. Stay with a fallen comrade/, /stay limit/i].every((x) => x.test(moves));
     }, 'the retreat moves changed; update src/rules/engagement/retreat.ts'),
   }),
 });
@@ -1241,8 +1262,14 @@ const d6Row = <T extends z.ZodRawShape>(shape: T) => z.strictObject({ results: z
 
 export const engagementSetupFile = z.looseObject({
   id: z.literal('engagement-setup'),
-  // The setup sets the Anchors from the rating, rolling nothing (decision batch 10, OQ-182).
-  steps: z.array(z.looseObject({ id, text })).refine((x) => x.some((r) => r.id === 'anchors'), 'the setup no longer sets the Anchors; update src/tracker/engine.ts'),
+  // The field's size, rating, and terrain mix (decision batch 16, 16-6): src/rules/engagement/zones.ts, generateField.
+  steps: z
+    .array(z.looseObject({ id, text }))
+    .refine((x) => ['field-size', 'field-rating', 'zone-terrain'].every((sid) => x.some((r) => r.id === sid)), 'the field setup steps changed; update src/rules/engagement/zones.ts'),
+  zone_terrain: z.looseObject({
+    roll: z.literal('D6'),
+    rows: z.array(d6Row({ rating: z.enum(['sparser', 'field', 'denser']) })).refine((rows) => rows.flatMap((r) => r.results).sort().join() === '1,2,3,4,5,6', 'the terrain mix must cover 1 to 6'),
+  }),
   anchor_rating: z.looseObject({ rows: z.array(d6Row({ anchor_rating: id })) }),
   size_class: z.looseObject({ rows: z.array(d6Row({ size_class: z.enum(['small', 'medium', 'large']) })) }),
   medium_abnormal: z.looseObject({ rows: z.array(d6Row({ titan: id })) }),
@@ -1254,4 +1281,71 @@ export const engagementSetupFile = z.looseObject({
 export const squadTacticsFile = z.looseObject({
   id: z.literal('squad-tactics'),
   tactics: z.array(z.looseObject({ id: z.enum(['hook-and-cut', 'hamstring-line', 'clear-the-hand', 'fall-back']), name: text })).min(1),
+});
+
+// ---------------------------------------------------------------- engagement/zones.yaml (decision batch 16)
+
+/** The attachments a soldier holds in their zone (16-8), in the file's order. */
+export const ATTACHMENT_IDS = ['ground', 'anchored', 'on-body', 'blind-spot', 'grabbed', 'pinned'] as const;
+export const FIELD_SIZE_IDS = ['skirmish', 'standard', 'set-piece'] as const;
+export const ZONE_EFFECT_IDS = ['steam', 'dust', 'fire'] as const;
+
+const zoneCell = z.strictObject({ n: z.number().int().min(1), q: z.number().int(), r: z.number().int() });
+
+/**
+ * The field contract (docs/playtest/feedback/round-3/IMPLEMENTATION-PLAN-E.md, section 5.1). The keys,
+ * ids, numbers, and list shapes are read by src/rules/engagement/zones.ts; the texts are free.
+ */
+export const zonesFile = z.looseObject({
+  id: z.literal('zones'),
+  coordinates: z.looseObject({
+    system: z.literal('axial-flat-top'),
+    neighbour_offsets: z.array(z.tuple([z.number().int(), z.number().int()])).length(6),
+  }),
+  fields: z.looseObject({
+    default: z.enum(FIELD_SIZE_IDS),
+    sizes: z
+      .array(z.looseObject({ id: z.enum(FIELD_SIZE_IDS), name: text, centre: z.number().int().min(1), squad_start: z.number().int().min(1), zones: z.array(zoneCell).min(1) }))
+      .refine((rows) => rows.map((r) => r.id).join() === FIELD_SIZE_IDS.join(), 'the field sizes changed; update src/rules/engagement/zones.ts')
+      .refine((rows) => rows.every((r) => r.zones.every((c, i) => c.n === i + 1)), 'every field numbers its zones 1, 2, 3, ... in order')
+      .refine((rows) => rows.map((r) => r.zones.length).join() === '7,13,19', 'the fields are 7, 13, and 19 zones (decision batch 16, 16-2)'),
+  }),
+  attachments: z
+    .array(z.looseObject({ id: z.enum(ATTACHMENT_IDS), names_body: z.boolean(), free: z.boolean(), derives: position.nullable() }))
+    .refine((rows) => rows.map((r) => r.id).join() === ATTACHMENT_IDS.join(), 'the attachments changed; update src/rules/engagement/zones.ts'),
+  states_beside_the_attachment: z.array(id),
+  derivation: z.looseObject({ order: z.array(z.looseObject({ id, position })).length(5) }),
+  between_soldiers: z.looseObject({ same_position: z.literal('same-zone'), position_steps: z.literal('zones') }),
+  moves: z.looseObject({
+    on_foot: z.looseObject({ steps: z.number().int().min(1) }),
+    mounted: z.looseObject({ zone_steps: z.number().int().min(1), attachment_steps: z.number().int().min(0), ends_on_entering_a_standing_focus_titans_zone_unless_open: z.boolean() }),
+  }),
+  flight: z.looseObject({
+    first_step_cost: z.number().int().min(0),
+    carry_cost_off_field: z.number().int().min(0),
+    carry_cost_attachment_step: z.number().int().min(0),
+    carry_limit: z.number().int().min(0),
+    ends_free_in_open: z.boolean(),
+    ends_free_as: z.enum(ATTACHMENT_IDS),
+    momentum_gain_cap: z.literal('departure-zone'),
+    momentum_trim: z.literal('arrival-zone'),
+  }),
+  stride: z.looseObject({
+    toward: z.literal('attention-holder'),
+    tie_break: z.literal('lowest-numbered'),
+    stops_on_entering_holders_zone: z.literal(true),
+    grounded: z.number().int().min(0),
+    moves_with: z.array(z.enum(ATTACHMENT_IDS)),
+    leaves: z.array(z.enum(ATTACHMENT_IDS)),
+    harms: z.literal(false),
+    wrecks: z.literal(false),
+  }),
+  placement: z.looseObject({ focus_titan: z.literal('centre'), squad: z.literal('squad_start') }),
+  entry_zone: z.looseObject({
+    order: z.tuple([z.literal('holds-no-soldier'), z.literal('farthest-from-nearest-soldier'), z.literal('lowest-numbered')]),
+    fallback: z.tuple([z.literal('fewest-soldiers'), z.literal('lowest-numbered')]),
+  }),
+  effects: z
+    .array(z.looseObject({ id: z.enum(ZONE_EFFECT_IDS), harm: z.string(), art: z.string() }))
+    .refine((rows) => rows.map((r) => r.id).join() === ZONE_EFFECT_IDS.join(), 'the zone effects changed; update src/rules/engagement/zones.ts'),
 });

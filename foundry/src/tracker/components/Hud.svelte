@@ -94,7 +94,7 @@
         {#if v.mode === 'titan'}
           <Clock segments={v.retreat.length} filled={v.retreat.filled} label={t('retreat')} />
           <span>{v.retreat.active ? t('retreatCalled') : t('retreatN', { n: v.retreat.filled, of: v.retreat.length })}</span>
-          {#if v.mode === 'titan'}<span title={v.anchors.trait}>{v.anchors.text}</span>{/if}
+          {#if v.mode === 'titan' && v.field}<span>{t('fieldPlate', { size: v.field.sizeText, rating: v.anchor })}</span>{/if}
         {:else}<span>{t('skirmish')}</span>{/if}
         <button type="button" class="mini" onclick={() => act('unfold')}>{t('act.unfold')}</button>
         <button type="button" class="mini" aria-label={t('act.boardLabel')} onclick={() => act('board')}>{t('act.board')}</button>
@@ -110,11 +110,11 @@
         {:else}
           <span class="hint" title={v.hint}>{v.hint}</span>
         {/if}
-        <!-- The anchor rating belongs to the engagement, not to a soldier, so it is read here and
-             not on every token; the Momentum pip track on the tokens carries its cap (batch D). -->
-        {#if v.mode === 'titan'}
-          <span class="anchorplate" title="{v.anchors.text}{v.anchors.trait ? `. ${v.anchors.trait}` : ''}">
-            <b>{v.anchor}</b><span>{t('line.anchors')} {v.anchors.left}<small>&thinsp;{t('of')}&thinsp;</small>{v.anchors.full}</span>
+        <!-- The field rating and size belong to the engagement; each zone's own rating is on the
+             board and in the ledger's field readout, and each soldier's cap is their zone's (16-4). -->
+        {#if v.mode === 'titan' && v.field}
+          <span class="anchorplate" title={t('fieldPlate', { size: v.field.sizeText, rating: v.anchor })}>
+            <b>{v.anchor}</b><span>{v.field.sizeText}</span>
           </span>
         {/if}
         {#if isGM}

@@ -3,8 +3,8 @@
  * and release. Pure and unit tested.
  */
 import type { BodyPart } from '../titan.ts';
-import { withPosition } from './positions.ts';
 import type { GrabState, Position, SoldierState, TitanRow } from './types.ts';
+import type { Placement } from './zones.ts';
 
 /** The holding arm: the first arm in the stat block that is not Broken (grab_lands, hold). */
 export function holdingArm(parts: readonly BodyPart[]): BodyPart | null {
@@ -15,8 +15,8 @@ export interface GrabLanding {
   /** Only the crush lands (a Pinned target, pinned_target), or the whole Grab. */
   crushOnly: boolean;
   grab: GrabState | null;
-  /** The target's Positions after the hold (on-body, with the close rule). */
-  positions: Record<string, Position>;
+  /** The target's placement after the hold: grabbed naming the Titan, in its zone (16-23). */
+  placement: Placement;
   /** The holding arm with its count lost (its Toughness is grip Toughness while it holds). */
   parts: BodyPart[];
   /** Chapter 4 effects of the hold on the target. */
@@ -27,21 +27,21 @@ export interface GrabLanding {
 }
 
 /**
- * A Grab lands (grab_lands): the target becomes Grabbed, holds on-body relative to the holding Titan
- * (close rule), stops being airborne, carried, or carrying, is dismounted, and holds the Titan's
- * Attention. The holding arm's count is lost. A Pinned target takes only the crush. Null when the
- * Titan has no arm to hold with (a Broken arm cannot Grab).
+ * A Grab lands (grab_lands): the target becomes Grabbed, their attachment grabbed naming the holding
+ * Titan in its zone (which derives on-body, 16-23), stops being airborne, carried, or carrying, is
+ * dismounted, and holds the Titan's Attention. The holding arm's count is lost. A Pinned target takes
+ * only the crush. Null when the Titan has no arm to hold with (a Broken arm cannot Grab).
  */
-export function grabLands(target: SoldierState, titan: TitanRow, parts: readonly BodyPart[], focus: readonly string[]): GrabLanding | null {
+export function grabLands(target: SoldierState, titan: TitanRow, parts: readonly BodyPart[]): GrabLanding | null {
   if (target.pinned) {
-    return { crushOnly: true, grab: null, positions: { ...target.positions }, parts: [...parts], clearAirborne: false, dismount: false, stopCarrying: null, stopBeingCarried: null };
+    return { crushOnly: true, grab: null, placement: { zone: target.zone, attachment: { ...target.attachment } }, parts: [...parts], clearAirborne: false, dismount: false, stopCarrying: null, stopBeingCarried: null };
   }
   const arm = holdingArm(parts);
   if (!arm) return null;
   return {
     crushOnly: false,
     grab: { soldier: target.id, counted: 0, lifted: false, arm: arm.id },
-    positions: withPosition(target.positions, titan.label, 'on-body', focus),
+    placement: { zone: titan.zone, attachment: { kind: 'grabbed', body: titan.label } },
     parts: parts.map((p) => (p.id === arm.id ? { ...p, progress: 0 } : { ...p })),
     clearAirborne: target.airborne,
     dismount: target.mounted,
@@ -63,15 +63,17 @@ export function countTurn(grab: GrabState): { grab: GrabState | null; event: Cou
 }
 
 export interface Release {
-  /** The freed soldier's Position relative to the holding Titan, or undefined when it is dead. */
+  /** The freed soldier's Position relative to the holding Titan (in-reach: ground in its zone), or undefined when it is dead. */
   position: Position | undefined;
   /** A lifted soldier falls (release, lifted). */
   falls: boolean;
+  /** Ground in the holding Titan's (or corpse's) zone, after any fall (16-23). */
+  placement: Placement;
 }
 
-/** Being freed (release): in-reach relative to a living holder, a fall if lifted. */
-export function release(grab: GrabState, titanAlive: boolean): Release {
-  return { position: titanAlive ? 'in-reach' : undefined, falls: grab.lifted };
+/** Being freed (release): ground in the holder's zone, in-reach relative to a living holder, a fall first if lifted. */
+export function release(grab: GrabState, titanAlive: boolean, zone: number | null = null): Release {
+  return { position: titanAlive ? 'in-reach' : undefined, falls: grab.lifted, placement: { zone, attachment: { kind: 'ground', body: null } } };
 }
 
 /** The Toughness a Body Part strike reads: grip Toughness for the holding arm. */

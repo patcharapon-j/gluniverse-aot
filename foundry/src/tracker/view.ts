@@ -7,8 +7,9 @@ import { iconPath } from '../art.ts';
 import { evaluateLadder } from '../rules/engagement/attention.ts';
 import { FRENZY_CAP, tieCard } from '../rules/engagement/cards.ts';
 import { grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
-import { comparisonLabel, isClose, leaveBlock, letGoBlock, moveOptions, returnBlock, stepsApart, stepRows, waysOf } from '../rules/engagement/positions.ts';
-import { chargeBlock, chargeDoubleStep, momentumCap } from '../rules/engagement/momentum.ts';
+import { isClose, leaveBlock, letGoBlock, returnBlock, returnZones } from '../rules/engagement/positions.ts';
+import { capOf } from '../rules/engagement/momentum.ts';
+import { zoneDistance, type Attachment } from '../rules/engagement/zones.ts';
 import { checksOf, endComplete, isManual, nextCheck, stayLimitLeft, stepsOf, wingsEditable, type EndEntry } from '../rules/engagement/round.ts';
 import { foeTurn } from '../rules/engagement/skirmish.ts';
 import { drawAttentionBlock } from '../rules/engagement/attention.ts';
@@ -18,7 +19,7 @@ import { trackerApply } from '../settings.svelte.ts';
 import { currentEngagement, engagementTurns } from './combat.ts';
 import { checkCategoryOf, endLock, endingState, roundCore, skirmishFoes } from './engine.ts';
 import { tr } from './notes.ts';
-import { E, forcedFor, grabbedBy, partsOf, snapshot, titanActor, titanToken } from './snapshot.ts';
+import { E, grabbedBy, partsOf, ratingOf, snapshot, titanActor, titanToken } from './snapshot.ts';
 
 export const LETTER: Record<Position, string> = { distant: 'D', 'in-reach': 'I', 'on-body': 'O', 'blind-spot': 'B' };
 export const POS_ICON: Record<Position, string> = { distant: iconPath('pos-distant'), 'in-reach': iconPath('pos-in-reach'), 'on-body': iconPath('pos-on-body'), 'blind-spot': iconPath('pos-blind-spot') };
@@ -119,9 +120,19 @@ export interface SoldierRow {
   cells: Cell[];
   gas: number;
   gasMax: number;
-  /** Momentum held, and the cap the Anchors left give (anchor-ratings.yaml, momentum). */
+  /** Momentum held, and the cap the anchors of their zone give (anchor-ratings.yaml, momentum; 16-4). */
   momentum: number;
   momentumCap: number;
+  /** The field readout (16-35): their zone (null off field), attachment, mounted, and horse's zone. */
+  zone: number | null;
+  zoneText: string;
+  attachKind: string;
+  attachBody: string;
+  attachText: string;
+  mounted: boolean;
+  horseText: string;
+  /** The edge zones a departed soldier may return into (16-26). */
+  returnZones: number[];
   stress: number;
   owner: boolean;
   swapBlock: string | null;
@@ -140,6 +151,8 @@ export interface SoldierRow {
 export interface TitanView {
   key: string;
   label: string;
+  /** The zone it stands in (16-35). */
+  zone: number;
   colour: string;
   name: string;
   kind: string;
@@ -209,6 +222,24 @@ export interface FoeView {
   canAct: boolean;
 }
 
+export interface ZoneView {
+  n: number;
+  rating: string;
+  name: string;
+  /** Its start rating's name when a wreck or a ruling has moved it (the tile keeps the start, 16-34). */
+  startName: string | null;
+  trait: string;
+  titans: string[];
+  soldiers: string[];
+}
+
+export interface FieldView {
+  size: string;
+  sizeText: string;
+  rating: string;
+  zones: ZoneView[];
+}
+
 export interface TrackerView {
   combat: string;
   isGM: boolean;
@@ -232,8 +263,8 @@ export interface TrackerView {
   checks: CheckView[];
   allStamped: boolean;
   retreat: { length: number; filled: number; active: boolean; text: string };
-  /** The Anchors left of the rating's own count, and its Terrain Trait (anchor-ratings.yaml). */
-  anchors: { left: number; full: number; text: string; trait: string };
+  /** The field readout (16-35): its size, the field rating, and each zone's rating and occupants. */
+  field: FieldView | null;
   background: { name: string; length: number; filled: number; entered: boolean }[];
   tactics: string;
   cloaks: string;
@@ -371,11 +402,19 @@ export function buildView(): TrackerView | null {
       gas: src.gas_rating ?? 0,
       gasMax: CONFIG.WOF.gas.full,
       momentum: s.momentum,
-      momentumCap: momentumCap(snap.anchors),
+      momentumCap: capOf(s, snap.field),
+      zone: s.zone,
+      zoneText: s.left ? tr('zone.off') : s.zone === null ? '–' : tr('zone.n', { n: s.zone }),
+      attachKind: s.attachment.kind,
+      attachBody: s.attachment.body ?? '',
+      attachText: s.zone === null ? '' : attachText(s.attachment),
+      mounted: s.mounted,
+      horseText: s.horseZone === null ? '' : tr('zone.horse', { n: s.horseZone }),
+      returnZones: snap.field && s.left ? returnZones(snap.field, snap.titans) : [],
       stress: src.derived?.stress_effective ?? src.stress ?? 0,
       owner,
       swapBlock: snap.step === 'swap' ? swapBlockText(snap, id) : null,
-      leave: snap.mode === 'titan' ? blockText(leaveBlock(s, snap.titans, !!g)) : null,
+      leave: snap.mode === 'titan' ? blockText(leaveBlock(s, snap.field, snap.titans, !!g, snap.retreat)) : null,
       returnBack: snap.mode === 'titan' ? blockText(returnBlock(s, snap.retreat)) : null,
       odm: sys.odmUsed.includes(id),
       engaged: (sys.skirmish.engaged as any[]).filter((e) => e.soldier === id).map((e) => e.foe),
@@ -539,12 +578,25 @@ export function buildView(): TrackerView | null {
     checks,
     allStamped,
     retreat: { length: retreat.length, filled: retreat.filled, active: retreat.active, text: retreatText },
-    anchors: {
-      left: snap.anchors,
-      full: snap.anchor?.anchors ?? 0,
-      text: tr('anchors', { left: snap.anchors, full: snap.anchor?.anchors ?? 0 }),
-      trait: snap.anchor ? game.i18n.localize(CONFIG.WOF.labels.terrainTraits[snap.anchor.trait] ?? '') : '',
-    },
+    field: snap.field
+      ? {
+          size: snap.field.size,
+          sizeText: tr(`field.${snap.field.size}`),
+          rating: snap.anchor?.name ?? '',
+          zones: snap.field.zones.map((z) => {
+            const r = ratingOf(z.rating);
+            return {
+              n: z.n,
+              rating: z.rating,
+              name: r?.name ?? z.rating,
+              startName: z.start !== z.rating ? (ratingOf(z.start)?.name ?? z.start) : null,
+              trait: r ? game.i18n.localize(CONFIG.WOF.labels.terrainTraits[r.trait] ?? '') : '',
+              titans: snap.titans.filter((t) => t.zone === z.n).map((t) => (t.status === 'corpse' ? `${t.label} (${tr('corpse')})` : t.label)),
+              soldiers: snap.soldiers.filter((x) => x.zone === z.n && x.alive && !x.left).map((x) => short(x.name)),
+            };
+          }),
+        }
+      : null,
     background: (sys.background as any[]).map((b) => ({ name: b.name, length: b.length, filled: b.filled, entered: !!b.entered })),
     tactics,
     cloaks: (sys.cloaks as string[]).map((id) => nm(snap, id)).join(', ') || tr('none'),
@@ -584,61 +636,21 @@ export function swapReason(a: string, b: string): string | null {
   const snap = snapshot(combat);
   const why = swapCheck(snap, a, b);
   if (!why) return null;
-  const label = comparisonLabel(snap.titans);
-  if (why.key === 'far' && snap.anchor && label) {
+  if (why.key === 'far' && snap.field) {
     const sa = snap.soldiers.find((x) => x.id === a)!;
     const sb = snap.soldiers.find((x) => x.id === b)!;
-    const t = snap.titans.find((x) => x.label === label);
-    const n = stepsApart(stepRows(snap.anchor, !!t?.grounded || t?.status === 'corpse'), sa.positions[label], sb.positions[label]);
-    return tr('swap.farDetail', { a: sa.name, b: sb.name, label, anchor: snap.anchor.name, n: Number.isFinite(n) ? n : '∞' });
+    const n = sa.zone !== null && sb.zone !== null ? zoneDistance(snap.field, sa.zone, sb.zone) : Infinity;
+    return tr('swap.farDetail', { a: sa.name, b: sb.name, n: Number.isFinite(n) ? n : '∞' });
   }
   return tr(`swap.${why.key}`, { name: why.who ?? '' });
 }
 
-/**
- * The steps the current terrain allows relative to one body, named for the move menu. The shape is a
- * property of the Anchor Rating (anchor-ratings.yaml, ratings, steps): Open joins Distant, In Reach
- * and On Body with no Blind Spot at all while the Titan stands; Sparse is a chain through On Body to
- * Blind Spot; Wooded, Urban and Giant Forest let In Reach reach both On Body and Blind Spot. A
- * grounded Titan or a corpse adds the on-foot permissions. Read from the data, never hard-coded.
- */
-function stepLines(snap: Snapshot, t: TitanRow, from: Position | null): StepLine[] {
-  if (!snap.anchor) return [];
-  const grounded = t.grounded || t.status === 'corpse';
-  return stepRows(snap.anchor, grounded).map((row) => ({
-    from: row.a,
-    to: row.b,
-    fromLabel: tr(`pos.${row.a}`),
-    toLabel: tr(`pos.${row.b}`),
-    ways: waysOf(row).map((w) => tr(`move.way.${w.kind}`)).join(', '),
-    here: from === row.a || from === row.b,
-  }));
-}
+/** An attachment named for the ledger: On Body A, Blind Spot A, on the ground, and so on. */
+export const attachText = (a: Attachment) => (a.body ? tr(`attach.${a.kind}Of`, { label: a.body }) : tr(`attach.${a.kind}`));
 
 function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, colour: string, isGM: boolean, owner: boolean): Cell {
   const p = s.positions[t.label] ?? null;
   const corpse = t.status === 'corpse';
-  const opts = snap.anchor ? moveOptions(s, { rating: snap.anchor, titan: t, grabbed: grabbedIn(snap)(s.id), retreat: snap.retreat, momentum: s.momentum, forced: forcedFor(game.combats.get(snap.combat), snap, s, t.label) }) : [];
-  const options: PosOption[] = POSITIONS.map((to) => {
-    const o = opts.find((x) => x.to === to);
-    return {
-      to,
-      label: tr(`pos.${to}`),
-      icon: POS_ICON[to],
-      current: to === p,
-      charge: to === p && chargeDoubleStep(snap.anchor) && !chargeBlock(s, snap.anchor, p ?? undefined, grabbedIn(snap)(s.id)),
-      ways: (o?.ways ?? []).map((w) => ({
-        kind: w.kind,
-        label: tr(`move.way.${w.kind}`),
-        steps: w.steps,
-        carry: w.carry,
-        charge: w.charge,
-        // A Flight is rolled either way; Carry says what the extra steps cost (momentum, spends, carry).
-        note: w.carry > 0 ? tr('move.carry', { n: w.carry }) : w.steps > 1 ? tr('move.carryFree') : w.kind === 'odm' ? tr('move.flight') : w.charge ? tr('move.charge') : null,
-      })),
-      block: to === p ? null : o?.block ? tr(`move.${o.block}`) : null,
-    };
-  });
   return {
     key: t.key,
     label: t.label,
@@ -649,13 +661,14 @@ function cellView(s: SoldierState, t: TitanRow, snap: Snapshot, grab: boolean, c
     close: isClose(p ?? undefined),
     grab,
     colour,
-    options: owner || isGM ? options : [],
+    // Moves are made on the engagement board (src/board/); the ledger shows the derived Position (16-35).
+    options: [],
     hooked: t.flags.hooked.includes(s.id),
     attention: t.holder === s.id,
     flagLoud: t.flags.loud.includes(s.id),
     flagHurt: t.flags.hurt.includes(s.id),
-    steps: stepLines(snap, t, p),
-    letGo: blockText(letGoBlock(s, t.label, grabbedIn(snap)(s.id))),
+    steps: [],
+    letGo: s.attachment.body === t.label ? blockText(letGoBlock(s, grabbedIn(snap)(s.id))) : tr('move.notClose'),
     loud: corpse ? null : (() => {
       const why = drawAttentionBlock(s, t, grabbedIn(snap)(s.id));
       return why ? tr(`block.${why}`) : null;
@@ -714,6 +727,7 @@ function titanView(combat: any, snap: Snapshot, t: TitanRow, turns: any[], turnI
   return {
     key: t.key,
     label: t.label,
+    zone: t.zone,
     colour,
     name: token?.name ?? actor?.name ?? '?',
     kind,

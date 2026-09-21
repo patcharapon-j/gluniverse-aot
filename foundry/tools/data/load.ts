@@ -81,6 +81,7 @@ export const FILES = {
   round: ['data/engagement/round.yaml', S.roundFile],
   positions: ['data/engagement/positions.yaml', S.positionsFile],
   anchorRatings: ['data/engagement/anchor-ratings.yaml', S.anchorRatingsFile],
+  zones: ['data/engagement/zones.yaml', S.zonesFile],
   grab: ['data/engagement/grab.yaml', S.grabFile],
   backgroundTitans: ['data/engagement/background-titans.yaml', S.backgroundTitansFile],
   engagementSetup: ['data/engagement/engagement-setup.yaml', S.engagementSetupFile],
@@ -212,6 +213,15 @@ function crossCheck(t: Tables): void {
   }
   const ratings = new Set(t.anchorRatings.ratings.map((r) => r.id));
   for (const r of t.engagementSetup.anchor_rating.rows) if (!ratings.has(r.anchor_rating)) fail(FILES.engagementSetup[0], `names the missing Anchor Rating "${r.anchor_rating}"`);
+  for (const r of t.anchorRatings.ratings) {
+    for (const k of ['sparser', 'denser'] as const) if (!ratings.has(r[k])) fail(FILES.anchorRatings[0], `"${r.id}" names the missing ${k} rating "${r[k]}"`);
+  }
+  // The field layouts (decision batch 16, 16-2): each zone once, the centre and the start zone on it.
+  for (const size of t.zones.fields.sizes) {
+    const seen = new Set(size.zones.map((c) => `${c.q},${c.r}`));
+    if (seen.size !== size.zones.length) fail(FILES.zones[0], `the ${size.id} field places two zones on one hex`);
+    for (const n of [size.centre, size.squad_start]) if (!size.zones.some((c) => c.n === n)) fail(FILES.zones[0], `the ${size.id} field names the missing zone ${n}`);
+  }
   const titanIds = new Set(t.titans.map((x) => x.id));
   for (const r of t.engagementSetup.medium_abnormal.rows) if (!titanIds.has(r.titan)) fail(FILES.engagementSetup[0], `names the missing Titan "${r.titan}"`);
   if (t.grab.grab_lands.grip_toughness !== t.sizeClasses.grip_toughness) fail(FILES.grab[0], 'its grip Toughness differs from data/engagement/size-classes.yaml');
@@ -219,7 +229,7 @@ function crossCheck(t: Tables): void {
     if (!ladders.has(titan.attention_ladder)) fail(`data/titans/${titan.id}.yaml`, `names the missing Attention Ladder "${titan.attention_ladder}"`);
     if (!titan.abnormal) {
       const size = t.sizeClasses.classes.find((c) => c.id === titan.size_class)!;
-      for (const key of ['tempo', 'nape_depth', 'regeneration_clock', 'heave'] as const) {
+      for (const key of ['tempo', 'nape_depth', 'regeneration_clock', 'heave', 'stride'] as const) {
         if (titan[key] !== size[key]) fail(`data/titans/${titan.id}.yaml`, `${key} differs from its Size Class row`);
       }
     }
