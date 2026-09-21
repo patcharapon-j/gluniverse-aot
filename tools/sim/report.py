@@ -194,11 +194,7 @@ SNAPSHOT_CHANGE_NOTES = {
                           "matches the run's",
     "tools/sim/dice.py": "the Titan attack's shared functions, and 8-40's Fear snapshot (`fear_result`, "
                          "`apply_fear_result`); listed with the engine changes",
-    "tools/sim/engine.py": "the Titan attack's shared functions, and 8-40's Fear snapshot (`Fight.fear_event`); listed "
-                           "with the engine changes",
     "tools/sim/families.py": "the Titan attack's shared functions; listed with the engine changes",
-    "tools/sim/rules.py": "wording guards: every statement guard ignores letter case (package D's glossary capitals), and "
-                          "the stay limit's guards read 8-36's wording; no value read changes",
 }
 # The in-memory checks behind the notes above (review fix plan, section 5, (b)), on the committed seeds and case sizes.
 POST_RUN_CHECKS = (
