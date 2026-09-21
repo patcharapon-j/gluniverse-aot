@@ -97322,7 +97322,11 @@
   }
  },
  "post_run_commits": {
+  "data/engagement/tuning.yaml": "4682319f28a4c4ce3f5430973d9fd0cb5b1bedf873ce07687dcebc8ef1503fda",
   "data/titans/probe-figures.yaml": "1acc274e0e5759b71faff7e147eaf6cbe34561221cc0b91fc1f53d265a79b8e4",
+  "data/titans/tuning.yaml": "1ed04829956a6e1557388eb4ee228b17ddbfa28242ec986fe9f13a3f1e647068",
+  "docs/rules/05-titan-engagement.md": "52d893f39696871907c3a3387bb3478cebb9a7cf70fc3632fcd97daa6d343d9f",
+  "docs/rules/06-standard-titans.md": "08a4a1df8e62535a4682dd5dba0ba056f7fd781797687903a1914428020c722e",
   "tools/sim/run.py": "6f724192f5a5f43c10dddcb00472d6c6d15a70d42328d2742597bff66013eca3"
  },
  "previous_headlines": [
