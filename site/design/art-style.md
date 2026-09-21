@@ -394,11 +394,36 @@ Settled by the owner on 2026-09-21:
 - **Hexes are flat-top**, with two-to-one foreshortening, so a tile is twice as wide as it is tall.
 - **The board takes its own style block and its own approved style lock**, before any of the twenty-nine files are generated. ADR-0022 requires a style lock of every family, and a shallow-isometric board tile is not covered by the colour plate block, the ink-wash vignette block, or the icon system block.
 
-The style block below is written once the style lock is approved. Until then the board has no locked block and no batch may run against it.
+The style lock was approved by the owner on 2026-09-21: variant 1 of each of the five anchor ratings, `titan-medium` and `soldier-standing`. Those seven originals are the board's style references, never regenerated or edited, and each later board asset attaches the approved asset of its own kind with `-i`, alongside the two colour plate style-lock plates.
+
+A board asset is assembled like a colour plate: run header, aspect line, the plate REFERENCE IMAGES line, the colour plate style block, the world block (tiles and soldier figures only), then the board block for its kind, the subject, and the exclusions. The colour plate style block is still used verbatim. The board block carries what it cannot say, because it describes how characters are drawn and a terrain tile has none.
 
 ### Style block: board tile
 
-Pending the style lock.
+Goes after the colour plate style block and before the terrain line, which is the only per-tile text (`TERRAIN: ...`, then `SCALE: one tile is about a Titan's reach across, roughly fifteen metres, so everything on it is sized to that.`).
+
+```text
+RENDERING, important, read this first: this is a hand-painted anime background, painted exactly like the attached approved plates. Grass, earth, stone, timber and foliage are laid in as broad masses of colour with visible brush strokes in them, flat painterly anime shading, and confident dark contour lines on anything with a defined edge such as a stone, a trunk, a roof or a wall. Never a photograph, never a photorealistic render, never a 3D render, never a game-engine texture, never a scanned physical wargame tile, and never photographic depth-of-field blur. Individual blades of grass, photographic surface grain and speckled noise are wrong; brush marks and simplified painted shapes are right. If it would look like a photograph of real ground, it is wrong.
+GEOMETRY, exact: one flat-top hexagon, that is a hexagon with a flat top edge, a flat bottom edge, and a pointed corner at the left and at the right. The hexagon exactly fills the canvas and is pinned to its edges: the left point touches the middle of the left canvas edge, the right point touches the middle of the right canvas edge, the flat top edge lies along the top of the canvas spanning its middle half, and the flat bottom edge lies along the bottom of the canvas spanning its middle half. It is therefore as wide as the canvas and as tall as the canvas, and the only transparent areas are the four triangular corners the hexagon does not cover. Nothing at all is drawn outside the hexagon. The six edges are clean straight cuts with no border, no outline, no rim and no frame drawn on them.
+TILING: the ground surface runs right up to all six edges and is cut off flat by them, with no fade, no vignette and no darkening at the edges, so that many copies of this tile placed edge to edge read as one continuous field. Nothing on the tile crosses an edge or overhangs it.
+LIGHT: flat, even, overcast daylight from high and slightly to the upper left, with no long cast shadows, no dramatic rim light and no sun flare, so that tiles of different terrain sit together without a lighting seam. Small contact shadows directly under objects are fine.
+SCALE: one tile is about a Titan's reach across, roughly fifteen metres, so everything on it is sized to that.
+COLOUR: keep to the locked palette above, parchment and dust tones with deep military green and iron-gall brown-black shadows, muted and filmic rather than bright and saturated.
+No figures of any kind: no soldiers, no Titans, no horses, no animals, no people.
+BACKGROUND: everything outside the hexagon is transparent with true alpha, nothing there at all: no sky, no ground, no paper, no shadow, no glow. The alpha edge is clean and hard along all six sides, with no coloured fringe and no soft halo. If transparency is impossible, make everything outside the hexagon plain flat pure white #FFFFFF.
+```
+
+Aspect 16:9, about 1536x864. The hexagon is pinned to the canvas edges rather than given a ratio, so every tile is the same hexagon: the first lock round asked for a width of the full canvas and a height of half the width inside a 16:9 canvas, which cannot both hold, and the five tiles came back at five different ratios (0.528 to 0.651) and did not tessellate. Pinned, they land at 0.562 to 0.581. A board places tiles at a column step of three quarters of the tile width and a row step of the tile height, with odd columns dropped by half a row.
+
+Three variants per anchor rating. Variants 2 and 3 attach the approved variant 1 of the same rating with `-i`, so a rating's tiles match. Giant Forest trunks rise to the top edge of the hexagon and are cut there, never beyond it.
+
+### Board figures
+
+Titans and soldiers stand on the board as painted miniatures, **seen at eye level**, not from above: the owner kept the lock figures' eye-level view on 2026-09-21 because the silhouette reads better at the 120 px the board draws a soldier. Aspect 4:5, about 1024x1280, on transparent alpha, facing left and slightly toward the viewer, flat overcast light from the upper left, no cast shadow and no ground disc. A Titan wears plain dark brown short trunks and stands in a low bank of pale steam from mid-thigh down, which hides the feet and serves as its base; both arms and both shoulders have open space round them so the game can draw a Wounded or Broken Body Part mark over any one limb, and the head and neck are clear of the shoulders for the Nape. Every figure attaches the approved figure of its own kind with `-i`, and a Titan also attaches the approved colour plate of its own Size Class.
+
+### Post-processing: the matte fringe
+
+The generator leaves a saturated red and yellow fringe along the alpha edge of anything cut out on transparency, heavy on a Titan (3.2 percent of its pixels on the lock figure) and trace on tiles. Despill it before approval: a pixel is fringe when it is strongly red-over-blue or yellow-over-blue, a fringe pixel takes the mean colour of its clean opaque neighbours within 4 px, and one with no clean neighbour goes fully transparent. Proof on dark, where the fringe shows.
 
 ## Sizes
 
