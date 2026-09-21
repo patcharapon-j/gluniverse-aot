@@ -247,9 +247,9 @@ export interface FrenzyInput {
 
 /**
  * frenzy (end_steps, frenzy; titan-format.yaml, frenzy): 1 more on every living Focus Titan's
- * Frenzy at the end of an even-numbered round, never above the cap; at the end of an odd-numbered
- * round nothing changes. A Titan that entered this round is at 0 and rises to 1 at the next
- * even-numbered round-end; it rises during a retreat as well, and a corpse holds none, so only
+ * Frenzy at the end of every third round, never above the cap; at the end of any other round
+ * nothing changes. A Titan that entered this round is at 0 and rises to 1 at the next
+ * third round-end; it rises during a retreat as well, and a corpse holds none, so only
  * living Focus Titans are passed in. No Next Behavior already rolled changes: a roll took the
  * Frenzy that stood when it was made.
  */

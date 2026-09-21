@@ -2431,7 +2431,7 @@
       "tempo": "Tempo {n}",
       "frenzy": "Frenzy",
       "frenzyTitle": "Frenzy {n} of {cap}: added to its behavior roll",
-      "frenzyNote": "Rises 1 at the end of every even-numbered round, to 3. Added to the behavior roll.",
+      "frenzyNote": "Rises 1 at the end of every third round, to 3. Added to the behavior roll.",
       "of": "of",
       "none": "none",
       "used": "used",
@@ -2771,7 +2771,7 @@
         "wreckIgnored": "Zone {zone} is Sparse and its one good tree survives: no step lost.",
         "momentumTrim": "{name} is over the new cap and holds {n}.",
         "frenzy": "{label} Frenzy {n} of {cap}.",
-        "frenzyHeld": "{label} Frenzy unchanged: it rises at the end of even-numbered rounds.",
+        "frenzyHeld": "{label} Frenzy unchanged: it rises at the end of every third round.",
         "gasAsked": "Gas Rolls owed by {who}: each rolls their own.",
         "wreckOpen": "Zone {zone} is already Open: nothing more to wreck."
       },

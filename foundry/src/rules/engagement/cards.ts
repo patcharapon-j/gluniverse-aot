@@ -125,17 +125,17 @@ export function tieCard(id: string, soldiers: Record<string, number | null>, win
 
 /**
  * Frenzy (round 3, decision 12, part 2; behavior-procedure.yaml, roll): each Focus Titan holds
- * Frenzy, starting at 0 and rising by 1 at the end of every even-numbered round, to this cap
- * (round 3 retune, R1).
+ * Frenzy, starting at 0 and rising by 1 at the end of every third round, to this cap
+ * (zone retune, Z2).
  */
 export const FRENZY_CAP = 3;
 
-/** Frenzy rises at the end of every even-numbered round, not every round (round 3 retune, R1). */
-export const FRENZY_RATE = 2;
+/** Frenzy rises at the end of every third round, not every round (zone retune, Z2). */
+export const FRENZY_RATE = 3;
 
 /**
- * Frenzy, starting at 0 and rising by 1 at the end of every even-numbered round, to this cap
- * (round 3 retune, R1).
+ * Frenzy, starting at 0 and rising by 1 at the end of every third round, to this cap
+ * (zone retune, Z2).
  */
 export function frenzyAfterRound(frenzy: number, round: number): number {
   return round % FRENZY_RATE === 0 ? Math.min(frenzy + 1, FRENZY_CAP) : frenzy;

@@ -144,7 +144,7 @@ export function titanRow(combat: any, row: any): TitanRow {
     flags: { hooked: [...row.flags.hooked], hurt: [...row.flags.hurt], loud: [...row.flags.loud] },
     grounded: !!sys?.grounded,
     entered: row.entered,
-    // Frenzy rises 1 at the end of every even-numbered round and feeds the behavior roll
+    // Frenzy rises 1 at the end of every third round and feeds the behavior roll
     // (data/engagement/round.yaml, end_steps, frenzy; titan-format.yaml).
     frenzy: row.frenzy ?? 0,
     zone: row.zone ?? 0,

@@ -62,7 +62,7 @@ interface TitanState {
   parts: Record<string, { count: number; state: 'intact' | 'wounded' | 'broken' }>;
   openings: number;
   regen: number;
-  /** 0 to 3, rising 1 at the end of every even-numbered round and added to the behavior roll. */
+  /** 0 to 3, rising 1 at the end of every third round and added to the behavior roll. */
   frenzy: number;
   holder: string;
   next: string | null;

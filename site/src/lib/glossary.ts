@@ -32,7 +32,7 @@ const RAW: { term: string; chapter: ChapterId; definition: string; aliases?: str
   { term: 'Foe', chapter: 'skirmishes', aliases: ['Foes'], definition: 'A person, or a band of people, the Squad fights in a Skirmish.' },
   { term: 'Grabbed', chapter: 'fighting-titans', definition: "Gripped in a Titan's hand. You cannot Help, Cover, or make a Reaction, and the Titan devours you unless you get free in time." },
   { term: 'Graduation Exam', chapter: 'making-your-soldier', definition: "The optional played prologue of three Stages, each rolling one Trial and the condition it is run under, that helps decide each Cadet's Class Rank." },
-  { term: 'Frenzy', chapter: 'fighting-titans', definition: 'How worked up a Focus Titan is. It starts a fight at 0, gains 1 at the end of every even-numbered round to a cap of 3, and is added to its behavior roll — so the longer the fight runs, the further down its table it rolls.' },
+  { term: 'Frenzy', chapter: 'fighting-titans', definition: 'How worked up a Focus Titan is. It starts a fight at 0, gains 1 at the end of every third round to a cap of 3, and is added to its behavior roll — so the longer the fight runs, the further down its table it rolls.' },
   { term: 'Grief', chapter: 'wounds-and-fear', definition: 'The weight a soldier carries after a comrade dies. Each point lowers Resolve by 1 until it is dealt with during Downtime.' },
   { term: 'Haven', chapter: 'making-your-soldier', definition: 'What a soldier has to return to. During Downtime it lets them lower Stress and Grief.' },
   { term: 'Jam', chapter: 'gear-and-odm', aliases: ['Jams', 'Jammed'], definition: 'ODM Gear worn down to 0. It stops working and drops an airborne soldier.' },

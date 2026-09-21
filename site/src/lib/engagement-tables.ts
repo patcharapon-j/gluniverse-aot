@@ -1022,7 +1022,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   frenzy: {
     title: 'Frenzy.',
     icon: 'ph:flame',
-    text: 'Every living Focus Titan gains 1 Frenzy at the end of every even-numbered round, up to 3. Frenzy is added to its next behavior roll, and every table runs from terrorising to killing.',
+    text: 'Every living Focus Titan gains 1 Frenzy at the end of every third round, up to 3. Frenzy is added to its next behavior roll, and every table runs from terrorising to killing.',
     exit: { kind: 'stop', label: 'It gets worse', text: 'For three rounds it postures. By round four it is trying to kill you. A long fight is a losing one.' },
   },
   'round-ends': {

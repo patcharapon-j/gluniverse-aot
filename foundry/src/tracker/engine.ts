@@ -5,7 +5,7 @@
  */
 import { SYSTEM_ID } from '../config.ts';
 import { evaluateLadder, chooseEntry, enteringAttention, entryTargets, retargetForEntry } from '../rules/engagement/attention.ts';
-import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_CAP, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
+import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_CAP, FRENZY_RATE, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
 import { countTurn, holdingArm, release } from '../rules/engagement/grab.ts';
 import { coreOf, grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { flightEnds, flightPrefix, moveFlags, holdsAPosition, leaveBlock, letGoBlock, moveBlock, moveContext, moveOptionsFor, nextLabel, ratingRows, returnBlock, returnZones, routeOption, type MoveKind, type ZoneMoveOption } from '../rules/engagement/positions.ts';
@@ -1223,8 +1223,8 @@ export async function undoCheck(combat: any, index: number): Promise<void> {
 
 /**
  * The frenzy end step (round.yaml, end_steps, frenzy; batch F2): every living Focus Titan's Frenzy
- * rises by 1 at the end of an even-numbered round, never above FRENZY_CAP; at the end of an
- * odd-numbered round it is held. A corpse has none, and a Next Behavior already rolled is not
+ * rises by 1 at the end of every third round, never above FRENZY_CAP; at the end of any other
+ * round it is held. A corpse has none, and a Next Behavior already rolled is not
  * touched: a behavior roll takes the Frenzy that stood when it was rolled (behavior-procedure.yaml,
  * next_behavior, frenzy_when).
  */
@@ -1237,7 +1237,7 @@ function raiseFrenzy(combat: any, rec: Recorder): void {
   }
   const next = rows.map((r) => (r.status === 'focus' ? { ...r, frenzy: frenzyAfterRound(Number(r.frenzy ?? 0), combat.round) } : r));
   rec.set(combat, 'system.titans', next);
-  if (combat.round % 2 === 0) {
+  if (combat.round % FRENZY_RATE === 0) {
     for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzy', { label: r.label, n: r.frenzy, cap: FRENZY_CAP }));
   } else {
     for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzyHeld', { label: r.label }));
