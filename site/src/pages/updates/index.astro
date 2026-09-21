@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components';
 import OpenerLayout from '~/layouts/OpenerLayout.astro';
 import { issued, releaseTabs, releases } from '~/lib/updates';
+import plate from '~/assets/plates/plate-updates.webp';
 
 const entries = await releases();
 const tabs = releaseTabs(entries);
@@ -18,8 +19,10 @@ const tabs = releaseTabs(entries);
   plate={{
     number: 'Plate VI',
     caption: 'An amendment slip pasted into the front of a field copy.',
-    label: 'A typed amendment slip stamped and pasted inside the cover of a Survey Corps field manual, with a dated signature beneath it',
+    label: 'A typed amendment slip stamped and pasted inside the cover of a Survey Corps field manual, the Wings of Freedom emblem embossed on the board beside it',
     art: 'updates-opener',
+    image: plate,
+    maxWidth: 560,
   }}
   stamp="Amended"
 >

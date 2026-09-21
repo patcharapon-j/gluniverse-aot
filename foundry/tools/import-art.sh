@@ -3,6 +3,8 @@
 # static/assets. Run by hand after an art change; the build never reads art-src. Needs cwebp.
 #   Action Catalog icons   128 px webp   assets/icons/action-*.webp
 #   Token status icons     256 px webp   assets/icons/status-*.webp (read at 24 to 64 px on a token)
+#   Tracker state marks    128 px webp   assets/icons/pos-*.webp, titan-*.webp (read at 20 to 28 px
+#                          in a badge, which inverts them; see tracker/badges.ts)
 #   Soldier portraits      512 px webp   assets/portraits/portrait-<specialty>.webp
 #   Foe plates             512 px webp   assets/plates/plate-foe-<kind>.webp
 #   Setup background       1920 px webp  assets/plates/setup-sortie-dawn.webp
@@ -12,6 +14,7 @@ set -eu
 HERE=$(cd "$(dirname "$0")/.." && pwd)
 ART="$HERE/art-src"
 B1="$ART/batch-1/web"
+B2="$ART/batch-2/web"
 SL="$ART/style-lock"
 DICE="$SL/dice/final"
 OUT="$HERE/static/assets"
@@ -26,6 +29,10 @@ for n in nape-strike fly dodge rally; do lossy -resize 128 128 "$SL/icons/v2/act
 # Status icons: 11 from batch 1, Down and Grabbed from the style lock.
 for f in "$B1"/status-*.webp; do lossy -resize 256 256 "$f" -o "$OUT/icons/$(basename "$f")"; done
 for n in down grabbed; do lossy -resize 256 256 "$SL/icons/v2/status-$n.png" -o "$OUT/icons/status-$n.webp"; done
+
+# Batch 2 tracker state marks: hooked-in, Frenzy, Openings. 128 px, matching the other pos-* icons.
+# These are flat ink on transparent because badges.ts inverts them; never the filled-disc status- style.
+for n in pos-hooked titan-frenzy titan-opening; do lossy -resize 128 128 "$B2/$n.webp" -o "$OUT/icons/$n.webp"; done
 
 # Portraits: eight from batch 1, the Slayer from the style lock.
 for f in "$B1"/portrait-*.webp; do cp "$f" "$OUT/portraits/"; done
