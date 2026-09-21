@@ -51,7 +51,7 @@ engaged_and_apart:
     - {id: apart, name: Apart, meaning: "Not within arm's reach of a Foe."}
   per_pair: Each soldier is Engaged with or Apart from each Foe separately.
   not_positions: >-
-    Engaged and Apart are not Positions. A Skirmish has no Position, no Anchor Rating, no ODM move, no
+    Engaged and Apart are not Positions. A Skirmish has no field, zone, or Position, no Anchor Rating, no ODM move, no
     Fly roll a rule calls for, and no airborne soldier; the one Fly roll in a Skirmish is a called roll the
     GM names for fly (actions, called_roll), which makes no soldier airborne (decision batch 9, 9-43).
   moves:
@@ -443,7 +443,7 @@ drives_and_talents:
     can also be used once per Skirmish (data/character/talents.yaml, talent_rules, limit_terms). A
     Skirmish that begins inside a Leg or a Night Camp is its own procedure with its own use, and neither
     use spends the other, as limit_terms states.
-  positions: A Talent whose effect reads a Position or a Position step does nothing in a Skirmish unless its row says what it does there, as Carrying Voice's does.
+  positions: A Talent whose effect reads a Position, a zone, or a number of zones does nothing in a Skirmish unless its row says what it does there, as Carrying Voice's does (decision batch 16, 16-11).
 squadmates: >-
   A Squadmate takes part like a player character, on its own card, directed as
   data/character/squadmates.yaml states, and never Pushes or Covers.

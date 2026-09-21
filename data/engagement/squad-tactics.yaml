@@ -79,6 +79,8 @@ tactics:
     declared_by: The player of any such soldier.
     when: At the wings step, before Wings are assigned or kept.
     effect: >-
-      Each such soldier's player chooses whether that soldier holds in-reach relative to that Titan
-      instead. The change is made by this rule, not by the soldier's own move. It is not a fall,
+      Each such soldier's player chooses whether that soldier's attachment becomes anchored if they
+      are airborne and ground if not, the detach rule's attachment, in the same zone, so that they
+      hold in-reach relative to that Titan instead (data/engagement/zones.yaml, detach_rule). The
+      change is made by this rule, not by the soldier's own move. It is not a fall,
       not ODM use, and does not change airborne.

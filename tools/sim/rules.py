@@ -170,6 +170,7 @@ class Rules:
         self._gear()
         self._engagement()
         self._titans()
+        self._zones()
         self._character()
         self._treatment()
         self._read()
@@ -490,8 +491,9 @@ class Rules:
         m = parse(r"step between ([a-z-]+) and ([a-z-]+) that a move on foot or an ODM move", g["open_rating"],
                   "the grounded Open step")
         self.grounded_extra_pair = frozenset(m.groups())
+        # "in an Open zone" or "at an Open zone" (decision batch 16, 16-21)
         self.grounded_extra_rating = next(rid for rid, r in self.ratings.items()
-                                          if re.search(rf"\bAt the {r['name']} rating", g["open_rating"]))
+                                          if re.search(rf"(?i)\b[ia][nt] an? {r['name']} zone", " ".join(g["open_rating"].split())))
         m = parse(r"holds ([a-z-]+) relative to it then holds ([a-z-]+) instead", g["ends"], "grounding's end")
         self.grounded_end_move = (m.group(1), m.group(2))
         self.fall_raise_ratings = {rid for rid, r in self.ratings.items() if r["name"] in self._fall_height_text}
@@ -502,19 +504,22 @@ class Rules:
                     self.fall_high.add(pid)
         if not self.fall_high:
             raise ValueError("falls.yaml: no Position reads as a high fall")
-        # falls.yaml, height, steps: the fall's reference Titan is the Focus Titan the soldier holds the closest
-        # Position to (decision batch 5, 5-5, OQ-123). With one Focus Titan it is always that Titan.
-        m = parse(r"find the fall's reference Titan: the Focus Titan relative to which the soldier held the closest "
-                  r"Position when they fell, in the order ([A-Z][a-z]+ [A-Z][a-z]+), ([A-Z][a-z]+ [A-Z][a-z]+), "
-                  r"([A-Z][a-z]+ [A-Z][a-z]+), ([A-Z][a-z]+)\.", self._fall_height_text, "the fall's reference Titan")
-        self.fall_reference_order = [next(p for p in self.positions if pos_name(p) == g) for g in m.groups()]
+        # falls.yaml, height, steps: the fall's reference body (decision batch 16, 16-22): the body the soldier's
+        # attachment named, else the Focus Titan whose card, Grab, or effect caused the fall, else the Focus Titan nearest
+        # the soldier's zone. With one Focus Titan it is always that Titan.
+        ht = " ".join(self._fall_height_text.split())
+        guard(r"attachment named", ht, "the fall's reference body")
+        guard(r"nearest the soldier's zone", ht, "the fall's reference body")
         pos = load("engagement/positions.yaml")
-        m = parse(r"holds ([a-z-]+) relative to that Titan once the fall", pos["falls_land"]["from_on_body_or_blind_spot"],
+        # positions.yaml, falls_land (16-22): the soldier stays in their zone and their attachment becomes ground
+        m = parse(r"stays in the zone they are in, which for an attached soldier is the body's zone, and their attachment "
+                  r"becomes ([a-z-]+)\. They then hold ([a-z-]+) relative to that body", pos["falls_land"]["where"],
                   "where a fall lands")
-        self.fall_lands = m.group(1)
-        m = parse(r"only the step from ([a-z-]+) to ([a-z-]+), on foot", pos["moves"]["down_soldier"]["allowed"],
-                  "the Down soldier's move")
-        self.down_step = (m.group(1), m.group(2))
+        self.fall_lands_attach, self.fall_lands = m.group(1), m.group(2)
+        # positions.yaml, moves, down_soldier (16-12): one on-foot zone step out of a zone holding a body into an
+        # adjacent zone holding none (engine.Fight.crawl)
+        guard(r"one on-foot zone step, out of a zone that holds a body into an adjacent zone that holds none",
+              pos["moves"]["down_soldier"]["allowed"], "the Down soldier's move")
 
         at = load("engagement/attention.yaml")
         self.tests = {t["id"]: t for t in at["tests"]}
@@ -581,6 +586,162 @@ class Rules:
         self.setup = es
 
         self.engagement_tuning = load("engagement/tuning.yaml")
+
+    # ------------------------------------------------------------------ the field (ADR-0029; decision batch 16)
+    def _zones(self):
+        """data/engagement/zones.yaml and the fields batch 16 added elsewhere (IMPLEMENTATION-PLAN-E.md, sections 5.1 and
+        5.2). Raises if any key of that contract is missing, so a data edit that drops one stops the run here. The
+        provisional values (OQ-200: the Carry limit and the mounted pace; OQ-202: the terrain mix) are read here and
+        nowhere else."""
+        def need(node, key, where):
+            if not isinstance(node, dict) or key not in node:
+                raise ValueError(f"{where}: no {key!r} (decision batch 16; IMPLEMENTATION-PLAN-E.md, section 5)")
+            return node[key]
+
+        zy = load("engagement/zones.yaml")
+        co = need(zy, "coordinates", "zones.yaml")
+        if need(co, "system", "zones.yaml coordinates") != "axial-flat-top":
+            raise ValueError(f"zones.yaml coordinates: system {co['system']!r}; space.py reads axial-flat-top")
+        fields = need(zy, "fields", "zones.yaml")
+        sizes = {}
+        for sz in need(fields, "sizes", "zones.yaml fields"):
+            zs = need(sz, "zones", f"zones.yaml fields {sz.get('id')}")
+            nums = [z["n"] for z in zs]
+            if nums != list(range(1, len(zs) + 1)):
+                raise ValueError(f"zones.yaml field {sz['id']}: zones not numbered 1 to {len(zs)} in order")
+            # 16-2: numbered column by column from the left, top to bottom within a column
+            if [(z["q"], z["r"]) for z in zs] != sorted((z["q"], z["r"]) for z in zs):
+                raise ValueError(f"zones.yaml field {sz['id']}: numbering is not column by column, top to bottom")
+            sizes[sz["id"]] = dict(centre=need(sz, "centre", sz["id"]), squad_start=need(sz, "squad_start", sz["id"]),
+                                   zones=zs, name=sz.get("name"))
+        self.zones = dict(neighbour_offsets=need(co, "neighbour_offsets", "zones.yaml coordinates"), sizes=sizes,
+                          default=need(fields, "default", "zones.yaml fields"), file=zy)
+        if self.zones["default"] not in sizes:
+            raise ValueError(f"zones.yaml fields default {self.zones['default']!r} is no size")
+        for key in ("edge_zone", "off_field", "occupancy", "attachments", "states_beside_the_attachment",
+                    "detach_rule", "derivation", "between_soldiers", "moves", "flight", "crossing_flag", "stride",
+                    "placement", "entry_zone", "effects", "effect_crossing", "elevation", "named_field_format", "gm"):
+            need(zy, key, "zones.yaml")
+        # the attachments and their derivation, which space.DERIVES and space.derive_position encode
+        import space
+        att = {a["id"]: a for a in zy["attachments"]}
+        if sorted(att) != sorted(space.FREE + space.BODY_KINDS):
+            raise ValueError(f"zones.yaml attachments changed: {sorted(att)}")
+        for aid, a in att.items():
+            if a["free"] != (aid in space.FREE) or a.get("derives") != space.DERIVES.get(aid):
+                raise ValueError(f"zones.yaml attachment {aid}: free or derives changed; space.py encodes the old rows")
+        rows = [(r["id"], r["position"]) for r in need(zy["derivation"], "order", "zones.yaml derivation")]
+        if [p for _, p in rows] != [space.OB, space.BS, space.IR, space.IR, space.D]:
+            raise ValueError(f"zones.yaml derivation order changed: {rows}; space.derive_position reads the old one")
+        bs = zy["between_soldiers"]
+        if (need(bs, "same_position", "between_soldiers"), need(bs, "position_steps", "between_soldiers")) != ("same-zone", "zones"):
+            raise ValueError("zones.yaml between_soldiers changed; engine.Fight.zones_apart reads zones")
+        # moves (16-12) and the Flight (16-13, 16-14)
+        mv = zy["moves"]
+        for key in ("zone_step", "attachment_step", "entered_zone_reads", "on_foot", "mounted", "down_soldier", "letting_go"):
+            need(mv, key, "zones.yaml moves")
+        if need(mv["on_foot"], "steps", "moves on_foot") != 1:
+            raise ValueError("zones.yaml moves on_foot: not one step")
+        mt = mv["mounted"]
+        self.mounted_pace = int(need(mt, "zone_steps", "moves mounted"))                     # OQ-200
+        if need(mt, "attachment_steps", "moves mounted") != 0 or \
+                need(mt, "ends_on_entering_a_standing_focus_titans_zone_unless_open", "moves mounted") is not True:
+            raise ValueError("zones.yaml moves mounted: space.ground_options encodes no attachment step and the stop")
+        guard(r"out of a zone that holds a body into an adjacent zone that holds none, never off field", mv["down_soldier"],
+              "the Down soldier's zone step")
+        fl = zy["flight"]
+        if need(fl, "first_step_cost", "flight") != 0 or need(fl, "ends_free_in_open", "flight") is not False \
+                or need(fl, "ends_free_as", "flight") != "anchored":
+            raise ValueError("zones.yaml flight: first_step_cost, ends_free_in_open, or ends_free_as changed")
+        if (need(fl, "momentum_gain_cap", "flight"), need(fl, "momentum_trim", "flight")) != ("departure-zone", "arrival-zone"):
+            raise ValueError("zones.yaml flight: the Momentum cap or trim moved; engine.Fight.flight reads the old zones")
+        need(fl, "carry_cost_into_zone", "flight")
+        self.carry_off = int(need(fl, "carry_cost_off_field", "flight"))
+        self.carry_attach = int(need(fl, "carry_cost_attachment_step", "flight"))
+        self.carry_limit = int(need(fl, "carry_limit", "flight"))                            # OQ-200
+        guard(r"the zone it starts in and the zone it ends in are never crossed", zy["crossing_flag"], "the crossing flag")
+        guard(r"unless they spend Momentum on quiet", zy["crossing_flag"], "quiet against the crossing flag")
+        # the Stride (16-16 to 16-19)
+        sd = zy["stride"]
+        want = dict(toward="attention-holder", tie_break="lowest-numbered", stops_on_entering_holders_zone=True,
+                    grounded=0, moves_with=["on-body", "grabbed"], leaves=["blind-spot"], harms=False, wrecks=False)
+        for k, v in want.items():
+            if need(sd, k, "zones.yaml stride") != v:
+                raise ValueError(f"zones.yaml stride {k}: {sd[k]!r}; space.stride_route and engine.Fight.stride read {v!r}")
+        bp = load("engagement/behavior-procedure.yaml")
+        steps = [s_["id"] for s_ in bp["resolving_a_card"]["steps"]]
+        if "stride" not in steps or not steps.index("attention") < steps.index("stride") < steps.index("choose"):
+            raise ValueError(f"behavior-procedure.yaml resolving_a_card: no stride between attention and choose: {steps}")
+        self.stride = {cid: int(need(c, "stride", f"size-classes.yaml {cid}")) for cid, c in self.size_classes.items()}
+        for tid, blk in self.titan_blocks.items():
+            if blk.get("abnormal"):
+                self.stride[tid] = int(need(blk, "stride", f"titans/{tid}.yaml (an Abnormal lists its Stride)"))
+        # placement (16-7) and the entry zone (16-29)
+        pl = zy["placement"]
+        if (need(pl, "focus_titan", "placement"), need(pl, "squad", "placement")) != ("centre", "squad_start"):
+            raise ValueError("zones.yaml placement changed; engine.Fight places the Titan in the centre, the Squad at the start")
+        ez = zy["entry_zone"]
+        if (need(ez, "order", "entry_zone"), need(ez, "fallback", "entry_zone")) != (
+                ["holds-no-soldier", "farthest-from-nearest-soldier", "lowest-numbered"], ["fewest-soldiers", "lowest-numbered"]):
+            raise ValueError("zones.yaml entry_zone order changed; space.entry_zone reads the old one")
+        # effects (16-30, OQ-201): none harms in this version, so no move takes an effect's harm
+        self.zone_effects = {e["id"]: e for e in zy["effects"]}
+        self.harming_effects = {e for e, row in self.zone_effects.items() if str(row.get("harm")) != "none"}
+        if self.harming_effects:
+            raise ValueError(f"zones.yaml effects {sorted(self.harming_effects)} harm; the simulator models no zone harm "
+                             "(decision batch 16, 16-30; OQ-201)")
+        # the ratings' zone values (anchor-ratings.yaml, ratings; 16-4, 16-13, 16-20)
+        ar = load("engagement/anchor-ratings.yaml")
+        self.anchors, self.carry_cost, self.sparser, self.denser = {}, {}, {}, {}
+        for r in ar["ratings"]:
+            rid = r["id"]
+            self.anchors[rid] = int(need(r, "anchors", f"anchor-ratings.yaml {rid}"))
+            self.carry_cost[rid] = int(need(r, "carry_cost", f"anchor-ratings.yaml {rid}"))
+            self.sparser[rid] = need(r, "sparser", f"anchor-ratings.yaml {rid}")
+            self.denser[rid] = need(r, "denser", f"anchor-ratings.yaml {rid}")
+        for rid in list(self.sparser.values()) + list(self.denser.values()):
+            if rid not in self.anchors:
+                raise ValueError(f"anchor-ratings.yaml names {rid!r} as a sparser or denser rating; no such rating")
+        bottom = [rid for rid, sp in self.sparser.items() if sp == rid]
+        if len(bottom) != 1:
+            raise ValueError(f"anchor-ratings.yaml: {bottom} are their own sparser; the ladder needs one bottom (Open)")
+        self.open_rating = bottom[0]
+        # anchor-ratings.yaml, zone_becomes_open (OQ-205): engine.Fight.wreck_zone lands every anchored soldier in the zone
+        guard(r"every soldier anchored in that zone becomes ground and stops being airborne, with no fall, whatever "
+              r"stands in it", need(ar, "zone_becomes_open", "anchor-ratings.yaml"), "a zone that becomes Open (OQ-205)")
+        # the Terrain Traits the engine applies by zone (16-5): the Bonus Dice a mounted soldier's Break Attention gains
+        # (Open), and the roof that keeps a soldier at a Blind Spot from being airborne (Urban)
+        self.mounted_ba_dice, self.roof_ratings = {}, set()
+        for r in ar["ratings"]:
+            tt = " ".join(str(r["terrain_trait"]).split())
+            m = re.search(r"A mounted soldier's Break Attention gains (\d+) Bonus Die", tt)
+            if m:
+                self.mounted_ba_dice[r["id"]] = int(m.group(1))
+            if re.search(r"holds blind-spot relative to a Focus Titan in an? \w+ zone is anchored to a roof and is not "
+                         r"airborne, so a Jam does not drop them", tt):
+                self.roof_ratings.add(r["id"])
+        if len(self.mounted_ba_dice) != 1 or len(self.roof_ratings) != 1:
+            raise ValueError(f"anchor-ratings.yaml terrain_trait: Break Attention dice on {self.mounted_ba_dice}, roofs "
+                             f"on {self.roof_ratings}; engine.Fight reads one rating of each")
+        # the Sparse grace, once per zone (16-5, 16-20): the rating whose trait names the first wreck
+        self.wreck_grace = {r["id"] for r in ar["ratings"]
+                            if re.search(r"(?i)\bfirst (Anchor|wreck)\b", " ".join(str(r["terrain_trait"]).split()))}
+        if len(self.wreck_grace) != 1:
+            raise ValueError(f"anchor-ratings.yaml: the wreck grace reads on {sorted(self.wreck_grace)}; expected one rating")
+        # field generation (16-6; OQ-202)
+        es = load("engagement/engagement-setup.yaml")
+        ids = [s_["id"] for s_ in es["steps"]]
+        for sid in ("field-size", "field-rating", "zone-terrain"):
+            if sid not in ids:
+                raise ValueError(f"engagement-setup.yaml steps: no {sid} (decision batch 16, 16-6)")
+        zt = need(es, "zone_terrain", "engagement-setup.yaml")
+        if need(zt, "roll", "zone_terrain") != "D6":
+            raise ValueError("engagement-setup.yaml zone_terrain: not a D6")
+        self.zone_terrain = [(list(r["results"]), r["rating"]) for r in need(zt, "rows", "zone_terrain")]
+        if sorted(x for res, _ in self.zone_terrain for x in res) != [1, 2, 3, 4, 5, 6] or \
+                {k for _, k in self.zone_terrain} - {"sparser", "field", "denser"}:
+            raise ValueError(f"engagement-setup.yaml zone_terrain rows: {self.zone_terrain}")
+        guard(r"every zone but the centre and the Squad's start zone", zt["applies_to"], "which zones roll the mix")
 
     # ------------------------------------------------------------------ Chapter 6
     def _titans(self):
@@ -713,6 +874,42 @@ class Rules:
         self.heat_body_loc = "torso"      # 8-7: corpse heat lands at the torso for a body pin (guarded above)
         self.heave_heat_loc = "arm"       # 8-7: a Heave's heat at 0 Health lands at an arm, side rolled
 
+        # ------------------------------------------------------ Frenzy (decision batch 13, 13-10 and 13-11; OQ-193)
+        # A counter every Focus Titan carries: 0 when it becomes a Focus Titan, plus 1 at the frenzy end step to a
+        # cap, added to the behavior roll and to nothing else. engine.Titan.roll_nb and engine.Fight.end_steps.
+        fz = tf["frenzy"]
+        self.frenzy_cap = int(fz["cap"])
+        self.frenzy_start = int(fz["starts_at"])
+        self.frenzy_rate = int(fz["rate"])
+        if self.frenzy_start != 0 or self.frenzy_cap < 1 or self.frenzy_rate < 1:
+            raise ValueError(f"titan-format.yaml frenzy: starts_at {self.frenzy_start} cap {self.frenzy_cap} "
+                             "(decision batch 13, 13-10)")
+        guard(r"By 1 at the frenzy end step of every third round of the Titan Engagement, the third, "
+              r"the sixth, the ninth, and so on, for every living Focus Titan, never above the cap",
+              fz["rises"], "when Frenzy rises")
+        guard(r"The behavior roll, and nothing else", fz["used_by"], "what Frenzy is used by")
+        guard(r"A total above the table's highest result reads as that highest result, which is 6",
+              tf["behavior_table"]["result_above_the_table"], "a behavior roll above the table")
+        bp = load("engagement/behavior-procedure.yaml")
+        guard(r"Roll D6 and add the Titan's Frenzy as it stands now",
+              next(r["text"] for r in bp["next_behavior"]["roll"] if r["id"] == "roll"), "the behavior roll")
+        guard(r"the roll takes the Titan's Frenzy as it stands at the moment of the roll",
+              bp["next_behavior"]["frenzy_when"], "when a behavior roll reads Frenzy")
+        # ------------------------------------------------------ retargeting (decision batch 13, 13-9; OQ-192)
+        # engine.Fight.choose_behavior re-evaluates the Attention Ladder over the candidates who meet the entry's
+        # position_requirement before it considers the fallback, and Attention moves with it.
+        ch = next(st for st in bp["resolving_a_card"]["steps"] if st["id"] == "choose")
+        guard(r"if the Attention holder does not meet its position_requirement, re-evaluate the Attention Ladder over "
+              r"only those of the Titan's candidates who do meet it", ch["text"], "retargeting before the fallback")
+        guard(r"Only if no candidate meets the position_requirement is the behavior its fallback entry",
+              ch["text"], "the fallback after retargeting")
+        at = load("engagement/attention.yaml")
+        rt = at["evaluation"]["retargeting"]
+        guard(r"Exactly as any evaluation: the same rungs of the Titan's ladder, in order, and the same steps",
+              rt["how"], "how a retargeting evaluation runs")
+        guard(r"holds the Titan's Attention from that moment", rt["attention_moves"], "Attention moving on a retarget")
+        guard(r"nothing is evaluated, Attention does not change", rt["none"], "a retarget with no candidate")
+
     def steam_damage(self, face):
         """titan-harm.yaml, steam: the damage a D6 face gives (decision batch 8, 8-7)."""
         return next(dmg for res, dmg in self.steam_rows if covers(res, face))
@@ -790,7 +987,7 @@ class Rules:
              "mid-air-catch": int(eff("mid-air-catch", r"needing (\d+)", "Fly need").group(1)),
              "spare-parts": int(eff("spare-parts", r"rises by (\d+) more", "extra repair").group(1)),
              "triage": int(eff("triage", r"at least (\d+) successes", "successes", key="trigger").group(1)),
-             "formation-drill": count_of(eff("formation-drill", r"up to (\w+) Position steps", "Help range").group(1),
+             "formation-drill": count_of(eff("formation-drill", r"up to (\w+) zones", "Help range").group(1),
                                          "formation-drill's steps"),
              "steady-heart": int(eff("steady-heart", r"Resolve counts as (\d+) higher", "Resolve").group(1))}
         for tid, pat, what in (("not-like-this", r"takes no lifted penalty", "lifted penalty"),
@@ -798,8 +995,8 @@ class Rules:
                                ("close-pass", r"adds nothing to what the roll needs", "Feint need"),
                                ("mid-air-catch", r"the fall's band is low", "low band"),
                                ("tourniquet", r"from turn to engagement", "slowed limit"),
-                               ("got-your-back", r"from any number of Position steps away", "Cover range"),
-                               ("change-the-order", r"whatever Positions they hold", "swap"),
+                               ("got-your-back", r"from any number of zones away", "Cover range"),
+                               ("change-the-order", r"whatever zones they are in", "swap"),
                                ("gallows-humour", r"roll the D6 a second time\. Use the second total", "reroll")):
             eff(tid, pat, what)
         m = eff("steady-heart", r"for the ([a-z-]+) or ([a-z-]+) trigger", "triggers", key="trigger")
@@ -981,6 +1178,17 @@ class Rules:
     def _round_and_setup(self):
         rd = load("engagement/round.yaml")
         self.round_steps = [s["id"] for s in rd["round_steps"]]
+        # decision batch 13, 13-10: the frenzy end step, between regeneration and background-clocks
+        self.round_end_steps = [s["id"] for s in rd["end_steps"]]
+        for need in ("regeneration", "frenzy", "background-clocks"):
+            if need not in self.round_end_steps:
+                raise ValueError(f"round.yaml: end step {need} is gone")
+        if not (self.round_end_steps.index("regeneration") < self.round_end_steps.index("frenzy")
+                < self.round_end_steps.index("background-clocks")):
+            raise ValueError("round.yaml end_steps: frenzy no longer sits between regeneration and background-clocks "
+                             "(decision batch 13, 13-10); engine.Fight.end_steps follows the old order")
+        guard(r"Raise every living Focus Titan's Frenzy by 1, never above its cap",
+              next(s["text"] for s in rd["end_steps"] if s["id"] == "frenzy"), "the frenzy end step")
         for need in ("wings", "deal", "swap", "play", "end"):
             if need not in self.round_steps:
                 raise ValueError(f"round.yaml: round step {need} is gone")
@@ -1040,8 +1248,9 @@ class Rules:
         # decision batch 8, 8-21: option 4 also follows a Heave or a strike on the pinning Body Part for a Pinned comrade
         if re.search(r"\bpinned\b", eff["moves"], re.I) and re.search(r"\bheave\b", eff["moves"], re.I):
             self.retreat_stay_actions |= {"heave", "body-part-strike"}
-        guard(r"Toward distant: one step along a shortest chain of steps their move can make", eff["moves"], "retreat option 1")
-        guard(r"A soldier who can make none of these may let go", eff["moves"], "the retreat's letting go")
+        guard(r"Out: one step their move can make, the first of these that applies", eff["moves"], "retreat option 1")
+        guard(r"whatever body stands in that zone", eff["moves"], "retreat option 2 from any edge zone (16-27)")
+        guard(r"letting go if they cannot make one", eff["moves"], "the retreat's letting go")
         # decision batch 8, 8-32 and 8-36: engine.Fight.fallen_options_closed follows these sentences. It closes the
         # stays once the Focus Titan is dead, which covers both: with one Focus Titan and no Background Titans, a
         # corpse (and so a pin under one) exists only after that Titan dies, and no Nape strike is made in a retreat.
@@ -1056,8 +1265,8 @@ class Rules:
         guard(r"A Titan Engagement always ends", fl["always_ends"], "the retreat clock ending every Titan Engagement")
         guard(r"every soldier who still holds a Position in it dies, left to the Titans", fl["left_behind"], "left behind")
         pos = load("engagement/positions.yaml")
-        guard(r"holds distant relative to every Focus Titan, and is not Down, Grabbed, or carried", pos["leaving"]["who"],
-              "who can leave")
+        guard(r"free, in an edge zone that holds no Focus Titan and no corpse, and is not Down, Grabbed, Pinned, or carried\. "
+              r"During a retreat the edge zone's condition does not apply", pos["leaving"]["who"], "who can leave (16-26)")
         guard(r"except during a retreat", pos["leaving"]["returning"], "no return during a retreat")
         guard(r"holds on-body or blind-spot relative to a Focus Titan and is not Grabbed or carried",
               pos["moves"]["letting_go"]["who"], "who can let go")
@@ -1065,7 +1274,7 @@ class Rules:
         guard(r"two soldiers who have both left the Titan Engagement count as holding the same Position. A soldier who has "
               r"left never counts as holding the same Position as, or one step from, a soldier who still holds a Position",
               ee["soldiers_who_left"]["same_position"], "the Position test for soldiers who left")
-        guard(r"reads their last Positions", ee["positions_read"], "the end steps' last Positions")
+        guard(r"Where a step compares two soldiers, it reads their zones", ee["positions_read"], "the end steps' zones (16-24)")
 
     # ------------------------------------------------------------------ case dimensions stated in the tuning files
     def _case_dimensions(self):
@@ -1159,6 +1368,13 @@ class Rules:
         ab = t6["targets"]["abnormals"]
         self.bar_fights = ab["sampling"]["fights_per_row"]
         self.bar_standard_errors = ab["sampling"]["standard_errors"]
+        # Rows run with their twins and reported beside the bar, never judged by it (round 3 retune, R7).
+        self.bar_reported_rows = tuple(ab.get("reported_rows", ()))
+        bar_labels = {r["abnormal"] for r in load("titans/probe-figures.yaml")["bar"]["rows"]}
+        for label in self.bar_reported_rows:
+            if label not in bar_labels:
+                raise ValueError(f"tuning.yaml abnormals reported_rows: {label!r} is no bar row of "
+                                 "data/titans/probe-figures.yaml (bar, rows)")
         self.bar_median_min = int(parse(r"median kill round is (\d+) or later", " ".join(ab["not_trivial"]),
                                         "the bar's median floor").group(1))
         self.bar_median_max = int(parse(r"median kill round is (\d+) or sooner", " ".join(ab["winnable"]),

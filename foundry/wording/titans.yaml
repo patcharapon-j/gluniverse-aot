@@ -5,35 +5,35 @@
 figures:
   tempo:
     text: How many times it acts each round.
-    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
   napeDepth:
     text: Successes a single Nape strike needs to kill it.
-    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
   regeneration:
     text: Rounds before its wounds close.
-    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
 readWords:
   toughness:
     text: the Toughness of a Body Part
-    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
   napeDepth:
     text: its Nape Depth
-    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
   regeneration:
     text: how fast it regenerates
-    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
   attentionLadder:
     text: what draws its attention
-    from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+    from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
 readNote:
   text: "An Abnormal keeps some things to itself. A Read can tell your squad {list}."
-  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
 unknown:
   text: Unknown until a Read
-  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
 toughnessByRead:
   text: Toughness learned by a Read
-  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }
 fallback:
   text: When a rolled behavior cannot happen and has nothing to fall back on, it does this instead.
-  from: { path: site/src/components/TitanSpecimen.astro, sha: 380f41d009ae8e5fc9a1bef0cd38571627cf3bcd }
+  from: { path: site/src/components/TitanSpecimen.astro, sha: 388caba8317de9a0b49c8dec704d9c337406237f }

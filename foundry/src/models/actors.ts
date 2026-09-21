@@ -170,6 +170,9 @@ export function defineActorModels() {
         nape_depth: k.int(4, { min: 1 }),
         regeneration_clock: k.int(3, { min: 1 }),
         heave: k.int(3, { min: 1 }),
+        // Its Stride (size-classes.yaml, stride; decision batch 16, 16-16). Null reads the stat block's
+        // value from the data by the Titan's id or Size Class (src/tracker/snapshot.ts, strideOfActor).
+        stride: k.nullableInt({ min: 0 }),
         body_parts: new f.ArrayField(
           new f.SchemaField({
             id: k.str(),
@@ -207,8 +210,8 @@ export function defineActorModels() {
         next_behavior: new f.SchemaField({ entry: k.str(), revealed: k.bool() }),
         // behavior-procedure.yaml, next_behavior.previous_behavior: the next roll skips it
         previous_behavior: k.str(),
-        // Frenzy: 0 while a Focus Titan enters, 1 more at each round end to the cap of 3
-        // (rules/engagement/cards.ts, FRENZY_CAP), added to the behavior roll. Unbounded in the
+        // Frenzy: 0 while a Focus Titan enters, 1 more at the end of every third round to the cap of 3
+        // (rules/engagement/cards.ts, frenzyRule), added to the behavior roll. Unbounded in the
         // field so a GM may set any value (ADR-0028); the rules do the capping.
         frenzy: k.nonNeg(),
         attention_holder: k.str(),

@@ -70,6 +70,7 @@ Otherwise head out: a step toward Distant (In Reach first), leaving at Distant, 
 Blind Spot when no step can be made. No Nape strike, Hook and Cut, Read, or Draw Attention is taken in a retreat.
 Lone (lone_turn), Grab cell rescuers, and the Jam test holder are documented at their functions.
 """
+import space
 from dice import make_build, make_free_build, make_template, use_talent, give_talent
 from rules import HEAVE_FROM
 from rules import R, D, IR, OB, BS
@@ -158,7 +159,7 @@ def helpers(f, roller, n):
                 or (f.bound(h) and not h.cur_move)     # under a retreat the forced move comes first
                 or h.role in ("decoyer", "rider", "lone", "victim", "reader")):
             continue
-        if f.steps_apart(h.pos, roller.pos) > help_range(roller, h):
+        if f.zones_apart(h, roller) > help_range(roller, h):      # zones between them (16-11)
             continue
         if not (h.card_passed or h.role == "helper" or (h.role == "striker" and h.start_pos == D)):
             continue
@@ -180,7 +181,7 @@ def dodge_helpers(f, s):
            and not h.cur_action and not h.forced_strike      # decision batch 7, 7-8: no Help until the strike
            and not (h.pinned and h.pinned["body"])           # decision batch 8, 8-9: no action while body-pinned
            and not (f.bound(h) and not h.cur_move) and h.role not in ("lone", "victim")
-           and f.steps_apart(h.pos, s.pos) <= help_range(s, h)]
+           and f.zones_apart(h, s) <= help_range(s, h)]
     out.sort(key=lambda h: not h.card_passed)
     out = out[:R.help_max]
     for h in out:
@@ -197,7 +198,7 @@ def dodge_coverer(f, s):
     out = [c for c in f.present() if c is not s and (c.pc or R.squadmate_covers) and not c.down and not c.grabbed
            and not c.forced_strike      # decision batch 7, 7-8: no Cover until the forced strike is taken
            and not c.pinned             # decision batch 8, 8-9: Cover is not on the Pinned list
-           and (f.steps_apart(c.pos, s.pos) <= 1      # talents.yaml, got-your-back: any distance for the first comrade
+           and (f.zones_apart(c, s) <= 1      # talents.yaml, got-your-back: any distance for the first comrade
                 or (use_talent(c, "got-your-back") and c.covered_comrade in (None, s.name)))]
     return min(out, key=lambda c: c.stress) if out else None
 
@@ -228,6 +229,72 @@ def down_turn(f, s):
     f.crawl(s)
 
 
+# ---------------------------------------------------------------------- routes over the field (decision batch 16)
+def pick_move(f, s, target, opts, kind):
+    """The route a soldier takes toward target, a Position relative to the Focus Titan, among one kind's moves
+    [(steps, carries, Momentum)]: returns (rank, option) or None when no move helps. POLICY CHOICE, the routes a
+    player learns on the field:
+    - a move that reaches target is best; failing that, one that ends free in a zone nearer the Titan's zone, the
+      nearer the better (a move never goes the long way round);
+    - then a Flight that crosses no standing Focus Titan's zone (a crossing sets the loudest flag unless quiet is
+      spent), then the least Momentum, then the fewest Carries, keeping the rest for bite and quiet;
+    - toward distant, the zone farthest from the Titan's, holding no body, then the lowest-numbered; toward any other
+      Position, the lowest-numbered zone.
+    A move off field is never picked here: leaving is the retreat's (retreat_out)."""
+    t = f.t
+    fd = f.field
+    best = None
+    here = fd.distance(s.zone, t.zone) if s.zone is not None else 99
+    for o in opts:
+        steps, carries, cost = o
+        end = steps[-1]
+        if end[0] is None:
+            continue
+        pos = f.pos_of(end)
+        if pos == target:
+            rank = 0
+        elif target != D and end[1] in space.FREE and fd.distance(end[0], t.zone) < here:
+            rank = 1 + fd.distance(end[0], t.zone)
+        else:
+            continue
+        cross = 1 if (kind == "odm" and f.crossing_titans(s.zone, steps)) else 0
+        if target == D:
+            pref = (-fd.distance(end[0], t.zone), f.holds_body(end[0]), end[0])
+        else:
+            pref = (end[0],)
+        key = (rank, cross, cost, carries) + pref
+        if best is None or key < best[0]:
+            best = (key, o)
+    return best
+
+
+def wants_quiet(f, s):
+    """anchor-ratings.yaml, momentum, spends, quiet: POLICY CHOICE, a soldier whose Flight would set the loudest flag
+    (a crossing or no successes) spends 1 Momentum on quiet when they hold it after their Carries, unless their role
+    is to hold the Titan's Attention (a decoyer or a screen) or the case turns quiet off (quiet False)."""
+    return f.cfg.get("quiet", True) and s.role not in ("decoyer", "screen", "screen2", "rider")
+
+
+def bite(f, s):
+    """anchor-ratings.yaml, momentum, spends, bite: POLICY CHOICE, every Momentum the soldier holds is bitten into a
+    strike this turn, within the Bonus Dice cap, unless the case turns bite off (bite False, the row that measures bite
+    on its own, tuning.yaml's first thing to cut). Brace and clean line are never spent."""
+    return s.momentum if f.cfg.get("bite", True) else 0
+
+
+def crawl_zone(f, s, zones):
+    """positions.yaml, moves, down_soldier: POLICY CHOICE, the adjacent zone holding no body that holds a standing
+    comrade, else the one farthest out (the highest ring), else the lowest-numbered."""
+    comrades = {c.zone for c in f.present() if c is not s and not c.down and c.carried_by is None}
+    return min(zones, key=lambda n: (n not in comrades, -f.field.ring(n), n))
+
+
+def retreat_zone(f, s, zones):
+    """The soldier's choice among the zones retreat option 1 leaves tied (engine.Fight.retreat_out_zones sorts them):
+    POLICY CHOICE, the first, which is the lowest-numbered of the tie."""
+    return zones[0] if zones else None
+
+
 # ---------------------------------------------------------------------- the falling Titan (decision batch 8, 8-9)
 def leap_helpers(f, s):
     """Leap Clear's Help from a comrade at the same Position. POLICY CHOICE, as the dodge's: with dodge_help every such
@@ -235,7 +302,7 @@ def leap_helpers(f, s):
     (the baseline)."""
     if not f.cfg.get("dodge_help"):
         return []
-    out = [h for h in f.present() if h is not s and h.pos == s.pos and not h.down and not h.grabbed and not h.pinned
+    out = [h for h in f.present() if h is not s and h.zone == s.zone and not h.down and not h.grabbed and not h.pinned
            and h.carried_by is None and not h.cur_action][:R.help_max]
     for h in out:
         h.cur_action = True
@@ -267,7 +334,8 @@ def heaver(f):
         return None
     cand = [c for c in f.present() if not c.down and not c.grabbed and not c.pinned and c.carried_by is None
             and c.carrying is None and c.role not in ("lone", "victim", "rider")]
-    return min(cand, key=lambda c: (f.steps_apart(c.pos, IR), f.card.get(c.name, 99))) if cand else None
+    return min(cand, key=lambda c: (f.zones_apart(c, f.t) if c.zone is not None else 99, f.steps_apart(c.pos, IR),
+                                    f.card.get(c.name, 99))) if cand else None
 
 
 def heave_turn(f, s):
@@ -293,9 +361,7 @@ def wings_step(f):
         if stranded:
             f.use_tactic("fall-back")
             for s in stranded:
-                s.pos = IR
-                if s.carrying is not None:
-                    s.carrying.pos = IR
+                s.pos = IR          # the detach rule (zones.yaml): free in the Titan's zone; a carried comrade follows
                 f.stats["fall_backs"] += 1
 
 
@@ -498,7 +564,7 @@ def take_turn(f, s):
                 f.read(s)
         return
     if cfg.get("treat_in_fight") and role in ("cutter", "helper") and not s.cur_action and not t.dead:
-        pat = next((p for p in f.present() if p is not s and p.pos == s.pos and not p.grabbed and
+        pat = next((p for p in f.present() if p is not s and p.zone == s.zone and not p.grabbed and
                     (p.down or any(c["row"]["lethal"] and c["limit"] == "turn" for c in p.untreated()))), None)
         if pat is not None:
             lethal = [c for c in pat.untreated() if c["row"]["lethal"] and c["limit"] == "turn"]
@@ -517,8 +583,8 @@ def take_turn(f, s):
                     f.set_down(s)
                 return
         elif not s.cur_action and not t.grab:
-            c = next((p for p in f.present() if p is not s and p.pos == s.pos and p.down and not p.grabbed
-                      and p.carried_by is None and p.pos != D), None)
+            c = next((p for p in f.present() if p is not s and p.zone == s.zone and p.down and not p.grabbed
+                      and p.carried_by is None and p.pos != D and not p.pinned), None)
             if c is not None and f.lift(s, c):
                 f.try_step(s, IR if s.pos in (OB, BS) else D, ("foot", "odm"))
                 return
@@ -652,14 +718,12 @@ def striker_turn(f, s):
         # the striker cuts as a cutter until grounding opens one. On Wooded a chain always exists.
         return cutter_turn(f, s)
     if s.pos != BS:
-        nxt = f.route_step(s, BS) or BS
-        if s.pos == D:
-            f.try_step(s, IR)
-        elif s.gas == 0 and s.spares > 0 and not t.grounded() and not s.cur_action:
+        # POLICY CHOICE (the route, decision batch 16): a Flight straight to the Blind Spot when Momentum can pay its
+        # Carries, else the nearest step of the chain (policy.pick_move ranks them)
+        if s.gas == 0 and s.spares > 0 and not t.grounded() and not s.cur_action and s.pos != D:
             f.change_canister(s)
+        if not f.go(s, BS) and s.pos != D:
             f.try_step(s, f.route_step(s, BS) or BS)
-        else:
-            f.try_step(s, nxt)
     if f.can_nape(s):
         if f.cfg.get("policy", "eager") == "eager" or f.nape_bonus_without_help(s) >= 2 or f.rnd >= 3:
             f.nape_strike(s)
@@ -719,30 +783,69 @@ def rescue(f, s):
 
 # ---------------------------------------------------------------------- the retreat (decision batch 5, 5-1 and 5-10)
 def retreat_toward(f, s, target):
-    """Retreat options 1 and 3 (background-titans.yaml, retreat, moves): one step that lowers the number of Position
-    steps to target, tried In Reach, On Body, Blind Spot, Distant (the probe's order)."""
-    if s.cur_move:
+    """Retreat option 3 (background-titans.yaml, retreat, moves; 16-27): one step that lowers the number of zones between
+    the soldier and target, a comrade. In the comrade's zone there is none. POLICY CHOICE: the lowest-numbered such
+    zone."""
+    if s.cur_move or s.zone is None or target.zone is None:
         return False
-    d = f.steps_apart(s.pos, target)
-    for to in (IR, OB, BS, D):
-        if (to != s.pos and f.step_kinds(s.pos, to) and f.steps_apart(to, target) < d
-                and f.retreat_step(s, to, toward_comrade=target != D)):
+    fd = f.field
+    if s.zone == target.zone:
+        return False        # no step lowers zero zones: option 4 after an action, or option 1 or 2 (review 1, M8)
+    if not f.is_free(s):
+        return False
+    d = fd.distance(s.zone, target.zone)
+    for n in f.field.neighbours(s.zone):
+        if fd.distance(n, target.zone) < d and f.retreat_step(s, (n, "ground", None), toward_comrade=True):
             return True
     return False
 
 
+def retreat_out(f, s):
+    """Options 1 and 2 (background-titans.yaml, retreat, moves; 16-27): from on-body or blind-spot, an attachment step to
+    free, or letting go when none can be made; from free in an edge zone, leave, whatever body stands there; from free
+    elsewhere, a zone step one ring further out (engine.Fight.retreat_out_zones)."""
+    if s.cur_move or s.zone is None:
+        return
+    if not f.is_free(s):
+        if not f.retreat_step(s, (s.zone, "ground", None)):
+            f.let_go(s)
+        return
+    if f.field.is_edge(s.zone):
+        f.leave(s)
+        return
+    for n in f.retreat_out_zones(s):
+        if f.retreat_step(s, (n, "ground", None)):
+            return
+
+
 def forced_move(f, s, toward):
-    """effect-types.yaml, forced-move (decision batch 7, 7-8): one Position step toward Distant ("distant") or toward the
-    nearest comrade ("comrade"), made as a retreat's move is (retreat_toward). POLICY CHOICE: the nearest comrade is
-    the one the fewest Position steps away, the earliest card first among ties. Returns True when a step was made."""
+    """effect-types.yaml, forced-move (decision batch 7, 7-8; 16-28): one step at the start of the soldier's next turn.
+    Toward distant is one step by the retreat's option 1; toward the nearest comrade is one step that lowers the zones
+    to them. It is not the soldier's own move and never a Flight (positions.yaml, moves, forced_step): not rolled, no
+    Carry, no Momentum, no flag; an ODM step is ODM use, and airborne after it. READING: a forced step never leaves the
+    Titan Engagement (leaving is a soldier's own move, 16-26), so from free in an edge zone toward distant it is no step.
+    POLICY CHOICE: the nearest comrade is the fewest zones away, the earliest card first among ties; the step is
+    mounted, on foot, or ODM, the first the soldier can make. Returns True when a step was made."""
+    if s.zone is None:
+        return False
     if toward == "distant":
-        target = D
-    else:
-        others = [c for c in f.present() if c is not s]
-        if not others:
+        if not f.is_free(s):
+            to = [(s.zone, "ground", None)]
+        elif f.field.is_edge(s.zone):
             return False
-        target = min(others, key=lambda c: (f.steps_apart(s.pos, c.pos), f.card.get(c.name, 99))).pos
-    return s.pos != target and retreat_toward(f, s, target)
+        else:
+            to = [(n, "ground", None) for n in f.retreat_out_zones(s)]
+    else:
+        others = [c for c in f.present() if c is not s and c.zone is not None]
+        if not others or not f.is_free(s):
+            return False
+        c = min(others, key=lambda c: (f.zones_apart(s, c), f.card.get(c.name, 99)))
+        d = f.zones_apart(s, c)
+        to = [(n, "ground", None) for n in f.field.neighbours(s.zone) if f.field.distance(n, c.zone) < d]
+    for place in to:
+        if f.forced_step(s, place):
+            return True
+    return False
 
 
 def forced_strike_turn(f, s):
@@ -794,17 +897,6 @@ def free_pinned_act(f, s, c, stay):
     return False
 
 
-def retreat_out(f, s):
-    """Options 1 and 2: a step toward Distant, or leaving from Distant. A soldier at On Body or Blind Spot who can make
-    no step lets go (positions.yaml, moves, letting_go) and falls."""
-    if s.cur_move:
-        return
-    if s.pos == D:
-        f.leave(s)
-    elif not retreat_toward(f, s, D) and s.pos in (OB, BS):
-        f.let_go(s)
-
-
 def retreat_act(f, s, g):
     """The action taken for a Grabbed comrade in a retreat: Pry Loose (as rescue chooses it), a strike on the holding
     arm, or with the escapes Break Attention with ODM Gear. Returns True when an action was taken."""
@@ -843,13 +935,13 @@ def retreat_turn(f, s):
     g = t.grab
     if g is not None and g["victim"] is not s and not g["victim"].dead:
         v = g["victim"]
-        if s.pos == v.pos:
+        if s.zone == v.zone:
             moved = s.cur_move       # a Fear row's forced move may have made the move already (8-13): no stay then
             if retreat_act(f, s, g):
                 if not moved:
                     f.stay(s, v)
                 return
-        elif retreat_toward(f, s, v.pos):
+        elif retreat_toward(f, s, v):
             retreat_act(f, s, g)
             return
     # decision batch 8, 8-21: options 3 and 4 for a Pinned comrade. POLICY CHOICE: a soldier carrying no one goes to
@@ -857,14 +949,14 @@ def retreat_turn(f, s):
     # struck, else Heaves, and stays; from elsewhere they step toward the comrade, then act.
     pinned = [c for c in f.present() if c is not s and c.pinned]
     if pinned and s.carrying is None and "heave" in R.retreat_stay_actions:
-        c = min(pinned, key=lambda c: (f.steps_apart(s.pos, c.pos), f.card.get(c.name, 99)))
-        if s.pos == c.pos:
+        c = min(pinned, key=lambda c: (f.zones_apart(s, c), f.card.get(c.name, 99)))
+        if s.zone == c.zone:
             moved = s.cur_move       # a Fear row's forced move may have made the move already (8-13): no stay then
             if free_pinned_act(f, s, c, stay=not moved):
                 if not moved:
                     f.stay(s, c)
                 return
-        elif retreat_toward(f, s, c.pos):
+        elif retreat_toward(f, s, c):
             free_pinned_act(f, s, c, stay=False)
             return
     if s.carrying is not None:
@@ -872,8 +964,8 @@ def retreat_turn(f, s):
         return
     fallen = [c for c in f.present() if c is not s and c.down and not c.grabbed and c.carried_by is None and not c.pinned]
     if fallen:
-        c = min(fallen, key=lambda c: (f.steps_apart(s.pos, c.pos), f.card.get(c.name, 99)))
-        if c.pos == s.pos:
+        c = min(fallen, key=lambda c: (f.zones_apart(s, c), f.card.get(c.name, 99)))
+        if c.zone == s.zone:
             if not s.cur_action:
                 lethal = [x for x in c.untreated() if x["row"]["lethal"] and x["limit"] == "turn"]
                 if f.cfg.get("treat_in_fight") and lethal:
@@ -885,8 +977,8 @@ def retreat_turn(f, s):
                 if f.lift(s, c):
                     retreat_out(f, s)
                     return
-        elif retreat_toward(f, s, c.pos):
-            if c.pos == s.pos and not s.cur_action:
+        elif retreat_toward(f, s, c):
+            if c.zone == s.zone and not s.cur_action:
                 f.lift(s, c)
             return
     retreat_out(f, s)
@@ -938,31 +1030,24 @@ def lone_stage(f, s):
 
 def route_gap(f, s):
     """ADR-0010's promise checked in play, at every lone turn and every lone ending: a gap is a state in which a
-    Nape strike is legal now or after one step the soldier can make, while no decoy is legal at the soldier's
-    Position or at any Position one such step away. A decoy already holding is not a gap."""
+    Nape strike is legal now or after one move the soldier can make, while no decoy is legal where the soldier is or
+    anywhere one such move reaches (engine.Fight.one_move_places). A decoy already holding is not a gap."""
     t = f.t
-    if t.dead or s.dead or s.down or s.grabbed or t.holder == "decoy":
+    if t.dead or s.dead or s.down or s.grabbed or t.holder == "decoy" or s.zone is None:
         return False
-    reach = [(s.pos, s.mounted)]
-    for p in R.positions:
-        if p == s.pos:
-            continue
-        kinds = f.step_kinds(s.pos, p)
-        if "foot" in kinds or ("odm" in kinds and s.odm_working()):
-            reach.append((p, False))
-        if "mounted" in kinds and s.mounted:
-            reach.append((p, True))
-    if not any(p == BS and not m and s.handles and (s.odm_working() or t.grounded()) for p, m in reach):
+    reach = [(f.place(s), s.mounted)] + f.one_move_places(s)
+    reach = [(p, m) for p, m in reach if p[0] is not None]
+    if not any(f.pos_of(p) == BS and not m and s.handles and (s.odm_working() or t.grounded()) for p, m in reach):
         return False
-    saved = (s.pos, s.mounted, s.cur_action)
+    saved = (s.zone, s.attach, s.mounted, s.cur_action)
     try:
         s.cur_action = False
         for p, m in reach:
-            s.pos, s.mounted = p, m
+            s.zone, s.attach, s.mounted = p[0], (p[1], p[2]), m
             if any(f.decoy_legal(s, d) for d in ("feint", "flare", "thrown-cloak", "riderless-horse")):
                 return False
     finally:
-        s.pos, s.mounted, s.cur_action = saved
+        s.zone, s.attach, s.mounted, s.cur_action = saved
     return True
 
 

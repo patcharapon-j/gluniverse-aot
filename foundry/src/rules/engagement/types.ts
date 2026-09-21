@@ -5,6 +5,7 @@
  */
 
 import type { TerrainTrait } from './momentum.ts';
+import type { Attachment, FieldState, ZoneId } from './zones.ts';
 
 export type Position = 'distant' | 'in-reach' | 'on-body' | 'blind-spot';
 export const POSITION_IDS: readonly Position[] = ['distant', 'in-reach', 'on-body', 'blind-spot'];
@@ -30,9 +31,18 @@ export interface SoldierState {
   airborne: boolean;
   /** ODM Gear counts as had: held, not Jammed, Gas Rating above 0. */
   odmHad: boolean;
-  /** Position by Focus Titan (or corpse) label. */
+  /** The zone they are in, or null off field (zones.yaml; decision batch 16). A carried soldier's is their carrier's. */
+  zone: ZoneId | null;
+  /** Where they are within their zone (zones.yaml, attachments). */
+  attachment: Attachment;
+  /** Their horse's zone, or null when it is not on the field or they have none (16-25). */
+  horseZone: ZoneId | null;
+  /**
+   * Position by Focus Titan (or corpse) label, derived from zone and attachment by snapshot()
+   * (zones.ts, derivePositions). Nothing writes it.
+   */
   positions: Record<string, Position>;
-  /** Momentum held, 0 to the Anchors left (anchor-ratings.yaml, momentum). */
+  /** Momentum held, 0 to the anchors of their zone (anchor-ratings.yaml, momentum). */
   momentum: number;
   /** Untreated Critical Injuries held (the most-harmed test). */
   untreated: number;
@@ -59,7 +69,7 @@ export interface TitanRow {
   label: string;
   status: 'focus' | 'corpse';
   tempo: number;
-  /** Frenzy held: 0 on entry, 1 more at each round end to FRENZY_CAP, added to the behavior roll. */
+  /** Frenzy held: 0 on entry, 1 more at the end of every third round to its cap (cards.ts, frenzyRule), added to the behavior roll. */
   frenzy: number;
   /** The Attention Ladder's rungs, highest first. */
   ladder: string[];
@@ -72,6 +82,12 @@ export interface TitanRow {
   grounded: boolean;
   /** The round it became a Focus Titan. */
   entered: number;
+  /** The zone it stands in; a corpse's never changes (16-24). */
+  zone: ZoneId;
+  /** Its Stride as its stat block gives it (size-classes.yaml, stride); stride.ts, strideOf, reads 0 when grounded. */
+  stride: number;
+  /** Its board figure: the Size Class, or the Abnormal's own id (small, medium, large, sprinting-abnormal). */
+  figure: string;
 }
 
 export const emptyFlags = (): TitanFlags => ({ hooked: [], hurt: [], loud: [] });
@@ -96,7 +112,7 @@ export interface StepRow {
 export interface AnchorRating {
   id: string;
   name: string;
-  /** The Anchors the field starts with (anchor-ratings.yaml, ratings, anchors). */
+  /** A zone of this rating's anchors: the Momentum cap there (anchor-ratings.yaml, ratings, anchors). */
   anchors: number;
   /** The rating's Terrain Trait (momentum.ts, TERRAIN_TRAITS). */
   trait: TerrainTrait;
@@ -109,11 +125,14 @@ export interface Snapshot {
   mode: Mode;
   step: Step;
   round: number;
+  /** The field rating's row (16-6). Each zone's own rating is on `field`. */
   anchor: AnchorRating | null;
-  /** The Anchors left, which is every soldier's Momentum cap (anchor-ratings.yaml, anchors). */
-  anchors: number;
-  /** Anchors wrecked so far, for the Sparse Terrain Trait's first-wreck grace. */
-  wrecks: number;
+  /** The field of a Titan Engagement (zones.yaml), or null in a Skirmish. */
+  field: FieldState | null;
+  /** Where each dead soldier's left items lie, by zone (16-25). */
+  leftItems: { soldier: string; zone: ZoneId; items: string[] }[];
+  /** The order soldiers took their attachment to a body (a rising stamp by soldier id): the board's order of arrival. */
+  arrivals: Record<string, number>;
   /** Soldiers who made an ODM move this round (odm-gear.yaml, odm_use). */
   odmUsed: string[];
   /** Soldiers whose move is spent this round (blade-sets.yaml, swap). */

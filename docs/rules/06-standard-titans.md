@@ -28,7 +28,7 @@ Later rules this chapter only refers to:
 Every open question this chapter raised is decided in `docs/rules/DECISIONS-2026-09-14.md`: OQ-100 to OQ-110 under *Batch 4*, as revised under *Batch 4b*, and OQ-111 under *Batch 3d* as revised under *Batch 3e*. The rule below cites its decision as (decision batch 4, OQ-nn) or (decision batch 4b, 4b-n). Batch 4 changed three rules this chapter reads: an Attention Ladder tie that no card can break leaves Attention held by nothing, so the Squad sheet's order chooses nothing; the current-holder test is met only by a holder who is not at Distant; and the Sprinting Abnormal's Grab and Headlong Lunge needed 2 dodge successes, now 6 Attack Dice. Batch 4b changed two more: every Attention Ladder begins with hooked-into-its-body, so the Sprinting Abnormal's top two rungs swapped and noise no longer turns it off a striker who fell short; and its bar reads a row past the tolerance on one seed again on a second seed, pooled. It also left one question open: four strikers and no cutters beat the baseline Squad on every table, which section 6.6 reports beside the prepared-Squad target (OQ-112). *Batch 8* (2026-09-15) replaced every entry's fixed need of dodge successes with Attack Dice, 3 per point, rolled as Titan Dice and cancelled by the dodge (8-1; OQ-145). The chapter meets the Chapter 6 constraints in `docs/rules/DECISIONS-2026-09-14.md` as follows:
 - **Format and values:** each standard Titan takes every number from its Size Class row, has the five standard Body Parts in order, and uses the standard ladder. `tools/probes/chapter-06/titans.py` checks every value against `data/engagement/size-classes.yaml`. The Abnormal lists every value in full, inside the stated bounds, and names a ladder built from the closed `tests` list.
 - **Behavior Table shape:** results 1 and 2 terrorize, 3 and 4 control, 5 and 6 kill, one Thrash, and the tier rules. Each harming entry's effects list its Injury Location, its Injury Type (decision batch 7, 7-5), and whether its Critical Injury can be lethal, and an entry with a grab effect is marked in its table's Grab column. Each standard table has one Grab result and one result that can be lethal. A holder at In Reach meets the Position requirement of at least four results in six. No entry affects a horse.
-- **Targets per table:** every standard table replaced the reference table in the Chapter 5 model at the reference start, and the Jam test and the move-up shares were run for each (section 6.6). The lone Nape strike and the Grab cells were also re-run at each stat block's own values, the lone fight at each Titan's Tempo, Nape Depth, and table, and ADR-0014's helper, decoy-screen, and Squad Tactic rows for every table (decision batch 3b). Decision batch 3c re-ran the lone fight with a spare canister and Field Repair. After decision batch 3e every full-fight row and the Abnormal's bar were re-run under Chapter 5's rules as that batch left them: a flag lasts until the end of the Titan's next card that resolves a behavior, so a card that resolves nothing (each card of a decoy's hold, a card that comes up while the Titan holds a Grabbed soldier, and a card with no one holding its Attention) leaves every flag standing; and the nearest rung is met by the candidates at the closest Position, even when it is the highest rung met. The standard rows moved within sampling, and the Sprinting Abnormal's ladder names the current-holder test, so it is still the Titan its figures measure (section 6.5). After decision batch 4 every figure was re-run again, under that batch's tie-break and current-holder test and with the Sprinting Abnormal's kill entries at a fixed need of 2. The standard rows moved within sampling; the Abnormal's rows moved, and its bar was read in both Squad sheet orders (section 6.6). After decision batch 4b the fight, bar, solo, Grab, and lone figures were re-run with the Sprinting Abnormal's top two rungs swapped. Every committed row repeated its figures exactly except the Abnormal's Draw Attention row, since no one in any other row holds the loudest flag. The loud-rider and four-striker rows were added, and the bar reads a row past its tolerance on one seed again on a second seed (section 6.6). After decision batch 5 the fight, bar, solo, Grab, and lone figures were re-run under the retreat clock, and the loud-rider rows were removed, since Draw Attention needs a Position other than Distant (section 6.6). Those figures were measured with each entry's fixed need of dodge successes, before Attack Dice. The final full simulator rerun re-measured each under Attack Dice as a check, and every target and bar limit was Met (section 6.6; decision batch 8, 8-14 and 8-31; OQ-145).
+- **Targets per table:** every standard table replaced the reference table in the Chapter 5 model at the reference start, and the Jam test and the move-up shares were run for each (section 6.6). The lone Nape strike and the Grab cells were also re-run at each stat block's own values, the lone fight at each Titan's Tempo, Nape Depth, and table, and ADR-0014's helper, decoy-screen, and Squad Tactic rows for every table (decision batch 3b). Decision batch 3c re-ran the lone fight with a spare canister and Field Repair. After decision batch 3e every full-fight row and the Abnormal's bar were re-run under Chapter 5's rules as that batch left them: a flag lasts until the end of the Titan's next card that resolves a behavior, so a card that resolves nothing (each card of a decoy's hold, a card that comes up while the Titan holds a Grabbed soldier, and a card with no one holding its Attention) leaves every flag standing; and the nearest rung is met by the candidates at the closest Position, even when it is the highest rung met. The standard rows moved within sampling, and the Sprinting Abnormal's ladder names the current-holder test, so it is still the Titan its figures measure (section 6.5). After decision batch 4 every figure was re-run again, under that batch's tie-break and current-holder test and with the Sprinting Abnormal's kill entries at a fixed need of 2. The standard rows moved within sampling; the Abnormal's rows moved, and its bar was read in both Squad sheet orders (section 6.6). After decision batch 4b the fight, bar, solo, Grab, and lone figures were re-run with the Sprinting Abnormal's top two rungs swapped. Every committed row repeated its figures exactly except the Abnormal's Draw Attention row, since no one in any other row holds the loudest flag. The loud-rider and four-striker rows were added, and the bar reads a row past its tolerance on one seed again on a second seed (section 6.6). After decision batch 5 the fight, bar, solo, Grab, and lone figures were re-run under the retreat clock, and the loud-rider rows were removed, since Draw Attention needs a Position other than Distant (section 6.6). Those figures were measured with each entry's fixed need of dodge successes, before Attack Dice. The confirming run of the zone retune re-measured each under Attack Dice and on the field, and every target, every band, and every limit of the Sprinting Abnormal's bar was Met, which closed OQ-199 (section 6.6; decision batch 8, 8-14 and 8-31; the round 3 retune, R6 and R7; the zone retune, Z5; OQ-145).
 - **Abnormals:** reported under the same probes and not tuned, against a stated bar (section 6.6).
 
 **Rulings.** Which Titan appears, and which Background Titans come with it, is the GM's framing when the GM names them before a Titan Engagement starts; otherwise the rule that begins it and the setup table decide (Chapter 5, section 5.1; decision batch 9, 9-15). The GM may also name Circumstances on the soldiers' rolls against these Titans, as Chapter 5's Rulings paragraph allows. The GM applies the rest of this chapter as written: which entry a Titan resolves and against whom, which the Behavior Table and Chapter 5's procedures decide; every number in a stat block, standard or Abnormal, and its Attack Dice, which take no Circumstances; and the hiding of an Abnormal's values, which only a Read reveals (ADR-0024, limits 8 and 16). What the GM applies as written outside this chapter is the list in Chapter 1, section 1.1, item 6.
@@ -57,6 +57,7 @@ A stat block gives the fields of Chapter 5's format (section 5.4):
 - **Nape Depth:** successes one Nape strike needs.
 - **Regeneration clock:** segments.
 - **Heave rating:** the heave count at which its body, living or a corpse, frees every soldier it pins (Chapter 5, section 5.7). A standard Titan takes its Size Class's, and an Abnormal lists its own (decision batch 8, 8-9).
+- **Stride:** the zones it moves toward its Attention holder on each of its cards that resolves a behavior (Chapter 5, section 5.5; decision batch 16, 16-16). A standard Titan takes its Size Class's and an Abnormal lists its own; Chapter 5's Stride table (section 5.4) renders every Titan's from `data/titans/`. A grounded Titan's is 0.
 - **Body Parts:** in stat block order, with each one's Toughness. The order breaks Regeneration ties and decides which arm Grabs.
 - **Attention Ladder:** standard, or the Abnormal's own.
 
@@ -65,7 +66,7 @@ A standard Titan's numbers are public. An Abnormal's Toughness, Nape Depth, Rege
 ### Reading a Behavior Table
 
 Each row of a rendered Behavior Table gives:
-- **D6:** the result that rolls it. Thrash is never rolled.
+- **D6:** the result that rolls it. The behavior roll is D6 plus the Titan's Frenzy, so a frenzied Titan reaches the lower rows of this column and the upper ones only when the roll cannot be taken (Chapter 5, sections 5.4 and 5.5). Thrash is never rolled.
 - **Behavior and tier.**
 - **Targets:** the holder of the Titan's Attention, or the holder and everyone else at their Position who is not Grabbed.
 - **Holder's Position:** the entry's Position requirement. "Any" means all four Positions.
@@ -77,12 +78,12 @@ Each row of a rendered Behavior Table gives:
 
 Below each table, one line per entry says what the behavior looks like. The line decides nothing; the row does. Each line names only the Body Parts its row uses, and shows nothing its row's Positions rule out, so the words never show a Titan doing something its Broken parts or the holder's Position forbid. `titans.py` fails any line that names the Titan's arm, leg, or eyes when its row does not list that kind, that shows the Titan seeing a holder its row allows at Blind Spot, or that shows it touching a holder its row allows at Distant.
 
-Every procedure step comes from Chapter 5: the Next Behavior roll with no back-to-back repeats and move-up past Broken parts, the card, the fallback, Thrash, and dodging. No entry names death. A Titan kills only through:
+Every procedure step comes from Chapter 5: the Next Behavior roll with Frenzy added, no back-to-back repeats and move-up past Broken parts, the card, the retarget, the fallback and its own retarget, Thrash, and dodging. No entry names death. A Titan kills only through:
 - a lethal Critical Injury, by its Death Roll or an instant-death row, which a lucky roll's net success rider can reach (Chapter 3);
 - the Grab's devour step (Chapter 5);
 - a fall one of its effects causes, such as a knock-loose, or a Critical Injury that leaves an airborne or mounted soldier Down. The fall's damage can bring Health to 0 and inflict a Critical Injury that is lethal (Chapter 4).
 
-In play, Thrash is the behavior each table resolves most: 31% of the standard Small Titan's resolved cards, 41% of the standard Medium Titan's and of the standard Large Titan's, and 34% of the Sprinting Abnormal's at their reference starts. Nearly all of it comes from a holder standing where the rolled entry cannot reach, most often a Nape striker who fell short at Blind Spot, so a Titan with a soldier at its Nape mostly thrashes. Each table's Thrash line is written for that Titan's body. Thrash's share is a consequence of the fallback rule, accepted and not tuned away (`tuning.yaml`, `verdicts`, `thrash_share`; decision batch 4, OQ-101).
+In play, Thrash used to be the behavior each table resolved most: 31% of the standard Small Titan's resolved cards, 41% of the standard Medium Titan's and of the standard Large Titan's, and 34% of the Sprinting Abnormal's at their reference starts. Nearly all of it came from a holder standing where the rolled entry could not reach, most often a Nape striker who fell short at Blind Spot, so a Titan with a soldier at its Nape mostly thrashed. **Decision batch 13 is aimed squarely at that**: a Titan whose Attention holder cannot meet the rolled entry now retargets down the Attention Ladder to a soldier who can, and falls back only when nobody in the fight qualifies, and on the confirming run of the zone retune Thrash resolves 8.9% of the standard Small Titan's resolved cards, 7.3% of the standard Medium Titan's, 11.9% of the standard Large Titan's, and 13.7% of the Sprinting Abnormal's at their reference starts (Chapter 5, section 5.6; `docs/reviews/simulator-report.md`, section 6.15). Each table's Thrash line is still written for that Titan's body. What Thrash's share settles at is now a figure the retune reports rather than a consequence accepted and not tuned away (`tuning.yaml`, `verdicts`, `thrash_share`; decision batch 4, OQ-101, as amended by decision batch 13, 13-9).
 
 An entry is marked as a Grab by its grab effect alone, with no field of its own (decision batch 4, OQ-100).
 
@@ -99,7 +100,7 @@ When an effect kills its target, that target receives none of the card's later e
 >
 > Titans go for people, not pain and not animals, so every entry acts on soldiers, and none on a horse.
 >
-> Read strictly, the Chapter 6 constraint says no state of previous behavior and Broken parts may push the kill share past one half. The Chapter 5 reference table would fail that reading (4 results in 6 with both arms Broken after Shake Off), so every table here was built to pass it. On the standard tables the kill results are 5 and 6, a control entry at 3 uses a Body Part kind only if the entry at 6 uses it too, and the entries at 4 and 5 use none. That layout is why several entries use no Body Part, and why their lines describe acts that need none. Giving those entries the part their first lines described breaks the limit:
+> Read strictly, the Chapter 6 constraint says no state of previous behavior and Broken parts may push the kill share past one half at Frenzy 0; Frenzy 1 to 3 climb past it by design (Chapter 5, section 5.4). The Chapter 5 reference table would fail that reading (4 results in 6 with both arms Broken after Shake Off), so every table here was built to pass it. On the standard tables the kill results are 5 and 6, a control entry at 3 uses a Body Part kind only if the entry at 6 uses it too, and the entries at 4 and 5 use none. That layout is why several entries use no Body Part, and why their lines describe acts that need none. Giving those entries the part their first lines described breaks the limit:
 > - **Small, Lurch Closer with a leg:** 0.67, after Scrabble with both arms and both legs Broken.
 > - **Medium, Snap Short with an arm** (it was a groping hand): 1.00, after Shake Off with the eyes and both arms Broken.
 > - **Medium, Shake Off with an arm:** 1.00.
@@ -120,6 +121,7 @@ When an effect kills its target, that target receives none of the card's later e
 | Regeneration clock | 2 segments |
 | Body Parts and Toughness | eyes 1, left arm 1, right arm 1, left leg 1, right leg 1 |
 | Heave rating | 2 |
+| Stride | 1 zone |
 | Attention Ladder | Standard Attention Ladder |
 <!-- END RENDERED: stat-block standard-small -->
 
@@ -129,7 +131,7 @@ When an effect kills its target, that target receives none of the card's later e
 | 1 | Gape | Terrorize | holder | Any | none | 3 | Stress +1 | Thrash | no |
 | 2 | Lurch Closer | Terrorize | holder | Distant, In Reach | none | 3 | Stress +1; Telegraph | Thrash | no |
 | 3 | Clutch at the Legs | Control | holder | In Reach | arm | 6 | Crush Critical Injury (leg, side rolled, cannot be lethal) | Thrash | no |
-| 4 | Scrabble | Control | holder | On Body, Blind Spot | none | 6 | Knock loose (fall: Crush); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
+| 4 | Scrabble | Control | holder | On Body, Blind Spot | none | 6 | Knock loose (fall: Crush); Wreck (the Titan's zone takes one rating step toward Open) | Thrash | no |
 | 5 | Bite | Kill | holder | In Reach, On Body | none | 6 | Bite Critical Injury (leg, side rolled, can be lethal) | Thrash | no |
 | 6 | Grab | Kill | holder | In Reach, On Body | arm | 6 | Grab (crush: Crush) | Thrash | yes |
 | never rolled | Thrash | Thrash | holder | Any | none | 6 | Knock loose (fall: Crush) | none | no |
@@ -166,6 +168,7 @@ When an effect kills its target, that target receives none of the card's later e
 | Regeneration clock | 3 segments |
 | Body Parts and Toughness | eyes 2, left arm 2, right arm 2, left leg 2, right leg 2 |
 | Heave rating | 3 |
+| Stride | 2 zones |
 | Attention Ladder | Standard Attention Ladder |
 <!-- END RENDERED: stat-block standard-medium -->
 
@@ -174,7 +177,7 @@ When an effect kills its target, that target receives none of the card's later e
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Fixed Grin | Terrorize | holder | Any | eyes | 3 | Stress +1; Telegraph | Thrash | no |
 | 2 | Snap Short | Terrorize | holder | In Reach, On Body | none | 3 | Stress +1 | Thrash | no |
-| 3 | Swat | Control | holder | In Reach, On Body | arm | 6 | Crush Critical Injury (rolled location, cannot be lethal); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
+| 3 | Swat | Control | holder | In Reach, On Body | arm | 6 | Crush Critical Injury (rolled location, cannot be lethal); Wreck (the Titan's zone takes one rating step toward Open) | Thrash | no |
 | 4 | Shake Off | Control | holder | On Body, Blind Spot | none | 6 | Knock loose (fall: Crush) | Thrash | no |
 | 5 | Bite | Kill | holder | In Reach, On Body | none | 9 | Bite Critical Injury (torso, can be lethal) | Thrash | no |
 | 6 | Grab | Kill | holder | In Reach, On Body | arm | 9 | Grab (crush: Crush) | Thrash | yes |
@@ -214,6 +217,7 @@ When an effect kills its target, that target receives none of the card's later e
 | Regeneration clock | 4 segments |
 | Body Parts and Toughness | eyes 2, left arm 3, right arm 3, left leg 2, right leg 2 |
 | Heave rating | 4 |
+| Stride | 2 zones |
 | Attention Ladder | Standard Attention Ladder |
 <!-- END RENDERED: stat-block standard-large -->
 
@@ -221,10 +225,10 @@ When an effect kills its target, that target receives none of the card's later e
 | D6 | Behavior | Tier | Targets | Holder's Position | Body Parts used | Attack Dice | Effects | Fallback | Grab |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Loom | Terrorize | holder | Any | none | 6 | Stress +1; Telegraph | Thrash | no |
-| 2 | Heavy Tread | Terrorize | holder and everyone at their Position | Distant, In Reach | both legs | 6 | Stress +1; Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
-| 3 | Crush | Control | holder | In Reach | none | 9 | Crush Critical Injury (leg, side rolled, cannot be lethal); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
+| 2 | Heavy Tread | Terrorize | holder and everyone in their zone at their Position | Distant, In Reach | both legs | 6 | Stress +1; Wreck (the Titan's zone takes one rating step toward Open) | Thrash | no |
+| 3 | Crush | Control | holder | In Reach | none | 9 | Crush Critical Injury (leg, side rolled, cannot be lethal); Wreck (the Titan's zone takes one rating step toward Open) | Thrash | no |
 | 4 | Shrug Off | Control | holder | On Body, Blind Spot | none | 9 | Knock loose (fall: Crush) | Thrash | no |
-| 5 | Bite | Kill | holder | On Body | none | 12 | Bite Critical Injury (torso, can be lethal) | Crush | no |
+| 5 | Bite | Kill | holder | In Reach, On Body | none | 12 | Bite Critical Injury (torso, can be lethal) | Crush | no |
 | 6 | Grab | Kill | holder | In Reach, On Body | arm | 12 | Grab (crush: Crush) | Thrash | yes |
 | never rolled | Thrash | Thrash | holder | Any | none | 9 | Knock loose (fall: Crush) | none | no |
 
@@ -236,13 +240,13 @@ When an effect kills its target, that target receives none of the card's later e
 - **Heavy Tread.** It walks straight at the soldier, and every step shakes the ground under everyone beside them.
 - **Crush.** It slams its bulk down beside the soldier, standing or fallen, and pins the soldier's legs under it.
 - **Shrug Off.** It heaves its shoulders and scrapes its back and neck along whatever stands near it.
-- **Bite.** It turns its head to the soldier clinging to its body and bites. A soldier In Reach is too far below its mouth, so it pins them under its bulk instead.
+- **Bite.** It stoops, turns its head to the soldier it has fixed on, and bites. It reaches a soldier clinging to its body without moving and folds almost double to reach one on the ground.
 - **Grab.** A hand bigger than the soldier closes around them and starts to lift.
 - **Thrash.** It heaves its whole body about, lashing at nothing in particular.
 <!-- END RENDERED: behavior-text standard-large -->
 
-> **Design note (OQ-101):** A Large Titan's mouth is far above the ground, so Bite needs a soldier On Body and becomes Crush against one In Reach.
-> - **Heavy Tread** shakes everyone at the holder's Position, and it needs both legs: one Broken leg grounds the Titan, and a grounded Titan does not walk. Its result then moves up to Crush.
+> **Design note (OQ-101):** A Large Titan's mouth is far above the ground, and until the round 3 retune its Bite needed a soldier On Body and became Crush against one In Reach. That left a fall from a flail as the Large's only kill against a Squad that kept off its body, and Health 6 and retargeting both remove that fall by design: with neither rule the Large read 0.038 deaths a fight against the Medium's 0.038, and with retargeting 0.053 against 0.070, under the twin the bar reads it as. So it stoops: Bite reaches In Reach as every other Bite in this chapter does, and Crush is its fallback only when nobody is within reach (round 3 retune, R5; `docs/reviews/round-3-retune-decisions.md`).
+> - **Heavy Tread** shakes everyone at the holder's Position **in the holder's zone**, never the whole field, even against a holder at Distant (Chapter 5, section 5.4, *Reach is the Titan's own zone*; decision batch 16, 16-18), and it needs both legs: one Broken leg grounds the Titan, and a grounded Titan does not walk. Its result then moves up to Crush.
 > - **Crush and Shrug Off** use no Body Part. Its bulk slams down beside a soldier and pins their legs, and its back scrapes against whatever stands near it, whatever is Broken. Crush's leg Critical Injury cannot be lethal, as every control entry's cannot.
 > - **Crush** harms the holder only. When it also struck everyone at the holder's Position, 16.6% of fights had no kill within 12 rounds, the reading before decision batch 5, over the 15% limit, with 2.66 Critical Injuries per fight. On the holder only, the Large Titan deals what Chapter 5's reference Large Titan dealt (section 6.6).
 
@@ -260,15 +264,15 @@ This chapter prints each Abnormal's hidden values only in a GM section, which pl
 
 ### The Sprinting Abnormal
 
-A Medium Abnormal that runs. At the table everyone sees what any Focus Titan shows: it is Medium, it draws two cards a round (Tempo 2), its Heave rating is 3, and its Body Parts' counts and states and its clock's filled segments are on the tracker. Its Behavior Table is public:
+A Medium Abnormal that runs. At the table everyone sees what any Focus Titan shows: it is Medium, it draws two cards a round (Tempo 2), its Heave rating is 3, its Stride is 3, one more than any standard Titan's, and its Body Parts' counts and states and its clock's filled segments are on the tracker. Its Behavior Table is public:
 
 <!-- BEGIN RENDERED: behavior-table sprinting-abnormal -->
 | D6 | Behavior | Tier | Targets | Holder's Position | Body Parts used | Attack Dice | Effects | Fallback | Grab |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | Run Past | Terrorize | holder and everyone at their Position | Distant, In Reach | both legs | 3 | Stress +1; Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
+| 1 | Run Past | Terrorize | holder and everyone in their zone at their Position | Distant, In Reach | both legs | 3 | Stress +1; Wreck (the Titan's zone takes one rating step toward Open) | Thrash | no |
 | 2 | Veer | Terrorize | holder | Any | none | 3 | Stress +1; Telegraph | Thrash | no |
 | 3 | Trample | Control | holder | Distant, In Reach | both legs | 6 | Crush Critical Injury (leg, side rolled, cannot be lethal) | Thrash | no |
-| 4 | Pitch Headlong | Control | holder | On Body, Blind Spot | none | 3 | Knock loose (fall: Crush); Wreck (the Titan Engagement loses 1 Anchor) | Thrash | no |
+| 4 | Pitch Headlong | Control | holder | On Body, Blind Spot | none | 3 | Knock loose (fall: Crush) | Thrash | no |
 | 5 | Grab | Kill | holder | In Reach, On Body | arm | 6 | Grab (crush: Crush) | Thrash | yes |
 | 6 | Headlong Lunge | Kill | holder | In Reach, On Body | both legs | 6 | Crush Critical Injury (rolled location, can be lethal) | Pitch Headlong | no |
 | never rolled | Thrash | Thrash | holder | Any | none | 6 | Knock loose (fall: Crush) | none | no |
@@ -287,7 +291,7 @@ A Medium Abnormal that runs. At the table everyone sees what any Focus Titan sho
 <!-- END RENDERED: behavior-text sprinting-abnormal -->
 
 What its table means at the table:
-- **It runs through people.** Run Past and Trample work against a holder at Distant or In Reach, so a soldier on horseback at Distant is not out of its path: Distant is out of a standing Titan's reach, not out of a running one's way (Chapter 5, section 5.2). Trample's leg Critical Injury cannot be lethal; a rider who goes Down from it falls (Chapter 4).
+- **It runs through people.** Run Past and Trample work against a holder at Distant or In Reach, so a soldier on horseback in another zone is not out of its path: Distant is out of a standing Titan's reach, not out of a running one's way (Chapter 5, section 5.2). Run Past strikes the holder and everyone at their Position **in the holder's zone** only, not every soldier elsewhere on the field (Chapter 5, section 5.4; decision batch 16, 16-18). With a Stride of 3 it covers most of the Standard field on one card before it resolves the entry. Trample's leg Critical Injury cannot be lethal; a rider who goes Down from it falls (Chapter 4).
 - **Its hands and jaws need you close.** Its Grab and Headlong Lunge need In Reach or On Body, and the Lunge falls back to Pitch Headlong. Both roll 6 Attack Dice, the standard Medium Titan's control pool rather than its kill pool of 9: it snatches and lunges at full stride, and a soldier leaps clear of a Titan that cannot stop.
 - **Cut one leg.** Run Past, Trample, and Headlong Lunge each need both legs. One Broken leg drops it to the ground (Chapter 5, section 5.7): it can no longer run past, trample, or lunge, and it only veers, pitches over, and grabs, while Nape strikes against it gain the grounded dice. Four strikers who leave its legs alone still kill it sooner and take less harm under the rules as they stand, an open question on every table (section 6.6, *Four strikers and no cutters*; OQ-112).
 - **Clinging to it is risky.** Pitch Headlong knocks loose the soldier holding its Attention when they are On Body or at Blind Spot, though its slow roll rolls only 3 Attack Dice.
@@ -298,7 +302,8 @@ The Sprinting Abnormal's Behavior Table and Attention Ladder stand within the cl
 > **Design note (OQ-102, OQ-103, OQ-109):** Between 845 and 850 the Abnormals the Survey Corps meets break the pattern: they ignore soldiers close to them and run for somewhere else, and the Survey Corps rides out in a wide scouting formation to see them coming. In manga chapter 22 (anime episode 17) one runs past the formation's outer riders toward its centre, and riders bring it down by cutting its legs, then its Nape. The Sprinting Abnormal is that runner.
 > - **Its body is a runner's.** Two cards a round (Tempo 2), and three of its six entries need both legs, so cutting one leg is how a Squad stops it running, as in canon.
 > - **It is not a Shifter.** An earlier draft singled out riders, snatched soldiers from the saddle and the air, and leapt after flyers. Those are the Female Titan's acts in the same chapters, a Shifter's choices, and Shifters are not Phase 1 (ADR-0002, ADR-0013). This table has no entry that reaches Distant with a hand or jaws, and nothing that picks out a rider.
-> - **The bar:** an Abnormal is not tuned to a target, so this chapter holds it against its own bar in `tuning.yaml` (`abnormals`), at the start any rule that names it gives: every soldier mounted, with the `abnormal` Fear Roll. Each limit is a standard Titan's measured figure, and every limit is read one way, row against row, as decision batch 3b reads every table. Each of its rows is set against the standard Medium and Large Titans' rows with the same support, or their reference rows where they have none. It must not be trivial: a median kill in round 2 or later and at least the Medium Titan's Critical Injuries in every row, and more deaths than the Medium Titan at the reference start. It must be winnable: a median kill by round 4, and no more fights that end with no kill than the Large Titan's row (decision batch 5, 5-10). And it has a ceiling: no more deaths per fight than the Large Titan's row. A limit holds within sampling when the figure is past it by no more than 2 standard errors at 120,000 fights a row. A row past that on one seed is run again on a second seed in the same order, and it fails only if the figure pooled over both runs is past 2 standard errors (decision batch 4b, 4b-4). Every row is run in both Squad sheet orders, the player characters listed cutters first and then strikers first, each twin in the same order, because under Chapter 5's last tie-break neither order may choose anything (decision batch 4, 4-4). Section 6.6 checks each part.
+> - **The bar:** an Abnormal is not tuned to a target, so this chapter holds it against its own bar in `tuning.yaml` (`abnormals`), at the start any rule that names it gives: every soldier mounted, with the `abnormal` Fear Roll. Each limit is a standard Titan's measured figure, and every limit is read one way, row against row, as decision batch 3b reads every table. Each of its rows is set against the standard Medium and Large Titans' rows with the same support, or their reference rows where they have none. It must not be trivial: a median kill in round 2 or later and at least the Medium Titan's Critical Injuries in every row, and more deaths than the Medium Titan at the reference start. Its two ladder rows, the standard ladder in place of its own and its earlier ladder, are run beside the bar and reported, not judged: they measure what its ladder is worth, not the creature this chapter publishes (round 3 retune, R7). It must be winnable: a median kill by round 4, and no more fights that end with no kill than the Large Titan's row (decision batch 5, 5-10). And it has a ceiling: no more deaths per fight than the Large Titan's row. A limit holds within sampling when the figure is past it by no more than 2 standard errors at 120,000 fights a row. A row past that on one seed is run again on a second seed in the same order, and it fails only if the figure pooled over both runs is past 2 standard errors (decision batch 4b, 4b-4). Every row is run in both Squad sheet orders, the player characters listed cutters first and then strikers first, each twin in the same order, because under Chapter 5's last tie-break neither order may choose anything (decision batch 4, 4-4). Section 6.6 checks each part.
+> - **Only one of its entries wrecks.** Run Past, its legs pounding across the ground, wrecks the zone it stands in; Pitch Headlong, a roll against soldiers on its body, does not. With two cards a round and as Headlong Lunge's fallback, Pitch Headlong's wreck flattened the runner's own zone to Open, which it rarely leaves, and the Squad failed to kill it more often than the Large twin, so the zone retune took the wreck off that one entry and left every other entry's (decision batch 17, Z3; `docs/reviews/zone-retune-decisions.md`).
 
 #### GM section: the Sprinting Abnormal's hidden values
 
@@ -315,6 +320,7 @@ Players do not read this subsection. Its four hidden values, each Body Part's To
 | Regeneration clock | 3 segments |
 | Body Parts and Toughness | eyes 2, left arm 2, right arm 2, left leg 2, right leg 2 |
 | Heave rating | 3 |
+| Stride | 3 zones |
 | Attention Ladder | Sprinting Abnormal Ladder |
 | Hidden until Read | each Body Part's Toughness, Nape Depth, Regeneration clock length, Attention Ladder |
 <!-- END RENDERED: stat-block sprinting-abnormal -->
@@ -325,7 +331,7 @@ Its Attention Ladder (`index.yaml`, `ladders`), highest first:
 1. **hooked-into-its-body:** The soldier holds on-body relative to the Titan, or holds the hooked-by-strike flag for it.
 2. **loudest-or-brightest:** The soldier holds the loudest flag for the Titan.
 3. **current-holder:** The soldier holds the Titan's Attention and a Position other than Distant. A holder who is at Distant, mounted or on foot, does not meet it (decision batch 4, 4-3). A Down soldier can meet it.
-4. **nearest:** The soldier holds the closest Position any soldier in the set being tested holds, in the order on-body, in-reach, blind-spot, distant. As the highest rung met, it is met by the candidates at the closest Position any candidate holds; as a lower rung, by the tied soldiers at the closest Position any of them holds. A Down soldier can meet it.
+4. **nearest:** The soldier holds the closest Position any soldier in the set being tested holds, in the order on-body, in-reach, blind-spot, distant. As the highest rung met, it is met by the candidates at the closest Position any candidate holds; as a lower rung, by the tied soldiers at the closest Position any of them holds. Among candidates at Distant it counts no zones: every soldier in another zone holds the same Position, and ties go on to the holder and card steps (decision batch 16, 16-17). A Down soldier can meet it.
 <!-- END RENDERED: ladder sprinting-abnormal -->
 
 What its ladder means at the table:
@@ -347,9 +353,11 @@ What its ladder means at the table:
 
 ## 6.6 Tuning (ADR-0014)
 
+> **Measured on the field (decision batch 16, 16-38; the zone retune, Z5).** Every figure, band, verdict, and bar limit in this section is the confirming run of the zone retune, which measured the Titans on the field with zones and the Stride, Frenzy at every third round, and the Sprinting Abnormal's Pitch Headlong without its wreck (`docs/reviews/zone-retune-decisions.md`, Z1 to Z5). The field's own figures, the Stride, Flights, Momentum, and wrecks, are in Chapter 5, section 5.13.
+
 Chapter 6 changes no Size Class value; those are Chapter 5's simulator starting values (OQ-78). What this chapter measures is each Behavior Table, and the Abnormal's values. The Phase 1 simulator re-measures all of them, and `tuning.yaml` (`simulator_cases`) lists the cases this chapter adds.
 
-Every verdict in this section reads the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`, cited by section; decision batch 8, 8-14 and 8-31), in which every target, band, and bar limit is Met and no fight reached the safety cap, and `probe-figures.yaml` is re-committed from that run. A figure a note gives as the probes' was measured with each entry's fixed need of dodge successes, before Attack Dice replaced it at 3 dice per point (8-1), and stands as the record of the measurement that chose a value. Where a note names a fixed need, the entry now rolls three times that many Attack Dice.
+Every verdict in this section reads the confirming run of the zone retune (`docs/reviews/simulator-report.md`, cited by section; decision batch 8, 8-14 and 8-31; the zone retune, Z5), the run that measured decision batches 10, 11, 13, and 16 together with the zone retune's rulings. On it every ADR-0014 target and every band in this section is Met, at each reference start and on the bar's runs in both Squad sheet orders, every limit of the Sprinting Abnormal's bar holds in every judged row and both orders, and no fight reached the safety cap. The one limit the round 3 retune's run had Missed, the Critical Injuries floor in the screen with Hook and Cut and Hamstring Line, with the escapes, holds on it, and OQ-199 is closed (*Its bar, row against row*). `probe-figures.yaml` is re-committed from that run. A figure a note gives as the probes' was measured with each entry's fixed need of dodge successes, before Attack Dice replaced it at 3 dice per point (8-1), and stands as the record of the measurement that chose a value. Where a note names a fixed need, the entry now rolls three times that many Attack Dice.
 
 **Probes.** The figures come from the probe scripts in `tools/probes/chapter-06/`. They import Chapter 5's dice core, full-fight model, and simple models, replace only what reads a Titan, and add what a fight's start calls for. They read each stat block and table from `data/titans/`, so no Titan value is written into a script. `tuning.yaml` (`probes`) states the model, the baseline policy, and the exact commands; the figure tables below are rendered from `probe-figures.yaml`.
 
@@ -369,7 +377,7 @@ Sensitivity rows name what they add. Beside them, every table reports ADR-0014's
 <!-- BEGIN RENDERED: fight port-check -->
 | Case | Median kill round | By round 3 | By round 4 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Grabs that kill | Jams per fight | Titan cards resolved per round |
 |---|---|---|---|---|---|---|---|---|---|---|
-| reference Medium Titan, 4 player characters (Chapter 5 gives 62.0% by round 3, 0.72 Critical Injuries) | 3 | 62.5% | 73.3% | 7.8% | 0.70 | 0.060 | 0.196 | 11.1% | 0.026 | 0.854 |
+| reference Medium Titan, 4 player characters (Chapter 5 gives 62.0% by round 3, 0.72 Critical Injuries) | 3 | 70.3% | 81.4% | 3.8% | 0.79 | 0.100 | 0.283 | 18.9% | 0.001 | 0.797 |
 <!-- END RENDERED: fight port-check -->
 
 ### Move-up shares
@@ -381,11 +389,11 @@ Sensitivity rows name what they add. Beside them, every table reports ADR-0014's
 |---|---|---|---|---|
 | Standard Small Titan | 0.50 | previous Scrabble; nothing Broken | 3 | 5 of 6 |
 | Standard Medium Titan | 0.50 | previous Shake Off; nothing Broken | 2 | 5 of 6 |
-| Standard Large Titan | 0.50 | previous Shrug Off; nothing Broken | 3 | 4 of 6 |
+| Standard Large Titan | 0.50 | previous Shrug Off; nothing Broken | 3 | 5 of 6 |
 | Sprinting Abnormal | 0.50 | previous Pitch Headlong; nothing Broken | 1 | 5 of 6 |
 <!-- END RENDERED: shares -->
 
-Every table peaks at exactly one half. The Sprinting Abnormal can be left with one legal entry: after Veer, with both arms and a leg Broken, every result moves up to Pitch Headlong, which falls back to Thrash unless the holder is On Body or at Blind Spot. Every result still resolves.
+Every table peaks at exactly one half. That is at Frenzy 0, where the constraint binds. Frenzy adds to the roll and lifts every peak past one half by design, to every result in six at Frenzy 3 after the entry at result 4 (Chapter 5, section 5.4). The Sprinting Abnormal can be left with one legal entry: after Veer, with both arms and a leg Broken, every result moves up to Pitch Headlong, which falls back to Thrash unless the holder is On Body or at Blind Spot. Every result still resolves.
 
 The results each entry receives, by previous behavior, with nothing Broken, and by Broken parts, with no previous behavior:
 
@@ -548,24 +556,24 @@ Four Rookie player characters at Stress 1 fight the standard Medium Titan under 
 <!-- BEGIN RENDERED: fight standard-medium -->
 | Case | Median kill round | By round 3 | By round 4 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Grabs that kill | Jams per fight | Titan cards resolved per round |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 4 player characters, eager, dodge when harmed (the reference start) | 3 | 62.4% | 73.2% | 7.8% | 0.69 | 0.066 | 0.196 | 11.4% | 0.028 | 0.854 |
-| strikers wait | 3 | 61.4% | 72.5% | 7.2% | 0.73 | 0.063 | 0.207 | 10.3% | 0.026 | 0.855 |
-| dodge only lethal harm and Grabs | 3 | 65.0% | 75.6% | 8.2% | 0.94 | 0.082 | 0.187 | 9.6% | 0.009 | 0.856 |
-| 4 player characters and 2 helper Squadmates | 3 | 69.5% | 79.7% | 5.3% | 0.62 | 0.031 | 0.181 | 3.2% | 0.022 | 0.836 |
-| template Squad | 3 | 51.5% | 61.5% | 14.7% | 0.88 | 0.113 | 0.235 | 19.9% | 0.033 | 0.876 |
-| mounted start | 3 | 62.3% | 73.4% | 7.7% | 0.69 | 0.061 | 0.190 | 10.2% | 0.028 | 0.854 |
-| a first Titan Engagement, with its Fear Roll | 3 | 56.7% | 68.0% | 10.3% | 0.78 | 0.086 | 0.210 | 15.0% | 0.031 | 0.863 |
-| 4 eager strikers and no cutters | 3 | 78.6% | 89.0% | 1.6% | 0.44 | 0.025 | 0.132 | 5.2% | 0.023 | 0.823 |
+| 4 player characters, eager, dodge when harmed (the reference start) | 3 | 69.9% | 80.6% | 4.8% | 0.83 | 0.129 | 0.329 | 20.0% | 0.000 | 0.796 |
+| strikers wait | 3 | 63.0% | 76.8% | 5.6% | 0.95 | 0.158 | 0.374 | 21.6% | 0.000 | 0.822 |
+| dodge only lethal harm and Grabs | 3 | 71.8% | 82.6% | 4.3% | 1.00 | 0.118 | 0.291 | 19.1% | 0.000 | 0.800 |
+| 4 player characters and 2 helper Squadmates | 2 | 77.1% | 86.6% | 2.6% | 0.68 | 0.055 | 0.262 | 8.4% | 0.000 | 0.776 |
+| template Squad | 3 | 60.5% | 71.6% | 9.8% | 1.13 | 0.258 | 0.452 | 30.0% | 0.001 | 0.816 |
+| mounted start | 3 | 70.0% | 80.2% | 5.2% | 0.86 | 0.143 | 0.336 | 22.0% | 0.001 | 0.797 |
+| a first Titan Engagement, with its Fear Roll | 3 | 66.3% | 76.7% | 7.2% | 0.97 | 0.195 | 0.383 | 26.5% | 0.001 | 0.805 |
+| 4 eager strikers and no cutters | 2 | 89.0% | 94.3% | 1.0% | 0.31 | 0.042 | 0.114 | 19.7% | 0.000 | 0.690 |
 <!-- END RENDERED: fight standard-medium -->
 
-> **Design note:** The target is met. On the final full simulator rerun under Attack Dice every Medium band is inside its limits, at the reference start and on the bar's two runs of it (`docs/reviews/simulator-report.md`, section 3). A median is read exactly, and each range or limit is its own band (ADR-0014, as amended in decision batches 5, 5c, 7, and 8):
-> - **Median kill:** round 3 (42.0% killed by round 2).
-> - **Killed by round 3:** 62.4%, inside 55% to 70% (62.3% and 62.5% on the bar's runs).
-> - **Critical Injuries per fight:** 0.69, inside 0.5 to 0.9 (0.687 and 0.685 on the bar's runs).
-> - **Deaths per fight (OQ-132, decided anew):** the band, at most 0.08, reads deaths through the end of the Titan Engagement: the fight's own deaths and those of its end steps (decision batch 5, 5-19). Decision batch 7, 7-13, re-set it from 0.05 to 0.06, because the owner accepted fights that are each lethal on their own, and decision batch 8, 8-31, from 0.06 to 0.08, as the owner's chosen lethality for the first playtest, with no value or rule changed for it; it is re-set again with every deaths band under OQ-140. The probes run no end steps, so the deaths column in this section's tables is deaths during the fight. Through the end, the full simulator rerun under Attack Dice gives 0.0754 (standard error 0.0034) at the reference start, and 0.0687 and 0.0693 (standard error 0.0010) in the bar's two Squad sheet orders, each Met. During the fight, reported beside it, the rerun gives 0.0663, 0.0606, and 0.0614. Under each entry's fixed need, the probes' reference row gave 0.046 (standard error 0.003), and at 120,000 fights the bar's twin rows gave 0.0487 with the cutters first and 0.0501 with the strikers first, pooled over a second seed 0.0494 (standard error 0.0006).
-> - **Grabs per fight:** 0.196, inside 0.15 to 0.30 (0.191 on both of the bar's runs).
+> **Design note:** The target is met. On the confirming run of the zone retune every Medium band is inside its limits, at the reference start and on the bar's two runs of it (`docs/reviews/simulator-report.md`, section 3). A median is read exactly, and each range or limit is its own band (ADR-0014, as amended in decision batches 5, 5c, 7, and 8, and by the round 3 retune, R2):
+> - **Median kill:** round 3 (44.8% killed by round 2).
+> - **Killed by round 3:** 69.9%, inside 55% to 75% (70.3% and 70.2% on the bar's runs). The band's top moved from 70% to 75% because retargeting frees a striker who fell short to cut again, which adds about five points at every Frenzy setting (round 3 retune, R2).
+> - **Critical Injuries per fight:** 0.83, inside 0.5 to 0.9 (0.836 and 0.834 on the bar's runs).
+> - **Deaths per fight (OQ-132, decided anew):** the band, at most 0.15, reads deaths through the end of the Titan Engagement: the fight's own deaths and those of its end steps (decision batch 5, 5-19). Decision batch 7, 7-13, re-set it from 0.05 to 0.06, because the owner accepted fights that are each lethal on their own, and decision batch 8, 8-31, from 0.06 to 0.08, as the owner's chosen lethality for the first playtest, with no value or rule changed for it; and the round 3 retune (R2, `docs/reviews/round-3-retune-decisions.md`), from 0.08 to 0.15, because retargeting and Frenzy, the rules the owner chose, measure there at Frenzy's halved rate and no rate or cap of Frenzy lands 0.08; the zone retune kept it at 0.15 and slowed Frenzy to every third round, because zones and wrecks had carried the deaths past it (Z2); it is re-set again with every deaths band under OQ-140. The probes run no end steps, so the deaths column in this section's tables is deaths during the fight. Through the end, the confirming run gives 0.1373 (standard error 0.0052) at the reference start, and 0.1463 and 0.1460 (standard error 0.0017) in the bar's two Squad sheet orders, each Met. During the fight, reported beside it, the run gives 0.1292, 0.1385, and 0.1388. Under each entry's fixed need, the probes' reference row gave 0.046 (standard error 0.003), and at 120,000 fights the bar's twin rows gave 0.0487 with the cutters first and 0.0501 with the strikers first, pooled over a second seed 0.0494 (standard error 0.0006).
+> - **Grabs per fight:** 0.329, inside 0.15 to 0.45 (0.325 on both of the bar's runs). The band's top moved from 0.30 to 0.45 because Frenzy puts up to four faces on the entry at result 6, which on every standard table is the Grab; the guard the band once carried, one Grab result to a table, is now read directly (round 3 retune, R2; report section 4.1).
 >
-> Every row runs under the retreat clock (decision batch 5, 5-10), and no fight reached the safety cap (section 6.12 of the report). The retreat leaves behind Down soldiers that the 12-round horizon, which gave 0.034 deaths during the fight, never counted, and the end steps add the Death Rolls of the survivors' untreated injuries; together they carried the deaths past the band's earlier limit of 0.05. Fixed at the torso, the Bite deals deaths during the fight near the reference table's rolled Bite: on the rerun 0.066 against 0.060 in the port check (the probes: 0.046 against 0.048). Starting mounted changes nothing beyond sampling (62.3% by round 3, 0.69 Critical Injuries, 0.061 deaths during the fight and 0.069 through the end; section 9 of the report). A Squad's first Titan Engagement, with its Fear Roll, is slower and costlier (56.7% by round 3, 0.78 Critical Injuries, 0.086 deaths during the fight and 0.095 through the end): its deaths pass the Medium band's limit, and like every sensitivity row it is reported, not tuned.
+> Every row runs under the retreat clock (decision batch 5, 5-10), and no fight reached the safety cap (section 6.12 of the report). The retreat leaves behind Down soldiers that the 12-round horizon, which gave 0.034 deaths during the fight, never counted, and the end steps add the Death Rolls of the survivors' untreated injuries; together they carried the deaths past the band's earlier limit of 0.05, and retargeting and Frenzy carried them past 0.08. Fixed at the torso, the Bite deals somewhat more deaths during the fight than the reference table's rolled Bite: on the confirming run 0.129 against 0.100 in the port check (the probes: 0.046 against 0.048). Starting mounted changes little (70.0% by round 3, 0.86 Critical Injuries, 0.143 deaths during the fight and 0.150 through the end; section 9 of the report). A Squad's first Titan Engagement, with its Fear Roll, is slower and costlier (66.3% by round 3, 0.97 Critical Injuries, 0.195 deaths during the fight and 0.202 through the end): its deaths pass the Medium band's limit, and like every sensitivity row it is reported, not tuned.
 
 ### The standard Small and Large Titans
 
@@ -574,28 +582,28 @@ The same Squad, policy, and sensitivity rows, against the standard Small Titan a
 <!-- BEGIN RENDERED: fight standard-small -->
 | Case | Median kill round | By round 3 | By round 4 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Grabs that kill | Jams per fight | Titan cards resolved per round |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 4 player characters, eager, dodge when harmed (the reference start) | 2 | 81.3% | 90.5% | 2.2% | 0.86 | 0.060 | 0.256 | 9.0% | 0.030 | 1.510 |
-| 4 player characters and 2 helper Squadmates | 2 | 87.0% | 94.3% | 0.8% | 0.81 | 0.020 | 0.241 | 2.2% | 0.023 | 1.488 |
-| template Squad | 2 | 73.5% | 85.3% | 4.1% | 1.04 | 0.111 | 0.282 | 15.1% | 0.034 | 1.553 |
-| 4 eager strikers and no cutters | 2 | 91.1% | 96.9% | 0.4% | 0.63 | 0.023 | 0.190 | 4.4% | 0.026 | 1.477 |
+| 4 player characters, eager, dodge when harmed (the reference start) | 2 | 84.0% | 91.9% | 2.4% | 0.82 | 0.077 | 0.273 | 14.8% | 0.001 | 1.418 |
+| 4 player characters and 2 helper Squadmates | 2 | 89.2% | 95.0% | 1.2% | 0.69 | 0.033 | 0.222 | 6.0% | 0.001 | 1.376 |
+| template Squad | 2 | 77.6% | 87.8% | 4.3% | 0.98 | 0.135 | 0.343 | 21.7% | 0.001 | 1.455 |
+| 4 eager strikers and no cutters | 1 | 96.4% | 98.5% | 0.3% | 0.31 | 0.023 | 0.101 | 15.5% | 0.000 | 1.086 |
 <!-- END RENDERED: fight standard-small -->
 
 <!-- BEGIN RENDERED: fight standard-large -->
 | Case | Median kill round | By round 3 | By round 4 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Grabs that kill | Jams per fight | Titan cards resolved per round |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 4 player characters, eager, dodge when harmed (the reference start) | 3 | 62.5% | 74.4% | 12.9% | 1.19 | 0.141 | 0.246 | 16.1% | 0.036 | 0.853 |
-| 4 player characters and 2 helper Squadmates | 3 | 69.3% | 79.7% | 9.2% | 1.05 | 0.039 | 0.234 | 5.2% | 0.029 | 0.841 |
-| template Squad | 4 | 49.6% | 62.3% | 20.6% | 1.51 | 0.234 | 0.301 | 22.7% | 0.044 | 0.875 |
-| 4 eager strikers and no cutters | 2 | 78.7% | 89.9% | 2.6% | 0.76 | 0.063 | 0.149 | 4.4% | 0.030 | 0.823 |
+| 4 player characters, eager, dodge when harmed (the reference start) | 3 | 66.7% | 79.8% | 6.8% | 1.24 | 0.221 | 0.423 | 22.1% | 0.001 | 0.790 |
+| 4 player characters and 2 helper Squadmates | 2 | 75.2% | 85.9% | 3.5% | 1.03 | 0.101 | 0.336 | 9.9% | 0.000 | 0.775 |
+| template Squad | 3 | 56.7% | 71.5% | 12.2% | 1.64 | 0.392 | 0.560 | 32.2% | 0.001 | 0.803 |
+| 4 eager strikers and no cutters | 2 | 88.5% | 94.4% | 1.5% | 0.48 | 0.075 | 0.155 | 21.2% | 0.001 | 0.681 |
 <!-- END RENDERED: fight standard-large -->
 
-> **Design note:** Both targets are met on the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`, sections 3, 6.2, 7, and 9):
-> - **Small:** median kill round 2 (66.0% killed by round 2), and 0.86 Critical Injuries per fight with steam, at most 1.0 (0.81 without steam).
-> - **Large:** median kill round 3, and 12.9% of fights with no kill, inside no kill in at most 15% of fights (decision batch 5, 5-10); 13.0% and 13.1% on the bar's two runs of that start. It deals 1.19 Critical Injuries and 0.141 deaths per fight during the fight (0.149 through the end), under Chapter 5's reference Large Titan (1.24 and 0.235; section 10).
+> **Design note:** Both targets are met on the confirming run of the zone retune (`docs/reviews/simulator-report.md`, sections 3, 6.2, 7, and 9):
+> - **Small:** median kill round 2 (67.7% killed by round 2), and 0.815 Critical Injuries per fight with steam, at most 1.0 (0.79 without steam, the same within sampling).
+> - **Large:** median kill round 3, and 6.8% of fights with no kill, inside no kill in at most 15% of fights (decision batch 5, 5-10); 6.8% and 6.9% on the bar's runs of that start. It deals 1.24 Critical Injuries and 0.221 deaths per fight during the fight (0.233 through the end), above Chapter 5's reference Large Titan (1.09 and 0.179, 0.196 through the end; section 10), because the round 3 retune let its Bite reach In Reach as well as On Body (R5).
 >
 > Heavy Tread needs both legs, so a grounded Large Titan's Heavy Tread moves up to Crush. With one leg the probes gave 13.0% with no kill, 1.38 Critical Injuries, and 0.162 deaths before decision batch 3e, to the 12-round horizon, so the change moves nothing beyond sampling (OQ-109).
 >
-> A template Squad against the Large Titan is where Phase 1's hardest standard fight shows: a median kill in round 4, 20.6% of fights with no kill, and 0.234 deaths during the fight (0.246 through the end). Those are reported, not tuned, like every template row.
+> A template Squad against the Large Titan is where Phase 1's hardest standard fight shows: a median kill in round 3, 12.2% of fights with no kill, and 0.392 deaths during the fight (0.406 through the end). Those are reported, not tuned, like every template row.
 
 ### A lone soldier after Break Attention
 
@@ -606,32 +614,32 @@ Below it, Chapter 5's lone fight (section 5.13) against each Titan's own Tempo, 
 <!-- BEGIN RENDERED: solo -->
 | Titan | Nape Depth | Rookie from Stress 0 | Rookie from Stress 1 | Veteran from Stress 2 | Levi-grade from Stress 2 |
 |---|---|---|---|---|---|
-| Standard Small Titan | 3 | 29.4% | **33.2%** | **54.3%** | **68.3%** |
-| Standard Medium Titan | 4 | 9.9% | **13.0%** | **32.2%** | **47.2%** |
-| Standard Large Titan | 4 | 9.9% | **13.0%** | **32.2%** | **47.2%** |
+| Standard Small Titan | 3 | 32.5% | **35.9%** | **57.6%** | **70.7%** |
+| Standard Medium Titan | 4 | 11.6% | **15.0%** | **35.8%** | **52.0%** |
+| Standard Large Titan | 4 | 11.6% | **15.0%** | **35.8%** | **52.0%** |
 <!-- END RENDERED: solo -->
 
 <!-- BEGIN RENDERED: lone-fight -->
 | Titan | Tempo | Nape Depth | Line | Usable strike before the retreat | Round of the strike, median (mean) | Titan cards against the soldier before it | Titan cards against the soldier per fight | Critical Injuries per fight | Dead | Down | No decoy usable first | Still waiting when the retreat begins | Stress at the cut | Cut succeeds | Lone fights that kill |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Standard Small Titan | 2 | 3 | waiting | 69.2% | 4 (3.98) | 5.55 | 7.95 | 0.17 | 2.7% | 2.6% | 0.0% | 25.4% | 3.06 | 34.6% | 24.0% |
-| Standard Small Titan | 2 | 3 | hurried | 68.3% | 3 (3.36) | 3.59 | 5.43 | 0.48 | 7.7% | 8.2% | 0.0% | 15.7% | 2.85 | 34.1% | 23.3% |
-| Standard Small Titan | 2 | 3 | waiting, one-card hold (before batch 3b) | 40.9% | 4 (4.36) | 6.32 | 10.72 | 0.30 | 4.6% | 4.4% | 0.0% | 50.1% | 3.20 | 34.3% | 14.0% |
-| Standard Medium Titan | 1 | 4 | waiting | 70.3% | 3 (3.85) | 2.47 | 3.47 | 0.14 | 2.4% | 3.2% | 0.0% | 24.1% | 2.56 | 14.0% | 9.8% |
-| Standard Large Titan | 1 | 4 | waiting | 69.7% | 3 (3.83) | 2.45 | 3.50 | 0.16 | 2.8% | 2.2% | 0.0% | 25.2% | 2.90 | 14.8% | 10.3% |
+| Standard Small Titan | 2 | 3 | waiting | 17.3% | 3 (3.47) | 4.43 | 8.02 | 1.88 | 35.0% | 32.0% | 0.0% | 15.7% | 3.32 | 42.3% | 7.3% |
+| Standard Small Titan | 2 | 3 | hurried | 33.5% | 3 (3.41) | 3.47 | 6.27 | 1.56 | 29.3% | 25.4% | 0.0% | 11.8% | 3.13 | 42.6% | 14.3% |
+| Standard Small Titan | 2 | 3 | waiting, one-card hold (before batch 3b) | 8.3% | 3 (3.39) | 4.56 | 8.63 | 2.05 | 38.0% | 35.2% | 0.0% | 18.5% | 3.28 | 42.8% | 3.5% |
+| Standard Medium Titan | 1 | 4 | waiting | 36.0% | 3 (3.47) | 2.07 | 3.45 | 1.13 | 21.1% | 29.1% | 0.0% | 13.8% | 3.05 | 21.2% | 7.6% |
+| Standard Large Titan | 1 | 4 | waiting | 30.8% | 3 (3.21) | 1.83 | 3.14 | 1.28 | 24.3% | 39.2% | 0.0% | 5.8% | 3.15 | 21.4% | 6.6% |
 <!-- END RENDERED: lone-fight -->
 
-> **Design note:** The target is met on the standard Medium Titan, at its measurement point, on the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`, sections 1, 2.2, and 9):
-> - **Rookie:** 13.0% on the fresh cut at Stress 1, inside 8% to 14% (9.9% from Stress 0). Reported beside it and not tuned, the in-fight cut succeeds 14.0% at a mean Stress of 2.56.
-> - **Levi-grade soldier:** 47.2%, inside about 50%, which reads 45% to 55% (ADR-0014, as amended in decision batch 5).
+> **Design note:** The target is met on the standard Medium Titan, at its measurement point, on the confirming run of the zone retune (`docs/reviews/simulator-report.md`, sections 1, 2.2, and 9):
+> - **Rookie:** 15.0% on the fresh cut at Stress 1, inside 8% to 16% (11.6% from Stress 0). The band's top moved from 14% to 16% because decision batch 11's Push re-rolls the blade's Gear Dice, which lifted the fresh cut from 13.0% to 15.0%, and every lever that would restore 14% breaks Target 3 or unpicks a package taken whole (round 3 retune, R4). Reported beside it and not tuned, the in-fight cut succeeds 21.2% at a mean Stress of 3.05.
+> - **Levi-grade soldier:** 52.0%, inside about 50%, which reads 45% to 55% (ADR-0014, as amended in decision batch 5).
 >
-> The Large Titan's Nape Depth is also 4, so its fresh cut gives the same figures. The Small Titan has Nape Depth 3, where a fresh cut lands one strike in three (33.2% for the Rookie).
+> The Large Titan's Nape Depth is also 4, so its fresh cut gives the same figures. The Small Titan has Nape Depth 3, where a fresh cut lands better than one strike in three (35.9% for the Rookie).
 >
-> The lone fight shows what the per-strike table leaves out. The lone line waits on the card order and on the decoys in a row, and a decoy holds a Tempo 2 Titan for both of its cards (Chapter 5, section 5.6). On the rerun:
-> - **The Tempo 1 Titans** give a usable strike before the retreat in about seven lone fights in ten (Medium 70.3%, Large 69.7%), most often in round 3, after under three Titan cards. The probes found about a quarter still waiting when the retreat begins, and under the retreat no cut follows.
-> - **The standard Small Titan** gives it about as often (69.2%), and its cut lands a third of the time (34.6%). It is still the harder lone fight: a waiting soldier takes 5.55 of its cards before the strike, at a mean Stress of 3.06, and 2.7% are devoured. The probes gave 22.8% of its lone fights killing.
-> - **The hurried line** strikes the Small Titan sooner (median round 3 against 4) and pays for it: 7.7% devoured and 8.2% Down, against 2.7% and 2.6%. Which line to take is the player's choice.
-> - **With a one-card hold,** as before decision batch 3b, the Small Titan's lone line would reach a usable strike in 40.9% of lone fights.
+> The lone fight shows what the per-strike table leaves out. The lone line waits on the card order and on the decoys in a row, and a decoy holds a Tempo 2 Titan for both of its cards (Chapter 5, section 5.6). On the confirming run:
+> - **The Tempo 1 Titans** give a usable strike before the retreat in about a third of lone fights (Medium 36.0%, Large 30.8%), most often in round 3, after about two Titan cards (2.07 and 1.83). 13.8% and 5.8% are still waiting when the retreat begins, and under the retreat no cut follows. The rest end the lone fight Down or dead first: 21.1% of the lone soldiers die against the Medium Titan and 24.3% against the Large.
+> - **The standard Small Titan** gives it about half as often (17.3%), though its cut lands better than two times in five (42.3%). It is the harder lone fight: a waiting soldier takes 4.43 of its cards before the strike, at a mean Stress of 3.32, and 35.0% are devoured. 7.3% of its lone fights end with the Titan dead.
+> - **The hurried line** reaches the strike against the Small Titan about twice as often (33.5%, median round 3 on both lines) and costs less, not more: 29.3% devoured and 25.4% Down, against 35.0% and 32.0%. Which line to take is the player's choice.
+> - **With a one-card hold,** as before decision batch 3b, the Small Titan's lone line would reach a usable strike in 8.3% of lone fights.
 > - **The route stays open on every table.** No decoy is usable first in any lone fight on any line: a Jam is cleared in the fight by Field Repair and an empty canister is changed for a spare, so the Feint is available whenever a Nape strike is legal (Chapter 5, sections 5.6 and 5.13; decision batch 3c). The tables differ in how often the strike comes, not in whether a decoy is left.
 >
 > The Sprinting Abnormal's lone rows show its hidden Nape Depth, so they are in its GM subsection below.
@@ -643,15 +651,15 @@ Chapter 5's Grab model against each Titan's own Grab, measured before Attack Dic
 <!-- BEGIN RENDERED: grab -->
 | Titan | Grab Attack Dice | Alone, dodge failed | Alone, no dodge | One comrade S1 G0 | S2 G0 | S3 G0 | S1 G1 | S2 G1 | S3 G1 |
 |---|---|---|---|---|---|---|---|---|---|
-| Standard Small Titan | 6 | 70.3% | 72.8% | 29.3% | 34.3% | 40.0% | 34.4% | 40.7% | 48.1% |
-| Standard Medium Titan | 9 | 70.1% | 73.3% | 28.6% | 33.8% | 39.7% | 34.1% | 39.7% | 48.3% |
-| Standard Large Titan | 12 | 69.7% | 73.2% | 29.2% | 33.0% | 39.5% | 34.4% | 40.1% | 47.7% |
-| Sprinting Abnormal | 6 | 70.0% | 72.9% | 28.7% | 34.1% | 39.6% | 34.5% | 40.1% | 48.2% |
+| Standard Small Titan | 6 | 67.6% | 69.9% | 26.0% | 31.3% | 37.4% | 31.1% | 37.5% | 45.9% |
+| Standard Medium Titan | 9 | 67.6% | 70.0% | 25.9% | 30.8% | 37.1% | 30.6% | 37.3% | 45.9% |
+| Standard Large Titan | 12 | 67.4% | 69.9% | 25.4% | 30.9% | 36.8% | 31.1% | 36.7% | 45.6% |
+| Sprinting Abnormal | 6 | 67.7% | 70.0% | 25.9% | 30.3% | 37.1% | 31.0% | 37.0% | 45.6% |
 <!-- END RENDERED: grab -->
 
-> **Design note:** The target is met on every Titan on the final full simulator rerun under Attack Dice, with witnesses' Fear Rolls on every row of the re-cut table (`docs/reviews/simulator-report.md`, sections 1 and 9):
-> - **On the standard Medium Titan:** a lone victim whose dodge failed dies 70.1% of the time, inside about 2 in 3, which reads 61.7% to 71.7%. With one comrade in reach, every cell is under 50% (the worst, Stress 3 with 1 Grief, is 48.3%), and the Stress 2, no-Grief cell is 33.8%, inside near 1 in 3, which reads 28.3% to 38.3% (ADR-0014, as amended in decision batch 5).
-> - **On the other Titans:** the Grab procedure is the same on every Titan, and the victim's failed dodge only sets their Stress, so no Grab's Attack Dice moves a cell by more than sampling, and the Grab takes no rider (decision batch 8, 8-2). The Sprinting Abnormal's Grab rolls 6 Attack Dice (decision batch 4, OQ-103): a lone victim whose dodge failed dies 70.0% of the time, and the Stress 2, no-Grief cell is 34.1%. The Small Titan's cells run 29.3% to 48.1% and the Large Titan's 29.2% to 47.7%. Every cell of every Titan is under 50%.
+> **Design note:** The target is met on every Titan on the confirming run of the zone retune, with witnesses' Fear Rolls on every row of the re-cut table (`docs/reviews/simulator-report.md`, sections 1 and 9):
+> - **On the standard Medium Titan:** a lone victim whose dodge failed dies 67.6% of the time, inside about 2 in 3, which reads 61.7% to 71.7%. With one comrade in reach, every cell is under 50% (the worst, Stress 3 with 1 Grief, is 45.9%), and the Stress 2, no-Grief cell is 30.8%, inside near 1 in 3, which reads 28.3% to 38.3% (ADR-0014, as amended in decision batch 5).
+> - **On the other Titans:** the Grab procedure is the same on every Titan, and the victim's failed dodge only sets their Stress, so no Grab's Attack Dice moves a cell by more than sampling, and the Grab takes no rider (decision batch 8, 8-2). The Sprinting Abnormal's Grab rolls 6 Attack Dice (decision batch 4, OQ-103): a lone victim whose dodge failed dies 67.7% of the time, and the Stress 2, no-Grief cell is 30.3%. The Small Titan's cells run 26.0% to 45.9% and the Large Titan's 25.4% to 45.6%. Every cell of every Titan is under 50%.
 >
 > In the full fight, the share of Grabs that kill is reported in each fight table, not tuned (OQ-95).
 
@@ -662,13 +670,13 @@ Chapter 5's Jam test with each Titan's own table. The holder is at In Reach, and
 <!-- BEGIN RENDERED: jam -->
 | Titan | One Titan, worst cell | Two Titans, worst cell | Two Titans, every card at the kill pool (upper bound) | Mounted holder at Distant, horse lame: one Titan; two Titans |
 |---|---|---|---|---|
-| Standard Small Titan | 8.3% (help 0 covered) | 22.8% (help 0 covered) | 25.5% (help 0 covered) | 8.5% (help 0 covered); 23.2% (help 0 covered) |
-| Standard Medium Titan | 7.7% (help 0 covered) | 20.6% (help 0 covered) | 29.9% (help 0 covered) | 7.6% (help 0 covered); 20.9% (help 0 covered) |
-| Standard Large Titan | 10.5% (help 0 covered) | 27.7% (help 0 covered) | 32.9% (help 0 covered) | 10.2% (help 0 covered); 26.9% (help 0 covered) |
-| Sprinting Abnormal | 8.4% (help 0 covered) | 22.9% (help 0 covered) | 25.5% (help 0 covered) | 8.4% (help 0 covered); 22.9% (help 0 covered) |
+| Standard Small Titan | 1.5% (help 0 covered) | 16.6% (help 0 covered) | 18.9% (help 0 covered) | 12.4% (help 0 covered); 38.9% (help 0 covered) |
+| Standard Medium Titan | 1.6% (help 0 covered) | 17.2% (help 0 covered) | 25.5% (help 0 covered) | 11.0% (help 0 covered); 35.7% (help 0 covered) |
+| Standard Large Titan | 2.8% (help 0 covered) | 26.7% (help 0 covered) | 31.0% (help 0 covered) | 15.8% (help 0 covered); 46.0% (help 0 covered) |
+| Sprinting Abnormal | 1.6% (help 0 covered) | 16.9% (help 0 covered) | 18.9% (help 0 covered) | 12.2% (help 0 covered); 39.3% (help 0 covered) |
 <!-- END RENDERED: jam -->
 
-> **Design note:** On the final full simulator rerun under Attack Dice, every table's worst cell stays under a third, for one Titan and for two, on foot and mounted, and so does every mixed pair (`docs/reviews/simulator-report.md`, section 4.2). The closest is two standard Large Titans at 27.7% on foot and 26.9% mounted (the probes: 32.9% and 32.6%). It passes by 5.6 points, and any change to the Large table re-runs the test before it is accepted. Every card at the kill pool, the upper bound, reaches 32.9% for two Large Titans. The worst pattern is again Covering with no Help. Inside the full fight a Jam on a dodge comes in at most 2.5% of fights on any table (section 4.3).
+> **Design note:** The band is read on the table reading, which the report calls the acceptance reading: the holder on foot, each card rolling its own Attack Dice. On the confirming run of the zone retune every table's worst cell stays under a third there, for one Titan and for two, as does every mixed pair (`docs/reviews/simulator-report.md`, section 4.2). The closest is two standard Large Titans at 26.7%, which passes by 6.6 points, and any change to the Large table re-runs the test before it is accepted. Every card at the kill pool, the upper bound, reaches 31.0% for two Large Titans. The worst pattern is again Covering with no Help. The mounted reading, a holder on horseback at Distant dodging with the horse, is Chapter 6's own and is reported beside the band rather than judged by it: against one Titan it stays under a third on every table (11.0% to 15.8%), and against two it passes a third on every table (35.7% for two Medium Titans, 46.0% for two Large). Inside the full fight a Jam on a dodge comes in at most 0.0% of fights on any table (section 4.3).
 
 ### The Sprinting Abnormal
 
@@ -685,73 +693,73 @@ Decision batch 4b's loud rider, a player character who stayed mounted at Distant
 <!-- BEGIN RENDERED: fight sprinting-abnormal -->
 | Case | Median kill round | By round 3 | By round 4 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Grabs that kill | Jams per fight | Titan cards resolved per round |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 4 player characters, mounted, with the abnormal Fear Roll, eager, dodge when harmed (its reference start) | 2 | 71.1% | 80.9% | 8.0% | 0.83 | 0.088 | 0.278 | 18.4% | 0.026 | 1.607 |
-| 4 player characters and 2 helper Squadmates | 2 | 77.9% | 87.0% | 4.5% | 0.76 | 0.032 | 0.273 | 7.2% | 0.016 | 1.575 |
-| template Squad | 3 | 62.1% | 73.2% | 11.6% | 0.99 | 0.143 | 0.307 | 25.6% | 0.028 | 1.647 |
-| cutters take Draw Attention while a striker holds Attention | 3 | 70.5% | 81.0% | 5.9% | 1.00 | 0.101 | 0.297 | 16.1% | 0.027 | 1.587 |
-| 4 player characters and 2 mounted Squadmates who stay at Distant | 2 | 71.0% | 80.7% | 7.9% | 0.84 | 0.064 | 0.284 | 16.1% | 0.025 | 1.610 |
-| the standard ladder instead of its own | 2 | 75.8% | 86.4% | 3.1% | 0.80 | 0.075 | 0.283 | 14.3% | 0.023 | 1.536 |
-| 4 player characters on foot, with the abnormal Fear Roll | 2 | 70.8% | 80.5% | 7.9% | 0.86 | 0.092 | 0.291 | 18.5% | 0.026 | 1.607 |
-| its earlier ladder, loudest-or-brightest then nearest | 3 | 77.1% | 87.7% | 2.4% | 0.87 | 0.072 | 0.316 | 15.9% | 0.018 | 1.522 |
-| 4 eager strikers and no cutters | 2 | 92.2% | 96.9% | 0.4% | 0.62 | 0.019 | 0.170 | 5.5% | 0.020 | 1.468 |
+| 4 player characters, mounted, with the abnormal Fear Roll, eager, dodge when harmed (its reference start) | 2 | 74.8% | 83.5% | 5.3% | 0.89 | 0.155 | 0.452 | 24.5% | 0.000 | 1.439 |
+| 4 player characters and 2 helper Squadmates | 2 | 79.8% | 88.0% | 3.2% | 0.79 | 0.059 | 0.408 | 10.5% | 0.000 | 1.434 |
+| template Squad | 3 | 69.4% | 78.1% | 8.7% | 1.19 | 0.266 | 0.578 | 31.7% | 0.001 | 1.448 |
+| cutters take Draw Attention while a striker holds Attention | 2 | 76.9% | 84.9% | 4.7% | 0.97 | 0.149 | 0.415 | 23.1% | 0.000 | 1.448 |
+| 4 player characters and 2 mounted Squadmates who stay at Distant | 2 | 76.1% | 84.4% | 5.5% | 0.94 | 0.143 | 0.479 | 22.9% | 0.000 | 1.437 |
+| the standard ladder instead of its own | 2 | 78.8% | 87.1% | 4.0% | 0.82 | 0.131 | 0.392 | 22.7% | 0.000 | 1.432 |
+| 4 player characters on foot, with the abnormal Fear Roll | 2 | 74.7% | 83.0% | 5.8% | 0.92 | 0.169 | 0.474 | 25.3% | 0.001 | 1.440 |
+| its earlier ladder, loudest-or-brightest then nearest | 2 | 77.2% | 85.6% | 4.2% | 0.84 | 0.127 | 0.419 | 22.3% | 0.000 | 1.433 |
+| 4 eager strikers and no cutters | 2 | 95.3% | 98.1% | 0.4% | 0.41 | 0.030 | 0.125 | 17.5% | 0.000 | 1.216 |
 <!-- END RENDERED: fight sprinting-abnormal -->
 
-> **Design note:** On the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`, sections 2.3, 5, and 9), at its reference start its median kill comes in round 2 (71.1% by round 3) and in both of its bar runs (70.7% and 70.9%). 8.0% of fights end with no kill. It deals 0.83 Critical Injuries and 0.088 deaths per fight during the fight (0.098 through the end), and 18.4% of its 0.278 Grabs per fight devour. The probes gave 69.3%, 8.9%, 0.85, 0.104, and 19.4% of 0.328. It runs its quarry down while they are within its reach, at its Nape, or on it: at that start, to the 12-round horizon, its current-holder rung kept a holder who was not the closest soldier 0.98 times a fight, none of its cards landed on a holder at Distant while someone stood closer, and 0.18 of its cards a fight landed on a Down holder (60,000 fights; `tuning.yaml`, `verdicts`, `sprinting_abnormal`). The rows after the first:
-> - **A template Squad** is the costliest row: a median kill in round 3, 62.1% by round 3, 11.6% with no kill, 0.99 Critical Injuries, and 0.143 deaths during the fight (0.155 through the end).
-> - **Draw Attention** matters more against it than against a standard Titan, because noise is its second rung, above its quarry. A cutter who takes it, from a Position other than Distant (Chapter 5, section 5.6), pulls the Titan off its quarry, but not off a striker who has just struck its Nape or a soldier On Body, since every ladder begins with hooked-into-its-body (decision batch 4b, 4b-1). The loud cutter at In Reach draws its Grab and its Lunge and pays for it: 70.5% by round 3, 5.9% with no kill, 1.00 Critical Injuries, and 0.101 deaths per fight during the fight, against its reference start's 71.1%, 8.0%, 0.83, and 0.088 (on the bar's runs, 1.031 and 1.030 Critical Injuries and 0.121 and 0.123 deaths through the end). The rule bars 0.49 attempts a fight by a cutter still at Distant (OQ-113; report section 6.7). Under the ladder before decision batch 4b, with noise first and to the 12-round horizon, the same row gave 72.4% by round 3, 3.6% with no kill, 0.97, and 0.075.
-> - **Four eager strikers and no cutters** kill it soonest of any row: 92.2% by round 3, 0.4% with no kill, 0.62 Critical Injuries, and 0.019 deaths. They beat the baseline Squad on every table, which section 6.6 reports under *Four strikers and no cutters* (OQ-112).
-> - **Riders:** two mounted Squadmates waiting at Distant change the kill and the Critical Injuries little (71.0% by round 3, 0.84 Critical Injuries) and deal 0.064 deaths. Nothing on its ladder prefers a rider, and a rider at Distant is never kept as its quarry, so they neither draw it nor screen it.
-> - **The standard ladder** no longer makes it deadlier now that its Grab and Headlong Lunge roll 6 Attack Dice. Turning also on the cutters in its reach and on whoever hurt it last, it ends more fights early and deals no more: 75.8% by round 3, 3.1% with no kill, 0.80 Critical Injuries, and 0.075 deaths.
-> - **Its earlier ladder,** loudest-or-brightest then nearest, has no hooked rung and no quarry, so it goes for whoever is closest, usually the cutters at its legs: a median kill in round 3, 77.1% by round 3, 2.4% with no kill, 0.87 Critical Injuries, and 0.072 deaths (OQ-102).
-> - **On foot,** with the same Fear Roll, the figures match the mounted start within sampling (70.8% by round 3, 0.86 Critical Injuries, 0.092 deaths).
+> **Design note:** On the confirming run of the zone retune (`docs/reviews/simulator-report.md`, sections 2.3, 5, and 9), at its reference start its median kill comes in round 2 (74.8% by round 3) and in both of its bar runs (75.0% and 75.1%). 5.3% of fights end with no kill. It deals 0.89 Critical Injuries and 0.155 deaths per fight during the fight (0.161 through the end), and 24.5% of its 0.452 Grabs per fight devour. The probes gave 69.3%, 8.9%, 0.85, 0.104, and 19.4% of 0.328. It runs its quarry down while they are within its reach, at its Nape, or on it: at that start, to the 12-round horizon, its current-holder rung kept a holder who was not the closest soldier 0.98 times a fight, none of its cards landed on a holder at Distant while someone stood closer, and 0.18 of its cards a fight landed on a Down holder (60,000 fights; `tuning.yaml`, `verdicts`, `sprinting_abnormal`). The rows after the first:
+> - **A template Squad** is the costliest row: a median kill in round 3, 69.4% by round 3, 8.7% with no kill, 1.19 Critical Injuries, and 0.266 deaths during the fight (0.275 through the end).
+> - **Draw Attention** matters more against it than against a standard Titan, because noise is its second rung, above its quarry. A cutter who takes it, from a Position other than Distant (Chapter 5, section 5.6), pulls the Titan off its quarry, but not off a striker who has just struck its Nape or a soldier On Body, since every ladder begins with hooked-into-its-body (decision batch 4b, 4b-1). The loud cutter at In Reach draws its Grab and its Lunge and pays for it: 76.9% by round 3, 4.7% with no kill, 0.97 Critical Injuries, and 0.149 deaths per fight during the fight, against its reference start's 74.8%, 5.3%, 0.89, and 0.155 (on the bar's runs, 0.996 and 1.000 Critical Injuries and 0.1643 and 0.1648 deaths through the end). The rule bars 0.19 attempts a fight by a cutter still at Distant (OQ-113; report section 6.7). Under the ladder before decision batch 4b, with noise first and to the 12-round horizon, the same row gave 72.4% by round 3, 3.6% with no kill, 0.97, and 0.075.
+> - **Four eager strikers and no cutters** kill it soonest of any row: 95.3% by round 3, 0.4% with no kill, 0.41 Critical Injuries, and 0.030 deaths. They beat the baseline Squad on every table, which section 6.6 reports under *Four strikers and no cutters* (OQ-112).
+> - **Riders:** two mounted Squadmates waiting at Distant change the kill and the Critical Injuries little (76.1% by round 3, 0.94 Critical Injuries) and deal 0.143 deaths. Nothing on its ladder prefers a rider, and a rider at Distant is never kept as its quarry, so they neither draw it nor screen it.
+> - **The standard ladder** no longer makes it deadlier now that its Grab and Headlong Lunge roll 6 Attack Dice. Turning also on the cutters in its reach and on whoever hurt it last, it ends more fights early and deals no more: 78.8% by round 3, 4.0% with no kill, 0.82 Critical Injuries, and 0.131 deaths. Under retargeting it is retargeted less often than under its own ladder, on 19.1% of its cards against 23.8%, so the ladder is not what keeps retargeting off the runner (report section 6.15). The row is reported beside the bar and not judged by it (round 3 retune, R7).
+> - **Its earlier ladder,** loudest-or-brightest then nearest, has no hooked rung and no quarry, so it goes for whoever is closest, usually the cutters at its legs: a median kill in round 2, 77.2% by round 3, 4.2% with no kill, 0.84 Critical Injuries, and 0.127 deaths (OQ-102). It is reported beside the bar too.
+> - **On foot,** with the same Fear Roll, the figures match the mounted start within sampling (74.7% by round 3, 0.92 Critical Injuries, 0.169 deaths; on the bar's runs 0.1685 and 0.1624 deaths through the end, against the mounted start's 0.1673 and 0.1653).
 >
-> Every figure in these bullets is the rerun's, deaths during the fight (report section 9).
+> Every figure in these bullets is the confirming run's, deaths during the fight (report section 9).
 
 #### Its bar, row against row
 
-Every row above, and each of its support rows (*Support rows*, below), at 120,000 fights, beside its twins: the standard Medium Titan's row and the standard Large Titan's row with the same support, or their reference rows where they have none (`bar`). Each row is run twice, with the player characters listed cutters first and then strikers first on the Squad sheet, and each twin in the same order (decision batch 4, 4-4). Each cell gives the Sprinting Abnormal's figure first. The deaths columns are the probes' deaths during the fight. The bar's deaths limits read deaths through the end of the Titan Engagement, and on that reading the simulator finds the ceiling and the reference row's deaths floor holding in every row and both orders (decision batch 5, 5-19; `docs/reviews/simulator-report.md`, section 5). A part that holds within sampling is past its twin's figure by no more than 2 standard errors of the difference (`tuning.yaml`, `abnormals`, `sampling`).
+Every row above, and each of its support rows (*Support rows*, below), at 120,000 fights, beside its twins: the standard Medium Titan's row and the standard Large Titan's row with the same support, or their reference rows where they have none (`bar`). Each row is run twice, with the player characters listed cutters first and then strikers first on the Squad sheet, and each twin in the same order (decision batch 4, 4-4). Each cell gives the Sprinting Abnormal's figure first. The deaths columns are the probes' deaths during the fight. The bar's deaths limits read deaths through the end of the Titan Engagement, and on that reading the simulator finds the ceiling and the reference row's deaths floor holding in every row and both orders (decision batch 5, 5-19; `docs/reviews/simulator-report.md`, section 5). A part that holds within sampling is past its twin's figure by no more than 2 standard errors of the difference (`tuning.yaml`, `abnormals`, `sampling`). The two ladder rows carry no verdict; they are reported (round 3 retune, R7).
 
 <!-- BEGIN RENDERED: bar sprinting-abnormal -->
 | Row (120,000 fights each) | Squad sheet order | Median kill round | Critical Injuries per fight: it; standard Medium Titan's row | Deaths per fight during the fight: it; standard Medium Titan's row (reference only) | No kill: it; standard Large Titan's row | Deaths per fight during the fight: it; standard Large Titan's row | Bar |
 |---|---|---|---|---|---|---|---|
-| 4 player characters, mounted, with the abnormal Fear Roll, eager, dodge when harmed (its reference start) | cutters first | 2 | 0.84; 0.69 | 0.089; 0.061 | 7.9%; 13.0% | 0.089; 0.143 | holds |
-| 4 player characters, mounted, with the abnormal Fear Roll, eager, dodge when harmed (its reference start) | strikers first | 2 | 0.84; 0.69 | 0.087; 0.061 | 7.7%; 13.1% | 0.087; 0.141 | holds |
-| 4 player characters and 2 helper Squadmates | cutters first | 2 | 0.76; 0.62 | not read | 4.4%; 9.3% | 0.029; 0.041 | holds |
-| 4 player characters and 2 helper Squadmates | strikers first | 2 | 0.77; 0.62 | not read | 4.4%; 9.4% | 0.029; 0.041 | holds |
-| template Squad | cutters first | 3 | 1.00; 0.89 | not read | 11.9%; 20.5% | 0.147; 0.243 | holds |
-| template Squad | strikers first | 3 | 1.00; 0.89 | not read | 12.0%; 20.9% | 0.150; 0.247 | holds |
-| cutters take Draw Attention while a striker holds Attention | cutters first | 3 | 1.03; 0.69 | not read | 6.4%; 13.0% | 0.108; 0.143 | holds |
-| cutters take Draw Attention while a striker holds Attention | strikers first | 3 | 1.03; 0.69 | not read | 6.4%; 13.1% | 0.111; 0.141 | holds |
-| 4 player characters and 2 mounted Squadmates who stay at Distant | cutters first | 2 | 0.85; 0.69 | not read | 7.7%; 13.0% | 0.067; 0.143 | holds |
-| 4 player characters and 2 mounted Squadmates who stay at Distant | strikers first | 2 | 0.85; 0.69 | not read | 7.9%; 13.1% | 0.069; 0.141 | holds |
-| the standard ladder instead of its own | cutters first | 2 | 0.80; 0.69 | not read | 3.3%; 13.0% | 0.077; 0.143 | holds |
-| the standard ladder instead of its own | strikers first | 2 | 0.80; 0.69 | not read | 3.3%; 13.1% | 0.076; 0.141 | holds |
-| 4 player characters on foot, with the abnormal Fear Roll | cutters first | 2 | 0.85; 0.69 | not read | 8.0%; 13.0% | 0.090; 0.143 | holds |
-| 4 player characters on foot, with the abnormal Fear Roll | strikers first | 2 | 0.83; 0.69 | not read | 7.8%; 13.1% | 0.086; 0.141 | holds |
-| its earlier ladder, loudest-or-brightest then nearest | cutters first | 3 | 0.87; 0.69 | not read | 2.3%; 13.0% | 0.070; 0.143 | holds |
-| its earlier ladder, loudest-or-brightest then nearest | strikers first | 3 | 0.86; 0.69 | not read | 2.3%; 13.1% | 0.071; 0.141 | holds |
-| 4 player characters and 2 Squadmates screening beside the holder | cutters first | 2 | 0.53; 0.44 | not read | 2.8%; 9.4% | 0.016; 0.027 | holds |
-| 4 player characters and 2 Squadmates screening beside the holder | strikers first | 2 | 0.54; 0.44 | not read | 2.8%; 9.4% | 0.016; 0.026 | holds |
-| 4 player characters, Hook and Cut and Hamstring Line, with the escapes | cutters first | 2 | 0.73; 0.63 | not read | 5.7%; 11.0% | 0.072; 0.115 | holds |
-| 4 player characters, Hook and Cut and Hamstring Line, with the escapes | strikers first | 2 | 0.73; 0.63 | not read | 5.7%; 11.1% | 0.072; 0.115 | holds |
-| 4 player characters and 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | cutters first | 2 | 0.48; 0.42 | not read | 2.0%; 7.6% | 0.014; 0.022 | holds |
-| 4 player characters and 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | strikers first | 2 | 0.48; 0.42 | not read | 1.9%; 7.5% | 0.013; 0.021 | holds |
-| 4 eager strikers and no cutters | cutters first | 2 | 0.62; 0.44 | not read | 0.4%; 2.5% | 0.019; 0.060 | holds |
-| 4 eager strikers and no cutters | strikers first | 2 | 0.62; 0.44 | not read | 0.4%; 2.5% | 0.019; 0.059 | holds |
+| 4 player characters, mounted, with the abnormal Fear Roll, eager, dodge when harmed (its reference start) | cutters first | 2 | 0.92; 0.84 | 0.160; 0.139 | 5.7%; 6.8% | 0.160; 0.227 | holds |
+| 4 player characters, mounted, with the abnormal Fear Roll, eager, dodge when harmed (its reference start) | strikers first | 2 | 0.92; 0.83 | 0.158; 0.139 | 5.6%; 6.9% | 0.158; 0.230 | holds |
+| 4 player characters and 2 helper Squadmates | cutters first | 2 | 0.80; 0.68 | not read | 3.3%; 3.7% | 0.062; 0.109 | holds |
+| 4 player characters and 2 helper Squadmates | strikers first | 2 | 0.80; 0.69 | not read | 3.3%; 3.7% | 0.064; 0.109 | holds |
+| template Squad | cutters first | 3 | 1.18; 1.16 | not read | 8.6%; 12.6% | 0.260; 0.406 | holds |
+| template Squad | strikers first | 3 | 1.18; 1.15 | not read | 8.6%; 12.6% | 0.259; 0.411 | holds |
+| cutters take Draw Attention while a striker holds Attention | cutters first | 2 | 1.00; 0.84 | not read | 4.9%; 6.8% | 0.155; 0.227 | holds |
+| cutters take Draw Attention while a striker holds Attention | strikers first | 2 | 1.00; 0.83 | not read | 5.0%; 6.9% | 0.155; 0.230 | holds |
+| 4 player characters and 2 mounted Squadmates who stay at Distant | cutters first | 2 | 0.94; 0.84 | not read | 5.3%; 6.8% | 0.138; 0.227 | holds |
+| 4 player characters and 2 mounted Squadmates who stay at Distant | strikers first | 2 | 0.94; 0.83 | not read | 5.2%; 6.9% | 0.136; 0.230 | holds |
+| the standard ladder instead of its own | cutters first | 2 | 0.82; 0.83 | not read | 4.1%; 6.8% | 0.131; 0.229 | reported: fails: floor (pooled over two seeds) |
+| the standard ladder instead of its own | strikers first | 2 | 0.82; 0.83 | not read | 4.1%; 6.9% | 0.134; 0.230 | reported: holds (floor within sampling) |
+| 4 player characters on foot, with the abnormal Fear Roll | cutters first | 2 | 0.90; 0.84 | not read | 5.8%; 6.8% | 0.161; 0.227 | holds |
+| 4 player characters on foot, with the abnormal Fear Roll | strikers first | 2 | 0.89; 0.83 | not read | 5.5%; 6.9% | 0.156; 0.230 | holds |
+| its earlier ladder, loudest-or-brightest then nearest | cutters first | 2 | 0.87; 0.84 | not read | 4.6%; 6.8% | 0.141; 0.227 | reported: holds |
+| its earlier ladder, loudest-or-brightest then nearest | strikers first | 2 | 0.87; 0.83 | not read | 4.5%; 6.9% | 0.140; 0.230 | reported: holds |
+| 4 player characters and 2 Squadmates screening beside the holder | cutters first | 2 | 0.58; 0.56 | not read | 1.8%; 3.5% | 0.038; 0.089 | holds |
+| 4 player characters and 2 Squadmates screening beside the holder | strikers first | 2 | 0.58; 0.57 | not read | 1.9%; 3.6% | 0.038; 0.090 | holds |
+| 4 player characters, Hook and Cut and Hamstring Line, with the escapes | cutters first | 2 | 0.77; 0.73 | not read | 4.1%; 5.9% | 0.120; 0.194 | holds |
+| 4 player characters, Hook and Cut and Hamstring Line, with the escapes | strikers first | 2 | 0.78; 0.72 | not read | 4.4%; 5.9% | 0.129; 0.194 | holds |
+| 4 player characters and 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | cutters first | 2 | 0.51; 0.51 | not read | 1.4%; 3.2% | 0.030; 0.077 | holds |
+| 4 player characters and 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | strikers first | 2 | 0.51; 0.51 | not read | 1.4%; 3.2% | 0.030; 0.078 | holds |
+| 4 eager strikers and no cutters | cutters first | 2 | 0.41; 0.30 | not read | 0.4%; 1.5% | 0.029; 0.073 | holds |
+| 4 eager strikers and no cutters | strikers first | 2 | 0.41; 0.30 | not read | 0.4%; 1.4% | 0.028; 0.071 | holds |
 <!-- END RENDERED: bar sprinting-abnormal -->
 
-> **Design note (OQ-103):** On the final full simulator rerun under Attack Dice it holds every part of its bar in every row, in both Squad sheet orders, on deaths through the end of the Titan Engagement and on deaths during the fight, and the two orders differ by sampling alone, as Chapter 5's last tie-break says they must (decision batch 4, 4-4; `docs/reviews/simulator-report.md`, sections 5.1 and 5.2). Every row runs under the retreat clock (decision batch 5, 5-10), and the loud-rider rows have left the bar, since Draw Attention needs a Position other than Distant (5-8). No row was past a limit, so none needed a second seed (decision batch 4b, 4b-4). The figures below are the rerun's, deaths through the end:
-> - **Not trivial.** Every row has a median kill in round 2 or 3, and at least the standard Medium Titan's Critical Injuries, by 17.2 standard errors or more. The closest is the screen with Hook and Cut and Hamstring Line (0.479 against 0.421 with the cutters first, 0.480 against 0.422 with the strikers first). At the reference start it deals 0.0995 and 0.0984 deaths, against the Medium Titan's 0.0687 and 0.0693.
-> - **Winnable.** Every row has a median kill by round 3, and fewer fights with no kill than the standard Large Titan's twin, by 40.0 standard errors or more in every row: at the reference start 7.90% and 7.74% against 13.05%, with the template Squad 11.94% and 11.96% against 20.47% and 20.87%, and with four strikers 0.39% and 0.41% against 2.49% and 2.46%.
-> - **Ceiling.** Every row deals fewer deaths than the Large Titan's twin in both orders, by 8.6 standard errors or more. The closest is the helpers row: 0.0388 (standard error 0.0007) against the Large Titan's 0.0499 (0.0009) with the cutters first (9.3 standard errors), and 0.0388 against 0.0490 with the strikers first (8.6). To the 12-round horizon that row sat at its twin's rate (pooled over the committed runs and the round 2 review's fresh runs, 0.0207 against 0.0208). Under the retreat clock the Large Titan's Down soldiers are left behind more often than the Abnormal's, so the margin opened, as decision batch 5 measured on the simulator (10.5 and 11.8 standard errors). A row past 2 standard errors would still be re-run on a second seed in the same order, and fail only on the figure pooled over both runs (`tuning.yaml`, `abnormals`, `sampling`; decision batch 4b, 4b-4).
-> - **The Grab alone at a fixed need of 2** was measured and rejected, to the 12-round horizon. On the final rerun the same variant, at 6 Attack Dice with Headlong Lunge at 9, fails the ceiling with helpers in both orders on deaths through the end: 0.0543 against 0.0499 (3.5 standard errors), pooled over two seeds 0.0545 against 0.0502 (4.8), and 0.0546 against 0.0490 (4.5), pooled 0.0549 against 0.0503 (5.2); it holds every row on deaths during the fight (report sections 5.3 and 5.4). The probes' record: it sits above its twin's rate, not at it: pooled over seven runs it deals 0.0217 deaths with helpers against the Large twins' 0.0206 (3.5 standard errors), and 0.0108 with the screen against 0.0103 (2.6) (decision batch 4b, 4b-4). On this bar's own seeds, with Headlong Lunge left at 3, it fails the ceiling with helpers in both orders: 0.0219 deaths against 0.0200 (2.2 standard errors) and 0.0218 against 0.0194 (2.8). Decision batch 4 had seen it hold the ceiling on one seed and fail the screen with the pair by 2.1 standard errors on the next (`tools/probes/batch-4/quarry_b4_grab2_bar.out`). The bar rejects it on each seed and on the pooled figure (`tools/probes/batch-4/abnormal_b4.py`). No one in those rows takes Draw Attention, so decision batch 4b's rung order leaves them as measured.
+> **Design note (OQ-103):** On the confirming run of the zone retune it holds every part of its bar in every judged row and both Squad sheet orders, on deaths through the end of the Titan Engagement and on deaths during the fight alike, and the two orders differ by sampling alone, as Chapter 5's last tie-break says they must (decision batch 4, 4-4; `docs/reviews/simulator-report.md`, sections 5.1 and 5.2). The one limit the round 3 retune's run had Missed, the Critical Injuries floor in the screen with Hook and Cut and Hamstring Line, with the escapes (0.491 against 0.522 and 0.492 against 0.523 pooled over two seeds; round 3 retune, R7), holds on this run in both orders, so OQ-199 is closed (the zone retune, Z5). Every row runs under the retreat clock (decision batch 5, 5-10), and the loud-rider rows have left the bar, since Draw Attention needs a Position other than Distant (5-8). A figure past a limit by more than 2 standard errors is re-run on a second seed in the same order, with its twins, and judged on the pooled figure (decision batch 4b, 4b-4). The figures below are the confirming run's, deaths through the end:
+> - **Not trivial.** Every row has a median kill in round 2 or 3, and Critical Injuries reach the standard Medium Titan's twin in every judged row. The closest is the screen with Hook and Cut and Hamstring Line, with the escapes, the row OQ-199 held open: 0.514 against 0.513 with the cutters first and 0.513 against 0.511 with the strikers first, z of -0.3 and -0.7, on both death readings. Next come the template Squad with the strikers first (1.178 against 1.153, 3.3 standard errors) and the screen alone with the strikers first (0.583 against 0.569, 3.4). At the reference start it deals 0.1673 and 0.1653 deaths, against the Medium Titan's 0.1463 and 0.1460. The two ladder rows, the standard ladder in place of its own and its earlier ladder, are run with their twins and reported beside the bar, not judged by it (round 3 retune, R7): the standard-ladder row sits at the floor with the cutters first (0.821 against 0.830 pooled over two seeds, +2.3) and holds every other limit in both orders, and the earlier-ladder row holds every limit in both orders by 5.9 standard errors or more.
+> - **Winnable.** Every row has a median kill by round 3, and fewer fights with no kill than the standard Large Titan's twin, by 5.5 standard errors or more in every row, the closest the helpers row (3.26% against 3.67% with the cutters first): at the reference start 5.68% and 5.58% against 6.80% and 6.90%, with the template Squad 8.63% and 8.58% against 12.59% and 12.64%, and with four strikers 0.38% and 0.37% against 1.48% and 1.45%.
+> - **Ceiling.** Every row deals fewer deaths than the Large Titan's twin in both orders, by 23.8 standard errors or more. The closest are the start on foot and its reference start: on foot with the cutters first, 0.1685 against 0.2387 (23.8 standard errors), and its reference start, 0.1673 (standard error 0.0019) against the Large Titan's 0.2387 (0.0022) with the cutters first (24.3) and 0.1653 against 0.2420 with the strikers first (25.9). The margin is wide because the round 3 retune let the standard Large Titan's Bite reach In Reach as well as On Body, which the Large's row had needed at Health 6 (R5). A row past 2 standard errors is re-run on a second seed in the same order, and fails only on the figure pooled over both runs (`tuning.yaml`, `abnormals`, `sampling`; decision batch 4b, 4b-4).
+> - **The Grab alone at a fixed need of 2** was measured and rejected, to the 12-round horizon. On the confirming run the same variant, at 6 Attack Dice with Headlong Lunge at 9, holds every limit in every row in both orders, on deaths through the end and on deaths during the fight (report sections 5.3 and 5.4), where on the run before the round 3 retune's confirming run it had failed the ceiling with helpers in both orders through the end. It is a variant of the creature's values and is reported beside the bar, not judged by it, as the two ladder rows are (round 3 retune, R7); the values this chapter publishes are the ones the bar holds. The probes' record: it sits above its twin's rate, not at it: pooled over seven runs it deals 0.0217 deaths with helpers against the Large twins' 0.0206 (3.5 standard errors), and 0.0108 with the screen against 0.0103 (2.6) (decision batch 4b, 4b-4). On this bar's own seeds, with Headlong Lunge left at 3, it fails the ceiling with helpers in both orders: 0.0219 deaths against 0.0200 (2.2 standard errors) and 0.0218 against 0.0194 (2.8). Decision batch 4 had seen it hold the ceiling on one seed and fail the screen with the pair by 2.1 standard errors on the next (`tools/probes/batch-4/quarry_b4_grab2_bar.out`). The bar rejects it on each seed and on the pooled figure (`tools/probes/batch-4/abnormal_b4.py`). No one in those rows takes Draw Attention, so decision batch 4b's rung order leaves them as measured.
 > - **Without current-holder** the same ladder narrows to the nearest and, with the kill entries at a fixed need of 2, failed the ceiling narrowly on the bar's seeds, to the 12-round horizon (no one in these rows takes Draw Attention, so the rung order does not reach them): with helpers 0.0208 and 0.0209 deaths against 0.0200 and 0.0194 (0.9 and 1.7 standard errors), screening 0.0111 and 0.0112 against 0.0099 and 0.0106 (2.4 and 1.2), and screening with the pair 0.0087 and 0.0091 against 0.0079 and 0.0081 (1.9 and 2.4), at 120,000 fights a row (`abnormal_b4.py`). At a fixed need of 3, under decision batch 3e, it failed by 8.0 to 12.7 standard errors (`tools/probes/batch-3e/abnormal_b3e.py`).
 >
 > Its values were chosen against this bar, within the Abnormal bounds, and not tuned to a target (decision batch 4, OQ-103):
 > - **The Grab and Headlong Lunge at a fixed need of 2, now 6 Attack Dice.** Under Chapter 5's last tie-break about half of all fights start with a striker as its first quarry, and its Grab and Lunge then fall on the cutters at In Reach. At 3 it broke the ceiling in every supported row, by 3.4 to 5.9 standard errors at 24,000 fights in either sheet order. Of the levers measured, only both kill entries at 2 held every row without moving its Toughness, its Nape Depth, or the Jam test (decision batch 4, 4-4). A snatch and a lunge made at full stride are easier to leap clear of than a standing Titan's.
 > - **Pitch Headlong at a fixed need of 1, now 3 Attack Dice.** With its ladder, a Nape striker who falls short draws its next behavior. At the Medium row's control need of 2, Pitch Headlong threw enough of them off to fail the ceiling in the round 2 fix pass: 0.026 deaths with helpers, against the Large Titan's 0.019. Changing Headlong Lunge instead left that row at 0.024 to 0.025. A slow, heaving roll that a clinging soldier can ride out or leap clear of needs 1, and at 1 the table holds the bar.
 > - **Legs at Toughness 2.** With leg Toughness 3 the template Squad row gave 0.296 deaths per fight, over the Large Titan's 0.268.
-> - **Nape Depth 3** keeps the fight a race, and it is why the Abnormal falls sooner than the standard Medium Titan (71.1% by round 3 against 62.4% on the rerun; the probes: 69.3% against 61.7%). At Nape Depth 4, with its ladder and table as they stood under decision batch 3e, every row read failed the winnable limit and the ceiling (120,000 fights a row; not re-measured under decision batch 4, which kept Nape Depth 3): the reference start has 18.5% of fights with no kill against the Large Titan's 13.0%, and 0.172 deaths against 0.164; helpers 12.6% against 9.3%, and 0.051 deaths against 0.020; the template Squad a median kill in round 6, 37.0% with no kill against 20.0%, and 0.344 deaths against 0.278.
+> - **Nape Depth 3** keeps the fight a race, and it is why the Abnormal falls sooner than the standard Medium Titan (74.8% by round 3 against 69.9% on the confirming run; the probes: 69.3% against 61.7%). At Nape Depth 4, with its ladder and table as they stood under decision batch 3e, every row read failed the winnable limit and the ceiling (120,000 fights a row; not re-measured under decision batch 4, which kept Nape Depth 3): the reference start has 18.5% of fights with no kill against the Large Titan's 13.0%, and 0.172 deaths against 0.164; helpers 12.6% against 9.3%, and 0.051 deaths against 0.020; the template Squad a median kill in round 6, 37.0% with no kill against 20.0%, and 0.344 deaths against 0.278.
 > - **What a Read teaches.** A Tactician who reads its Nape Depth learns that this Abnormal's Nape is shallower than a standard Medium Titan's. That is a fact about this Titan, which is dangerous for how fast it runs and how often it acts, and not a rule for Abnormals: every Abnormal's Nape Depth is its own hidden value, so the next one a Squad reads can be deeper. The chapter accepts that cost of Nape Depth 3, which fails no fidelity rule, and OQ-103 records it for the decider.
 
 #### A lone soldier against it
@@ -761,21 +769,21 @@ The lone Nape strike and the lone fight, as for the standard Titans above.
 <!-- BEGIN RENDERED: solo sprinting-abnormal -->
 | Titan | Nape Depth | Rookie from Stress 0 | Rookie from Stress 1 | Veteran from Stress 2 | Levi-grade from Stress 2 |
 |---|---|---|---|---|---|
-| Sprinting Abnormal | 3 | 29.4% | **33.2%** | **54.3%** | **68.3%** |
+| Sprinting Abnormal | 3 | 32.5% | **35.9%** | **57.6%** | **70.7%** |
 <!-- END RENDERED: solo sprinting-abnormal -->
 
 <!-- BEGIN RENDERED: lone-fight sprinting-abnormal -->
 | Titan | Tempo | Nape Depth | Line | Usable strike before the retreat | Round of the strike, median (mean) | Titan cards against the soldier before it | Titan cards against the soldier per fight | Critical Injuries per fight | Dead | Down | No decoy usable first | Still waiting when the retreat begins | Stress at the cut | Cut succeeds | Lone fights that kill |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Sprinting Abnormal | 2 | 3 | waiting | 51.8% | 4 (4.44) | 6.51 | 10.27 | 1.00 | 2.3% | 6.2% | 0.0% | 39.7% | 3.87 | 33.4% | 17.3% |
-| Sprinting Abnormal | 2 | 3 | hurried | 59.3% | 4 (3.90) | 4.70 | 7.24 | 0.94 | 7.0% | 11.5% | 0.0% | 22.1% | 3.58 | 34.1% | 20.3% |
-| Sprinting Abnormal | 2 | 3 | waiting, one-card hold (before batch 3b) | 28.2% | 4 (4.62) | 6.96 | 12.31 | 1.24 | 3.6% | 8.5% | 0.0% | 59.6% | 3.95 | 33.7% | 9.5% |
+| Sprinting Abnormal | 2 | 3 | waiting | 9.9% | 3 (3.28) | 4.08 | 8.03 | 2.04 | 33.7% | 43.9% | 0.0% | 12.5% | 3.63 | 40.3% | 4.0% |
+| Sprinting Abnormal | 2 | 3 | hurried | 22.3% | 3 (3.40) | 3.54 | 7.00 | 1.77 | 29.1% | 37.0% | 0.0% | 11.7% | 3.55 | 40.0% | 8.9% |
+| Sprinting Abnormal | 2 | 3 | waiting, one-card hold (before batch 3b) | 4.5% | 3 (3.21) | 4.22 | 8.37 | 2.14 | 35.4% | 46.5% | 0.0% | 13.6% | 3.63 | 39.0% | 1.8% |
 <!-- END RENDERED: lone-fight sprinting-abnormal -->
 
-> **Design note:** On the final full simulator rerun under Attack Dice (`docs/reviews/simulator-report.md`, sections 2.2 and 9), at the Sprinting Abnormal's Nape Depth 3 a fresh cut lands about one strike in three: 33.2% for the Rookie at Stress 1, and 68.3% for the Levi-grade soldier. Its lone fight is still the deadliest in the chapter, and here the strike does not come as often:
-> - **The waiting line.** Run Past and Trample reach a soldier waiting at Distant, so only 51.8% of lone fights reach a usable strike before the retreat (the probes found 42.5% still waiting when it begins). 6.2% end Down, and a lone fight deals 1.00 Critical Injuries. Decision batch 3b's probe row for Tempo 2 at Nape Depth 3 (69.2% in the probes) was measured on Chapter 5's reference table, whose entries do not reach Distant. The Feint stays usable here as on every table (no decoy usable first in 0.0% of waiting lone fights), so the lower rate is the table's, not a closed route (decision batch 3c).
-> - **The hurried line** reaches the strike more often (59.3%), because waiting at Distant is no safer, and more of those soldiers are devoured (7.0% against 2.3%).
-> - **With a one-card hold,** as before decision batch 3b, the waiting line would reach it in 28.2% of lone fights.
+> **Design note:** On the confirming run of the zone retune (`docs/reviews/simulator-report.md`, sections 2.2 and 9), at the Sprinting Abnormal's Nape Depth 3 a fresh cut lands better than one strike in three: 35.9% for the Rookie at Stress 1, and 70.7% for the Levi-grade soldier. Its lone fight is, with the standard Small Titan's, the deadliest in the chapter, and here the strike comes least often:
+> - **The waiting line.** Run Past and Trample reach a soldier waiting at Distant, so only 9.9% of lone fights reach a usable strike before the retreat, and 12.5% are still waiting when it begins. 33.7% of the lone soldiers die and 43.9% end Down, and a lone fight deals 2.04 Critical Injuries. Decision batch 3b's probe row for Tempo 2 at Nape Depth 3 (69.2% in the probes) was measured on Chapter 5's reference table, whose entries do not reach Distant. The Feint stays usable here as on every table (no decoy usable first in 0.0% of waiting lone fights), so the lower rate is the table's, not a closed route (decision batch 3c).
+> - **The hurried line** reaches the strike more than twice as often (22.3%), because waiting at Distant is no safer, and fewer of those soldiers die (29.1% against 33.7%).
+> - **With a one-card hold,** as before decision batch 3b, the waiting line would reach it in 4.5% of lone fights.
 >
 > The lone model breaks no Body Part, so its round 2 table leaves these rows as they were. It does read the Grab's fixed need, so these rows were re-run after decision batch 4 set it to 2, and again under the retreat clock after decision batch 5. They count decision batch 3c's spare canister and Field Repair.
 
@@ -786,11 +794,11 @@ Each Focus Titan's reference row, weighted by the interim setup table's odds, wi
 <!-- BEGIN RENDERED: setup-mix -->
 | Interim setup table | Sprinting Abnormal as Focus Titan | Critical Injuries per Titan Engagement | Deaths per Titan Engagement |
 |---|---|---|---|
-| without the medium_abnormal roll | never | 0.83 | 0.077 |
-| with the medium_abnormal roll | 1 in 12 | 0.84 | 0.078 |
+| without the medium_abnormal roll | never | 0.89 | 0.127 |
+| with the medium_abnormal roll | 1 in 12 | 0.90 | 0.129 |
 <!-- END RENDERED: setup-mix -->
 
-> **Design note (decision batch 4, OQ-104):** On the final full simulator rerun, at 1 Titan Engagement in 12, the Abnormal roll adds 0.012 Critical Injuries and 0.001 deaths during the fight (0.002 through the end) per Titan Engagement the table sets up: 0.842 and 0.078 against 0.830 and 0.077 (`docs/reviews/simulator-report.md`, section 6.9). The probes gave 0.02 and 0.005. The rate an Expedition meets Abnormals, against the PC death target, is a Phase 1 simulator case (`tuning.yaml`, `simulator_cases`).
+> **Design note (decision batch 4, OQ-104):** On the confirming run of the zone retune, at 1 Titan Engagement in 12, the Abnormal roll adds 0.005 Critical Injuries and 0.002 deaths during the fight (0.002 through the end) per Titan Engagement the table sets up: 0.899 and 0.129 against 0.894 and 0.127 (`docs/reviews/simulator-report.md`, section 6.9). The probes gave 0.02 and 0.005. The rate an Expedition meets Abnormals, against the PC death target, is a Phase 1 simulator case (`tuning.yaml`, `simulator_cases`).
 
 ### Support rows
 
@@ -799,77 +807,77 @@ ADR-0014 reports rows beside each target. Every table is fought at its reference
 <!-- BEGIN RENDERED: support -->
 | Titan | Support (4 Rookie player characters and) | Median kill round | By round 3 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Titan cards resolved per round | Titan cards a decoy spent per round | Squad Tactic uses per fight |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Standard Small Titan | none (the reference start) | 2 | 81.3% | 2.2% | 0.86 | 0.060 | 0.256 | 1.510 | 0.000 | 0.00 |
-| Standard Small Titan | 2 helper Squadmates | 2 | 87.0% | 0.8% | 0.81 | 0.020 | 0.241 | 1.488 | 0.000 | 0.00 |
-| Standard Small Titan | 2 Squadmates screening beside the holder | 2 | 87.1% | 0.8% | 0.54 | 0.013 | 0.161 | 1.097 | 0.429 | 0.00 |
-| Standard Small Titan | Hook and Cut and Hamstring Line, with the escapes | 2 | 83.3% | 1.7% | 0.81 | 0.047 | 0.237 | 1.454 | 0.029 | 1.09 |
-| Standard Small Titan | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 2 | 89.2% | 0.5% | 0.48 | 0.008 | 0.147 | 1.048 | 0.443 | 1.10 |
-| Standard Medium Titan | none (the reference start) | 3 | 62.4% | 7.8% | 0.69 | 0.066 | 0.196 | 0.854 | 0.000 | 0.00 |
-| Standard Medium Titan | 2 helper Squadmates | 3 | 69.5% | 5.3% | 0.62 | 0.031 | 0.181 | 0.836 | 0.000 | 0.00 |
-| Standard Medium Titan | 2 Squadmates screening beside the holder | 3 | 67.4% | 5.3% | 0.43 | 0.022 | 0.121 | 0.635 | 0.217 | 0.00 |
-| Standard Medium Titan | Hook and Cut and Hamstring Line, with the escapes | 3 | 66.2% | 7.3% | 0.65 | 0.058 | 0.187 | 0.790 | 0.049 | 1.30 |
-| Standard Medium Titan | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 2 | 71.5% | 4.9% | 0.41 | 0.018 | 0.116 | 0.597 | 0.241 | 1.30 |
-| Standard Large Titan | none (the reference start) | 3 | 62.5% | 12.9% | 1.19 | 0.141 | 0.246 | 0.853 | 0.000 | 0.00 |
-| Standard Large Titan | 2 helper Squadmates | 3 | 69.3% | 9.2% | 1.05 | 0.039 | 0.234 | 0.841 | 0.000 | 0.00 |
-| Standard Large Titan | 2 Squadmates screening beside the holder | 3 | 67.4% | 9.8% | 0.78 | 0.029 | 0.159 | 0.646 | 0.213 | 0.00 |
-| Standard Large Titan | Hook and Cut and Hamstring Line, with the escapes | 3 | 65.0% | 11.3% | 1.06 | 0.114 | 0.231 | 0.797 | 0.044 | 1.29 |
-| Standard Large Titan | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 3 | 69.9% | 7.9% | 0.69 | 0.024 | 0.151 | 0.605 | 0.238 | 1.30 |
-| Sprinting Abnormal | none (the reference start) | 2 | 71.1% | 8.0% | 0.83 | 0.088 | 0.278 | 1.607 | 0.000 | 0.00 |
-| Sprinting Abnormal | 2 helper Squadmates | 2 | 77.9% | 4.5% | 0.76 | 0.032 | 0.273 | 1.575 | 0.000 | 0.00 |
-| Sprinting Abnormal | 2 Squadmates screening beside the holder | 2 | 78.9% | 2.8% | 0.53 | 0.015 | 0.170 | 1.202 | 0.407 | 0.00 |
-| Sprinting Abnormal | Hook and Cut and Hamstring Line, with the escapes | 2 | 75.4% | 5.5% | 0.73 | 0.070 | 0.257 | 1.520 | 0.049 | 0.96 |
-| Sprinting Abnormal | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 2 | 82.5% | 1.9% | 0.47 | 0.013 | 0.160 | 1.160 | 0.408 | 1.03 |
+| Standard Small Titan | none (the reference start) | 2 | 84.0% | 2.4% | 0.82 | 0.077 | 0.273 | 1.418 | 0.000 | 0.00 |
+| Standard Small Titan | 2 helper Squadmates | 2 | 89.2% | 1.2% | 0.69 | 0.033 | 0.222 | 1.376 | 0.000 | 0.00 |
+| Standard Small Titan | 2 Squadmates screening beside the holder | 2 | 89.5% | 0.6% | 0.52 | 0.020 | 0.176 | 1.046 | 0.379 | 0.00 |
+| Standard Small Titan | Hook and Cut and Hamstring Line, with the escapes | 2 | 85.9% | 1.9% | 0.69 | 0.062 | 0.240 | 1.314 | 0.067 | 0.83 |
+| Standard Small Titan | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 2 | 90.6% | 0.4% | 0.46 | 0.014 | 0.151 | 0.975 | 0.402 | 0.88 |
+| Standard Medium Titan | none (the reference start) | 3 | 69.9% | 4.8% | 0.83 | 0.129 | 0.329 | 0.796 | 0.000 | 0.00 |
+| Standard Medium Titan | 2 helper Squadmates | 2 | 77.1% | 2.6% | 0.68 | 0.055 | 0.262 | 0.776 | 0.000 | 0.00 |
+| Standard Medium Titan | 2 Squadmates screening beside the holder | 2 | 74.1% | 2.7% | 0.56 | 0.052 | 0.214 | 0.603 | 0.209 | 0.00 |
+| Standard Medium Titan | Hook and Cut and Hamstring Line, with the escapes | 3 | 72.2% | 4.4% | 0.72 | 0.120 | 0.282 | 0.718 | 0.070 | 1.03 |
+| Standard Medium Titan | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 2 | 76.8% | 2.6% | 0.50 | 0.043 | 0.192 | 0.554 | 0.243 | 1.13 |
+| Standard Large Titan | none (the reference start) | 3 | 66.7% | 6.8% | 1.24 | 0.221 | 0.423 | 0.790 | 0.000 | 0.00 |
+| Standard Large Titan | 2 helper Squadmates | 2 | 75.2% | 3.5% | 1.03 | 0.101 | 0.336 | 0.775 | 0.000 | 0.00 |
+| Standard Large Titan | 2 Squadmates screening beside the holder | 3 | 71.9% | 3.5% | 0.86 | 0.090 | 0.281 | 0.608 | 0.202 | 0.00 |
+| Standard Large Titan | Hook and Cut and Hamstring Line, with the escapes | 3 | 69.0% | 6.2% | 1.08 | 0.194 | 0.363 | 0.717 | 0.065 | 1.02 |
+| Standard Large Titan | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 2 | 74.5% | 3.0% | 0.75 | 0.074 | 0.247 | 0.555 | 0.238 | 1.13 |
+| Sprinting Abnormal | none (the reference start) | 2 | 74.8% | 5.3% | 0.89 | 0.155 | 0.452 | 1.439 | 0.000 | 0.00 |
+| Sprinting Abnormal | 2 helper Squadmates | 2 | 79.8% | 3.2% | 0.79 | 0.059 | 0.408 | 1.434 | 0.000 | 0.00 |
+| Sprinting Abnormal | 2 Squadmates screening beside the holder | 2 | 82.3% | 1.9% | 0.58 | 0.037 | 0.285 | 1.129 | 0.351 | 0.00 |
+| Sprinting Abnormal | Hook and Cut and Hamstring Line, with the escapes | 2 | 78.9% | 4.6% | 0.80 | 0.130 | 0.387 | 1.351 | 0.069 | 0.72 |
+| Sprinting Abnormal | 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes | 2 | 85.3% | 1.3% | 0.51 | 0.030 | 0.238 | 1.054 | 0.379 | 0.88 |
 <!-- END RENDERED: support -->
 
 <!-- BEGIN RENDERED: tactics standard-medium -->
 | Squad Tactics held (4 player characters, with the escapes) | Median kill round | By round 3 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Titan cards resolved per round | Titan cards a decoy spent per round | Squad Tactic uses per fight |
 |---|---|---|---|---|---|---|---|---|---|
-| none | 3 | 63.2% | 7.6% | 0.69 | 0.060 | 0.193 | 0.854 | 0.000 | 0.00 |
-| Hook and Cut | 3 | 64.5% | 8.0% | 0.67 | 0.066 | 0.182 | 0.796 | 0.049 | 0.32 |
-| Hamstring Line | 3 | 64.3% | 7.0% | 0.65 | 0.057 | 0.183 | 0.846 | 0.000 | 0.99 |
-| Clear the Hand | 3 | 62.3% | 7.5% | 0.69 | 0.057 | 0.191 | 0.853 | 0.000 | 0.07 |
-| Fall Back | 3 | 62.9% | 7.6% | 0.68 | 0.057 | 0.192 | 0.853 | 0.000 | 0.00 |
-| Hook and Cut and Hamstring Line | 3 | 66.2% | 7.3% | 0.65 | 0.058 | 0.187 | 0.790 | 0.049 | 1.30 |
-| Hook and Cut and Clear the Hand | 3 | 64.7% | 7.2% | 0.65 | 0.055 | 0.187 | 0.794 | 0.050 | 0.39 |
-| Hook and Cut and Fall Back | 3 | 64.1% | 8.0% | 0.67 | 0.064 | 0.190 | 0.794 | 0.050 | 0.33 |
-| Hamstring Line and Clear the Hand | 3 | 64.6% | 7.4% | 0.65 | 0.060 | 0.182 | 0.849 | 0.000 | 1.05 |
-| Hamstring Line and Fall Back | 3 | 63.9% | 6.9% | 0.66 | 0.059 | 0.188 | 0.846 | 0.000 | 0.99 |
-| Clear the Hand and Fall Back | 3 | 62.7% | 7.7% | 0.68 | 0.056 | 0.189 | 0.854 | 0.000 | 0.07 |
+| none | 3 | 69.9% | 5.0% | 0.82 | 0.128 | 0.317 | 0.795 | 0.001 | 0.00 |
+| Hook and Cut | 3 | 71.5% | 4.8% | 0.74 | 0.127 | 0.286 | 0.720 | 0.069 | 0.43 |
+| Hamstring Line | 3 | 71.4% | 4.7% | 0.80 | 0.126 | 0.305 | 0.797 | 0.001 | 0.65 |
+| Clear the Hand | 3 | 70.1% | 5.1% | 0.82 | 0.130 | 0.320 | 0.801 | 0.001 | 0.09 |
+| Fall Back | 3 | 70.9% | 5.0% | 0.82 | 0.133 | 0.319 | 0.798 | 0.001 | 0.01 |
+| Hook and Cut and Hamstring Line | 3 | 72.2% | 4.4% | 0.72 | 0.120 | 0.282 | 0.718 | 0.070 | 1.03 |
+| Hook and Cut and Clear the Hand | 3 | 70.7% | 5.1% | 0.76 | 0.133 | 0.303 | 0.723 | 0.067 | 0.52 |
+| Hook and Cut and Fall Back | 3 | 70.7% | 4.7% | 0.75 | 0.125 | 0.295 | 0.720 | 0.069 | 0.44 |
+| Hamstring Line and Clear the Hand | 3 | 71.2% | 4.6% | 0.79 | 0.120 | 0.304 | 0.796 | 0.001 | 0.74 |
+| Hamstring Line and Fall Back | 3 | 71.7% | 4.7% | 0.80 | 0.120 | 0.309 | 0.793 | 0.001 | 0.67 |
+| Clear the Hand and Fall Back | 3 | 70.6% | 5.0% | 0.82 | 0.133 | 0.324 | 0.796 | 0.001 | 0.10 |
 <!-- END RENDERED: tactics standard-medium -->
 
 > **Design note:** The support rows keep the shape Chapter 5 measured on the reference table (section 5.13):
-> - **A screen is a trade, whatever the Tempo.** On the final full simulator rerun (`docs/reviews/simulator-report.md`, section 9), against two helpers, two Squadmates screening beside the holder cut a Titan's Critical Injuries by 26% to 33%:
->   - the standard Medium Titan: 0.43 Critical Injuries, against 0.62;
->   - the Small Titan: 0.54, against 0.81;
->   - the Large Titan: 0.78, against 1.05;
->   - the Sprinting Abnormal: 0.53, against 0.76.
+> - **A screen is a trade, whatever the Tempo.** On the confirming run of the zone retune (`docs/reviews/simulator-report.md`, section 9), against two helpers, two Squadmates screening beside the holder cut a Titan's Critical Injuries by 17% to 27%:
+>   - the standard Medium Titan: 0.56 Critical Injuries, against 0.68;
+>   - the Small Titan: 0.52, against 0.69;
+>   - the Large Titan: 0.86, against 1.03;
+>   - the Sprinting Abnormal: 0.58, against 0.79.
 >
->   In the probes they also cut the cards a Titan resolves by about a quarter (23% to 26%; the standard Medium Titan 0.634 cards a round against 0.837). The kill comes within about 2 points of the helpers' pace, a little slower on the Medium and Large Titans and a little faster on the Small Titan and the Sprinting Abnormal: by round 3, 67.4% against 69.5%, 67.4% against 69.3%, 87.1% against 87.0%, and 78.9% against 77.9%.
-> - **Heavy Tread does not make the screen a trap.** Against the standard Large Titan the screen's deaths are 0.029 per fight during the fight, against 0.039 with helpers.
+>   They also cut the cards a Titan resolves by about a fifth to a quarter (21% to 24%; the standard Medium Titan 0.603 cards a round against 0.776). The kill comes within about 3 points of the helpers' pace, a little slower on the Medium and Large Titans and level or a little faster on the Small Titan and the Sprinting Abnormal: by round 3, 74.1% against 77.1%, 71.9% against 75.2%, 89.5% against 89.2%, and 82.3% against 79.8%.
+> - **Heavy Tread does not make the screen a trap.** Against the standard Large Titan the screen's deaths are 0.090 per fight during the fight, against 0.101 with helpers.
 > - **Decision batches 3e and 4 moved no standard row beyond sampling.** Every row here was re-run under them, and again under the retreat clock of decision batch 5; the flag figures below were measured to the 12-round horizon. Chapter 5 measured the flag rule where a hold ends with Attention on a striker who fell short, including the Small Titan's screen with Hook and Cut and Hamstring Line: the Titan's next behavior then lands on that striker 99.4% of the time, against 0.5% when the flags cleared on the card that ended the hold, with 87.9% killed by round 3 and 0.51 Critical Injuries either way within sampling. On the standard ladders the earlier reading of the nearest rung kept a holder farther off than the closest soldier 0.002 times a fight or less; the rule never does (Chapter 5, `data/engagement/tuning.yaml`, `prepared_squad_kill`, `decoys`, `flags_under_a_hold`, and `nearest_rung`).
-> - **Squad Tactics** on the standard Medium Titan keep the median kill in round 3 alone and in every pair on the rerun, with 62.3% (Clear the Hand) to 66.2% (Hook and Cut with Hamstring Line) killed by round 3 and 0.65 to 0.69 Critical Injuries per fight, as on the reference table (report section 9).
+> - **Squad Tactics** on the standard Medium Titan keep the median kill in round 3 alone and in every pair on the confirming run, with 70.1% (Clear the Hand) to 72.2% (Hook and Cut with Hamstring Line) killed by round 3 and 0.72 to 0.82 Critical Injuries per fight, as on the reference table (report section 9).
 
 ### How the fights compare
 
-On the final full simulator rerun (`docs/reviews/simulator-report.md`, sections 3, 5, and 9; deaths during the fight), for the reference Squad under the baseline policy, and under every support row, no fight in this chapter is unwinnable or trivial. Each table's support row is read against the standard Medium Titan's row with the same support (decision batch 3b). The Sprinting Abnormal's rows are also read against the standard Large Titan's row with the same support (its bar, section 6.6):
-- **Small** is a quick kill: median round 2, 81.3% by round 3. It still deals 0.86 Critical Injuries per fight, more than the Medium Titan with smaller Attack Dice, because it acts twice a round: 0.256 Grabs per fight against 0.196 (the probes: 1.51 cards resolved per round against 0.85).
-- **Medium** is the reference: median round 3, 62.4% by round 3, 0.69 Critical Injuries, and 0.066 deaths (0.075 through the end).
-- **Large** kills in the same median round but drags. 12.9% of fights end with no kill, and it deals nearly twice the Medium Titan's Critical Injuries (1.19) and about twice its deaths (0.141).
-- **The Sprinting Abnormal** falls sooner than the Medium Titan and later than the Small Titan (71.1% by round 3, its median kill in round 2). It deals about the Small Titan's Critical Injuries (0.83) and more deaths (0.088 against 0.060). For every Squad, supported or not, and in either Squad sheet order, it deals no more deaths than the Large Titan's row for the same Squad, within sampling.
+On the confirming run of the zone retune (`docs/reviews/simulator-report.md`, sections 3, 5, and 9; deaths during the fight), for the reference Squad under the baseline policy, and under every support row, no fight in this chapter is unwinnable, and none is trivial (*Its bar, row against row*, above; OQ-199, closed). Each table's support row is read against the standard Medium Titan's row with the same support (decision batch 3b). The Sprinting Abnormal's rows are also read against the standard Large Titan's row with the same support (its bar, section 6.6):
+- **Small** is a quick kill and the cheapest of the four: median round 2, 84.0% by round 3, 0.82 Critical Injuries and 0.077 deaths per fight. It still acts twice a round, 1.418 cards resolved against the Medium Titan's 0.796, but each card is light, and retargeting finds a second soldier for its cards far less often than for the Medium Titan's (19.1% of them against 33.4%; report section 6.15), so it sits level with the Medium Titan on Critical Injuries and under it on Grabs (0.273 against 0.329).
+- **Medium** is the reference: median round 3, 69.9% by round 3, 0.83 Critical Injuries, and 0.129 deaths (0.137 through the end).
+- **Large** kills in the same median round but drags (66.7% by round 3 against the Medium Titan's 69.9%). 6.8% of fights end with no kill, and it deals half again the Medium Titan's Critical Injuries (1.24) and about 1.7 times its deaths (0.221).
+- **The Sprinting Abnormal** falls sooner than the Medium Titan and later than the Small Titan (74.8% by round 3, its median kill in round 2). It deals more Critical Injuries than the Medium Titan (0.89 against 0.83) and more deaths (0.155 against 0.129). For every Squad, supported or not, and in either Squad sheet order, it deals no more deaths than the Large Titan's row for the same Squad, within sampling.
 
 Across the four:
-- **Kills come:** at least 62.4% of fights end in a kill by round 3, and at most 12.9% end with no kill.
-- **Every fight costs something:** at the reference start each Titan deals at least 0.69 Critical Injuries per fight, and each makes at least 0.19 Grabs per fight.
+- **Kills come:** at least 66.7% of fights end in a kill by round 3, and at most 6.8% end with no kill.
+- **Every fight costs something:** at the reference start each Titan deals at least 0.82 Critical Injuries per fight, and each makes at least 0.27 Grabs per fight.
 - **Support wins sooner, never trivially.** Under every support row:
   - the median kill is by round 3;
-  - at most 11.3% of fights end with no kill (the Large Titan with Hook and Cut and Hamstring Line);
-  - each table deals at least the Critical Injuries of the Medium Titan's row with the same support.
+  - at most 6.2% of fights end with no kill (the Large Titan with Hook and Cut and Hamstring Line);
+  - the Large Titan and the Sprinting Abnormal deal at least the Critical Injuries of the Medium Titan's row with the same support; the closest is the Abnormal's screen with Hook and Cut and Hamstring Line, which the bar reads at 120,000 fights a row and finds holding in both orders (*Its bar, row against row*; OQ-199, closed). The standard Small Titan sits level with the Medium Titan's row with helpers (0.69 against 0.68) and under it in every other support row, for the same reason its reference row does.
 
   Under the strongest support, the screen with Hook and Cut and Hamstring Line:
-  - the Medium Titan still takes a median of 2 or 3 rounds, on the boundary (71.5% by round 3), and deals 0.41 Critical Injuries per fight;
-  - the Large Titan takes 3 rounds (69.9%) and deals 0.69;
-  - the Small Titan takes 2 rounds (89.2%) and deals 0.48;
-  - the Sprinting Abnormal takes 2 rounds (82.5%) and deals 0.47.
+  - the Medium Titan takes a median of 2 rounds (76.8% by round 3) and deals 0.50 Critical Injuries per fight;
+  - the Large Titan takes 2 rounds (74.5%) and deals 0.75;
+  - the Small Titan takes 2 rounds (90.6%) and deals 0.46;
+  - the Sprinting Abnormal takes 2 rounds (85.3%) and deals 0.51.
 
 #### Four strikers and no cutters
 
@@ -878,28 +886,28 @@ ADR-0014's prepared-Squad target is read under the baseline policy, two cutters 
 <!-- BEGIN RENDERED: four-strikers -->
 | Titan | Squad | Median kill round | By round 3 | No kill | Critical Injuries per fight | Deaths per fight during the fight | Grabs per fight | Nape strikes per fight | Body Part strikes per fight |
 |---|---|---|---|---|---|---|---|---|---|
-| Chapter 5's reference Medium Titan | baseline: 2 cutters, 2 strikers | 3 | 62.5% | 7.8% | 0.70 | 0.060 | 0.196 | 3.16 | 5.59 |
-| Chapter 5's reference Medium Titan | 4 strikers, no cutters | 2 | 78.3% | 1.3% | 0.43 | 0.020 | 0.130 | 4.55 | 0.23 |
-| Standard Small Titan | baseline: 2 cutters, 2 strikers | 2 | 81.3% | 2.2% | 0.86 | 0.060 | 0.256 | 1.86 | 3.70 |
-| Standard Small Titan | 4 strikers, no cutters | 2 | 91.1% | 0.4% | 0.63 | 0.023 | 0.190 | 2.55 | 0.31 |
-| Standard Medium Titan | baseline: 2 cutters, 2 strikers | 3 | 62.4% | 7.8% | 0.69 | 0.066 | 0.196 | 3.13 | 5.59 |
-| Standard Medium Titan | 4 strikers, no cutters | 3 | 78.6% | 1.6% | 0.44 | 0.025 | 0.132 | 4.52 | 0.23 |
-| Standard Large Titan | baseline: 2 cutters, 2 strikers | 3 | 62.5% | 12.9% | 1.19 | 0.141 | 0.246 | 2.91 | 5.66 |
-| Standard Large Titan | 4 strikers, no cutters | 2 | 78.7% | 2.6% | 0.76 | 0.063 | 0.149 | 4.41 | 0.26 |
-| Sprinting Abnormal | baseline: 2 cutters, 2 strikers | 2 | 71.1% | 8.0% | 0.83 | 0.088 | 0.278 | 2.01 | 4.40 |
-| Sprinting Abnormal | 4 strikers, no cutters | 2 | 92.2% | 0.4% | 0.62 | 0.019 | 0.170 | 2.53 | 0.28 |
+| Chapter 5's reference Medium Titan | baseline: 2 cutters, 2 strikers | 3 | 70.3% | 3.8% | 0.79 | 0.100 | 0.283 | 3.12 | 4.26 |
+| Chapter 5's reference Medium Titan | 4 strikers, no cutters | 2 | 89.6% | 0.9% | 0.30 | 0.036 | 0.107 | 3.30 | 0.13 |
+| Standard Small Titan | baseline: 2 cutters, 2 strikers | 2 | 84.0% | 2.4% | 0.82 | 0.077 | 0.273 | 1.84 | 2.96 |
+| Standard Small Titan | 4 strikers, no cutters | 1 | 96.4% | 0.3% | 0.31 | 0.023 | 0.101 | 1.86 | 0.14 |
+| Standard Medium Titan | baseline: 2 cutters, 2 strikers | 3 | 69.9% | 4.8% | 0.83 | 0.129 | 0.329 | 3.11 | 4.35 |
+| Standard Medium Titan | 4 strikers, no cutters | 2 | 89.0% | 1.0% | 0.31 | 0.042 | 0.114 | 3.29 | 0.14 |
+| Standard Large Titan | baseline: 2 cutters, 2 strikers | 3 | 66.7% | 6.8% | 1.24 | 0.221 | 0.423 | 3.04 | 4.36 |
+| Standard Large Titan | 4 strikers, no cutters | 2 | 88.5% | 1.5% | 0.48 | 0.075 | 0.155 | 3.25 | 0.20 |
+| Sprinting Abnormal | baseline: 2 cutters, 2 strikers | 2 | 74.8% | 5.3% | 0.89 | 0.155 | 0.452 | 2.01 | 3.30 |
+| Sprinting Abnormal | 4 strikers, no cutters | 2 | 95.3% | 0.4% | 0.41 | 0.030 | 0.125 | 2.05 | 0.16 |
 <!-- END RENDERED: four-strikers -->
 
-> **Design note (decision batch 4b, 4b-2; OQ-112):** Four strikers beat the baseline Squad on every table: they kill sooner, leave fewer fights that end with no kill, and take fewer Critical Injuries and deaths. On the final full simulator rerun (`docs/reviews/simulator-report.md`, sections 6.8 and 9; deaths during the fight), against the standard Medium Titan 78.6% of fights end in a kill by round 3, against 62.4%, with 0.44 Critical Injuries and 0.025 deaths against 0.69 and 0.066. Against the standard Large Titan the figures are 78.7% against 62.5%, 2.6% with no kill against 12.9%, and 0.063 deaths against 0.141. Against the Sprinting Abnormal they are 92.2% against 71.1%, and 0.019 deaths against 0.088.
-> - **Why.** Four strikers make more Nape strikes (4.52 a fight against 3.13 on the standard Medium Titan) and almost no Body Part strikes (0.23 against 5.59). A striker who falls short holds Attention at Blind Spot, where most entries fall back to Thrash's knock-loose (section 6.1), while cutters stand In Reach, where every Grab, Bite, Crush, Trample, and Lunge applies. The extra Nape strikes and the Openings a short cut leaves are worth more than the grounded dice a Broken leg buys.
+> **Design note (decision batch 4b, 4b-2; OQ-112):** Four strikers beat the baseline Squad on every table: they kill sooner, leave fewer fights that end with no kill, and take fewer Critical Injuries and deaths. On the confirming run of the zone retune (`docs/reviews/simulator-report.md`, sections 6.8 and 9; deaths during the fight), against the standard Medium Titan 89.0% of fights end in a kill by round 3, against 69.9%, with 0.31 Critical Injuries and 0.042 deaths against 0.83 and 0.129. Against the standard Large Titan the figures are 88.5% against 66.7%, 1.5% with no kill against 6.8%, and 0.075 deaths against 0.221. Against the Sprinting Abnormal they are 95.3% against 74.8%, and 0.030 deaths against 0.155. Against the standard Small Titan the four-striker median kill comes in round 1 (96.4% by round 3).
+> - **Why.** Four strikers make more Nape strikes (3.29 a fight against 3.11 on the standard Medium Titan) and almost no Body Part strikes (0.14 against 4.35). A striker who falls short holds Attention at Blind Spot, where most entries fall back to Thrash's knock-loose (section 6.1), while cutters stand In Reach, where every Grab, Bite, Crush, Trample, and Lunge applies. The extra Nape strikes and the Openings a short cut leaves are worth more than the grounded dice a Broken leg buys.
 > - **What it costs.** Section 6.5 tells a Squad to cut one leg of the Sprinting Abnormal, as canon's soldiers bring Titans down, and Hamstring Line and the grounded dice reward cutting legs. A Squad that tries both learns to leave the legs. The prepared-Squad target is still read under the baseline Squad, as ADR-0014 defines it, so the target stands and these rows are reported beside it, not tuned.
-> - **Medians on the boundary.** On the rerun, against the standard Medium Titan the four-striker median kill is round 3 on the boundary at the reference start, and in the bar's 120,000-fight twin runs round 3 on the boundary with the cutters first and round 2 with the strikers first. Against the standard Large Titan it is round 2 on the boundary at the reference start and with the cutters first, and round 2 with the strikers first. The probes' 12,000-fight rows gave round 3 on both. Decision batch 4b's 60,000-fight rows, to the 12-round horizon, gave round 3 and round 2.
-> - **The Sprinting Abnormal's four-striker row** holds its bar against the standard Titans' four-striker rows in both Squad sheet orders: on the rerun, 0.0284 and 0.0280 deaths through the end against the Large Titan's 0.0679 and 0.0666, and 0.623 and 0.619 Critical Injuries against the Medium Titan's 0.440 and 0.437 (section 6.6, *Its bar, row against row*).
+> - **Medians off the boundary.** On the confirming run, against the standard Medium Titan and the standard Large Titan the four-striker median kill is round 2, off the boundary, at the reference start and in both of the bar's 120,000-fight twin runs (89.4% and 88.4% by round 3 in the bar's runs with the cutters first). On the round 3 retune's run both sat on the boundary, round 2 or 3 by the run. The probes' 12,000-fight rows gave round 3 on both. Decision batch 4b's 60,000-fight rows, to the 12-round horizon, gave round 3 and round 2.
+> - **The Sprinting Abnormal's four-striker row** holds its bar against the standard Titans' four-striker rows in both Squad sheet orders: on the confirming run, 0.0336 and 0.0335 deaths through the end against the Large Titan's 0.0787 and 0.0763, and 0.411 and 0.410 Critical Injuries against the Medium Titan's 0.301 and 0.304 (section 6.6, *Its bar, row against row*).
 > - **Open.** That cutting legs is the worse policy is an unresolved question (OQ-112), left to a decision that can redraw the Behavior Tables once the Phase 1 simulator reports the four-striker row beside every target. Decision batch 4b measured two levers on the standard Medium Titan, to the 12-round horizon, and neither closes the gap. Turning the Titan on a Blind Spot holder raises the baseline to 1.09 Critical Injuries and 0.073 deaths and leaves four strikers ahead (0.83 and 0.035). Grounded-titan Bonus Dice of 3 leave the gap standing: the baseline reaches 66.2% by round 3 and 0.66 Critical Injuries, and four strikers 78.4% and 0.42 (`tools/probes/batch-4b/strikers_b4b.out`).
 
 ### Gas
 
-This chapter adds no ODM use and changes no gas rule, so Chapter 4's gas figures stand: a full canister lasts a median of 8 rounds of ODM use with no Push, and 6 Pushing every round, both medians read exactly and met, and Met again on the final full simulator rerun under Attack Dice (medians 8 and 6; Chapter 5, section 5.13).
+This chapter adds no ODM use and changes no gas rule, so Chapter 4's gas figures stand: a full canister lasts a median of 8 rounds of ODM use with no Push, and 6 Pushing every round, both medians read exactly and met, and Met again on the confirming run of the zone retune (medians 8 and 6, means 9.24 and 6.34; Chapter 5, section 5.13).
 
 ---
 
@@ -933,23 +941,23 @@ Two changes were decisions rather than pointers, both taken in decision batch 4:
 
 *The numbers in this example are for illustration only. The rows follow the YAML files at the time of writing; if the files change, the files govern.*
 
-The Squad fights Focus Titan A, the standard Medium Titan, at Anchor Rating Wooded, in round 2.
+The Squad fights Focus Titan A, the standard Medium Titan, in zone 7 of a Standard field, a Wooded zone, in round 2.
 
 **The field.**
-- **Private Oskar Brandt** holds In Reach and the Titan's Attention.
-- **Private Renate Vogt** holds In Reach, with Agility 3, ODM Gear 2, Stress 1, and the Closing Hand Scar.
+- **Private Oskar Brandt** is on the Ground in zone 7, so In Reach, and holds the Titan's Attention.
+- **Private Renate Vogt** is on the Ground in zone 7, In Reach, with Agility 3, ODM Gear 2, Stress 1, and the Closing Hand Scar.
 - **The Titan's Next Behavior** is hidden, and nothing is Broken.
 
-**Round 2, the Titan's card.** The ladder keeps Oskar: both soldiers meet only nearest person in reach, and the current holder keeps a tie. The Next Behavior is revealed as Fixed Grin, result 1.
+**Round 2, the Titan's card.** The ladder keeps Oskar: both soldiers meet only nearest person in reach, and the current holder keeps a tie. He is in the Titan's zone, so it does not stride. The Next Behavior is revealed as Fixed Grin, result 1.
 - **Can it happen?** Its eyes are not Broken, and it works at any Position, so it resolves against Oskar with 3 Attack Dice. The GM rolls them in the open: 5, 1, and 3, one success.
 - **Oskar's choice.** It deals only Stress, so he keeps his turn and does not dodge. The success is net, so Fixed Grin lands, and he gains 1 Stress.
 - **The telegraph.** The GM rolls the new Next Behavior: a 6, Grab. Fixed Grin is the previous behavior and both arms are unbroken, so Grab can be rolled. Its telegraph effect reveals it to every soldier at once.
 
 **Round 3.** Oskar draws 4, Renate 7, and the Titan 12.
-- **Card 4: Oskar** makes an ODM move from In Reach to Blind Spot, a Wooded step. Every ODM move is a Flight, so he rolls for Fly and scores 2 successes, which give him 2 Momentum, the cap Wooded's 2 Anchors set (Chapter 5, section 5.2). The step would have happened on no successes too, though he would have come in loud. He still holds Attention, which changes only when the Titan's card comes up, so he cannot strike the Nape. He strikes the eyes instead and scores 1 success: their count is 1 of Toughness 2, and he holds the just-hurt flag.
+- **Card 4: Oskar** makes an ODM move in zone 7 from the Ground to A's Blind Spot, an attachment step a Wooded zone allows, and as the Flight's first step it costs nothing. Every ODM move is a Flight, so he rolls for Fly and scores 2 successes, which give him 2 Momentum, the cap a Wooded zone's 2 anchors set (Chapter 5, section 5.2). The step would have happened on no successes too, though he would have come in loud. He still holds Attention, which changes only when the Titan's card comes up, so he cannot strike the Nape. He strikes the eyes instead and scores 1 success: their count is 1 of Toughness 2, and he holds the just-hurt flag.
 - **Card 7: Renate** stays In Reach and strikes the left leg for 1 success, a count of 1, which gives her the just-hurt flag too.
 - **Card 12: the Titan.**
-  - **Attention.** No one is On Body or holds the hooked-by-strike flag. Renate is the only soldier In Reach, so she takes Attention on the second rung. The flags stay until this card's Next step.
+  - **Attention.** No one is On Body or holds the hooked-by-strike flag. Renate is the only soldier In Reach, so she takes Attention on the second rung. She is in its zone, so it does not stride. The flags stay until this card's Next step.
   - **The Grab.** It needs In Reach or On Body and an unbroken arm, so it resolves against Renate with 9 Attack Dice. The GM rolls them in the open: 6, 5, 5, 4, 3, 2, 2, 1, and 1. That is 3 successes, so the Grab's Severity is 3.
 - **Renate's dodge.** Her turn this round is spent, so the dodge spends her round 4 turn.
   - **The Scar.** Grab's effects include a grab effect, which marks it as a Grab, so the Closing Hand gives her a 1-die penalty on this dodge.

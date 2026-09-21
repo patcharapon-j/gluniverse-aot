@@ -44,8 +44,10 @@ effect_types:
     meaning: >-
       A Titan Engagement begins (Chapter 5, section 5.1), with the starting Positions, Focus Titan,
       Background Titan clocks, and mounted state the row names; data/expedition/legs.yaml (leg_steps,
-      titan-engagement) and night give its Anchor Rating, and data/engagement/engagement-setup.yaml
-      everything the row leaves unnamed.
+      titan-engagement) and night give its field rating, and data/engagement/engagement-setup.yaml
+      everything the row leaves unnamed. A named in-reach places the soldier in the Focus Titan's
+      zone, the centre, with attachment ground, and a named distant places them in the Squad's start
+      zone (data/engagement/positions.yaml, placement, named; decision batch 16, 16-7).
   - id: skirmish
     meaning: A Skirmish begins (data/skirmish/skirmish.yaml, starting) with the Foes the row names.
   - id: as-row
@@ -189,11 +191,11 @@ night:
   unused_modifiers: Nights outside, the Formation Post, the Pace, and the Leg roll add nothing to this roll.
   # decision batch 8, 8-27 (OQ-152, item f); decision batch 9, 9-40
   anchor_rating: >-
-    A Titan Engagement this table begins takes its Anchor Rating from the kind of the Waypoint the camp is
+    A Titan Engagement this table begins takes its field rating from the kind of the Waypoint the camp is
     made at (data/expedition/legs.yaml, night_camp, at_waypoint; data/expedition/route.yaml,
     waypoint_kinds), which is the Waypoint the day's last Leg reached unless a Waypoint-scene retreat left
     no Leg slot that day (decision batch 9, 9-40). A camp at the gate the Expedition left rolls it on the
-    setup table, as a gate gives none (data/expedition/route.yaml, kind_rules, gate; decision batch 9, 9-45).
+    setup table, as a gate gives none (its field rating; the zones are then generated from it) (data/expedition/route.yaml, kind_rules, gate; decision batch 9, 9-45).
   # decision batch 8, 8-37
   retreat: >-
     A Titan Engagement this table begins that becomes a retreat before it ends falls back overnight

@@ -1,44 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { chooseEntry, drawAttentionBlock, enteringAttention, entryTargets, evaluateLadder, retargetForEntry, type LadderInput } from '../src/rules/engagement/attention.ts';
-import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_CAP, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
+import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_DEFAULTS, frenzyRule, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
 import { breakFreeNeeds, countTurn, grabLands, holdingArm, holdingArmReach, release } from '../src/rules/engagement/grab.ts';
 import { checkTrackerPermission, checkTrackerRequest, checkTrackerRules, coreOf, fallBackBlock, type TrackerRequest, type TrackerWorld } from '../src/rules/engagement/guard.ts';
 import { gainInjury } from '../src/rules/engagement/injury.ts';
 import {
-  carryCost,
   changeEffects,
-  chargeBlock,
-  chargeDoubleStep,
   flightResult,
   jamDrops,
   momentumCap,
   momentumEnd,
   MOMENTUM_SPENDS,
   spendBlock,
-  SPEND_COST,
-  startingAnchors,
+  SPEND_DEFAULTS,
+  spendCost,
   terrainBreakAttentionDice,
   trimToCap,
-  wreckAnchor,
 } from '../src/rules/engagement/momentum.ts';
-import {
-  comparisonLabel,
-  corpsePosition,
-  entering,
-  leaveBlock,
-  letGoBlock,
-  moveOptions,
-  nearEachOther,
-  nextLabel,
-  returnBlock,
-  stepRows,
-  stepsApart,
-  swapBladeSetBlock,
-  swapSpends,
-  type MoveContext,
-  type SwapContext,
-  withPosition,
-} from '../src/rules/engagement/positions.ts';
+import { leaveBlock, letGoBlock, moveFlags, moveOptions, routeOption, nextLabel, returnBlock, returnZones, stepRows, swapBladeSetBlock, swapSpends, type MoveContext, type SwapContext } from '../src/rules/engagement/positions.ts';
+import { configureZones, generateField, withinZones } from '../src/rules/engagement/zones.ts';
 import {
   autoChecks,
   checksOf,
@@ -86,6 +66,8 @@ const tables = loadTables();
 const E = engagementConfig(tables);
 const rating = (id: string) => E.ratings.find((r) => r.id === id)! as AnchorRating;
 const wooded = rating('wooded');
+configureZones(E.zones);
+const field = generateField('standard', 'wooded', Object.fromEntries(Array.from({ length: 13 }, (_, i) => [i + 1, 'wooded'])), () => 3);
 const medium = tables.titans.find((t) => t.id === 'standard-medium')!;
 const sprinter = tables.titans.find((t) => t.id === 'sprinting-abnormal')!;
 const ladder = (id: string) => (id === 'standard' ? tables.attention.ladders[0].rungs : tables.titanIndex.ladders.find((l) => l.id === id)!.rungs);
@@ -100,11 +82,11 @@ function seeded(seed: number) {
 }
 
 function soldier(id: string, extra: Partial<SoldierState> = {}): SoldierState {
-  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, positions: { A: 'distant' }, momentum: 0, untreated: 0, ...extra };
+  return { id, name: id, pc: true, alive: true, down: false, left: false, carriedBy: null, carrying: null, pinned: null, mounted: false, airborne: false, odmHad: true, zone: 8, attachment: { kind: 'ground', body: null }, horseZone: null, positions: { A: 'distant' }, momentum: 0, untreated: 0, ...extra };
 }
 
 function titan(label: string, extra: Partial<TitanRow> = {}): TitanRow {
-  return { key: `t${label}`, label, status: 'focus', tempo: 1, frenzy: 0, ladder: [...ladder('standard')], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, ...extra };
+  return { key: `t${label}`, label, status: 'focus', tempo: 1, frenzy: 0, ladder: [...ladder('standard')], holder: '', grab: null, decoy: null, decoysInRow: 0, flags: emptyFlags(), grounded: false, entered: 1, zone: 7, stride: 2, figure: 'medium', ...extra };
 }
 
 const partsOf = (states: Partial<Record<string, BodyPart['state']>> = {}): BodyPart[] => medium.body_parts.map((b) => ({ ...b, state: states[b.id] ?? 'intact', progress: 0 }));
@@ -191,14 +173,14 @@ describe('swaps (round.yaml, swapping)', () => {
       swapped: [],
       wings: {},
       grabbed: () => false,
-      near: (x, y) => nearEachOther(x, y, 'A', wooded, [titan('A')]),
+      near: (x, y) => withinZones(field, x, y, 1),
       ...extra,
     };
   };
 
-  it('allows the same Position, one step apart, and two departed soldiers', () => {
+  it('allows the same zone, an adjacent zone, and two departed soldiers (16-11)', () => {
     expect(swapBlock(base({}, {}))).toBeNull();
-    expect(swapBlock(base({ positions: { A: 'in-reach' } }, { positions: { A: 'blind-spot' } }))).toBeNull();
+    expect(swapBlock(base({ zone: 7 }, { zone: 8 }))).toBeNull();
     expect(swapBlock(base({ left: true, positions: {} }, { left: true, positions: {} }))).toBeNull();
   });
 
@@ -209,105 +191,77 @@ describe('swaps (round.yaml, swapping)', () => {
     expect(swapBlock(base({}, {}, { swapped: ['a'] }))?.key).toBe('already');
     expect(swapBlock(base({}, {}, { cards: { a: 3, b: null }, wings: { b: 'x' } }))?.key).toBe('wing');
     expect(swapBlock(base({}, {}, { cards: { a: 3 } }))?.key).toBe('noCard');
-    expect(swapBlock(base({ positions: { A: 'distant' } }, { positions: { A: 'on-body' } }))?.key).toBe('far');
+    expect(swapBlock(base({ zone: 1 }, { zone: 8 }))?.key).toBe('far');
     expect(swapBlock(base({ left: true, positions: {} }, {}))?.key).toBe('oneLeft');
     expect(swapBlock(base({ alive: false }, {}))?.key).toBe('dead');
   });
 
-  it('measures distance under the Anchor Rating: Open has no blind-spot step', () => {
-    const open = rating('open');
-    const x = soldier('a', { positions: { A: 'in-reach' } });
-    const y = soldier('b', { positions: { A: 'blind-spot' } });
-    expect(nearEachOther(x, y, 'A', open, [titan('A')])).toBe(false);
-    expect(nearEachOther(x, y, 'A', wooded, [titan('A')])).toBe(true);
-  });
 });
 
 // ------------------------------------------------------------------ positions
 
-describe('Positions and moves (positions.yaml, anchor-ratings.yaml)', () => {
-  const ctx = (t: TitanRow = titan('A'), r: AnchorRating = wooded, momentum = 0): MoveContext => ({ rating: r, titan: t, grabbed: false, retreat: false, momentum });
-  const opts = (s: SoldierState, c = ctx()) => Object.fromEntries(moveOptions(s, c).map((o) => [o.to, o]));
+describe('Positions and moves (positions.yaml, anchor-ratings.yaml, zones.yaml)', () => {
+  const ctx = (titans: TitanRow[] = [titan('A')], momentum = 0): MoveContext => ({ field, titans, rating: (id) => rating(id), grabbed: false, momentum });
+  const to = (s: SoldierState, c = ctx()) => moveOptions(s, c).map((o) => `${o.kind}:${o.to.zone ?? 'off'}:${o.to.attachment.kind}`);
 
-  it('makes one step the rating allows, by the kinds its row names', () => {
-    const o = opts(soldier('a'));
-    expect(o['in-reach'].ways.map((w) => w.kind)).toEqual(['onFoot', 'odm']);
-    expect(o['on-body'].block).toBe('notOneStep');
-    const near = opts(soldier('a', { positions: { A: 'in-reach' } }));
-    expect(near['blind-spot'].ways.map((w) => w.kind)).toEqual(['odm']);
-  });
-
-  it('has no Fly-roll step left: Urban no longer joins Distant to Blind Spot, and Carry crosses it (anchor-ratings.yaml, history)', () => {
-    const urban = rating('urban');
-    expect(urban.steps.some((r) => r.a === 'distant' && r.b === 'blind-spot')).toBe(false);
+  it('keeps the Anchor Rating shapes: no Fly-roll step, Sparse a chain, no rating reaching the Nape from Distant', () => {
+    expect(rating('urban').steps.some((r) => r.a === 'distant' && r.b === 'blind-spot')).toBe(false);
     expect(rating('sparse').steps.some((r) => (r.a === 'in-reach' && r.b === 'blind-spot') || (r.a === 'blind-spot' && r.b === 'in-reach'))).toBe(false);
     expect(rating('giant-forest').steps.some((r) => r.a === 'distant' && r.b === 'blind-spot')).toBe(false);
-    const o = opts(soldier('a'), ctx(titan('A'), urban));
-    expect(o['blind-spot'].block).toBe('notOneStep');
-    const carried = opts(soldier('a', { momentum: 1 }), ctx(titan('A'), urban, 1));
-    expect(carried['blind-spot'].ways).toEqual([{ kind: 'odm', steps: 2, carry: 1, charge: false }]);
-    expect(o['in-reach'].ways.map((w) => w.kind)).toEqual(['onFoot', 'odm']);
   });
 
-  it('keeps a mounted soldier to mounted steps and ODM moves, and needs ODM Gear for ODM moves', () => {
-    const mounted = opts(soldier('a', { mounted: true }), ctx(titan('A'), rating('urban')));
-    expect(mounted['in-reach'].ways.map((w) => w.kind)).toEqual(['odm']);
-    const dry = opts(soldier('a', { odmHad: false, positions: { A: 'in-reach' } }));
-    expect(dry['on-body'].block).toBe('noOdm');
-    expect(dry.distant.ways.map((w) => w.kind)).toEqual(['onFoot']);
-  });
-
-  it('lets a grounded Titan be climbed on foot, and adds the Open rating’s blind-spot step; a corpse is always grounded', () => {
-    const up = opts(soldier('a', { odmHad: false, positions: { A: 'in-reach' } }), ctx(titan('A', { grounded: true })));
-    expect(up['on-body'].ways.map((w) => w.kind)).toEqual(['onFoot']);
-    const geared = opts(soldier('a', { positions: { A: 'in-reach' } }), ctx(titan('A', { grounded: true })));
-    expect(geared['on-body'].ways.map((w) => w.kind)).toEqual(['onFoot', 'odm']);
+  it('lets a grounded Titan be climbed on foot, adds the Open blind-spot step, and counts a corpse as grounded', () => {
     const open = stepRows(rating('open'), true);
-    expect(stepsApart(open, 'on-body', 'blind-spot')).toBe(1);
-    expect(stepsApart(stepRows(rating('open'), false), 'on-body', 'blind-spot')).toBe(Infinity);
-    const corpse = opts(soldier('a', { odmHad: false, positions: { A: 'in-reach' } }), ctx(titan('A', { status: 'corpse' })));
-    expect(corpse['on-body'].block).toBeNull();
+    expect(open.some((r) => r.a === 'on-body' && r.b === 'blind-spot' && r.onFoot)).toBe(true);
+    expect(stepRows(rating('open'), false).some((r) => r.a === 'on-body' && r.b === 'blind-spot')).toBe(false);
+    const up = to(soldier('a', { zone: 7, odmHad: false }), ctx([titan('A', { grounded: true })]));
+    expect(up).toContain('onFoot:7:on-body');
+    const corpse = to(soldier('a', { zone: 7, odmHad: false }), ctx([titan('A', { status: 'corpse' })]));
+    expect(corpse).toContain('onFoot:7:blind-spot');
+    const standing = to(soldier('a', { zone: 7, odmHad: false }), ctx());
+    expect(standing.some((x) => x.includes('on-body'))).toBe(false);
   });
 
-  it('lets a Down soldier step only from in-reach to Distant on foot; a Grabbed, Pinned, or carried soldier changes nothing', () => {
-    const down = opts(soldier('a', { down: true, positions: { A: 'in-reach' } }));
-    expect(down.distant.ways.map((w) => w.kind)).toEqual(['onFoot']);
-    expect(down['on-body'].block).toBe('down');
-    expect(opts(soldier('a'), { ...ctx(), grabbed: true })['in-reach'].block).toBe('grabbed');
-    expect(opts(soldier('a', { pinned: { body: 'A', bodyPin: false } }))['in-reach'].block).toBe('pinned');
-    expect(opts(soldier('a', { carriedBy: 'b' }))['in-reach'].block).toBe('carried');
-    expect(opts(soldier('a', { left: true }))['in-reach'].block).toBe('left');
+  it('lets a free soldier mount a horse in their zone as part of the move (review M7)', () => {
+    const walker = soldier('w', { zone: 8, odmHad: false, horseZone: 8 });
+    const opts = moveOptions(walker, ctx());
+    expect(opts.filter((o) => o.kind === 'mounted').every((o) => o.mount)).toBe(true);
+    expect(opts.some((o) => o.kind === 'mounted' && o.steps.length === 2)).toBe(true);
+    expect(moveOptions(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), ctx()).some((o) => o.kind === 'mounted')).toBe(false);
   });
 
-  it('applies the close rule: on-body or blind-spot toward one Focus Titan turns the other’s into in-reach', () => {
-    expect(withPosition({ A: 'on-body', B: 'distant' }, 'B', 'blind-spot', ['A', 'B'])).toEqual({ A: 'in-reach', B: 'blind-spot' });
-    expect(withPosition({ A: 'distant', B: 'on-body' }, 'A', 'in-reach', ['A', 'B'])).toEqual({ A: 'in-reach', B: 'on-body' });
-    // A corpse's Position is never read by the close rule.
-    expect(withPosition({ A: 'on-body', B: 'distant' }, 'B', 'on-body', ['B'])).toEqual({ A: 'on-body', B: 'on-body' });
+  it('mounts or dismounts after the steps too (horses.yaml, within_a_move; review 2 n4)', () => {
+    const rider = moveOptions(soldier('r', { zone: 8, mounted: true, odmHad: false, horseZone: 8 }), ctx());
+    expect(rider.find((o) => o.kind === 'mounted' && o.to.zone === 5 && o.dismountAfter)).toBeTruthy();
+    const walker = moveOptions(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), ctx());
+    expect(walker.find((o) => o.kind === 'onFoot' && o.to.zone === 5)?.mountAfter).toBeUndefined();
+    expect(walker.find((o) => o.kind === 'onFoot' && o.to.zone === 5 && o.mountAfter)).toBeTruthy();
+    expect(walker.some((o) => o.kind === 'onFoot' && o.to.zone === 10 && o.mountAfter)).toBe(false);
+    const c = ctx();
+    expect(routeOption(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), c, 'onFoot', [{ zone: 5, attachment: { kind: 'ground', body: null } }], { mountAfter: true })?.mountAfter).toBe(true);
+    expect(routeOption(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), c, 'onFoot', [{ zone: 10, attachment: { kind: 'ground', body: null } }], { mountAfter: true })).toBeNull();
   });
 
-  it('places everyone who holds a Position at Distant toward a Titan that enters, and reads on-body as in-reach toward a corpse', () => {
-    expect(entering(soldier('a', { positions: { A: 'on-body' } }), 'B', true)).toEqual({ A: 'on-body', B: 'distant' });
-    expect(entering(soldier('a', { left: true, positions: {} }), 'B', false)).toEqual({});
-    expect([corpsePosition('on-body'), corpsePosition('blind-spot'), corpsePosition('distant'), corpsePosition(undefined)]).toEqual(['in-reach', 'in-reach', 'distant', undefined]);
+  it('moves a Grabbed, Pinned, carried, or departed soldier nowhere', () => {
+    expect(moveOptions(soldier('a'), { ...ctx(), grabbed: true })).toEqual([]);
+    expect(moveOptions(soldier('a', { pinned: { body: 'A', bodyPin: false } }), ctx())).toEqual([]);
+    expect(moveOptions(soldier('a', { carriedBy: 'b' }), ctx())).toEqual([]);
+    expect(moveOptions(soldier('a', { left: true, zone: null }), ctx())).toEqual([]);
   });
 
-  it('compares against the earliest living Focus Titan, else the last corpse', () => {
-    expect(comparisonLabel([titan('B'), titan('A')])).toBe('A');
-    expect(comparisonLabel([titan('A', { status: 'corpse' }), titan('B')])).toBe('B');
-    expect(comparisonLabel([titan('A', { status: 'corpse' }), titan('B', { status: 'corpse' })])).toBe('B');
-    expect(comparisonLabel([])).toBeNull();
-  });
-
-  it('leaves only from Distant toward every body, and returns never during a retreat', () => {
-    const ts = [titan('A'), titan('B', { status: 'corpse' })];
-    expect(leaveBlock(soldier('a', { positions: { A: 'distant', B: 'distant' } }), ts, false)).toBeNull();
-    expect(leaveBlock(soldier('a', { positions: { A: 'distant', B: 'in-reach' } }), ts, false)).toBe('notDistant');
-    expect(leaveBlock(soldier('a', { down: true }), ts, false)).toBe('down');
+  it('leaves from a free edge zone with no body in it, and returns never during a retreat (16-26)', () => {
+    const ts = [titan('A'), titan('B', { status: 'corpse', zone: 1 })];
+    expect(leaveBlock(soldier('a', { zone: 8 }), field, ts, false)).toBeNull();
+    expect(leaveBlock(soldier('a', { zone: 1 }), field, ts, false)).toBe('bodyInZone');
+    expect(leaveBlock(soldier('a', { zone: 1 }), field, ts, false, true)).toBeNull();
+    expect(leaveBlock(soldier('a', { zone: 7 }), field, [], false)).toBe('notEdge');
+    expect(leaveBlock(soldier('a', { zone: 7, attachment: { kind: 'on-body', body: 'A' } }), field, ts, false)).toBe('notFree');
+    expect(leaveBlock(soldier('a', { down: true }), field, ts, false)).toBe('down');
     expect(returnBlock(soldier('a', { left: true }), true)).toBe('retreat');
     expect(returnBlock(soldier('a', { left: true }), false)).toBeNull();
-    expect(letGoBlock(soldier('a', { positions: { A: 'on-body' } }), 'A', false)).toBeNull();
-    expect(letGoBlock(soldier('a', { positions: { A: 'in-reach' } }), 'A', false)).toBe('notClose');
+    expect(returnZones(field, ts)).not.toContain(1);
+    expect(letGoBlock(soldier('a', { attachment: { kind: 'on-body', body: 'A' } }), false)).toBeNull();
+    expect(letGoBlock(soldier('a'), false)).toBe('notClose');
     expect(nextLabel(['A', 'B'])).toBe('C');
   });
 });
@@ -397,7 +351,7 @@ describe('Attention (attention.yaml, evaluation)', () => {
     const field = (extra: Partial<Snapshot>): Snapshot => ({
       combat: 'C', mode: 'titan', step: 'play', round: 2, anchor: wooded, titans: [titan('A')], wings: {}, cards: { a: 3, b: 9, c: 1 }, titanCards: {}, swapped: [], proposal: null,
       retreat: false, wingsSet: true, wingsOpen: false, reassign: [], tactics: { held: [], used: [] }, cloaks: [],
-      anchors: 2, wrecks: 0, odmUsed: [], movesSpent: [],
+      field: null, leftItems: [], arrivals: {}, odmUsed: [], movesSpent: [],
       soldiers: [soldier('a', { positions: { A: 'blind-spot' } }), soldier('b', { positions: { A: 'in-reach' } }), soldier('c', { left: true, positions: {} })],
       ...extra,
     });
@@ -450,6 +404,21 @@ describe('Attention (attention.yaml, evaluation)', () => {
     expect(chooseEntry(entries, 'run-past', '', lame, 'distant').id).toBe('thrash');
     expect(chooseEntry(entries, 'grab', '', parts, 'distant').id).toBe('thrash');
     expect(chooseEntry(medium.behavior_table.entries, 'nope', '', partsOf(), 'distant').tier).toBe('thrash');
+  });
+
+  it('retargets over the fallback’s own requirement instead of testing it against the unchanged holder (completed after round 3 review 1, M1)', () => {
+    const large = tables.titans.find((t) => t.id === 'standard-large')!;
+    const entries = large.behavior_table.entries;
+    const parts = large.body_parts.map((b) => ({ ...b, state: 'intact' as const, progress: 0 }));
+    // bite (on-body) falls back to crush (in-reach); a holder at Blind Spot meets neither.
+    // With no retarget callback the fallback is unreachable, as before decision batch 13, 13-9.
+    expect(chooseEntry(entries, 'bite', '', parts, 'blind-spot').id).toBe('thrash');
+    // A retarget that finds nobody still leaves Thrash.
+    expect(chooseEntry(entries, 'bite', '', parts, 'blind-spot', () => null).id).toBe('thrash');
+    // A retarget that finds someone at In Reach reaches the fallback.
+    expect(chooseEntry(entries, 'bite', '', parts, 'blind-spot', () => 'in-reach').id).toBe('crush');
+    // The fallback is still Thrash when it is the previous behavior, whatever the retarget finds.
+    expect(chooseEntry(entries, 'bite', 'crush', parts, 'blind-spot', () => 'in-reach').id).toBe('thrash');
   });
 
   it('targets the holder, or everyone at the holder’s Position who is not Grabbed', () => {
@@ -539,16 +508,20 @@ describe('Attention (attention.yaml, evaluation)', () => {
 describe('Frenzy (behavior-procedure.yaml, roll; round 3, decision 12)', () => {
   const entries = medium.behavior_table.entries;
 
-  it('rises 1 at each round end and stops at the cap of 3', () => {
-    expect(FRENZY_CAP).toBe(3);
-    expect(frenzyAfterRound(0)).toBe(1);
-    expect(frenzyAfterRound(1)).toBe(2);
-    expect(frenzyAfterRound(2)).toBe(3);
-    expect(frenzyAfterRound(3)).toBe(3);
-    expect(frenzyAfterRound(FRENZY_CAP)).toBe(FRENZY_CAP);
-    // A Focus Titan enters at 0, so four round ends walk it up and hold it there.
+  it('rises 1 at the end of every third round and stops at the cap of 3', () => {
+    // The rate and cap are the data's (titan-format.yaml, frenzy; review m1).
+    expect(E.frenzy).toEqual(FRENZY_DEFAULTS);
+    expect(frenzyRule()).toEqual({ rate: tables.titanFormat.frenzy.rate, cap: tables.titanFormat.frenzy.cap });
+    expect(frenzyAfterRound(0, 1)).toBe(0);
+    expect(frenzyAfterRound(0, 2)).toBe(0);
+    expect(frenzyAfterRound(0, 3)).toBe(1);
+    expect(frenzyAfterRound(1, 4)).toBe(1);
+    expect(frenzyAfterRound(1, 6)).toBe(2);
+    expect(frenzyAfterRound(2, 9)).toBe(3);
+    expect(frenzyAfterRound(3, 12)).toBe(3);
+    // A Focus Titan enters at 0, so nine rounds from 0 give 3.
     let f = 0;
-    for (let round = 0; round < 6; round++) f = frenzyAfterRound(f);
+    for (let round = 1; round <= 9; round++) f = frenzyAfterRound(f, round);
     expect(f).toBe(3);
   });
 
@@ -560,7 +533,7 @@ describe('Frenzy (behavior-procedure.yaml, roll; round 3, decision 12)', () => {
     // Above the top of the table (6 on the Standard Medium) reads as the top.
     expect(behaviorResult(5, 2, entries)).toBe(6);
     expect(behaviorResult(6, 3, entries)).toBe(6);
-    expect(behaviorResult(6, FRENZY_CAP, sprinter.behavior_table.entries)).toBe(6);
+    expect(behaviorResult(6, frenzyRule().cap, sprinter.behavior_table.entries)).toBe(6);
     // Thrash claims no result, so it never becomes the top the total clamps to.
     expect(Math.max(...entries.flatMap((e: any) => e.results))).toBe(6);
   });
@@ -574,20 +547,20 @@ describe('Frenzy (behavior-procedure.yaml, roll; round 3, decision 12)', () => {
 // ------------------------------------------------------------------ the Grab
 
 describe('the Grab (grab.yaml)', () => {
-  it('holds with the first arm that is not Broken, clears its count, and places the target On Body with the close rule', () => {
+  it('holds with the first arm that is not Broken, clears its count, and makes the target grabbed in its zone (16-23)', () => {
     const parts = partsOf({ 'left-arm': 'broken' }).map((p) => (p.id === 'right-arm' ? { ...p, progress: 1 } : p));
-    const t = soldier('o', { positions: { A: 'blind-spot', B: 'in-reach' }, airborne: true, mounted: true, carrying: 'x' });
-    const land = grabLands(t, titan('B'), parts, ['A', 'B'])!;
+    const t = soldier('o', { zone: 7, attachment: { kind: 'blind-spot', body: 'A' }, airborne: true, mounted: true, carrying: 'x' });
+    const land = grabLands(t, titan('B', { zone: 7 }), parts)!;
     expect(holdingArm(parts)?.id).toBe('right-arm');
     expect(land.grab).toEqual({ soldier: 'o', counted: 0, lifted: false, arm: 'right-arm' });
-    expect(land.positions).toEqual({ A: 'in-reach', B: 'on-body' });
+    expect(land.placement).toEqual({ zone: 7, attachment: { kind: 'grabbed', body: 'B' } });
     expect(land.parts.find((p) => p.id === 'right-arm')!.progress).toBe(0);
     expect(land).toMatchObject({ clearAirborne: true, dismount: true, stopCarrying: 'x', crushOnly: false });
   });
 
   it('lands only the crush on a Pinned target, and nothing without an arm', () => {
-    expect(grabLands(soldier('p', { pinned: { body: 'A', bodyPin: false } }), titan('A'), partsOf(), ['A'])!.crushOnly).toBe(true);
-    expect(grabLands(soldier('p'), titan('A'), partsOf({ 'left-arm': 'broken', 'right-arm': 'broken' }), ['A'])).toBeNull();
+    expect(grabLands(soldier('p', { pinned: { body: 'A', bodyPin: false } }), titan('A'), partsOf())!.crushOnly).toBe(true);
+    expect(grabLands(soldier('p'), titan('A'), partsOf({ 'left-arm': 'broken', 'right-arm': 'broken' }))).toBeNull();
   });
 
   it('lifts after the first counted turn and devours after the second', () => {
@@ -599,8 +572,8 @@ describe('the Grab (grab.yaml)', () => {
 
   it('frees to in-reach, with a fall once lifted, and no Position when the Titan is dead', () => {
     const g = { soldier: 'o', counted: 1, lifted: true, arm: 'left-arm' };
-    expect(release(g, true)).toEqual({ position: 'in-reach', falls: true });
-    expect(release({ ...g, lifted: false }, false)).toEqual({ position: undefined, falls: false });
+    expect(release(g, true, 7)).toEqual({ position: 'in-reach', falls: true, placement: { zone: 7, attachment: { kind: 'ground', body: null } } });
+    expect(release({ ...g, lifted: false }, false)).toMatchObject({ position: undefined, falls: false });
     expect(breakFreeNeeds(g, E.breakFree)).toEqual({ needs: 2, penalty: 2 });
     expect(breakFreeNeeds({ ...g, lifted: false }, E.breakFree)).toEqual({ needs: 2, penalty: 0 });
     expect(holdingArmReach(g, E.holdingArmReach, false)).toEqual(['on-body', 'blind-spot']);
@@ -918,13 +891,10 @@ describe('gaining a Critical Injury (critical-injuries.yaml, gaining)', () => {
 // ------------------------------------------------------------------ Flight, Momentum, Anchors (decision batch 10)
 
 describe('Flight (positions.yaml, moves, flight)', () => {
-  const ctx = (r: AnchorRating = wooded, momentum = 0): MoveContext => ({ rating: r, titan: titan('A'), grabbed: false, retreat: false, momentum });
-
-  it('makes its step whatever the roll gives: no successes still moves, gains nothing, and comes in loud', () => {
-    const o = Object.fromEntries(moveOptions(soldier('a'), ctx()).map((x) => [x.to, x]));
-    // The step row itself never asks for successes any more: the ODM way is offered outright.
-    expect(o['in-reach'].ways.find((w) => w.kind === 'odm')).toEqual({ kind: 'odm', steps: 1, carry: 0, charge: false });
-    expect(o['in-reach'].block).toBeNull();
+  it('makes its move whatever the roll gives: no successes still moves, gains nothing, and comes in loud', () => {
+    const o = moveOptions(soldier('a'), { field, titans: [titan('A')], rating: (id) => rating(id), grabbed: false, momentum: 0 });
+    // The step itself never asks for successes: a one-step Flight is offered outright.
+    expect(o.find((x) => x.kind === 'odm' && x.to.zone === 7)).toMatchObject({ fly: true, carries: 0, momentum: 0 });
     const flown = flightResult(0, 0, 2);
     expect(flown).toEqual({ momentum: 0, gained: 0, loud: true });
   });
@@ -954,22 +924,15 @@ describe('Flight (positions.yaml, moves, flight)', () => {
     expect(changeEffects('rule', 'mounted').flight).toBe(false);
   });
 
-  it('still offers the retreat’s forced target as an ODM way, so the retreat move is rolled', () => {
-    const s = soldier('a', { positions: { A: 'on-body' } });
-    const forced = Object.fromEntries(moveOptions(s, { ...ctx(), retreat: true, forced: ['in-reach'] }).map((x) => [x.to, x]));
-    expect(forced['in-reach'].ways.map((w) => w.kind)).toEqual(['odm']);
-    expect(forced['blind-spot'].block).toBe('forced');
-  });
 });
 
 describe('Momentum (anchor-ratings.yaml, momentum)', () => {
-  it('is capped by the Anchors left, and the excess is lost at once when Anchors fall', () => {
+  it('is capped by the anchors of the soldier’s zone, and the excess is lost at once (16-4)', () => {
     expect(momentumCap(rating('giant-forest').anchors)).toBe(3);
     expect(momentumCap(0)).toBe(0);
-    const squad = [soldier('a', { momentum: 3 }), soldier('b', { momentum: 1 }), soldier('c', { momentum: 0 })];
-    expect(trimToCap(squad, 1)).toEqual({ a: 1 });
-    expect(trimToCap(squad, 0)).toEqual({ a: 0, b: 0 });
-    expect(trimToCap(squad, 3)).toEqual({});
+    const f = generateField('standard', 'wooded', { 1: 'sparse', 2: 'open', 3: 'urban' }, () => 3);
+    const squad = [soldier('a', { momentum: 3, zone: 1 }), soldier('b', { momentum: 1, zone: 2 }), soldier('c', { momentum: 3, zone: 3 }), soldier('d', { momentum: 2, zone: null })];
+    expect(trimToCap(squad, f)).toEqual({ a: 1, b: 0, d: 0 });
   });
 
   it('is lost entirely at the round’s momentum step by anyone who made no ODM move', () => {
@@ -982,18 +945,11 @@ describe('Momentum (anchor-ratings.yaml, momentum)', () => {
     expect(momentumEnd([soldier('a', { momentum: 2 })], ['a'], () => true)).toEqual({ a: 0 });
   });
 
-  it('spends Carry on the extra steps, free for a Flight’s first step in a Giant Forest', () => {
-    expect(carryCost(wooded, 1, true)).toBe(1);
-    expect(carryCost(wooded, 2, true)).toBe(2);
-    expect(carryCost(rating('giant-forest'), 1, true)).toBe(0);
-    expect(carryCost(rating('giant-forest'), 2, true)).toBe(1);
-    // The free step is a Flight's; a move on foot or mounted pays for every Carry.
-    expect(carryCost(rating('giant-forest'), 1, false)).toBe(1);
-  });
-
-  it('names the spends the data lists, each costing 1', () => {
+  it('names the spends the data lists, each costing 1 but Carry, which the zones price (16-13)', () => {
     expect(E.momentum.spends.map((x) => x.id)).toEqual([...MOMENTUM_SPENDS]);
-    expect(E.momentum.spends.every((x) => x.cost === SPEND_COST)).toBe(true);
+    expect(Object.fromEntries(E.momentum.spends.filter((x) => x.id !== 'carry').map((x) => [x.id, x.cost]))).toEqual(SPEND_DEFAULTS);
+    expect(spendCost('quiet')).toBe(SPEND_DEFAULTS.quiet);
+    expect(E.momentum.spends.find((x) => x.id === 'carry')!.cost).toBeNull();
   });
 
   it('takes a soldier off the round’s Gas Rolls when they buy a clean line', () => {
@@ -1003,32 +959,8 @@ describe('Momentum (anchor-ratings.yaml, momentum)', () => {
 });
 
 describe('Anchors and the Terrain Traits (anchor-ratings.yaml, anchors and ratings)', () => {
-  it('starts from the Anchor Rating, one row each', () => {
+  it('gives each rating its anchors, one row each', () => {
     expect(Object.fromEntries(E.ratings.map((r) => [r.id, r.anchors]))).toEqual({ open: 0, sparse: 1, wooded: 2, urban: 3, 'giant-forest': 3 });
-    expect(startingAnchors(rating('urban'))).toEqual({ anchors: 3, wrecks: 0 });
-    expect(startingAnchors(null)).toEqual({ anchors: 0, wrecks: 0 });
-  });
-
-  it('loses 1 to a wreck and never falls below 0', () => {
-    let state = startingAnchors(wooded);
-    state = wreckAnchor(state, wooded);
-    expect(state).toMatchObject({ anchors: 1, wrecks: 1, ignored: false });
-    state = wreckAnchor(state, wooded);
-    expect(state).toMatchObject({ anchors: 0, wrecks: 2 });
-    state = wreckAnchor(state, wooded);
-    expect(state).toMatchObject({ anchors: 0, wrecks: 3, ignored: false });
-  });
-
-  it('keeps the first Anchor wrecked at the Sparse rating, and only the first', () => {
-    const sparse = rating('sparse');
-    expect(sparse.trait).toBe('first-wreck-ignored');
-    let state = startingAnchors(sparse);
-    expect(state.anchors).toBe(1);
-    const first = wreckAnchor(state, sparse);
-    expect(first).toEqual({ anchors: 1, wrecks: 1, ignored: true });
-    state = first;
-    const second = wreckAnchor(state, sparse);
-    expect(second).toEqual({ anchors: 0, wrecks: 2, ignored: false });
   });
 
   it('gives each rating its Terrain Trait, and the traits the code applies', () => {
@@ -1037,7 +969,7 @@ describe('Anchors and the Terrain Traits (anchor-ratings.yaml, anchors and ratin
       sparse: 'first-wreck-ignored',
       wooded: 'none',
       urban: 'blind-spot-anchored',
-      'giant-forest': 'first-carry-free',
+      'giant-forest': 'fall-raised',
     });
     // Open: a mounted soldier's Break Attention gains 1 Bonus Die.
     expect(terrainBreakAttentionDice(rating('open'), true)).toBe(1);
@@ -1058,14 +990,19 @@ describe('Anchors and the Terrain Traits (anchor-ratings.yaml, anchors and ratin
 describe('the mounted charge (anchor-ratings.yaml, mounted_charge)', () => {
   const rider = (extra: Partial<SoldierState> = {}) => soldier('r', { mounted: true, ...extra });
 
-  it('is open to a mounted soldier making the Distant to In Reach step, in either direction', () => {
-    expect(chargeBlock(rider(), wooded, 'distant', false)).toBeNull();
-    expect(chargeBlock(rider(), wooded, 'in-reach', false)).toBeNull();
-    expect(chargeBlock(rider(), wooded, 'on-body', false)).toBe('chargeReach');
-    expect(chargeBlock(soldier('a'), wooded, 'distant', false)).toBe('notMounted');
-    expect(chargeBlock(rider(), wooded, 'distant', true)).toBe('grabbed');
-    // Urban has no mounted row at all.
-    expect(chargeBlock(rider(), rating('urban'), 'distant', false)).toBe('notOneStep');
+  it('names every Focus Titan in a zone the ride enters or leaves, and never enters Urban (16-12, 16-15)', () => {
+    const f = generateField('standard', 'wooded', { 5: 'urban' }, () => 3);
+    const opts = moveOptions(rider({ odmHad: false }), { field: f, titans: [titan('A')], rating: (id) => rating(id), grabbed: false });
+    expect(opts.find((o) => o.to.zone === 7)!.charge).toEqual(['A']);
+    expect(opts.find((o) => o.to.zone === 10 && o.steps.length === 1)!.charge).toEqual([]);
+    expect(opts.some((o) => o.kind === 'mounted' && o.steps.some((x) => x.zone === 5))).toBe(false);
+    // A rider may dismount first and walk into the Urban zone (horses.yaml, within_a_move; review M7).
+    expect(opts.find((o) => o.kind === 'onFoot' && o.to.zone === 5)).toMatchObject({ dismount: true });
+    // A charge is offered, never chosen for the rider (review M5).
+    const into7 = opts.find((o) => o.kind === 'mounted' && o.to.zone === 7)!;
+    expect(moveFlags(into7, false)).toEqual([]);
+    expect(moveFlags({ ...into7, chargeOn: 'A' }, false)).toEqual(['A']);
+    expect(moveFlags({ ...into7, chargeOn: 'Z' }, false)).toEqual([]);
   });
 
   it('says when Momentum may be spent at all (momentum, spends, when)', () => {
@@ -1076,11 +1013,6 @@ describe('the mounted charge (anchor-ratings.yaml, mounted_charge)', () => {
     expect(spendBlock(soldier('a', { momentum: 2, left: true }), 'brace', false)).toBe('left');
   });
 
-  it('may make that step twice at the Open rating only', () => {
-    expect(chargeDoubleStep(rating('open'))).toBe(true);
-    expect(chargeDoubleStep(wooded)).toBe(false);
-    expect(chargeDoubleStep(rating('giant-forest'))).toBe(false);
-  });
 });
 
 describe('Swap Blade Set (blade-sets.yaml, swap; decision batch 10)', () => {
@@ -1112,7 +1044,12 @@ describe('tracker requests (the GM proxy guard)', () => {
     step: 'swap',
     round: 2,
     anchor: wooded,
-    soldiers: [soldier('a', { positions: { A: 'in-reach' } }), soldier('b', { positions: { A: 'on-body' } }), soldier('c', { positions: { A: 'distant' } }), soldier('m', { pc: false, positions: { A: 'in-reach' } })],
+    soldiers: [
+      soldier('a', { zone: 7, positions: { A: 'in-reach' } }),
+      soldier('b', { zone: 7, attachment: { kind: 'on-body', body: 'A' }, positions: { A: 'on-body' } }),
+      soldier('c', { zone: 1, positions: { A: 'distant' } }),
+      soldier('m', { zone: 7, pc: false, positions: { A: 'in-reach' } }),
+    ],
     titans: [titan('A')],
     wings: {},
     cards: { a: 3, b: 7, c: 11, m: 15 },
@@ -1125,8 +1062,9 @@ describe('tracker requests (the GM proxy guard)', () => {
     reassign: [],
     tactics: { held: ['fall-back'], used: [] },
     cloaks: [],
-    anchors: 2,
-    wrecks: 0,
+    field,
+    leftItems: [],
+    arrivals: {},
     odmUsed: [],
     movesSpent: [],
     ...extra,
@@ -1252,10 +1190,10 @@ describe('tracker requests (the GM proxy guard)', () => {
 describe('a Focus Titan dies (titan-harm.yaml, titan_death)', () => {
   const grab = { soldier: 'g', counted: 1, lifted: true, arm: 'left-arm' };
   const soldiers = [
-    soldier('a', { positions: { A: 'blind-spot', B: 'distant' } }),
-    soldier('b', { positions: { A: 'on-body', B: 'in-reach' } }),
+    soldier('a', { zone: 7, attachment: { kind: 'blind-spot', body: 'A' }, airborne: true, positions: { A: 'blind-spot', B: 'distant' } }),
+    soldier('b', { zone: 7, attachment: { kind: 'on-body', body: 'A' }, positions: { A: 'on-body', B: 'in-reach' } }),
     soldier('c', { positions: { A: 'distant', B: 'distant' } }),
-    soldier('g', { positions: { A: 'on-body', B: 'distant' } }),
+    soldier('g', { zone: 7, attachment: { kind: 'grabbed', body: 'A' }, positions: { A: 'on-body', B: 'distant' } }),
     soldier('x', { positions: { B: 'distant' } }),
   ];
   const titans = [titan('A', { grab }), titan('B')];
@@ -1275,18 +1213,20 @@ describe('a Focus Titan dies (titan-harm.yaml, titan_death)', () => {
     expect(planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: null, grounded: false })!.clearCards).toEqual(['A1', 'A2', 'A3']);
   });
 
-  it('turns each Position into a Position relative to the corpse', () => {
-    expect(plan.positions.a).toEqual({ A: 'in-reach', B: 'distant' });
-    expect(plan.positions.b).toEqual({ A: 'in-reach', B: 'in-reach' });
-    expect(plan.positions.c).toEqual({ A: 'distant', B: 'distant' });
-    expect(plan.positions.x).toEqual({ B: 'distant' });
+  it('ends every attachment naming it: a fall lands them on the ground, else the detach rule (16-24)', () => {
+    // a is airborne at the Blind Spot: they swing clear of the standing body and end anchored (review C1).
+    expect(plan.placements.a).toEqual({ zone: 7, attachment: { kind: 'anchored', body: null } });
+    expect(plan.placements.b).toEqual({ zone: 7, attachment: { kind: 'ground', body: null } });
+    expect(plan.placements.c).toBeUndefined();
+    const grounded = planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 1, grounded: true })!;
+    expect(grounded.placements.a).toEqual({ zone: 7, attachment: { kind: 'anchored', body: null } });
   });
 
   it('frees the Grabbed soldier into the steam and the fall', () => {
     expect(plan.freed).toBe('g');
-    expect(plan.positions.g).toEqual({ A: 'in-reach', B: 'distant' });
+    expect(plan.placements.g).toEqual({ zone: 7, attachment: { kind: 'ground', body: null } });
     expect(plan.steam).toEqual(['a', 'b', 'g']);
-    expect(plan.fall).toEqual(['a', 'b', 'g']);
+    expect(plan.fall).toEqual(['b', 'g']);
     expect(planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 1, grounded: true })!.fall).toEqual([]);
     expect(plan.relief).toEqual(['a', 'b', 'c', 'g', 'x']);
   });

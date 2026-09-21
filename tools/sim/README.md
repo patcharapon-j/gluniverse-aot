@@ -30,6 +30,9 @@ Options:
 
 - `--scale 0.05` runs 5% of every case's trials into `results/results-scale.json` and `results/report-scale.md`,
   and leaves `results.json` and the report alone. Use it as a smoke test.
+- `--no-recheck` skips the re-check pass. Use it for the first run after a rule change: every committed probe figure
+  is then stale, so nearly every case is flagged and re-run at five times its trials for nothing. Re-commit the probe
+  figures (`--commit-probe-figures`) after that run so the next run's re-checks mean something again.
 - `--report` re-renders the report from `results/results.json` alone. It refuses, and lists the files, if any
   file of the rules snapshot differs from the one the results record.
 - `--report --stale-ok` renders anyway and lists those files at the top of the report. Every figure is still the
@@ -75,10 +78,34 @@ commit, so the hashes identify the rules the figures come from.
   Repair, day-limit Death Rolls, Health lost to damage restored, healing time), then promotion for the day's
   deaths, the new characters, and the interim issue.
 
+## Decision batch 16: the field
+
+- **Zones** (ADR-0029; `space.py`). A fight generates its field from the case's `terrain` (the field rating) with the
+  terrain mix (`engagement-setup.yaml`, `zone_terrain`, OQ-202), drawn first from the fight's own stream. The Titan
+  stands in the centre zone and the Squad in the start zone. A soldier holds a zone and an attachment; `Soldier.pos`
+  derives the Position relative to the Focus Titan and a write of one goes through `engine.Fight.place_at`.
+- **Moves.** `engine.Fight.go` makes one move toward a Position; `policy.pick_move` chooses the kind and route (reach
+  the Position, else close on the Titan's zone; no crossing; least Momentum; fewest Carries). A Flight is rolled for
+  fly, never Pushed, and its route is chosen after the roll. Momentum is capped by the zone and spent on Carry,
+  quiet (`policy.wants_quiet`), and bite (`policy.bite`); brace, clean line, and the mounted charge are never used.
+- **Terrain Traits by zone** (16-5): Open's Bonus Die on a mounted Break Attention and Urban's roof (a soldier at a
+  Blind Spot in an Urban zone is not airborne, so a Jam does not drop them) read the soldier's zone
+  (`rules.R.mounted_ba_dice`, `roof_ratings`); Sparse's grace is `space.wreck`'s, Giant Forest's raised fall
+  `engine.Fight.fall_band`'s.
+- **The retreat's option 3** is a zone step only: in the comrade's zone no step lowers the zones between them.
+- **The Stride** runs in `engine.Fight.titan_card` between the attention and choose steps (`engine.Fight.stride`).
+- **Provisional values** (OQ-200: `carry_limit`, `mounted_pace`; OQ-202: the terrain mix) are read from `data/` only
+  (`rules.R._zones`); a case may override them, and the `zones/` rows of `cases.py` (seed base 28000) do.
+- **Tests.** `uv run --with pyyaml --with pytest python -m pytest tools/sim/test_space.py` runs the shared cases of
+  `IMPLEMENTATION-PLAN-E.md`, section 5.5, on a hand-built stub, checks `rules.R` against the contract, and plays a few
+  fights in process. It runs no case.
+
 ## Files
 
 | File | Holds |
 | --- | --- |
+| `space.py` | The field: zones, distance, edges, derived Positions, moves and Flights over zones, Carry, the Stride's route, wrecks, the entry zone, field generation. Pure functions over `R`. |
+| `test_space.py` | Its tests (section 5.5's shared cases) and an in-process engine smoke. |
 | `rules.py` | Every value the engine reads, loaded from `data/` YAML into one `R` object. Text rules the YAML states only in prose are parsed with patterns that fail loudly if the wording changes; there are no fallback values. |
 | `dice.py` | Soldiers, the reference builds and templates, attribute rolls with Push, Covering, Gear and Stress Dice, Stress Responses, Critical Injuries, Scars and their rows, fall damage, Fear Rolls, and Death Rolls. |
 | `engine.py` | The rules: a Titan and its Behavior Table procedure, the round with the Wings step, the deal, and initiative swaps, the Attention Ladder, Read and Call It, Positions and steps, carrying, mounting, ODM wear, Jams and gas, horses, Break Attention and every decoy, the Grab with Help on Break Free and Pry Loose, strikes, Regeneration, Treat Injury and Field Repair, the start-of-fight Fear Rolls, every engagement-end step, and round-time counters. It never chooses; it calls `policy.py`. |
@@ -103,6 +130,7 @@ they leave the fight's own draws unchanged.
 | Chapter 6 full fights | 20000 |
 | Chapter 6 cases the probes left unrun, and full-fight reports | 21000 |
 | Sensitivity rows for rules the simulator adds | 23000 |
+| The field's levers (decision batch 16, `zones/`) | 28000 |
 | Abnormal bar, cutters first / strikers first | 30000 / 40000 |
 | Grab-alone bar variant, cutters first / strikers first | 50000 / 55000 |
 | Lone fights | 60000 |

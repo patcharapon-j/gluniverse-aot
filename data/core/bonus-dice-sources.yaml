@@ -30,8 +30,9 @@ sources:
     condition_in_titan_engagement: >-
       The helper has an unspent action this round (a turn spent in advance by a
       Reaction or a result begins its round with its move and action spent, and an
-      action a result spends in advance begins its round spent) and is at the same
-      Position as the roller or one Position step away.
+      action a result spends in advance begins its round spent) and is in the roller's
+      zone or an adjacent zone (data/engagement/zones.yaml, between_soldiers; decision
+      batch 16, 16-11).
     condition_outside_titan_engagement: >-
       On a roll a rule calls for, that rule allows Help and states who qualifies to Help
       and what Help spends. If that rule says nothing about Help, the roll cannot be
@@ -149,7 +150,7 @@ sources:
     condition: >-
       In a Titan Engagement, the soldier spends Momentum on Bite or on Brace
       (data/engagement/anchor-ratings.yaml, momentum, spends). Bite gives its dice to a strike or a
-      Break Attention the soldier takes this turn against the Focus Titan their Flight named; Brace
+      Break Attention the soldier takes this turn against a Focus Titan in the zone their Flight ended in; Brace
       gives them to the soldier's next dodge this round. Declared with every other Bonus Dice
       source, before the roll.
     rules: [05-titan-engagement]
@@ -159,9 +160,9 @@ sources:
     name: Terrain Trait
     dice: as the Anchor Rating's Terrain Trait gives
     condition: >-
-      The Titan Engagement's Anchor Rating has a Terrain Trait that gives Bonus Dice
+      The Anchor Rating of the zone the soldier is in has a Terrain Trait that gives Bonus Dice
       (data/engagement/anchor-ratings.yaml, ratings, terrain_trait). Only the Open rating's does:
-      a mounted soldier's Break Attention gains 1.
+      a mounted soldier's Break Attention gains 1 in an Open zone.
     rules: [05-titan-engagement]
     decided: [OQ-182]
 

@@ -70,7 +70,7 @@ const arcs = steps.filter((s) => s.span > 1).sort((x, y) => x.from - y.from);
   )}
 
   <p class="foot">
-    Drawn at <b>{drawn.name}</b>, which holds {drawn.anchors} Anchors. Every Anchor Rating has its own step rows and its own Anchors, in the tables below. Every ODM move along one of these is a Flight, and a move that crosses two steps spends Momentum on Carry. A Titan grounded by a Broken leg lets every step joining In Reach, On Body, and Blind Spot be made on foot, and none mounted.
+    Drawn at <b>{drawn.name}</b>, which holds {drawn.anchors} Anchors. Every Anchor Rating has its own step rows and its own Anchors, in the tables below. Every ODM move along one of these is a Flight, and every Carry past the first step pays that step’s cost. A Titan grounded by a Broken leg lets every step joining In Reach, On Body, and Blind Spot be made on foot, and none mounted.
   </p>
 
   <figcaption class="titleblock" id="fig-positions-caption"><span>{fig}</span><span>Positions and the moves between them</span></figcaption>

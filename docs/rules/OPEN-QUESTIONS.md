@@ -1905,6 +1905,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 3*)
 - **Decision:** (a) with (d): Medium Nape Depth stays 4, and ADR-0014's bound becomes "about 10%", 8% to 14% at the Rookie's fight-start Stress of 1, with 13.1% accepted; every lever was measured and rejected (Nape Depth 5, a 1- or 2-die penalty on the lone cut, no Push). Revised by batch 3b: the lone-line figures are replaced by the full lone-fight rows under the rule as revised (76.0% of lone fights reach a usable strike within 12 rounds, most often in round 4; the cut succeeds 14.2% in the fight), and the band is read on a fresh cut directly after Break Attention at fight-start Stress 1, with the in-fight cut reported beside it.
 - **ADR:** ADR-0014 (body and `## Amended`) and again in batch 3b (the band's measurement point)
+- **Revised by the round 3 retune (R4):** the band reads 8% to 16% on the fresh cut. Decision batch 11's Push re-rolls the blade's Gear Dice, which moved the fresh cut from 13.0% to 15.0% (12.9% with the re-roll off, nothing else changed) and the Levi-grade cut from 47.2% to 52.2%; Nape Depth 5 reads 4.4% and 33.7%, and the batch 11 package is the owner's, taken whole. Same reading as batch 3's, same kind of cause.
 
 ### OQ-80: The Behavior Table procedure
 
@@ -2321,6 +2322,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 4*)
 - **Decision:** Keep (a): the three standard tables as revised, with "any state" read as every previous behavior combined with every count of Broken parts; Thrash's share of resolved cards is an accepted, stated consequence of the fallback rule; any change to the Large table re-runs the two-Titan Jam cell.
 - **ADR:** none
+- **Revised by the round 3 retune (R5):** the Large's Bite reaches In Reach; the design note is rewritten.
 
 ### OQ-102: The Sprinting Abnormal's Attention Ladder and Behavior Table
 
@@ -2371,6 +2373,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 4*)
 - **Decision:** (b)'s ladder and table, with two Chapter 5 changes (4-3): a tie the card step cannot break, at the start of a Titan Engagement or at an end step, leaves Attention held by nothing until the Titan's next card, so the Squad sheet's order chooses nothing (the Opus conformance review's Critical 1: the committed probe's cutters-first sheet chose the quarry, and the strikers first or a random order broke the ceiling by 5 to 16 standard errors); and current-holder is met only by a holder who is not at Distant, so a quarry who rides clear is dropped and cannot be parked (Major 2). Under the rule the sheet order does nothing (0.126 deaths at the reference start either way), and the values as committed fail the ceiling, so OQ-103 changes. Option (f) stays rejected (tools/probes/batch-4/runner_b4.py). Revised by batch 4b: the ladder's first rung is hooked-into-its-body, as on every ladder (a rule of the ladder format, ADR-0010), so it reads [hooked-into-its-body, loudest-or-brightest, current-holder, nearest]; a rider shouting from Distant no longer pays (4b-1).
 - **ADR:** ADR-0003 and ADR-0010 (`## Amended`, batch 4)
+- **Revised by the round 3 retune (R7):** the rows that measure the ladder's worth, option (c)'s standard ladder and the earlier ladder, are reported beside the bar and not judged by it. On the confirming run the standard-ladder row sits at the Critical Injuries floor (0.822 against 0.837 pooled, cutters first) and shows that the ladder is not what keeps retargeting off the runner: with the standard ladder it is retargeted on 11.4% of cards against 14.4% with its own.
 
 ### OQ-103: The Sprinting Abnormal's values, and the bar an untuned Abnormal is reported against
 
@@ -2427,6 +2430,9 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Decision:** (a)'s bar unchanged, read under batch 4's tie-break in both sheet orders; Medium class, Tempo 2, Nape Depth 3, Regeneration 3, Toughness 2 stand; the Grab and Headlong Lunge move to Severity 2, so both kill entries are one below the medium kill tier's Severity 3, Pitch Headlong one below the medium control tier's Severity 2, and Trample at that control Severity (4-4; 4b-7). At 120,000 fights a row, in both sheet orders, the ceiling holds with helpers (0.0205 and 0.0197 deaths against the Large twin's 0.0205 and 0.0216), the screen (0.0104 and 0.0102 against 0.0104 and 0.0105), and the screen with the pair (0.0078 and 0.0081 against 0.0086 and 0.0082), and the floor and the winnable limit hold by 20 standard errors or more; the Grab alone at Severity 2 fails one seed in the pair row (+2.1). The reference start moves to median round 2, 69.7% by round 3, 0.85 Critical Injuries, 0.078 deaths. Every Abnormal figure re-runs. Revised by batch 4b: the bar's limits are unchanged, and a row past 2 standard errors on one seed is re-run on a second seed and fails only on the pooled figure; the decided helpers ceiling sits at the Large twin's rate, and the Grab alone at Severity 2 sits above it, pooled +3.5 standard errors (4b-4). Under the swapped ladder (4b-1) the bar holds in both orders: helpers 0.0206 and 0.0194 deaths against 0.0207 and 0.0215, the screen 0.0101 and 0.0096 against 0.0108 and 0.0101, the screen with the pair 0.0078 and 0.0080 against 0.0088 and 0.0092.
 - **ADR:** ADR-0014 (`## Amended`, batch 4)
 - **Revised by batch 5:** The bar's winnable limit reads "no kill" for "no kill within 12 rounds", the share of fights that end with the Focus Titan alive under the retreat clock (decision batch 5, 5-10; OQ-126). Re-measured under the clock at 120,000 fights a row in both sheet orders, the bar holds every limit in every row, the helpers ceiling at −10.5 and −11.8 standard errors (`tools/probes/batch-5/retreat_b5_bar.out`).
+- **Revised by the round 3 retune (R5):** the bar is judged on the confirming run with the Large's Bite reaching In Reach; on the retune's first run the Large twin sat below the Medium reference at every Frenzy setting and every bar failure was that.
+- **Revised by the round 3 retune (R7), after the confirming run:** the bar holds every limit in every judged row and both orders but the Critical Injuries floor in the screen with Hook and Cut and Hamstring Line, Missed in both orders and logged as OQ-199; the floor stands as written and no value moves before the playtest. The two ladder rows, the standard ladder instead of its own and its earlier ladder, are reported beside the bar and not judged by it, because the bar holds the published creature's values and its ladder is one of them.
+- **Revised by the zone retune (Z3 and Z5), after its confirming run:** with zones and the Stride, Frenzy at every third round, and Pitch Headlong without its wreck, the bar holds every limit in every judged row and both orders, the Critical Injuries floor in the screen with Hook and Cut and Hamstring Line included, which closes OQ-199 (`docs/reviews/simulator-report.md`, sections 5.1 and 5.2; rules hash `54e147e73e8d0852`).
 
 ### OQ-104: When the Abnormal enters Phase 1 play
 
@@ -2964,6 +2970,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
   - **The order guard.** The retreat order guard now checks what follows an action taken first. That action must be one of option 4's actions, and the only move after it is the stay with the comrade it was taken for. A lift must be followed by the move out. A policy that treats a comrade and then walks on now raises, instead of reporting a rescue the order forbids.
   - **The miss in the files.** The tuning files name the band's reading (5-19), and `data/titans/tuning.yaml`'s Medium verdict reads Missed. The report's missed-result map and OQ-128's gap list are synchronized with this register, and the rerun renders the three Medium deaths rows Missed (OQ-132).
 - **Decided anew by batch 8 (8-31), after the full rerun:** the band reads "at most 0.08 deaths per fight through the end of the Titan Engagement", with deaths during the fight reported beside it, recorded as the owner's chosen lethality for the first playtest (`OWNER-DECISIONS.md`, *After the full rerun*). The rerun under the round 1 package read 0.0754 (standard error 0.0034) at the reference start and 0.0687 and 0.0693 (standard error 0.0010) in the bar's two orders, Missed against 0.06 and Met against 0.08; during the fight, 0.0663, 0.0606, and 0.0614. No option (b) to (d) and no lever of 8-14 is taken. The first-Titan-Engagement row (0.073 to 0.095 through the end) is a sensitivity row no target reads. OQ-140 still re-sets the band after the playtest.
+- **Decided anew by the round 3 retune (R2):** the band reads "at most 0.15 deaths per fight through the end of the Titan Engagement", with deaths during the fight reported beside it. Retargeting and Frenzy (decision batch 13) measure 0.137 at the reference start at Frenzy's halved rate, 0.070 with Frenzy off, and 0.174 at the rate as first written; no rate or cap lands 0.08 with retargeting on, so the band moved as 8-31 moved it. OQ-140 still re-sets it after the playtest.
 
 ### OQ-133: Simulator target: eye strikes at the Small and Large Size Classes and arm Toughness are not measured
 
@@ -3103,6 +3110,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Open
 - **Revised by batch 8 (8-1, 8-14):** option (a)'s lever is now Attack Dice, a smooth knob (each Titan die adds about a sixth of a success against a Rookie who cancels about 1.8), but the research measured that no rolled shape at any Health reaches this target by dice alone (about 36 kill dice on sixes, or a pool no one rolls), so the retune uses (b), (d), (e), or (f) with Attack Dice as a fine adjustment only. Steam, corpse heat, and the falling Titan (OQ-138, OQ-146) add deaths outside the attack roll and are counted in the playtest's per-Expedition tally before this is decided.
 - **Revised by batch 8 (8-31):** in the current handling the Medium band stands at 0.08 through the end, not 0.06, since the owner accepted the rerun's 0.075 as the playtest's lethality (OQ-132). This target is unchanged and still aims above it.
+- **Revised by the round 3 retune (R2):** the Medium band stands at 0.15 through the end; the default Squad reads about 0.050 PC deaths a fight on the standard Medium under R1, against this target's 0.125. Still in waiting.
 
 ### OQ-141: Expeditions and Downtime, the playtest minimum
 
@@ -3867,6 +3875,8 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Costs recorded:** the escalation reaches the table one card late, which is stated in the rules rather than discovered. Frenzy adds no dice, changes no Attack Dice, no need, and no effect, and moves no soldier. No Behavior Table is re-authored.
 - **ADR:** amends ADR-0001.
 - **Simulator case:** required, in the same retune as OQ-190 and OQ-192. The rate and the cap are starting values the simulator moves; the shape is settled.
+- **Revised by the round 3 retune (R1):** the rate is one rise every second round, at the frenzy end step of every even-numbered round; the cap stays 3. The shape is unchanged.
+- **Revised again by the zone retune (Z2):** every third round, at the frenzy end step of the third, the sixth, the ninth round, and so on; the cap stays 3 (DECISIONS-2026-09-14.md, *Batch 17*; `docs/reviews/zone-retune-decisions.md`).
 
 ### OQ-194: The musket note quotes a Health that no longer exists
 
@@ -3880,3 +3890,174 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Costs recorded:** a real change in threshold. Whether a firearm still frightens anyone is read from the rerun, and two single-number levers are held in reserve behind it: the Skirmish rider at 2 per Net Success beyond the first, ahead of the musket's base damage (b).
 - **ADR:** none.
 - **Simulator case:** read from the retune of OQ-190, which must re-read the musket against the new Health and the Skirmish probe's reported figures.
+
+### OQ-195: Frenzy sends a Titan to the bottom of its own table
+
+- **Type:** Mechanical bug (from OQ-193)
+- **Arose in:** `docs/reviews/round-3-rule-change-review-1.md`, C3, verified by exact enumeration of all four tables in `data/titans/`.
+- **Related:** OQ-80, OQ-101, OQ-192, OQ-193.
+- **Question:** The behavior roll clamps D6 plus Frenzy at 6, and the move-up rule sends an illegal result to the next higher one, wrapping from 6 to 1. So every face Frenzy carries past 6 lands on result 6, and whenever that entry is illegal, which is whenever it is the previous behavior or needs a Broken arm, all of them wrap to result 1, the table's weakest entry. The standard Medium at Frenzy 3 that had just Grabbed resolved Fixed Grin on 4 faces in 6 against 2 in 6 at Frenzy 0, with the lowest kill share of any state on the table. What does a frenzied Titan do when it cannot take the top of its table?
+- **Options:** (a) Wrap downward always, at every Frenzy. (b) Apply the clamp after the legality test. (c) Exempt only the case where the total exceeded 6. (d) Key the wrap to Frenzy: it stands at Frenzy 0 and is gone at Frenzy 1 or more, where the roll turns back down from 6.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 14*, 14-3)
+- **Decision:** (d). At Frenzy 0 the wrap stands, so every Frenzy 0 share is untouched, Chapter 6's tables were authored to a rule that still holds, and the chapter-06 probes need no change. At Frenzy 1 or more the roll never wraps and turns back down the table from 6. (a) changes every Frenzy 0 share and the sentence Chapter 6's authors were given; (c) splits two faces that both read as 6, which cannot be said at the table.
+- **Costs recorded:** every Frenzy 1 to 3 share in which the result-6 entry is illegal changes, so the retune must read the kill share by previous behavior, Broken parts, and Frenzy, and the share of rolls resolving each table's result-1 entry by Frenzy.
+- **ADR:** amends ADR-0001.
+- **Simulator case:** `data/engagement/tuning.yaml`, `simulator_cases`, the behavior roll under Frenzy.
+
+### OQ-196: a Titan's fallback entry is never retargeted
+
+- **Type:** Mechanical bug (from OQ-192)
+- **Arose in:** `docs/reviews/round-3-rule-change-review-1.md`, M1.
+- **Related:** OQ-101, OQ-192.
+- **Question:** The `choose` step retargets the rolled entry and then, when nobody qualifies, tests the fallback against the **unchanged** Attention holder. Where the fallback is `thrash` that is harmless, because Thrash lists all four Positions. In the two tables with a real fallback, the standard Large's Crush and the Sprinting Abnormal's Pitch Headlong, it reproduces exactly the inertness OQ-192 exists to remove. Is the fallback retargeted?
+- **Options:** (a) Retarget the fallback the same way. (b) Resolve the fallback against whoever a retarget would pick, untested against Position. (c) Set both real fallbacks to `thrash` and keep the field for Abnormals.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 14*, 14-7)
+- **Decision:** (a). The fallback is tested the same way as the rolled entry and retargets in its turn, and Thrash comes only when nobody meets the fallback either. (b) changes what `fallback` means; (c) touches `data/titans/`, which 13-9 promises it does not.
+- **Costs recorded:** the retune must report the share of cards on which the fallback itself retargets, which is where the change reaches the standard Large and the Sprinting Abnormal.
+- **ADR:** amends ADR-0001.
+- **Simulator case:** `data/engagement/tuning.yaml`, the batch 13 retune note.
+
+### OQ-197: what a failed Nape striker is still promised
+
+- **Type:** Consequential fix (from OQ-192)
+- **Arose in:** `docs/reviews/round-3-rule-change-review-1.md`, C6.
+- **Related:** OQ-81, OQ-111, OQ-112, OQ-192.
+- **Question:** ADR-0010 promises three times, from batch 4b onward, that a Nape striker who falls short draws the Titan's **next behavior** on every ladder, and 13-9's amendment closes by saying the Nape strike's Attention restriction is unchanged. Retargeting breaks the promise in the common case: the striker takes Attention at the card's `attention` step and the `choose` step moves it straight off them, because most entries do not reach Blind Spot. On the standard Medium that is 4 rolls in 6 at Frenzy 0 and 5 in 6 above it. Is the promise kept, or is the record corrected?
+- **Options:** (a) Amend ADR-0010 to say what the rules now do. (b) Exempt a soldier holding the hooked-by-strike flag from every retarget. (c) Return Attention to the flag holder at the card's `next` step.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 14*, 14-6)
+- **Decision:** (a). The striker draws the Titan's **Attention** on every ladder, which is unchanged, and its next behavior when that behavior's Position requirement includes Blind Spot. When it does not, the Titan retargets to a comrade it can reach and its Attention goes with it. No mechanics change; the record stops overstating what was unchanged. (b) is the exact counter-case 13-9 was decided against, since a striker at Blind Spot is the soldier who parked the fight; (c) contradicts `attention_moves` and adds a step no tracker carries.
+- **Costs recorded:** the price of a failed strike now falls on whoever is within the Titan's hands' reach rather than on the striker, and a striker freed to cut twice may move the lone-strike band. (b) is held as the alternative, beside downgrading, if that band breaks upward.
+- **ADR:** amends ADR-0010.
+- **Simulator case:** `data/engagement/tuning.yaml`, `simulator_cases`, failed Nape strikes.
+
+### OQ-198: The standard Large Titan is softer than the Medium at Health 6
+
+- **Type:** Simulator target (the round 3 retune)
+- **Arose in:** `docs/reviews/round-3-retune-decisions.md`, R5; `docs/reviews/simulator-report.md` sections 2.1, 5.1, and 6.15; `data/titans/standard-large.yaml`; Chapter 6 section 6.4.
+- **Related:** OQ-101, OQ-103, OQ-140, OQ-190, OQ-192.
+- **Question:** With Health 6 the Large's Thrash and Shrug Off falls no longer kill, and its Bite, On Body only, never reached a Squad off its body, so the Large read 0.038 deaths a fight with neither batch 13 rule (0.112 at Health 4), 0.053 with retargeting, and below the Medium at every Frenzy setting, and the Abnormal's bar, which reads the Large as its ceiling and the Medium as its floor, bounded an empty interval.
+- **Options:** (a) Bite reaches In Reach as well as On Body (0.122 with Frenzy off, 0.210 under R1; every bar row measured holds). (b) Bite falls back to Grab (0.108 and 0.184; 0.67 Grabs a fight, the doubling the Grab guard exists to catch). (c) Nape Depth 5 (0.460, median 4, 21.6% no kill; a reserved lever). (d) Leave it and read the bar as unjudged.
+- **Status:** Decided (round 3 retune, R5)
+- **Decision:** (a). One table line and OQ-101's design note; nothing reserved is touched. The confirming run reads the whole bar, the Large band, and the Large's Jam test on it.
+- **Costs recorded:** one line of a Chapter 6 table is re-authored, which 13-9 and 13-10 promised not to do *for retargeting or Frenzy*; this is re-authored because Health 6 removed the Large's kill and the Large must anchor the bar. The Large's Jam test moves toward its kill-pool reading as the Bite reaches the In Reach holder, and the confirming run reads both.
+- **ADR:** ADR-0014, as amended by the round 3 retune.
+- **Simulator case:** the confirming run's bar in both orders, the Large band, and the Large's Jam test.
+
+### OQ-199: Simulator target: the Sprinting Abnormal's Critical Injuries floor is missed against the strongest support
+- **Type:** Simulator target
+- **Arose in:** the confirming run of the round 3 retune (rules hash `0e5b7591a58a8d85`): `docs/reviews/simulator-report.md` sections 5.1, 5.2, and 6.15; `docs/reviews/round-3-retune-decisions.md`, R7; `data/titans/tuning.yaml` (`targets`, `abnormals`, `not_trivial` and `missed`); Chapter 6 sections 6.5 and 6.6.
+- **Related:** OQ-102, OQ-103, OQ-112, OQ-140, OQ-192, OQ-193, OQ-198.
+- **Question:** The bar's floor reads "In every row, Critical Injuries per fight are at least those of the standard Medium Titan's twin". In the row with 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, and the escapes, the confirming run gives 0.485 against 0.523 with the cutters first (+9.4 standard errors; pooled over two seeds 0.491 against 0.522, +11.1) and 0.497 against 0.523 with the strikers first (+6.2; pooled 0.492 against 0.523, +10.9), on both death readings. Before decision batch 13 the row read 0.479 against 0.421 (-17.2) and 0.480 against 0.422 (-17.3); on the retune's first run, at Frenzy every round, 0.573 against 0.576 (within sampling) and 0.567 against 0.584 pooled (+5.2). Under retargeting and Frenzy the Medium twin's Critical Injuries rose 24% and the Abnormal's 2.5%: a retarget moves the standard Medium's Attention on 24.1% of its cards in that row and the Abnormal's on 10.6% (report section 6.15; 26.7% against 14.4% at the reference starts), because the runner's cards fail for want of anyone to reach (Thrash 27.4% against 18.8%) and not for a holder out of Position, which is what retargeting answers. With the standard ladder in place of its own it is retargeted on 11.4% of cards at the reference start against 14.4% with its own, so the ladder is not the cause. Every other limit holds in every judged row, most by 10 to 40 standard errors, and in this row the runner kills faster (85.2% by round 3 against the Medium's 77.8%), leaves fewer fights with no kill (1.3% against 2.4%), and kills fewer soldiers (0.025 against 0.036 during the fight) than the Medium (Chapter 6, *Support rows*).
+- **Options:**
+  - (a) Leave the floor and the values, and read the first playtest: whether the runner against a screened, hamstrung Squad plays as the easier fight, and whether that is wrong at the table.
+  - (b) A value of the Abnormal's, within the Abnormal bounds: Attack Dice on Trample or Run Past, the entries that reach a screen and a cutter at its legs. Each lifts every row, the reference row included, which already sits 11% above the Medium's Critical Injuries and 14% above its deaths, and moves every row toward the ceiling.
+  - (c) Re-read the floor in the support rows, against the Medium twin's figure before retargeting or against a stated share of it. Both are the floor lowered to where the runner sits, and neither has a reason that survives the row the floor was written for.
+  - (d) Re-set it with every deaths band and bar limit when OQ-140 retunes the Titans on playtest data.
+- **Current handling:** Closed on the confirming run of the zone retune. No value, rule, or limit changed for it; `data/titans/tuning.yaml` records the miss and its closing beside the floor (`targets`, `abnormals`, `oq_199`), and the report renders no missed result.
+- **Why it was open:** The cause was a rule the owner chose (decision batch 13, 13-9) doing for the standard Medium what the runner's table never needed, and every lever touched a measured row or the bar's own definition, so the decision was left for after the first playtest, with OQ-140.
+- **Simulator case:** the bar's screen-with-the-pair row in both orders, with its twins, deaths through the end and during the fight both reported (`bar/` in `tools/sim/cases.py`).
+- **Status:** Decided (closed on the confirming run of the zone retune; `docs/reviews/zone-retune-decisions.md`, Z5)
+- **Decision:** Closed, option (a) standing, on the evidence Z5 names: a run that reads the cell holding or within sampling in both orders. The confirming run of the zone retune (2026-09-21; rules hash `54e147e73e8d0852`; 55,528,000 trials) reads it holding in both: 0.514 against the standard Medium Titan's 0.513 with the cutters first (z -0.3) and 0.513 against 0.511 with the strikers first (z -0.7), on both death readings, a negative z being on the floor's permitted side (`docs/reviews/simulator-report.md`, section 5.1, the rows "support: 4 player characters and 2 Squadmates screening beside the holder, Hook and Cut and Hamstring Line, with the escapes"; section 5.2 reads the same). On the field the Medium twin's Critical Injuries in that row fell (0.513 against the round 3 retune's pooled 0.522) and the runner's rose (0.514 against 0.491). Every limit of the bar holds in every judged row and both orders, and the report reads 0 missed results. The floor, the values, and the bar stand as written; if the first playtest or OQ-140's retune moves the bar, this row is read again with it.
+- **ADR:** ADR-0014, as amended by the round 3 retune (R7) and the zone retune (Z5).
+
+### OQ-200: Zone movement's starting values: the Carry limit and the mounted pace
+- **Type:** Simulator target (batch E, E7)
+- **Arose in:** decision batch 16, 16-12 and 16-13; `docs/playtest/feedback/round-3/zone-combat-design.md` sections 2.5 and 3.5; `data/engagement/zones.yaml`; `data/engagement/anchor-ratings.yaml`.
+- **Related:** OQ-182, OQ-183, OQ-201, OQ-202.
+- **Question:** The design's Carry costs (Open 2, Sparse 1, Wooded and denser 0) leave a Flight through Wooded zones free of any limit, and its promise that a horse outpaces a Titan needs a mounted move longer than one zone. Batch 16 sets a Flight to at most 2 Carries, the most a Flight could make at the tuned Wooded rating before zones, and a mounted move to at most two zone steps, ending on entering a standing Focus Titan's zone unless that zone is Open. Are these the right values once Titans stride?
+- **Options:** (a) Keep 2 and 2. (b) Carry limit 1 or 3. (c) Mounted pace 1 outside Open zones, with the Open ride-through only. (d) Tie the Carry limit to the anchors of the zone the Flight starts in.
+- **Current handling:** (a), decided. The rerun reported Momentum gained and spent per fight, the share of Flights that Carry, how often a Stride brings its holder into reach, and how often a rider or a flier leaves ahead of a Titan.
+- **Simulator case:** the E7 rerun's reference fights on the Standard field, with each value moved one step either way; `tools/sim/cases.py` keeps the `zones/` rows as sensitivity rows.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 17*, Z4)
+- **Decision:** Zone retune, Z4 (decision batch 17): option **(a)**, measured. The Carry limit stays 2 and the mounted pace stays 2. Carry limit 1 reads 0.1694 deaths through the end on the standard Medium's bar run and Carry limit 3 reads 0.1679, against 0.1661 as shipped; the Sprinting Abnormal's no kill moves only between 9.93% and 10.19%. The mounted pace moves only mounted rows (pace 3 reads 0.186 against 0.167, pace 1 reads 0.171), and 2 is the value that neither raises lethality nor gives up a horse outpacing a striding Titan. With nothing to buy, the values stand and their provisional markers come off (`docs/reviews/zone-retune-decisions.md`).
+- **ADR:** ADR-0029; ADR-0014 with the retune.
+
+### OQ-201: Which zone effects harm, and how much
+- **Type:** Design
+- **Arose in:** decision batch 16, 16-30; `zone-combat-design.md` sections 2.2 and 2.5; the three effect overlays shipped in `foundry/static/assets/board/`.
+- **Related:** OQ-138, OQ-146, OQ-200.
+- **Question:** The design gives effects a home in a zone and says a Flight that crosses a zone holding an effect such as fire or a steam cloud takes that effect's harm, but names no harm, and no rule of the Titan Engagement places fire or a lingering steam cloud today. Batch 16 writes the crossing rule and a closed list (steam in a corpse's zone, dust in a wrecked zone, fire reserved) and gives every effect harm none. Should any effect harm, and on what terms?
+- **Options:** (a) None harms; effects are information on the board and the sheet. (b) A corpse's steam deals the steam table's damage to a soldier who crosses or enters its zone. (c) Fire, placed only by an Operation Frame or a Mission Brief complication, deals Burn damage on entering or crossing. (d) A harming effect only in scenario rules, never in the base Titan Engagement.
+- **Current handling:** (a). No harm outside the Behavior Tables is added, which is what ADR-0005 and ADR-0019 guard; the mechanism is in the data so that a later ruling adds a row rather than a rule.
+- **Why still open:** Any harm here is new Titan-side harm with no Reaction, and it would need its own lethality row.
+- **Simulator case:** none until an option other than (a) is taken.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** 16-30 as written.
+- **ADR:** ADR-0029.
+
+### OQ-202: The field's terrain mix
+- **Type:** Simulator target (batch E, E7)
+- **Arose in:** decision batch 16, 16-6; `zone-combat-design.md` section 7.7; `data/engagement/engagement-setup.yaml`, `zone_terrain`.
+- **Related:** OQ-141, OQ-167, OQ-200.
+- **Question:** A field of one rating everywhere has no route to choose. Batch 16 generates each zone other than the centre and the Squad's start zone with a D6: 1 one rating sparser, 2 to 5 the field rating, 6 one rating denser. Does that give a route decision often enough without moving the tuned approach?
+- **Options:** (a) Keep the table. (b) A wider mix, 1 to 2 sparser and 6 denser. (c) A fixed pattern per field rating, with no roll. (d) The field rating everywhere unless the starting rule or the GM names a mix.
+- **Current handling:** (a), decided. The rerun reported the reference figures with the mix, with option (b), and with option (d).
+- **Simulator case:** the E7 rerun's reference fights with the mix on and with option (d); `tools/sim/cases.py` keeps the `zones/` rows as sensitivity rows.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 17*, Z4)
+- **Decision:** Zone retune, Z4 (decision batch 17): option **(a)**, measured. The terrain mix stays 1 sparser, 2 to 5 the field rating, 6 denser. The wide mix (option (b)) reads 0.1686 deaths through the end on the standard Medium's bar run and the uniform field (option (d)) reads 0.1656, against 0.1661 as shipped, and the Sprinting Abnormal's no kill stays between 10.09% and 10.11% against 9.98%. With nothing to buy, the mix stands and its provisional marker comes off (`docs/reviews/zone-retune-decisions.md`).
+- **ADR:** ADR-0029; ADR-0014 with the retune.
+
+### OQ-203: A forced step toward Distant from a zone that holds no body
+- **Type:** Rules gap (batch E, P1)
+- **Arose in:** decision batch 16, 16-28 and 16-27; `data/harm/effect-types.yaml`, `forced-move`; `data/engagement/positions.yaml`, `moves`, `forced_step`; Chapter 3, section 3.9; Chapter 5, section 5.2.
+- **Related:** OQ-186, OQ-139.
+- **Question:** 16-28 makes a Fear Roll's forced step "toward distant" one step by the retreat's option 1. Option 1's last clause moves a free soldier in a zone that holds no body one ring further out, which a retreat needs so that it ends. Before zones a forced step toward Distant was not made for a soldier who already held Distant from every Focus Titan. Does a soldier who is already Distant from every body still take the outward step?
+- **Options:** (a) No step when the soldier is free in a zone that holds no body: "toward distant" stops at Distant, as it always did. (b) Always take option 1's step, the outward ring included, so fear drives a soldier toward the edge even when out of reach. (c) Take option 1 only while the soldier is in a zone holding a body or attached to one.
+- **Current handling:** (a), marked PROVISIONAL in `effect-types.yaml`, Chapter 3 section 3.9, and Chapter 5 section 5.2. It keeps the effect's old meaning and its name, and (c) reads the same in play.
+- **Why still open:** 16-28's words read as (b); (a) is the reading most consistent with the effect's purpose and its pre-zone rule, and neither is measured.
+- **Simulator case:** the rerun's Fear Roll rows under (a) and (b), reporting forced steps taken and soldiers who reach an edge zone by them.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029.
+
+### OQ-204: The cost of a Flight whose first step is the step off field
+- **Type:** Rules gap (batch E, P1)
+- **Arose in:** decision batch 16, 16-13 and 16-26; `data/engagement/zones.yaml`, `flight`; `data/engagement/positions.yaml`, `leaving`, `how`; Chapter 5, section 5.11.
+- **Related:** OQ-200.
+- **Question:** 16-13 makes a Flight's first step free "a zone step or an attachment step" and prices "a step off field" at 1; 16-12 counts stepping off field as a zone step; 16-26 says leaving at the end of a Flight "costs 1 Carry". What does a Flight from an edge zone whose only step is off field cost?
+- **Options:** (a) Nothing: it is the Flight's free first step, and the 1 applies only when leaving is a later step. (b) 1, always: stepping off field is never free by Flight. (c) The step off field cannot be a Flight's first step.
+- **Current handling:** (a), marked PROVISIONAL in `positions.yaml` (`leaving`, `how`) and Chapter 5 section 5.11. A soldier on foot leaves from an edge zone for nothing, so (b) would make a flier pay more than a walker for the same step.
+- **Why still open:** 16-26's "costs 1 Carry" reads as (b) if taken alone; the data contract (`carry_cost_off_field: 1`) serves every option.
+- **Simulator case:** the rerun's retreats, reporting how often a Flight leaves as its first step.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029.
+
+### OQ-205: Soldiers Anchored in a zone that becomes Open with no standing Titan in it
+- **Type:** Rules gap (batch E review round 1, m4)
+- **Arose in:** `docs/reviews/zone-combat-review-1.md`, m4; decision batch 16, 16-21; `data/engagement/anchor-ratings.yaml`, `zone_becomes_open`; `data/engagement/positions.yaml`, `changes_to_position`, `zone-becomes-open` and `titan-stands-up`.
+- **Related:** OQ-203.
+- **Question:** 16-21 lands every soldier Anchored in a zone that becomes Open only "while a standing Focus Titan is in it". A zone can become Open under a grounded Titan (its falling body's wreck, or a wreck entry it resolves while grounded), and the stands-up rule converts only Blind Spot. The soldiers Anchored there stay Anchored and airborne in a zone with nothing to hook, for the rest of the fight, a state no Flight could produce (a Flight never ends free in an Open zone). What happens to them?
+- **Options:** (a) Every soldier Anchored in a zone that becomes Open lands Ground with no fall, whatever stands in it; the Blind Spot to On Body change still needs a standing Focus Titan. (b) As (a), but applied only when the grounded Titan stands again, in `titan-stands-up`. (c) Leave them Anchored.
+- **Current handling:** (a), marked PROVISIONAL in `anchor-ratings.yaml`, `positions.yaml`, and Chapter 5 section 5.2. It is what `data/gear/odm-gear.yaml` (`airborne`) and the packet already said without the condition, it needs no new timing, and it never leaves a soldier in an attachment the zone cannot hold. (b) leaves the impossible state standing until the Titan stands, and (c) keeps it for the fight.
+- **Why still open:** 16-21 names the standing Titan for both halves of the rule; splitting them is a reading, not a decision.
+- **Simulator case:** none needed; the state is rare (a zone wrecked to Open under a grounded Titan with a soldier Anchored in it), and the change moves no Position the simulator reads for a strike.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029; ADR-0024.
+
+### OQ-206: A fall in a Titan Engagement with no Focus Titan alive
+- **Type:** Rules gap (batch E review round 1, m5)
+- **Arose in:** `docs/reviews/zone-combat-review-1.md`, m5; decision batch 16, 16-22; `data/gear/falls.yaml`, `height`, `steps`; Chapter 4 section 4.6; Chapter 5 section 5.2.
+- **Related:** OQ-123, OQ-165.
+- **Question:** The reference body's last fallback is the Focus Titan nearest the soldier's zone. After the last Focus Titan dies while a soldier is still Pinned, the Titan Engagement runs on, and an Anchored soldier who falls (a Jam on a Pushed Flight, say) has no attachment body, no cause Titan, and no Focus Titan. The band step then reads a Position relative to nothing, a closed rule with no answer.
+- **Options:** (a) Otherwise the corpse nearest the soldier's zone, a tie going to the earliest label; with no body at all, the band starts low before any raise. (b) With no Focus Titan alive, every such fall is low. (c) The outside-a-Titan-Engagement rule: the fall takes only a named band, else low.
+- **Current handling:** (a), marked PROVISIONAL in `falls.yaml`, Chapter 4 section 4.6, and Chapter 5 section 5.2. A corpse is a body a soldier can attach to (16-24), so it is the body a fall near it reads, and the Large raise then follows the corpse's Size Class as it would a living one's. The Giant Forest raise still applies.
+- **Why still open:** 16-22 wrote the fallbacks for a living fight; which body the run-on reads is new.
+- **Simulator case:** none; the run-on after the last kill is short and no strike reads its falls.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029; ADR-0024.
+
+### OQ-207: The entry zone when no soldier is on the field
+- **Type:** Rules gap (batch E review round 1, m12)
+- **Arose in:** `docs/reviews/zone-combat-review-1.md`, m12; decision batch 16, 16-29; `data/engagement/zones.yaml`, `entry_zone`; Chapter 5 section 5.10.
+- **Related:** OQ-204.
+- **Question:** A Titan entering the fight takes the empty edge zone "farthest from the nearest soldier on the field". When every soldier has left and a returner keeps the fight open for a round, a Background clock can fill at the end step with no soldier on the field, and "farthest from the nearest soldier" has no value. Which edge zone does it enter?
+- **Options:** (a) The lowest-numbered edge zone. (b) The edge zone farthest from the zone the returners left by. (c) The edge zone opposite the Squad's start zone.
+- **Current handling:** (a), marked PROVISIONAL in `zones.yaml`, Chapter 5 section 5.10, and the packet. It is the tie-break the rule already ends on, and it is what `tools/sim/space.py`, `entry_zone`, already does with no soldier zones.
+- **Why still open:** 16-29 does not name the case; (a) is the reading by inference made explicit.
+- **Simulator case:** none; the simulator already implements (a).
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029; ADR-0024.

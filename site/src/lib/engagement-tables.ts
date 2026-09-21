@@ -63,7 +63,7 @@ const POSITION_WORDING: Record<string, string> = {
   'in-reach': "Within reach of its hands, on the ground or on anchors beside it.",
   'on-body': 'Hooked into the Titan or standing on it, anywhere but the Nape.',
   'blind-spot':
-    "Out of its sight with its Nape within reach. You are anchored to terrain behind the Titan, a tree or a roof, and you are not touching it: Blind Spot is a place in the world, not a place on the monster. The only Position a Nape strike is made from.",
+    "Out of its sight with its Nape within reach. You are anchored to terrain behind the Titan, hanging from a tree on your lines or standing on a roof, and you are not touching it: Blind Spot is a place in the world, not a place on the monster. Whether you are airborne follows the move that brought you there. The only Position a Nape strike is made from.",
 };
 
 /** The icon for each Position, from the site's Position set. */
@@ -104,16 +104,18 @@ interface RawPositionChange {
  * principle at its head come from the Positions table; a new entry with no wording fails the build.
  */
 const POSITION_CHANGE_WORDING: Record<string, string> = {
-  'own-move': 'One step the ground allows, or a mount, a dismount, or leaving. An ODM move is a Flight, and crosses two steps only by spending Momentum on Carry.',
-  'letting-go': 'Taken instead of a move: you fall, and land In Reach.',
-  fall: 'Any fall from On Body or Blind Spot leaves you In Reach of the Titan the fall is read against. From further out, your Position holds.',
+  'own-move': 'A zone step, an attachment step, a mount, a dismount, or leaving. An ODM move is a Flight, and every step past the first is a Carry, paid in Momentum.',
+  'letting-go': 'Taken instead of a move: you fall, and land Ground in the zone you are in.',
+  fall: 'You stay in the zone you are in and land Ground, so you hold In Reach relative to a body there.',
   'fear-roll-forced-move': 'One step at the start of your next turn. It is the result moving you, not a move of your own.',
   'grab-lands': 'The Grabbed soldier holds On Body relative to the hand that holds them.',
-  'freed-from-a-grab': 'In Reach, with a fall first if you had already been lifted.',
-  'knock-loose': 'A target who is airborne or on the body falls, and lands In Reach.',
-  'close-rule': "Coming to On Body or Blind Spot on one Titan makes every other Titan's On Body or Blind Spot read In Reach.",
+  'freed-from-a-grab': 'Ground in the holding Titan’s zone, with a fall first if you had already been lifted.',
+  'knock-loose': 'A target who is airborne, or who holds On Body or Blind Spot relative to the Titan, falls.',
+  stride: 'The Titan’s zone changes. You go with it if you hold On Body or Grabbed relative to it; you stay and detach if you hold its Blind Spot. Everyone else’s Position relative to it is derived anew.',
+  'zone-becomes-open': 'Every soldier who holds that Titan’s Blind Spot in the zone holds On Body instead, and every soldier Anchored there lands Ground. Neither is a fall.',
   'titan-becomes-focus': 'Everyone holding a Position holds Distant relative to it.',
   'focus-titan-dies': 'Your Positions carry over to its corpse, with On Body and Blind Spot reading In Reach.',
+  'titan-body-comes-down': 'Everyone on it or behind it who is not airborne ends up In Reach of the body, whether they leap clear or are pinned under it. If you were in the air, you swing clear and keep your Position.',
   'fall-back': 'At the Wings step, each soldier on the body or at Blind Spot may take In Reach instead, their own choice. It is not a fall and it is not ODM use.',
   'titan-stands-up': 'On Open ground only: a Titan that gets its legs back has no Blind Spot to stand behind, so a soldier there holds On Body instead. Everywhere else you keep the Position you hold.',
   carried: 'You move with whoever carries you, and your own move changes nothing.',
@@ -128,7 +130,7 @@ export function positionChangesTable(): CoreTableData {
   const T = 'What changes a Position';
   return {
     caption: 'Everything that changes a Position',
-    note: 'A closed list. An action is never on it: nothing you roll moves you, whatever it rolls.',
+    note: 'A closed list. No action is on it: nothing you roll moves you, whatever it rolls. Fly, Leap Clear, and Mount or Dismount are not actions, and each is a row of the list.',
     columns: ['What', 'Where it leaves you'],
     see: false,
     groups: [
@@ -172,14 +174,15 @@ export function positionStepsTable(): CoreTableData {
   const T = 'Position steps';
   return {
     caption: 'Position steps by Anchor Rating',
-    note: 'Two Positions joined by a row are one Position step apart, whichever kinds of move can make it. A step can be made either way. No step asks for a roll of its own: every ODM move is a Flight, and a move that crosses two steps spends Momentum on Carry.',
-    columns: ['Position step', 'On foot', 'Mounted', 'ODM'],
+    note: 'Two Positions joined by a row are one Position step apart, whichever kinds of move can make it. A step can be made either way. No step asks for a roll of its own: every ODM move is a Flight, and every Carry past the first step pays that step’s cost.',
+    columns: ['Position step', 'Read as', 'On foot', 'Mounted', 'ODM'],
     see: false,
     groups: doc.ratings.map((rating) => ({
       heading: `${rating.name}: ${wording(RATING_WORDING, rating.id, T)}`,
       rows: rating.steps.map((step) => ({
         cells: [
           `${position(step.between[0], T)} to ${position(step.between[1], T)}`,
+          step.between[0] === 'distant' ? 'zone step into it' : 'attachment step in it',
           step.on_foot ? 'Yes' : 'No',
           step.mounted ? 'Yes' : 'No',
           step.odm ? 'Yes' : 'No',
@@ -201,10 +204,10 @@ interface RawSpend {
 /** What the ground gives a soldier on the wires, one line per rating. */
 const TERRAIN_WORDING: Record<string, string> = {
   open: 'A mounted soldier’s Break Attention gains 1 Bonus Die. The plain is the horse’s.',
-  sparse: 'The first Anchor wrecked in the fight is not lost. One good tree survives.',
+  sparse: 'The first wreck a zone takes while it is Sparse does nothing, once per zone. One good tree survives.',
   wooded: 'None. This is the plain baseline every other rating is read against.',
   urban: 'A soldier at Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them.',
-  'giant-forest': 'The first step a Flight Carries costs no Momentum. The Corps fights best here.',
+  'giant-forest': 'Every fall that is not from a horse, in the zone, is raised one band. The Corps fights best here, and a Flight pays nothing to enter it.',
 };
 
 export function anchorsTable(): CoreTableData {
@@ -212,7 +215,7 @@ export function anchorsTable(): CoreTableData {
   const T = 'Anchors';
   return {
     caption: 'Anchors and Terrain Traits by Anchor Rating',
-    note: 'The Anchors are the fight’s own pool, public and never restored. However many are left is every soldier’s Momentum cap.',
+    note: 'Each zone holds its own Anchors, public and never restored. However many a zone has left is every soldier’s Momentum cap in that zone.',
     columns: ['Anchor Rating', 'Anchors', 'Terrain Trait'],
     see: false,
     groups: [
@@ -229,9 +232,9 @@ export function anchorsTable(): CoreTableData {
 const SPEND_WORDING: Record<string, { name: string; effect: string }> = {
   carry: {
     name: 'Carry',
-    effect: 'One more Position step on this move, along steps your kind of move could make, relative to the same Titan. You may Carry more than once on one move.',
+    effect: 'One more step on this Flight, a zone step or an attachment step, at the entered zone’s Carry cost. At most 2 Carries on one Flight.',
   },
-  bite: { name: 'Bite', effect: '1 Bonus Die on a strike or a Break Attention you take this turn against the Titan you flew relative to.' },
+  bite: { name: 'Bite', effect: '1 Bonus Die on a strike or a Break Attention you take this turn against a Focus Titan in the zone the Flight ended in.' },
   brace: { name: 'Brace', effect: '1 Bonus Die on your next dodge this round.' },
   quiet: { name: 'Quiet', effect: 'You set no mark this turn, the loudest mark a Flight with no successes would set included. A mark already set is not cleared.' },
   'clean-line': { name: 'Clean line', effect: 'You make no Gas Roll for this round.' },
@@ -269,6 +272,7 @@ interface RawSizeClass {
   attack_dice: Record<string, number>;
   raises_fall_band: boolean;
   heave: number;
+  stride: number;
 }
 
 /** The Body Part kinds a Toughness column can name. */
@@ -285,8 +289,8 @@ export function titanSizesTable(): CoreTableData {
   for (const kind of kinds) wording(TOUGHNESS_COLUMNS, kind, T);
   return {
     caption: 'What a standard Titan takes from its Size Class',
-    note: 'An Abnormal lists its own numbers, and keeps some of them hidden until a Read.',
-    columns: ['Size Class', 'Height', 'Tempo', 'Nape Depth', 'Regeneration', 'Heave rating', ...kinds.map((k) => `${TOUGHNESS_COLUMNS[k]} Toughness`)],
+    note: 'An Abnormal lists its own numbers, and keeps some of them hidden until a Read. A grounded Titan’s Stride is 0, whatever its class.',
+    columns: ['Size Class', 'Height', 'Tempo', 'Nape Depth', 'Regeneration', 'Heave rating', 'Stride', ...kinds.map((k) => `${TOUGHNESS_COLUMNS[k]} Toughness`)],
     see: false,
     groups: [
       {
@@ -300,6 +304,7 @@ export function titanSizesTable(): CoreTableData {
               String(c.nape_depth),
               `${c.regeneration_clock} segments`,
               String(c.heave),
+              `${c.stride} zone${c.stride === 1 ? '' : 's'}`,
               ...kinds.map((k) => String(c.toughness[k])),
             ] as Cell[],
           };
@@ -979,7 +984,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   swap: {
     title: 'Swap.',
     icon: 'ph:arrows-left-right',
-    text: 'Two soldiers who each hold a card, neither Down nor Grabbed, at the same Position or one step apart, or both having left, may exchange cards. Each soldier takes part in at most one swap.',
+    text: 'Two soldiers who each hold a card, neither Down nor Grabbed, in the same zone or an adjacent zone, or both having left, may exchange cards. Each soldier takes part in at most one swap.',
     exit: { kind: 'stop', label: 'Never', text: 'A Titan’s card is never swapped, and swapping is not an action.' },
   },
   play: {
@@ -1012,14 +1017,14 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   momentum: {
     title: 'Momentum.',
     icon: 'ph:wind',
-    text: 'Everyone who made no ODM move this round loses all their Momentum. Anyone who flew keeps what they hold, up to the Anchors left.',
+    text: 'Everyone who made no ODM move this round loses all their Momentum. Anyone who flew keeps what they hold, up to the anchors of the zone they are in.',
     exit: { kind: 'stop', label: 'Keep flying', text: 'A round spent standing still costs you everything you were carrying.' },
   },
   frenzy: {
     title: 'Frenzy.',
     icon: 'ph:flame',
-    text: 'Every living Focus Titan gains 1 Frenzy, up to 3. Frenzy is added to its next behavior roll, and every table runs from terrorising to killing.',
-    exit: { kind: 'stop', label: 'It gets worse', text: 'Round one it postures. By round three it is trying to kill you. A long fight is a losing one.' },
+    text: 'Every living Focus Titan gains 1 Frenzy at the end of every third round, up to 3. Frenzy is added to its next behavior roll, and every table runs from terrorising to killing.',
+    exit: { kind: 'stop', label: 'It gets worse', text: 'For four rounds it postures. By round five it is trying to kill you. A long fight is a losing one.' },
   },
   'round-ends': {
     title: 'Round ends.',

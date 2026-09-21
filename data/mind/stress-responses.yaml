@@ -138,8 +138,8 @@ rally:
   in_titan_engagement:
     kind: action
     position_requirement: >-
-      The target holds the same Position as the Rallying soldier or one Position step away
-      (data/engagement/positions.yaml, comparison). Carrying Voice adds one more step (data/character/talents.yaml). Two soldiers
+      The target is in the Rallying soldier's zone or an adjacent zone (data/engagement/zones.yaml,
+      between_soldiers; decision batch 16, 16-11). Carrying Voice adds one more zone (data/character/talents.yaml). Two soldiers
       who have both left a Titan Engagement that is still under way count as holding the same
       Position (data/harm/engagement-end.yaml, soldiers_who_left).
     help: >-
@@ -155,4 +155,4 @@ rally:
       (data/harm/sheet-fields.yaml, rallied_outside_titan_engagement_by).
   talents:
     - {id: steady-voice, effect: adds dice}
-    - {id: carrying-voice, effect: one more Position step}
+    - {id: carrying-voice, effect: one more zone}

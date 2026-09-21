@@ -105,6 +105,8 @@ def fight_job(args):
         add(acc, "lame_dodge_fight", 1 if st["lame_dodges"] else 0)
         add(acc, "jam_fight", 1 if st["jams"] else 0)
         hist(acc, "kill_round", st["kill_round"] if st["kill_round"] is not None else "none")
+        # decision batch 16, 16-38: rounds to the first Nape strike, beside rounds to the kill
+        hist(acc, "first_nape_round", st["first_nape_round"] if st["first_nape_round"] is not None else "none")
     return acc
 
 
@@ -138,6 +140,12 @@ def summarize_fight(acc):
     out["devour_share"] = 100 * s.get("devours", 0) / max(1, s.get("grabs", 0))
     out["grab_death_share"] = 100 * s.get("grab_deaths", 0) / max(1, s.get("grabs", 0))
     out["thrash_share"] = 100 * s.get("thrash", 0) / max(1, s.get("resolved", 0))
+    # decision batch 13 (13-9, 13-10): the share of resolved cards whose entry retargeted down the Attention Ladder,
+    # the share that found no soldier who met it and so fell back or Thrashed, and the share of behavior rolls the
+    # Titan's Frenzy lifted off the face the die showed
+    out["retarget_share"] = 100 * s.get("retargets", 0) / max(1, s.get("resolved", 0))
+    out["retarget_miss_share"] = 100 * s.get("retarget_misses", 0) / max(1, s.get("resolved", 0))
+    out["frenzy_lift_share"] = 100 * s.get("frenzy_lifts", 0) / max(1, s.get("nb_rolls", 0))
     # round-time counters, per round, and per round with a Grab and without one
     per = {"tracker_writes": "grab_round_writes", "ladder_evals": "grab_round_evals", "dodges": "grab_round_dodges",
            "fear_rolls": "grab_round_fears", "gas_rolls": "grab_round_gas"}
@@ -149,6 +157,13 @@ def summarize_fight(acc):
                        other_round=(s.get("pools", 0) - s.get("grab_round_pools", 0)) / max(1, rounds - gr))
     out["round_time"] = rt
     out["rounds_per_fight"] = s.get("rounds", 0) / n
+    # decision batch 16, 16-38: the field's figures, as shares
+    fn = acc["hist"].get("first_nape_round", {})
+    out["median_first_nape_round"] = median_from(fn, n) if fn else None
+    out["stride_reach_share"] = 100 * s.get("stride_reach", 0) / max(1, s.get("resolved", 0))
+    out["flights_carry_share"] = 100 * s.get("flights_carry", 0) / max(1, s.get("flights", 0))
+    out["bs_lost_share"] = 100 * s.get("bs_lost", 0) / n
+    out["nape_help_adjacent_share"] = 100 * s.get("nape_helps_adjacent", 0) / max(1, s.get("nape_helps", 0))
     return out
 
 
@@ -166,7 +181,7 @@ def setup_lone(f, cfg):
             setattr(s, k, start[k])
     if start.get("horse_gone"):
         s.horse_gone = True
-        s.horse_at = None
+        s.horse_zone = None
         s.mounted = False
     if "flares" in start:
         f.flares = start["flares"]
@@ -723,6 +738,11 @@ def jam_job(args):
                     break
             if jammed:
                 break
+            # round.yaml, end_steps, frenzy (decision batch 13, 13-10): the Jam test's rounds are rounds, so every
+            # living Focus Titan's Frenzy rises here and the next round's behavior rolls read it
+            for t in titans:
+                if t.frenzy < R.frenzy_cap:
+                    t.frenzy += 1
         acc["n"] += 1
         add(acc, "jammed", jammed)
     return acc

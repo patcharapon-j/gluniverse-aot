@@ -7,6 +7,7 @@
  * effects bound to the model, and default art.
  * 3: the Lifepath wizard.
  * 4: the Titan Engagement tracker (HUD strip, board, token badges, round-end automation).
+ * Batch E: the engagement board over the canvas area while a Titan Engagement has a field (16-34).
  * The dice-pool bar above the chat input.
  */
 import { buildSystemConfig, SYSTEM_ID } from './config.ts';
@@ -29,6 +30,7 @@ import { loadSettings, registerSettings } from './settings.svelte.ts';
 import { registerPortraits, registerSheets, registerTokenDefaults } from './sheets/register.ts';
 import { defineWizard, openLifepath } from './lifepath/wizard-app.ts';
 import { registerTracker } from './tracker/index.ts';
+import { registerBoard } from './board/app.ts';
 
 Hooks.once('init', () => {
   CONFIG.WOF = buildSystemConfig();
@@ -58,6 +60,7 @@ Hooks.once('init', () => {
   registerPortraits();
   defineWizard();
   registerTracker();
+  registerBoard();
   game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse, widgetStats, openLifepath };
   console.log(`${SYSTEM_ID} | initialised: ${CONFIG.WOF.actionCatalog.length} Action Catalog entries`);
 });

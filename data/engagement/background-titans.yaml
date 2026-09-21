@@ -21,7 +21,7 @@ background_titan:
   clock_length: >-
     The length the rule that begins the Titan Engagement names, or the one
     data/engagement/engagement-setup.yaml gives.
-  no_positions: No soldier holds a Position relative to a Background Titan, and it has no cards, Attention, or Behavior Table in play.
+  no_positions: No soldier holds a Position relative to a Background Titan, and it has no zone, cards, Attention, or Behavior Table in play.
 
 focus_titan_limit: 2
 
@@ -68,8 +68,14 @@ full_clock:
     text: >-
       The Background Titan becomes a Focus Titan with the next letter not yet used as a label in
       this Titan Engagement. It starts as data/engagement/engagement-flow.yaml (starting,
-      titan-values) states. Every soldier who holds a Position holds distant relative to it
-      (data/engagement/positions.yaml, two_focus_titans, entering). Evaluate its Attention Ladder:
+      titan-values) states. Its Frenzy is 0. When the clock filled at the background-clocks end
+      step, the frenzy step of that round has already run, so it stays at 0 through its first full
+      round (data/engagement/round.yaml, end_steps, frenzy). The new Focus Titan enters at the edge
+      zone that holds no soldier and is farthest from the nearest soldier on the field, a tie going to
+      the lowest-numbered; if every edge zone holds a soldier, at the edge zone holding the fewest,
+      then the lowest-numbered (data/engagement/zones.yaml, entry_zone). Every soldier's Position
+      relative to it is derived, so a soldier in another zone holds distant
+      (data/engagement/positions.yaml, two_focus_titans, entering). It strides from its first card. Evaluate its Attention Ladder:
       at the background-clocks end step no cards choose, and mid-round, after a flare, that round's
       cards break a tie (data/engagement/attention.yaml, evaluation, card and none; decision batch 4b,
       4b-3). It is dealt cards from the next round on.
@@ -99,14 +105,20 @@ retreat:
         successes sets the loudest flag (data/engagement/positions.yaml, moves, flight; decision
         batch 10, 10-5, OQ-186). A Fear Roll result's forced step is not the soldier's move and is
         never a Flight (data/engagement/positions.yaml, moves, forced_step):
-          1. Toward distant: one step along a shortest chain of steps their move can make from
-             their Position to distant (data/engagement/anchor-ratings.yaml), relative to the Focus Titan with the earliest label they do not hold distant from; once they hold distant relative to every Focus Titan, relative to the corpse with the earliest label they do not hold distant from (decision batch 8, 8-20).
-          2. Leave: if they hold distant relative to every Focus Titan, leave the Titan Engagement
-             (data/engagement/positions.yaml, leaving).
-          3. Toward a fallen comrade: one step that lowers the number of Position steps between the
-             soldier and a Down, Grabbed, or Pinned comrade who is not carried.
-          4. Stay with a fallen comrade: a move that changes nothing, if the soldier already holds
-             the same Position as such a comrade and has already taken, earlier in this same turn,
+          1. Out: one step their move can make, the first of these that applies. From on-body or
+             blind-spot, an attachment step to free, or letting go if they cannot make one. From free
+             in a zone holding a body, a zone step into an adjacent zone one ring further out, or,
+             from an edge zone, option 2. From free in a zone holding no body, a zone step one ring
+             further out (data/engagement/zones.yaml, coordinates, ring). Among the zones a step may
+             enter, those holding no body come first, then the farthest from the nearest living
+             Focus Titan, or from the nearest corpse when none is alive; a tie left over is the
+             soldier's choice.
+          2. Leave: from an edge zone, free, leave the Titan Engagement by a zone step off field,
+             whatever body stands in that zone (data/engagement/positions.yaml, leaving).
+          3. Toward a fallen comrade: one step that lowers the number of zones between the soldier
+             and a Down, Grabbed, or Pinned comrade who is not carried.
+          4. Stay with a fallen comrade: a move that changes nothing, if the soldier is already in
+             such a comrade's zone and has already taken, earlier in this same turn,
              one of these actions for that comrade: treat-injury; or, for a Grabbed comrade,
              break-free on their behalf with Pry Loose, a body-part-strike against the holding arm,
              or break-attention against the holding Titan; or, for a Pinned comrade, heave against the pinning body or body-part-strike against the pinning Body Part (decision batch 8, 8-21). A soldier who has not taken such an action first cannot use this option that turn. A soldier who lifts a comrade
@@ -129,27 +141,32 @@ retreat:
         Pinned, or carried, is not standing for the no-soldier-standing test
         (data/engagement/engagement-flow.yaml, ending, no-soldier-standing, past_the_stay_limit;
         decision batch 8, 8-34 and 8-36).
-        For 3 and 4, Positions are compared relative to the holding Titan for a Grabbed comrade,
-        relative to the pinning body for a Pinned one (decision batch 8, 8-21), and for a Down one as
-        every other comparison is: relative to the living Focus Titan with the earliest label or, when
-        none is alive, relative to the corpse of the Focus Titan that died last
-        (data/engagement/positions.yaml, comparison, otherwise; decision batch 8, 8-20). The number
-        of Position steps between two Positions is the fewest step rows of the Anchor Rating that
-        join them (data/engagement/anchor-ratings.yaml, ratings).
+        For 3 and 4, a comrade's zone is where they are: a Grabbed comrade is in the holding Titan's
+        zone and a Pinned one in the pinning body's, and the number of zones between two soldiers is
+        the distance between their zones (data/engagement/zones.yaml, coordinates, distance;
+        between_soldiers; decision batch 16, 16-27).
         A soldier who can make none of these may let go (data/engagement/positions.yaml, moves,
         letting_go) or change nothing.
     - id: order
       # decision batch 5, 5-1 (OQ-119), and the lift exception decided in 5-13: without it a soldier
-      # who shares a Down comrade's Position must move away before the lift, and at distant must leave.
+      # who shares a Down comrade's zone must move away before the lift, and at an edge must leave.
       text: >-
         On each turn on which moves binds the soldier, their move comes before their action
         (data/engagement/round.yaml, turn_order), with two exceptions. A stay-with-a-comrade move
         (option 4) comes after the action taken for that comrade. A move on a turn whose action is
-        lift-comrade comes after the lift, so a soldier who shares a Down comrade's Position can
-        lift them and carry them out by option 1 or 2 in the same turn.
+        lift-comrade comes after the lift, so a soldier who shares a Down comrade's zone can lift them
+        and carry them out by option 1 or 2 in the same turn.
     - id: no-return
       text: A soldier who has left cannot return.
     - id: actions
       text: "Actions are not limited by the retreat, only ordered after the forced move (order), except that no Nape strike is made during a retreat, on a soldier's own turn or through Hook and Cut (data/engagement/titan-harm.yaml, nape_strikes; data/engagement/squad-tactics.yaml, hook-and-cut; decision batch 5, 5-15, OQ-129)."
+  termination: >-
+    A soldier bound by the retreat who takes option 1 or 2 on each of their moves leaves within five
+    of them: at most two to become free, at most two to reach an edge zone, and one off field. A
+    Stride never lengthens this, since it frees a soldier at Blind Spot, carries only soldiers who
+    are not yet free, and never moves a free soldier;
+    a Grab stops the soldier's moves as it always has, and its release leaves them free. The stay limit
+    bounds options 3 and 4 as it always has, so every retreat ends by no-soldier-standing (decision
+    batch 16, 16-27).
   ends: A retreat ends only when the Titan Engagement ends (data/engagement/engagement-flow.yaml, ending).
   stress: The end-of-Engagement Stress relief applies to a retreat as to any ending (data/core/stress-changes.yaml, engagement-ends).

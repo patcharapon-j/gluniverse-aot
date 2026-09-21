@@ -6,7 +6,8 @@ import { SYSTEM_ID } from '../config.ts';
 import { DIRECT_SETTING } from '../settings-menu.ts';
 import { nextCheck, type EndEntry } from '../rules/engagement/round.ts';
 import { currentEngagement } from './combat.ts';
-import { applyCheck, endEngagement, endLock, isGM, leave, movePosition, nextCard, returnTo, roundAction, runEnd, setAirborne, setAnchorRating, setAttention, setGrabbed, setInEngagement, setLoudest, setMomentum, setOpening, setPinned, setTurnSpent, skipCheck, swap, undoCheck } from './engine.ts';
+import { soldierIn } from './snapshot.ts';
+import { applyCheck, endEngagement, endLock, isGM, gmPlace, gmPlaceHorse, gmPlaceTitan, leave, letGo, nextCard, requestZoneMove, returnTo, roundAction, runEnd, setAirborne, setAttention, setGrabbed, setInEngagement, setLoudest, setMomentum, setOpening, setPinned, setTurnSpent, setZoneRating, skipCheck, swap, undoCheck } from './engine.ts';
 import { ask } from './requests.ts';
 import { foeAct } from './results.ts';
 import { refreshStatuses } from './statuses.ts';
@@ -93,8 +94,14 @@ async function direct(op: string, combat: any, data: Record<string, any>): Promi
       return void (await setMomentum(combat, soldier, Number(data.value ?? 0)));
     case 'airborne':
       return void (await setAirborne(combat, soldier, !!data.on));
-    case 'anchor':
-      return void (await setAnchorRating(combat, String(data.rating ?? '')));
+    case 'zone-rating':
+      return void (await setZoneRating(combat, Number(data.zone), String(data.rating ?? '')));
+    case 'place':
+      return void (await gmPlace(combat, soldier, data.to));
+    case 'place-titan':
+      return void (await gmPlaceTitan(combat, key, Number(data.zone)));
+    case 'place-horse':
+      return void (await gmPlaceHorse(combat, soldier, data.zone === null || data.zone === undefined || data.zone === '' ? null : Number(data.zone)));
     case 'loud':
       return void (await setLoudest(combat, soldier, key, !!data.on));
     case 'opening':
@@ -188,15 +195,21 @@ export async function act(action: string, data: Record<string, any> = {}): Promi
       case 'engage':
         return void (await ask({ act: 'engage', combat: combat.id, soldier: data.soldier, foe: data.foe }));
       case 'move':
-        // With Direct Control on, the GM's request carries `force`: the rules checks are stepped over
-        // and the permission check still runs (ADR-0028).
-        return void (await movePosition(combat, { actor: game.actors.get(data.soldier), key: data.key, to: data.to, way: data.way, carry: data.carry, charge: data.charge, kind: data.kind, force: !!data.force }));
+        // With Direct Control on, the GM places the soldier where the option ends, as a ruling
+        // (ADR-0028); otherwise the rules check the move (16-12).
+        if (data.force && isGM()) return void (await gmPlace(combat, String(data.soldier), data.option.to));
+        return void (await requestZoneMove(combat, String(data.soldier), data.option));
       case 'direct':
         return await direct(String(data.op ?? ''), combat, data);
+      case 'let-go': {
+        const actor = game.actors.get(data.soldier);
+        const s = actor ? soldierIn(combat, actor.id) : null;
+        return void (actor && s && (await letGo(combat, actor, s)));
+      }
       case 'leave':
         return void (await leave(combat, game.actors.get(data.soldier)));
       case 'return':
-        return void (await returnTo(combat, game.actors.get(data.soldier)));
+        return void (await returnTo(combat, game.actors.get(data.soldier), data.zone === undefined ? undefined : Number(data.zone)));
       case 'foe-act':
         return await foeAct(combat, data.foe);
       case 'foe-health': {

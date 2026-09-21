@@ -1,0 +1,119 @@
+---
+title: The Field Has Zones Now
+date: "2026-09-21"
+tab: Sept 2026
+summary: A Titan fight is now fought over a drawn field of numbered zones. Positions still work exactly as written; they just come from where you stand, and Titans can close the distance themselves.
+sources:
+  - path: docs/rules/05-titan-engagement.md
+    sha: "92506550589ff210191f608f04cf384987f8215c"
+  - path: data/engagement/zones.yaml
+    sha: "f2956d5e04b878f105ae5f2762f0a163a63ddc32"
+  - path: data/engagement/positions.yaml
+    sha: "24f45e88413f0e183901ecf1a93b53b4a55f65ff"
+  - path: data/engagement/anchor-ratings.yaml
+    sha: "73ccac5575f457fa46999d3d4514825e2acfaefa"
+  - path: data/engagement/size-classes.yaml
+    sha: "c33e65ddc6cb78cb057b0d8462430c1c73d00d9b"
+  - path: data/engagement/behavior-procedure.yaml
+    sha: "4bc3ae8d5647b1d8fad8fa8593f572ae3a1ea80f"
+  - path: data/engagement/round.yaml
+    sha: "80ceb842525c338d3dd05ca723911ef63c9fb491"
+  - path: data/engagement/titan-format.yaml
+    sha: "0f832b2da3978d7146e15b1b4297aa280a8bab65"
+  - path: docs/adr/0029-the-engagement-is-fought-over-zones.md
+    sha: "2248363aa7b02706ca6701f41755665a8b78d58d"
+---
+
+import ChapterContents from '~/components/ChapterContents.astro';
+import FactTable from '~/components/FactTable.astro';
+import FieldQuote from '~/components/FieldQuote.astro';
+import MarginNote from '~/components/MarginNote.astro';
+import RuleBox from '~/components/RuleBox.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Subsection from '~/components/Subsection.astro';
+import ZoneField from '~/components/ZoneField.astro';
+
+<FieldQuote cite="Survey Corps manual, on ground">Know the ground before you know the monster. The monster changes every fight. The ground decides what you can do about it.</FieldQuote>
+
+Positions have not changed. Distant, In Reach, On Body, and Blind Spot still mean exactly what they always meant, and every rule that reads one still reads it the same way. What changed is where they come from: a Titan fight is now fought over a drawn field, and your Position comes from your place on it.
+
+<ChapterContents label="What changed" items={[
+  { id: 'the-field', title: 'The Field', note: 'Zones, and what stands where' },
+  { id: 'flying-the-field', title: 'Flying the Field', note: 'Carries, and coming in loud' },
+  { id: 'the-titan-closes', title: 'The Titan Closes', note: 'The Stride' },
+  { id: 'at-the-virtual-table', title: 'At the Virtual Table', note: 'The screen, updated' },
+  { id: 'frenzy-slows-down', title: 'Frenzy Slows Down', note: 'Every third round now, not every second' },
+  { id: 'what-we-are-still-watching', title: 'What We Found', note: 'The field, measured' },
+]} />
+
+<SectionHead id="the-field" eyebrow="Part 1">The Field</SectionHead>
+
+<Subsection title="A field you can draw" id="a-field-you-can-draw">
+
+A fight is fought over a **field** of numbered hexagonal zones, each about a Titan's reach across, thirteen of them by default. Focus Titan A starts in the centre zone, and your Squad starts one zone out. Every zone carries its own ground, from Open to Giant Forest, and its own Anchors, Terrain Trait, and cost to fly into.
+
+<ZoneField />
+
+</Subsection>
+
+<Subsection title="Zone and attachment, not a name on a sheet" id="zone-and-attachment">
+
+You are in exactly one zone, and you hold exactly one **attachment**: Ground or Anchored (either way, free to move), or On Body, Blind Spot, Grabbed, or Pinned, naming whichever Titan or corpse you are fixed to. Your Position relative to any one of them is never written down. It is read off your zone and your attachment, fresh, every time a rule needs it.
+
+<FactTable compact caption="Reading a Position off the field" columns={['Your zone and attachment', 'Position']} rows={[
+  ['On Body or Grabbed, naming that Titan', 'On Body'],
+  ['Blind Spot, naming that Titan', 'Blind Spot'],
+  ['Pinned naming it, or free in its zone', 'In Reach'],
+  ['Free in any other zone', 'Distant'],
+]} />
+
+**At the table** this means one thing above all: **a Titan is a place now, not a fact about you.** Two Titans in the same fight each have their own zone, and you can be In Reach of one and Distant from the other without any special rule to say so. The old close rule, which used to knock you back to In Reach of every Titan you were not fighting the moment you closed on one, is gone. It was never doing anything a field does not already do for free.
+
+</Subsection>
+
+<MarginNote>The four Positions, the shapes of the ground, and what changes one: <a href="/guide/fighting-titans/#positions-and-moves">Fighting Titans</a>.</MarginNote>
+
+<SectionHead id="flying-the-field" eyebrow="Part 2">Flying the Field</SectionHead>
+
+Every ODM move in a fight is still a Flight, and it still rolls the same way. What changed is what a long one costs.
+
+<FactTable compact caption="Flying more than one step" columns={['', '']} rows={[
+  ['The first step', 'Free, whatever the roll gives. It may cross into an adjacent zone or move you within your own.'],
+  ['Every step after', 'A <b>Carry</b>, paid in Momentum. Entering Open ground costs the most; Wooded, Urban, and Giant Forest ground cost nothing at all.'],
+  ['The limit', 'Two Carries to a Flight, so a long run still costs something even on the cheapest ground.'],
+  ['Flying past a Titan', 'Cross its zone without stopping and it marks you loudest, whatever the dice gave, unless you spend Momentum to stay Quiet.'],
+]} />
+
+**At the table** this rewards a soldier who commits to a route rather than one who threads the whole field in a single turn. Momentum was always the price of flying; now the ground itself sets the price, zone by zone.
+
+<SectionHead id="the-titan-closes" eyebrow="Part 3">The Titan Closes</SectionHead>
+
+<Subsection title="It comes to you now" id="the-stride">
+
+Every Focus Titan has a **Stride**: a number of zones it may close, on any card that reaches that step, toward whoever holds its Attention. It takes the shortest route, one zone at a time, and stops the moment it reaches them. A soldier riding it (On Body or Grabbed) goes with it. A soldier at its Blind Spot, anchored to the tree and not the Titan, is left behind.
+
+Nothing about it is a roll or a choice at the table. It harms nobody by itself, and it goes exactly where the Attention Ladder already sent it.
+
+</Subsection>
+
+<RuleBox variant="stop" title="Standing off no longer buys you a round" icon="ph:footprints">
+
+Before the field, a Titan that could not reach its Attention holder simply could not reach them, full stop, until somebody moved. Now it walks the distance itself. Keeping your comrades apart used to be a way to slow a fight down. It no longer is.
+
+</RuleBox>
+
+<SectionHead id="at-the-virtual-table" eyebrow="Part 4">At the Virtual Table</SectionHead>
+
+<Subsection title="The GM Screen reads the field now" id="the-screen">
+
+The old Position picker, one dropdown per soldier per Titan, is gone. In its place: a **zone** number and an **attachment**, one of each per soldier, read straight off your board or the field diagram. The screen derives every Position from them the same way the book does, and it shows the Carry cost of the ground you are standing on, so a Flight's price is never a lookup away.
+
+</Subsection>
+
+<SectionHead id="frenzy-slows-down" eyebrow="Part 5">Frenzy Slows Down</SectionHead>
+
+**Frenzy now rises by 1 at the end of every third round instead of every second,** still to a cap of 3. A Titan that closes the distance itself no longer waits for you to come to it, and the field's own wrecks and Carries already cost a Squad more than a standing fight ever did. Fights on the zone field ran deadlier than the book was built for, and Frenzy stacked on top of that pushed them past what a Squad should be asked to survive. Slowing it down gives the field room to be the danger, instead of piling a second one on top of it.
+
+<SectionHead id="what-we-are-still-watching" eyebrow="Part 6">What We Found</SectionHead>
+
+A field and a Titan that closes the distance change the shape of a fight in ways a page of rules cannot predict by itself, so every figure this book quotes for how long a fight runs, how it opens, and what it costs has now been measured again on the field, with the Stride and every wreck counted in. The shape held: a prepared Squad still kills the standard Medium Titan in about three rounds, and every band this book sets stayed inside its limits. Slowing Frenzy to every third round is what kept it there, and the Sprinting Abnormal's Pitch Headlong no longer wrecks the ground under it, which was costing the Squad more than the rules meant it to. Play it, and tell us where a fight still feels wrong.

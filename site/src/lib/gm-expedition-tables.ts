@@ -268,7 +268,7 @@ export function legHazardModifiers(): GmTableData {
 
 // ---------------------------------------------------------------- the route
 
-/** The Waypoint kinds, each with the Anchor Rating it sets and its place on the interim route. */
+/** The Waypoint kinds, each with the field rating it sets and its place on the interim route. */
 export function waypointKinds(): GmTableData {
   const anchorName = (id: string) => named(anchors.ratings, id, 'an Anchor Rating').name;
   const rollCell = (results: number[]): string => {
@@ -277,8 +277,8 @@ export function waypointKinds(): GmTableData {
   };
   return {
     caption: 'Waypoint kinds',
-    note: 'A Waypoint’s kind sets the Anchor Rating of a Titan Engagement on the Leg that leads to it, and so decides more of that fight than the Titan does.',
-    columns: ['Waypoint kind', 'Anchor Rating', 'Interim route (D6)'],
+    note: 'A Waypoint’s kind sets the field rating of a Titan Engagement on the Leg that leads to it, and so decides more of that fight than the Titan does.',
+    columns: ['Waypoint kind', 'Field rating', 'Interim route (D6)'],
     see: false,
     groups: [
       {

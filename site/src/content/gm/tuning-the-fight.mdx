@@ -6,15 +6,15 @@ order: 3
 tab: Tuning
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "302daca974f8a68305f92fe90c88f5fb1718501b"
+    sha: "92506550589ff210191f608f04cf384987f8215c"
   - path: docs/rules/06-standard-titans.md
-    sha: "de99c51273438fe68db52607ce85c21a2d7d5a93"
+    sha: "d786d456876ca31f086ce7c09c4739243f751e70"
   - path: data/engagement/tuning.yaml
-    sha: "3aafe3b92cfb315520ccacd03544faa4cebe5d45"
+    sha: "6b873d615c6b63b71a2166c2a05cb2b0774afc63"
   - path: data/titans/tuning.yaml
-    sha: "a5c05124f54b424ace026687c2863cf401418ca3"
+    sha: "3a6ba60472b8a5b7e965242f5b385bb63c7852f9"
   - path: data/engagement/engagement-setup.yaml
-    sha: "deeac6163448a03a1fac606c19d143b609949d18"
+    sha: "dbe7f5c181689357c35c7a06d751f5b76fd37d23"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -41,26 +41,27 @@ Know the shape a fight already has before you reach for anything, so you can tel
 
 <SectionHead id="what-to-expect" eyebrow="Section 1">What to Expect</SectionHead>
 
-<FactTable caption="How long a Titan takes" columns={['Titan', 'The shape of the fight']} rows={[
+<FactTable caption="How a Titan takes to fall" columns={['Titan', 'The shape of the fight']} rows={[
   ['Medium', '<b>Dead in about three rounds</b> against a prepared Squad of four. Round three is the one to picture when pacing a session.'],
-  ['Small', 'Usually two — and it still costs <em>more</em>, because it acts twice a round and swings twice as often at whoever holds its Attention.'],
-  ['Large', 'Dies about when the Medium does, but it <b>drags</b>. A real share of these end with the Squad out of gas, out of room, or retreating with it still standing — at close to twice the harm.'],
-  ['Sprinting Abnormal', 'Falls sooner than the Medium and later than the Small. Hurts about as much as the Small, and kills rather more often.'],
+  ['Small', 'Usually two, and a little <em>cheaper</em> than the Medium for all that it acts twice a round. It rarely turns on anyone new before it is down.'],
+  ['Large', 'Dies about when the Medium does, but it <b>drags</b>. About one fight in fifteen ends with the Squad out of gas, out of ground, or retreating with it still standing, at about half again the Critical Injuries of a Medium fight and more than half again the deaths.'],
+  ['Sprinting Abnormal', 'Falls sooner than the Medium and later than the Small. Hurts more than either, and kills more often than the Medium.'],
 ]} />
 
-**Every one of those shapes assumes the Squad presses.** A Titan gains 1 Frenzy at the end of each round, to 3, and adds it to its behavior roll, so a fight that runs past round three costs more than the row above says. The Squad decides which of the two it gets.
+**Every one of those shapes assumes the Squad presses.** A Titan gains 1 Frenzy at the end of every third round, to 3, and adds it to its behavior roll, so a fight that runs past round six costs more than the row above says. The Squad decides which of the two it gets.
 
 <FinePrint title="what every fight costs, and where the hard nights come from">
 
 <Subsection title="What every fight costs" id="what-every-fight-costs">
 
 - **Expect a Critical Injury in most fights, and a Grab every few.** A fight nobody bled in is unusual, not the baseline.
-- **The field runs down.** Anchors are never restored, so by round three or four the Squad is moving one step at a time with little Momentum. **That arc is the design, not a losing Squad.**
-- **About a third of a Rookie's Flights earn nothing,** and coming in loud turns the Titan — expect it to look at whoever just arrived at least once a round.
+- **Zones run down.** A zone's rating steps toward Open and is never restored, so a zone the fight has passed through carries little Momentum by round three or four, and a wreck to Open can close a Nape route on a standing Titan outright. **That arc is the design, not a losing Squad.**
+- **A Titan closes on its own.** The Stride brings it to its Attention holder's zone on cards that reach that step, so standing off no longer buys a round for free.
+- **Plenty of a Rookie's Flights earn nothing,** and coming in loud turns the Titan. Expect it to look at whoever just arrived, or whoever flew past its face, at least once a round.
 - **Deaths are rare, and meant to be.** No single standard fight is expected to kill; when one does, a Grab went unanswered or a soldier was already carrying too much.
 - **A long fight is a losing one.** Frenzy walks a Titan down its own table, and it never falls. A Squad that kites, retreats late, or spends rounds on a leg it did not need is choosing the kill tier.
 - **Standing where it cannot reach you does not stop the round.** A Titan that cannot get at its Attention holder turns on the next soldier it can reach. The safe Position is safe for one person only, and that person's comrades pay for it.
-- **A Grab is the sharp end.** With a comrade close enough to act, a Grabbed soldier dies about **one time in three** — alone, **two in three**. That gap is the whole argument for staying near each other.
+- **A Grab is the sharp end.** With a comrade close enough to act, a Grabbed soldier dies about one time in three; alone, two in three. That gap is the whole argument for staying near each other.
 - **A first fight is slower and costlier** for the Fear Roll it opens with. Do not read it as rules that are too hard.
 - **A canister lasts about eight rounds of ODM use,** which is why the retreat clock is {RETREAT_CLOCK} segments. The run for the walls begins as the gas runs low.
 
@@ -70,9 +71,9 @@ Know the shape a fight already has before you reach for anything, so you can tel
 
 <Subsection title="Where the hard nights come from" id="where-the-hard-nights-come-from">
 
-- **Soldiers built without Talents.** Plain templates against a Large Titan is the hardest standard fight in the book: a round longer, far more often no kill at all, twice the harm.
-- **Two Focus Titans at once.** Rounds near half an hour, and roughly double what the Squad faces. If your rounds are dragging, this is usually why.
-- **Scattering.** The lethality lives in the Grab, and the Grab's lethality lives in how far away everybody else is.
+- **Soldiers built without Talents.** Plain templates against a Large Titan is the hardest standard fight in the book: no kill at all close to twice as often as a prepared Squad sees it, and about half again the Critical Injuries and deaths that the same soldiers take from a Medium Titan.
+- **Two Focus Titans at once.** Rounds near half an hour, and far more falls on the Squad than in one fight. If your rounds are dragging, this is usually why.
+- **Scattering.** The lethality lives in the Grab, and the Grab's lethality lives in how many zones away everybody else is.
 
 </Subsection>
 
@@ -94,7 +95,7 @@ Everything here is set **before the dice, in the open, and never mid-fight.**
 
 <FactTable caption="Set before a fight begins" columns={['Lever', 'What it buys']} rows={[
   ['The Titan', 'Small for a quick, sharp scene. Medium for the standard fight. Large when the scene is meant to be <em>survived</em> rather than won. The Sprinting Abnormal when the table should feel the rules have changed.'],
-  ['The ground', 'The <b>Anchor Rating</b> changes a fight more than most Titans do. Open ground holds no Anchors at all, so nobody carries Momentum and everyone arrives empty-handed; a Giant Forest holds three, and the Squad crosses two Positions at a time until the place is flattened.'],
+  ['The field rating', 'Changes a fight more than most Titans do, zone by zone. An Open zone holds no Anchors at all and costs 2 Momentum to Carry into, so nobody arrives with much left; a Giant Forest zone holds three and costs nothing to Carry into, so a Flight chains zone steps freely until the place is flattened.'],
   ['Background Titans', `None, one, or two, each on ${backgroundClocks()} segments. <b>The strongest lever you have, and the easiest to overspend.</b>`],
   ['Support', 'Squadmates who Help, a decoy screen, and the Squad Tactics they hold all end fights sooner without making them trivial. Under the strongest support a Medium Titan still takes two or three rounds and still draws blood.'],
 ]} />
@@ -105,14 +106,15 @@ Everything here is set **before the dice, in the open, and never mid-fight.**
 
 <RuleBox variant="stop" title="Leave these exactly as written" icon="ph:prohibit">
 
-- **A Titan's numbers.** Tempo, Nape Depth, Regeneration, Toughness, Heave, Attack Dice — every one is load-bearing for how long a fight runs and what it costs.
+- **A Titan's numbers.** Tempo, Nape Depth, Regeneration, Toughness, Heave, Attack Dice, Stride: every one is load-bearing for how long a fight runs and what it costs.
 - **The Behavior Tables and Attention Ladders.** You never pick the row, the fallback, the target, the order, or the soldier a retarget lands on. The table picks, and the Positions decide.
-- **Frenzy.** It starts at 0, rises 1 a round to 3, and is added to the roll. Never held back because a fight is going badly for the Squad, and never pushed because one is going well.
+- **The Stride and a Flight's Carry.** Whether a Titan strides, how far, and by which route; what a Carry costs into a zone and the limit on a Flight. None of it is your call, and none of it is rolled.
+- **Frenzy.** It starts at 0, rises 1 every third round to 3, and is added to the roll. Never held back because a fight is going badly for the Squad, and never pushed because one is going well.
 - **An open roll, once it has fallen** — Attack Dice, the setup table, the hazard and Night tables, every roll on a table.
 - **The hidden Next Behavior.** Rolled once, face down, never re-rolled or swapped for something better.
 - **Which of an Abnormal's numbers a Read reveals,** and the price of each.
 - **The clocks and the retreat:** the Background clocks, the retreat clock's named length, the forced moves, the stay limit, and the two tests that end a fight.
-- **Anchors and Momentum.** Every point a soldier earns or spends is theirs. You never hand one out, take one back, or wreck an Anchor because the fight is going too well — and **Anchors at 0 close no step row.**
+- **Anchors and Momentum.** Every point a soldier earns or spends is theirs. You never hand one out, take one back, or wreck a zone because the fight is going too well, and **a zone wrecked to Open under a standing Titan loses its Blind Spot step.**
 - **What a ruling may cost:** one stake, from the closed menu. Never a Critical Injury, a Death Roll, a Scar, Grief, a Fear Roll, Stress relief, or healing.
 
 </RuleBox>

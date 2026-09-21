@@ -33,6 +33,8 @@ REFERENCE IMAGES: the attached images are approved plates from this same set. Ma
 
 Without references, subjects with a lot of bare skin or foliage (Titans, forests) drift toward photoreal. With them, the Titan plate matched the soldier plate on the first try. For icons, say the plates are world reference only (what ODM gear, wire, and blades look like, not how to render), and also attach approved icons for frame and texture.
 
+**References alone are not enough for a subject with no people in it.** Learned on 2026-09-21, twice in one session: the Updates plate (a book on a desk) and the first board terrain tile (grass and earth) both came back photoreal with both style-lock plates attached. The colour plate style block describes how *characters* are drawn, so a subject with no figure in it has nothing in the block to hold on to. Both were fixed by putting a RENDERING paragraph in the subject, which is per-asset text and not locked, naming the painted treatment and then naming each wrong outcome: never a photograph, never a photorealistic render, never a 3D render, never photographic depth-of-field blur or lens bokeh, and a closing line saying what it would look like if it were wrong. Do this for any subject that is a place or an object rather than a person, and do not reach for the style block instead.
+
 Every prompt is assembled in this order: the run header, the aspect ratio line, the style block, the world block (plates only), the subject, then the exclusions.
 
 ### Run header
@@ -202,7 +204,7 @@ Stamp icons, generated with the Codex `board-game-icon-assets` skill. Shown at 3
 ### Icon run header
 
 ```text
-Use the `board-game-icon-assets` skill for this task (read its SKILL.md and references/icon-principles.md first and follow them). Use your built-in image generation tool to create <n> stamp icons for a tabletop RPG website, one image per icon, and copy each generated PNG into `icons/` inside the current working directory with the exact filename listed (copy the file; do not re-encode, crop, or resize). Do not write code and do not review anything; only generate and copy images. Generate the first icon to lock the frame, stroke, and ink texture, then generate every following icon using the previously generated icons as the visual reference, keeping the frame geometry, stroke weight, canvas margin, and stamp texture identical within each family and across the set. When done, reply with the list of saved absolute paths and one line per icon naming its glyph.
+Use the `board-game-icon-assets` skill for this task (read its SKILL.md and references/icon-principles.md first and follow them). Use your built-in image generation tool to create <n> stamp icons for a tabletop RPG website, one image per icon, and copy each generated PNG into `icons/` inside the current working directory with the exact filename listed, using only the exact file path your own image generation call returned in this session (never the newest file in ~/.codex/generated_images, which other sessions also write to) (copy the file; do not re-encode, crop, or resize). Do not write code and do not review anything; only generate and copy images. Generate the first icon to lock the frame, stroke, and ink texture, then generate every following icon using the previously generated icons as the visual reference, keeping the frame geometry, stroke weight, canvas margin, and stamp texture identical within each family and across the set. When done, reply with the list of saved absolute paths and one line per icon naming its glyph.
 ```
 
 For a later batch, attach one or two approved style lock icons with `-i` so the frame and stroke carry over.
@@ -383,6 +385,46 @@ EXCLUSIONS: transparent background with true alpha, nothing behind the seal at a
 - Generated seals come back browner than the palette. Measure the mean colour over the opaque pixels and lift the RGB until it lands near `#8B2A21`; the picked seal needed a 1.15 multiplier.
 - Three candidates were made. The picked one had the boldest wing split at 120 px; a shallow-deboss candidate and a candidate whose wings left a hollow V both read as foliage and are kept in `site/art-src/seal/rejected/`.
 
+## The engagement board
+
+A new family, added on 2026-09-21 for the zone combat board (`docs/playtest/feedback/round-3/zone-combat-design.md` section 7, `ART-HANDOUT.md` section 4). Twenty-nine assets: fifteen hex terrain tiles, five anchor rating rim glyphs, four Titan figures, two soldier figures, three effect overlays.
+
+Settled by the owner on 2026-09-21:
+
+- **Hexes are flat-top**, with two-to-one foreshortening, so a tile is twice as wide as it is tall.
+- **The board takes its own style block and its own approved style lock**, before any of the twenty-nine files are generated. ADR-0022 requires a style lock of every family, and a shallow-isometric board tile is not covered by the colour plate block, the ink-wash vignette block, or the icon system block.
+
+The style lock was approved by the owner on 2026-09-21: variant 1 of each of the five anchor ratings, `titan-medium` and `soldier-standing`. Those seven originals are the board's style references, never regenerated or edited, and each later board asset attaches the approved asset of its own kind with `-i`, alongside the two colour plate style-lock plates.
+
+A board asset is assembled like a colour plate: run header, aspect line, the plate REFERENCE IMAGES line, the colour plate style block, the world block (tiles and soldier figures only), then the board block for its kind, the subject, and the exclusions. The colour plate style block is still used verbatim. The board block carries what it cannot say, because it describes how characters are drawn and a terrain tile has none.
+
+### Style block: board tile
+
+Goes after the colour plate style block and before the terrain line, which is the only per-tile text (`TERRAIN: ...`, then `SCALE: one tile is about a Titan's reach across, roughly fifteen metres, so everything on it is sized to that.`).
+
+```text
+RENDERING, important, read this first: this is a hand-painted anime background, painted exactly like the attached approved plates. Grass, earth, stone, timber and foliage are laid in as broad masses of colour with visible brush strokes in them, flat painterly anime shading, and confident dark contour lines on anything with a defined edge such as a stone, a trunk, a roof or a wall. Never a photograph, never a photorealistic render, never a 3D render, never a game-engine texture, never a scanned physical wargame tile, and never photographic depth-of-field blur. Individual blades of grass, photographic surface grain and speckled noise are wrong; brush marks and simplified painted shapes are right. If it would look like a photograph of real ground, it is wrong.
+GEOMETRY, exact: one flat-top hexagon, that is a hexagon with a flat top edge, a flat bottom edge, and a pointed corner at the left and at the right. The hexagon exactly fills the canvas and is pinned to its edges: the left point touches the middle of the left canvas edge, the right point touches the middle of the right canvas edge, the flat top edge lies along the top of the canvas spanning its middle half, and the flat bottom edge lies along the bottom of the canvas spanning its middle half. It is therefore as wide as the canvas and as tall as the canvas, and the only transparent areas are the four triangular corners the hexagon does not cover. Nothing at all is drawn outside the hexagon. The six edges are clean straight cuts with no border, no outline, no rim and no frame drawn on them.
+TILING: the ground surface runs right up to all six edges and is cut off flat by them, with no fade, no vignette and no darkening at the edges, so that many copies of this tile placed edge to edge read as one continuous field. Nothing on the tile crosses an edge or overhangs it.
+LIGHT: flat, even, overcast daylight from high and slightly to the upper left, with no long cast shadows, no dramatic rim light and no sun flare, so that tiles of different terrain sit together without a lighting seam. Small contact shadows directly under objects are fine.
+SCALE: one tile is about a Titan's reach across, roughly fifteen metres, so everything on it is sized to that.
+COLOUR: keep to the locked palette above, parchment and dust tones with deep military green and iron-gall brown-black shadows, muted and filmic rather than bright and saturated.
+No figures of any kind: no soldiers, no Titans, no horses, no animals, no people.
+BACKGROUND: everything outside the hexagon is transparent with true alpha, nothing there at all: no sky, no ground, no paper, no shadow, no glow. The alpha edge is clean and hard along all six sides, with no coloured fringe and no soft halo. If transparency is impossible, make everything outside the hexagon plain flat pure white #FFFFFF.
+```
+
+Aspect 16:9, about 1536x864. The hexagon is pinned to the canvas edges rather than given a ratio, so every tile is the same hexagon: the first lock round asked for a width of the full canvas and a height of half the width inside a 16:9 canvas, which cannot both hold, and the five tiles came back at five different ratios (0.528 to 0.651) and did not tessellate. Pinned, they land at 0.562 to 0.581. A board places tiles at a column step of three quarters of the tile width and a row step of the tile height, with odd columns dropped by half a row.
+
+Three variants per anchor rating. Variants 2 and 3 attach the approved variant 1 of the same rating with `-i`, so a rating's tiles match. Giant Forest trunks rise to the top edge of the hexagon and are cut there, never beyond it.
+
+### Board figures
+
+Titans and soldiers stand on the board as painted miniatures, **seen at eye level**, not from above: the owner kept the lock figures' eye-level view on 2026-09-21 because the silhouette reads better at the 120 px the board draws a soldier. Aspect 4:5, about 1024x1280, on transparent alpha, facing left and slightly toward the viewer, flat overcast light from the upper left, no cast shadow and no ground disc. A Titan wears plain dark brown short trunks and stands in a low bank of pale steam from mid-thigh down, which hides the feet and serves as its base; both arms and both shoulders have open space round them so the game can draw a Wounded or Broken Body Part mark over any one limb, and the head and neck are clear of the shoulders for the Nape. Every figure attaches the approved figure of its own kind with `-i`, and a Titan also attaches the approved colour plate of its own Size Class.
+
+### Post-processing: the matte fringe
+
+The generator leaves a saturated red and yellow fringe along the alpha edge of anything cut out on transparency, heavy on a Titan (3.2 percent of its pixels on the lock figure) and trace on tiles. Despill it before approval: a pixel is fringe when it is strongly red-over-blue or yellow-over-blue, a fringe pixel takes the mean colour of its clean opaque neighbours within 4 px, and one with no clean neighbour goes fully transparent. Proof on dark, where the fringe shows. Never despill an effect overlay: fire is red and yellow by nature, and on `fx-fire` the detector flagged 270,000 pixels of real flame. Effects and rim glyphs ship as generated.
+
 ## Sizes
 
 | Asset | Aspect | Generated size | Web copy |
@@ -393,6 +435,10 @@ EXCLUSIONS: transparent background with true alpha, nothing behind the seal at a
 | Ink-wash vignette | 1:1 | 1024x1024 | WebP, quality 82 |
 | Game icon | 1:1 | 1024x1024, transparent | WebP with alpha, quality 82, alpha quality 100 |
 | Wax seal | 1:1 | 1024x1024, transparent | WebP with alpha, 768 px, quality 82, alpha quality 100 |
+| Board hex tile | 16:9, hexagon pinned to the canvas edges | about 1672x941, transparent corners | WebP with alpha, 1024 px wide, quality 82, alpha quality 100 |
+| Board figure (Titan or soldier) | 4:5 | about 1024x1280, transparent | WebP with alpha, 1024 px tall, quality 82, alpha quality 100 |
+| Board effect overlay | 1:1 | 1024x1024, transparent | WebP with alpha, 512 px, quality 82, alpha quality 100 |
+| Board rim glyph | 1:1 | 1024x1024, transparent | WebP with alpha, 128 px, quality 82, alpha quality 100 |
 
 WebP copies are made with `cwebp -q 82 -alpha_q 100 -m 6`, adding `-resize` when the long edge is over 1600 px. Crop to the target ratio before encoding if the model returns a near miss.
 
@@ -404,6 +450,7 @@ Names describe meaning, never appearance, in lowercase kebab case.
 - Ink-wash vignettes: `vignette-ink-<subject>.png`, for example `vignette-ink-odm-canister.png`.
 - Wax seal: `seal-wax.png`, one file.
 - Icons: `<family>-<meaning>.png`. Families are `die`, `roll`, `tier`, `gear`, `talent`, `attr`, `harm`, `size`, `position`, `tactic`, `specialty`. Examples: `die-stress.png`, `roll-push.png`, `tier-kill.png`, `gear-odm.png`.
+- Board: `hex-<anchor rating>-<variant>.png` with the rating ids of `data/engagement/anchor-ratings.yaml` (`hex-giant-forest-2.png`), `rim-<anchor rating>.png`, `titan-<size class>.png`, `soldier-<pose>.png`, `fx-<effect>.png`.
 - Retries keep the name and add `-v2`, `-v3` in `originals/` until one is picked. The picked file takes the plain name.
 
 ## Folders
@@ -415,3 +462,4 @@ Names describe meaning, never appearance, in lowercase kebab case.
 - `site/art-src/seal/`: the wax seal's 1024 px original, with its unpicked candidates in `rejected/` (gitignored).
 - `site/art-src/brand/`: the brand batch. `prompts/` holds every prompt as it was sent, `originals/` the picked generations, `rejected/` the ones that lost, `web/` the processed masters, and `og-compose.html` the page the social card is captured from (all gitignored).
 - `site/art-src/<batch>/contact-sheet*.png`: review sheets for the owner.
+- `foundry/art-src/board/`: the engagement board. `originals/` holds the generations and `originals/icons/` the rim glyphs, `clean/` the despilled PNGs, `web/` the WebP copies, `rejected/` the ones that lost, `prompts/` every prompt as sent (all gitignored). Shipped copies are committed under `foundry/static/assets/board/` by `foundry/tools/import-art.sh`.

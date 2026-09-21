@@ -34,6 +34,12 @@ fields:
     The Heave rating: the heave count at which a Titan's body, living or a corpse, frees every soldier
     it pins (data/engagement/titan-harm.yaml, falling_titan, heave). An Abnormal lists its own (decision
     batch 8, 8-9; OQ-146).
+  stride: >-
+    Zones a Focus Titan may move toward its Attention holder on each of its cards that resolves a
+    behavior (data/engagement/behavior-procedure.yaml, resolving_a_card, stride). A grounded Titan's
+    Stride is 0 (data/engagement/titan-harm.yaml, grounded). An Abnormal lists its own (decision
+    batch 16, 16-16). The values are
+    (measured in the zone retune, Z1: at every reference start a Stride is taken over one zone, so values above 0 read the same; docs/reviews/zone-retune-decisions.md).
 
 classes:
   - id: small
@@ -46,6 +52,7 @@ classes:
     attack_dice: {terrorize: 3, control: 6, kill: 6}
     raises_fall_band: false
     heave: 2
+    stride: 1
 
   - id: medium
     name: Medium
@@ -57,6 +64,7 @@ classes:
     attack_dice: {terrorize: 3, control: 6, kill: 9}
     raises_fall_band: false
     heave: 3
+    stride: 2
 
   - id: large
     name: Large
@@ -68,6 +76,7 @@ classes:
     attack_dice: {terrorize: 6, control: 9, kill: 12}
     raises_fall_band: true
     heave: 4
+    stride: 2
 
 # An arm that holds a Grabbed soldier has this Toughness while it holds them, whatever its class
 # (ADR-0019; data/engagement/grab.yaml).
@@ -86,5 +95,6 @@ measured_note: >-
   every target under Attack Dice as a check (decision batch 8, 8-14; OQ-145).
 unmeasured:
   - heave for every class (decision batch 8, 8-9; the rerun reports pins and Heaves, it does not tune the rating)
+  - stride for every class (decision batch 16, 16-16 and 16-38; the simulator's starting values, measured first by batch E's rerun) (measured in the zone retune, Z1: at every reference start a Stride is taken over one zone, so values above 0 read the same; docs/reviews/zone-retune-decisions.md)
   - toughness.eyes for every class
   - toughness.arm for every class (only the grip_toughness arm was measured, in the Grab model)

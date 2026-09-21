@@ -84,8 +84,32 @@ class Soldier:
         self.retiring = False
         self.carrying = None
         self.carried_by = None
+        # the field (ADR-0029; decision batch 16): the zone (None off field) and the attachment (kind, body label) a
+        # Titan Engagement gives the soldier (engine.Fight.add), and the Fight whose Focus Titan a Position is read
+        # relative to. Outside a Fight a Position is stored as written.
+        self.fight = None
+        self.zone = None
+        self.attach = ("ground", None)
+        self.momentum = 0
+        self._pos = None
 
     # ------------------------------------------------------------------ derived values
+    @property
+    def pos(self):
+        """The soldier's Position relative to the Focus Titan, derived from zone and attachment (zones.yaml,
+        derivation; decision batch 16, 16-9), never recorded. A write goes through engine.Fight.place_at, which sets the
+        zone and attachment the Position means."""
+        f = self.fight
+        return self._pos if f is None else f.position(self)
+
+    @pos.setter
+    def pos(self, p):
+        f = self.fight
+        if f is None:
+            self._pos = p
+        else:
+            f.place_at(self, p)
+
     @property
     def resolve(self):
         return self.resolve_base + self.scars - min(self.grief, R.grief_max)

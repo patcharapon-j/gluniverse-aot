@@ -506,6 +506,7 @@
                 <input type="checkbox" checked={view.corpse} disabled={ro} onchange={(e) => setField(actor, 'system.corpse', e.currentTarget.checked)} />
                 <span class="lbl">{t('WOF.Actor.Titan.FIELDS.tempo.label')}</span><span>{view.tempo}</span>
                 <span class="lbl">{t('WOF.Actor.Titan.FIELDS.heave.label')}</span><span>{view.heave}</span>
+                <span class="lbl">{t('WOF.Actor.Titan.FIELDS.stride.label')}</span><span>{view.stride}</span>
                 <span class="lbl">{t('WOF.Actor.Titan.FIELDS.attention_ladder.label')}</span><span>{view.ladder?.name ?? t('WOF.TitanSheet.hidden')}</span>
               </div>
             </div>

@@ -16,9 +16,10 @@ odm_moves:
     An ODM move is a move a soldier makes on their own ODM Gear, and every ODM move is a Flight:
     it is rolled for fly, its step happens whatever the roll gives, each success is 1 Momentum, and
     no successes sets the loudest flag (data/engagement/positions.yaml, moves, flight;
-    data/engagement/anchor-ratings.yaml, momentum). Which Position changes need an ODM move at each
-    Anchor Rating, and which can be made on foot or mounted, is in
-    data/engagement/anchor-ratings.yaml (move_kinds, ratings).
+    data/engagement/anchor-ratings.yaml, momentum). Which zone steps and attachment steps need an ODM
+    move in a zone of each Anchor Rating, and which can be made on foot or mounted, is in
+    data/engagement/anchor-ratings.yaml (move_kinds, ratings) and data/engagement/zones.yaml
+    (moves).
   needs: ODM Gear that counts as had (data/gear/items.yaml, odm-gear, counts_as_not_had).
   mounted: A mounted soldier's ODM move dismounts them first (data/gear/horses.yaml, mounted).
   overloaded: >-
@@ -38,7 +39,7 @@ odm_use:
     used it (gas_roll, when). A mounted charge is not ODM use (data/gear/horses.yaml, mounted,
     charge).
   not_odm_use:
-    - Holding a Position without moving, including staying airborne on the soldier's anchors.
+    - Staying where they are without moving, including staying airborne on the soldier's anchors.
     - A mounted charge (data/gear/horses.yaml, mounted, charge).
     - A roll whose gear item is a Blade Set, a horse, or a kit, including every Nape strike.
     - Being carried by a comrade.
@@ -75,6 +76,7 @@ airborne:
     - The soldier makes a move that is not an ODM move.
     - The soldier falls (data/gear/falls.yaml).
     - The soldier becomes Grabbed (data/engagement/grab.yaml).
+    - The zone the soldier is anchored in becomes Open, with no fall (data/engagement/anchor-ratings.yaml, zone_becomes_open; decision batch 16, 16-21).
     - The Titan Engagement ends. The soldier lands, with no fall.
     - Outside a Titan Engagement, the procedure whose rule made the soldier airborne ends, unless that rule states another point.
   never_airborne:
@@ -164,9 +166,10 @@ running_dry:
     - They cannot make an ODM move, so they make no Gas Roll for a later round until their Gas Rating is above 0.
     - They cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot (strikes).
   airborne: >-
-    Running dry does not make the soldier fall. An airborne soldier stays airborne at their
-    Position until they stop being airborne (airborne, stops_being_airborne). Which moves that are
-    not ODM moves each Position allows is in data/engagement/positions.yaml (moves, letting_go).
+    Running dry does not make the soldier fall. An airborne soldier stays airborne in their zone,
+    with their attachment, until they stop being airborne (airborne, stops_being_airborne). Which
+    moves that are not ODM moves each attachment allows is in data/engagement/positions.yaml (moves,
+    letting_go).
   ends: >-
     When the Gas Rating rises above 0: Change Canister (change_canister), Standard Issue
     (data/gear/standard-issue.yaml), or receiving a canister by passing or taking and then

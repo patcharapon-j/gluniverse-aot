@@ -53,16 +53,53 @@ export function defineCombatModels() {
             dodges: new f.ArrayField(new f.SchemaField({ soldier: k.str(), successes: k.nonNeg(), message: k.str() })),
             pending: k.str(),
             clearTheHand: k.bool(),
-            // batch F2: rises 1 at each round end to FRENZY_CAP, and is added to the behavior roll.
+            // batch F2: rises 1 at the end of every third round to its cap (cards.ts, frenzyRule), and is added to the behavior roll.
             frenzy: k.nonNeg(),
+            // The zone it stands in (decision batch 16; zones.yaml). A corpse's never changes.
+            zone: k.nonNeg(),
           }),
         ),
         background: new f.ArrayField(
           new f.SchemaField({ name: k.str(), titan: k.str(), actor: k.str(), length: k.int(6, { min: 1 }), filled: k.nonNeg(), entered: k.nonNeg() }),
         ),
         retreat: new f.SchemaField({ length: k.int(8, { min: 1 }), filled: k.nonNeg(), active: k.bool(), began: k.nonNeg() }),
-        // The Anchors left and how many wreckings the field has seen (anchor-ratings.yaml, anchors).
-        anchors: new f.SchemaField({ left: k.nonNeg(), wrecks: k.nonNeg() }),
+        // The field (zones.yaml; decision batch 16, 16-2 to 16-6): its size, field rating, and each zone's
+        // rating, start rating, Sparse grace, and effects. Null outside a Titan Engagement.
+        field: nullableSchema({
+          size: k.choice(['skirmish', 'standard', 'set-piece'], 'standard'),
+          rating: k.str('wooded'),
+          centre: k.int(7, { min: 1 }),
+          squadStart: k.int(8, { min: 1 }),
+          zones: new f.ArrayField(
+            new f.SchemaField({
+              n: k.int(1, { min: 1 }),
+              q: k.int(0),
+              r: k.int(0),
+              rating: k.str('wooded'),
+              start: k.str('wooded'),
+              graceUsed: k.bool(),
+              effects: new f.ArrayField(new f.StringField({ required: true, blank: false, choices: ['steam', 'dust', 'fire'] })),
+            }),
+          ),
+        }),
+        // Each soldier's zone (null: off field), attachment, and horse's zone (zones.yaml, attachments; 16-8, 16-25).
+        placements: new f.ArrayField(
+          new f.SchemaField({
+            soldier: k.str(),
+            zone: k.nullableInt({ min: 1 }),
+            kind: k.choice(['ground', 'anchored', 'on-body', 'blind-spot', 'grabbed', 'pinned'], 'ground'),
+            body: k.str(),
+            horseZone: k.nullableInt({ min: 1 }),
+            // A rising stamp set when the attachment became on-body, blind-spot, or grabbed: the board's order of arrival.
+            since: k.nonNeg(),
+          }),
+        ),
+        // The last thing the board animates, written in the same update as the change it shows; seq only rises.
+        boardEvent: nullableSchema({
+          seq: k.nonNeg(),
+          kind: k.choice(['stride', 'flight', 'wreck', 'fall', 'steam', 'enter'], 'stride'),
+          data: new f.ObjectField(),
+        }),
         wings: new f.ArrayField(new f.SchemaField({ mate: k.str(), pc: k.str() })),
         wingsSet: k.bool(),
         wingsOpen: k.bool(),
@@ -73,6 +110,8 @@ export function defineCombatModels() {
         // Soldiers whose move this round is spent (blade-sets.yaml, swap), and who bought a clean line.
         movesSpent: strings(),
         cleanLine: strings(),
+        // Soldiers who spent Momentum on quiet this round: they set no flag this turn (anchor-ratings.yaml, spends, quiet; 16-14).
+        quiet: strings(),
         tactics: new f.SchemaField({ held: strings(), used: strings() }),
         cloaks: strings(),
         noOneStanding: k.nonNeg(),

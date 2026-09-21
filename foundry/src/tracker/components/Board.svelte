@@ -1,8 +1,9 @@
 <script lang="ts">
   /**
-   * The Engagement board (the locked Ops Ledger): a two-page ledger spread. Left: the engagement line,
-   * the step bar, and the soldier by Titan Position matrix (or, in a Skirmish, Engaged or Apart by
-   * Foe). Right: a block per Focus Titan and corpse, then the Background and retreat clocks (or the
+   * The Engagement ledger (the locked Ops Ledger): a two-page ledger spread. Left: the engagement line,
+   * the step bar, the field readout (each zone's rating and who stands in it), and each soldier's zone,
+   * attachment, and derived Positions, read only (decision batch 16, 16-35; moves are made on the
+   * engagement board, src/board/), or, in a Skirmish, Engaged or Apart by Foe. Right: a block per Focus Titan and corpse, then the Background and retreat clocks (or the
    * Foe group). Footer: the round-end checklist with its stamps, Undo, and Apply.
    */
   import { tick as settle } from 'svelte';
@@ -21,7 +22,7 @@
   let lastStamped = -1;
 
   function openMenu(e: MouseEvent, row: SoldierRow, cell: Cell) {
-    if (!cell.options.length && !isGM) return;
+    if (!row.owner && !isGM) return;
     const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const h = host!.getBoundingClientRect();
     menu = { row, cell, x: Math.min(r.left - h.left, h.width - 220), y: r.bottom - h.top + 2 };
@@ -35,14 +36,22 @@
   /** Direct Control is the GM's own client stepping over the rules checks (ADR-0028). */
   const direct = $derived(isGM && tracker.direct);
 
-  function move(to: string, way: string, carry = 0, charge = false, force = false) {
+  function letGo() {
     if (!menu) return;
     const { row, cell } = menu;
     menu = null;
-    void act('move', { soldier: row.id, key: cell.key, to, way, carry, charge, force }).then(() => {
+    void act('let-go', { soldier: row.id }).then(() => {
       pulse(host?.querySelector(`[data-cell="${row.id}-${cell.key}"]`), MOTION.colors.notice);
     });
   }
+
+  /** Direct Control's placement (ADR-0028): a zone (or off field) and an attachment, naming the open cell's body where it names one. */
+  function place(zone: string, kind: string) {
+    if (!menu) return;
+    const body = ['on-body', 'blind-spot', 'grabbed', 'pinned'].includes(kind) ? menu.cell.label : null;
+    set('place', { to: { zone: zone === 'off' ? null : Number(zone), attachment: { kind, body } } });
+  }
+  const zoneNumbers = $derived((v?.field?.zones ?? []).map((z) => z.n));
 
   /** One direct setter, run and the menu left open so the GM can set several things at once. */
   function set(op: string, data: Record<string, unknown> = {}) {
@@ -111,8 +120,8 @@
         </header>
         <div class="eline">
           {#if v.mode === 'titan'}
-            <span>{t('line.anchor')} <b>{v.anchor}</b></span>
-            <span title={v.anchors.trait}>{t('line.anchors')} <b>{v.anchors.text}</b></span>
+            <span>{t('line.fieldRating')} <b>{v.anchor}</b></span>
+            <span>{t('line.field')} <b>{v.field?.sizeText ?? '–'}</b></span>
             <span>{t('line.round')} <b>{v.round}</b></span>
             <span>{t('line.step')} <b>{v.steps.find((s) => s.id === v.step)?.label}</b></span>
             <span>{t('retreat')} <b>{v.retreat.text}</b></span>
@@ -140,15 +149,28 @@
         {#if direct}<p class="directbar">{t('direct.banner')}</p>{/if}
         {#if v.ending.met}<p class="lognote red">{v.ending.text}</p>{/if}
 
+        {#if v.mode === 'titan' && v.field}
+          <h3 class="sec"><span class="n">§0</span>{t('board.field')}<span class="hint">{t('board.fieldHint')}</span></h3>
+          <div class="zonelist">
+            {#each v.field.zones as z (z.n)}
+              <span class="zn" class:occupied={z.titans.length || z.soldiers.length} title={z.trait}>
+                <b>{z.n}</b> {z.name}{#if z.startName}<small> ({t('board.wasRating', { name: z.startName })})</small>{/if}
+                {#if z.titans.length}<em>{z.titans.join(', ')}</em>{/if}
+                {#if z.soldiers.length}<small>{z.soldiers.join(', ')}</small>{/if}
+              </span>
+            {/each}
+          </div>
+        {/if}
         <h3 class="sec"><span class="n">§1</span>{v.mode === 'titan' ? t('board.matrix') : t('board.engaged')}<span class="hint">{v.mode === 'titan' ? t('board.matrixHint') : t('board.engagedHint')}</span></h3>
         <div class="mxwrap">
           <table class="mx">
-            <colgroup><col style="width:44px" /><col />{#if v.mode === 'titan'}{#each v.titans as _ti (_ti.key)}<col style="width:84px" />{/each}{:else}{#each v.foes as _f (_f.id)}<col style="width:62px" />{/each}{/if}{#if v.mode === 'titan'}<col style="width:40px" />{/if}<col style="width:54px" /></colgroup>
+            <colgroup><col style="width:44px" /><col />{#if v.mode === 'titan'}<col style="width:96px" />{#each v.titans as _ti (_ti.key)}<col style="width:84px" />{/each}{:else}{#each v.foes as _f (_f.id)}<col style="width:62px" />{/each}{/if}{#if v.mode === 'titan'}<col style="width:40px" />{/if}<col style="width:54px" /></colgroup>
             <thead>
               <tr>
                 <th>{t('board.card')}</th><th>{t('board.soldier')}</th>
                 {#if v.mode === 'titan'}
-                  {#each v.titans as ti (ti.key)}<th class="t{ti.colour}" title={ti.name}>{ti.label} {ti.corpse ? t('corpse') : ti.name}</th>{/each}
+                  <th>{t('board.zone')}</th>
+                  {#each v.titans as ti (ti.key)}<th class="t{ti.colour}" title={ti.name}>{ti.label} {ti.corpse ? t('corpse') : ti.name} · {t('zone.n', { n: ti.zone })}</th>{/each}
                   <th>{t('board.gas')}</th>
                   <th>{t('board.momentum')}</th>
                 {:else}
@@ -179,13 +201,18 @@
                         {#if r.owner && v.mode === 'titan'}
                           <span class="rowacts">
                             {#if !r.leave}<button type="button" class="link-btn" onclick={() => act('leave', { soldier: r.id })}>{t('act.leave')}</button>{/if}
-                            {#if !r.returnBack}<button type="button" class="link-btn" onclick={() => act('return', { soldier: r.id })}>{t('act.return')}</button>{/if}
+                            {#if !r.returnBack}{#each r.returnZones as n (n)}<button type="button" class="link-btn" onclick={() => act('return', { soldier: r.id, zone: n })}>{t('act.returnTo', { n })}</button>{/each}{/if}
                           </span>
                         {/if}
                       </div>
                     </div>
                   </td>
                   {#if v.mode === 'titan'}
+                    <td class="zonecell">
+                      <b>{r.zoneText}</b>
+                      {#if r.attachText}<small>{r.attachText}</small>{/if}
+                      <small>{#if r.airborne}{t('board.airborneShort')}{/if}{#if r.mounted} {t('board.mountedShort')}{/if}{#if r.horseText} {r.horseText}{/if}</small>
+                    </td>
                     {#each r.cells as c (c.key)}
                       <td>
                         <button type="button" class="pc {c.colour}" class:close={c.close} class:grab={c.grab} class:none={!c.position} data-cell="{r.id}-{c.key}" disabled={c.grab && !isGM} aria-haspopup="menu" title={c.grab ? t('board.grabbedCell', { label: c.label }) : c.position ? t(`posTip.${c.position}`) : ''} aria-label="{r.name}, {c.label}: {c.text}" onclick={(e) => openMenu(e, r, c)}>
@@ -376,41 +403,12 @@
   {#if menu}
     <div class="pop" class:direct role="menu" tabindex="-1" style="left:{menu.x}px;top:{menu.y}px" onkeydown={menuKey}>
       <div class="pk">{t('board.menuTitle', { name: menu.row.name, label: menu.cell.label })}</div>
-      <!-- The legal path stays the default and stays first, so the system still teaches the rules. -->
-      {#each menu.cell.options as o (o.to)}
-        <div class="popt" class:current={o.current}>
-          <span class="pn" title={t(`posTip.${o.to}`)}><img src={o.icon} alt="" />{o.label}</span>
-          {#if o.current}<em class="note">{t('board.current')}</em>{#if o.charge}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, 'mounted', 0, true)}>{t('move.chargeAct')}</button>{/if}
-          {:else}
-            {#each o.ways as w (w.kind)}
-              <button type="button" role="menuitem" onclick={() => move(o.to, w.kind, w.carry)}>{w.label}{#if w.note}<small> {w.note}</small>{/if}</button>
-              {#if w.charge}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, w.kind, w.carry, true)}>{t('move.chargeAct')}</button>{/if}
-            {/each}
-            {#if o.block}<em class="note">{o.block}</em>{/if}
-            {#if isGM}<button type="button" role="menuitem" class="rule" onclick={() => move(o.to, 'rule')}>{t('move.byRule')}</button>{/if}
-            <!-- Direct Control: every Position, with no step check, no anchor check and no Grabbed
-                 check. The request carries `force` (ADR-0028). -->
-            {#if direct}<button type="button" role="menuitem" class="force" onclick={() => move(o.to, 'rule', 0, false, true)}>{t('direct.setPosition')}</button>{/if}
-          {/if}
-        </div>
-      {/each}
       {#if !menu.cell.corpse}
-        {#if !menu.cell.letGo}<button type="button" role="menuitem" onclick={() => menu && move('in-reach', 'letGo')}>{t('move.letGo')}</button>{/if}
+        {#if !menu.cell.letGo}<button type="button" role="menuitem" onclick={letGo}>{t('move.letGo')}</button>{/if}
         {#if !menu.cell.loud && v?.step === 'play'}<button type="button" role="menuitem" onclick={() => { const m = menu!; menu = null; void act('loud', { soldier: m.row.id, key: m.cell.key }); }}>{t('act.drawAttention')}</button>{/if}
       {/if}
 
-      <!-- The shape of the Position map, read off the current Anchor Rating's own step rows, drawn
-           where the choice is made (ASSESSMENT item 11). Open has no Blind Spot while the Titan
-           stands; Sparse is a chain; Wooded, Urban and Giant Forest branch. -->
-      <div class="pmap">
-        <span class="pmh">{t('board.stepsHere', { anchor: v?.anchor ?? '' })}</span>
-        {#each menu.cell.steps as st, k (k)}
-          <span class="pstep" class:here={st.here}>{st.fromLabel} <i aria-hidden="true">—</i> {st.toLabel}<small>{st.ways}</small></span>
-        {:else}
-          <em class="note">{t('board.noSteps')}</em>
-        {/each}
-        <span class="pmn">{t('board.blindSpotNote')}</span>
-      </div>
+      <p class="note">{t('board.movesOnBoard')}</p>
 
       {#if direct}
         <!-- The second section: the direct setters the rules do not otherwise expose. Visually
@@ -437,9 +435,37 @@
             <button type="button" role="menuitem" aria-label={t('direct.more')} onclick={() => set('opening', { on: true })}>+</button>
           </div>
           <label class="drow">
-            <span class="dlbl">{t('direct.anchor')}</span>
-            <select value={v?.anchorId ?? ''} onchange={(e) => set('anchor', { rating: e.currentTarget.value })}>
-              {#each v?.ratings ?? [] as r (r.id)}<option value={r.id}>{r.name} ({r.anchors})</option>{/each}
+            <span class="dlbl">{t('direct.place')}</span>
+            <select value={menu.row.zone === null ? 'off' : String(menu.row.zone)} onchange={(e) => place(e.currentTarget.value, menu!.row.attachKind)} aria-label={t('board.zone')}>
+              {#each zoneNumbers as n (n)}<option value={String(n)}>{t('zone.n', { n })}</option>{/each}
+              <option value="off">{t('zone.off')}</option>
+            </select>
+            <select value={menu.row.attachKind} onchange={(e) => place(menu!.row.zone === null ? 'off' : String(menu!.row.zone), e.currentTarget.value)} aria-label={t('direct.attachment')}>
+              {#each ['ground', 'anchored', 'on-body', 'blind-spot', 'grabbed', 'pinned'] as k (k)}<option value={k}>{t(`attach.${k}`)}</option>{/each}
+            </select>
+          </label>
+          {#if menu.row.zone !== null}
+            <label class="drow">
+              <span class="dlbl">{t('direct.zoneRating', { n: menu.row.zone })}</span>
+              <select value={v?.field?.zones.find((z) => z.n === menu!.row.zone)?.rating ?? ''} onchange={(e) => set('zone-rating', { zone: menu!.row.zone, rating: e.currentTarget.value })}>
+                {#each v?.ratings ?? [] as r (r.id)}<option value={r.id}>{r.name} ({r.anchors})</option>{/each}
+              </select>
+            </label>
+          {/if}
+          {#if menuTitan}
+            <label class="drow">
+              <span class="dlbl">{t('direct.titanZone', { label: menuTitan.label })}</span>
+              <select value={String(menuTitan.zone)} onchange={(e) => set('place-titan', { zone: Number(e.currentTarget.value) })}>
+                {#each zoneNumbers as n (n)}<option value={String(n)}>{t('zone.n', { n })}</option>{/each}
+              </select>
+            </label>
+          {/if}
+          <label class="drow">
+            <span class="dlbl">{t('direct.horse')}</span>
+            <select value="" onchange={(e) => set('place-horse', { zone: e.currentTarget.value === 'off' ? null : Number(e.currentTarget.value) })}>
+              <option value="" disabled>{menu.row.horseText || t('none')}</option>
+              {#each zoneNumbers as n (n)}<option value={String(n)}>{t('zone.n', { n })}</option>{/each}
+              <option value="off">{t('zone.off')}</option>
             </select>
           </label>
           <em class="note">{t('direct.logged')}</em>

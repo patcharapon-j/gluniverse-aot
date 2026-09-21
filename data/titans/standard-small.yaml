@@ -19,6 +19,7 @@ tempo: 2
 nape_depth: 3
 regeneration_clock: 2
 heave: 2   # its Size Class row's Heave rating (data/engagement/size-classes.yaml, heave; decision batch 8, 8-9)
+stride: 1   # its Size Class row's Stride (data/engagement/size-classes.yaml, stride; decision batch 16, 16-16)
 body_parts:
   - {id: eyes, kind: eyes, toughness: 1}
   - {id: left-arm, kind: arm, toughness: 1}

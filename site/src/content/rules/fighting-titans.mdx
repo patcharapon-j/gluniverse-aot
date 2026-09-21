@@ -6,39 +6,41 @@ order: 5
 tab: Titans
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "302daca974f8a68305f92fe90c88f5fb1718501b"
+    sha: "92506550589ff210191f608f04cf384987f8215c"
   - path: docs/rules/06-standard-titans.md
-    sha: "de99c51273438fe68db52607ce85c21a2d7d5a93"
+    sha: "d786d456876ca31f086ce7c09c4739243f751e70"
+  - path: data/engagement/zones.yaml
+    sha: "f2956d5e04b878f105ae5f2762f0a163a63ddc32"
   - path: data/engagement/positions.yaml
-    sha: "01a0ba44084e8e796baf551212419c7365e3b0a0"
+    sha: "24f45e88413f0e183901ecf1a93b53b4a55f65ff"
   - path: data/engagement/anchor-ratings.yaml
-    sha: "a6ef21ee521348ecbf0f398797b7725bd49b1fef"
+    sha: "73ccac5575f457fa46999d3d4514825e2acfaefa"
   - path: data/engagement/round.yaml
-    sha: "a6d51d5d3d3a3c8348bf0659e4dabd35c28df781"
+    sha: "80ceb842525c338d3dd05ca723911ef63c9fb491"
   - path: data/engagement/size-classes.yaml
-    sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
+    sha: "c33e65ddc6cb78cb057b0d8462430c1c73d00d9b"
   - path: data/engagement/titan-format.yaml
-    sha: "fd5d90796bc295112a1bfecdd5e106a4d437025b"
+    sha: "0f832b2da3978d7146e15b1b4297aa280a8bab65"
   - path: data/engagement/behavior-procedure.yaml
-    sha: "8993831871f8fb548e3b489378607927bccc11ab"
+    sha: "4bc3ae8d5647b1d8fad8fa8593f572ae3a1ea80f"
   - path: data/engagement/attention.yaml
-    sha: "a01305bb80f454c445be1d37ab633b85d0027c5d"
+    sha: "d348f104102dffcbc8dcdbfda73f57a4e7ec7ded"
   - path: data/engagement/titan-harm.yaml
-    sha: "286457b6cca7e728c54919581b96ed55c24dbe45"
+    sha: "868ba62206d22f8eab5d716629a71c750ec63e11"
   - path: data/engagement/read.yaml
-    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
+    sha: "4c6f60af2d757027d71368129ae3ec6f58ea3004"
   - path: data/engagement/grab.yaml
-    sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
+    sha: "b52129f3597da2e8a0d9e21d54dcd541c08cf21d"
   - path: data/engagement/engagement-flow.yaml
-    sha: "dd549bbcb21ddd5fa1867a9f32e7cc945c82d771"
+    sha: "c4d04b1c8ac4839bb531520f4adc34c382b28d93"
   - path: data/engagement/background-titans.yaml
-    sha: "709277b23e0e35b3f79f193636fbd1e70bc64798"
+    sha: "49b1681716adc1d6b463d956e6fa68f2e7064a4b"
   - path: data/engagement/squad-tactics.yaml
-    sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
+    sha: "404d461f565f9ba376a80b6273f8a0ed8e78074a"
   - path: data/harm/effect-types.yaml
-    sha: "09be8cce7c8f1b04b114c49c0e31106a5729cc3d"
+    sha: "4beb1797239b9204825a1a80b4a8d45515534c11"
   - path: data/character/action-catalog.yaml
-    sha: "747752afe49fd764d041b05362412356a62fe355"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -60,6 +62,7 @@ import SectionHead from '~/components/SectionHead.astro';
 import StepFlow from '~/components/StepFlow.astro';
 import Subsection from '~/components/Subsection.astro';
 import TryRollButton from '~/components/TryRollButton.astro';
+import ZoneField from '~/components/ZoneField.astro';
 import plate from '~/assets/plates/plate-fighting-titans.webp';
 
 <FieldQuote cite="Survey Corps manual, on engaging">It cannot see behind itself. That is the whole of our advantage, and it is enough.</FieldQuote>
@@ -97,8 +100,8 @@ Rounds, until the Titans are dead or you are out. A Titan tracked in full is a <
 
 <FactTable caption="Setting up a fight" columns={['', '']} rows={[
   ['Who', 'Whoever the starting rule names, else every living soldier.'],
-  ['The ground', 'The <b>Anchor Rating</b> sets the Anchors — every Momentum cap — and the Terrain Trait. Nothing is rolled, and Momentum starts at 0.'],
-  ['Where', 'Everyone <b>Distant</b> from Focus Titan A, mounted as they were, nobody airborne.'],
+  ['The field', 'Thirteen zones by default, each with its own <b>Anchor Rating</b> — the Anchors, the Terrain Trait, and the Carry cost a Flight pays to enter it. Nothing is rolled that the starting rule or your framing has already named, and Momentum starts at 0.'],
+  ['Where', 'Focus Titan A stands in the <b>centre zone</b>. Everyone else starts in the <b>Squad\'s start zone</b>, one zone out, mounted as they were, nobody airborne.'],
   ['The Titan', 'Parts Intact, no Openings, clock empty, Next Behavior rolled and hidden.'],
   ['First look', 'It reads its ladder — usually nothing holds it until its first card.'],
   ['Then', 'Fear Rolls for a first fight and for an Abnormal, Squad Tactics unused, round 1.'],
@@ -126,17 +129,23 @@ Fights run at Standard <GlossaryTerm term="Circumstances" />, and the step never
 
 <SectionHead id="positions-and-moves" eyebrow="Section 2">Positions and Moves</SectionHead>
 
+A fight is fought over a **field** of numbered hexagonal **zones**, each about a Titan's reach across, with its own ground, whatever stands in it, and whatever it has taken. The Standard field of 13 zones is the default; a Skirmish field of 7 or a Set piece of 19 comes out when the starting rule or the GM's framing calls for one. Zones that share an edge are **adjacent**, and a zone's **ring** is how many steps out from the centre it sits. A zone with fewer than six neighbours is an **edge zone**; step off field from one and you have left the fight.
+
+<ZoneField />
+
+Every soldier on the field is in exactly one zone and holds exactly one **attachment** — Ground or Anchored (either way, **free**), or On Body, Blind Spot, Grabbed, or Pinned (naming a Focus Titan or a corpse in that zone). Only a free soldier can make a zone step. Your **Position** relative to any one Titan or corpse is never written down: it is read fresh, every time, from your zone and your attachment.
+
 <PositionsMap fig="Fig. 2" rating="wooded" />
 
 <CoreTable table="positions" />
 
-**One Position per Focus Titan and per corpse.** Holding one is the test for being in the fight.
+**One Position per Focus Titan and per corpse.** Holding one is the test for being in the fight. A zone holds anyone and anything at once (soldiers, horses, Titans, corpses), and nothing in it blocks a move, a Flight, or a Stride through it.
 
 <RuleBox variant="stop" title="Blind Spot is not on the Titan" icon="ph:tree-evergreen">
 
 **On Body means on it.** Hooked into the body or standing on it, holding on to the thing that is trying to kill you.
 
-**Blind Spot does not.** You are anchored to terrain *behind* the Titan, a tree or a roof or a beam, out of its sight with its Nape within reach. You are not touching it. The name sounds like a place on the monster and it is a place in the world.
+**Blind Spot does not.** You are anchored to terrain *behind* the Titan, a tree or a roof or a beam, hanging from it on your lines or standing on it, out of its sight with its Nape within reach. You are not touching the Titan. The name sounds like a place on the monster and it is a place in the world. Whether you are airborne follows the move that brought you there, not the Position: an ODM move leaves you in the air, as anywhere, and only the Urban roof holds you up.
 
 Everything follows from that one fact. Steam at a Regeneration fill burns the soldiers On Body and leaves the Nape strikers alone. A Jam does not drop a soldier standing on an Urban roof. And on ground with nothing to anchor to, there is no Blind Spot at all.
 
@@ -156,14 +165,15 @@ Everything follows from that one fact. Steam at a Regeneration fill burns the so
 
 <Subsection title="What a move can do" id="what-a-move-can-do">
 
-One named Titan's Position, by one step or not at all, with one mount or dismount. **It is the only way you change your own Position.**
+A zone step to an adjacent zone, or an attachment step inside your own zone, with one mount or dismount. **It is the only way you change your own zone or attachment, and so the only way you change a Position.**
 
 <FactTable compact columns={['State', 'Your move']} rows={[
-  ['On your lines', 'Every ODM move is a <b>Flight</b>. More than one step only by spending Momentum on Carry.'],
-  ['Mounted', 'A mounted step, or an ODM move that dismounts you first. Distant to In Reach may be a <b>charge</b>.'],
-  ['<GlossaryTerm term="Down" />', 'In Reach to Distant, on foot, and nothing else.'],
+  ['On your lines', 'Every ODM move is a <b>Flight</b>. Its first step is free; each one past that is a <b>Carry</b>, paid in Momentum.'],
+  ['Mounted', 'Up to two zone steps and no attachment step, or an ODM move that dismounts you first. A step into or out of a Titan\'s zone may be a <b>charge</b>.'],
+  ['On foot', 'One step, a zone step or an attachment step, along the ground your zone\'s rating allows.'],
+  ['<GlossaryTerm term="Down" />', 'One on-foot zone step, out of a zone holding a body and into an adjacent one that holds none. Never off field.'],
   ['Grabbed, carried, or <GlossaryTerm term="Pinned" />', 'Nothing. A Pinned soldier cannot be moved by any rule either.'],
-  ['On Body or Blind Spot', 'You may <b>let go</b> and fall from that height — how a <GlossaryTerm term="Jam">Jammed</GlossaryTerm> soldier gets off.'],
+  ['On Body or Blind Spot', 'You may <b>let go</b> and fall from that height, landing Ground in the same zone — how a <GlossaryTerm term="Jam">Jammed</GlossaryTerm> soldier gets off.'],
 ]} />
 
 **A forced step** from a Fear Roll is a result, not a move: it spends nothing, happens on a spent turn, and is **never a Flight** — unrolled, no Momentum, marking nobody.
@@ -174,9 +184,12 @@ One named Titan's Position, by one step or not at all, with one mount or dismoun
 
 **Every ODM move in a fight is a Flight:** roll Fly on your own harness, needing no successes.
 
-- **The step happens whatever the dice say.** The roll decides what the flight was *worth*.
-- **Each success is 1 <GlossaryTerm term="Momentum" />,** up to the Anchors left.
-- **No successes and you come in loud,** marked from any Position, Distant included — not a shout, the sound of a bad landing.
+- **The first step happens whatever the dice say,** and costs nothing — a zone step or an attachment step. The roll decides what the flight was *worth*, never whether it happened.
+- **Each step past the first is a Carry,** paid in Momentum: entering an Open zone costs 2, Sparse 1, Wooded, Urban, and Giant Forest 0; a step off field costs 1, and an attachment step costs 1. **At most 2 Carries on one Flight.**
+- **A Flight can't end free in an Open zone.** Its last step there must land you On Body or Blind Spot, or it must carry you on out. One that ends free ends **Anchored**.
+- **Each success is 1 <GlossaryTerm term="Momentum" />,** up to the Anchors of the zone you started in; anything above the Anchors of the zone you end in is lost.
+- **Crossing a Titan's zone without stopping there is seen.** You mark loudest on every Titan standing in a zone you cross, whatever the roll gave, unless you spend Momentum on Quiet.
+- **No successes and you come in loud,** marked from any zone, up to Quiet.
 - Your own roll, so Circumstances, Talents, Help, and the Push all reach it. Letting go, a step on foot, a mounted step, and being carried are **not** Flights.
 
 <TryRollButton pool={{ base: 4, gear: 2, stress: 1 }} label="Try a Flight" />
@@ -189,17 +202,17 @@ One named Titan's Position, by one step or not at all, with one mount or dismoun
 
 <Subsection title="Momentum and Anchors" id="momentum">
 
-Speed you are carrying, 0 up to the Anchors left. **Lose all of it at the end of any round you made no ODM move in.** You spend it in your own turn, and nobody else — the GM included — ever grants, spends, or takes a point.
+Speed you are carrying, 0 up to the Anchors of the zone you're in. **Lose all of it at the end of any round you made no ODM move in.** You spend it in your own turn, and nobody else, the GM included, ever grants, spends, or takes a point.
 
 <CoreTable table="momentum" />
 
-**Anchors** are the trees, roofs, and beams worth a line, in a public pool the rating sets. **However many are left is every soldier's Momentum cap.**
+**Anchors** are the trees, roofs, and beams worth a line, and every zone holds its own rating. **However many a zone has left is every soldier's Momentum cap in that zone.**
 
 <CoreTable table="anchors" />
 
-- **Never restored.** A wreck destroys 1, landed or whiffed; a falling body destroys 1 where it lands.
-- **Caps fall with them,** and anyone over the new cap loses the excess at once.
-- **At 0, nobody holds Momentum** — but Flights still fly and **no step row changes.** However flat the place has been beaten, the route to the Nape stays open.
+- **Never restored.** A wreck takes one rating step off the Titan's own zone, landed or whiffed; a falling body does the same to the zone it lands in.
+- **Caps fall with the zone,** and a soldier in it who is over the new cap loses the excess at once.
+- **At Open, nobody in that zone holds Momentum.** Flights still fly, though, and every soldier Anchored in a zone that becomes Open lands Ground with no fall, whatever stands there, a provisional rule not yet settled. A wreck to Open also **removes that zone's Blind Spot step**, converting a standing Titan's Blind Spot there to On Body. A grounded Titan's Nape stays reachable at every rating.
 
 Each rating carries one **Terrain Trait**; Wooded has none, and is the plain ground the rest are read against.
 
@@ -213,19 +226,21 @@ Each rating carries one **Terrain Trait**; Wooded has none, and is the plain gro
 
 <CoreTable table="position-changes" />
 
-Not on the list, and this is the half nobody can see: the **Nape strike**, the **Body Part strike**, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other action you can take. **None of them moves you,** whatever it rolls. Neither does a Titan turning its Attention onto you: Attention is not a Position, and the two never move each other.
+Not on the list, and this is the half nobody can see: the **Nape strike**, the **Body Part strike**, Break Attention, Draw Attention, Read, Heave, Treat Injury, Rally, and every other entry in the Action Catalog that is an **action**. **None of them moves you,** whatever it rolls. Neither does a Titan turning its Attention onto you: Attention is not a Position, and the two never move each other.
+
+Three Catalog entries are not actions, and they are on the list above rather than here: **Fly**, which is your own move; **Leap Clear**, which belongs to the body coming down; and **Mount or Dismount**, which is part of a move.
 
 </Subsection>
 
 <Subsection title="Comparing two soldiers" id="comparing-positions">
 
-Help, Covering, Treat Injury, and Rally all ask whether two soldiers share a Position or stand one step apart. Compare relative to **the Titan the act is made against** — for a <GlossaryTerm term="Heave" /> or a pinning part, **that body**; failing both, the earliest-labelled living Titan.
+Help, Covering, Treat Injury, and Rally all read whether two soldiers hold the same Position, and that reads whether they share a zone. **One step** is the same zone or an adjacent zone; **two steps** is within two zones.
 
 </Subsection>
 
 <Subsection title="Where a fall lands" id="where-a-fall-lands">
 
-Read it relative to the Titan you hold the closest Position to; on a tie, the one that caused it. From **the body** you land **In Reach**; from further out your Position holds. Nothing else moves, and a fall is never your move.
+You stay in the zone you are in (for an attached soldier, the body's zone) and land **Ground**, so you hold **In Reach** relative to whatever body is there. The height it reads is the reference body the fall names: your own attachment if you had one, else the Titan whose card or Grab caused it, else the nearest Titan to your zone, else, with no Focus Titan alive, the corpse nearest your zone, a tie going to the earliest label. With no body at all it starts low before any raise, a provisional rule not yet settled. A fall is never your move.
 
 </Subsection>
 
@@ -233,13 +248,13 @@ Read it relative to the Titan you hold the closest Position to; on a tie, the on
 
 <Subsection title="Two Titans, and corpses" id="two-focus-titans">
 
-A second Titan arrives from outside, so everyone starts Distant from it.
+A second Titan arrives from outside the fight at the field's **entry zone**, the edge zone with no soldier in it and farthest from the nearest one (with no soldier on the field at all, the lowest-numbered edge zone, a provisional rule not yet settled), so everyone holds Distant relative to it until it strides.
 
-**The close rule.** Come to On Body or Blind Spot on one Titan and any other's becomes In Reach. **Nobody is hooked into two Titans at once.**
+**One zone, one attachment, two Positions.** An attachment names one body at most, so you are never hooked into two Titans at once: your zone and attachment give your Position relative to each of them separately, and each strides on its own cards toward its own Attention holder.
 
-When a Titan dies, the Position you held becomes your Position on its **corpse**, On Body and Blind Spot reading In Reach. A corpse counts as grounded and its Positions count for every rule that reads one — but it holds no Attention, plays no cards, and is no fall's reference. Only a Heave and a strike on a pinning part reach it.
+When a Titan dies, every attachment naming it ends, and afterward soldiers can step onto it on foot as onto a grounded Titan; your Positions relative to it are then derived as for any body. A corpse counts as grounded and never moves, and its Positions count for every rule that reads one, but it holds no Attention and plays no cards. It can still be a fall's reference: the reference is whatever body your attachment named when you fell, and that can be a corpse. Only a Heave and a strike on a pinning part reach it.
 
-A horse moves only with its rider, and no ladder or behavior picks one.
+A horse moves only with its rider and stays in the zone it was left in, and no ladder or behavior picks one.
 
 </Subsection>
 
@@ -263,6 +278,7 @@ A horse moves only with its rider, and no ladder or behavior picks one.
   ['Nape Depth', 'Successes one Nape strike needs to kill it.'],
   ['Regeneration', 'Clock length, in segments.'],
   ['Heave', 'The heave count that frees everyone its body pins.'],
+  ['Stride', 'Zones it may close on a card that reaches the Stride step. Grounded, its Stride is 0.'],
   ['Body Parts', 'In order, each with its <GlossaryTerm term="Toughness" />. The order breaks Regeneration ties and decides which arm Grabs.'],
   ['Attention Ladder', 'Standard, or its own.'],
 ]} />
@@ -307,9 +323,19 @@ Every Focus Titan holds a hidden **Next Behavior**, rolled out of sight and neve
 
 <Subsection title="Frenzy, and why time is not on your side" id="frenzy">
 
-Every Focus Titan starts a fight at **Frenzy 0**, and gains **1 at the end of each round, to a cap of 3**. Its Frenzy is added to its behavior roll, and a result past the bottom of its table reads as the bottom.
+Every Focus Titan starts a fight at **Frenzy 0**, and gains **1 at the end of every third round (the third, the sixth, the ninth), to a cap of 3**. Its Frenzy is added to its behavior roll, and a result past the bottom of its table reads as the bottom.
 
-Every Behavior Table runs the same way, from terrorising you to killing you. So the longer a Titan is alive, the further down its own table it rolls. **Round one it postures. By round three it is trying to kill you.** Frenzy is public, and it never falls.
+Every Behavior Table runs the same way, from terrorising you to killing you. So the longer a Titan is alive, the further down its own table it rolls. **For four rounds it postures. By round five it is trying to kill you.** Frenzy is public, and it never falls.
+
+</Subsection>
+
+<Subsection title="The Stride" id="the-stride">
+
+On each of its cards that reaches this step, if its Attention holder is in another zone, the Titan **strides** toward them: one adjacent zone closer at a time, up to its Stride, stopping the moment it enters the holder's zone. When two zones are equally close, it takes the **lower-numbered**. It never goes off field, and nothing in a zone blocks it. A grounded Titan's Stride is 0, and it never strides while holding a Grabbed soldier, held by a decoy, or with nothing holding its Attention.
+
+**What goes with it.** Every soldier On Body or Grabbed moves with it, zone by zone, and any comrade they carry. A soldier at its Blind Spot stays behind, anchored to the terrain and not the Titan, and detaches, now holding Distant. A Pinned soldier stays Pinned where they lie.
+
+**It is not a roll, an action, or a choice.** It harms nobody, sets no mark, clears none, and wrecks nothing. Its destination is whoever the ladder already picked; its route is fixed. Once it stops, the entry's Position requirement is checked against wherever it left everyone.
 
 </Subsection>
 
@@ -341,6 +367,12 @@ Only when **nobody** in the fight is standing where that behavior can reach does
     icon: "ph:ladder-simple",
     text: "It turns to whoever meets the highest rung anyone meets.",
     exit: { kind: "cover", label: "Nobody", text: "If nothing holds its Attention, the card resolves nothing and every mark stands." },
+  },
+  {
+    title: "It strides.",
+    icon: "ph:footprints",
+    text: "If its Attention holder is in another zone, it closes toward them, one zone at a time, up to its Stride, and stops on entering their zone.",
+    exit: { kind: "note", label: "Grounded", text: "A grounded Titan's Stride is 0, and it does not stride." },
   },
   {
     title: "Choose the entry.",
@@ -484,9 +516,9 @@ Each success adds 1 to the part's **count**; at its <GlossaryTerm term="Toughnes
 
 Strength on a <GlossaryTerm term="Blade Set" />, needing **Blind Spot**, **not holding its Attention**, not Grabbed, **working ODM Gear** unless it is grounded, and **no retreat**.
 
-**Reach the Nape Depth and it dies. Fall short and each success becomes 1 Opening.** Every Nape strike marks you *hooked in by a strike* whatever it rolls, so a striker who falls short draws the next behavior.
+**Reach the Nape Depth and it dies. Fall short and each success becomes 1 Opening.** Every Nape strike marks you *hooked in by a strike* whatever it rolls, so a striker who falls short draws the Titan's **Attention**, on every ladder. They take its next behavior only if that behavior reaches Blind Spot; if it does not, the Titan turns on a comrade it can reach, and its Attention goes with them.
 
-**The strike does not move you.** Hooking in is an Attention fact and nothing else: you are still at Blind Spot, anchored to the same tree, not on the Titan. And since the strike needs a soldier who does **not** hold its Attention, a striker who has pulled that Attention onto themselves is standing in exactly the right place and **cannot strike again until it moves** — which takes a comrade's shout, or a Break Attention with a decoy.
+**The strike does not move you.** Hooking in is an Attention fact and nothing else: you are still at Blind Spot, anchored to the same tree, not on the Titan. And since the strike needs a soldier who does **not** hold its Attention, a striker who has pulled that Attention onto themselves is standing in exactly the right place and **cannot strike again until it moves** — which takes a comrade's shout, a Break Attention with a decoy, or the Titan itself retargeting to someone it can reach.
 
 An **Opening** is a public token recording who made it, worth 1 Bonus Die to a Nape striker — **never to the soldier who made it**. It waits for a comrade even if you die or leave, and Regeneration and death erase them.
 
@@ -544,7 +576,7 @@ A standard Titan's numbers are already public, so its Next Behavior is the only 
 
 <Subsection title="Call It" id="call-it">
 
-An option of a Read that revealed the Next Behavior, costing **2 of that Read's successes** — 1 with Sharp Call. Every target **but the reader** gains **2 Bonus Dice** on a dodge against that card, fallback and Thrash included.
+An option of a Read that revealed the Next Behavior, costing **2 of that Read's successes** — 1 with Sharp Call. Every target **but the reader** gains **2 Bonus Dice** on a dodge against that card, fallback, Thrash, and a retarget included: what you Called is the entry, not the soldier it lands on.
 
 Called once per behavior. It gives the reader nothing, and nothing to a target cancelling with an earlier dodge, and it ends when the card is done, a decoy spends it, or the Titan dies.
 
@@ -612,10 +644,10 @@ A **retreat** begins when the retreat clock fills, or when a Background clock fi
 **Nothing more arrives:** only Regeneration keeps filling. **Moves are forced** — everyone holding a Position, not Down, Grabbed, or carried, spends each move on one of these:
 
 <FactTable compact caption="Forced moves, your choice" columns={['#', 'The move']} roll rows={[
-  ['1', 'A step toward Distant from the earliest-labelled Focus Titan you are not yet Distant from — then from the earliest corpse.'],
-  ['2', '<b>Leaving,</b> once Distant from every Titan and every corpse.'],
-  ['3', 'A step that brings you closer to a Down, Grabbed, or Pinned comrade.'],
-  ['4', '<b>Staying put</b> at such a comrade\'s Position — but only if you already took an action for them earlier this turn.'],
+  ['1', 'A step out: off On Body or Blind Spot to free if you can make no other, or a zone step one ring further out from the nearest Titan or corpse, favouring a zone with no body in it.'],
+  ['2', '<b>Leaving,</b> off field from an edge zone, whatever stands there.'],
+  ['3', 'A zone step that lowers the number of zones between you and a Down, Grabbed, or Pinned comrade.'],
+  ['4', '<b>Staying put,</b> a move that changes nothing — but only in such a comrade\'s zone, and only if you already took an action for them earlier this turn.'],
 ]} />
 
 **The stay limit.** Options 3 and 4 last as many rounds as the retreat clock has segments, then become 1 or 2 — though a Down or Grabbed comrade has no limit while a Focus Titan is alive.
@@ -628,7 +660,7 @@ A **retreat** begins when the retreat clock fills, or when a Background clock fi
 
 <Subsection title="Leaving" id="leaving">
 
-Distant from every Titan and corpse, and not Down, Grabbed, or carried, you may use your move to **leave**, taking anyone you carry and the horse you ride. You still take a turn each round: your move can only return, and your action can be any entry needing no Position. Leavers share one Position with each other, are never near anyone still fighting, and no Titan reaches them — but ODM use still makes a Gas Roll.
+Free, not Down, Grabbed, or carried, and in an edge zone holding no Titan and no corpse (that last condition drops away during a retreat), you may use your move to **leave** the field, taking anyone you carry and the horse you ride. You still take a turn each round: your move can only return, to an edge zone holding neither, and your action can be any entry needing no Position. Leavers share one Position with each other, are never near anyone still fighting, and no Titan reaches them or strides toward them — but ODM use still makes a Gas Roll.
 
 </Subsection>
 
@@ -643,7 +675,7 @@ Two tests, and nothing else — the GM never ends a fight.
 
 **Ending that way while a Titan lives kills everyone still holding a Position,** and everyone still Pinned dies under the body. Those deaths raise no Fear Roll, but they count for <GlossaryTerm term="Grief" />.
 
-Afterwards Momentum becomes 0, and the Anchors and Position records are cleared.
+Afterwards the field's zone ratings and every soldier's Momentum are cleared. Positions are never recorded, so nothing else needs clearing.
 
 </Subsection>
 

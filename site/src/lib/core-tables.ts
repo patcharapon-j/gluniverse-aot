@@ -299,7 +299,7 @@ const STRESS_WORDING: Record<string, { trigger: string; who: string; amount?: st
   ruling: { trigger: 'You fail a called roll whose stakes, named before the roll, were Stress.', who: 'You', see: ['#called-rolls'] },
   'named-gain': {
     trigger:
-      'A table result, a Talent, or an Expedition rule such as hunger names a gain. A Fear Roll result that spreads fear gives its Stress to every comrade within one Position step of the soldier who rolled: that is Stress, not a roll, and causes no Fear Roll.',
+      'A table result, a Talent, or an Expedition rule such as hunger names a gain. A Fear Roll result that spreads fear gives its Stress to every comrade in the soldier’s zone or an adjacent zone: that is Stress, not a roll, and causes no Fear Roll.',
     who: 'As that rule states',
     amount: 'As that rule states',
     see: ['wounds-and-fear', 'expeditions-and-downtime'],
@@ -408,14 +408,14 @@ const BONUS_WORDING: Record<string, { unit?: [string, string]; addsTo: string; w
     see: ['skirmishes'],
   },
   momentum: {
-    addsTo: 'A strike or a Break Attention this turn against the Titan you flew relative to, for Bite. Your next dodge this round, for Brace.',
+    addsTo: 'A strike or a Break Attention this turn against a Focus Titan in the zone your Flight ended in, for Bite. Your next dodge this round, for Brace.',
     when: 'You are in a Titan Engagement and hold the Momentum to spend.',
     spends: '1 Momentum per die',
     see: ['fighting-titans'],
   },
   'terrain-trait': {
     addsTo: "A mounted soldier's Break Attention, which is the only Terrain Trait that gives dice.",
-    when: 'The fight is at the Open Anchor Rating.',
+    when: 'You are mounted, in an Open zone.',
     spends: 'Nothing',
     see: ['fighting-titans'],
   },

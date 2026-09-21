@@ -378,6 +378,7 @@ export function buildPackDocs(t: Tables, lang: Lang, site: SiteWording, fw: Foun
       nape_depth: x.nape_depth,
       regeneration_clock: x.regeneration_clock,
       heave: x.heave,
+      stride: x.stride,
       body_parts: x.body_parts.map((b) => ({ ...b, state: 'intact', progress: 0 })),
       attention_ladder: x.attention_ladder,
       behavior_table: {

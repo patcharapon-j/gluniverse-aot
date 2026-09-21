@@ -3,19 +3,25 @@
 # static/assets. Run by hand after an art change; the build never reads art-src. Needs cwebp.
 #   Action Catalog icons   128 px webp   assets/icons/action-*.webp
 #   Token status icons     256 px webp   assets/icons/status-*.webp (read at 24 to 64 px on a token)
+#   Tracker state marks    128 px webp   assets/icons/pos-*.webp, titan-*.webp (read at 20 to 28 px
+#                          in a badge, which inverts them; see tracker/badges.ts)
 #   Soldier portraits      512 px webp   assets/portraits/portrait-<specialty>.webp
 #   Foe plates             512 px webp   assets/plates/plate-foe-<kind>.webp
 #   Setup background       1920 px webp  assets/plates/setup-sortie-dawn.webp
+#   Engagement board       assets/board: hex tiles 1024 px wide, Titan and soldier figures 1024 px
+#                          tall, effect overlays 512 px, rim glyphs 128 px (site/design/art-style.md)
 #   Dice So Nice faces     assets/dice: labels as lossless webp (alpha kept exactly), bump maps as
 #                          greyscale PNG, identical faces stored once; textures as webp + PNG bump
 set -eu
 HERE=$(cd "$(dirname "$0")/.." && pwd)
 ART="$HERE/art-src"
 B1="$ART/batch-1/web"
+B2="$ART/batch-2/web"
+BOARD="$ART/board/web"
 SL="$ART/style-lock"
 DICE="$SL/dice/final"
 OUT="$HERE/static/assets"
-mkdir -p "$OUT/icons" "$OUT/portraits" "$OUT/plates" "$OUT/dice"
+mkdir -p "$OUT/icons" "$OUT/portraits" "$OUT/plates" "$OUT/dice" "$OUT/board"
 
 lossy() { cwebp -quiet -q "${Q:-82}" -alpha_q 100 -m 6 "$@"; }
 
@@ -26,6 +32,10 @@ for n in nape-strike fly dodge rally; do lossy -resize 128 128 "$SL/icons/v2/act
 # Status icons: 11 from batch 1, Down and Grabbed from the style lock.
 for f in "$B1"/status-*.webp; do lossy -resize 256 256 "$f" -o "$OUT/icons/$(basename "$f")"; done
 for n in down grabbed; do lossy -resize 256 256 "$SL/icons/v2/status-$n.png" -o "$OUT/icons/status-$n.webp"; done
+
+# Batch 2 tracker state marks: hooked-in, Frenzy, Openings. 128 px, matching the other pos-* icons.
+# These are flat ink on transparent because badges.ts inverts them; never the filled-disc status- style.
+for n in pos-hooked titan-frenzy titan-opening; do lossy -resize 128 128 "$B2/$n.webp" -o "$OUT/icons/$n.webp"; done
 
 # Portraits: eight from batch 1, the Slayer from the style lock.
 for f in "$B1"/portrait-*.webp; do cp "$f" "$OUT/portraits/"; done
@@ -41,6 +51,13 @@ for n in gear-rations; do lossy -resize 128 128 "$SITE/$n.webp" -o "$OUT/icons/$
 
 # Setup background.
 cp "$B1/setup-sortie-dawn.webp" "$OUT/plates/setup-sortie-dawn.webp"
+
+# Engagement board (batch 2, the zone board). Tiles keep their transparent corners, figures and
+# effects their alpha, so every file is lossy with alpha_q 100 like the icons.
+for f in "$BOARD"/hex-*.webp; do lossy -resize 1024 0 "$f" -o "$OUT/board/$(basename "$f")"; done
+for f in "$BOARD"/titan-*.webp "$BOARD"/soldier-*.webp; do lossy -resize 0 1024 "$f" -o "$OUT/board/$(basename "$f")"; done
+for f in "$BOARD"/fx-*.webp; do lossy -resize 512 512 "$f" -o "$OUT/board/$(basename "$f")"; done
+for f in "$BOARD"/rim-*.webp; do lossy -resize 128 128 "$f" -o "$OUT/board/$(basename "$f")"; done
 
 # Dice So Nice faces (asset-inventory.md, Dice So Nice presets).
 label() { cwebp -quiet -lossless -z 9 -exact "$1" -o "$OUT/dice/$2.webp"; }

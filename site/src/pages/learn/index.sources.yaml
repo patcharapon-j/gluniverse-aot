@@ -12,20 +12,20 @@
 # site/design/claims/learn-to-play.md.
 sources:
   - path: site/src/content/rules/rules-of-play.mdx
-    sha: "7c571547fd126ee47e33a9a93ad92651f8380336"
+    sha: "9c61ef1adad393416b18682bbd36e9253f675def"
   - path: site/src/content/rules/fighting-titans.mdx
-    sha: "6d00aeb39a9331bb3bd71f852732ae87d646f751"
+    sha: "260ecd7d5c98355872e1356bbf4b606a69a4ff96"
   - path: site/src/content/rules/making-your-soldier.mdx
-    sha: "6dd75938ee279bfcba7ed2493939ea696e3194b5"
+    sha: "e491ebc09cdd485a57426809231afcc76c04d2c0"
   - path: site/src/content/rules/gear-and-odm.mdx
-    sha: "6f193cfc24b0e3401652f6e6cee4d31532766708"
+    sha: "baecd7ef672aab12538b5fe9772a6c66b50a8bdc"
   - path: data/character/action-catalog.yaml
-    sha: "747752afe49fd764d041b05362412356a62fe355"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
   - path: data/gear/items.yaml
-    sha: "6ddd7b203621fb85bf84aef77f3592a81edcb07d"
+    sha: "2721b8315b6ceb2330f6089f197baadc9f6b45ee"
   - path: data/engagement/anchor-ratings.yaml
-    sha: "a6ef21ee521348ecbf0f398797b7725bd49b1fef"
+    sha: "73ccac5575f457fa46999d3d4514825e2acfaefa"
   - path: data/engagement/attention.yaml
-    sha: "a01305bb80f454c445be1d37ab633b85d0027c5d"
+    sha: "d348f104102dffcbc8dcdbfda73f57a4e7ec7ded"
   - path: data/engagement/size-classes.yaml
-    sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
+    sha: "c33e65ddc6cb78cb057b0d8462430c1c73d00d9b"

@@ -137,8 +137,8 @@ talents_never_change_a_step: true    # ADR-0016, Talent guardrail 10; decision b
 in_titan_engagement:
   default: standard
   already_priced:
-    - the Anchor Rating
-    - Positions
+    - each zone's Anchor Rating
+    - zones, attachments, and Positions
     - Openings
     - a grounded Titan
     - Call It
@@ -172,7 +172,8 @@ in_titan_engagement:
     - a Titan's Attack Dice and the Titan Dice roll
     - which entry a Behavior Table resolves, and against whom
     - the Next Behavior, once rolled
-    - the Attention Ladder and who holds Attention
+    - the Attention Ladder, who holds Attention, and a retarget
+    - a Focus Titan's Frenzy and the behavior roll it feeds
     - the Reaction procedure, the whiff, the rider, and the Grab countdown
     - Nape Depth, Toughness, Regeneration, and the Heave rating
     - the Openings an entry creates

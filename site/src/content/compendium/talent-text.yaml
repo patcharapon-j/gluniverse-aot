@@ -8,19 +8,19 @@
 # record the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/talents.yaml
-    sha: "4d63533a7910acc0dcb8bb0ee1f5e6e5b0340c4b"
+    sha: "25bec0208f4e75c40808eccc8372a09c5e983763"
   - path: data/character/action-catalog.yaml
-    sha: "747752afe49fd764d041b05362412356a62fe355"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
   - path: data/engagement/read.yaml
-    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
+    sha: "4c6f60af2d757027d71368129ae3ec6f58ea3004"
   - path: data/engagement/grab.yaml
-    sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
+    sha: "b52129f3597da2e8a0d9e21d54dcd541c08cf21d"
   - path: data/gear/falls.yaml
-    sha: "7508711ebe1cb5f4afd6468ffeef8b443d5e5420"
+    sha: "197f9c0859eb55289c9317ae8cff4ab18fbb1a57"
   - path: data/harm/death-rolls.yaml
     sha: "66dd2a154f48e9036242cd6c26de2ef46c4ee9a6"
   - path: data/mind/fear-rolls.yaml
-    sha: "6b6e4d5d77bf9c68bdd2ef02fd9c4229d0e1dd99"
+    sha: "b171a17727944f2fd9ee26559e169094203e4ccc"
 
 talents:
   # ---------------------------------------------------------------- Slayer
@@ -51,8 +51,8 @@ talents:
     effect: The Gas Roll is two dice instead.
   mid-air-catch:
     trigger: >-
-      In a Titan Engagement, a comrade falls while holding the same Position as you, relative to the Titan the
-      fall is measured from, and you are airborne, not carried, and carrying no comrade.
+      In a Titan Engagement, a comrade in your zone falls, and you are airborne, not carried, and carrying no
+      comrade.
     effect: >-
       Before the fall's damage is rolled, you may make a Fly roll with your own ODM Gear, needing 1 success.
       It spends nothing, can be Pushed, cannot be Helped, and counts as using your ODM Gear. On a success the
@@ -93,15 +93,15 @@ talents:
       revealed the Next Behavior is enough.
   wide-awareness:
     trigger: You declare Help for a roll in a Titan Engagement.
-    effect: You may be up to two Position steps from the roller instead of one. Every other Help requirement still applies.
+    effect: You may be up to two zones from the roller instead of one. Every other Help requirement still applies.
   formation-drill:
     trigger: You declare that the Squadmate on your Wing Helps a roll of yours in a Titan Engagement.
-    effect: The Squadmate may be up to two Position steps from you instead of one. Every other Help requirement still applies.
+    effect: The Squadmate may be up to two zones from you instead of one. Every other Help requirement still applies.
   change-the-order:
     trigger: The swap step of a round in a Titan Engagement begins, and you hold a card this round and are neither Down nor Grabbed.
     effect: >-
       You may name two comrades who each hold a card this round, are neither Down nor Grabbed, and both agree.
-      They exchange cards whatever Positions they hold. It is the one swap each of them takes part in this round,
+      They exchange cards whatever zones they are in. It is the one swap each of them takes part in this round,
       and you take no part in it.
   break-their-nerve:
     trigger: Your Size Up of a Foe group in a Skirmish succeeds.
@@ -111,7 +111,7 @@ talents:
 
   # ---------------------------------------------------------------- Leader
   unshaken-command:
-    trigger: In a Titan Engagement, a comrade who holds your Position or a Position one step from you makes a Fear Roll, and you are not Down.
+    trigger: In a Titan Engagement, a comrade in your zone or an adjacent zone makes a Fear Roll, and you are not Down.
     effect: That Fear Roll uses your Resolve in place of the comrade's, if yours is higher.
   shout-them-off:
     trigger: You declare Draw Attention in a Titan Engagement.
@@ -119,11 +119,11 @@ talents:
   carrying-voice:
     trigger: You declare Rally.
     effect: >-
-      You may target a comrade one Position step farther from you than Rally otherwise allows. In a Skirmish,
-      which has no Positions, you may target any soldier taking part in it.
+      You may target a comrade one zone farther from you than Rally otherwise allows. In a Skirmish,
+      which has no Positions or zones, you may target any soldier taking part in it.
   shoulder-the-load:
     trigger: You declare that you Cover a comrade's Push in a Titan Engagement.
-    effect: You may be up to two Position steps from the Pushing soldier instead of one. Every other Covering requirement still applies.
+    effect: You may be up to two zones from the Pushing soldier instead of one. Every other Covering requirement still applies.
   put-in-a-word:
     trigger: You declare that you Help a comrade's Requisition roll.
     effect: >-
@@ -184,10 +184,10 @@ talents:
     effect: You may take it as part of your move instead of as your action.
   horse-whistle:
     trigger: >-
-      You declare a move in a Titan Engagement that mounts your own horse, while you hold Distant or In Reach
-      relative to the Focus Titan recorded with the horse's Position.
+      You declare a move in a Titan Engagement that mounts your own horse, while you are free (on the Ground
+      or Anchored).
     effect: >-
-      Before the move, your horse holds the Position you hold, if it is not lame and holds a Position, so the move
+      Before the move, your horse is in your zone, if it is not lame and is in a zone, so the move
       can mount it. Every other mount requirement still applies.
   hard-rider:
     trigger: Your Ride roll as Lead on a Hard Ride succeeds.
@@ -195,7 +195,7 @@ talents:
 
   # ---------------------------------------------------------------- Brawler
   pry-loose:
-    trigger: You declare Break Free on behalf of a Grabbed comrade who holds your Position, and you are not Grabbed.
+    trigger: You declare Break Free on behalf of a Grabbed comrade in your zone, and you are not Grabbed.
     effect: >-
       You may take Break Free as your action on that comrade's behalf, although you are not Grabbed. You roll
       your own pool, including your Dice Talent that names Break Free. If the roll succeeds, the comrade is freed
@@ -224,7 +224,7 @@ talents:
     trigger: You declare that you Cover a comrade's Push in a Titan Engagement.
     effect: >-
       If you have Covered no other comrade's Push in this Titan Engagement, you may Cover it from any number of
-      Position steps away. Every other Covering requirement still applies.
+      zones away. Every other Covering requirement still applies.
   gallows-humour:
     trigger: You roll for a Stress Response.
     effect: Once the total is known, you may roll the D6 a second time. Use the second total.

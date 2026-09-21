@@ -46,6 +46,47 @@ export function titanPlate(id: string, sizeClass: string): string {
   return `${ASSETS}/plates/plate-titan-${!id || id.startsWith('standard-') ? sizeClass : id}.webp`;
 }
 
+/**
+ * The engagement board's art (ADR-0027 as amended by 16-34; site/design/art-style.md, "The engagement
+ * board"): flat-top hex tiles, rim glyphs, eye-level figures, and effect overlays, all under
+ * static/assets/board. Every board image goes through `boardPath`.
+ */
+export const boardPath = (name: string) => `${ASSETS}/board/${name}.webp`;
+/** A zone's tile: the zone's start rating, in the variant its number fixes. */
+export const boardTile = (rating: string, variant: 1 | 2 | 3) => boardPath(`hex-${rating}-${variant}`);
+/** A zone's rim glyph: the zone's current rating. */
+export const boardRim = (rating: string) => boardPath(`rim-${rating}`);
+/** small, medium, large, or an Abnormal with its own figure (sprinting-abnormal). */
+export const boardTitan = (sizeClassOrAbnormalId: string) => boardPath(`titan-${sizeClassOrAbnormalId}`);
+export const boardSoldier = (pose: 'standing' | 'hanging') => boardPath(`soldier-${pose}`);
+export const boardFx = (effect: 'steam' | 'fire' | 'dust') => boardPath(`fx-${effect}`);
+/** The tile variant of zone n: ((n - 1) mod 3) + 1, so every client draws the same field (16-34). */
+export const tileVariant = (n: number) => ((((n - 1) % 3) + 3) % 3 + 1) as 1 | 2 | 3;
+
+/** The anchor ratings the board has tiles and rims for. */
+export const BOARD_RATINGS = ['open', 'sparse', 'wooded', 'urban', 'giant-forest'] as const;
+/** The Abnormals with a board figure of their own; every other Titan stands as its Size Class. */
+export const BOARD_ABNORMALS = ['sprinting-abnormal'] as const;
+
+/** A Titan's board figure: its own Abnormal figure where one ships, else its Size Class. */
+export function boardTitanFigure(sizeClass: string | null | undefined, sourceId?: string | null): string {
+  if (sourceId && (BOARD_ABNORMALS as readonly string[]).includes(sourceId)) return boardTitan(sourceId);
+  return boardTitan(sizeClass && ['small', 'medium', 'large'].includes(sizeClass) ? sizeClass : 'medium');
+}
+
+/** Every board image, for loading once per engagement and destroying with it (ADR-0027 budget). */
+export function boardAssets(): string[] {
+  const out: string[] = [];
+  for (const r of BOARD_RATINGS) {
+    for (const v of [1, 2, 3] as const) out.push(boardTile(r, v));
+    out.push(boardRim(r));
+  }
+  for (const t of ['small', 'medium', 'large', ...BOARD_ABNORMALS]) out.push(boardTitan(t));
+  out.push(boardSoldier('standing'), boardSoldier('hanging'));
+  for (const f of ['steam', 'fire', 'dust'] as const) out.push(boardFx(f));
+  return out;
+}
+
 export const SETUP_BACKGROUND = `${ASSETS}/plates/setup-sortie-dawn.webp`;
 
 export const GEAR_ICONS: Record<string, string> = {

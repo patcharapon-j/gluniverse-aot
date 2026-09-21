@@ -449,7 +449,7 @@ On a failure nothing happens.
 
 ### In a Titan Engagement
 
-- Treat Injury is an action. The patient must hold the same Position as the treater (Chapter 5, section 5.2, `data/engagement/positions.yaml`, `comparison`). Two soldiers who have both left the Titan Engagement while it goes on count as holding the same Position, including for Help and Covering on the roll (section 3.16).
+- Treat Injury is an action. The patient must be in the treater's zone (Chapter 5, section 5.2; `data/engagement/zones.yaml`, `between_soldiers`). Two soldiers who have both left the Titan Engagement while it goes on count as holding the same Position, including for Help and Covering on the roll (section 3.16).
 - It can be Helped (Chapter 1, section 1.8), Pushed, and Covered (section 1.5). Sure Hands allows a second Push.
 - A failed use can be tried again on a later turn.
 
@@ -481,19 +481,19 @@ In a care window:
 When a Titan Engagement or a Skirmish ends, each dying soldier gets one chance at treatment before the end-of-fight Death Rolls (`aftermath_rolls`; section 3.16, step 5):
 
 - **Patient:** a living soldier with an untreated lethal Critical Injury that has an `engagement` limit, including a `turn` limit that has just become one. The patient may be Down.
-- **One roll per patient.** Each patient gets at most one aftermath roll. The players choose its treater: a living soldier who is not Down and who, when the Titan Engagement ended, held the patient's Position or a Position one step from it, or the patient, if not Down, treating themselves with the self-treatment penalty. Positions are compared as they stood at that moment, relative to the Focus Titan alive last, using, if it died, each soldier's Position relative to its corpse as it stands at the end (decision batch 8, 8-20) (when more than one Focus Titan was alive, relative to the one Chapter 5 compares Positions by; Chapter 5, section 5.2; decision batch 5, OQ-122). Two soldiers who had both left count as holding the same Position (section 3.16). A Skirmish has no Positions, so when a Skirmish ends every soldier who took part counts as holding the patient's Position (`in_a_skirmish`; `procedures`, `skirmish` in `data/harm/engagement-end.yaml`).
+- **One roll per patient.** Each patient gets at most one aftermath roll. The players choose its treater: a living soldier who is not Down and who, when the Titan Engagement ended, was in the patient's zone, or the patient, if not Down, treating themselves with the self-treatment penalty (Chapter 5, section 5.2; decision batch 5, OQ-122; decision batch 16, 16-11). Two soldiers who had both left count as holding the same Position (section 3.16). A Skirmish has no Positions, so when a Skirmish ends every soldier who took part counts as holding the patient's Position (`in_a_skirmish`; `procedures`, `skirmish` in `data/harm/engagement-end.yaml`).
 - **One roll per treater.** Each soldier makes at most one aftermath roll.
 - **The roll** uses treat on one untreated lethal `engagement` Critical Injury of the patient's, chosen by the players. On a success, that Critical Injury becomes treated and stabilized and gives back its Health box as treat does (*Uses*), which can end the patient's Down before the Death Rolls (section 3.3).
 - **A failure uses up the patient's attempt.** No other treater, and no other Critical Injury of the same patient, can reopen it before the Death Rolls.
 - No one can Help or Cover an aftermath roll. It can be Pushed, and Sure Hands allows a second Push. It is not a care window, so it does not use up the treater's roll in the care window that follows.
 - The players choose the order of rolls, using Chapter 2's roll-off if they disagree.
 
-> **Design note (OQ-57):** One aftermath roll per patient keeps an immediate chance to save a comrade without serial free attempts from everyone nearby. With only one roll per treater, three untrained soldiers within one step left an untreated `engagement` row fatal just 3.8% of the time, which would make treatment during the fight nearly worthless. A Squad can still gain by delaying the end of a fight, at the price of further Titan cards. A treatment probe (aftermath roll at Stress 0, one Push on 0 successes, a Strength 3 patient, no Help, Cover, Sure Hands, or further Titan cards) gives the patient's chance of dying if the fight ends now, against one more in-fight roll at Stress 1 followed by the aftermath roll:
+> **Design note (OQ-57):** One aftermath roll per patient keeps an immediate chance to save a comrade without serial free attempts from everyone nearby. With only one roll per treater, three untrained soldiers each eligible to treat left an untreated `engagement` row fatal just 3.8% of the time, which would make treatment during the fight nearly worthless. A Squad can still gain by delaying the end of a fight, at the price of further Titan cards. A treatment probe (aftermath roll at Stress 0, one Push on 0 successes, a Strength 3 patient, no Help, Cover, Sure Hands, or further Titan cards) gives the patient's chance of dying if the fight ends now, against one more in-fight roll at Stress 1 followed by the aftermath roll:
 >
 > - Wits 2 treater, no medical kit: 23.2% against 7.8%.
 > - Wits 2 treater, kit rated 1: 19.4% against 5.5%.
 > - Rookie Medic (Wits 4, Field Medicine 1, kit rated 1): 6.4% against 0.8%.
-> - Wits 2 treater two steps away, no kit: 57.9% with no eligible aftermath treater, against 23.2% when one move brings the treater within one step.
+> - Wits 2 treater out of the patient's zone, no kit: 57.9% with no eligible aftermath treater, against 23.2% when one move brings the treater into the patient's zone.
 >
 > The delay figures multiply independent treatment estimates and leave out the harm of the extra Titan cards.
 
@@ -563,9 +563,9 @@ Every row in this chapter names its effects by type from `data/harm/effect-types
 - **Next action spent** spends the action of the soldier's earliest turn, starting with the current round's, whose action is unspent. That turn keeps its move. An action spent in a later round begins that round already spent (Chapter 1, section 1.9), so the soldier cannot Help that round or make a Reaction with that turn.
 - **No Reactions** forbids the soldier's Reactions from when the result takes effect until the end of the first of their turns that begins after that. For a row that spends two turns, it lasts until the end of the second such turn. Which turn the row spends does not change how long the ban lasts, and the ban ends when the Titan Engagement ends. Each row that carries it also names `forbids: [reaction]`, Chapter 1's shared hook (section 1.9); the hook reads this ban and adds no second timer. A Titan's card against the soldier lands on 1 or more Titan successes, and a card that scores 0 whiffs and spares them (ADR-0019; decision batch 8, 8-1).
 - **The six Fear Roll effects** (decision batch 7, 7-8) act on the event's Titan, which section 3.12 defines:
-  - **The loudest flag** gives the soldier the loudest flag for the event's Titan, the flag Draw Attention sets (Chapter 5, section 5.6), unless they hold Distant relative to it. It lasts like every flag.
-  - **Stress to comrades nearby** gives Stress to every comrade who holds the soldier's Position or one Position step away, compared relative to the event's Titan. It is Stress, not a roll, and causes no Fear Roll. It applies only after every Fear Roll of the same event has found its row, so it never changes a comrade's total for that event; it counts from their next roll on (section 3.12, *Limits*; decision batch 8, 8-40).
-  - **A forced step** changes the soldier's Position by one step at the start of their next turn, even a turn spent in advance: toward Distant by the retreat's first option (Chapter 5, section 5.10), or toward the nearest comrade. It is a result, not the soldier's move, so it spends nothing. No step is made for a soldier who is Down, Grabbed, Pinned, or carried, or who has no such step to make, and it never makes them leave or let go.
+  - **The loudest flag** gives the soldier the loudest flag for the event's Titan, the flag Draw Attention sets (Chapter 5, section 5.6), if it is a Focus Titan in the soldier's zone. It lasts like every flag.
+  - **Stress to comrades nearby** gives Stress to every comrade in the soldier's zone or an adjacent zone. It is Stress, not a roll, and causes no Fear Roll. It applies only after every Fear Roll of the same event has found its row, so it never changes a comrade's total for that event; it counts from their next roll on (section 3.12, *Limits*; decision batch 8, 8-40).
+  - **A forced step** moves the soldier one step at the start of their next turn, even a turn spent in advance: toward Distant by the retreat's first option, out of a Titan's reach (Chapter 5, section 5.10), or toward the nearest comrade, lowering the number of zones between them. PROVISIONAL: a soldier already free in a zone that holds no body makes no step toward Distant (OQ-203). It is a result, not the soldier's move, so it spends nothing. No step is made for a soldier who is Down, Grabbed, Pinned, or carried, or who has no such step to make, and it never makes them leave or let go.
   - **A forced strike** makes the soldier's next action a Nape strike or a Body Part strike against the event's Titan, Pushed if it falls short and the soldier may Push it. Until they make it, they take no other action but Swap Blade Set, and cannot Help or Cover, through `forbids: [help, cover]`. It waits while they are Grabbed, Down, or Pinned; a limb-pinned soldier's strike on the Body Part that pins them, when the event's Titan's body pins them, is the forced strike. A strike they cannot legally make does not end it: it ends only when they strike, when Rally clears it, when that Titan dies, or when the Titan Engagement ends (decision batch 8, 8-16).
   - **Blade Set dropped** empties the soldier's handles. The set lies at their Position, no one takes it during the Titan Engagement, and it is shared out with the left items when the Titan Engagement ends (Chapter 4, section 4.11). The swap refits from a carried set (Chapter 4, section 4.4).
   - **A Gas Roll at once** is a two-die Gas Roll on the fitted canister, if its Gas Rating is above 0 (Chapter 4, section 4.3). It is not the round's Gas Roll and is not ODM use.
@@ -644,7 +644,7 @@ Rally is the Empathy action `rally` (Chapter 2). `rally` in `data/mind/stress-re
 - **Rally never lowers Stress.**
 - **In a Titan Engagement:**
   - It is an action.
-  - The target must hold the same Position as the Rallying soldier or one Position step away, and Carrying Voice adds one more step. Two soldiers who have both left the Titan Engagement while it goes on count as holding the same Position, including for Help and Covering on the roll (section 3.16).
+  - The target must be in the Rallying soldier's zone or an adjacent zone, and Carrying Voice adds one more zone. Two soldiers who have both left the Titan Engagement while it goes on count as holding the same Position, including for Help and Covering on the roll (section 3.16).
   - It can be Helped as Chapter 1 states, and a failed Rally can be tried again on a later turn.
 - **Outside a Titan Engagement:**
   - Any soldier who is not Down may Rally a comrade, with no Help and no Covering.
@@ -734,7 +734,7 @@ Each row's name and *What happens* line are fiction. Only its Effects and Forbid
 | 6 | Scream | The scream is out of you before you know it is yours. Somewhere above you, a huge head turns. | next turn spent; no Reactions; the loudest flag on the event's Titan, never from Distant | Reactions |
 | 7 | Run for the Wall | Every part of you turns toward home and goes. Behind you, someone is still fighting. | next turn spent; no Reactions; 1 step toward Distant at the start of the next turn; gain a Scar | Reactions |
 | 8 | Kill It | The world goes quiet and red. When it comes back, you are already going for it. | next 2 turns spent; no Reactions; next action a strike on the event's Titan, Pushed if short; gain a Scar | Reactions, Help, Covering |
-| 9 or more | Nothing Left | You open your hands and let the blades fall. Everyone near you sees it in your face. | next 2 turns spent; no Reactions; drop the Blade Set in the handles; comrades within 1 Position step gain 1 Stress; gain a Scar | Reactions |
+| 9 or more | Nothing Left | You open your hands and let the blades fall. Everyone near you sees it in your face. | next 2 turns spent; no Reactions; drop the Blade Set in the handles; comrades in your zone or an adjacent zone gain 1 Stress; gain a Scar | Reactions |
 <!-- END RENDERED: fear-rolls -->
 
 **The event's Titan.** An effect that acts on a Titan acts on the event's Titan (`event_titan`), which each trigger names:
@@ -881,7 +881,7 @@ Chapter 5 states when a Titan Engagement ends (section 5.11, `data/engagement/en
 
 The steps are resolved outside the Titan Engagement. No soldier retires, and no promotion happens, before step 9.
 
-**Momentum and Anchors.** No step above reads either. Every soldier's Momentum becomes 0 and the Titan Engagement's Anchors are cleared with the Position records, after the last step above (`momentum_and_anchors`; Chapter 5, section 5.2). A Skirmish has neither.
+**Momentum and Anchors.** No step above reads either. Every soldier's Momentum becomes 0 and the field, with every zone's rating, is cleared, after the last step above (`momentum_and_anchors`; Chapter 5, section 5.2). A Skirmish has neither.
 
 **Pinned soldiers.** A Titan Engagement does not end by its no-Focus-Titan test while a soldier lies Pinned: the rounds go on until the last Pinned soldier is freed or dies (Chapter 5, section 5.11; decision batch 8, 8-9). Its end frees no one: only the no-soldier-standing test can end it while a soldier is Pinned, and then every Pinned soldier dies, left under the body, whether or not a Focus Titan is alive, as a soldier left to the Titans does, counted for Grief (decision batch 8, 8-21; OQ-157).
 

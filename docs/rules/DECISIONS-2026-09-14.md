@@ -3697,7 +3697,7 @@ What was wrong, measured. Of the 20 Position step rows only 2 called for a Fly r
 
 The line this batch draws: **the guaranteed step stays free, and everything new sits above it.** No move is slower, none is less reliable, and nothing is rationed, because the failure mode the project's own prior-art research names is the mobility bottleneck that makes movement scarce and turns dead. What was missing was something to reach for.
 
-Measurement. Every number in this batch is an ADR-0014 starting value and **the committed simulator figures are stale until the rerun**. Item 10-1 is a retune rather than a sensitivity row, because Flight replaces the move rather than sitting beside it. The rerun must answer the kill-round target with **Bite** measured separately as the first thing to cut, the PC Critical Injury and death targets that the three loudest-flag changes feed together, the wreck rate per table and Size Class, and `families.route_check` with Anchors at 0, which must confirm ADR-0010's legal route still holds. Round time is expected to rise by about 1 to 1.5 dice pools a round against today's 3.57.
+Measurement. Every number in this batch is an ADR-0014 starting value and **the committed simulator figures are stale until the rerun**. (Read forward: the confirming run of 2026-09-21 is that rerun, and batch 15 rules on it.) Item 10-1 is a retune rather than a sensitivity row, because Flight replaces the move rather than sitting beside it. The rerun must answer the kill-round target with **Bite** measured separately as the first thing to cut, the PC Critical Injury and death targets that the three loudest-flag changes feed together, the wreck rate per table and Size Class, and `families.route_check` with Anchors at 0, which must confirm ADR-0010's legal route still holds. Round time is expected to rise by about 1 to 1.5 dice pools a round against today's 3.57.
 
 No new ADR, and no ADR amended. ADR-0010 is preserved as written and is the boundary item 10-3 respects. ADR-0024 limit 8 holds throughout: every value is printed, and the GM never picks a step, an Anchor, or a point of Momentum. ADR-0004 is untouched, because the Gear Die change the owner proposed is deferred rather than taken.
 
@@ -3899,7 +3899,7 @@ Rulings on the owner's decisions of 2026-09-20, after the first session at the t
 
 **Decision.** ADR-0014 is amended, and no target changes. The three reference builds read **Health 6, 6, and 7**. The Health-dependent reported rows move with the range: the row that read "the reference Squad with each soldier's Health set to 3" reads **Health set to 5**, one below the Rookie's, which is what it always meant; the row that read "the Health 2, 5, and 6 builds Chapter 3 quotes" reads **the Health 4, 7, and 8 builds**, the new floor and the two values only the Lifepath reaches.
 
-**Stale.** **Every figure in ADR-0014, in `data/engagement/tuning.yaml`, in `data/titans/tuning.yaml`, in `data/titans/probe-figures.yaml`, and in `docs/reviews/simulator-report.md` is stale until the rerun.** The rerun is a **retune**, not a check, and it is **one run that measures batches A and F together**, because the two pull in opposite directions and neither figure means anything alone: Health takes every band down and the behavior fixes put lethality back. It runs in the same rerun batches 10 and 11 schedule. It must answer every Critical Injury and deaths band at the new Health; the share of a Titan's cards that resolve Thrash before and after retargeting; each table's kill share by previous behavior and by Broken parts under the Frenzy roll; the Frenzy rate and cap, which are starting values the simulator moves; the musket against the new Health; and the `health_reports` rows, whose reachable Health values are now 4 to 8.
+**Stale.** **Every figure in ADR-0014, in `data/engagement/tuning.yaml`, in `data/titans/tuning.yaml`, in `data/titans/probe-figures.yaml`, and in `docs/reviews/simulator-report.md` is stale until the rerun.** (Read forward: the rerun ran, batch 15 ruled on it as R1 to R5, and the confirming run of 2026-09-21, rules hash `0e5b7591a58a8d85`, replaced every figure named here. R6 and R7 record what it read.) The rerun is a **retune**, not a check, and it is **one run that measures batches A and F together**, because the two pull in opposite directions and neither figure means anything alone: Health takes every band down and the behavior fixes put lethality back. It runs in the same rerun batches 10 and 11 schedule. It must answer every Critical Injury and deaths band at the new Health; the share of a Titan's cards that resolve Thrash before and after retargeting; each table's kill share by previous behavior and by Broken parts under the Frenzy roll; the Frenzy rate and cap, which are starting values the simulator moves; the musket against the new Health; and the `health_reports` rows, whose reachable Health values are now 4 to 8.
 
 **Measurement.** Required, as above. Chapter 3's exact "Injuries before Down" figures at Health 4, 5, and 6 are arithmetic about a Health value, not about a build, so they stand; what moved is which builds reach them. The Health 7 and 8 rows are measured in the rerun and are not guessed here, and the Health 2 and 3 rows describe values no soldier can now have.
 
@@ -3927,7 +3927,7 @@ An explicit `not_changed_by` line names what does not: the Nape strike, the Body
 
 ### 13-6: Blind Spot is a place in the world (OQ-191)
 
-**Decision.** Wherever Blind Spot is introduced, it says plainly that a soldier there is **anchored to terrain behind the Titan and is not on it**: on a tree or a roof, not touching the Titan. It is a place in the world, not a place on the monster.
+**Decision.** Wherever Blind Spot is introduced, it says plainly that a soldier there is **anchored to terrain behind the Titan and is not on it**: anchored to a tree or a roof, hanging from it or standing on it, not touching the Titan. It is a place in the world, not a place on the monster. Whether the soldier is airborne is not a property of the Position: it follows the move that brought them there, and only the Urban Terrain Trait says otherwise, so the Jam and the Falling Titan read exactly as they did (round 3 review 1, M4; `docs/reviews/round-3-review-decisions.md`).
 
 **Why.** This is the single most misread thing in the rules, and the misreading explains the steam incident: if Blind Spot sounds like a spot on the body, then "steam hits everyone On Body" sounds as if it should catch the Nape strikers, and it does not. Three existing rules only make sense on the correct reading: steam at a Regeneration fill burns On Body and not Blind Spot; the Urban Terrain Trait says a Blind Spot soldier is anchored to a roof and is not airborne; and the Anchor Rating decides whether a Blind Spot exists at all while the Titan stands.
 
@@ -3961,23 +3961,23 @@ A **grounded Titan** changes every map: every step among In Reach, On Body, and 
 
 **How the Ladder is read.** The Ladder's existing evaluation and tie-breaks in `data/engagement/attention.yaml`, restricted to the qualifying candidates, and nothing else. The candidate rules are untouched. No new rule of selection is invented, so the choice stays deterministic and the GM still picks nothing (ADR-0024, limit 8). `attention.yaml` records that the Ladder is read for this purpose and that Attention moves with it. Retargeting moves no soldier: it is not a change of Position (13-5).
 
-**Why.** Every fallback in every table written is `thrash`. With Attention on a soldier at Distant or Blind Spot a Medium Titan could not Bite or Grab **at all**, and two cards in three became Thrash, so the better the Squad played the more inert the monster became. That is what the first session felt. No Behavior Table is re-authored, and every `fallback` value stands.
+**Why.** Every fallback in every table written is `thrash`, but two. With Attention on a soldier at Distant or Blind Spot a Medium Titan could not Bite or Grab **at all**, and two cards in three became Thrash, so the better the Squad played the more inert the monster became. That is what the first session felt. No Behavior Table is re-authored, and every `fallback` value stands.
 
-**Rejected, and kept in the file.** Keeping the target and downgrading the entry to the highest-numbered one at or below the roll whose requirement the holder meets. It is workable and worse, because it keeps the Titan fixated on the person deliberately standing where it cannot hurt them, which is the problem. It stays as the alternative if retargeting measures badly.
+**Rejected, and kept in the file.** Keeping the target and downgrading the entry to the highest-numbered one at or below the roll whose requirement the holder meets. It is workable and worse, because it keeps the Titan fixated on the person deliberately standing where it cannot hurt them, which is the problem. It stays as the alternative if retargeting measures badly. Measured in the round 3 retune (R3): at Frenzy's cap of 3 it reads 0.125 deaths against retargeting's 0.174 on the reference start, with 40% of cards downgraded and 5% Thrash, and the holder it cannot reach is grinned at instead of flailed at. Not taken.
 
-**ADR.** Amends ADR-0001 and ADR-0010.
+**ADR.** Amends ADR-0001 and ADR-0010. ADR-0010's batch 4b promise is narrowed by this, recorded after round 3 review 1 (C6; `docs/reviews/round-3-review-decisions.md`): a failed striker draws the Titan's Attention on every ladder, and its next behavior when that behavior can reach Blind Spot.
 
 ### 13-10: Frenzy (OQ-193)
 
 **Decision.** Each Focus Titan holds **Frenzy**: a whole number that **starts at 0** when it becomes a Focus Titan, **rises by 1 at a new round-end step**, and is **capped at 3**. Its behavior roll is **D6 plus Frenzy**, and **a result above the table's highest entry reads as the highest entry**, which is the entry holding result 6. Frenzy is public and sits on the Titan's tracker row. It adds no dice, changes no Attack Dice, no need, and no effect, and it moves no soldier. It never falls, a corpse has none, and a Background Titan has none until it becomes a Focus Titan. The GM never raises, lowers, or spends it (ADR-0024, limit 8).
 
-**The end step.** A new `frenzy` step sits between the regeneration step and the background-clocks step, so a Titan that entered at the end of the previous round starts its first full round clean and leaves the end step at Frenzy 1. Frenzy rises during a retreat, as Regeneration does.
+**The end step.** A new `frenzy` step sits between the regeneration step and the background-clocks step, and it raises only a Titan that is a Focus Titan when it runs, as the regeneration step fills only their clocks. So a Titan that enters at the background-clocks step of one round starts its first full round clean on both counts, its clock empty and its Frenzy 0, and first rises at the end of that round; a Titan a flare brings in mid-round rises with the others at that round's end. Frenzy rises during a retreat, as Regeneration does. (Corrected after round 3 review 1, C2, in `docs/reviews/round-3-review-decisions.md`: as first written this paragraph said the entrant left the end step at Frenzy 1, which the step order it chose does not produce.)
 
 **Why.** Every Behavior Table is already ordered terrorize to kill by result, so adding to the roll walks a Titan up its own table as a fight drags: it postures in round 1 and is trying to kill by round 3. It gives a fight a shape it did not have and gives the Squad a reason to commit rather than kite. It is self-correcting in the direction the design wants: a Squad that kills fast sees little Frenzy, and a Squad that grinds gets eaten.
 
 **No table is re-authored.** No file in `data/titans/` changes for this, and no `fallback` value or comment became wrong.
 
-**Measurement.** The rate and the cap are starting values the simulator moves in 13-2's rerun; the shape is settled.
+**Measurement.** The rate and the cap are starting values the simulator moves in 13-2's rerun; the shape is settled. The move-up rule's wrap is keyed to Frenzy 0 after round 3 review 1 (C3; `docs/reviews/round-3-review-decisions.md`). The retune moved the rate to one rise every second round, at the end of every even-numbered round, and kept the cap (round 3 retune, R1; `docs/reviews/round-3-retune-decisions.md`).
 
 ### 13-11: When Frenzy counts (OQ-193)
 
@@ -4012,3 +4012,427 @@ A **grounded Titan** changes every map: every step among In Reach, On Body, and 
 **Recorded.** Batches **B** (the GM is never blocked), **C** (the prompt card), and **D** (token readouts) are settled in `docs/playtest/feedback/round-3/OWNER-DECISIONS.md` and are **Foundry only**: this batch writes their ADRs (13-12, 13-13, 13-14) and nothing else. Batch **E**, zone combat, is settled in the same record, with its design in `zone-combat-design.md`, and is **not part of this rules change**: its rules and its retune wait until batches A and F have been played, because E changes the tempo of every fight and its numbers must build on A and F's measured ones. **No ADR for zones is written here**; ADR-0029 lands with batch E.
 
 **Out of scope:** the simulator rerun itself, the Foundry and site code, the packet, and the zone rules.
+
+## Batch 14: round 3 review 1, applied
+
+Rulings on `docs/reviews/round-3-rule-change-review-1.md`, the first adversarial review of decision batch 13 (wof-reviewer on Opus, 2026-09-21: 6 Critical, 6 Major, 7 Minor). Made 2026-09-21. Nineteen findings, plus two the review did not raise and applying it uncovered. The five that were design calls rather than mechanical fixes went to a Fable decider, whose reasoning is in `docs/reviews/round-3-review-decisions.md`; the fix plan is `docs/playtest/feedback/round-3/REVIEW-FIX-PLAN.md`. Nothing in `docs/playtest/feedback/round-3/OWNER-DECISIONS.md` is reopened: the Health formula, Frenzy's shape, retargeting rather than downgrading, and lethality restored through behavior all stand, and Attack Dice, Nape Depth and Tempo stay in reserve.
+
+### Summary table
+
+| Item | Finding | Decision (one line) | ADR change | Glossary change | Impact |
+|---|---|---|---|---|---|
+| 14-1 | C1 | The glossary states the new Health formula and points at the data, so the number lives in one place | none | **Health** | `CONTEXT.md` |
+| 14-2 | C2 | The frenzy end step raises only a Titan that is a Focus Titan when it runs, as the regeneration step fills only their clocks; a Titan that enters at the background-clocks step stays at 0 through its first full round | none | none | `round.yaml`, `titan-format.yaml`, `background-titans.yaml`, Ch5 5.3 |
+| 14-3 | C3 | The move-up rule's wrap from 6 to 1 stands at Frenzy 0 and is gone at Frenzy 1 or more, where an illegal result at 6 turns back **down** the table | amends ADR-0001 | **Frenzy** | `behavior-procedure.yaml`, `titan-format.yaml`, Ch5 5.5, `CONTEXT.md` |
+| 14-4 | C4 | The one-half kill-share constraint binds at Frenzy 0 only; the Frenzy 1 to 3 shares are reported figures and Frenzy's rate and cap are the levers | none | none | `data/titans/tuning.yaml`, `behavior-procedure.yaml`, Ch6 |
+| 14-5 | C5 | The narrowed set bounds every step of a retargeting evaluation, `loudest-matches` included, so a loud soldier who fails the Position requirement is never added | none | none | `attention.yaml` |
+| 14-6 | C6 | ADR-0010's batch 4b promise is narrowed honestly: a failed striker draws the Titan's **Attention** on every ladder, and its next behavior when that behavior can reach Blind Spot | amends ADR-0010 | none | ADR-0010, Ch5 5.6 and 5.7, `attention.yaml`, `action-catalog.yaml` |
+| 14-7 | M1 | The fallback entry is tested the same way as the rolled one and retargets in its turn; Thrash comes only when nobody meets the fallback either | amends ADR-0001 | none | `behavior-procedure.yaml`, `titan-format.yaml`, Ch5 5.5 and 5.6, `tools/sim` |
+| 14-8 | M2 | A fifteenth row in the closed list: a Titan's body coming down, by its death or by a living Titan becoming grounded | none | none | `positions.yaml`, Ch5 5.2, site wording |
+| 14-9 | M3 | "An action never changes a Position" is true of Catalog entries of kind `action`; `fly`, `leap-clear` and `mount-or-dismount` are not actions and sit on the list | none | none | `positions.yaml`, Ch5 5.2 |
+| 14-10 | M4 | Blind Spot is anchored to terrain behind the Titan, hanging from it or standing on it; whether the soldier is airborne follows the move that brought them there, and only the Urban Terrain Trait says the roof holds them. No mechanics change | none | **Blind Spot** | `positions.yaml`, Ch5 5.2, `CONTEXT.md`, 13-6 |
+| 14-11 | M5 | Frenzy and its end step join Chapter 1's closed list of what the GM applies as written, and Frenzy and a retarget join the Circumstances `never` list | none | none | Ch1 1.1, `circumstances.yaml` |
+| 14-12 | M6 | The Grab model's victim reads `builds`, `rookie` rather than a literal Health, and `health_reports` moves to Health 4 to 8 with the pre-batch-13 figures kept under `history` | none | none | `data/engagement/tuning.yaml` |
+| 14-13 | m1 to m7 | Seven small corrections: the Down comrade a retarget can reach, the branch map's phantom node, `call_it` and a retarget, the close rule's dropped qualifier, a narrowed evaluation that reaches its own `none` step, a stale template Health in a label, and the glossary's missing **Retarget** | none | **Attention Ladder**, new **Retarget** | `attention.yaml`, `read.yaml`, `tuning.yaml`, `CONTEXT.md`, Ch5, `tools/render` |
+| 14-14 | found while applying | Chapter 5's worked example resolved a Swat as Thrash against a Blind Spot holder while two soldiers stood In Reach, which retargeting makes wrong. The revealed entry becomes Shake Off, which reaches Blind Spot, and the retarget case is shown beside it | none | none | Ch5 |
+| 14-15 | found while applying | Chapter 6 was not touched by batch 13 at all: its Thrash shares, its D6 column and its procedure list all described the pre-batch-13 rules | none | none | Ch6 |
+
+### 14-3: the move-up wrap is keyed to Frenzy 0 (C3)
+
+**Decision.** The roll climbs the table from the total as before. At **Frenzy 0** the wrap stands, after 6 comes 1. At **Frenzy 1 or more** the roll never wraps: if the entry at 6 cannot be rolled, it turns back down and takes the entry holding the next result below the total, and so on to 1. Thrash is still what is left when nothing can be rolled.
+
+**Why.** The clamp pushes every face Frenzy carries past 6 onto result 6. Whenever the entry at 6 is illegal, which is the previous behavior or a Broken arm for three of the four Grabs, the old wrap landed every one of those faces on result 1, the weakest entry on the table. Enumerated exactly: the standard Medium at Frenzy 3 that had just Grabbed resolved Fixed Grin on 4 faces in 6 against 2 in 6 at Frenzy 0, with a kill share of 1 in 6, the lowest of any state. A maximally frenzied Titan postured more than a calm one, which inverts the escalation 13-10 exists to produce. Keying the wrap to Frenzy 0 leaves every Frenzy 0 share untouched, so Chapter 6's tables were authored to a rule that still holds and the chapter-06 probes, which run at Frenzy 0, need no change; at Frenzy 1 or more it is the clean rule, climb then descend.
+
+**Measured after.** On all four tables, the share of any result-1 entry at Frenzy 1 to 3 is now 0 in 6 in every state, and kill shares climb 2, 3, 4, 5 in 6 with nothing Broken and 3, 4, 5, 6 after the entry at result 4.
+
+**ADR.** Amends ADR-0001.
+
+### 14-7: the fallback is retargeted too (M1)
+
+**Decision.** When no candidate meets the rolled entry, the Titan takes the entry's fallback and tests it the same way: Thrash if it is thrash, is the previous behavior, or needs Body Parts the Titan lacks; otherwise, if the Attention holder does not meet the fallback's own `position_requirement`, the Titan retargets over the candidates who do; Thrash only when nobody meets that either.
+
+**Why.** 13-9 says "no Behavior Table is re-authored and every `fallback` value stands", which is only true if a fallback is reachable. Two tables have a real fallback, the standard Large's Crush and the Sprinting Abnormal's Pitch Headlong, and both were tested against the very holder the rolled entry had just failed against, so both reproduced exactly the inertness 13-9 exists to remove: a Large Titan whose Attention sat on a mounted soldier at Distant would Thrash rather than Crush the soldier standing inside its reach.
+
+**ADR.** Amends ADR-0001.
+
+## Batch 15: the round 3 retune, applied
+
+Rulings on the retune decision batch 13 scheduled (13-2 and 13-10), made 2026-09-21 by the Fable decider after the run of 1002 cases and 63,040,000 trials. The reasoning, every figure it rests on, and the exact wording of every edit are in `docs/reviews/round-3-retune-decisions.md`; this table is the index. The run found that **batch F overshot**: the standard Medium's deaths through the end read 0.169 against a band of 0.08, with Critical Injuries 0.928, Grabs 0.389, and 71.5% killed by round 3. Attack Dice, Nape Depth, and Tempo stay in reserve, because they move only if batch F fell short, and it did not.
+
+| Item | Ruling | ADR change | Glossary change | Impact |
+|---|---|---|---|---|
+| R1 | Frenzy rises at the end of every **even-numbered** round of the Titan Engagement, not every round; the cap stays 3. 13-10 names the rate as the simulator's, and the retune moved it: at one rise a round Frenzy 1 sat on the round-3 card, the round the kill target names, so the Squad playing exactly as intended paid it | amends ADR-0001 | **Frenzy** | `titan-format.yaml`, `round.yaml`, Ch5 5.3 and 5.4 and the worked example, `CONTEXT.md`, `tools/sim`, site, packet, Foundry |
+| R2 | The Medium bands are re-set: deaths **at most 0.15** through the end, Grabs **0.15 to 0.45**, killed by round 3 **55% to 75%**; Critical Injuries 0.5 to 0.9 stand. No rate or cap of Frenzy lands 0.08 with retargeting on, so the band moved as 8-31 moved it rather than the owner's rule being removed | amends ADR-0014 | none | `data/titans/tuning.yaml`, `tools/sim/targets.py`, Ch5 5.13, Ch6 6.6, OQ-132, OQ-140 |
+| R3 | Neither held alternative is taken. The hooked-by-strike exemption reads 0.120 by putting the Thrash share back to 43%, and downgrading reads 0.125 with 40% of cards downgraded: each is retargeting switched off for the case 13-9 was made for | none | none | 13-9's rejected paragraph, ADR-0010 |
+| R4 | Target 2's band reads **8% to 16%**. The fresh cut moved from 13.0% to 15.0% because of decision batch 11's Push re-roll, not batch F; with that rule off it reads 12.9% | amends ADR-0014 | none | ADR-0014, both tuning files, Ch5 5.13, Ch6 6.6, OQ-79 |
+| R5 | The standard **Large Titan's Bite reaches In Reach as well as On Body**. At Health 6 the Large's only kill against a Squad off its body was a fall from a flail, which Health and retargeting both remove, so it read softer than the Medium and the Abnormal's bar bounded an empty interval | amends ADR-0014 | none | `data/titans/standard-large.yaml`, Ch6 6.4's rendered rows and its OQ-101 note, `data/titans/tuning.yaml`, OQ-101, OQ-103, new **OQ-198** |
+| R6 | One confirming run after R1 to R5, then every figure paragraph is re-rendered from the report and the stale markers come off | none | none | the run |
+| R7 | Made after the confirming run. The bar's **Critical Injuries floor stands as written**; the screen with Hook and Cut and Hamstring Line is **Missed in both orders and logged as OQ-199**, with no value of the Abnormal's moved before the playtest, because retargeting lifts the standard Medium's Critical Injuries by a quarter in that row and the runner's by a fortieth and the floor is read relative to the Medium; the bar's **two ladder rows are reported beside it, not judged by it**, because the bar holds the published creature's values and its ladder is one of them | amends ADR-0014 | none | `data/titans/tuning.yaml`, `tools/sim/rules.py`, `tools/sim/report.py`, `tools/probes/chapter-06/render.py`, Ch6 6.5 and 6.6, OQ-102, OQ-103, new **OQ-199**; the report re-rendered, no run |
+
+**Out of scope, and unchanged:** Attack Dice, Nape Depth, Tempo, every Attention Ladder, the Grab, the retreat clock, the Sprinting Abnormal's own values, the Health formula, and Frenzy's cap.
+
+**The owner's veto point, recorded because it is theirs and not the decider's:** if the first playtest is to run at the 0.08 lethality chosen before batch 13, the setting is retargeting with Frenzy switched off, which reads 0.070. That is a rule removal the owner makes.
+
+## Batch 16: zone combat, the Stride, and the engagement board
+
+Rulings that close every gap `docs/playtest/feedback/round-3/zone-combat-design.md` leaves, so that batch E of `OWNER-DECISIONS.md` can be drafted without invention. Made 2026-09-21, after the owner played batches A and F at the table and ordered batch E started, which lifted its only gate (`OWNER-DECISIONS.md`, question 9). Thirty-eight items. Nothing settled is reopened: Positions are derived from zone plus attachment; the fields are 13, 7, and 19; Stride is Small 1, Medium 2, Large 2, Sprinting Abnormal 3; a wreck takes one rating step off the Titan's own zone and striding wrecks nothing; and every recommendation in the design stands as written. Where the design gives a rule, the item states it exactly as the data should; where it leaves a gap, the item fills it and says why. Three values chosen here are provisional and logged: OQ-200, OQ-201, and OQ-202. The work that applies these rulings is split in `docs/playtest/feedback/round-3/IMPLEMENTATION-PLAN-E.md`. New ADR-0029; ADR-0009, ADR-0010, and ADR-0027 amended.
+
+Throughout, **free** means an attachment of ground or anchored, and **a body** means a Focus Titan or a corpse.
+
+### Summary table
+
+| Item | Source | Decision (one line) | ADR change | Glossary change | Chapter impact |
+|---|---|---|---|---|---|
+| 16-1 | Owner (item 8) | ADR-0029: the Titan Engagement is fought over zones, Positions derived, Titans stride | new ADR-0029; amends ADR-0009, ADR-0010, ADR-0027 | see 16-37 | Ch5 5.1, 5.2 |
+| 16-2 | Design 2.1 | The three fields, their exact layouts, numbering, rings, edge zones, and off field | ADR-0029 | **Field**, **Zone**, **Edge zone**, **Off field** | Ch5 5.1; `zones.yaml` |
+| 16-3 | Design 2.2, 6.4 | A zone holds anything; nothing blocks a move or a Stride; two Focus Titans may share a zone | ADR-0029 | none | Ch5 5.2 |
+| 16-4 | Design 2.2 | Each zone carries its own Anchor Rating; the engagement-wide Anchors count is retired; the Momentum cap is the anchors of the soldier's zone | ADR-0029 | **Anchor Rating** | Ch5 5.2; `anchor-ratings.yaml`, `round.yaml` |
+| 16-5 | Gap | Every Terrain Trait reads the zone it concerns | none | none | Ch5 5.2; Ch4 (falls) |
+| 16-6 | Design 7.7; gap | Field generation: size, field rating, and a D6 terrain mix per zone; the GM's framing | none | **Field rating** | Ch5 5.1; Ch7; `engagement-setup.yaml`, `route.yaml` |
+| 16-7 | Design 2.7 | Starting placement: Focus Titan A in the centre zone, the Squad in the start zone below it | none | none | Ch5 5.1; `positions.yaml`, `hazards.yaml` |
+| 16-8 | Design 2.3 | The attachments: ground, anchored, on-body, blind-spot, grabbed, pinned; airborne and mounted stay separate states | ADR-0029 | **Attachment** | Ch5 5.2; `zones.yaml` |
+| 16-9 | Design 2.3 | The derivation of the four Positions; holding a Position; the close rule and the comparison block retired | ADR-0029 | **Position** | Ch5 5.2; `positions.yaml` |
+| 16-10 | Gap | Blind Spot in one zone has no facing | amends ADR-0010 | **Blind Spot** | Ch5 5.2 |
+| 16-11 | Design 2.3 | Between two soldiers: same Position reads same zone; Position steps read zones | none | **Help** | Ch1 1.5, 1.8; Ch3; Ch4; `talents.yaml` and every reader |
+| 16-12 | Design 2.4; gap | Moves: zone steps and attachment steps, which kinds make each, mounted pace, the Down soldier | none | none | Ch5 5.2; Ch4 4.x (horses) |
+| 16-13 | Design 2.5 | The Flight across zones: the free first step, Carry cost by zone entered, the Carry limit, never ending free in an Open zone | none | none | Ch5 5.2; `anchor-ratings.yaml` |
+| 16-14 | Gap | Momentum over zones: gain, trim, and the spends that named a Titan | none | none | Ch5 5.2 |
+| 16-15 | Design 2.5; gap | Flags a move sets: crossing a Focus Titan's zone, a Flight with no successes, the mounted charge | amends ADR-0010 | none | Ch5 5.2, 5.6; `attention.yaml` |
+| 16-16 | Owner (Titan movement) | The Stride: a new card step, its route and tie-break, its values, grounded 0 | ADR-0029 | **Stride** | Ch5 5.4, 5.5; Ch6 stat blocks; `size-classes.yaml`, `titan-format.yaml`, `behavior-procedure.yaml`, `sprinting-abnormal.yaml` |
+| 16-17 | Gap | Whom a Titan strides toward, and what it does when its holder is off field, airborne, carried, a decoy, or nothing | amends ADR-0010 | none | Ch5 5.5, 5.6 |
+| 16-18 | Design 6.1 | Reach is the Titan's own zone; `holder-and-position` reads the holder's zone | none | none | Ch5 5.4; `titan-format.yaml` |
+| 16-19 | Design 3.5 | What a Stride carries and what it leaves behind | amends ADR-0010 | none | Ch5 5.2, 5.5 |
+| 16-20 | Owner (question 8) | Wrecking made local, the `sparser` ladder, the Sparse grace per zone, and the route promise | amends ADR-0010 | none | Ch5 5.2, 5.7; `anchor-ratings.yaml`, `titan-format.yaml`, `titan-harm.yaml` |
+| 16-21 | Gap | A zone that becomes Open under a standing Titan, and a Titan standing up in an Open zone | none | none | Ch5 5.2 |
+| 16-22 | Design 2.6 | Falls: the reference body, the band, and where the soldier lands | none | none | Ch4 (falls); `falls.yaml` |
+| 16-23 | Design 2.6 | The Grab, a knock loose, Pinned, and carrying in zones | none | none | Ch5 5.7, 5.8; `grab.yaml`, `carrying.yaml` |
+| 16-24 | Design 2.6 | Corpse zones | none | **Corpse** | Ch5 5.7; `positions.yaml`, `titan-harm.yaml` |
+| 16-25 | Design 2.6 | Horses and left items are in zones | none | none | Ch4; `horses.yaml`, `carrying.yaml`, `sheet-fields.yaml` |
+| 16-26 | Design 2.6; gap | Leaving is a step off field from an edge zone; returning enters one | amends ADR-0009 | none | Ch5 5.11 |
+| 16-27 | Design 3.7; gap | The retreat under zones, and why it always ends | amends ADR-0009 | none | Ch5 5.10; `background-titans.yaml` |
+| 16-28 | Gap | A Fear Roll's forced move and draw-attention effect in zones | none | none | Ch3; `effect-types.yaml`, `fear-rolls.yaml` |
+| 16-29 | Design 3.7, 6.7 | Background Titans stay a clock; a promoted Titan enters at an edge zone no soldier stands in | none | none | Ch5 5.10 |
+| 16-30 | Design 2.2; gap | Effects in zones: a closed list, and none harms in this version | none | none | Ch5 5.2; `zones.yaml` |
+| 16-31 | Design 6.2 | Elevation is left out | ADR-0029 | none | Ch5 5.2 |
+| 16-32 | Batch 13, 13-5 | The closed list of what changes a Position, rewritten for zones | none | none | Ch5 5.2; `positions.yaml` |
+| 16-33 | ADR-0024 | What the GM names as framing, and what they never name | none | none | Ch5 5.1; Ch1 1.1 |
+| 16-34 | Design 7 | The engagement board | amends ADR-0027 | none | none (Foundry) |
+| 16-35 | Design 7.8 | The ledger's left page and the sheets record zone and attachment | none | none | Ch4 (sheet fields); Foundry |
+| 16-36 | Design 6.3 | The printable field | none | none | packet |
+| 16-37 | Glossary | New and reworded terms | none | as listed | `CONTEXT.md` |
+| 16-38 | Owner (E7) | The rerun and what it reports; what is held | none now; ADR-0014 with the retune | none | Ch5 5.13; Ch6 6.6 after the run |
+
+### 16-1: ADR-0029
+
+**Decision.** New `docs/adr/0029-the-engagement-is-fought-over-zones.md`. It amends ADR-0009 (the Waypoint kind names the field rating; the retreat ends by leaving off field), ADR-0010 (Attention is physical through the Stride; Blind Spot has no facing; the route promise reads over the field; a Flight across a Titan's zone sets the loudest flag), and ADR-0027 (the board specified). ADR-0001 is not amended: the Stride is a step of a Titan's card, not a turn, and it chooses nothing. ADR-0014 is amended by the retune's own decisions after the rerun (16-38), not here.
+
+**Why.** The owner's ADR list for round 3 names ADR-0029 with those two amendments, and the board's amendment was already promised by 13-14.
+
+### 16-2: The field
+
+**Decision.** `data/engagement/zones.yaml`, `fields`. A zone is a flat-top hexagon identified by a number and by axial coordinates `q` (column, rising to the right) and `r`. Its neighbours are the zones at offsets (+1, 0), (+1, -1), (0, -1), (-1, 0), (-1, +1), and (0, +1) that are on the field. The distance between two zones is `(|dq| + |dr| + |dq + dr|) / 2`, in zones. A zone's **ring** is its distance from the centre zone. Zones are numbered column by column from the left, and top to bottom within a column, so the same number names the same zone on the board, the tracker, and the printed sheet.
+
+- **Skirmish field**, 7 zones: 1 (-1, 0), 2 (-1, 1), 3 (0, -1), 4 (0, 0), 5 (0, 1), 6 (1, -1), 7 (1, 0). Centre 4; Squad start 5.
+- **Standard field**, 13 zones, the default: 1 (-2, 0), 2 (-2, 1), 3 (-2, 2), 4 (-1, 0), 5 (-1, 1), 6 (0, -1), 7 (0, 0), 8 (0, 1), 9 (1, -1), 10 (1, 0), 11 (2, -2), 12 (2, -1), 13 (2, 0). Centre 7; Squad start 8. It is the Skirmish field with three more zones on each side, five columns of 3, 2, 3, 2, 3, so it lies wider than it is tall, as the board draws it.
+- **Set piece**, 19 zones: 1 to 3 at q -2 with r 0 to 2; 4 to 7 at q -1 with r -1 to 2; 8 to 12 at q 0 with r -2 to 2; 13 to 16 at q 1 with r -2 to 1; 17 to 19 at q 2 with r -2 to 0. Centre 10; Squad start 11.
+
+An **edge zone** is a zone with fewer than six neighbours on the field: every zone but the centre on the 7 and 13 fields, and the twelve zones of ring 2 on the 19 field. **Off field** is everywhere beyond the edge zones; a soldier there has left the Titan Engagement. The field exists only in a Titan Engagement: a Skirmish keeps Engaged and Apart, and a Chase keeps its Chase Bands.
+
+**Why.** The design gave the sizes and not the shapes, and the Stride's tie-break, the entry zone, the retreat, and the printed sheet all need one numbering every table shares. The 13 layout is the only 13-zone field symmetric about both axes around one centre.
+
+### 16-3: What a zone holds
+
+**Decision.** `zones.yaml`, `occupancy`: "A zone holds any number of soldiers, horses, Focus Titans, and corpses, and its effects (16-30). Nothing in a zone blocks a move, a Flight, or a Stride into it, across it, or out of it. Two Focus Titans may stand in one zone; each derives its own Positions and neither affects the other."
+
+**Why.** Design 6.4 recommends it, and the owner took every recommendation.
+
+### 16-4: A rating per zone, and the Momentum cap
+
+**Decision.** `anchor-ratings.yaml`. Each zone holds one Anchor Rating, its **rating**, and its **start rating**, the rating it had when the field was generated. A zone's **anchors** are its rating's `anchors` value, read at any moment; the Titan Engagement's single Anchors count is retired, and a wreck changes a zone's rating instead (16-20). `momentum`, `cap`: "A soldier's Momentum cap is the anchors of the zone they are in. When a soldier's zone changes, or its rating falls, a soldier whose Momentum is above the new cap loses the excess at once." `round.yaml`, `gm_tracker`, `engagement_line`: the Anchor Rating and Anchors fields become the field size and the field rating, and the field readout lists each zone's rating (16-35).
+
+**Why.** Once terrain is local a global count has nothing to count, and a cap read from the ground under the soldier is what makes an Open zone cost something, which is the design's point.
+
+### 16-5: Terrain Traits by zone
+
+**Decision.** `anchor-ratings.yaml`, `ratings`, `terrain_trait`, each read from one zone:
+- **Open**: a mounted soldier's Break Attention gains 1 Bonus Die when the soldier is in an Open zone.
+- **Sparse**: the first wreck a zone takes while its rating is Sparse does nothing; once per zone (16-20).
+- **Urban**: a soldier who holds blind-spot relative to a Focus Titan in an Urban zone is anchored to a roof and is not airborne.
+- **Giant Forest**: the first-Carry-free trait is withdrawn as a special rule, because the Carry cost of 0 into Wooded and denser zones (16-13) contains it. The trait now reads the rule `falls.yaml` already applies: every fall that is not from a horse, in a Giant Forest zone, is raised one band (16-22).
+
+**Why.** Each trait described one place; a zone is that place. The design folded Giant Forest's Carry trait into the general cost by name.
+
+### 16-6: Field generation, and framing
+
+**Decision.** `engagement-setup.yaml`, `steps`, in this order, each value that the starting rule or the GM's framing names being taken as named and never rolled:
+1. **field-size**: the Standard field, unless the starting rule or the GM's framing names the Skirmish field or the Set piece.
+2. **field-rating**: D6 on `anchor_rating`, as today. A Waypoint's kind names it (`route.yaml`, `waypoint_kinds`, `anchor_rating`, which now reads the field rating).
+3. **zone-terrain**: the centre zone and the Squad's start zone take the field rating. Every other zone, in number order, rolls D6 on `zone_terrain`: 1, the field rating's `sparser`; 2 to 5, the field rating; 6, the field rating's `denser`. `anchor-ratings.yaml` gains, per rating, `sparser` (Giant Forest and Urban to Wooded, Wooded to Sparse, Sparse to Open, Open to Open) and `denser` (Open to Sparse, Sparse to Wooded, Wooded to Giant Forest, Urban to Urban, Giant Forest to Giant Forest). Each zone's start rating is the rating it takes here.
+4. The Focus Titan, the Background Titans, and the retreat clock, as today.
+
+A starting rule may name a whole field in this shape: `field: {size: standard, rating: wooded, zones: {3: open, 12: urban}}`, where `zones` names ratings by zone number and every zone it does not name is generated as above.
+
+**Why.** Design 7.7 says setup must be nearly free, and a field of one rating everywhere has no route to choose, which is the feature. Keeping the Titan's zone and the Squad's zone at the field rating keeps the first approach on the rating ADR-0014 tuned. The mix table is provisional (OQ-202).
+
+### 16-7: Starting placement
+
+**Decision.** `positions.yaml`, `placement`, `default`: "Focus Titan A stands in the centre zone. Every soldier who takes part is in the Squad's start zone, the zone directly below the centre, with attachment ground, not airborne, mounted or not as they were. A dismounted soldier's horse is in that zone." A named starting Position reads: **in-reach**, the Focus Titan's zone with attachment ground; **distant**, the Squad's start zone. So the Leg Hazard table's Straggler row puts its victim in the centre zone and everyone else in the start zone, and Overrun puts the whole Squad in the centre zone; `hazards.yaml` keeps its `placement` values. Placement is by rule and meets no Drive's own-move trigger, as today.
+
+**Why.** Design 2.7: one zone out keeps two moves to the Nape, as Distant did. The start zone is an edge zone on every field, so a soldier who starts there can leave with one move, as a soldier at Distant could.
+
+### 16-8: Attachments
+
+**Decision.** `zones.yaml`, `attachments`. Every soldier on the field holds exactly one attachment:
+- `ground`: on the ground in their zone, on foot or mounted.
+- `anchored`: on their lines in the terrain of their zone. Only a Flight that ends free gives it (16-13).
+- `on-body`, naming a body in their zone: hooked into it or standing on it, anywhere but the Nape.
+- `blind-spot`, naming a Focus Titan or corpse in their zone: anchored to terrain in that zone, out of its sight with its Nape in reach, not on it (16-10).
+- `grabbed`, naming the Focus Titan that holds them.
+- `pinned`, naming the body that pins them.
+
+**Airborne** and **mounted** stay the states Chapter 4 defines (`odm-gear.yaml`, `airborne`; `horses.yaml`) and sit beside the attachment; they are not attachments. A carried soldier's zone and attachment are their carrier's. **The detach rule**: when an attachment to a body ends by a rule that is not a fall or a move, the soldier's attachment becomes `anchored` if they are airborne and `ground` if not, and nothing else about them changes.
+
+**Why.** The owner named flying, On Body, anchored, and Blind Spot as conditions; keeping airborne and mounted as the existing states leaves the Jam, the falling Titan, the Grab, and every Attention test that reads them untouched.
+
+### 16-9: The derivation of Positions
+
+**Decision.** `positions.yaml`, `derivation`, replacing `relative_to`, `comparison`, `two_focus_titans` (`close_rule`, `independent`, `recorded_label`), and `a_focus_titan_dies`'s recording: "A soldier on the field holds a Position relative to every Focus Titan and every corpse, derived from their zone and attachment, in this order: **on-body** if their attachment is on-body or grabbed naming that body; **blind-spot** if it is blind-spot naming that body; **in-reach** if it is pinned naming that body, or if they are in that body's zone with any other attachment; **distant** if they are in another zone. A soldier off field, or dead, holds no Position." `holding_a_position`: "A soldier holds a Position while they are on the field." A Position is never recorded or written; every rule that reads one reads it derived at that moment. `two_focus_titans` shrinks to: "A soldier's one zone and one attachment give their Position relative to each Focus Titan; the close rule is retired, because one attachment cannot name two bodies."
+
+**Why.** Design 2.3, the core of the owner's decision 5: every `position_requirement`, rung, and reader keeps working, and the two repair blocks are deleted rather than amended.
+
+### 16-10: Blind Spot in one zone
+
+**Decision.** `positions.yaml`, `positions`, `blind-spot`, adds: "A Titan on the field has no facing, and no rule reads a direction inside a zone. Blind Spot is available in a zone where that zone's rating has a step reaching blind-spot, or where the body is grounded (`anchor-ratings.yaml`, `grounded_titan`). Any number of soldiers may hold it. 'Behind the Titan' is its fiction." The board draws a rear marker on the side of the Titan away from its Attention holder (16-34); that is display only.
+
+**Why.** A facing would need a rule to turn the Titan, and every such rule is either a GM choice (ADR-0024, limit 8) or a new roll (ADR-0018). The rating already decides whether a Blind Spot exists.
+
+### 16-11: Between two soldiers
+
+**Decision.** `zones.yaml`, `between_soldiers`, and every reader named in the plan: "Where a rule asks whether two soldiers hold the same Position, it reads whether they are in the same zone. Where it counts Position steps between two soldiers, it counts zones: one Position step reads the same zone or an adjacent zone, and two Position steps read within two zones." So Help, Covering, Rally, the Stress change on a comrade within one step, the Fear Roll's witnesses within one step, and the Talents that widen a reach by a step (`talents.yaml`: wide-awareness, formation-drill, carrying-voice, shoulder-the-load, got-your-back) read zones; Treat Injury, Lift Comrade, Pass Item, Take Item, Field Repair on a comrade's item, Pry Loose's helpers, aftermath rolls, and a retreat's stay read the same zone. A roll against a Titan no longer names a Titan to compare relative to. The rules for soldiers who have left (`positions.yaml`, `leaving`, `after_leaving`, `same_position`) are unchanged.
+
+**Why.** Design 2.3, point 3: "in the same zone, or in an adjacent zone" replaces the comparison lookup. Mapping "same" to the same zone and "one step" to adjacent keeps each rule's own distinction between sharing a place and being near.
+
+### 16-12: Moves
+
+**Decision.** `positions.yaml`, `moves`, and `anchor-ratings.yaml`, `move_kinds`. A move no longer names a Titan; it names where it ends: a zone, or off field, and an attachment. It is made of steps:
+- **Zone step**: from free in a zone to free in an adjacent zone, or off field from an edge zone (leaving, 16-26).
+- **Attachment step**: in one zone, along the rating's step rows among in-reach, on-body, and blind-spot, with in-reach read as free and each attachment naming one body in that zone; the `grounded_titan` permissions apply to a grounded Titan or a corpse. There is no step from one body's attachment straight to another's.
+
+Which kind of move can make a zone step reads **the zone it enters**: on foot, always; mounted, when that zone's rating has `mounted: true` on its distant to in-reach row (every rating but Urban), and off field; ODM, always, with 16-13's limit on where a Flight ends. Each rating's distant to in-reach row is read this way from now on: `on_foot` and `mounted` say whether that kind may enter such a zone, and `odm` says whether a Flight may end free in it.
+
+- **On foot**: one step.
+- **Mounted**: up to **two zone steps** (the mounted pace, provisional, OQ-200), no attachment steps. The move ends on entering a zone that holds a standing Focus Titan, unless that zone is Open, where the rider may ride on through. A move can include one mount or one dismount, before or after its steps. This replaces the Open double step, which it contains.
+- **ODM**: a Flight (16-13).
+- **Down soldier**: one on-foot zone step, only out of a zone that holds a body into an adjacent zone that holds none, never off field, and not while Grabbed, carried, or Pinned.
+- **Letting go**: unchanged: instead of a move, from on-body or blind-spot; a fall; the soldier lands free in the same zone.
+- A move may change nothing.
+
+**Why.** The step rows keep every in-zone rule the ratings already make, and reading the entered zone for a zone step is design 2.4's "the rating of the zones involved" made exact. The mounted pace is design 3.5's horse that outpaces a Titan on foot's terms; without it a rider on Wooded ground covers one zone to a Medium's two.
+
+### 16-13: The Flight across zones
+
+**Decision.** `positions.yaml`, `moves`, `flight`, and `anchor-ratings.yaml`, `momentum`, `spends`, `carry`, and `ratings`, new `carry_cost`: "A Flight is rolled as today and needs nothing. Its first step, a zone step or an attachment step, costs nothing. Each further step is a Carry, paid in Momentum: a zone step costs the Carry cost of the zone it enters, **Open 2, Sparse 1, Wooded 0, Urban 0, Giant Forest 0**; a step off field costs 1; an attachment step costs 1. A Flight makes **at most 2 Carries** (provisional, OQ-200). A Flight never ends free in an Open zone: in an Open zone its last step must be an attachment step onto a body there, or the Flight must go on out of it. A Flight that ends free ends with attachment `anchored`. The soldier is airborne after it, as after any ODM move."
+
+**Why.** The costs are the design's, taken by the owner. The limit closes a gap the design left: Carry at 0 through Wooded zones would otherwise cross the field for nothing. Two Carries is the most a Flight could make at the tuned Wooded rating before zones (cap 2), so the reference Flight keeps its reach. The Open ending is today's Open row, which gives ODM no distant to in-reach step: there is nothing to hook, so the arc must land on something.
+
+### 16-14: Momentum over zones
+
+**Decision.** `anchor-ratings.yaml`, `momentum`: "A Flight's successes give Momentum up to the anchors of the zone the Flight starts in. Carry is spent from it during the move. At the end of the move, Momentum above the anchors of the zone it ends in is lost." `spends`: **bite** reads "a strike or a Break Attention this turn against a Focus Titan in the zone the Flight ended in"; **quiet** is unchanged and stops every flag the soldier would set this turn, the crossing flag of 16-15 included; **brace** and **clean-line** are unchanged. Momentum is still lost at the round-ends end step by a soldier who made no ODM move that round.
+
+**Why.** The old spends named "the Focus Titan the Flight named", and a Flight no longer names one.
+
+### 16-15: Flags a move sets
+
+**Decision.** `positions.yaml`, `moves`, `flight`, and `attention.yaml`, `flags`, `loudest`, `set_when`:
+- **Crossing**: "A Flight crosses a zone when it enters that zone and leaves it again in the same move; the zone it starts in and the zone it ends in are never crossed. The soldier sets the loudest flag on every Focus Titan standing in a zone the Flight crosses, whatever the roll gave, unless they spend Momentum on quiet. A corpse takes no flag."
+- **No successes**: "The soldier sets the loudest flag on every Focus Titan in the zone the Flight ends in; when there is none, on the Focus Titan nearest that zone, a tie going to the earliest label."
+- **Mounted charge** (`anchor-ratings.yaml`, `mounted_charge`): "A mounted move that enters or leaves a zone holding a Focus Titan may set the loudest flag on one such Titan, the rider's choice, once per move."
+
+Draw Attention is unchanged: it needs a Position other than Distant, which now means being in the Titan's zone.
+
+**Why.** The crossing flag is design 2.5 as the owner took it, and "whatever the roll gave" is its own wording; quiet already buys silence for the whole turn, so leaving it in costs nothing new. The other two named a Titan the move no longer names.
+
+### 16-16: The Stride
+
+**Decision.** `behavior-procedure.yaml`, `resolving_a_card`, a new step `stride` after `attention` and before `choose`: "If a soldier holds the Titan's Attention and is in another zone, the Titan moves toward that soldier's zone, one zone at a time, up to its Stride, and stops as soon as it enters that zone. Each zone it enters is an adjacent zone one closer to the holder's zone; when two are, it enters the lower-numbered. It never goes off field." `size-classes.yaml`, new `stride` per class: **Small 1, Medium 2, Large 2**, with `fields`, `stride`: "Zones a Focus Titan may move toward its Attention holder on each of its cards that resolves a behavior (`behavior-procedure.yaml`, `resolving_a_card`, `stride`)." `titan-format.yaml`, `stat_block`, `fields`, new `stride`, taken from the Size Class by a standard Titan (`standard_titan` lists it) and listed in full by an Abnormal; `data/titans/sprinting-abnormal.yaml`, **`stride: 3`**. `titan-harm.yaml`, `grounded`, `effects`, adds: "Its Stride is 0." The Stride is not a roll, an entry, or an action. It harms nobody, sets no flag, clears no flag, wrecks nothing, and is no Fear Roll trigger. A card that stops before the stride step (the Titan is dead, holds a Grabbed soldier, is held by a decoy, or has nothing holding its Attention) does not stride. The entry's `position_requirement` is then checked at `choose` exactly as today, retargeting included, against Positions as the Stride left them.
+
+**Why.** Section 3 as the owner accepted it; the tie-break closes ADR-0024, limit 8's gap with a rule a table reads off the printed numbers in a second. Stride values are the simulator's starting values.
+
+### 16-17: Whom a Titan strides toward
+
+**Decision.** `behavior-procedure.yaml`, `resolving_a_card`, `stride`, `holder`: "The Titan strides only toward a soldier who holds its Attention at the stride step, after that card's attention step. A soldier who has left holds no Attention (`attention.yaml`, `changes`, `holder-gone`), and the attention step evaluates only candidates on the field, so a Titan never strides toward a soldier off field. An airborne holder is in their zone like any soldier; airborne is a state, not a place. A carried holder is in their carrier's zone. A soldier Grabbed by another Focus Titan is never a candidate. A decoy's hold, or nothing holding its Attention, stops the card before the stride step." `attention.yaml`, `tests`, `nearest`, is unchanged: it reads the order of Positions, and among candidates at Distant it counts no zones, so ties at Distant go on to the holder and card steps as today.
+
+**Why.** Every case already has an answer in the Ladder's own steps; the Stride only needs to say it reads them. The owner settled that the Attention Ladder is unchanged as written, so the nearest rung does not learn to count zones.
+
+### 16-18: Reach is the Titan's own zone
+
+**Decision.** `titan-format.yaml`, `entry_fields`, `targets`, `holder-and-position`: "that soldier and every other soldier **in the holder's zone** who holds the same Position relative to the Titan, except a soldier who is Grabbed." And `position_requirement` adds: "In Reach, On Body, and Blind Spot exist only in the Titan's own zone, whatever its Size Class. An entry whose requirement lists distant resolves at a holder in any other zone, as its text describes the Titan closing." A knock loose on an airborne holder in another zone drops them in their own zone (16-22).
+
+**Why.** Design 6.1 recommends the simple reach. Without the zone clause, Run Past and Heavy Tread against a holder at Distant would strike every soldier anywhere on the field.
+
+### 16-19: What a Stride carries and leaves
+
+**Decision.** `positions.yaml`, new `stride_moves`: "When a Focus Titan strides, every soldier whose attachment is on-body or grabbed naming it moves with it, zone by zone, with any comrade they carry. A soldier whose attachment is blind-spot naming it stays in the zone it leaves, and the detach rule applies (16-8): they are anchored if airborne and on the ground if not, and now hold distant relative to it. Horses, left items, other soldiers, and corpses never move with a Titan. A soldier in a zone the Titan enters now holds in-reach relative to it; one in a zone it leaves now holds distant."
+
+**Why.** Design 3.5: the two ways of being close split on risk, legibly.
+
+### 16-20: Wrecking made local, and the route promise
+
+**Decision.** `titan-format.yaml`, `effect_types`, `wreck`: "The Titan's zone takes one rating step toward Open: its rating becomes its rating's `sparser` (`anchor-ratings.yaml`, `ratings`). Like telegraph, it applies whether the behavior landed or whiffed. It affects no soldier and no horse, and changes a Position only as 16-21 states." `anchor-ratings.yaml`, `wrecking`: the Sparse grace reads per zone (16-5), an Open zone takes no further step, and `by_a_falling_titan` reads "one rating step off the zone the body lands in, which is its own zone". `titan-harm.yaml`, `falling_titan`, `wrecks_an_anchor`, reads the same. Striding never wrecks. `at_zero` is replaced by `route`: "A wreck can close the Nape in one zone. ADR-0010's legal route holds on the field: a standing Titan follows its Attention holder into another zone, and a grounded Titan opens the Nape at every rating (`grounded_titan`). A field whose every zone is Open is today's Open rating, where only a grounded Titan's Nape can be reached."
+
+**Why.** Question 8 as the owner settled it. The ladder takes Urban and Giant Forest to Wooded because a rating step is an anchors step, 3 to 2; the tile art keeps the zone's start terrain (16-34).
+
+### 16-21: A zone that becomes Open, and a Titan standing up
+
+**Decision.** `positions.yaml`, `changes_to_position`, new row `zone-becomes-open`: "When a zone's rating becomes Open while a standing Focus Titan is in it, every soldier who holds blind-spot relative to that Titan holds on-body instead, a change made by this rule and not a fall; every soldier anchored in that zone becomes ground and stops being airborne, with no fall." `anchor-ratings.yaml`, `grounded_titan`, `ends` and `open_rating`, read "at an Open zone" for "at the Open rating", meaning the zone the Titan is in. `odm-gear.yaml`, `airborne`, `stops_being_airborne`, gains that row.
+
+**Why.** It mirrors the existing stands-up rule, which already answers "a Blind Spot that stops existing under a standing Titan" without a fall, so no new harm is invented.
+
+### 16-22: Falls
+
+**Decision.** `falls.yaml`, `height`, `steps`: the reference body is "the body the soldier's attachment named when they fell (on-body, blind-spot, or grabbed); otherwise the Focus Titan whose card, Grab, or effect caused the fall; otherwise the Focus Titan nearest the soldier's zone, a tie going to the earliest label". The band reads the soldier's Position relative to it as today. The Giant Forest raise reads "if the zone the soldier falls in is Giant Forest". `positions.yaml`, `falls_land`: "A soldier who falls stays in the zone they are in, which for an attached soldier is the body's zone, and their attachment becomes ground." They then hold in-reach relative to that body, as today.
+
+**Why.** Design 2.6: unchanged bands, landing in the Titan's zone. The reference Titan's old closest-Position search collapses to the attachment.
+
+### 16-23: The Grab, a knock loose, Pinned, and carrying
+
+**Decision.** `grab.yaml`: a Grab landing sets the attachment to grabbed naming the holding Titan, which derives on-body, and the soldier moves with it (16-19). Freed and not lifted: ground in the holding Titan's zone. Freed after a lift: a fall first, then ground. Freed by the holding Titan's death: for its steam and fall steps they hold on-body relative to the dying body, as today, then ground in the corpse's zone. A knock loose is a fall (16-22). `titan-harm.yaml`, `pinned`: attachment pinned naming the body, in its zone, in-reach relative to it; no rule moves them while Pinned. `carrying.yaml`: a carried comrade's zone and attachment are the carrier's; a comrade set down, or no longer carried, is in the carrier's zone with attachment ground; a Lift needs the same zone.
+
+**Why.** Design 2.6 says unchanged; this states each in the terms the data will use.
+
+### 16-24: Corpse zones
+
+**Decision.** `positions.yaml`, `corpse`: "A corpse lies in the zone its Titan died in for the rest of the Titan Engagement and never moves. It counts as a grounded Titan for attachment steps, and its permissions never end. At the Titan's death, every attachment naming it but pinned ends, after its steam and fall steps, and the detach rule applies (16-8); every Position relative to the corpse is then derived. A corpse's zone counts as a Focus Titan's zone for leaving (16-26) and for the retreat (16-27). A corpse carries the steam effect (16-30)." The recording of last Positions at a death, and the rewriting of recorded horse and left-item Positions to distant (`two_focus_titans`, `a_focus_titan_dies`; `recorded_label`), are retired: zones already record where everyone and everything is. `engagement-end.yaml`, `positions_read`: "the Positions derived from each soldier's zone and attachment as the Titan Engagement ends."
+
+**Why.** Design 2.6: the corpse is an object in its zone, and "On Body and Blind Spot read In Reach" becomes one statement instead of a rewrite.
+
+### 16-25: Horses and left items
+
+**Decision.** `horses.yaml`, `horse_position`: "In a Titan Engagement a horse is in a zone. While its soldier is mounted it is in the soldier's zone and moves with them. After a dismount it stays in that zone until mounted again. Horse Whistle places the soldier's own horse in the soldier's zone. A mount needs the horse in the soldier's zone and the soldier free." `sheet-fields.yaml`, `horse`, `position`, records the horse's zone number, or left. `carrying.yaml`, `leaving_play`, `death`: a dead soldier's left items lie in the zone they died in, recorded by zone number, and Take Item needs that zone. No Focus Titan label is recorded with either.
+
+**Why.** Design 2.6: a horse left in a zone replaces the recorded-Position rewriting entirely.
+
+### 16-26: Leaving and returning
+
+**Decision.** `positions.yaml`, `leaving`, `who` and `how`: "Leaving is a zone step off field from an edge zone. A soldier may make it when they are free, not Down, Grabbed, Pinned, or carried, and the edge zone they step from holds no Focus Titan and no corpse; during a retreat that last condition does not apply (16-27). It may be the last step of a mounted move or of a Flight, where it costs 1 Carry. A comrade the soldier carries leaves with them, and a mounted soldier's horse; a dismounted horse stays in its zone." `returning`: "A returner's move enters an edge zone of their choosing that holds no Focus Titan and no corpse, with attachment ground, mounted or not as they left; if every edge zone holds one, any edge zone. Not during a retreat."
+
+**Why.** Design 2.6. The no-Titan condition keeps today's rule that only a soldier at Distant from every body leaves; allowing the step at the end of a longer move is what gives a rider and a flier the escape design 3.5 promises and a soldier on foot does not have.
+
+### 16-27: The retreat, and why it always ends
+
+**Decision.** `background-titans.yaml`, `retreat`, `moves`, the options rewritten:
+1. **Out.** One step their move can make, the first of these that applies: from on-body or blind-spot, an attachment step to free, or letting go if they cannot make one; from free in a zone holding a body, a zone step into an adjacent zone one ring further out, or, from an edge zone, option 2; from free in a zone holding no body, a zone step one ring further out. Among the zones a step may enter, those holding no body come first, then the farthest from the nearest living Focus Titan, or from the nearest corpse when none is alive; a tie left over is the soldier's choice.
+2. **Leave**, from an edge zone, free, **whatever body stands in that zone**.
+3. **Toward a fallen comrade**: a step that lowers the number of zones between them and a Down, Grabbed, or Pinned comrade who is not carried.
+4. **Stay with a fallen comrade**: a move that changes nothing, in that comrade's zone, after an action option 4 lists, as today.
+
+The stay limit, the order, no return, and no Nape strike are unchanged. `termination`: "A soldier bound by the retreat who takes option 1 or 2 on each of their moves leaves within five of them: at most two to become free, at most two to reach an edge zone, and one off field. A Stride never lengthens this, since it frees a soldier at Blind Spot and changes no soldier's ring; a Grab stops the soldier's moves as today, and its release leaves them free. The stay limit bounds options 3 and 4 as today, so every retreat ends by no-soldier-standing."
+
+**Why.** Design 3.7 asked that the chase still terminate, and with a Titan that follows it would not: a soldier on foot stepping out of a Medium's zone is caught again by its next card every time. Letting the step off field be taken from any edge zone in a retreat is what makes it end; the outward ring is the design's "one zone directly away" made countable.
+
+### 16-28: A Fear Roll's forced move and draw-attention effect
+
+**Decision.** `effect-types.yaml`, `forced-move`: "toward distant" is one step by retreat option 1 (16-27); "toward nearest-comrade" is one step that lowers the number of zones to the nearest comrade. `draw-attention`: sets the loudest flag on the Focus Titan in the soldier's zone that caused the event, or, if the event's Titan is not in their zone, none. The comrades "within one Position step" of a witness read the same zone or an adjacent one (16-11).
+
+**Why.** Each read Position steps relative to a Titan, which zones replace.
+
+### 16-29: Background Titans, and the entry zone
+
+**Decision.** `background-titans.yaml` is unchanged except `full_clock`, `fewer_than_two_focus_titans`: "The new Focus Titan enters at the edge zone that holds no soldier and is farthest from the nearest soldier on the field, a tie going to the lowest-numbered; if every edge zone holds a soldier, at the edge zone holding the fewest, then the lowest-numbered. It strides from its first card." A Background Titan has no zone. `positions.yaml`, `two_focus_titans`, `entering`: "A Titan that enters stands in its entry zone; every soldier's Position relative to it is derived, so a soldier in another zone holds distant." The two-Focus-Titan limit is unchanged, and two Focus Titans stride independently.
+
+**Why.** Design 3.7 and 6.7 keep the clock and place the promoted Titan at an edge. Choosing the zone no soldier stands in keeps today's rule that everyone holds Distant from a Titan that enters.
+
+### 16-30: Effects in zones
+
+**Decision.** `zones.yaml`, `effects`, a closed list:
+- `steam`: in a corpse's zone for as long as it lies there, and in a living Titan's zone for the step that resolves a steam trigger.
+- `dust`: in a zone whose rating is below its start rating, and in a falling Titan's zone for the step of its fall.
+- `fire`: reserved. No rule places it in this version.
+
+`harm` is **none** for every effect in this version. The steam table still burns soldiers by attachment (on-body at a Regeneration fill; on-body and blind-spot at a kill) and corpse heat still burns the Pinned; neither reads the zone. `crossing`: "A soldier whose move enters or crosses a zone holding an effect whose harm is not none takes that harm once for each such effect in that move." Decoys and flares are not zone effects and have no zone.
+
+**Why.** The design gives effects a home and a crossing rule but names no harm, and a harm outside the Behavior Tables is what ADR-0005 and ADR-0019 guard against; it waits for its own ruling (provisional, OQ-201). The art for all three ships already.
+
+### 16-31: Elevation
+
+**Decision.** `zones.yaml`, `elevation`: "A zone has no height. Height is read from the attachment, as the fall bands read it (on-body and blind-spot high), from the Giant Forest zone's raised band, and from the Large Size Class's raised band. Rooftops and canopy are the Urban and Giant Forest ratings' fiction."
+
+**Why.** Design 6.2 recommends it out of the first version.
+
+### 16-32: The closed list of what changes a Position, rewritten
+
+**Decision.** `positions.yaml`, `changes_to_position`. The principle stands: "An action never changes a Position." A new sentence heads the list: "A Position is derived (derivation), so it changes exactly when a soldier's zone or attachment changes, or when a body's zone does; this list names every rule that changes one." The rows: own-move (zone steps, attachment steps, a mount or dismount, leaving); letting-go; fall; fear-roll-forced-move; grab-lands; freed-from-a-grab; knock-loose; **stride** (16-19); **zone-becomes-open** (16-21); titan-becomes-focus (its entry zone, 16-29); focus-titan-dies (16-24); titan-body-comes-down; fall-back (the detach rule, 16-8); titan-stands-up (at an Open zone); carried; placement-leaving-returning-retreat. The `close-rule` row is deleted. `not_changed_by` gains: "A wreck changes no Position except by zone-becomes-open."
+
+**Why.** Batch 13 made the list closed; zones add two rows and remove one, and the list must stay true.
+
+### 16-33: What the GM names
+
+**Decision.** `engagement-setup.yaml`, `gm_choices`, and `zones.yaml`, `gm`: "As framing, before any roll on the setup table, where the starting rule names none: the field size, the field rating, and any zone's rating. Nothing else: never a soldier's zone or attachment, the Squad's start zone, a Titan's zone, a Stride's length or route, a tie, an entry zone, a Carry cost, or which zone a wreck takes (ADR-0024, limit 8)." In Foundry the GM's Direct Control places any soldier, horse, or Titan in any zone with any attachment, and sets any zone's rating, as a ruling written to the log and undoable (ADR-0028); that is the direct setter, not a rule of play.
+
+**Why.** Framing the ground is today's framing of the Anchor Rating; the rest is ADR-0024, limit 8.
+
+### 16-34: The engagement board
+
+**Decision.** ADR-0027 amended as recorded there. The board's display rules, none of which any rule reads:
+- **Tiles**: variant `((n - 1) mod 3) + 1` for zone n, drawn from the zone's **start** rating; the rim glyph shows its **current** rating; a zone whose rating is below its start carries `fx-dust` at low opacity.
+- **Titans**: the Size Class figure (the Sprinting Abnormal its own), facing the zone of its Attention holder, or its last Stride's direction, or left as drawn; Openings and Broken Body Parts marked on the figure; the Attention line drawn to the holder. The rear marker for Blind Spot sits on the side away from the facing. A corpse is its figure laid down, desaturated, under `fx-steam`.
+- **Soldiers**: `soldier-standing` for ground (mounted with the `gear-horse` icon), `soldier-hanging` for anchored, on-body, and blind-spot; airborne figures lifted over the tile with a grapple line to their zone; on-body figures pinned to the silhouette's shoulder, arm, or leg anchor in order of arrival; Grabbed in the holding arm's hand; Pinned laid at the body's base. Momentum pips and a gas gauge under each.
+- **Horses and left items**: the `gear-horse` icon, and a small item marker, in their zones.
+- **Set pieces**: the Flight arcs zone by zone along its steps, crossing zones visibly; the Stride walks zone by zone before the card resolves (both at Full motion; a fade at Reduced; nothing at Off).
+- **Interaction**: design 7.6 as written. Legal destinations light up with their Carry cost and "Fly" when the move is a Flight; dropping sends the Flight prompt to the soldier's owner (batch C). Direct Control lights every zone and attachment and tints the board's frame.
+
+**Why.** Design section 7, the owner's item 9. The fixed tile variant makes every client draw the same field; the start-rating tile keeps a ruined town looking like a town.
+
+### 16-35: The ledger and the sheets
+
+**Decision.** The tracker's ledger spread keeps its right page. Its left page becomes the field readout: each soldier's zone, attachment, airborne, mounted, and Momentum; each zone's rating; each Titan's zone. The Position matrix is retired, and derived Positions are shown read-only beside each soldier. `data/gear/sheet-fields.yaml`, `positions`, becomes `zone` and `attachment`, with the derived Positions shown and never written; `horse` records a zone (16-25); left items record a zone.
+
+**Why.** Design 7.8: the board is where you act, the tracker is where you check.
+
+### 16-36: The printable field
+
+**Decision.** The packet carries one printable page: the Standard field at play size, each hex at least 45 mm across so a token and a D6 fit, flat-top in the layout of 16-2, each zone's number small in its top corner and a blank rim band for the rating written in dry-wipe as its letter (O, S, W, U, G). The page also carries the Carry costs, the Stride table, and small outlines of the Skirmish field and the Set piece with their numbering. Titans and soldiers are tokens; an attachment is written beside the token as its letter (G, A, B for On Body, S for Blind Spot, X for Grabbed, P for Pinned).
+
+**Why.** Design 6.3: the cheapest answer for play without Foundry, with the numbers the Stride's tie-break reads.
+
+### 16-37: Glossary
+
+**Decision.** `CONTEXT.md`:
+- New **Field**: "The hexagonal zones a Titan Engagement is fought over: 7, 13, or 19, with 13 the default." _Avoid_: map, grid, battlefield.
+- New **Zone**: "One hex of the field, about a Titan's reach across, with its own Anchor Rating, occupants, and effects." _Avoid_: square, tile, area.
+- New **Edge zone**: "A zone on the rim of the field, from which a soldier steps off field to leave."
+- New **Off field**: "Beyond the edge zones. A soldier there has left the Titan Engagement."
+- New **Field rating**: "The Anchor Rating a field is generated from, which the centre zone and the Squad's start zone take."
+- New **Attachment**: "Where a soldier is within their zone: on the ground, anchored, On Body or in the Blind Spot of a named body, Grabbed, or Pinned. With the zone it gives every Position." _Avoid_: stance, state.
+- New **Stride**: "The zones a Focus Titan moves toward its Attention holder before each of its cards resolves a behavior: Small 1, Medium 2, Large 2, and as an Abnormal lists. A grounded Titan's is 0." _Avoid_: speed, movement rate.
+- **Position** reworded: "Where a soldier is relative to a Focus Titan or corpse, derived from their zone and attachment: Distant (another zone), In Reach (its zone), On Body, or Blind Spot." _Avoid_: range. "zone" leaves its avoid list.
+- **Anchor Rating** reworded: "How well a zone holds ODM Gear anchors: Open, Sparse, Wooded, Urban, or Giant Forest. It decides which attachment steps the zone allows and what a Flight pays to enter it."
+- **Blind Spot** adds: "It has no facing."
+- **Corpse** reworded: "A dead Focus Titan's body, lying for the rest of the Titan Engagement in the zone its Titan died in as a grounded body that soldiers hold Positions relative to: a soldier on the field is in the Titan Engagement, and Heave and the strike on a pinning Body Part are the only acts against it. It holds no Attention and plays no cards. The Titan Engagement does not end while a soldier lies Pinned under one."
+- **Help** reworded in its Titan Engagement clause: "needs the same zone or an adjacent zone" for "needs the same Position or one step away".
+
+**Why.** Every new noun the data uses needs its one meaning, and "zone" can no longer be an avoided word for Position.
+
+### 16-38: The rerun, and what is held
+
+**Decision.** Batch E's rerun (E7) runs after the spatial model (E8), alone, from a tree nobody is editing, and reports at least: every Critical Injury and deaths band with zones and the Stride; rounds to the first Nape strike and to the kill; the share of a Titan's cards that resolve Thrash and that retarget, against batch 15's figures; the share of cards whose Stride brought the holder into reach; round 1 figures on their own, because a Stride of 2 against a start one zone out closes on the first card, so design 2.7's hope that round one is unchanged is a figure to read, not a fact; Help on a Nape strike from an adjacent zone; Momentum gained and spent per fight and the share of Flights that Carry; wrecked zones per fight and fights in which the Titan's zone lost its Blind Spot; retreats and their length in rounds; and each value OQ-200 and OQ-202 hold. The levers, in order, are Stride, then the Carry limit and mounted pace, then the terrain mix; Attack Dice, Nape Depth, and Tempo stay in reserve as batch 15 left them. ADR-0014 and the tuning files are amended by the retune's own decisions after the report.
+
+**Held, not taken:** Background Titans walking in visibly; striding wrecking the zones it crosses; a Large Titan's reach into adjacent zones; a height per zone; replacing Positions outright; any zone effect that harms.
+
+**Why.** Section 3.6: zones and the Stride raise Titan effectiveness on top of batch F, and that has to be measured as its own row before anything is tuned.
+
+## Batch 17: the zone retune
+
+Rulings on batch E's rerun (plan stage 4), made 2026-09-21 by the zone retune decider after the run of 949 cases and 52 second-seed runs, 61,408,000 trials (commit `153b9b0`, rules hash `0035c5a43fc832a3`). The reasoning, every figure it rests on (in-process runs of 120,000 to 160,000 fights a cell), and the exact wording of every edit are in `docs/reviews/zone-retune-decisions.md`; this table is the index. The run found **19 misses**: the standard Medium's deaths through the end at 0.1689 (reference start), 0.1673 and 0.1676 (the bar's runs) against at most 0.15, and the Sprinting Abnormal's winnable limit in 16 judged cells (9.88% no kill against the Large twin's 7.28% at the reference start), with the Draw Attention row's ceiling past as well. The levers 16-38 names (the Stride, the Carry limit and mounted pace, the terrain mix) do not move either miss; the Medium's rise is the Stride's presence (+0.020) and wrecks (+0.021), which no earlier run applied, and the Abnormal's is wrecks alone. Attack Dice, Nape Depth, Tempo, and Health stay in reserve, because a behavior lever still works.
+
+| Item | Ruling | ADR change | Glossary change | Impact |
+|---|---|---|---|---|
+| Z1 | The Stride stays **Small 1, Medium 2, Large 2, Sprinting Abnormal 3**, now measured rather than starting values. At every reference start a Stride is taken over one zone, so 1, 2, and 3 read the same (Medium 0.165 at 1, 0.166 at 2); only 0 moves a figure (0.146), and 0 is a Titan that never moves, which ADR-0029 cannot ship without | none | none | `size-classes.yaml`, `sprinting-abnormal.yaml` comments |
+| Z2 | Frenzy rises at the end of **every third round** (the third, sixth, ninth), not every second; the cap stays 3. 13-10 names the rate as the simulator's. The Medium reads 0.1423 +/- 0.0015 on the bar run and 0.1428 +/- 0.0017 at the reference start, against 0.166 as shipped; cap 2 at the old rate reads 0.157 and misses. Frenzy 1 now lands on the round-5 card and Frenzy 3 only in a long retreat | amends ADR-0001 | **Frenzy** | `titan-format.yaml`, `round.yaml`, Ch5 5.3 and 5.4, `CONTEXT.md`, `tools/sim/rules.py`, OQ-193, site, packet, Foundry |
+| Z3 | The Sprinting Abnormal's **Pitch Headlong loses its wreck effect**; Run Past keeps its wreck. With Tempo 2, as Headlong Lunge's fallback, and wrecking whether it lands or whiffs, it flattened the runner's own zone, which the runner rarely leaves (0.35 Strides a fight): Blind Spot lost in 3.7% of fights, 1.90 Nape strikes against the Large's 3.00. Without it the runner reads 6.31% +/- 0.06 no kill against the Large's 7.35% +/- 0.07; with Z2 as well, every judged row holds every limit in both orders | none | none | `data/titans/sprinting-abnormal.yaml`, Ch6 6.5 (rendered) and its design note, `data/titans/tuning.yaml` verdicts, site, packet, Foundry |
+| Z4 | **OQ-200 and OQ-202 are decided (a)**: Carry limit 2, mounted pace 2, the terrain mix as 16-6 wrote it. Each moved one step reads within 0.003 of the value in force; with nothing to buy, the values stand and the provisional markers come off | none | none | `zones.yaml`, `engagement-setup.yaml`, OQ-200, OQ-202 |
+| Z5 | One confirming run after Z1 to Z4, then every figure paragraph is re-rendered. It must read the Medium's deaths at most 0.15 at the reference start and both bar runs (the second-seed rule judges a first seed within 2 standard errors of the edge), and the Abnormal's bar holding in every judged row. OQ-199's floor reads within sampling in the harness (+1.0 and -0.4); its closure is left to the next decider on the run's figures | none | none | the run |
+
+**Out of scope, and unchanged:** the Stride values, OQ-200's and OQ-202's values, the wreck rule (16-20), every standard Titan's wrecking entries, Attack Dice, Nape Depth, Tempo, Health, Frenzy's cap, every Attention Ladder, the Grab, the retreat clock, every band and bar limit.
+
+**The owner's dial, recorded because it is theirs:** the Medium's deaths at the bar run under Frenzy's settings, with everything else as shipped: rate 2 cap 3, 0.166; rate 2 cap 2, 0.157; rate 3 cap 3 (Z2), 0.142. Removing the Stride instead reads 0.146 and removing every wreck 0.145; both undo rules the owner chose.

@@ -46,11 +46,12 @@ def band_tolerance(size, k, v):
         if named != BAND_FIELDS[k]:
             raise ValueError(f"data/titans/tuning.yaml targets {size}: {k} names the reading {reading!r}; targets.py "
                              f"judges {BAND_FIELDS[k]} (decision batch 5, 5-19)")
-        # decision batch 8, 8-31 (OQ-132, decided anew): the Medium band reads at most 0.08 through the end of the Titan
-        # Engagement, the owner's chosen lethality (7-13's 0.06 and 5-19's 0.05 are history)
-        if size == "medium" and (tol["hi"], tol["hi_in"]) != (0.08, True):
-            raise ValueError(f"data/titans/tuning.yaml targets medium: {k} reads {tol['text']!r}; decision batch 8, "
-                             "8-31 sets the band to at most 0.08 through the end of the Titan Engagement")
+        # The round 3 retune, R2 (docs/reviews/round-3-retune-decisions.md): the Medium band reads at most 0.15 through
+        # the end of the Titan Engagement, what retargeting and Frenzy measure at Frenzy's halved rate. 8-31's 0.08,
+        # 7-13's 0.06 and 5-19's 0.05 are history, and OQ-140 re-sets it again after the playtest.
+        if size == "medium" and (tol["hi"], tol["hi_in"]) != (0.15, True):
+            raise ValueError(f"data/titans/tuning.yaml targets medium: {k} reads {tol['text']!r}; the round 3 retune "
+                             "(R2) sets the band to at most 0.15 through the end of the Titan Engagement")
     elif reading:
         raise ValueError(f"data/titans/tuning.yaml targets {size}: {k} names a reading ({reading!r}) targets.py does not read")
     return tol

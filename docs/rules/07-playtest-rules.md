@@ -74,10 +74,10 @@ When the Squad rides with no Brief, or with a Brief that names no route, roll th
 | 6 | Rear Guard |
 <!-- END RENDERED: interim-route -->
 
-A Waypoint's kind sets the Anchor Rating of a Titan Engagement on the Leg that leads to it. The gate sets none, so a Titan Engagement on the Leg to the gate rolls its Anchor Rating on the setup table (Chapter 5, section 5.1).
+A Waypoint's kind sets the **field rating** of a Titan Engagement on the Leg that leads to it: the Anchor Rating its centre zone and the Squad's start zone take, and every other zone is generated from (Chapter 5, section 5.1; decision batch 16, 16-6). The gate sets none, so a Titan Engagement on the Leg to the gate rolls its field rating on the setup table.
 
 <!-- BEGIN RENDERED: waypoint-kinds from data/expedition/route.yaml -->
-| Waypoint kind | Anchor Rating | Interim route (D6) |
+| Waypoint kind | Field rating | Interim route (D6) |
 |---|---|---|
 | Open plain | Open | 1 |
 | Hedgerows | Sparse | 2 |
@@ -148,7 +148,7 @@ For each Leg, in order:
 3. **Arrive.** The Squad reaches the Leg's Waypoint. On a success, spend 1 ration, and the hazard roll gets −1 for each success beyond the first. On a failure, spend 2 rations, and the hazard roll gets +1. A Hard Ride doubles the rations. A Squad that holds fewer rations than it must spend meets hunger (*Rations and hunger*).
 4. **The hazard.** At the Signal Relay Post the Squad may first spend its flare. Roll the hazard and resolve its row (*The Leg Hazard table*).
 5. **Harm.** Harm a row inflicts outside a Titan Engagement opens the care window Chapter 3 holds after harm outside a Titan Engagement, with every soldier on the Expedition in its scope (Chapter 3, section 3.5).
-6. **A Titan Engagement** a row begins takes its Anchor Rating from the kind of the Waypoint this Leg leads to, and whatever else the row names; the setup table gives everything the row leaves unnamed (Chapter 5, section 5.1). Every living soldier on the Expedition takes part, mounted or not as they rode. If it became a retreat before it ended (Chapter 5, section 5.10), the Squad falls back to the Waypoint this Leg started from and rides this Leg again from step 1, with a new Leg roll and a new hazard. A retreat from a Titan Engagement the Night table begins falls back overnight instead (*The Night Camp*, step 4).
+6. **A Titan Engagement** a row begins takes its field rating from the kind of the Waypoint this Leg leads to, and whatever else the row names; the setup table gives everything the row leaves unnamed (Chapter 5, section 5.1). Every living soldier on the Expedition takes part, mounted or not as they rode. If it became a retreat before it ended (Chapter 5, section 5.10), the Squad falls back to the Waypoint this Leg started from and rides this Leg again from step 1, with a new Leg roll and a new hazard. A retreat from a Titan Engagement the Night table begins falls back overnight instead (*The Night Camp*, step 4).
 7. **The Waypoint.** The Leg ends. At a Depot, every soldier receives a full Standard Issue together. At the gate, the Expedition ends.
 
 ### Waypoint scenes
@@ -208,6 +208,8 @@ Roll **D6** and add every line below. The hazard roll is a table roll: no pool, 
 | 9 | Abnormal | A Titan Engagement begins with every soldier at Distant, against the Sprinting Abnormal, or the Abnormal the Mission Brief names. |
 | 10 or more | Overrun | A Titan Engagement begins with every soldier at In Reach and two Background Titans, on clocks of 4 and 8. |
 <!-- END RENDERED: leg-hazards -->
+
+**Where the Squad starts.** A row that begins a Titan Engagement "with every soldier at Distant" places the Focus Titan in the centre zone and every soldier in the Squad's start zone, the default. The Straggler row puts its victim at In Reach, in the Focus Titan's zone with attachment Ground, and everyone else in the start zone; Overrun puts the whole Squad in the Focus Titan's zone (Chapter 5, section 5.1; `data/engagement/positions.yaml`, `placement`, `named`; decision batch 16, 16-7).
 
 ### The Straggler
 
@@ -480,7 +482,7 @@ A **Skirmish** is a scene in which soldiers fight people: Military Police, bandi
 
 ### Engaged and Apart
 
-- Each soldier is **Engaged** with a Foe, within arm's reach of it, or **Apart** from it, separately for each Foe. Engaged and Apart are not Positions: a Skirmish has no Positions, no Anchor Rating, no ODM move, no Fly roll a rule calls for, and no airborne soldier. The one Fly roll in a Skirmish is a called roll the GM names for Fly (*A called roll*, below), and it makes no soldier airborne (decision batch 9, 9-43).
+- Each soldier is **Engaged** with a Foe, within arm's reach of it, or **Apart** from it, separately for each Foe. Engaged and Apart are not Positions: a Skirmish has no field, zones, or Positions, no Anchor Rating, no ODM move, no Fly roll a rule calls for, and no airborne soldier. The one Fly roll in a Skirmish is a called roll the GM names for Fly (*A called roll*, below), and it makes no soldier airborne (decision batch 9, 9-43).
 - **A move** in a Skirmish does one of these: the soldier **closes in** and becomes Engaged with one Foe they name; **breaks away** and becomes Apart from every Foe they are Engaged with; or stays as they are. A move may also include one mount or one dismount (Chapter 4, section 4.5).
 - The move of a Held soldier, of a soldier who holds a Foe, and of a Down soldier changes nothing.
 - A Foe becomes Engaged or Apart only through the foe rule.

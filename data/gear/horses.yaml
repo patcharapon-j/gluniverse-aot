@@ -15,22 +15,21 @@ own_horse: >-
   (data/gear/standard-issue.yaml). A soldier can mount only their own horse.
 
 horse_position: >-
-  In a Titan Engagement a horse holds a Position. While its soldier is mounted, it holds the
-  soldier's Position and changes Position with them. After the soldier dismounts, it stays at the
-  Position where they dismounted until they mount it again. Where each horse is when a Titan
-  Engagement begins is in data/engagement/positions.yaml (placement). Whether a horse changes
-  Position by any other rule, and whether a Titan's behavior can target a horse, are in
-  data/engagement/positions.yaml (horses). The sheet records a dismounted horse's Position
-  together with the Focus Titan that Position is held relative to (data/gear/sheet-fields.yaml,
-  horse). How a soldier's Positions relative to two Focus Titans relate, and what a recorded
-  Position becomes when its Focus Titan dies, are in data/engagement/positions.yaml
-  (two_focus_titans). A horse whose riderless-horse decoy succeeds leaves the Titan Engagement: it
-  holds no Position and cannot be mounted or give Gear Dice until the Titan Engagement ends
+  In a Titan Engagement a horse is in a zone (data/engagement/zones.yaml). While its soldier is
+  mounted it is in the soldier's zone and moves with them. After a dismount it stays in that zone
+  until mounted again. Horse Whistle places the soldier's own horse in the soldier's zone
+  (data/character/talents.yaml, horse-whistle). Where each horse is when a Titan Engagement begins,
+  whether a horse moves by any other rule, and whether a Titan's behavior can target a horse, are in
+  data/engagement/positions.yaml (placement; horses). A Stride never moves a horse. The sheet records
+  a dismounted horse's zone number (data/gear/sheet-fields.yaml, horse); no Focus Titan label is
+  recorded with it. A horse whose riderless-horse decoy succeeds leaves the Titan Engagement: it is
+  in no zone and cannot be mounted or give Gear Dice until the Titan Engagement ends
   (data/engagement/attention.yaml, break_attention, decoys, riderless-horse;
-  data/engagement/positions.yaml, horses). Outside a Titan Engagement no horse holds a Position.
+  data/engagement/positions.yaml, horses). Outside a Titan Engagement no horse is in a zone
+  (decision batch 16, 16-25).
 
 titan_engagement_ends: >-
-  When a Titan Engagement ends, no horse holds a Position any longer. Each living soldier's horse
+  When a Titan Engagement ends, no horse is in a zone any longer. Each living soldier's horse
   is still that soldier's own, lame or not, and can be mounted under
   mounted.mount.requirements.outside_titan_engagement. A horse that left as a decoy is its
   soldier's own again. A soldier who was mounted stays mounted,
@@ -42,7 +41,7 @@ mounted:
     as_part_of: a move in a Titan Engagement; outside one, mounted.outside_titan_engagement
     requirements:
       in_titan_engagement:
-        - The soldier's own horse holds the Position the soldier holds when they mount, with both Positions compared relative to the Focus Titan recorded with the horse's Position.
+        - The soldier's own horse is in the soldier's zone when they mount, and the soldier is free (attachment ground or anchored; data/engagement/zones.yaml, attachments).
         - The horse is not lame.
                 - The soldier is not airborne, Down, Grabbed, or carried by a comrade.
         - A soldier who has lost both arms mounts and dismounts only with a comrade's help (data/harm/critical-injuries.yaml, lost_limb_riders, both-arms, mount_with_help; decision batch 8, 8-25).
@@ -55,33 +54,33 @@ mounted:
   dismount:
     as_part_of: a move in a Titan Engagement; outside one, mounted.outside_titan_engagement
     requirements: The soldier is mounted.
-    effect: The soldier is not mounted. In a Titan Engagement, the horse stays at the Position the soldier holds when they dismount.
+    effect: The soldier is not mounted. In a Titan Engagement, the horse stays in the zone the soldier is in when they dismount.
     roll: none
   within_a_move: >-
-    A move can include one mount or one dismount, made at the Position the soldier holds before
-    or after that move's change of Position. A mounted soldier's ODM move dismounts before its
-    change of Position, and is a Flight (data/engagement/positions.yaml, moves, flight). The
-    Position changes a mounted soldier can make are in data/engagement/anchor-ratings.yaml
-    (move_kinds, ratings).
+    A move can include one mount or one dismount, made in the zone the soldier is in before or after
+    that move's steps. A mounted soldier's ODM move dismounts before its first step, and is a Flight
+    (data/engagement/positions.yaml, moves, flight). A mounted move makes up to two zone steps and no
+    attachment step, enters any zone but an Urban one, and ends on entering a zone that holds a
+    standing Focus Titan unless that zone is Open (data/engagement/positions.yaml, moves, mounted;
+    OQ-200, decided by the zone retune, Z4).
   charge: >-
-    A mounted move that makes the distant to in-reach step may also set the loudest flag on that
-    Focus Titan, and at the Open rating may make that step twice
-    (data/engagement/anchor-ratings.yaml, mounted_charge). It is never rolled, spends nothing
+    A mounted move that enters or leaves a zone holding a Focus Titan may also set the loudest flag
+    on one such Titan, once per move (data/engagement/anchor-ratings.yaml, mounted_charge). It is never rolled, spends nothing
     beyond the move, and is not ODM use (decision batch 10, OQ-183).
   becoming_airborne: >-
     A mounted soldier whom a rule makes airborne, by an ODM move, which is a Flight, or by a Fly
     roll whose calling rule makes them airborne (data/gear/odm-gear.yaml, airborne), is dismounted first, with no
-    fall. In a Titan Engagement the horse stays at the Position the soldier held.
+    fall. In a Titan Engagement the horse stays in the soldier's zone.
   forced_dismount:
     - id: lame
       trigger: The horse becomes lame while the soldier is mounted.
-      effect: The soldier is dismounted and falls from a horse (data/gear/falls.yaml, lame-mounted). The horse stays at the Position.
+      effect: The soldier is dismounted and falls from a horse (data/gear/falls.yaml, lame-mounted). The horse stays in the soldier's zone.
     - id: down
       trigger: The soldier becomes Down while mounted.
-      effect: The soldier is dismounted and falls from a horse (data/gear/falls.yaml, down-mounted). The horse stays at the Position.
+      effect: The soldier is dismounted and falls from a horse (data/gear/falls.yaml, down-mounted). The horse stays in the soldier's zone.
     - id: grabbed
       trigger: The soldier becomes Grabbed while mounted.
-      effect: The soldier is dismounted with no fall. The horse stays at the Position.
+      effect: The soldier is dismounted with no fall. The horse stays in the soldier's zone.
   outside_titan_engagement: >-
     Outside a Titan Engagement there are no moves, except in a Skirmish, where a move may include
     one mount or one dismount (data/skirmish/skirmish.yaml, engaged_and_apart, mount). A soldier
@@ -99,8 +98,7 @@ gear_dice:
   ride: Only while the soldier is mounted on the horse.
   leap-clear: Only while the soldier is mounted on the horse (decision batch 8, 8-9).
   break-attention: >-
-    While the soldier is mounted on the horse, or while the horse holds the Position the soldier
-    holds, both compared relative to the Focus Titan recorded with the horse's Position
+    While the soldier is mounted on the horse, or while the horse is in the soldier's zone
     (horse_position). What Break Attention does with the horse is in
     data/engagement/attention.yaml (break_attention, decoys, riderless-horse).
   otherwise: The horse counts as not had for that entry (data/gear/items.yaml, horse).

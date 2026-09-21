@@ -6,23 +6,25 @@ order: 1
 tab: Titan Fights
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "302daca974f8a68305f92fe90c88f5fb1718501b"
+    sha: "92506550589ff210191f608f04cf384987f8215c"
   - path: docs/rules/01-core-rules.md
-    sha: "32d82c39759da2a5c4b531e0b49da4b194a51e10"
+    sha: "8ab942790e9e4676ca3f0f0a0279df5f81232b66"
+  - path: data/engagement/zones.yaml
+    sha: "f2956d5e04b878f105ae5f2762f0a163a63ddc32"
   - path: data/engagement/engagement-flow.yaml
-    sha: "dd549bbcb21ddd5fa1867a9f32e7cc945c82d771"
+    sha: "c4d04b1c8ac4839bb531520f4adc34c382b28d93"
   - path: data/engagement/engagement-setup.yaml
-    sha: "deeac6163448a03a1fac606c19d143b609949d18"
+    sha: "dbe7f5c181689357c35c7a06d751f5b76fd37d23"
   - path: data/engagement/anchor-ratings.yaml
-    sha: "a6ef21ee521348ecbf0f398797b7725bd49b1fef"
+    sha: "73ccac5575f457fa46999d3d4514825e2acfaefa"
   - path: data/engagement/size-classes.yaml
-    sha: "eaf96e042e9a4c3619d3e3e0d5c06ca490c9750f"
+    sha: "c33e65ddc6cb78cb057b0d8462430c1c73d00d9b"
   - path: data/engagement/round.yaml
-    sha: "a6d51d5d3d3a3c8348bf0659e4dabd35c28df781"
+    sha: "80ceb842525c338d3dd05ca723911ef63c9fb491"
   - path: data/engagement/behavior-procedure.yaml
-    sha: "8993831871f8fb548e3b489378607927bccc11ab"
+    sha: "4bc3ae8d5647b1d8fad8fa8593f572ae3a1ea80f"
   - path: data/engagement/background-titans.yaml
-    sha: "709277b23e0e35b3f79f193636fbd1e70bc64798"
+    sha: "49b1681716adc1d6b463d956e6fa68f2e7064a4b"
   - path: data/titans/index.yaml
     sha: "c64683a5b889e6cf9fb38cbc30c21bcba54c6952"
 ---
@@ -76,23 +78,23 @@ Call rolls sparingly. A roll is a moment with something at stake, and calling on
 
 <Subsection title="The order of setup" id="the-order-of-setup">
 
-1. **Take what is named.** The starting rule names the Anchor Rating, the Focus Titan, any Background Titans and their clocks, and the retreat clock's length. Your framing may name whatever it left out — **except the retreat clock**. Anything neither names comes from the setup table.
-2. **Set the Anchors** from the rating: {anchorCounts()}. Nothing is rolled. Whatever is left is every soldier's Momentum cap, and everyone starts at 0. Say the Terrain Trait aloud.
-3. **Label the Focus Titan A,** Body Parts Intact, no Openings, clock empty, **Frenzy 0**, and roll its hidden Next Behavior.
-4. **Place the soldiers and horses,** then let the Titan read its ladder with no cards dealt. A rung that picks out one soldier gives it Attention from setup; otherwise nothing holds it until its first card.
+1. **Take what is named.** The starting rule names the field (its size, its field rating, and any zone's rating), the Focus Titan, any Background Titans and their clocks, and the retreat clock's length. Your framing may name whatever it left out — **except the retreat clock**. Anything neither names comes from the setup table.
+2. **Generate the field.** The Standard field of 13 zones by default, each zone rated from the field rating: {anchorCounts()}. Nothing is rolled that is already named. Whatever a zone's rating leaves is every soldier's Momentum cap there, and everyone starts at 0 Momentum.
+3. **Label the Focus Titan A,** stood in the **centre zone**, Body Parts Intact, no Openings, clock empty, **Frenzy 0**, and roll its hidden Next Behavior.
+4. **Place the soldiers and horses in the Squad's start zone,** one zone out, then let the Titan read its ladder with no cards dealt. A rung that picks out one soldier gives it Attention from setup; otherwise nothing holds it until its first card.
 5. **Fear Rolls** for a first Titan fight and for an Abnormal. Squad Tactics become unused. Round 1 begins.
 
 </Subsection>
 
-<MarginNote>Everyone starts Distant unless the starting rule places them. Mounted stay mounted, nobody is airborne, and a dismounted soldier's horse holds Distant.</MarginNote>
+<MarginNote>Focus Titan A stands in the field's centre zone; everyone else starts in the Squad's start zone, one zone out, mounted as they were, nobody airborne.</MarginNote>
 
 <FinePrint title="what you may frame, and the setup table">
 
 <Subsection title="What you may frame" id="what-you-may-frame">
 
-Before any setup roll you may name the **Focus Titan** (any on the <a href="/gm/titans/">Titans</a> page), the **Anchor Rating**, and the **Background Titans** — none, one, or two, each on a clock of {backgroundClocks()} segments.
+Before any setup roll you may name the **Focus Titan** (any on the <a href="/gm/titans/">Titans</a> page), the **field size** (Skirmish, Standard, or Set piece), the **field rating**, **any single zone's rating**, and the **Background Titans** — none, one, or two, each on a clock of {backgroundClocks()} segments.
 
-**What you name is never rolled,** so no Abnormal roll is made for a Focus Titan you named. What stays closed to you: where the soldiers start, the Anchors the rating gives, the retreat clock's {RETREAT_CLOCK} segments, a setup row once rolled, and the opening Fear Rolls.
+**What you name is never rolled,** so no Abnormal roll is made for a Focus Titan you named, and no terrain roll is made for a zone you rate. What stays closed to you: a soldier's zone or attachment, a Titan's zone, a Stride's length or route or tie, an entry zone, a Carry cost, which zone a wreck takes, the retreat clock's {RETREAT_CLOCK} segments, a setup row once rolled, and the opening Fear Rolls.
 
 </Subsection>
 
@@ -110,7 +112,7 @@ Roll each part in the table's order, skipping whatever is already named. **On a 
 
 <SectionHead id="what-you-track" eyebrow="Section 3">What You Track</SectionHead>
 
-One tracker: an Engagement line, a row per Focus Titan, a row per Background Titan, and a row left behind for each corpse. The players keep the rest — and their Positions sit in one place, the positions column of the Squad sheet. **Read the ladder straight off that column.**
+One tracker: an Engagement line carrying the field itself (size, rating, and every zone's own reading), a row per Focus Titan, a row per Background Titan, and a row left behind for each corpse. The players keep the rest — and their zones and attachments sit in one place, the zone and attachment columns of the Squad sheet. **Read a Position straight off those two columns: never write one down.**
 
 <GmTable table="gm-tracker" />
 
@@ -119,10 +121,10 @@ One tracker: an Engagement line, a row per Focus Titan, a row per Background Tit
 <Subsection title="Running the round" id="when-to-update-it">
 
 - **Update** after the deal, after each Titan card, after each strike or Break Attention, after each counted Grab turn, after each falling body and Heave, and at the end steps.
-- **Anchors and Momentum are the players' arithmetic, not yours.** You mark an Anchor down when an effect takes it, and say so aloud. You never grant, spend, or take a point of Momentum.
+- **Anchors and Momentum are the players' arithmetic, not yours.** You mark a zone's rating down a step when an effect wrecks it, and say so aloud. You never grant, spend, or take a point of Momentum.
 - **The loudest mark reaches far.** It matches every rung but *hooked into its body* — so read that rung first, then ask who is shouting.
 - **Roll together** anything independent: the end-of-round Gas Rolls, and the witnesses' Fear Rolls for one event.
-- **Frenzy rises at an end step,** 1 a round to a cap of 3, on every living Focus Titan. Say the new number aloud. It is the clock the players can do something about.
+- **Frenzy rises at an end step,** 1 every third round to a cap of 3, at the end of rounds 3, 6, and 9, on every living Focus Titan. Say the new number aloud. It is the clock the players can do something about.
 - **Expect the time.** One Focus Titan against four players and two Squadmates runs **12 to 20 minutes a round**; a round with a Grab runs to the top of that. Two Focus Titans run to half an hour — which is why the Background clocks are as long as they are.
 
 </Subsection>
@@ -135,11 +137,11 @@ The one roll the players never see. Roll it where they cannot and record it face
 
 <Subsection title="Frenzy" id="frenzy">
 
-Each Focus Titan holds a **Frenzy**, starting at **0** and rising by **1 at the end of each round, to a cap of 3**. It is public: say it aloud as it rises, and keep it on the tracker.
+Each Focus Titan holds a **Frenzy**, starting at **0** and rising by **1 at the end of every third round, to a cap of 3**. It is public: say it aloud as it rises, and keep it on the tracker.
 
-**The behavior roll is a D6 plus Frenzy,** and a result past the table's last entry reads as that entry. Every table is already ordered from terrorising to killing, so Frenzy walks the Titan down its own table: it postures in round one and is trying to kill somebody by round three.
+**The behavior roll is a D6 plus Frenzy,** and a result past the table's last entry reads as that entry. Every table is already ordered from terrorising to killing, so Frenzy walks the Titan down its own table: it postures for four rounds and is trying to kill somebody from round five.
 
-That is the shape the fight is meant to have. **Every round the Squad spends not killing it is a round it gets worse,** so a Squad that commits sees little Frenzy and a Squad that kites gets eaten. You do nothing to bring this about but add the number.
+That is the shape the fight is meant to have. **Every third round the Squad spends not killing it is a round it gets worse,** so a Squad that commits sees little Frenzy and a Squad that kites gets eaten. You do nothing to bring this about but add the number.
 
 </Subsection>
 
@@ -161,8 +163,8 @@ Roll a new one when the Titan becomes a Focus Titan, after each card that resolv
   {
     title: "Move up if it cannot.",
     icon: "ph:arrow-up",
-    text: "Take the next higher result, wrapping 6 to 1, and test it the same way.",
-    exit: { kind: "note", label: "Shares shift", text: "A blocked entry passes its share upward, so with both arms Broken a Titan bites where it would have grabbed." },
+    text: "Take the next higher result and test it the same way. At Frenzy 0, after 6 comes 1. At Frenzy 1 or more the roll never wraps: from 6 it turns back down the table, to the next result below, and on toward 1.",
+    exit: { kind: "note", label: "Shares shift", text: "A blocked entry passes its share upward, so with both arms Broken a Titan bites where it would have grabbed. A frenzied Titan denied the top of its table takes the most dangerous thing left, never the bottom." },
   },
   {
     title: "Thrash if nothing passes.",
@@ -189,10 +191,11 @@ Roll a new one when the Titan becomes a Focus Titan, after each card that resolv
 1. **Dead** — nothing happens. **Holding a Grabbed soldier** — nothing resolves, the ladder is not read, and the Next Behavior waits.
 2. **A decoy holds it** — nothing resolves, the hold is one card shorter, and the Next Behavior is spent all the same. Only the hold's last card ends it and reads the ladder.
 3. **Otherwise read the ladder.** Nobody holding Attention means nothing resolves and every mark stands.
-4. **Choose:** the Next Behavior's entry, and Thrash without its Body Parts. **If the holder's Position does not fit, the Titan retargets:** read the ladder again among the soldiers who do fit, move its Attention to the one it picks, and resolve the entry against them. Only with nobody anywhere it can reach does the entry fall back, and Thrash again if that fallback repeats the previous behavior.
-5. **Announce name, tier, and targets, then roll the Attack Dice in the open.** No step reaches them, and you never re-roll or adjust.
-6. **Reactions and effects.** 0 successes whiffs against everyone and draws no dodge.
-7. **Next.** Even a whiff resolved a behavior: decoys in a row to 0, marks clear, new Next Behavior face down.
+4. **Stride.** If the holder is in another zone, it closes toward them one zone at a time, up to its Stride, and stops on entering their zone. A grounded Titan's Stride is 0. This is not a roll or a choice of yours: the destination is whoever the ladder just picked, and the route is fixed (lower-numbered zone on a tie).
+5. **Choose:** the Next Behavior's entry, and Thrash without its Body Parts. **If the holder's Position does not fit, the Titan retargets:** read the ladder again among the soldiers who do fit, move its Attention to the one it picks, and resolve the entry against them. Only with nobody anywhere it can reach does the entry fall back — and the fallback is tested the same way, retargeting in its turn. Thrash comes when the fallback repeats the previous behavior, needs Body Parts it has lost, or reaches nobody either.
+6. **Announce name, tier, and targets, then roll the Attack Dice in the open.** No step reaches them, and you never re-roll or adjust.
+7. **Reactions and effects.** 0 successes whiffs against everyone and draws no dodge. A wreck takes one rating step off the Titan's own zone, landed or whiffed.
+8. **Next.** Even a whiff resolved a behavior: decoys in a row to 0, marks clear, new Next Behavior face down.
 
 </Subsection>
 
@@ -208,7 +211,7 @@ A **Background Titan** is not a Titan in play. It is a closing clock — public,
 
 Each fills **1 segment** at the background-clocks end step, and **1 more per flare** spent on a Break Attention, resolving there and then, mid-round. **A flare never fills the retreat clock.** Several full at once resolve in tracker order.
 
-**When one fills** with fewer than two Focus Titans alive, that Titan **enters**: next label, clean, everyone Distant, and it reads its Attention. At an end step no cards break a tie, so its Attention is held by nothing until its first card. The soldiers make the second-Focus-Titan or Abnormal Fear Roll, one each, and it takes cards from the next round.
+**When one fills** with fewer than two Focus Titans alive, that Titan **enters**: next label, clean, standing in the **entry zone** (the edge zone holding no soldier and farthest from the nearest one, a tie going to the lowest-numbered; with no soldier on the field at all, the lowest-numbered edge zone, a provisional rule not yet settled), so everyone on the field holds Distant relative to it, and it reads its Attention. At an end step no cards break a tie, so its Attention is held by nothing until its first card. The soldiers make the second-Focus-Titan or Abnormal Fear Roll, one each, and it strides from its first card, taken from the next round.
 
 **With two Focus Titans already alive it does not enter** — the fight becomes a retreat instead.
 

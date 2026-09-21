@@ -19,7 +19,7 @@ format: data/engagement/titan-format.yaml (stat_block, abnormal_titan, behavior_
 # Headlong Lunge's attack_dice (6, against the medium row's kill pool of 9), and the ladder (OQ-102,
 # OQ-103; decision batch 4, 4-3 and 4-4, as revised in decision batch 4b, 4b-1). Each pool is 3 dice
 # for each point of the fixed need decision batch 4 chose (decision batch 8, 8-1). Trample, a harming
-# control entry, stays at the medium row's control pool of 6 (decision batch 4b, 4b-7). Every Toughness is the medium row's. Run Past, Trample, and Headlong Lunge list both
+# control entry, stays at the medium row's control pool of 6 (decision batch 4b, 4b-7). Every Toughness is the medium row's. Pitch Headlong carries no wreck (zone retune, Z3): with Tempo 2 and as Headlong Lunge's fallback it flattened the runner's own zone to Open, and the Squad failed to kill it more often than the Large twin (docs/reviews/zone-retune-decisions.md). Run Past, Trample, and Headlong Lunge list both
 # legs: one Broken leg grounds the Titan, and a grounded Titan does not run (OQ-109).
 size_class: medium
 abnormal: true
@@ -27,6 +27,7 @@ tempo: 2
 nape_depth: 3
 regeneration_clock: 3
 heave: 3   # its Heave rating, the medium row's; an Abnormal lists its own (data/engagement/size-classes.yaml, heave; decision batch 8, 8-9, OQ-146)
+stride: 3   # its Stride, one more than the medium row's; an Abnormal lists its own (data/engagement/size-classes.yaml, stride; decision batch 16, 16-16) (measured in the zone retune, Z1: at every reference start a Stride is taken over one zone, so values above 0 read the same; docs/reviews/zone-retune-decisions.md)
 body_parts:
   - {id: eyes, kind: eyes, toughness: 2}
   - {id: left-arm, kind: arm, toughness: 2}
@@ -94,7 +95,6 @@ behavior_table:
       attack_dice: 3   # below the medium row's control pool of 6 (OQ-103)
       effects:
         - {type: knock-loose}
-        - {type: wreck}
       fallback: thrash
       text: >-
         It flings its whole body forward and rolls over, a slow, heaving roll that scrapes off

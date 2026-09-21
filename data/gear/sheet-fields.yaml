@@ -6,7 +6,7 @@
 id: gear-sheet-fields
 name: Gear Sheet Fields
 chapter: 04-gear
-decided: [OQ-29, OQ-59, OQ-61, OQ-67, OQ-68, OQ-72, OQ-90, OQ-97, OQ-142, OQ-143]
+decided: [OQ-29, OQ-59, OQ-61, OQ-67, OQ-68, OQ-72, OQ-90, OQ-97, OQ-142, OQ-143]   # zone and attachment: decision batch 16, 16-25 and 16-35
 
 applies_to: [player-character, squadmate]
 
@@ -29,9 +29,8 @@ fields:
   - id: horse
     records: [rating, current, mounted, position]
     position: >-
-      In a Titan Engagement, the Position the horse holds while its soldier is dismounted,
-      together with the Focus Titan that Position is held relative to (focus_titan_label), or left,
-      while the horse has left the Titan Engagement as a decoy (data/engagement/positions.yaml,
+      In a Titan Engagement, the number of the zone the horse is in while its soldier is dismounted,
+      or left, while the horse has left the Titan Engagement as a decoy (data/engagement/positions.yaml,
       horses). Empty while the soldier is mounted, and outside a Titan Engagement
       (data/gear/horses.yaml, horse_position).
   - id: medical_kits
@@ -53,30 +52,41 @@ fields:
     added: decision batch 7, 7-16
   - id: left_at
     records: >-
-      After the soldier dies in a Titan Engagement, the Position where their left items lie,
-      together with the Focus Titan that Position is held relative to (focus_titan_label;
-      data/gear/carrying.yaml, leaving_play, death, where_left), and which items are still there.
+      After the soldier dies in a Titan Engagement, the number of the zone where their left items
+      lie (data/gear/carrying.yaml, leaving_play, death, where_left), and which items are still
+      there.
       Empty once the Titan Engagement ends.
-  - id: positions
+  - id: zone
     records: >-
-      In a Titan Engagement, the soldier's own Position relative to each living Focus Titan, each
-      with that Titan's letter (focus_titan_label), in the format of the positions column of
-      squad_sheet_row, such as "A In Reach B Distant"; or Left, while the soldier has left the
-      Titan Engagement (data/engagement/positions.yaml, positions, leaving). It mirrors that column
-      of the soldier's Squad sheet row, which is the record the Attention Ladder is read from
-      (data/engagement/round.yaml, gm_tracker, titan_card_checklist). Empty outside a Titan
-      Engagement. Added for Chapter 5 (OQ-90 item 14; OQ-97).
+      In a Titan Engagement, the number of the zone the soldier is in (data/engagement/zones.yaml,
+      fields); or Left, while the soldier has left the Titan Engagement
+      (data/engagement/positions.yaml, leaving). It mirrors the zone column of the soldier's Squad
+      sheet row. Empty outside a Titan Engagement. Replaces the positions field (decision batch 16,
+      16-35).
+  - id: attachment
+    records: >-
+      In a Titan Engagement, the soldier's attachment (data/engagement/zones.yaml, attachments), as
+      its letter: G ground, A anchored, B on-body, S blind-spot, X grabbed, P pinned, followed by the
+      label of the body it names (focus_titan_label), such as S A. It mirrors the attachment column
+      of the soldier's Squad sheet row. Empty outside a Titan Engagement or while the soldier has
+      left.
+  - id: positions_shown
+    records: >-
+      Not a field of its own: the soldier's Position relative to each Focus Titan and corpse, derived
+      from zone and attachment (data/engagement/positions.yaml, derivation). A sheet may show it
+      beside the soldier, read-only; it is never written, and the Attention Ladder reads it derived
+      at the moment it asks (data/engagement/round.yaml, gm_tracker, titan_card_checklist).
   - id: momentum
     text: >-
-      Momentum held, from 0 to the Anchors left in the Titan Engagement
+      Momentum held, from 0 to the anchors of the soldier's zone
       (data/engagement/anchor-ratings.yaml, momentum). 0 outside a Titan Engagement, and cleared
       when one ends.
   - id: airborne
     records: true or false (data/gear/odm-gear.yaml, airborne)
   - id: focus_titan_label
     records: >-
-      Not a field of its own: the letter that names a Focus Titan beside a recorded Position in
-      positions, horse.position, and left_at. The first Focus Titan of a Titan Engagement is A, the next Titan
+      Not a field of its own: the letter that names a Focus Titan, or its corpse, beside an
+      attachment that names it. The first Focus Titan of a Titan Engagement is A, the next Titan
       to become a Focus Titan in it is B, and so on. Labels end when the Titan Engagement ends.
   - id: carrying
     records: the comrade the soldier carries, or none
@@ -103,8 +113,8 @@ invariants:
   - carrying on one soldier and carried_by on the other always name each other.
   - Every entry in spare_canisters is 1 or more.
   - horse.position is empty while the soldier is mounted, and outside a Titan Engagement.
-  - Every Position recorded in positions, horse.position, or left_at names its Focus Titan.
-  - positions holds one entry for each living Focus Titan, or left, and never On Body or Blind Spot for two Focus Titans at once (data/engagement/positions.yaml, two_focus_titans).
+  - zone holds one zone number, or left; attachment holds one attachment, and names a body only when the attachment is on-body, blind-spot, grabbed, or pinned (data/engagement/zones.yaml, attachments).
+  - A body an attachment names is in the soldier's zone.
   - Every item named in kept_items is recorded in one of the fields above.
 
 not_recorded: >-
@@ -116,17 +126,20 @@ squad_sheet_row:
   purpose: >-
     One line per soldier on the Squad sheet. A Squadmate's line holds all of its gear, so six fully
     tracked soldiers stay quick to update. In a Titan Engagement every soldier who takes part, player
-    character or Squadmate, has a row, and its positions column is the record the Attention Ladder
-    is read from (data/engagement/round.yaml, gm_tracker, titan_card_checklist; OQ-97). A player
+    character or Squadmate, has a row, and its zone and attachment columns are the record the
+    Attention Ladder's Positions are derived from (data/engagement/round.yaml, gm_tracker, titan_card_checklist; OQ-97). A player
     character's row may hold its gear as well, or a dash in each gear column that its character
-    sheet already holds. The positions column is never a dash: it is filled on every row. Kept
+    sheet already holds. The zone column is never a dash in a Titan Engagement: it is filled on every
+    row. Kept
     items are not marked on the row; the soldier's sheet or stat block records them (kept_items).
   separator: " | "
   columns:
     - id: name
       format: the soldier's name
-    - id: positions
-      format: "Each living Focus Titan's letter and the soldier's Position relative to it, such as A In Reach B Distant; Left while the soldier has left; a dash outside a Titan Engagement"
+    - id: zone
+      format: "Z and the zone number, such as Z7; Left while the soldier has left; a dash outside a Titan Engagement"
+    - id: attachment
+      format: "The attachment's letter (G, A, B, S, X, or P) and the label of the body it names, such as S A; a dash while left or outside a Titan Engagement"
     - id: odm
       format: "ODM current/rating"
       marks: J after it while Jammed
@@ -138,7 +151,7 @@ squad_sheet_row:
       marks: "For each Blade Set rated above 1, its rating in brackets: after h for the set in the handles, and after n once for each such carried set, such as Bl 1[2]+2[3] for a rating 2 set in the handles and two carried sets, one of them rated 3"
     - id: horse
       format: "Hr current/rating"
-      marks: M after it while mounted; L while lame; @, the horse's Position, and its Focus Titan's letter while the horse holds a recorded Position, such as @In Reach A
+      marks: M after it while mounted; L while lame; @Z and the zone number while the horse stands dismounted in a zone, such as @Z8
     - id: kits
       format: "Med current/rating for each medical kit, then Tool current/rating for each tool kit, then Pistol or Musket current/rating for each firearm, such as Med 1/1 0/1 Pistol 1/1 L"
       meaning: only the kits and firearms held; a dash if none
@@ -147,8 +160,8 @@ squad_sheet_row:
       format: "Load items/limit"
       marks: O after it while Overloaded
     - id: state
-      format: "A if airborne; Carrying name; Carried by name; Dead @, the Position, and its Focus Titan's letter while left items lie there (left_at), such as Dead @Blind Spot A; a dash if none"
-  example: "Ilse (Medic) | A In Reach | ODM 2/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 M | Med 1/1 | Load 4/7 | -"
+      format: "A if airborne; Carrying name; Carried by name; Dead @Z and the zone number while left items lie there (left_at), such as Dead @Z7; a dash if none"
+  example: "Ilse (Medic) | Z7 | G | ODM 2/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 M | Med 1/1 | Load 4/7 | -"
 
 # ------------------------------------------------------------------ the Squad sheet (OQ-67)
 squad_sheet:

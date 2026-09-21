@@ -25,7 +25,8 @@ Passes, all inside the one command:
    (decision batch 5, 5-11; targets.py), each case with a judged figure past a band's edge by at most 2 standard
    errors. results.json keeps each case pooled over both seeds under pooled, by its first key;
 3. re-checks (recheck.py): every case with a figure past 3 standard errors from its committed probe figure is
-   re-run on new seeds, and a Chapter 6 full-fight row on the committed probe as well;
+   re-run on new seeds, and a Chapter 6 full-fight row on the committed probe as well. --no-recheck skips this pass
+   for the first run after a rule change, when the probe figures are stale and a flag is a change, not noise;
 4. the move-up shares and the lone route search, which are exact enumerations.
 
 The rules snapshot is the SHA-256 of every file under docs/rules/ and data/, and of the simulator's own source.
@@ -378,6 +379,9 @@ def main():
                     help="with --report: render even if files differ from the run's snapshot, and list them at the top")
     ap.add_argument("--commit-probe-figures", action="store_true",
                     help="re-commit data/titans/probe-figures.yaml from results/results.json (plan WP-S2)")
+    ap.add_argument("--no-recheck", action="store_true",
+                    help="skip pass 3; for the first run after a rule change, when every probe figure is stale and each "
+                         "flag is a real change rather than noise. Re-commit the probe figures after it")
     ap.add_argument("--accept-noted-changes", action="store_true",
                     help="record the hash of every changed file report.SNAPSHOT_CHANGE_NOTES explains")
     args = ap.parse_args()
@@ -432,8 +436,8 @@ def main():
         rows = [dict(c, summary=summ[c["key"]]) for c in cases]
         rows += [dict(c, summary=summarize(c, a)) for c, a in zip(second, accs2)]
         res = dict(scale=args.scale, cpus=procs, chunks=C.CHUNKS, cases=rows, pooled=pooled)
-        rc = recheck_cases(cases, res)
-        print(f"re-checks: {len(rc)} runs", flush=True)
+        rc = [] if args.no_recheck else recheck_cases(cases, res)
+        print(f"re-checks: {'skipped (--no-recheck)' if args.no_recheck else f'{len(rc)} runs'}", flush=True)
         accs3 = run_cases(p, rc, t0, "re-checks") if rc else []
     rechecks = {}
     for c, a in zip(rc, accs3):
@@ -445,6 +449,7 @@ def main():
             entry["sim"] = summarize(c, a)
             entry["sim_seeds"] = f"{c['seed'] * 1000} to {c['seed'] * 1000 + C.CHUNKS - 1}"
     res["rechecks"] = rechecks
+    res["rechecks_skipped"] = bool(args.no_recheck)
     res["shares"] = {tid: F.share_report(tid) for tid in C.TITANS + ["reference-medium"]}
     res["route"] = F.route_check()
     res["runtime_seconds"] = round(time.time() - t0, 1)

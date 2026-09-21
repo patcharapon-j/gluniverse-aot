@@ -103,7 +103,7 @@ const EFFECT_TEXT: Record<string, (e: RawEffect, table: string) => string> = {
   'fear-roll-total': (e) => `Fear Roll total raised by ${e.amount}`,
   'gain-scar': () => 'gain a Scar',
   'draw-attention': () => "you take the loudest mark on the event's Titan, never from Distant",
-  'stress-gain-nearby': (e) => `comrades within 1 Position step gain ${e.amount} Stress`,
+  'stress-gain-nearby': (e) => `comrades in your zone or an adjacent zone gain ${e.amount} Stress`,
   'forced-move': (e) => `1 step toward ${e.toward === 'distant' ? 'Distant' : 'the nearest comrade'} at the start of your next turn`,
   'forced-action': () => "your next action is a strike on the event's Titan, Pushed if it falls short",
   'drop-blade-set': () => 'drop the Blade Set in your handles',
@@ -283,12 +283,12 @@ const EFFECT_WORDING: Record<string, { name: string; does: string; outside?: str
   },
   'stress-gain-nearby': {
     name: 'Stress to comrades nearby',
-    does: 'Every comrade at your Position or one step away, compared relative to the event’s Titan, gains that much Stress once. It is Stress, not a roll, and it applies only after every Fear Roll of that event has found its row.',
+    does: 'Every comrade in your zone or an adjacent zone gains that much Stress once. It is Stress, not a roll, and it applies only after every Fear Roll of that event has found its row.',
     outside: 'In a Skirmish, every other soldier in it gains the Stress. Anywhere else, nothing.',
   },
   'forced-move': {
     name: 'A forced step',
-    does: 'At the start of your next turn, before anything else in it, your Position changes by one step: toward Distant by the retreat’s first option, or toward the nearest comrade. It is a result and not your move, so it spends nothing and happens even on a turn spent in advance. No step is made for a soldier who is Down, Grabbed, Pinned, carried, or has left, who has no such step, or who is already there, and it never makes you leave or let go.',
+    does: 'At the start of your next turn, before anything else in it, you take a forced step: a zone step toward Distant by the retreat’s first option, or toward the nearest comrade. It is a result and not your move, so it spends nothing and happens even on a turn spent in advance. No step is made for a soldier who is Down, Grabbed, Pinned, carried, or has left, who has no such step, or who is already there, and it never makes you leave or let go.',
     outside: 'Nothing.',
   },
   'forced-action': {

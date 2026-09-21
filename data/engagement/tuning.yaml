@@ -12,45 +12,67 @@ decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127
 
 # The probe figures below were measured with each Behavior Table entry's fixed need of dodge successes,
 # before Attack Dice replaced it at 3 dice per point (decision batch 8, 8-1), and stand as that record.
-# Every verdict below reads the final full simulator rerun under Attack Dice
-# (docs/reviews/simulator-report.md, decision batch 8, 8-14 and 8-31), in which every target, band, and
-# bar limit is Met and no fight reached the safety cap.
+# Every verdict below reads the confirming run of the zone retune (docs/reviews/simulator-report.md;
+# docs/reviews/zone-retune-decisions.md, Z5), in which every ADR-0014 target and every per-table band is Met,
+# at each reference start and on the bar's runs of it, every limit of the Sprinting Abnormal's bar holds, and
+# no fight reached the safety cap.
 
 # Decision batch 10 (OQ-182 to OQ-185) changed how a move works: every ODM move is a Flight, each
 # success is 1 Momentum, Anchors cap it and the Titan wrecks them, the loudest flag matches every
 # rung but hooked into its body, a mounted step may charge, and Swap Blade Set spends the move.
-# EVERY FIGURE IN THIS FILE AND IN docs/reviews/simulator-report.md IS STALE UNTIL THAT RERUN.
-# The rerun is a retune, not a sensitivity row, because Flight replaces the move rather than sitting
-# beside it. It must answer: prepared_squad_kill with Bite measured separately as the first thing to
+# Every figure in this file is the confirming run of the zone retune (docs/reviews/zone-retune-decisions.md,
+# Z5; the report it rendered is dated 2026-09-21, rules hash 54e147e73e8d0852), which measured batches 10, 11,
+# 13, and 16 and the zone retune's rulings together. The round 3 retune's run before it (R6; 2026-09-20) did
+# not measure batch 10's Flight: its engine made no Fly roll for an ODM move (it rolled only on a step row
+# that named one, and none did after batch 10), held no Momentum, spent no Carry, and applied no wreck effect.
+# The simulator models all of them from decision batch 16 on (tools/sim/space.py), and batch E's rerun was
+# their first measurement.
+# That rerun was a retune, not a sensitivity row, because Flight replaces the move rather than sitting
+# beside it. It had to answer: prepared_squad_kill with Bite measured separately as the first thing to
 # cut; the PC Critical Injury and death targets, which OQ-182's failed-Flight flag, OQ-183's charge
 # and OQ-184's matching flag feed together; the wreck rate per table and Size Class; and
 # families.route_check with Anchors at 0, which must confirm ADR-0010's legal route still holds.
-# Round time is expected to rise by about 1 to 1.5 dice pools a round against the 3.57 measured here.
+# On the confirming run of the zone retune the Chapter 5 reference start rolls 4.29 dice pools a round against
+# the round 3 retune run's 3.51 (simulator-report.md, section 6.10), a fight at the standard Medium Titan's
+# reference start wrecks 1.09 rating steps (section 7.2), and the lone legal route's state search finds no gap
+# (section 8).
 
 # Decision batch 11 (OQ-187) changed the Push's gear economy: a Gear Die showing 2 to 5 is re-rolled,
 # a 6 is kept and a 1 is locked; a Pushed roll wears its gear item by at most 1 point, however many
 # of its Gear Dice show 1; and Standard Issue issues ODM Gear rated 3 from Funding 3 up. The Jam test
-# reads the wear rule and the issued rating directly, so IT IS STALE UNTIL THE SAME RERUN, along with
+# reads the wear rule and the issued rating directly, so the confirming run re-read it, along with
 # every figure that a Pushed roll's gear feeds. The exact arithmetic on the Jam test's three-Pushed-
 # dodge proxy (tools/probes/round-2/gear_die.out) puts the package at 24.2% against the bar of a
-# third, where today's rule reads 17.8% at rating 3 and 26.3% at the rating 2 it replaces; the rerun
-# must confirm that on the full model, and must re-read the reference builds, whose Rookie now
-# carries ODM Gear 3 (ADR-0014, builds).
+# third, where today's rule reads 17.8% at rating 3 and 26.3% at the rating 2 it replaces; the
+# confirming run bore that out on the full model, with the acceptance test's worst cell at 26.4% for
+# two Large Titans on the reference table and no full fight Jamming at all (simulator-report.md,
+# sections 4.2, 4.3, and 10), and it read the reference builds, whose Rookie now carries ODM Gear 3
+# (ADR-0014, builds).
 
 # Decision batch 13 (OQ-190, OQ-192, OQ-193) changed Health and what a Titan does with its card.
 # Health is now 2 + (strength + agility) / 2, rounded up, so the reference builds read Rookie 6,
 # Veteran 6, and Levi-grade 7, and a built soldier's Health runs 4 to 6 rather than 2 to 4 (builds,
 # below, carries the new values). A Titan whose Attention holder cannot meet the rolled entry's
 # Position requirement now retargets down the Attention Ladder instead of falling to Thrash, and each
-# Focus Titan carries Frenzy, rising 1 a round to a cap of 3 and added to its behavior roll.
-# EVERY FIGURE IN THIS FILE AND IN docs/reviews/simulator-report.md IS STALE UNTIL THAT RERUN, which
-# is the same rerun batches 10 and 11 schedule. It is a retune, and it measures batches A and F
-# together: Health pulls every lethality band down and the behavior fixes put lethality back through
-# what the monster does rather than through its dice. It must answer: the Expedition PC Critical
+# Focus Titan carries Frenzy, rising 1 every third round to a cap of 3 (the round 3 retune halved the first
+# rate, R1, and the zone retune slowed it to every third round, Z2) and added to its behavior roll.
+# The confirming run of the round 3 retune measured them, on the one run batches 10 and 11 also
+# waited for. It was a retune, and it measured batches A and F together: Health pulls every
+# lethality band down and the behavior fixes put lethality back through
+# what the monster does rather than through its dice. It had to answer: the Expedition PC Critical
 # Injury and PC death targets, and every Critical Injury and deaths band of Chapter 6; the share of a
-# Titan's cards that resolve Thrash, before and after retargeting; the Frenzy rate and cap, which are
-# starting values the simulator moves; and the health_reports rows, whose reachable Health values are
-# now 4 to 8 rather than 2 to 6.
+# Titan's cards that resolve Thrash, before and after retargeting (on the zone retune's confirming run 7.3%
+# of the reference start's resolved cards Thrash, with 33.4% retargeted, against 15.8% and 26.7% on the
+# round 3 retune's; simulator-report.md section 6.15); the Frenzy rate and cap, which are starting values
+# the simulator moves and which the round 3 retune re-set to one rise every second round at a cap of 3
+# (R1), and the zone retune to one every third round (Z2); and the health_reports rows, whose reachable Health values are
+# now 4 to 8 rather than 2 to 6. The retune is ruled on in
+# docs/reviews/round-3-retune-decisions.md, and the zone retune's confirming run has read every figure
+# under R1 to R5 and Z1 to Z4; the figures below are that run's. Round 3 review 1 added two cases it also had to answer: the share of
+# retargeted kill-tier cards that land on a Down soldier, who makes no Reaction so every success is
+# net and who would have drawn a Thrash before retargeting (m1); and the share of cards on which the
+# fallback itself retargets, which is the part of 13-9 that reaches standard-large's Crush and the
+# Sprinting Abnormal's Pitch Headlong (M1).
 
 # ------------------------------------------------------------------ starting values
 starting_values:
@@ -356,7 +378,7 @@ prepared_squad_kill:
   tolerance: {median_kill_round: exactly 3}   # a median target reads exactly (ADR-0014, as amended in decision batch 5; OQ-127)
   probe: tools/probes/chapter-05/fight.py with cases1.json and cases2.json
   model:
-    battlefield: Anchor Rating Wooded, one Focus Titan with the reference table at its Size Class values, no Background Titans, and a retreat clock of 8 segments, which ends every fight the Squad has not won (retreat).
+    field: field rating Wooded, one Focus Titan with the reference table at its Size Class values, no Background Titans, and a retreat clock of 8 segments, which ends every fight the Squad has not won (retreat).
     squad: >-
       Four Rookie player characters at Stress 1, starting at distant: two cutters and two strikers.
       Squad rows add Squadmates as helpers or decoyers. The template row uses the Slayer and Flier
@@ -650,7 +672,11 @@ prepared_squad_kill:
       values: [2, 80.8%, 90.7%, 2.2%, 0.85, 0.056, 0.035, 0.252, 0.023]
     - case: Large, Tempo 1, Nape Depth 4, Regeneration 4, arm Toughness 3, Attack Dice 6, 9, 12
       values: [3, 61.0%, 73.0%, 14.3%, 1.32, 0.212, 0.038, 0.303, 0.054]
-  # Measured with fixed needs of a third of each pool, before decision batch 8 (8-1); stale until the rerun.
+  # Measured with fixed needs of a third of each pool, before decision batch 8 (8-1). These two rows are
+  # the probes' record of the pools they measured and stand as that. The chosen 3, 6, 9 and both
+  # alternatives were re-read on the confirming run: 0.58 Critical Injuries per fight at 3, 6, 6 and 0.94
+  # at 6, 9, 9, against the chosen pools' 0.81, with the kill round unchanged at 3 (verdict, below;
+  # docs/reviews/simulator-report.md, section 10).
   medium_attack_dice:
     - case: Attack Dice 3, 6, 6
       values: [3, 62.5%, 73.6%, 7.5%, 0.51, 0.028, 0.032, 0.133, 0.015]
@@ -719,44 +745,44 @@ prepared_squad_kill:
     The first draft's figures (77% by round 3 for 4 player characters) came from an uncommitted
     model started at Stress 0. They are withdrawn (OQ-78).
   verdict: >-
-    Met on the final full rerun under Attack Dice (docs/reviews/simulator-report.md, sections 1, 6.12,
-    and 10). The median kill round is 3, read exactly (tolerance): on the standard Medium Titan's
-    reference start 42.0% are killed by round 2 and 62.4% by round 3, and on Chapter 5's reference
-    Titan round 3 (62.5% by round 3, 0.70 Critical Injuries, 0.064 deaths during the fight and 0.074
-    through the end). Every Medium policy at the reference start keeps round 3 (strikers wait 61.6%,
-    dodge only Grab and Bite 65.9%, from Stress 0 60.1%), and so does every one or two Squad Tactics
-    held (61.8% to 66.7% by round 3). Regeneration 2 (57.0% by round 3, 0.91 Critical Injuries), Nape
-    Depth 3 (median round 2), Nape Depth 5 (median round 5), and Tempo 2 (1.94 Critical Injuries,
-    0.393 deaths during the fight) each miss it or trade it for far more harm. No Chapter 5 target
-    measures Large; at Nape Depth 4 its median kill is round 3 with nearly twice Medium's Critical
-    Injuries and between three and four times its deaths (1.24 and 0.235 during the fight against 0.70
-    and 0.064), and 14.1% of its fights end with no kill (OQ-78). Two Squadmates screening beside the
-    Attention holder deal 0.45 Critical Injuries per fight against the helpers' 0.62, and kill no
-    faster (67.6% by round 3 against 69.6%): a trade, not a dominant play (OQ-81). With helper
-    Squadmates the median kill is round 3 on the boundary in the squads row (69.6% by round 3) and in
-    the squad_tactics row with the escapes (69.1%), and round 2 with Hook and Cut and Hamstring Line
-    held (73.2%). 7.7% of the reference fights end in a retreat, which carries out 0.059 Down comrades
-    per fight and leaves 0.021 soldiers to the Titans, and no fight reached the safety cap. The target
-    is read under the baseline policy, two cutters and two strikers (ADR-0014, as amended in decision
-    batch 4b): four eager strikers and no cutters kill sooner and take less harm (78.2% by round 3,
-    median round 3 on the boundary, 0.44 Critical Injuries, 0.021 deaths during the fight), a row
-    reported beside the target, not tuned, and an open question (OQ-112). The probes' figures in this
-    section, under each entry's fixed need, stand as the record of that measurement (the screen's 0.635
-    cards a round against the helpers' 0.836; batch 3's rule 0.669 and 0.47).
+    Met on the confirming run of the zone retune (docs/reviews/simulator-report.md, sections 1, 3, 6.8,
+    6.12, and 10; docs/reviews/zone-retune-decisions.md, Z5). The median kill round is 3, read exactly
+    (tolerance): on the standard Medium Titan's reference start 44.8% are killed by round 2 and 69.9% by
+    round 3, and on Chapter 5's reference Titan round 3 (71.0% by round 3, 0.81 Critical Injuries, 0.111
+    deaths during the fight and 0.122 through the end). Every Medium policy at the reference start keeps
+    round 3 (strikers wait 63.3%, dodge only Grab and Bite 72.0%, from Stress 0 68.9%), and so does every
+    one or two Squad Tactics held (69.7% to 72.3% by round 3, 0.72 to 0.84 Critical Injuries).
+    Regeneration 2 (65.4% by round 3, 0.91 Critical Injuries), Nape Depth 3 (median round 2), Nape Depth 5
+    (median round 4, 20.0% with no kill), and Tempo 2 (2.01 Critical Injuries, 0.441 deaths during the
+    fight) each miss it or trade it for far more harm. No Chapter 5 target measures Large; at Nape Depth 4
+    its median kill is round 3 with about a third more Critical Injuries than Medium and about three
+    fifths more deaths (1.09 and 0.179 during the fight against 0.81 and 0.111), and 5.1% of its fights
+    end with no kill (OQ-78). Two Squadmates screening beside the Attention holder deal 0.56 Critical
+    Injuries per fight against the helpers' 0.67, and kill no faster (74.2% by round 3 against 77.4%): a
+    trade, not a dominant play (OQ-81). With helper Squadmates the median kill is round 2, in the squads
+    row (77.4% by round 3), in the squad_tactics row with the escapes (77.9%), and with Hook and Cut and
+    Hamstring Line held (79.3%). 4.1% of the reference fights end in a retreat, which carries out 0.017
+    Down comrades per fight and leaves 0.027 soldiers to the Titans, and no fight reached the safety cap.
+    The target is read under the baseline policy, two cutters and two strikers (ADR-0014, as amended in
+    decision batch 4b): four eager strikers and no cutters kill sooner and take less harm (89.6% by round
+    3, median round 2, 0.30 Critical Injuries, 0.036 deaths during the fight), a row reported beside the
+    target, not tuned, and an open question (OQ-112). The probes' figures in this section, under each
+    entry's fixed need, stand as the record of that measurement (the screen's 0.635 cards a round against
+    the helpers' 0.836; batch 3's rule 0.669 and 0.47).
 
 # ------------------------------------------------------------------ target 2: the lone Nape strike
 solo_nape:
   target: >-
     A lone, average soldier who has used Break Attention succeeds on about 10% of Nape strikes
-    against a Medium Titan, between 8% and 14% on a cut made directly after Break Attention from the
+    against a Medium Titan, between 8% and 16% on a cut made directly after Break Attention from the
     Rookie's fight-start Stress of 1, with the cut a lone soldier makes after the cards they took
     while waiting reported beside it and not tuned; a Levi-grade soldier pushing hard succeeds about
     50% of the time. (ADR-0014, body, second target, quoted word for word as amended in decision
     batches 3 and 3b; OQ-79; decision batch 3c, 3c-6.)
-  tolerance: {rookie_fresh_cut: 8% to 14%, levi_grade: 45% to 55%}   # ADR-0014, as amended in decision batch 5 (OQ-127)
+  tolerance: {rookie_fresh_cut: 8% to 16%, levi_grade: 45% to 55%}   # ADR-0014, as amended in decision batch 5 (OQ-127) and by the round 3 retune (R4): batch 11's Gear Die re-roll on the Push
   measurement_point: >-
     The band is read on a cut made directly after Break Attention from the Rookie's fight-start
-    Stress of 1, with no other Titan card resolved against the soldier (this model: 13.1%). The cut
+    Stress of 1, with no other Titan card resolved against the soldier (this model: 13.1% before decision batch 11, 15.0% after it). The cut
     a lone soldier makes after the cards they took while waiting is reported beside it and not
     tuned (lone_fight). A simulator value outside the band on the fresh cut is a miss; the in-fight
     figure is a report (decision batch 3b, 3b-2).
@@ -871,7 +897,11 @@ solo_nape:
     tempo_1_nape_depth_4:
       - case: the rule (decoys in a row, the Feint, a hold of Tempo cards), with a spare canister and Field Repair
         values: [69.9%, 3, 3.84, 2.46, 3.49, 0.16, 2.7%, 2.6%, 0.0%, 24.8%, 2.66, 14.1%, 9.8%]
-        jams: {fights_in_which_the_odm_gear_jams: 2.6%, field_repairs_that_succeed_per_fight: 0.017}
+        # Re-read on the confirming run of the zone retune; the probes gave 2.6% and 0.017. Decision
+        # batch 11 raised the Rookie's issued ODM Gear to rating 3 and capped a Pushed roll's wear at 1
+        # point, so a Jam takes three points of wear inside a lone fight where it took two, and the
+        # Field Repairs that answer one fall with it.
+        jams: {fights_in_which_the_odm_gear_jams: 0.3%, field_repairs_that_succeed_per_fight: 0.0005}
       - case: the rule, batch 3b's route check (no spare canister counted, no Field Repair)
         values: [69.5%, 3, 3.83, 2.45, 3.41, 0.14, 2.4%, 2.4%, 5.2%, 20.5%, 2.65, 14.2%, 9.8%]
       - case: decoys in a row, no Feint
@@ -905,16 +935,18 @@ solo_nape:
         values: [69.2%, 4, 4.00, 5.59, 7.81, 0.20, 3.4%, 4.0%, 0.0%, 23.4%, 2.78, 34.7%, 24.0%]
     chapter_6: Every Chapter 6 table's lone fight, on its own Tempo, Nape Depth, and Behavior Table, is in data/titans/probe-figures.yaml (lone).
   verdict: >-
-    Met at its measurement point on the final full rerun under Attack Dice
-    (docs/reviews/simulator-report.md, sections 1, 2.2, and 10). The Rookie's fresh cut at its
-    fight-start Stress of 1 succeeds 13.0% of the time (standard error 0.1), inside the band of 8% to
-    14%, and the Levi-grade soldier's 47.2% (standard error 0.2) is inside about 50%, which reads 45% to
-    55% (tolerance; OQ-79, OQ-127). Reported beside it and not tuned, the in-fight cut on Chapter 5's
-    reference Titan succeeds 14.1% at a mean Stress of 2.56. Under the rule as revised in decision
-    batches 3b and 3c, 70.3% of lone fights reach a usable strike before the retreat clock fills, most
-    often in round 3, after 2.47 Titan cards against the soldier, and against a Tempo 2 Titan the
-    waiting line gives 70.3% (lone_fight). The probes, under each entry's fixed need, gave 13.1%,
-    47.4%, and 69.9%, with 9.8% of lone fights killing and 24.8% still waiting when the retreat began.
+    Met at its measurement point on the confirming run of the zone retune
+    (docs/reviews/simulator-report.md, sections 1, 2.2, and 10). The Rookie's fresh cut at its fight-start
+    Stress of 1 succeeds 15.0% of the time (standard error 0.1), inside the band of 8% to 16%, which the
+    round 3 retune re-read because decision batch 11's Push re-rolls the blade's Gear Dice (R4; 12.9% with
+    that rule off and nothing else changed), and the Levi-grade soldier's 52.0% (standard error 0.2) is
+    inside about 50%, which reads 45% to 55% (tolerance; OQ-79, OQ-127). Reported beside it and not tuned,
+    the in-fight cut on Chapter 5's reference Titan succeeds 22.0% at a mean Stress of 3.10. Under the
+    rule as revised in decision batches 3b and 3c, on the field, 38.6% of lone fights reach a usable
+    strike before the retreat clock fills, most often in round 3, after 2.20 Titan cards against the
+    soldier, with 1.14 Critical Injuries a lone fight, and against a Tempo 2 Titan the waiting line gives
+    12.1% (lone_fight). The probes, under each entry's fixed need, gave 13.1%, 47.4%, and 69.9%, with 9.8%
+    of lone fights killing and 24.8% still waiting when the retreat began.
 
 # ------------------------------------------------------------------ target 3: the Grab
 grab:
@@ -930,8 +962,10 @@ grab:
   model: >-
     Rule (e) of OQ-85: the Grab spends the action of the victim's first counted turn, and a failed
     dodge that spent a later turn gets it back. Victim: the
-    reference Rookie (Strength 4, Health 4, Resolve 3, Blade Set 1, Grip Breaker 1, Stress 1) with no
-    earlier Critical Injury unless a row says otherwise. The crush comes from the torso rows with the
+    reference Rookie at the Health, Strength, and Resolve builds, rookie gives it, with Blade Set 1,
+    Grip Breaker 1, and Stress 1, and no earlier Critical Injury unless a row says otherwise. The
+    Health is read from builds and never restated here, so it cannot go stale again (decision batch
+    13, 13-4's reasoning; round 3 review 1, M6). The crush comes from the torso rows with the
     non-lethal cap, with their Break Free penalties and Down. Unless a row says otherwise, the
     victim's dodge against the Grab failed and spent a turn. Break Free needs 2, with a 2-die penalty
     once lifted, Pushing when short. The Medium Titan and every soldier come up in random card order
@@ -957,7 +991,7 @@ grab:
       - {case: "Brawler (Strength 4, Grip Breaker 1)", death: 69.5%}
       - {case: "Slayer (Strength 4, no Break Free Talent)", death: 75.0%}
       - {case: "Flier (Strength 3, no Break Free Talent)", death: 76.3%}
-      - {case: "Hunter (Strength 3, Health 3, no Break Free Talent)", death: 76.3%}
+      - {case: "Hunter (Strength 3, no Break Free Talent)", death: 76.3%}
   comrades_close:
     trials: 40,000 per cell
     cells: [stress_1_grief_0, stress_2_grief_0, stress_3_grief_0, stress_1_grief_1, stress_2_grief_1, stress_3_grief_1]
@@ -972,16 +1006,33 @@ grab:
   health_reports:
     model: >-
       As above. The earlier injuries are untreated leg Critical Injuries that give no Break Free
-      penalty: two at Health 3 to 6, and one at Health 2 so the victim starts with a box left. The
-      comrade row has one comrade at Stress 2 with Grief 0.
+      penalty: two at Health 5 to 8, and one at Health 4 so the victim starts with a box left. The
+      comrade row has one comrade at Stress 2 with Grief 0. The rows ran Health 2 to 6 until decision
+      batch 13 (13-1; OQ-190) raised the formula and put a built soldier at 4 to 6 and a rolled one at
+      4 to 8, so the rows no longer describe Health values a soldier can have (round 3 review 1, M6).
     columns: [lone, one_comrade]
+    # Each row below carries the pre-batch-13 figure measured at the row that played the same part, so
+    # the comparison still runs: health_4 is the one-earlier-injury row, as health_2 was, and health_5
+    # to 8 are the two-injury rows, as health_3 to 6 were. The confirming run has read all ten at the
+    # Health values a soldier can now have, and the 100% rows are gone with them: with earlier injuries
+    # it gives 67.7%, 67.2%, 67.5%, 67.7%, and 67.7% alone and 30.6%, 31.0%, 30.3%, 30.7%, and 30.9%
+    # with one comrade, at Health 4 to 8 in order, and fresh alone 67.5%, 67.6%, 67.7%, 67.4%, and
+    # 67.6% (docs/reviews/simulator-report.md, section 2.3). The rows below are the record of the
+    # Health values that produced them.
     with_earlier_injuries:
-      health_2: [100%, 47.9%]
-      health_3: [100%, 47.9%]
-      health_4: [69.8%, 33.1%]
-      health_5: [69.7%, 33.7%]
-      health_6: [69.7%, 33.2%]
-    fresh_victim_lone: {health_2: 70.0%, health_3: 69.9%, health_4: 69.9%, health_5: 69.5%, health_6: 69.8%}
+      health_4: [100%, 47.9%]
+      health_5: [100%, 47.9%]
+      health_6: [69.8%, 33.1%]
+      health_7: [69.7%, 33.7%]
+      health_8: [69.7%, 33.2%]
+    fresh_victim_lone: {health_4: 70.0%, health_5: 69.9%, health_6: 69.9%, health_7: 69.5%, health_8: 69.8%}
+    history:
+      measured_before_batch_13: >-
+        The rows as measured when a built soldier ran Health 2 to 4: two earlier injuries at Health 3
+        to 6 and one at Health 2. with_earlier_injuries read health_2 [100%, 47.9%], health_3
+        [100%, 47.9%], health_4 [69.8%, 33.1%], health_5 [69.7%, 33.7%], health_6 [69.7%, 33.2%], and
+        fresh_victim_lone read health_2 70.0%, health_3 69.9%, health_4 69.9%, health_5 69.5%,
+        health_6 69.8%.
   turn_debt:
     model: >-
       As the lone and one-comrade rows, but the victim's card comes after the Titan's and their turn
@@ -1010,16 +1061,17 @@ grab:
     - {case: strike penalty 2, one_comrade: 35.4% to 47.8%}
     - {case: strike penalty 3, one_comrade: "a cell at 50.6%, above the band"}
   verdict: >-
-    Met on the final full rerun under Attack Dice, with witnesses' Fear Rolls on every row of the
-    re-cut table (docs/reviews/simulator-report.md, sections 1, 2.3, and 10). On Chapter 5's reference
-    Titan a Grab kills a lone victim whose dodge failed 70.0% of the time, inside about 2 in 3, which
-    reads 61.7% to 71.7%, and one who did not dodge 72.9%, so declining to dodge gains nothing. With one
-    comrade in reach, the Stress 2, Grief 0 cell is 33.3%, inside near 1 in 3, which reads 28.3% to
-    38.3%, and the six cells run 28.8% to 48.3%, every cell below 50% (tolerance; OQ-50, OQ-95,
-    OQ-127). ADR-0014's Target 4, read on the standard Medium Titan, gives 70.1%, 33.8%, and a worst
-    cell of 48.3%, each Met. The reference Squad's share is reported beside it: in full fights 12.0% of
-    Grabs devour with 4 player characters (13.0% counting any death while held). The probes, under
-    each entry's fixed need and the old Fear table, gave 69.9%, 33.4%, and 11.3%.
+    Met on the confirming run of the zone retune, with witnesses' Fear Rolls on every row of the re-cut
+    table (docs/reviews/simulator-report.md, sections 1, 2.3, and 10). On Chapter 5's reference Titan a
+    Grab kills a lone victim whose dodge failed 67.8% of the time, inside about 2 in 3, which reads 61.7%
+    to 71.7%, and one who did not dodge 69.9%, so declining to dodge gains nothing. With one comrade in
+    reach, the Stress 2, Grief 0 cell is 30.6%, inside near 1 in 3, which reads 28.3% to 38.3%, and the
+    six cells run 25.6% to 45.1%, every cell below 50% (tolerance; OQ-50, OQ-95, OQ-127). ADR-0014's
+    Target 4, read on the standard Medium Titan, gives 67.6%, 30.8%, and a worst cell of 45.9%, each Met.
+    The reference Squad's share is reported beside it: in full fights 19.4% of Grabs devour with 4 player
+    characters (22.0% counting any death while held), 8.3% with 2 helper Squadmates, and 28.8% for the
+    template Squad. The probes, under each entry's fixed need and the old Fear table, gave 69.9%, 33.4%,
+    and 11.3%.
 
 # ------------------------------------------------------------------ the binding Jam test (OQ-72)
 jam_test:
@@ -1064,14 +1116,21 @@ jam_test:
     The first draft gave Help and Covering on a coin flip and every Titan 2 cards a round; its worst
     cell was 28.5%. That support pattern is withdrawn (OQ-96).
   verdict: >-
-    Met on the final full rerun under Attack Dice, with the holder dodging only a card whose roll
-    scores 1 or more successes (docs/reviews/simulator-report.md, sections 4.2 and 10). Under the
-    acceptance reading on the reference table every cell is under a third. The worst is two Large
-    Titans, Covered, no Help, at 28.3%; two Medium Titans give 20.8% and two Small Titans 22.6%. On
-    the every-card-at-the-kill-pool upper bound, two Medium Titans reach 29.6% and two Large Titans
-    33.0%, both under a third (OQ-96). The worst pattern is still Covering with no Help. The probes,
-    under each entry's fixed need, gave 32.7% for two Large Titans and 34.6% and 35.4% on the upper
-    bound. Any change to Attack Dice, a Tempo, or the wear rule re-runs the test before it is accepted.
+    Met on the confirming run of the zone retune, with the holder dodging only a card whose roll
+    scores 1 or more successes (docs/reviews/simulator-report.md, sections 4.2, 4.3, and 10). Under the
+    acceptance reading on the reference table every cell is far under a third. The worst is two Large
+    Titans, Covered, no Help, at 26.4%; two Medium Titans give 17.6% and two Small Titans 17.2%, and a
+    single Titan of any Size Class runs 1.6% to 3.0%. On
+    the every-card-at-the-kill-pool upper bound, two Medium Titans reach 25.5% and two Large Titans
+    31.6%, both under a third (OQ-96). The worst pattern is still Covering with no Help. The figures
+    fell against the run before the round 3 retune's because decision batch 11 raised the Rookie's issued ODM Gear to
+    rating 3 and capped a Pushed roll's wear at 1 point, so a Jam takes three points of wear inside the
+    test's three rounds where it took two; inside the full fight no reference start Jams any soldier's
+    ODM Gear at all, on a dodge or on any other roll (section 4.3, reported and not judged). The probes,
+    under each entry's fixed need and at ODM Gear 2 under the wear rule batch 11 replaced, gave 32.7%
+    for two Large Titans and 34.6% and 35.4% on the upper
+    bound. Any change to Attack Dice, a Tempo, the wear rule, or the issued rating re-runs the test
+    before it is accepted.
 
 # ------------------------------------------------------------------ gas
 gas:
@@ -1084,8 +1143,8 @@ gas:
     odm_use_named_by_this_chapter), so Chapter 4's figures stand: medians 8 and 6, the medians the
     target states (docs/rules/04-gear.md, section 4.3). The gas family in
     simple.py reproduces them, re-run after decision batch 5 with 200,000 canisters per case. Read
-    exactly, both medians are met (tolerance), and the final full simulator rerun gives medians 8 and
-    6 (means 9.24 and 6.34), Met (docs/reviews/simulator-report.md, section 1).
+    exactly, both medians are met (tolerance), and the confirming run of the zone retune gives
+    medians 8 and 6 (means 9.24 and 6.34), Met (docs/reviews/simulator-report.md, section 1).
 
 # ------------------------------------------------------------------ what the Phase 1 simulator must model
 # ADR-0014 as amended in decision batch 3 (OQ-98); docs/rules/DECISIONS-2026-09-14.md, Constraints on
@@ -1099,7 +1158,7 @@ simulator_cases:
   - Decoy screens from distant and beside the Attention holder under Break Attention's needs as revised in decision batches 3b and 3c, with the flag and nearest rules of decision batch 3e (decoys in a row, the Feint with its on-foot way against a grounded Titan, a hold of Tempo cards, flags that last until the end of the Titan's next card that resolves a behavior, and the nearest rung met at the closest Position), with Feint policies for Squadmates and player characters, against the Expedition PC Critical Injury target (OQ-81).
   - Background Titans, the retreat clock, and the retreat in the simulator's own round, with the horizon a safety cap no fight may reach, the committed rows re-run under the clock, Background clock lengths measured against a retreat rate per Titan Engagement (8.2% at Medium and 13.8% at Large in decision batch 5's measurement), and a retreat policy that also treats and chooses Pry Loose where a player would (OQ-87, OQ-126).
   - Treatment in the care windows between fights, Death Rolls, and the interim day and interim issue between sessions (decision batch 5, OQ-120), where a horse returns to 2 of 2 and ODM Gear worn at or above the Funding row carries (OQ-93).
-  - The targets as amended, each judged Met or Missed against its tolerance with the second-seed rule for a figure past an edge by at most 2 standard errors (OQ-127), namely the lone Rookie's 8% to 14% band on the fresh cut and the Levi-grade soldier's about 50% (OQ-79), with the in-fight lone cut and the Stress it is made at reported beside them and the lone fight at Tempo 1 and 2 on the waiting and hurried lines with Change Canister and Field Repair (solo_nape, lone_fight), and comrades close as one comrade in reach with the reference Squad's Grab death share reported (OQ-95).
+  - The targets as amended, each judged Met or Missed against its tolerance with the second-seed rule for a figure past an edge by at most 2 standard errors (OQ-127), namely the lone Rookie's 8% to 16% band on the fresh cut and the Levi-grade soldier's about 50% (OQ-79), with the in-fight lone cut and the Stress it is made at reported beside them and the lone fight at Tempo 1 and 2 on the waiting and hurried lines with Change Canister and Field Repair (solo_nape, lone_fight), and comrades close as one comrade in reach with the reference Squad's Grab death share reported (OQ-95).
   - Eyes and arm Toughness for every Size Class, Large against the PC Critical Injury and PC death targets, and Medium at Tempo 2 and the other rejected alternatives as sensitivity rows (OQ-78).
   - The Jam test inside the full-fight model, with helpers' cards, Positions, and actions deciding who can Help and Cover (OQ-96).
   - The reports ADR-0014 names, namely the lowered-Health Squad (each soldier at Health 5, one below the Rookie's) and the Health 4, 7, and 8 builds, the template Squad, and the Flier template's dodge (ADR-0014, as amended in decision batch 13; the rows read Health 3 and the Health 2, 5, and 6 builds before it).
@@ -1109,4 +1168,32 @@ simulator_cases:
   - Every case Chapter 6 adds (data/titans/tuning.yaml, simulator_cases), including the start-of-fight Fear Rolls for a first Titan Engagement and for an Abnormal, which fight.py does not make (OQ-105).
   - The four-striker Squad (4 eager strikers and no cutters) beside the baseline Squad on the reference Titan and every Chapter 6 table, reported beside every target as a sensitivity row; the prepared-Squad target is read under the baseline policy, and the simulator's report is the input to the open question on cutting legs (ADR-0014, as amended in decision batch 4b; decision batch 4b, 4b-2; OQ-112).
   - Horsemanship's dice on a dodge made with the horse only, never on foot (decision batch 5, OQ-121); Draw Attention only from a Position other than Distant (OQ-113); a Grab's hold before its crush (OQ-124); and a fall read relative to its reference Titan (OQ-123).
+  - "Failed Nape strikes: of strikes that fall short, the share whose striker is the target of the Titan's next
+    resolved behavior, and the striker's second-strike rate, a second Nape strike before the Titan's Attention
+    returns to them, by table and by Anchor Rating, read against the lone-strike band (ADR-0014; round 3
+    review 1, C6)."
+  - "The behavior roll under Frenzy: the share of rolls resolving each table's result-1 entry by Frenzy, which
+    the move-up rule's wrap at Frenzy 0 and its turn back down at Frenzy 1 or more decide (round 3 review 1,
+    C3); and the kill share by previous behavior, Broken parts, and Frenzy, read as a figure and not as a pass
+    or a fail (round 3 review 1, C4)."
+  - "The field (decision batch 16, 16-38; ADR-0029): every Titan Engagement fought over zones, with Positions
+    derived from zone and attachment, the Stride before each card that resolves a behavior, Flights across zones with
+    their Carry costs and the Carry limit, the crossing flag and quiet, the mounted pace, wrecks by zone with the Sparse
+    grace, leaving from edge zones, the retreat of 16-27, and fields generated with the terrain mix; reporting every
+    Critical Injury and deaths band with zones and the Stride, against the figures before them."
+  - "Rounds to the first Nape strike and to the kill; the share of a Titan's cards that resolve Thrash and that
+    retarget, against decision batch 15's figures; and the share of cards whose Stride brought the holder into the
+    Titan's zone (16-38)."
+  - "Round 1 on its own: Critical Injuries and cards that landed in the first round, since a Stride of 2 against a
+    start one zone out closes on the first card, so design 2.7's hope that round one is unchanged is a figure to
+    read (16-38)."
+  - "Help on a Nape strike from an adjacent zone, as a share of all Help on Nape strikes (16-11, 16-38)."
+  - "Momentum gained and spent per fight (on Carry, quiet, and bite), the share of Flights that Carry, and bite
+    measured on its own as a row with no bite (16-14, 16-38)."
+  - "Wrecked zones per fight, and fights in which the Titan's zone lost its Blind Spot while it stood (16-20, 16-21,
+    16-38); retreats and their length in rounds under zones (16-27)."
+  - "Each value OQ-200 and OQ-202 hold, as sensitivity rows in the order the retune reads the levers: the Stride (0,
+    1, and 3 beside 2), the Carry limit (1 and 3 beside 2) and the mounted pace (1 and 3 beside 2, on a mounted
+    Squad), then the terrain mix (one rating everywhere, and a wider mix), with a Sparse and an Urban field rating
+    beside the Wooded reference (16-38; tools/sim/cases.py, _zones)."
   - The Expedition targets, once the Expedition rules exist.

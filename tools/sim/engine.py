@@ -48,11 +48,23 @@ Rules as written, from data/ YAML through rules.R:
   soldiers who left count as holding the same Position as each other and no Position near anyone else;
 - a day passing (healing.yaml, each_day, and day_passes, interim): the day care window, day-limit Death Rolls,
   Health lost to damage restored, and healing time.
-Not modelled (report section 12 and the Open Questions it names): a second Focus Titan, Background Titans, and
-leaving and returning outside a retreat.
+- the field (ADR-0029; decision batch 16; space.py): a generated field of zones with the terrain mix, the Titan in the
+  centre and the Squad in the start zone; each soldier's zone and attachment, their Positions derived and never
+  stored (Soldier.pos); the Stride between the attention and choose steps, carrying on-body and grabbed soldiers and
+  leaving the Blind Spot behind; moves over zones (on foot one step, mounted up to the mounted pace, a Flight rolled
+  for fly with its first step free and each Carry paid in Momentum, never ending free in an Open zone); Momentum
+  capped by the zone, spent on Carry, quiet, and bite, lost at the round's end without an ODM move; the crossing and
+  no-successes flags; wrecks by zone with the Sparse grace and a zone made Open under a standing Titan; the Down
+  soldier's crawl out of a body's zone; leaving from an edge zone; the retreat of 16-27; holder-and-position targets
+  in the holder's zone; Help and every between-soldiers test read in zones; the Terrain Traits by zone (Open's Bonus
+  Die on a mounted Break Attention, Urban's roof at a Blind Spot, Sparse's grace, Giant Forest's raised fall).
+Not modelled (report section 12 and the Open Questions it names): a second Focus Titan, Background Titans (so no
+entry zone is ever used: space.entry_zone is tested, not run), leaving and returning outside a retreat, the mounted
+charge (no policy charges), and brace and clean line (no policy spends them).
 """
 import random
 
+import space
 from dice import roll, gain_ci, fall_damage, death_roll, gain_scar, take_damage, titan_roll, use_talent, COUNT
 from dice import fear_result, apply_fear_result
 from dice import attack_net, ci_rider, grab_net_lands
@@ -99,6 +111,9 @@ STAT_KEYS = ("cis", "pc_cis", "deaths", "pc_deaths", "grabs", "devours", "grab_d
              # fights that ran on after the kill for a Pinned soldier (8-9)
              "titan_rolls", "whiffs", "lands", "rider_cis", "steam_kill", "steam_regen", "steam_cis", "leap_rolls",
              "leap_clears", "pins", "heat_cis", "heat_deaths", "heaves", "freed", "ran_on",
+             # decision batch 13 (13-9, 13-10): cards whose behavior retargeted down the Attention Ladder, cards that
+             # fell back or Thrashed because no soldier met the entry, and behavior rolls a Titan's Frenzy lifted
+             "retargets", "retarget_misses", "frenzy_lifts", "nb_rolls",
              # soldiers freed by cutting the pinning Body Part, and grab effects that landed only their crush (8-17, 8-18)
              "cut_free", "pinned_crushes",
              # turns taken while Pinned, and Pinned soldiers who died left under the body at the end (8-21, 8-26)
@@ -108,7 +123,27 @@ STAT_KEYS = ("cis", "pc_cis", "deaths", "pc_deaths", "grabs", "devours", "grab_d
              # the Talent sensitivity rows (decision batch 7, 7-2): rule Talents that fired, Mid-Air Catch rolls
              "talent_fires", "catch_rolls",
              # a day passing (healing.yaml, each_day)
-             "day_death_rolls", "day_deaths", "pc_day_deaths", "healed", "day_health_restored")
+             "day_death_rolls", "day_deaths", "pc_day_deaths", "healed", "day_health_restored",
+             # the field (decision batch 16, 16-38): cards that reached the stride step with a holder in another zone,
+             # cards that strode, zones strode, and strides that brought the holder into the Titan's zone
+             "stride_steps", "strides", "stride_zones", "stride_reach",
+             # Flights: rolled, with a Carry, Carries, with no successes, rolled with no step taken, crossing a Focus
+             # Titan's zone, loudest flags they set; Momentum gained, spent (on Carry, quiet, and bite), and lost to a
+             # cap, a state, or the round's end; flags quiet stopped
+             "flights", "flights_carry", "carries", "flights_no_successes", "flights_still", "crossings", "flight_flags",
+             "momentum_gained", "momentum_spent", "momentum_carry", "momentum_quiet", "momentum_bite", "momentum_lost",
+             "quiet_stops",
+             # wrecks (16-20, 16-21): wreck effects and falling Titans, rating steps taken, Sparse graces, zones made
+             # Open under a standing Titan, and fights in which the Titan's zone lost its Blind Spot while it stood
+             "wrecks", "wreck_steps", "wreck_graces", "zones_opened", "bs_lost",
+             # Down soldiers' crawls out of a body's zone, soldiers the Stride carried, and Blind Spots it left behind
+             "crawls", "stride_carried", "stride_left",
+             # Help on a Nape strike, and the part of it given from an adjacent zone (16-11)
+             "nape_helps", "nape_helps_adjacent",
+             # round 1 on its own (16-38): Critical Injuries, player characters' Critical Injuries, cards that landed
+             "r1_cis", "r1_pc_cis", "r1_lands",
+             # the Terrain Traits read by zone (16-5): Open's Bonus Die on a mounted Break Attention
+             "terrain_dice")
 
 # A model check, not a rule: under the retreat clock every Titan Engagement ends (engagement-flow.yaml, ending,
 # always_ends), so no fight should reach this many rounds. stats["cap"] counts one that does.
@@ -116,6 +151,14 @@ SAFETY_CAP = R.safety_cap   # data/engagement/tuning.yaml, prepared_squad_kill, 
 GRAB_STEP_IDS = ["failed-dodge", "hold", "crush", "attention", "witnesses"]
 if R.grab_steps != GRAB_STEP_IDS:
     raise ValueError(f"grab.yaml grab_lands steps changed ({R.grab_steps}); engine.Fight.grab_lands follows the old order")
+
+
+class _Placed:
+    """A placement (zone, kind, body) read as a soldier for space.derive_position."""
+    __slots__ = ("zone", "attach", "left")
+
+    def __init__(self, place):
+        self.zone, self.attach, self.left = place[0], (place[1], place[2]), False
 
 
 # ---------------------------------------------------------------------- the Titan
@@ -175,6 +218,21 @@ class Titan:
         self.dead = False
         self.decoys_in_a_row = 0
         self.hold_left = 0
+        # decision batch 13, 13-10 (OQ-193): every Focus Titan starts at Frenzy 0 and rises at the frenzy end step
+        self.frenzy = R.frenzy_start
+        # the field (decision batch 16): its label (Focus Titan A), its zone (engine.Fight places it in the centre), and
+        # its Stride, an Abnormal's own or its Size Class's (size-classes.yaml, stride; OQ-200's lever, 16-38); a case's
+        # stride overrides it (the Stride sensitivity rows)
+        self.label = "A"
+        self.zone = None
+        self.stride = R.stride[self.id] if self.abnormal and self.id in R.stride else R.stride[block["size_class"]]
+        if cfg.get("stride") is not None:
+            over = cfg["stride"]
+            self.stride = over.get(block["size_class"], self.stride) if isinstance(over, dict) else int(over)
+
+    def stride_now(self):
+        """titan-harm.yaml, grounded (16-16): a grounded Titan's Stride is 0; a corpse never strides."""
+        return 0 if self.grounded() else self.stride
 
     def tough(self, p):
         if self.grab and self.grab["arm"] == p:
@@ -197,21 +255,41 @@ class Titan:
             need[k] = need.get(k, 0) + 1
         return all(self.unbroken(k) >= n for k, n in need.items())
 
-    def roll_nb(self, rng):
-        """behavior-procedure.yaml, next_behavior, roll: D6, moving up past the previous behavior and entries
-        whose Body Parts are Broken; Thrash when none can be rolled."""
+    def roll_nb(self, rng, stats=None):
+        """behavior-procedure.yaml, next_behavior, roll: D6 plus the Titan's Frenzy as it stands at this moment, a
+        total above 6 reading as 6, then moving up past the previous behavior and entries whose Body Parts are
+        Broken; Thrash when none can be rolled (decision batch 13, 13-10 and 13-11; OQ-193)."""
         self.nb_serial += 1
         self.nb_revealed = False
         self.called = None
-        r = rng.randint(1, 6)
-        for i in range(6):
-            eid = self.by_result[(r - 1 + i) % 6 + 1]
+        die = rng.randint(1, 6)
+        r = min(die + self.frenzy, 6)    # titan-format.yaml, behavior_table, result_above_the_table
+        if stats is not None:
+            stats["nb_rolls"] += 1
+            if r != die:
+                stats["frenzy_lifts"] += 1
+        for result in self.move_up_order(r):
+            eid = self.by_result[result]
             if eid != self.prev and self.parts_ok(self.entries[eid]):
                 return eid
         return self.thrash
 
+    def move_up_order(self, r):
+        """behavior-procedure.yaml, next_behavior, roll, move-up: the results tested, in order, from the total r.
+
+        The roll climbs the table from r. What happens at the top depends on Frenzy (decision batch 13, as amended
+        after round 3 review 1, C3). At Frenzy 0 it wraps, after 6 comes 1, as it always has. At Frenzy 1 or more it
+        never wraps: from 6 it turns back down, to the result below the total and on to 1, because Frenzy piles up
+        to four faces onto result 6 and a wrap would land every one of them on the table's weakest entry.
+        """
+        up = list(range(r, 7))
+        down = list(range(r - 1, 0, -1))
+        return up + (down[::-1] if self.frenzy == 0 else down)
+
     def choose(self, pos):
-        """behavior-procedure.yaml, resolving_a_card, choose."""
+        """behavior-procedure.yaml, resolving_a_card, choose, without the retargeting step, which needs the Titan
+        Engagement's soldiers and so lives on Fight.choose_behavior (decision batch 13, 13-9). This is the tail of
+        that step: the fallback a Titan reaches when no soldier in the fight meets the entry."""
         if self.nb == self.thrash:
             return self.thrash
         e = self.entries[self.nb]
@@ -252,12 +330,27 @@ class Fight:
         # Titan Engagement), so they do not move the draws of the fight itself.
         self.aux = aux if aux is not None else random.Random(0)
         self.cfg = cfg
+        # the field (decision batch 16, 16-6): the case's terrain is the field rating; the centre zone and the Squad's
+        # start zone take it and every other zone rolls the terrain mix (OQ-202), drawn from the fight's own stream
+        # before anything else; a case's zones name ratings by zone number, and uniform_field reads one rating in every
+        # zone (the sensitivity row nearest the figures measured before zones)
         self.rating = cfg.get("terrain", "wooded")
-        self.steps = R.ratings[self.rating]["steps"]
+        size = cfg.get("field_size", R.zones["default"])
+        if cfg.get("uniform_field"):
+            self.field = space.uniform_field(R, size, self.rating)
+            for n, rid in (cfg.get("zones") or {}).items():
+                self.field.zones[n].rating = self.field.zones[n].start = rid
+        else:
+            # a case's zone_terrain replaces the terrain mix's rows (the OQ-202 sensitivity rows); carry_limit and
+            # mounted_pace replace OQ-200's values (move_options). Every other case reads all three from data/.
+            self.field = space.generate_field(rng, R, size, self.rating, cfg.get("zones"), cfg.get("zone_terrain"))
         self.t = Titan(cfg)
+        self.t.zone = self.field.centre      # zones.yaml, placement: Focus Titan A in the centre zone (16-7)
+        self.bs_lost = False
         self.sold = []
         self.stats = {k: 0 for k in STAT_KEYS}
         self.stats["kill_round"] = None
+        self.stats["first_nape_round"] = None
         self.used_tactics = set()
         self.supply = supply if supply is not None else {"flares": R.supply["flares"], "medical": R.supply["medical"]}
         self.rnd = 0
@@ -294,7 +387,14 @@ class Fight:
     # ------------------------------------------------------------------ setup
     def add(self, s, role, mounted=False):
         s.role = role
-        s.pos = D
+        # zones.yaml, placement (16-7): every soldier in the Squad's start zone, attachment ground, not airborne,
+        # mounted or not as they were; a dismounted soldier's horse in that zone
+        s.fight = self
+        s.zone, s.attach = self.field.squad_start, ("ground", None)
+        s.momentum = 0
+        s.odm_moved = False
+        s.quiet = False
+        s.flight_zone = None
         s.airborne = False
         s.grabbed = False
         s.pre_turn, s.pre_action = set(), set()
@@ -308,7 +408,7 @@ class Fight:
         s.gas_rolled = False     # this round's Gas Roll made (odm-gear.yaml, gas_roll)
         s.ban = 0
         s.mounted = mounted
-        s.horse_at = None if mounted else D      # positions.yaml, placement: a dismounted soldier's horse holds Distant
+        s.horse_zone = None if mounted else s.zone      # horses.yaml, horse_position (16-25)
         s.horse_gone = False
         s.cloak_thrown = False
         s.start_pos = D
@@ -340,12 +440,12 @@ class Fight:
 
     def apart(self, a, b):
         """The number of Position steps between two soldiers, for the rules that compare them outside a Position
-        test of the Titan's (aftermath rolls, Help, Treat Injury): two soldiers who have both left count as holding
-        the same Position, and one who has left is never within a step of one who holds a Position
-        (engagement-end.yaml, soldiers_who_left, same_position). Positions are the last ones held."""
+        test of the Titan's (aftermath rolls, Help, Treat Injury): the zones between them (16-11); two soldiers who have
+        both left count as holding the same Position, and one who has left is never within a step of one who holds a
+        Position (engagement-end.yaml, soldiers_who_left, same_position). Zones are the last ones held."""
         if a.left or b.left:
             return 0 if (a.left and b.left) else 99
-        return self.steps_apart(a.pos, b.pos)
+        return self.zones_apart(a, b)
 
     # ------------------------------------------------------------------ the retreat (decision batch 5, 5-1 and 5-10)
     def bound(self, s):
@@ -384,41 +484,74 @@ class Fight:
                 and self.rnd > self.retreat_began + self.clock)
 
     def fallen_here(self, s):
-        """Down or Grabbed comrades, not carried, at the soldier's Position (option 4's comrades)."""
-        return [c for c in self.present() if c is not s and (c.down or c.grabbed) and c.carried_by is None and c.pos == s.pos]
+        """Down or Grabbed comrades, not carried, in the soldier's zone (option 4's comrades; 16-11)."""
+        return [c for c in self.present() if c is not s and (c.down or c.grabbed) and c.carried_by is None and c.zone == s.zone]
 
-    def retreat_step(self, s, to, toward_comrade=False):
-        """One step, mounted where the soldier rides and the row allows it, otherwise on foot or by ODM Gear.
-        toward_comrade: option 3, closed past the stay limit (8-32)."""
+    def retreat_step(self, s, place, toward_comrade=False):
+        """One step to placement place, mounted where the soldier rides and the zone allows it, otherwise on foot, or by
+        ODM Gear as a Flight of that one step (background-titans.yaml, retreat, moves: an ODM move under a retreat is a
+        Flight like any other). toward_comrade: option 3, closed past the stay limit (8-32)."""
         if toward_comrade and self.fallen_options_closed():
             raise ValueError(f"{s.name} stepped toward a comrade past the retreat's stay limit (decision batch 8, 8-32)")
         if s.cur_move:
             return False
         self.move_check(s)
-        kinds = ("mounted", "foot", "odm") if s.mounted else ("foot", "odm")
-        return self.try_step(s, to, kinds)
+        same = lambda st: len(st) == 1 and st[0][0] == place[0] and (st[0][1] == place[1] or (   # noqa: E731
+            st[0][1] in space.FREE and place[1] in space.FREE))
+        for k in (("mounted", "foot", "odm") if s.mounted else ("foot", "odm")):
+            if not self.can_move(s, k):
+                continue
+            if k == "odm":
+                if any(same(o[0]) for o in self.move_options(s, "odm", 0)):
+                    return self.flight(s, lambda opts: next((o for o in opts if same(o[0])), None))
+                continue
+            opt = next((o for o in self.move_options(s, k) if same(o[0])), None)
+            if opt is not None:
+                self.walk(s, opt, k)
+                return True
+        return False
 
-    def leave(self, s):
-        """positions.yaml, leaving (retreat option 2): a soldier at Distant, not Down, Grabbed, or carried, uses the move
-        to leave; a comrade they carry leaves with them; no one returns during a retreat."""
-        if s.pos != D or s.down or s.grabbed or s.carried_by is not None or s.left or s.cur_move:
+    def retreat_out_zones(self, s):
+        """background-titans.yaml, retreat, moves, option 1 (16-27): the zones a zone step out may enter from free in the
+        soldier's zone, one ring further out, holding no body first, then farthest from the nearest living Focus Titan
+        (or the nearest corpse when none is alive). A tie left over is the soldier's choice (policy.retreat_zone)."""
+        f = self.field
+        ring = f.ring(s.zone)
+        out = [n for n in f.neighbours(s.zone) if f.ring(n) == ring + 1]
+        live = [t for t in self.bodies() if not t.dead] or self.bodies()
+        far = lambda n: min(f.distance(n, t.zone) for t in live)     # noqa: E731
+        return sorted(out, key=lambda n: (self.holds_body(n), -far(n)))
+
+    def leave(self, s, moving=False):
+        """positions.yaml, leaving (16-26; retreat option 2): a zone step off field from an edge zone, free, not Down,
+        Grabbed, Pinned, or carried; outside a retreat only from a zone holding no Focus Titan and no corpse, during one
+        whatever body stands there. A comrade the soldier carries leaves with them, and a mounted soldier's horse; no
+        one returns during a retreat. moving: the step ends a move already under way (walk, flight)."""
+        if (s.zone is None or not self.field.is_edge(s.zone) or not self.is_free(s) or s.down or s.grabbed or s.pinned
+                or s.carried_by is not None or s.left or (s.cur_move and not moving)
+                or (self.holds_body(s.zone) and not self.retreat)):
             raise ValueError(f"{s.name} cannot leave (positions.yaml, leaving, who)")
-        self.move_check(s)
+        if not moving:
+            self.move_check(s)
         s.cur_move = True
         s.left = True
+        s.zone, s.attach = None, ("ground", None)
         s.airborne = False
         self.stats["left"] += 1
         c = s.carrying
         if c is not None:
             c.left = True
+            c.zone, c.attach = None, ("ground", None)
             self.stats["carried_out"] += 1
         for x in (s, c):
             if x is not None and self.t.holder is x:
                 self.t.holder = None      # attention.yaml, changes: the holder leaves
+        self.trim_momentum(s)
+        return True
 
     def let_go(self, s):
         """positions.yaml, moves, letting_go: the move of a soldier at On Body or Blind Spot, a fall a rule names."""
-        if s.pos not in (OB, BS) or s.grabbed or s.carried_by is not None or s.cur_move:
+        if s.attach[0] not in ("on-body", "blind-spot") or s.grabbed or s.carried_by is not None or s.cur_move:
             raise ValueError(f"{s.name} cannot let go (positions.yaml, moves, letting_go, who)")
         self.move_check(s)
         s.cur_move = True
@@ -475,27 +608,118 @@ class Fight:
             r += 1
         s.pre_action.add(r)
 
+    # ------------------------------------------------------------------ the field (ADR-0029; decision batch 16)
+    def position(self, s):
+        """zones.yaml, derivation (16-9): the soldier's Position relative to the Focus Titan or its corpse, from zone and
+        attachment. None off field."""
+        return space.derive_position(s, self.t)
+
+    def pos_of(self, place):
+        """The Position a placement (zone, kind, body) would give relative to the Focus Titan."""
+        return space.derive_position(_Placed(place), self.t)
+
+    def place(self, s):
+        return (s.zone, s.attach[0], s.attach[1])
+
+    def free_kind(self, s):
+        """zones.yaml, detach_rule: anchored if airborne, ground if not."""
+        return "anchored" if s.airborne else "ground"
+
+    def is_free(self, s):
+        return s.attach[0] in space.FREE
+
+    def place_at(self, s, p):
+        """A rule that names a Position relative to the Focus Titan (a fall's landing, a release, Leap Clear, a Heave,
+        Fall Back, the stand-up at an Open zone, a cell's setup): the zone and attachment it means. A free soldier is
+        anchored if airborne and on the ground if not (zones.yaml, detach_rule). Distant names no zone: only a soldier
+        already in another zone may be written to it."""
+        t = self.t
+        if p in (OB, BS):
+            s.zone, s.attach = t.zone, ("on-body" if p == OB else "blind-spot", t.label)
+        elif p == IR:
+            s.zone, s.attach = t.zone, (self.free_kind(s), None)
+        elif p == D:
+            if s.zone is None or s.zone == t.zone:
+                raise ValueError(f"{s.name}: distant names no zone; a zone step moves a soldier out of the Titan's zone")
+            if not self.is_free(s):
+                s.attach = (self.free_kind(s), None)
+        else:
+            raise ValueError(f"{s.name}: no Position {p!r}")
+        if s.carrying is not None:
+            self.follow(s.carrying, s)
+
+    def follow(self, c, s):
+        """zones.yaml, detach_rule: a carried soldier's zone and attachment are their carrier's."""
+        c.zone, c.attach = s.zone, s.attach
+
+    def bodies(self):
+        """The Focus Titan, living or a corpse: the one body this model has."""
+        return [self.t]
+
+    def holds_body(self, n):
+        return n is not None and self.t.zone == n
+
+    def t_rating(self):
+        """The Anchor Rating of the Focus Titan's zone, which every Position step relative to it reads."""
+        return self.field.rating(self.t.zone)
+
+    def zones_apart(self, a, b):
+        """zones.yaml, between_soldiers (16-11): the Position steps between two soldiers are the zones between them."""
+        if a.zone is None or b.zone is None:
+            return 99
+        return self.field.distance(a.zone, b.zone)
+
+    def trim_momentum(self, s):
+        """anchor-ratings.yaml, momentum (16-4): Momentum above the anchors of the soldier's zone is lost at once; a soldier
+        who has left, is Down, Grabbed, carried, or Pinned, or has died holds none."""
+        if not s.momentum:
+            return
+        if s.dead or s.left or s.down or s.grabbed or s.carried_by is not None or s.pinned or s.zone is None:
+            keep = 0
+        else:
+            keep = min(s.momentum, space.momentum_cap(self.field, R, s.zone))
+        self.stats["momentum_lost"] += s.momentum - keep
+        s.momentum = keep
+
+    def momentum_sweep(self):
+        for s in self.sold:
+            self.trim_momentum(s)
+
+    def on_roof(self, s):
+        """anchor-ratings.yaml, ratings, urban, terrain_trait (16-5): a soldier who holds blind-spot relative to a Focus
+        Titan in an Urban zone is anchored to a roof and is not airborne, so a Jam does not drop them."""
+        return (s.attach[0] == "blind-spot" and s.zone is not None and not self.t.dead
+                and self.field.rating(s.zone) in R.roof_ratings)
+
+    def roof(self, s):
+        """Applies the Urban trait after a change of zone or attachment: not airborne while on the roof."""
+        if self.on_roof(s):
+            s.airborne = False
+
+    def set_flag(self, s, key):
+        """A flag the soldier sets: none while they have spent Momentum on quiet this turn (anchor-ratings.yaml, momentum,
+        spends, quiet)."""
+        if s.quiet:
+            self.stats["quiet_stops"] += 1
+            return
+        s.flags[key] = True
+
     # ------------------------------------------------------------------ Positions and moves
     def step_kinds(self, a, b):
-        pair = frozenset((a, b))
-        row = self.steps.get(pair)
-        kinds = set(row["kinds"]) if row else set()
-        if a != b and self.t.grounded() and a in CLOSE and b in CLOSE:
-            if row:
-                kinds.add("foot")
-                kinds.discard("mounted")
-            elif self.rating == R.grounded_extra_rating and pair == R.grounded_extra_pair:
-                kinds |= {"foot", "odm"}
-        return kinds
+        """The kinds of move that can make the Position step a to b relative to the Focus Titan, in its zone, read off
+        that zone's rating (a distant to in-reach step is a zone step into it: zones.yaml, moves, entered_zone_reads)."""
+        return space.step_kinds(R, self.t_rating(), a, b, self.t.grounded())
 
     def steps_apart(self, a, b):
+        """Position steps between two Positions relative to the Focus Titan (not between two soldiers: zones_apart)."""
         if a == b:
             return 0
         return 1 if self.step_kinds(a, b) else 2
 
     def route_step(self, s, target, assume_odm=False):
-        """The first step of a shortest chain of steps from the soldier's Position to target that they can make on
-        foot or by ODM Gear (working, or assume_odm), under the Anchor Rating and grounding now; None if none."""
+        """The first step of a shortest chain of Position steps relative to the Focus Titan from the soldier's Position to
+        target that they can make on foot or by ODM Gear (working, or assume_odm), under its zone's rating and grounding
+        now; None if none."""
         if s.pos == target:
             return None
         frm = {s.pos: None}
@@ -517,11 +741,11 @@ class Fight:
 
     def dismount(self, s):
         s.mounted = False
-        s.horse_at = s.pos
+        s.horse_zone = s.zone          # horses.yaml, horse_position (16-25): the horse stays in that zone
 
     def horse_usable(self, s):
-        """attention.yaml, riderless-horse: own horse not lame, and mounted on it or it holds the soldier's Position."""
-        return not s.horse_gone and s.horse > 0 and (s.mounted or s.horse_at == s.pos)
+        """attention.yaml, riderless-horse: own horse not lame, and mounted on it or it is in the soldier's zone."""
+        return not s.horse_gone and s.horse > 0 and (s.mounted or (s.horse_zone is not None and s.horse_zone == s.zone))
 
     def items(self, s):
         """carrying.yaml, items_counted."""
@@ -537,10 +761,15 @@ class Fight:
     def overloaded(self, s):
         return self.items(s) > s.a("strength") + R.carry_limit_add
 
-    def can_step(self, s, to, kind):
-        if s.cur_move or s.down or s.grabbed or s.carried_by is not None or s.pos == to or s.pinned:
-            return False
-        if kind not in self.step_kinds(s.pos, to):
+    def may_leave(self, s):
+        """positions.yaml, leaving (16-26): a step off field from an edge zone, free, from a zone that holds no Focus Titan
+        and no corpse, or whatever body stands there during a retreat. This model has no leaving outside a retreat (no
+        returner, report section 12), so a policy's move leaves only under one."""
+        return (self.retreat and s.zone is not None and self.field.is_edge(s.zone) and not s.down and not s.grabbed
+                and s.carried_by is None and not s.pinned and not s.left)
+
+    def can_move(self, s, kind):
+        if s.cur_move or s.down or s.grabbed or s.carried_by is not None or s.pinned or s.left or s.zone is None:
             return False
         if kind == "odm":
             if s.carrying is not None and R.overloaded_spends_action and s.cur_action and self.overloaded(s):
@@ -550,44 +779,171 @@ class Fight:
             return s.mounted
         return True
 
-    def try_step(self, s, to, kinds=("foot", "odm")):
+    def move_options(self, s, kind, momentum=None, may_leave=False):
+        """Every move of this kind from the soldier's placement: [(steps, carries, Momentum)] (space.flight_options,
+        space.ground_options). A move on foot by a mounted soldier dismounts them first (horses.yaml, within_a_move)."""
+        start = self.place(s)
+        if kind == "odm":
+            m = s.momentum if momentum is None else momentum
+            return space.flight_options(R, self.field, start, m, self.bodies(), may_leave=may_leave,
+                                        carry_limit=self.cfg.get("carry_limit"))
+        return [(st, 0, 0) for st in space.ground_options(R, self.field, start, kind, self.bodies(), may_leave=may_leave,
+                                                          pace=self.cfg.get("mounted_pace"))]
+
+    def crossing_titans(self, start_zone, steps):
+        """zones.yaml, crossing_flag: the Focus Titans standing in a zone the Flight crosses (a corpse takes no flag)."""
+        zs = space.crossed(start_zone, [p[0] for p in steps])
+        return [t for t in self.bodies() if not t.dead and t.zone in zs]
+
+    def go(self, s, target, kinds=("foot", "odm")):
+        """One move toward target, a Position relative to the Focus Titan, of the first kind in kinds whose best move is
+        best (policy.pick_move ranks them: reaching target first, then closing on the Titan's zone). A Flight is judged
+        on the Momentum its roll could give at most, then rolled, and its route chosen on what it gave (READING: the
+        route of a Flight is chosen after its roll). Returns True when a move was made."""
+        best = None
         for k in kinds:
-            if self.can_step(s, to, k):
-                self.move(s, to, k)
+            if not self.can_move(s, k):
+                continue
+            m = max(s.momentum, space.momentum_cap(self.field, R, s.zone)) if k == "odm" else None
+            pick = P.pick_move(self, s, target, self.move_options(s, k, m), k)
+            if pick is not None and (best is None or pick[0] < best[0]):
+                best = (pick[0], k, pick[1])
+        if best is None:
+            return False
+        _, k, option = best
+        if k == "odm":
+            return self.flight(s, lambda opts: (P.pick_move(self, s, target, opts, k) or (None, None))[1])
+        self.walk(s, option, k)
+        return True
+
+    def try_step(self, s, to, kinds=("foot", "odm")):
+        """One move toward the Position `to` relative to the Focus Titan (go)."""
+        return self.go(s, to, kinds)
+
+    def walk(self, s, option, kind):
+        """A move on foot or mounted along option's steps (zones.yaml, moves): not airborne after it."""
+        steps = option[0]
+        if s.mounted and kind != "mounted":
+            self.dismount(s)       # horses.yaml, mounted, within_a_move
+        s.cur_move = True
+        was_d = s.pos == D
+        end = steps[-1]
+        if end[0] is None:
+            return self.leave(s, moving=True)
+        s.zone, s.attach = end[0], (end[1], end[2])
+        s.airborne = False
+        self.after_move(s, was_d)
+
+    def after_move(self, s, was_d):
+        self.roof(s)
+        if s.carrying is not None:
+            self.follow(s.carrying, s)
+            if s.pos == D and not was_d:
+                self.stats["carried_to_distant"] += 1
+        self.trim_momentum(s)
+
+    def flight(self, s, choose):
+        """positions.yaml, moves, flight, and zones.yaml, flight (16-13 to 16-15): the roll for fly with the soldier's ODM
+        Gear, needing nothing and never Pushed (POLICY CHOICE: a Push buys only Momentum); each success 1 Momentum up to
+        the anchors of the zone it starts in; then the route choose picks from the Flights that Momentum allows, its
+        first step free and each Carry paid; the crossing flag and the no-successes flag, unless the soldier spends
+        quiet (policy.wants_quiet); airborne after it; Momentum above the anchors of the zone it ends in lost."""
+        st = self.stats
+        if s.mounted:
+            self.dismount(s)
+        s.cur_move = True
+        if s.carrying is not None and R.overloaded_spends_action and self.overloaded(s):
+            s.cur_action = True     # carrying.yaml, overloaded: every ODM move also spends the action
+            st["overloaded_moves"] += 1
+        s.odm_used = s.odm_moved = True
+        was_d = s.pos == D
+        start = self.place(s)
+        st["flights"] += 1
+        st["fly_rolls"] += 1
+        res = roll(self.rng, s, "fly", gear="odm", push_to=0)
+        before = s.momentum
+        s.momentum = max(s.momentum, min(space.momentum_cap(self.field, R, s.zone), s.momentum + res.succ))
+        st["momentum_gained"] += s.momentum - before
+        self.after_roll(s, res, "odm")
+        if s.dead or s.zone is None or s.grabbed or s.pinned or s.carried_by is not None:
+            return True
+        opts = self.move_options(s, "odm", may_leave=self.may_leave(s))
+        pick = choose(opts)
+        if pick is None:
+            st["flights_still"] += 1
+            return True
+        steps, carries, cost = pick
+        s.momentum -= cost
+        st["momentum_spent"] += cost
+        st["momentum_carry"] += cost
+        st["carries"] += carries
+        st["flights_carry"] += 1 if carries else 0
+        flagged = self.crossing_titans(start[0], steps)
+        if flagged:
+            st["crossings"] += 1
+        end = steps[-1]
+        if res.succ == 0 and not self.t.dead:
+            flagged = flagged or [self.t]        # no successes: the Focus Titan in, or nearest, the zone it ends in
+            st["flights_no_successes"] += 1
+        if flagged and not s.quiet and s.momentum >= 1 and P.wants_quiet(self, s):
+            s.momentum -= 1
+            s.quiet = True
+            st["momentum_spent"] += 1
+            st["momentum_quiet"] += 1
+        if flagged:
+            self.set_flag(s, "loud")
+            st["flight_flags"] += 0 if s.quiet else 1
+        if end[0] is None:
+            return self.leave(s, moving=True)
+        s.zone, s.attach = end[0], (end[1], end[2])
+        s.airborne = True           # positions.yaml, moves, flight, airborne
+        s.flight_zone = end[0]
+        self.after_move(s, was_d)
+        return True
+
+    def forced_step(self, s, place):
+        """positions.yaml, moves, forced_step (16-28): one step to placement place, of the kind the soldier's move makes
+        (mounted when mounted; ODM when airborne, else on foot, the other when that one cannot make it). Never a
+        Flight: not rolled, no Carry, no Momentum, no flag. An ODM step is ODM use (the round's Gas Roll) and the
+        soldier is airborne after it. It spends nothing (soldier_turn keeps the move as it was)."""
+        if s.left or s.down or s.grabbed or s.carried_by is not None or s.pinned or s.zone is None:
+            return False
+        kinds = ("mounted",) if s.mounted else (("odm", "foot") if s.airborne else ("foot", "odm"))
+        for k in kinds:
+            if k == "odm" and not s.odm_working():
+                continue
+            for steps, _, _ in self.move_options(s, k, 0):
+                to = steps[0]
+                if len(steps) != 1 or to[0] != place[0] or not (to[1] == place[1] or (
+                        to[1] in space.FREE and place[1] in space.FREE)):
+                    continue
+                was_d = s.pos == D
+                s.zone, s.attach = to[0], (to[1], to[2])
+                s.airborne = k == "odm"
+                if k == "odm":
+                    s.odm_used = True
+                self.after_move(s, was_d)
                 return True
         return False
 
-    def move(self, s, to, kind):
-        if s.mounted and kind != "mounted":
-            self.dismount(s)   # horses.yaml, mounted, within_a_move
-        s.cur_move = True
-        frm = s.pos
-        if kind == "odm":
-            if s.carrying is not None and R.overloaded_spends_action and self.overloaded(s):
-                s.cur_action = True     # carrying.yaml, overloaded: every ODM move also spends the action
-                self.stats["overloaded_moves"] += 1
-            s.odm_used = True
-            s.airborne = True
-            s.pos = to
-            fly = self.steps.get(frozenset((frm, to)), {}).get("fly") if frozenset((frm, to)) in self.steps else None
-            if fly:
-                self.stats["fly_rolls"] += 1
-                res = roll(self.rng, s, "fly", gear="odm", push_to=fly["needs"])
-                if res.succ < fly["needs"]:
-                    s.pos = fly["failure_ends_at"]
-                self.after_roll(s, res, "odm")
-        else:
-            s.pos = to
-            s.airborne = False
-        if s.carrying is not None:
-            s.carrying.pos = s.pos
-            if s.pos == D and frm != D:
-                self.stats["carried_to_distant"] += 1
+    def one_move_places(self, s):
+        """Every (placement, mounted) one move of the soldier's own could reach now, a Flight on the Momentum they hold:
+        for the lone fight's route check (policy.route_gap). Makes no move."""
+        out = []
+        if s.zone is None:
+            return out
+        for kind in ("foot", "odm", "mounted"):
+            if kind == "odm" and not s.odm_working() or kind == "mounted" and not s.mounted:
+                continue
+            for steps, _, _ in self.move_options(s, kind):
+                out.append((steps[-1], kind == "mounted"))
+        return out
 
     def can_mount(self, s):
-        """horses.yaml, mounted, mount, requirements, in_titan_engagement."""
-        return (not s.mounted and not s.horse_gone and s.horse > 0 and s.horse_at == s.pos and not s.airborne
-                and not s.down and not s.grabbed and s.carried_by is None)
+        """horses.yaml, mounted, mount, requirements, in_titan_engagement (16-25): the horse in the soldier's zone and the
+        soldier free."""
+        return (not s.mounted and not s.horse_gone and s.horse > 0 and s.horse_zone is not None and s.horse_zone == s.zone
+                and self.is_free(s) and not s.airborne and not s.down and not s.grabbed and s.carried_by is None)
 
     def mount(self, s, within_move=False):
         """A move can include one mount (horses.yaml, within_a_move): made with this turn's move, or as part of a
@@ -596,24 +952,29 @@ class Fight:
             return False
         s.cur_move = True
         s.mounted = True
-        s.horse_at = None
+        s.horse_zone = None
+        s.attach = ("ground", None)
         self.stats["mounts"] += 1
         return True
 
     def crawl(self, s):
-        """positions.yaml, moves, down_soldier."""
-        a, b = R.down_step
-        if s.down and not s.grabbed and s.carried_by is None and not s.cur_move and s.pos == a and not s.pinned:
-            s.cur_move = True
-            s.pos = b
-            s.airborne = False
+        """zones.yaml, moves, down_soldier (16-12): one on-foot zone step out of a zone that holds a body into an adjacent
+        zone that holds none, never off field (policy.crawl_zone picks it)."""
+        if (s.down and not s.grabbed and s.carried_by is None and not s.cur_move and not s.pinned and s.zone is not None
+                and self.is_free(s) and self.holds_body(s.zone)):
+            to = [n for n in self.field.neighbours(s.zone) if not self.holds_body(n)]
+            if to:
+                s.cur_move = True
+                s.zone, s.attach = P.crawl_zone(self, s, to), ("ground", None)
+                s.airborne = False
+                self.stats["crawls"] += 1
 
     # ------------------------------------------------------------------ carrying a comrade
     def lift(self, s, c):
         """carrying.yaml, lifting_a_comrade, in_titan_engagement. Under a retreat the move follows the lift
         (background-titans.yaml, retreat, order)."""
         if (s.cur_action or s.down or s.grabbed or s.carrying is not None or s.carried_by is not None or c.dead
-                or not c.down or c.grabbed or c.carried_by is not None or c.pos != s.pos or c is s or s.left or c.left
+                or not c.down or c.grabbed or c.carried_by is not None or c.zone != s.zone or c is s or s.left or c.left
                 or c.pinned or s.pinned):     # a Pinned soldier cannot be moved (decision batch 8, 8-9)
             return False
         if self.bound(s) and not s.cur_move:
@@ -621,6 +982,7 @@ class Fight:
         s.cur_action = True
         s.carrying, c.carried_by = c, s
         c.airborne = c.mounted = False
+        self.follow(c, s)
         self.stats["lifts"] += 1
         return True
 
@@ -629,7 +991,8 @@ class Fight:
         if c is not None:
             s.carrying = None
             c.carried_by = None
-            c.pos = s.pos
+            # carrying.yaml (16-23): set down, or no longer carried, in the carrier's zone with attachment ground
+            c.zone, c.attach = s.zone, ("ground", None)
         return c
 
     # ------------------------------------------------------------------ gear after a roll
@@ -643,7 +1006,7 @@ class Fight:
                 s.odm = max(0, s.odm - res.gear_ones)
                 if s.odm == 0 and was > 0:
                     self.stats["jams"] += 1
-                    if s.airborne:
+                    if s.airborne and not self.on_roof(s):
                         self.fall(s)
         elif gear == "horse":
             if res.gear_ones:
@@ -777,12 +1140,12 @@ class Fight:
             s.ban = max(s.ban, max(1, row["spend_turns"]))
         # decision batch 7, 7-8 (OQ-139; effect-types.yaml): the six effect types a Fear row may add. With one Focus
         # Titan, the Titan that caused the event is always that Titan.
-        if row["draw"] and not s.left and s.pos not in R.draw_barred_positions:
+        if row["draw"] and not s.left and s.pos not in R.draw_barred_positions:   # the Titan in the soldier's zone (16-28)
             s.flags["loud"] = True          # draw-attention: the loudest flag, never from Distant (attention.yaml, loudest)
             self.stats["fear_draws"] += 1
         if row["nearby"]:
             for c in self.present():        # stress-gain-nearby: every comrade within one Position step, with no roll
-                if c is not s and self.steps_apart(c.pos, s.pos) <= 1:
+                if c is not s and self.zones_apart(c, s) <= 1:     # the same zone or an adjacent one (16-11, 16-28)
                     c.stress += row["nearby"]
                     self.stats["fear_contagion"] += 1
         if row["forced_move"]:
@@ -855,7 +1218,8 @@ class Fight:
         if from_horse:
             return R.fall_bands[0]
         i = 1 if s.pos in R.fall_high else 0
-        if self.t.raises_fall or self.rating in R.fall_raise_ratings:
+        # falls.yaml, height (16-22): the Giant Forest raise reads the zone the soldier falls in
+        if self.t.raises_fall or (s.zone is not None and self.field.rating(s.zone) in R.fall_raise_ratings):
             i += 1
         return R.fall_bands[min(i, len(R.fall_bands) - 1)]
 
@@ -869,8 +1233,9 @@ class Fight:
         if row is not None:
             self.count_ci(s)
             self.after_harm(s, row)
-        if high and not s.dead:
-            s.pos = R.fall_lands
+        if not s.dead and s.zone is not None:
+            # positions.yaml, falls_land (16-22): the soldier stays in their zone, attachment ground
+            s.attach = (R.fall_lands_attach, None)
         if c is not None and not c.dead:
             self.fall_carried(c, band, high)
 
@@ -882,8 +1247,8 @@ class Fight:
         if row is not None:
             self.count_ci(c)
             self.after_harm(c, row)
-        if high and not c.dead:
-            c.pos = R.fall_lands
+        if not c.dead and c.zone is not None:
+            c.attach = (R.fall_lands_attach, None)
 
     def fall_from_horse(self, s):
         c = self.set_down(s) if s.carrying is not None else None
@@ -901,6 +1266,9 @@ class Fight:
         self.stats["cis"] += 1
         if s.pc:
             self.stats["pc_cis"] += 1
+        if self.rnd == 1:
+            self.stats["r1_cis"] += 1
+            self.stats["r1_pc_cis"] += 1 if s.pc else 0
 
     # ------------------------------------------------------------------ steam, the falling Titan, Pinned (decision batch 8)
     def pinned_present(self):
@@ -919,7 +1287,7 @@ class Fight:
         no Help, spending nothing, as ODM use; a success makes the fall's band low, and a Jam makes the catcher fall
         (after_roll). POLICY CHOICE: the first such comrade who holds the Talent tries. Returns True on a catch."""
         for c in self.present():
-            if (c is s or not c.airborne or c.carried_by is not None or c.carrying is not None or c.pos != s.pos
+            if (c is s or not c.airborne or c.carried_by is not None or c.carrying is not None or c.zone != s.zone
                     or not c.odm_working() or not use_talent(c, "mid-air-catch", consume=False)):
                 continue
             use_talent(c, "mid-air-catch")
@@ -1008,6 +1376,9 @@ class Fight:
                 if not c.dead:
                     self.pin(c)
             self.pin(s)
+        # anchor-ratings.yaml, wrecking, by_a_falling_titan (16-20): one rating step off the zone the body lands in, its
+        # own zone; the dust effect is there for the step of the fall (16-30, no harm)
+        self.wreck_zone(self.t.zone)
 
     def pin(self, s):
         """falling_titan, pinned: one Crush Critical Injury at a rolled Injury Location that cannot be lethal and takes no
@@ -1025,7 +1396,8 @@ class Fight:
         if s.mounted:
             self.dismount(s)
         s.airborne = False
-        s.pos = IR
+        # titan-harm.yaml, pinned (16-23): attachment pinned naming the body, in its zone, in-reach relative to it
+        s.zone, s.attach = self.t.zone, ("pinned", self.t.label)
         self.after_harm(s, row)
 
     def corpse_heat(self, s):
@@ -1079,7 +1451,8 @@ class Fight:
         for s in self.present():
             if s.pinned and (part is None or s.pinned.get("part") == part):
                 s.pinned = None
-                s.pos = IR
+                s.airborne = False
+                s.pos = IR      # the detach rule: ground in the body's zone (16-8)
                 self.stats["freed" if part is None else "cut_free"] += 1
 
     def crush_only(self, s):
@@ -1101,8 +1474,9 @@ class Fight:
         if not grounded_before:
             self.titan_falls()
         for s in self.present():
-            if s.pos in (OB, BS):
-                s.pos = IR
+            if s.attach[1] == self.t.label and s.attach[0] != "pinned":
+                s.pos = IR      # positions.yaml, corpse (16-24): every attachment naming it but pinned ends (detach rule)
+        self.field.zones[self.t.zone].effects.add("steam")     # zones.yaml, effects, steam, in a corpse's zone (no harm)
         if self.pinned_present():
             self.stats["ran_on"] += 1
 
@@ -1117,6 +1491,78 @@ class Fight:
                     return
                 if out == "fights-back":
                     c["limit"] = R.limit_slows["turn"]
+
+    # ------------------------------------------------------------------ wrecks and the Stride (decision batch 16)
+    def wreck_zone(self, n):
+        """titan-format.yaml, effect_types, wreck, and a falling Titan (16-20): the zone takes one rating step toward Open
+        (space.wreck). A zone that becomes Open (16-21; OQ-205): every soldier anchored there becomes ground and stops
+        being airborne, with no fall, whatever stands in it; while a standing Focus Titan is in it, every soldier at its
+        Blind Spot holds on-body instead, not a fall. Momentum above the zone's new anchors is lost at once (16-4)."""
+        if n is None:
+            return
+        st = self.stats
+        st["wrecks"] += 1
+        frm, to, graced = space.wreck(self.field, R, n)
+        st["wreck_graces"] += 1 if graced else 0
+        if frm == to:
+            return
+        st["wreck_steps"] += 1
+        t = self.t
+        standing = not t.dead and not t.grounded() and t.zone == n
+        if to == R.open_rating:
+            # anchor-ratings.yaml, zone_becomes_open (OQ-205, provisional): every soldier anchored in the zone becomes
+            # ground and stops being airborne, with no fall, whatever stands in it; under a standing Focus Titan every
+            # soldier at its Blind Spot also holds on-body instead
+            st["zones_opened"] += 1 if standing else 0
+            for s in self.present():
+                if s.zone != n or s.pinned or s.carried_by is not None:
+                    continue
+                if standing and s.attach == ("blind-spot", t.label):
+                    s.attach = ("on-body", t.label)
+                elif s.attach[0] == "anchored":
+                    s.attach = ("ground", None)
+                    s.airborne = False
+        if standing and not self.bs_lost and not space.blind_spot_exists(R, self.field.rating(n), False):
+            self.bs_lost = True
+            st["bs_lost"] += 1
+        for s in self.present():
+            if s.zone == n:
+                self.trim_momentum(s)
+
+    def stride(self, h):
+        """behavior-procedure.yaml, resolving_a_card, stride (16-16 to 16-19): if the holder is in another zone, the Titan
+        moves toward the holder's zone one zone at a time, up to its Stride, stopping on entering it, the lower-numbered
+        zone on a tie (space.stride_route). Every soldier on-body or grabbed naming it moves with it, with any comrade they
+        carry; every soldier at its Blind Spot stays in the zone it leaves, anchored if airborne and on the ground if not.
+        It harms nobody, sets and clears no flag, and wrecks nothing."""
+        t = self.t
+        if h.zone is None or h.zone == t.zone:
+            return
+        st = self.stats
+        st["stride_steps"] += 1
+        route = space.stride_route(self.field, t.zone, h.zone, t.stride_now())
+        if not route:
+            return
+        st["strides"] += 1
+        for z in route:
+            for s in self.present():
+                if s.carried_by is not None or s.attach[1] != t.label:
+                    continue
+                if s.attach[0] in ("on-body", "grabbed"):
+                    s.zone = z
+                    st["stride_carried"] += 1
+                    if s.carrying is not None:
+                        self.follow(s.carrying, s)
+                elif s.attach[0] == "blind-spot":
+                    s.attach = (self.free_kind(s), None)
+                    st["stride_left"] += 1
+            t.zone = z
+            st["stride_zones"] += 1
+        if h.zone == t.zone:
+            st["stride_reach"] += 1
+        for s in self.present():
+            if s.attach[1] == t.label:
+                self.trim_momentum(s)
 
     # ------------------------------------------------------------------ Attention
     def meets(self, s, rung, most):
@@ -1146,10 +1592,12 @@ class Fight:
             return s.down
         raise ValueError(rung)
 
-    def evaluate(self, end_step=False):
+    def evaluate(self, end_step=False, only=None):
+        """attention.yaml, evaluation. `only` narrows the candidates to a retargeting evaluation's set: the same
+        rungs, the same steps, no new rule of selection (evaluation, retargeting; decision batch 13, 13-9)."""
         t = self.t
         self.stats["ladder_evals"] += 1
-        cands = self.present()
+        cands = self.present() if only is None else list(only)
         if not cands:
             t.holder = None
             return
@@ -1198,7 +1646,7 @@ class Fight:
 
     def begin(self):
         t = self.t
-        t.nb = t.roll_nb(self.rng)
+        t.nb = t.roll_nb(self.rng, self.stats)   # a new Focus Titan is at Frenzy 0, so this is a plain D6
         self.evaluate(end_step=True)
         trig = self.start_triggers()
         if trig:
@@ -1247,6 +1695,52 @@ class Fight:
         return True
 
     # ------------------------------------------------------------------ a Titan's card
+    def choose_behavior(self):
+        """behavior-procedure.yaml, resolving_a_card, choose, in full (decision batch 13, 13-9; OQ-192).
+
+        The Attention holder who does not meet the rolled entry's position_requirement no longer drops the Titan to
+        its fallback. The Attention Ladder is evaluated again over only the candidates who do meet it, and the
+        soldier it returns holds the Titan's Attention from that moment, so the entry's targets are read from them
+        (attention.yaml, evaluation, retargeting). Only when no candidate meets it does the fallback run, exactly as
+        it did before, with Attention unchanged."""
+        t = self.t
+        h = t.holder
+        if t.nb == t.thrash:
+            return t.thrash, h
+        e = t.entries[t.nb]
+        if not t.parts_ok(e):
+            return t.thrash, h
+        if h.pos in e["position_requirement"]:
+            return t.nb, h
+        # the holder cannot meet it: narrow the candidates and read the Ladder again over them
+        if self._retarget(e):
+            self.stats["retargets"] += 1
+            return t.nb, t.holder
+        # attention.yaml, evaluation, retargeting, none: nothing is evaluated and Attention does not change
+        self.stats["retarget_misses"] += 1
+        # the fallback is tested the same way, retargeting in its turn (round 3 review 1, M1)
+        fb = e["fallback"]
+        if fb in (t.thrash, "none") or fb == t.prev:
+            return t.thrash, h
+        fe = t.entries[fb]
+        if not t.parts_ok(fe):
+            return t.thrash, h
+        if h.pos in fe["position_requirement"]:
+            return fb, h
+        if self._retarget(fe):
+            self.stats["retargets"] += 1
+            return fb, t.holder
+        return t.thrash, h
+
+    def _retarget(self, entry):
+        """attention.yaml, evaluation, retargeting: narrow the candidates to those who meet the entry's
+        position_requirement and read the Ladder again over them. True when Attention moved."""
+        narrowed = [c for c in self.present() if c.pos in entry["position_requirement"]]
+        if not narrowed:
+            return False
+        self.evaluate(only=narrowed)
+        return True
+
     def titan_card(self):
         t = self.t
         self.stats["tracker_writes"] += 1       # round.yaml, gm_tracker, per_round_order: after each Titan card
@@ -1258,7 +1752,7 @@ class Fight:
         if t.holder == "decoy":
             t.hold_left -= 1
             t.prev = t.nb
-            t.nb = t.roll_nb(self.rng)          # a decoy's card spends the Next Behavior, and any Call It on it
+            t.nb = t.roll_nb(self.rng, self.stats)   # a decoy's card spends the Next Behavior, and any Call It on it
             self.stats["decoy_cards"] += 1
             if t.hold_left > 0:
                 return
@@ -1269,8 +1763,9 @@ class Fight:
         h = t.holder
         if h is None:
             return
+        self.stride(h)                      # the stride step, between attention and choose (16-16)
         called = t.called if (t.called and t.called["serial"] == t.nb_serial) else None
-        beh = t.choose(h.pos)
+        beh, h = self.choose_behavior()     # the choose step may move Attention (decision batch 13, 13-9)
         entry = t.entries[beh]
         dice = entry.get("attack_dice") or 0
         effects = entry["effects"]
@@ -1278,7 +1773,9 @@ class Fight:
         if entry["targets"] == "holder":
             targets = [h]
         else:
-            targets = sorted((s for s in self.present() if s.pos == h.pos and not s.grabbed),
+            # titan-format.yaml, holder-and-position (16-18): every soldier in the holder's zone who holds the same
+            # Position relative to the Titan, except a soldier who is Grabbed
+            targets = sorted((s for s in self.present() if s.zone == h.zone and s.pos == h.pos and not s.grabbed),
                              key=lambda s: self.card.get(s.name, 99))
         # decision batch 8, 8-1 (ADR-0019): the entry's Attack Dice are rolled once, in the open, as Titan Dice, and every
         # target compares against the same successes; 0 successes whiff against every target
@@ -1328,6 +1825,7 @@ class Fight:
             if net < 1 or s.dead:
                 continue
             self.stats["lands"] += 1
+            self.stats["r1_lands"] += 1 if self.rnd == 1 else 0
             for eff in effects:
                 if s.dead:
                     break    # decision batch 4, OQ-107
@@ -1362,12 +1860,14 @@ class Fight:
                         self.grab_lands(s, dodge_round, first_counted)
         if any(e["type"] == "telegraph" for e in effects):
             self.stats["telegraphs"] += 1
+        if any(e["type"] == "wreck" for e in effects) and not t.dead:
+            self.wreck_zone(t.zone)          # whether the behavior landed or whiffed (16-20)
         if beh == t.thrash:
             self.stats["thrash"] += 1
         t.prev = beh
         t.decoys_in_a_row = 0
         self.clear_flags()
-        t.nb = t.roll_nb(self.rng)        # Call It ends when the card that resolves it is finished
+        t.nb = t.roll_nb(self.rng, self.stats)   # Call It ends when the card that resolves it is finished
         self.stats["resolved"] += 1
 
     # ------------------------------------------------------------------ the Grab
@@ -1401,7 +1901,7 @@ class Fight:
         t.count[arm] = 0
         t.grab = {"victim": h, "arm": arm, "counted": 0, "lifted": False, "clear": False}
         h.grabbed = True
-        h.pos = OB
+        h.zone, h.attach = t.zone, ("grabbed", t.label)       # grab.yaml (16-23): grabbed naming it, on-body
         h.airborne = False
         if c is not None and was_air and not c.dead:
             self.fall_carried(c, band)
@@ -1430,10 +1930,10 @@ class Fight:
         if dead or v.dead:
             return
         if g["lifted"]:
-            v.pos = OB
+            v.attach = ("on-body", t.label)      # freed after a lift: a fall first, then ground (16-23)
             self.fall(v)
         else:
-            v.pos = IR
+            v.pos = IR                           # freed and not lifted: ground in the holding Titan's zone
 
     def grabbed_turn(self, s):
         t = self.t
@@ -1518,11 +2018,12 @@ class Fight:
         need = t.tough(part) - t.count[part]
         holding = bool(t.grab and t.grab["arm"] == part)
         # stay_for: a Pinned comrade whose pinning Body Part this is, under a retreat (8-21)
-        self.order_check(s, stay_for=stay_for or (t.grab["victim"] if (holding and s.pos == t.grab["victim"].pos) else None),
+        self.order_check(s, stay_for=stay_for or (t.grab["victim"] if (holding and s.zone == t.grab["victim"].zone) else None),
                          action="body-part-strike")
         s.cur_action = True
         s.forced_strike = False       # a Body Part strike takes a Fear row's forced strike (decision batch 7, 7-8)
-        res = roll(self.rng, s, "body-part-strike", bonus=len(helpers), gear="blade",
+        bite = self.bite(s, R.bonus_cap - len(helpers))
+        res = roll(self.rng, s, "body-part-strike", bonus=len(helpers) + bite, gear="blade",
                    push_to=need if push_to is None else push_to,
                    extra_pen=R.grab_strike_penalty if holding else 0, context=self.talent_context())
         self.stats["bodies"] += 1
@@ -1535,7 +2036,7 @@ class Fight:
         if hamstring and succ >= 1:
             succ += R.hamstring_extra
         if succ >= 1 and not t.dead:
-            s.flags["hurt"] = True          # a corpse gives no flag and no Openings (decision batch 8, 8-17)
+            self.set_flag(s, "hurt")        # a corpse gives no flag and no Openings (decision batch 8, 8-17)
         for _ in range(succ):
             if t.state[part] == R.broken:
                 if not t.dead:
@@ -1562,6 +2063,18 @@ class Fight:
         return (s.pos == BS and t.holder is not s and not s.grabbed and not s.down and s.handles and not s.left
                 and (spent_ok or not s.cur_action) and (s.odm_working() or t.grounded()) and not self.retreat)
 
+    def bite(self, s, room):
+        """anchor-ratings.yaml, momentum, spends, bite (16-14): 1 Bonus Die for each Momentum spent on a strike this turn
+        against a Focus Titan in the zone the Flight ended in, within the cap; declared before the roll. How much is
+        policy.bite's choice."""
+        n = min(max(0, room), s.momentum, P.bite(self, s)) if s.flight_zone is not None and s.flight_zone == self.t.zone \
+            and s.flight_zone == s.zone and not self.t.dead else 0
+        if n:
+            s.momentum -= n
+            self.stats["momentum_spent"] += n
+            self.stats["momentum_bite"] += n
+        return n
+
     def free_openings(self, s):
         return sum(1 for o in self.t.openings if o != s.name)
 
@@ -1579,17 +2092,22 @@ class Fight:
         if self.retreat:
             raise ValueError(f"{s.name} made a Nape strike during a retreat (background-titans.yaml, retreat, effects, actions)")
         self.order_check(s)
-        hs = P.helpers(self, s, R.bonus_cap - g - use) if help_nape else []
+        bite = self.bite(s, R.bonus_cap - g - use)
+        hs = P.helpers(self, s, R.bonus_cap - g - use - bite) if help_nape else []
+        self.stats["nape_helps"] += len(hs)
+        self.stats["nape_helps_adjacent"] += sum(1 for h in hs if h.zone != s.zone)
+        if self.stats.get("first_nape_round") is None:
+            self.stats["first_nape_round"] = self.rnd
         if ready_blade:
             self.spend_action(s)      # talents.yaml, ready-blade: the Nape strike spends the action of the next turn
         s.cur_action = True
         s.forced_strike = False       # a Nape strike takes a Fear row's forced strike (decision batch 7, 7-8)
-        res = roll(self.rng, s, "nape-strike", bonus=g + use + len(hs), gear="blade", push_to=t.nd,
+        res = roll(self.rng, s, "nape-strike", bonus=g + use + bite + len(hs), gear="blade", push_to=t.nd,
                    context=self.talent_context())
         self.stats["napes"] += 1
         self.stats["tracker_writes"] += 1
         self.after_roll(s, res, "blade")
-        s.flags["hooked"] = True
+        self.set_flag(s, "hooked")
         P.on_nape(self, s, res)
         if res.succ >= t.nd:
             grounded_before = t.grounded()
@@ -1670,7 +2188,7 @@ class Fight:
         need = self.ba_need(s, decoy)
         if decoy == "feint" and R.ba_needs["feint_extra"] and use_talent(s, "close-pass"):
             self.stats["talent_fires"] += 1
-        self.order_check(s, stay_for=t.grab["victim"] if (t.grab and s.pos == t.grab["victim"].pos) else None,
+        self.order_check(s, stay_for=t.grab["victim"] if (t.grab and s.zone == t.grab["victim"].zone) else None,
                          action="break-attention")
         s.cur_action = True
         if decoy == "flare":
@@ -1681,7 +2199,11 @@ class Fight:
             self.stats["cloaks"] += 1
         elif decoy == "feint":
             self.stats["feint_rolls"] += 1
-        res = roll(self.rng, s, "break-attention", gear=gear, push_to=need)
+        # anchor-ratings.yaml, ratings, open, terrain_trait (16-5): a mounted soldier's Break Attention gains the trait's
+        # Bonus Dice in an Open zone (bonus-dice-sources.yaml, terrain-trait)
+        terrain = R.mounted_ba_dice.get(self.field.rating(s.zone), 0) if s.mounted and s.zone is not None else 0
+        self.stats["terrain_dice"] += terrain
+        res = roll(self.rng, s, "break-attention", bonus=terrain, gear=gear, push_to=need)
         self.stats["tracker_writes"] += 1
         self.after_roll(s, res, gear)
         if res.succ >= need and not t.dead and not s.dead and t.holder != "decoy":
@@ -1709,7 +2231,7 @@ class Fight:
         if decoy == "riderless-horse":
             s.mounted = False
             s.horse_gone = True
-            s.horse_at = None
+            s.horse_zone = None
             self.stats["horses_sent"] += 1
         P.after_decoy(self, s)
 
@@ -1717,6 +2239,8 @@ class Fight:
     def soldier_turn(self, s):
         t = self.t
         s.turns += 1
+        s.quiet = False          # quiet and bite last the soldier's own turn (anchor-ratings.yaml, momentum, spends)
+        s.flight_zone = None
         if s.wing_of is not None:
             self.stats["wing_turns"] += 1
         ban_started = s.ban > 0
@@ -1730,11 +2254,10 @@ class Fight:
             # result spent, since a row that spends the turn may also force the move
             toward, s.forced_move = s.forced_move, None
             if not (s.left or s.down or s.grabbed or s.carried_by is not None or s.pinned):
-                spent, s.cur_move = s.cur_move, False
+                # positions.yaml, moves, forced_step: it spends nothing (decision batch 16 rewrote the step for zones; the
+                # engine before it spent the move with the step)
                 if P.forced_move(self, s, toward):
                     self.stats["fear_moves"] += 1
-                else:
-                    s.cur_move = spent
         if s.pinned and t.dead and s.pinned["since"] < s.turns and not s.left:
             self.corpse_heat(s)     # decision batch 8, 8-7: at the start of each turn after the fall, under a corpse
         if s.dead:
@@ -1764,6 +2287,8 @@ class Fight:
             P.take_turn(self, s)
             self.death_rolls(s)
         s.card_passed = True
+        s.quiet = False
+        s.flight_zone = None
         if ban_started and s.ban > 0:
             s.ban -= 1
 
@@ -1815,13 +2340,13 @@ class Fight:
             s.acted_first, s.lifted_first = None, False
             s.card_passed = False
             s.dodge_succ = None
-            s.odm_used = s.odm_pushed = False
+            s.odm_used = s.odm_pushed = s.odm_moved = False
             s.gas_rolled = False
             s.start_pos = s.pos
         return self.events()
 
     def swap_step(self, events):
-        """round.yaml, swapping: two card holders, neither Down nor Grabbed, at the same Position or one step apart,
+        """round.yaml, swapping: two card holders, neither Down nor Grabbed, in the same zone or adjacent ones (16-11),
         each in at most one swap a round; a Titan's card and a Squadmate on a Wing are never swapped."""
         if not self.cfg.get("swaps"):
             return events
@@ -1829,7 +2354,7 @@ class Fight:
         for a, b in P.swaps(self):
             if (a.name in used or b.name in used or a is b or a.dead or b.dead or a.left or b.left or a.down or b.down or a.grabbed
                     or b.grabbed or a.wing_of is not None or b.wing_of is not None
-                    or (self.steps_apart(a.pos, b.pos) > 1 and not self.change_order(a, b, namers))):
+                    or (self.zones_apart(a, b) > 1 and not self.change_order(a, b, namers))):
                 continue
             self.card[a.name], self.card[b.name] = self.card[b.name], self.card[a.name]
             used |= {a.name, b.name}
@@ -1882,6 +2407,7 @@ class Fight:
                 self.titan_card()
             elif not who.dead:
                 self.soldier_turn(who)
+            self.momentum_sweep()
             P.after_event(self)
             if t.dead and self.stats["kill_round"] is None:
                 self.stats["kill_round"] = rnd
@@ -1929,10 +2455,17 @@ class Fight:
                 t.state[p] -= 1
                 self.steam(STEAM_AT_REGEN, "steam_regen")     # decision batch 8, 8-7: a fill that recovers a Body Part
             t.regen = 0
+        # round.yaml, end_steps, frenzy (decision batch 13, 13-10): every living Focus Titan's Frenzy rises by 1 to
+        # its cap, during a retreat as well, and never touches a Next Behavior already rolled. It raises only a Titan
+        # that is a Focus Titan when the step runs (round 3 review 1, C2), which this model cannot distinguish because
+        # it has no Background Titans: the one Focus Titan is present from the start. It rises only at the end of a
+        # round that is a multiple of the rate (round.yaml; every third round at rate 3 since the zone retune, Z2).
+        if not t.dead and t.frenzy < R.frenzy_cap and self.rnd % R.frenzy_rate == 0:
+            t.frenzy += 1
         if was_grounded and not t.grounded():
             self.free_pinned()      # decision batch 8, 8-9: a living Titan that stops being grounded frees its Pinned
             t.heave_count = 0       # decision batch 8, 8-22: and its heave count clears
-        if was_grounded and not t.grounded() and self.rating == R.grounded_extra_rating:
+        if was_grounded and not t.grounded() and self.t_rating() == R.grounded_extra_rating:
             a, b = R.grounded_end_move
             for s in self.present():
                 if s.pos == a and not s.grabbed:
@@ -1943,6 +2476,11 @@ class Fight:
             self.retreat = True
             self.retreat_began = self.rnd
             self.stats["retreats"] += 1
+        # round-ends (anchor-ratings.yaml, momentum, lost): a soldier who made no ODM move this round loses all Momentum
+        for s in self.sold:
+            if s.momentum and not s.odm_moved:
+                self.stats["momentum_lost"] += s.momentum
+                s.momentum = 0
         self.stats["tracker_writes"] += 1       # at the end steps
         P.end_of_round(self)
 

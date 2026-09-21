@@ -140,7 +140,7 @@ const SECTIONS = [
       </BoxPair>
 
       <Subsection title="Covering" id="covering">
-        <p>A player character who is not Down, not Pushing, and one step away or nearer takes the Stress instead — declared after the Push, before any re-roll, one Coverer only, and refusable.</p>
+        <p>A player character who is not Down, not Pushing, and in the Pushing soldier's zone or an adjacent zone takes the Stress instead, declared after the Push, before any re-roll, one Coverer only, and refusable.</p>
         <p><b>The Coverer gains 1 Stress;</b> the Pusher gains none and adds no Stress Die. Everything else stands: a 1 is still <em>their</em> Stress Response, their gear still wears. Not an action, and a Squadmate never Covers.</p>
       </Subsection>
 
@@ -170,7 +170,7 @@ const SECTIONS = [
         <li><b>Listed sources only,</b> declared before the dice and never added later.</li>
         <li><b>Cap of 4.</b> Over it you choose, and what you leave out is not spent.</li>
         <li><b>Help</b> adds 1 die, from up to 3 comrades who never roll and take no Stress Response.</li>
-        <li><b>It spends the helper's action</b> in a fight, from one step away or nearer. Elsewhere, whatever the calling rule says.</li>
+        <li><b>It spends the helper's action</b> in a fight, from the roller's zone or an adjacent zone. Elsewhere, whatever the calling rule says.</li>
       </ul>
 
       <SectionHead id="the-round" eyebrow="6">The Round</SectionHead>
@@ -211,7 +211,7 @@ const SECTIONS = [
 
       <ul>
         <li><b>One Position per Focus Titan and per corpse.</b> Holding one is the test for being in the fight.</li>
-        <li><b>A move changes one named Titan's Position by one step</b> — the only way you change your own.</li>
+        <li><b>A move is a zone step to an adjacent zone or an attachment step in your own zone,</b> the only way you change your own Position.</li>
         <li><b>Close to one, loose from the other.</b> Coming to On Body or Blind Spot on one makes any other's In Reach.</li>
         <li><b>A fall from the body</b> lands you In Reach. From further out, your Position holds.</li>
       </ul>
@@ -225,7 +225,7 @@ const SECTIONS = [
         <ul>
           <li><b>Every ODM move in a fight is a Flight:</b> roll Fly on your own harness, needing no successes.</li>
           <li><b>The step happens whatever the dice say.</b> The roll decides what it was <em>worth</em>.</li>
-          <li><b>Each success is 1 Momentum,</b> up to the Anchors left. <b>No successes and you are marked loudest</b>, from any Position — Distant included.</li>
+          <li><b>Each success is 1 Momentum,</b> up to the Anchors of the zone you started in. <b>No successes and you are marked loudest,</b> from any Position, Distant included.</li>
           <li><b>Not Flights:</b> letting go, a step on foot, a mounted step, being carried, and a Fear Roll's forced step. A move made under a <em>retreat</em> is one.</li>
         </ul>
       </Subsection>
@@ -235,10 +235,10 @@ const SECTIONS = [
       <CoreTable table="anchors" />
 
       <ul>
-        <li><b>Momentum is capped by the Anchors left,</b> and you <b>lose all of it at the end of any round you made no ODM move in</b>. You spend it in your own turn; the GM never grants, spends, or takes a point.</li>
-        <li><b>Anchors are never restored.</b> A wreck destroys 1, landed or whiffed; a falling body destroys 1 where it lands. Caps fall with them.</li>
-        <li><b>At 0 Anchors nobody holds Momentum</b> — but Flights still fly and <b>no step row changes</b>.</li>
-        <li><b>The mounted charge:</b> a mounted step between Distant and In Reach may mark you loudest. Never rolled, not ODM use — and at Open it may be made <b>twice in one move</b>.</li>
+        <li><b>Momentum is capped by the Anchors of the zone you're in,</b> and you <b>lose all of it at the end of any round you made no ODM move in</b>. You spend it in your own turn; the GM never grants, spends, or takes a point.</li>
+        <li><b>A zone's Anchors are never restored.</b> A wreck takes one rating step off the Titan's own zone, landed or whiffed; a falling body does the same to the zone it lands in. Caps fall with the zone.</li>
+        <li><b>At Open, nobody in that zone holds Momentum,</b> but Flights still fly, and every soldier Anchored in a zone that becomes Open <b>lands Ground with no fall</b>, whatever stands there, a provisional rule not yet settled. A wreck to Open also <b>removes that zone's Blind Spot step</b>, turning a standing Titan's Blind Spot there into On Body.</li>
+        <li><b>The mounted charge:</b> a mounted move that enters or leaves a zone holding a Focus Titan may mark one such Titan loudest, your choice, once per move. Never rolled, not ODM use.</li>
       </ul>
 
       <SectionHead id="titans" eyebrow="8">Titans and the Grab</SectionHead>
@@ -250,7 +250,7 @@ const SECTIONS = [
       <MarginNote stamp="Read twice">The soldier holding a Titan's Attention cannot make a Nape strike against it. Somebody has to be the one it is looking at.</MarginNote>
 
       <ul>
-        <li><b>Frenzy.</b> Every Focus Titan starts a fight at 0 and gains <b>1 at the end of each round, to a cap of 3</b>. It is added to its behavior roll, and every table runs from terrorising to killing, so <b>it gets worse the longer you take</b>. A result past the table's last entry reads as that entry.</li>
+        <li><b>Frenzy.</b> Every Focus Titan starts a fight at 0 and gains <b>1 at the end of every third round, to a cap of 3</b>. It is added to its behavior roll, and every table runs from terrorising to killing, so <b>it gets worse the longer you take</b>. A result past the table's last entry reads as that entry.</li>
         <li><b>It turns on whoever it can reach.</b> If the soldier holding its Attention is not standing where the rolled behavior works, it takes the next candidate down the ladder who is, and its Attention goes with them. Only with nobody reachable does the behavior fall back.</li>
       </ul>
 

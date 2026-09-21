@@ -11,6 +11,7 @@ import { CARRIED_COMRADE_ITEMS, CARRYING_LIMIT_BONUS, MAX_GRIEF_COUNTED } from '
 import { entryNeeds, ROLL_TALENTS } from '../src/rules/roll.ts';
 import type { LpTables, Procedure } from '../src/rules/lifepath.ts';
 import { terrainTrait } from '../src/rules/engagement/momentum.ts';
+import type { FieldSize, ZoneRules } from '../src/rules/engagement/zones.ts';
 import { docId } from './data/ids.ts';
 import { wordingTexts } from './data/lifepath-wording.ts';
 
@@ -291,6 +292,52 @@ export function packIds(t: Tables) {
   };
 }
 
+/** The field rules src/rules/engagement/zones.ts reads (ZoneRules), from the data. */
+export function zoneRulesOf(t: Tables): ZoneRules {
+  const z = t.zones;
+  const layout = (sid: FieldSize) => {
+    const row = z.fields.sizes.find((x) => x.id === sid)!;
+    return { centre: row.centre, squadStart: row.squad_start, zones: row.zones.map((c) => ({ n: c.n, q: c.q, r: c.r })) };
+  };
+  return {
+    offsets: z.coordinates.neighbour_offsets.map(([dq, dr]) => [dq, dr] as [number, number]),
+    layouts: { skirmish: layout('skirmish'), standard: layout('standard'), 'set-piece': layout('set-piece') },
+    defaultSize: z.fields.default,
+    ratings: t.anchorRatings.ratings.map((r) => ({ id: r.id, anchors: r.anchors, carryCost: r.carry_cost, sparser: r.sparser, denser: r.denser })),
+    flight: {
+      firstStepCost: z.flight.first_step_cost,
+      offField: z.flight.carry_cost_off_field,
+      attachStep: z.flight.carry_cost_attachment_step,
+      carryLimit: z.flight.carry_limit,
+      endsFreeInOpen: z.flight.ends_free_in_open,
+    },
+    mounted: { zoneSteps: z.moves.mounted.zone_steps, stopsAtTitan: z.moves.mounted.ends_on_entering_a_standing_focus_titans_zone_unless_open },
+    terrain: t.engagementSetup.zone_terrain.rows.map((r) => ({ results: [...r.results], rating: r.rating })),
+    ...ratingRoles(t),
+  };
+}
+
+/**
+ * The ratings the rules name by role, read from the data rather than by id (review m2): the bottom of
+ * the ladder (its own sparser), the one whose trait keeps the first wreck, the one the grounded extra
+ * step names, and those whose zones raise a fall.
+ */
+function ratingRoles(t: Tables): Pick<ZoneRules, 'openRating' | 'graceRating' | 'groundedExtraRating' | 'fallRaise'> {
+  const rs = t.anchorRatings.ratings;
+  const one = (what: string, list: typeof rs) => {
+    if (list.length !== 1) throw new Error(`data/engagement/anchor-ratings.yaml: ${what} reads on ${list.map((r) => r.id).join(', ') || 'no rating'}; expected one.`);
+    return list[0].id;
+  };
+  const openText = t.anchorRatings.grounded_titan.open_rating.replace(/\s+/g, ' ');
+  const heightText = t.falls.height.steps.join(' ');
+  return {
+    openRating: one('the bottom of the ladder', rs.filter((r) => r.sparser === r.id)),
+    graceRating: one('the wreck grace', rs.filter((r) => /first (Anchor )?wreck/i.test(r.terrain_trait))),
+    groundedExtraRating: one('the grounded extra step', rs.filter((r) => new RegExp(`\\b[ia][nt] an? ${r.name} zone`, 'i').test(openText))),
+    fallRaise: rs.filter((r) => heightText.includes(r.name)).map((r) => r.id),
+  };
+}
+
 /** The tables the Engagement tracker reads (milestone 4, foundry/docs/tracker-plan.md). */
 export function engagementConfig(t: Tables) {
   const source = (sid: string) => {
@@ -317,9 +364,17 @@ export function engagementConfig(t: Tables) {
       trait: terrainTrait(r.id),
       steps: r.steps.map((x) => ({ a: x.between[0], b: x.between[1], onFoot: x.on_foot, mounted: x.mounted, odm: x.odm })),
     })),
+    // The field (zones.yaml, anchor-ratings.yaml, engagement-setup.yaml; decision batch 16): the
+    // values src/rules/engagement/zones.ts reads (configureZones).
+    zones: zoneRulesOf(t),
+    // Frenzy's rate and cap (titan-format.yaml, frenzy; src/rules/engagement/cards.ts, configureFrenzy).
+    frenzy: { rate: t.titanFormat.frenzy.rate, cap: t.titanFormat.frenzy.cap },
+    // Each Titan's Stride by id and by Size Class (size-classes.yaml, stride; decision batch 16, 16-16).
+    stride: { byTitan: Object.fromEntries(t.titans.map((x) => [x.id, x.stride])) as Record<string, number>, bySize: Object.fromEntries(t.sizeClasses.classes.map((c) => [c.id, c.stride])) as Record<string, number> },
     // Momentum and its spends (anchor-ratings.yaml, momentum; decision batch 10, OQ-182).
     momentum: {
-      spends: t.anchorRatings.momentum.spends.list.map((x) => ({ id: x.id, cost: x.cost })),
+      // Carry is priced per step by the zones (zones.ts, carryCostInto); every other spend costs 1.
+      spends: t.anchorRatings.momentum.spends.list.map((x) => ({ id: x.id, cost: typeof x.cost === 'number' ? x.cost : null })),
       biteDice: 1,
       braceDice: 1,
     },

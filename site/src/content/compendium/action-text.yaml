@@ -15,33 +15,33 @@
 # the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/character/action-catalog.yaml
-    sha: "747752afe49fd764d041b05362412356a62fe355"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
   - path: data/engagement/attention.yaml
-    sha: "a01305bb80f454c445be1d37ab633b85d0027c5d"
+    sha: "d348f104102dffcbc8dcdbfda73f57a4e7ec7ded"
   - path: data/engagement/read.yaml
-    sha: "5cbfdd4940f123fe6d0ec2bbeacbe25db25d6f66"
+    sha: "4c6f60af2d757027d71368129ae3ec6f58ea3004"
   - path: data/engagement/round.yaml
-    sha: "a6d51d5d3d3a3c8348bf0659e4dabd35c28df781"
+    sha: "80ceb842525c338d3dd05ca723911ef63c9fb491"
   - path: data/engagement/squad-tactics.yaml
-    sha: "87501601328423ccb80ce40efdcc53373ee1c1cc"
+    sha: "404d461f565f9ba376a80b6273f8a0ed8e78074a"
   - path: data/engagement/titan-harm.yaml
-    sha: "286457b6cca7e728c54919581b96ed55c24dbe45"
+    sha: "868ba62206d22f8eab5d716629a71c750ec63e11"
   - path: data/engagement/grab.yaml
-    sha: "7361e0322fd2bdd2018b54efc3704e30b849dbe3"
+    sha: "b52129f3597da2e8a0d9e21d54dcd541c08cf21d"
   - path: data/gear/carrying.yaml
-    sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
+    sha: "50681aaa7a60484b017b19fea4070de120c83a5b"
   - path: data/gear/horses.yaml
-    sha: "48bd1167d74e56c1e26f8265358876e0052c96e3"
+    sha: "67a3d5ffdcee0b0cd4ccf29e97af715dc38b985e"
   - path: data/gear/odm-gear.yaml
-    sha: "f94d9eb82fea1f7ae58339f7b037d3162e837b11"
+    sha: "8ef3b0a50aa0f8c9d0af0b3bd78d3ac268c98a03"
   - path: data/gear/blade-sets.yaml
     sha: "2f33a0bf9d8236c8c471881d782878d54e144bbe"
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/gear/field-repair.yaml
-    sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
+    sha: "ed5f381e7628b96259c7c6b71255d5842b248daa"
   - path: data/harm/treat-injury.yaml
-    sha: "28603f6905aaa187b8239f2df6b3c4756bef8dda"
+    sha: "96c6823d32328986ef2c204d4437dff91363d9e2"
   - path: data/campaign/downtime.yaml
     sha: "d5e2091e7d41e0f0eefdad38f71f584c856dfce3"
   - path: data/core/dice-pool.yaml
@@ -60,7 +60,7 @@ actions:
     does:
       - If the successes reach the Nape Depth, the Titan dies. If they fall short, each success creates 1 Opening, which your comrades can spend and you never can.
       - Openings, a grounded Titan, and Help can add Bonus Dice, up to the cap of 4. Its successes never count toward a later Nape strike, except as Openings.
-      - Making the strike counts as hooking into the Titan for the Attention Ladder only. It does not move you, and you are still at Blind Spot, anchored to the terrain behind the Titan and not on it. Because this roll needs a soldier who does not hold the Titan's Attention, a striker who draws that Attention onto themselves cannot strike again until the Attention moves.
+      - Making the strike counts as hooking into the Titan for the Attention Ladder only. It does not move you, and you are still at Blind Spot, anchored to the terrain behind the Titan and not on it. Because this roll needs a soldier who does not hold the Titan's Attention, a striker who draws that Attention onto themselves cannot strike again until the Attention moves, whether by a comrade's Draw Attention, by a decoy, or by the Titan retargeting to someone it can reach.
     pages: [fighting-titans, gear-and-odm]
 
   body-part-strike:
@@ -118,7 +118,7 @@ actions:
       - The same Read revealed the Titan's Next Behavior. You declare Call It when the Read's facts are picked.
     needs: 2 of the Read's successes, the one that revealed the Next Behavior and one more.
     does:
-      - Every target other than you who dodges the card that resolves that behavior gains Bonus Dice on the dodge, even when the card resolves it as its fallback or as Thrash. You gain none from your own Call It.
+      - Every target other than you who dodges the card that resolves that behavior gains Bonus Dice on the dodge, even when the card resolves it as its fallback or as Thrash, and even when the Titan retargets and the behavior lands on someone else. What you Called is the entry, not the soldier it lands on. You gain none from your own Call It.
       - A target who already cancelled with a dodge made earlier this round against that Titan gains nothing. A Next Behavior can be Called once.
     pages: [fighting-titans]
 
@@ -131,7 +131,7 @@ actions:
     does:
       - On a success you are freed.
     help: >-
-      In a Titan Engagement, Help as usual, with Positions compared relative to the Titan holding you. In a
+      In a Titan Engagement, Help as usual, from the Grabbed soldier's zone or an adjacent zone. In a
       Skirmish, up to three comrades taking part who are not Down may Help, each spending their action, whether
       Engaged or Apart.
     pages: [fighting-titans, skirmishes]
@@ -139,7 +139,7 @@ actions:
   swap-initiative-card:
     requires:
       - Only in the swap step of a round in a Titan Engagement, before the round's first card comes up.
-      - Two soldiers who each hold a card this round and are neither Down nor Grabbed, at the same Position or one Position step apart, or who have both left the Titan Engagement.
+      - Two soldiers who each hold a card this round and are neither Down nor Grabbed, in the same zone or adjacent zones, or who have both left the Titan Engagement.
       - Both soldiers agree.
     does:
       - The two soldiers exchange their cards. Each soldier takes part in at most one swap each round, and a Titan's card is never swapped.
@@ -156,7 +156,7 @@ actions:
   lift-comrade:
     requires:
       - The comrade is Down, or is not Down, agrees, and cannot move because of injuries to both legs.
-      - In a Titan Engagement, the comrade holds your Position and is not Pinned. Outside one, the comrade takes part in the same procedure as you.
+      - In a Titan Engagement, the comrade is in your zone and is not Pinned. Outside one, the comrade takes part in the same procedure as you.
       - The comrade is not Grabbed and not already carried.
       - You are not Down, carry no other comrade, and are not carried.
     does:
@@ -172,7 +172,7 @@ actions:
     does:
       - Each success adds 1 to the body's heave count. When the count reaches the body's Heave rating, every soldier it pins is freed. The count carries over between Heaves by different soldiers.
       - Heaving a corpse costs you 1 Burn damage after the roll, whatever its result.
-    help: Comrades who hold your Position may Help, each spending their action.
+    help: Comrades in your zone or an adjacent zone may Help, each spending their action.
     pages: [fighting-titans]
 
   change-canister:
@@ -186,7 +186,7 @@ actions:
   pass-item:
     requires:
       - You are not Down.
-      - The receiver is a living comrade at your Position, and may be Down or Grabbed. Outside a Titan Engagement, the receiver takes part in the same procedure as you.
+      - The receiver is a living comrade in your zone, and may be Down or Grabbed. Outside a Titan Engagement, the receiver takes part in the same procedure as you.
     does:
       - Give one item. You can pass a spare gas canister, your fitted canister if it has gas, a Blade Set not in the handles, a medical kit, a tool kit, or a flintlock pistol or musket. Never ODM Gear, the Blade Set in the handles, a horse, a carried comrade, or Squad Supply.
       - No roll, so it is never Helped or Covered. In a Titan Engagement it spends your action; outside one it spends nothing.
@@ -195,7 +195,7 @@ actions:
   take-item:
     requires:
       - You are not Down.
-      - A Down comrade who is not Grabbed holds your Position, or, in a Titan Engagement only, a dead comrade's left items lie at your Position.
+      - A Down comrade who is not Grabbed is in your zone, or, in a Titan Engagement only, a dead comrade's left items lie in your zone.
       - Outside a Titan Engagement, the Down comrade takes part in the same procedure as you.
     does:
       - Take one item the Down comrade could pass, or one of the left items. Left items are never taken outside a Titan Engagement; they are shared out instead.
@@ -204,12 +204,12 @@ actions:
 
   mount-or-dismount:
     requires:
-      - To mount, you have your own horse, it is not lame, and in a Titan Engagement it holds your Position.
-      - To mount, you are not airborne, Down, or carried, and in a Titan Engagement not Grabbed.
+      - To mount, you have your own horse, it is not lame, and in a Titan Engagement it is in your zone.
+      - To mount, you are not airborne, Down, or carried, and in a Titan Engagement not Grabbed, and free (on the Ground or Anchored).
       - A soldier who has lost both arms mounts and dismounts only with a comrade's help.
       - To dismount, you are mounted.
     does:
-      - In a Titan Engagement it is part of a move, never an action. A move can include one mount or one dismount, and a horse you dismount stays at your Position.
+      - In a Titan Engagement it is part of a move, never an action. A move can include one mount or one dismount, and a horse you dismount stays in your zone.
       - Outside a Titan Engagement you mount or dismount when the procedure under way says so.
     pages: [gear-and-odm]
 
@@ -225,7 +225,7 @@ actions:
     requires:
       - You are not Down.
     does:
-      - Drop a carried item, which leaves play, set down a comrade you carry, who then holds your Position, or stop being carried.
+      - Drop a carried item, which leaves play, set down a comrade you carry, who then is in your zone, or stop being carried.
       - In a Titan Engagement, at any point in your own turn, as often as you like, spending neither your move nor your action. No one is set down, or stops being carried, while the carrier is airborne. Outside a Titan Engagement, at any time.
     pages: [gear-and-odm]
 
@@ -241,14 +241,14 @@ actions:
   help:
     does:
       - Add 1 die to a comrade's roll. Up to 3 comrades can Help one roll, and each die counts toward the Bonus Dice cap of 4.
-      - In a Titan Engagement it spends your action, and you must be at the roller's Position or one step away. Outside a Titan Engagement, you can Help only where the rule that calls for the roll allows it.
+      - In a Titan Engagement it spends your action, and you must be in the roller's zone or an adjacent zone. Outside a Titan Engagement, you can Help only where the rule that calls for the roll allows it.
       - On a roll the GM calls for, you can Help if you are present and able to help with the act, as the GM rules. It spends nothing unless the GM names a cost of time or position for it before the dice, which falls when you declare the Help, whatever the roll gives. In a Skirmish that Help is the Skirmish's, spending your action.
     pages: [rules-of-play#help]
 
   cover:
     requires:
       - A comrade has declared a Push, and no die has been rolled again yet.
-      - You are a player character. In a Titan Engagement you are at the Pushing soldier's Position or one step away. Outside one, you qualify to Help that roll.
+      - You are a player character. In a Titan Engagement you are in the Pushing soldier's zone or an adjacent zone. Outside one, you qualify to Help that roll.
     does:
       - You take on the Stress of the Push. You gain 1 Stress, and the Pushing soldier gains no Stress and adds no new Stress Die. Covering is not an action.
     pages: [rules-of-play#covering]
@@ -343,7 +343,7 @@ actions:
   field-repair:
     requires:
       - Name the item before rolling. ODM Gear, a tool kit, a flintlock pistol, or a musket, never a Blade Set, a horse, a medical kit, or the tool kit giving this roll its Gear Dice.
-      - In a Titan Engagement, the item is your own or belongs to a comrade at your Position.
+      - In a Titan Engagement, the item is your own or belongs to a comrade in your zone.
       - Outside a Titan Engagement, only in a care window held when a Titan Engagement ends, when a day passes on an Expedition, or on the interim day, for an item of any soldier taking part in it. Never at another time.
     needs: "1"
     does:
@@ -361,8 +361,8 @@ actions:
       - Outside a Titan Engagement, also made when the GM calls a roll for an act this entry fits, such as reaching a rooftop.
     needs: A Flight needs nothing. A roll another rule calls for needs what that rule states. Outside a Titan Engagement, 1.
     does:
-      - "A Flight's step happens whatever the roll gives, so flying is never slower than walking the same line. What the roll decides is what the flight was worth: each success is 1 Momentum, up to the Anchors left."
-      - On no successes you come in loud and are marked loudest on the Titan you flew relative to, from any Position, Distant included. Momentum spent on Quiet stops that mark.
+      - "A Flight's step happens whatever the roll gives, so flying is never slower than walking the same line. What the roll decides is what the flight was worth: each success is 1 Momentum, up to the anchors of the zone you started in. Momentum above the anchors of the zone you end in is lost."
+      - On no successes you come in loud and are marked loudest on every Focus Titan in the zone you end in, or the nearest one when there is none. Crossing a Titan's zone without landing there marks it loudest too, whatever the roll gave. Momentum spent on Quiet stops those marks.
       - A Flight is a roll with your own harness as well as an ODM move, so it leaves you airborne and counts toward the one Gas Roll you make for the round.
       - "Called by another rule, that rule says what the roll needs and what it does. On a called roll it gives what the GM staked before the dice. In a Skirmish it is the one Fly roll there is: it takes its Gear Dice, makes no Gas Roll, never makes you airborne, and leaves you neither Engaged nor Apart."
     help: >-

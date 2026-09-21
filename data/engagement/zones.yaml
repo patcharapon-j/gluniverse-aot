@@ -1,0 +1,275 @@
+# The field of a Titan Engagement: its zones, how soldiers are placed in them by an attachment, how
+# the four Positions are derived from zone and attachment, how moves, Flights, and the Stride read the
+# zones, and the effects a zone can hold (ADR-0029; decision batch 16, 16-2 to 16-33).
+# Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (sections 5.1 and 5.2) references
+# this file and renders its tables from it (tools/render/render.py). The keys, ids, numbers, and list
+# shapes are a contract that the simulator (tools/sim/space.py) and the Foundry system
+# (foundry/src/rules/engagement/zones.ts) read (docs/playtest/feedback/round-3/IMPLEMENTATION-PLAN-E.md,
+# section 5.1); change a key only with both.
+id: zones
+name: The Field, Zones, and Attachments
+chapter: 05-titan-engagement
+adrs: [ADR-0010, ADR-0024, ADR-0029]
+decided: [OQ-200, OQ-202]   # OQ-200: the Carry limit and the mounted pace; OQ-202: the terrain mix (decision batch 16; both decided (a) by the zone retune, Z4, decision batch 17)
+provisional: [OQ-201]   # OQ-201: no zone effect harms (decision batch 16, 16-30); open, provisional ruling in force
+
+# ------------------------------------------------------------------ coordinates (16-2)
+coordinates:
+  system: axial-flat-top
+  neighbour_offsets: [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]]   # [dq, dr]
+  distance: >-
+    The distance between two zones, in zones, is (|dq| + |dr| + |dq + dr|) / 2, where dq and dr are
+    the differences of their q and r coordinates. Two zones at distance 1 are adjacent.
+  numbering: >-
+    Zones are numbered column by column from the left (q rising), and top to bottom within a column
+    (r rising), so one number names one zone on the board, the tracker, and the printed field.
+  ring: >-
+    A zone's ring is its distance from the centre zone. The centre zone is ring 0.
+
+# ------------------------------------------------------------------ the three fields (16-2)
+fields:
+  default: standard
+  sizes:
+    - id: skirmish
+      name: Skirmish field
+      use: >-
+        7 zones, for a small fight or a tight place, when the starting rule or the GM's framing
+        names it (data/engagement/engagement-setup.yaml, steps, field-size).
+      centre: 4
+      squad_start: 5
+      zones:
+        - {n: 1, q: -1, r: 0}
+        - {n: 2, q: -1, r: 1}
+        - {n: 3, q: 0, r: -1}
+        - {n: 4, q: 0, r: 0}
+        - {n: 5, q: 0, r: 1}
+        - {n: 6, q: 1, r: -1}
+        - {n: 7, q: 1, r: 0}
+    - id: standard
+      name: Standard field
+      use: >-
+        13 zones, the default: five columns of 3, 2, 3, 2, and 3 zones, so it lies wider than it is
+        tall. Every Titan Engagement is fought on it unless the starting rule or the GM's framing
+        names another field.
+      centre: 7
+      squad_start: 8
+      zones:
+        - {n: 1, q: -2, r: 0}
+        - {n: 2, q: -2, r: 1}
+        - {n: 3, q: -2, r: 2}
+        - {n: 4, q: -1, r: 0}
+        - {n: 5, q: -1, r: 1}
+        - {n: 6, q: 0, r: -1}
+        - {n: 7, q: 0, r: 0}
+        - {n: 8, q: 0, r: 1}
+        - {n: 9, q: 1, r: -1}
+        - {n: 10, q: 1, r: 0}
+        - {n: 11, q: 2, r: -2}
+        - {n: 12, q: 2, r: -1}
+        - {n: 13, q: 2, r: 0}
+    - id: set-piece
+      name: Set piece
+      use: >-
+        19 zones, for a large fight, a town, or two Focus Titans, when the starting rule or the GM's
+        framing names it.
+      centre: 10
+      squad_start: 11
+      zones:   # q -2: r 0..2 -> 1..3; q -1: r -1..2 -> 4..7; q 0: r -2..2 -> 8..12; q 1: r -2..1 -> 13..16; q 2: r -2..0 -> 17..19
+        - {n: 1, q: -2, r: 0}
+        - {n: 2, q: -2, r: 1}
+        - {n: 3, q: -2, r: 2}
+        - {n: 4, q: -1, r: -1}
+        - {n: 5, q: -1, r: 0}
+        - {n: 6, q: -1, r: 1}
+        - {n: 7, q: -1, r: 2}
+        - {n: 8, q: 0, r: -2}
+        - {n: 9, q: 0, r: -1}
+        - {n: 10, q: 0, r: 0}
+        - {n: 11, q: 0, r: 1}
+        - {n: 12, q: 0, r: 2}
+        - {n: 13, q: 1, r: -2}
+        - {n: 14, q: 1, r: -1}
+        - {n: 15, q: 1, r: 0}
+        - {n: 16, q: 1, r: 1}
+        - {n: 17, q: 2, r: -2}
+        - {n: 18, q: 2, r: -1}
+        - {n: 19, q: 2, r: 0}
+edge_zone: >-
+  A zone with fewer than six neighbours on the field: every zone but the centre on the Skirmish and
+  Standard fields, and the twelve zones of ring 2 on the Set piece. Leaving is a zone step off field
+  from an edge zone (data/engagement/positions.yaml, leaving).
+off_field: >-
+  Everywhere beyond the edge zones. A soldier off field has left the Titan Engagement and holds no
+  Position. The field exists only in a Titan Engagement: a Skirmish keeps Engaged and Apart, and a
+  Chase keeps its Chase Bands.
+occupancy: >-
+  A zone holds any number of soldiers, horses, Focus Titans, and corpses, and its effects (effects).
+  Nothing in a zone blocks a move, a Flight, or a Stride into it, across it, or out of it. Two Focus
+  Titans may stand in one zone; each derives its own Positions and neither affects the other.
+
+# ------------------------------------------------------------------ attachments (16-8)
+# Every soldier on the field holds exactly one attachment. names_body: it names one body (a Focus
+# Titan or a corpse) in the soldier's zone. free: a free soldier can make a zone step. derives: the
+# Position it gives relative to the body it names (derivation); null for one that names no body.
+attachments:
+  - id: ground
+    names_body: false
+    free: true
+    derives: null
+    text: On the ground in their zone, on foot or mounted.
+  - id: anchored
+    names_body: false
+    free: true
+    derives: null
+    text: >-
+      On their lines in the terrain of their zone. Only a Flight that ends free gives it
+      (data/engagement/positions.yaml, moves, flight).
+  - id: on-body
+    names_body: true
+    free: false
+    derives: on-body
+    text: Hooked into a body in their zone or standing on it, anywhere but the Nape.
+  - id: blind-spot
+    names_body: true
+    free: false
+    derives: blind-spot
+    text: >-
+      Anchored to terrain in the zone of the Focus Titan or corpse it names, out of its sight with
+      its Nape in reach, and not on it. It has no facing.
+  - id: grabbed
+    names_body: true
+    free: false
+    derives: on-body
+    text: Held by the Focus Titan it names (data/engagement/grab.yaml).
+  - id: pinned
+    names_body: true
+    free: false
+    derives: in-reach
+    text: Pinned under the body it names (data/engagement/titan-harm.yaml, pinned).
+states_beside_the_attachment: [airborne, mounted, carried]
+detach_rule: >-
+  When an attachment to a body ends by a rule that is not a fall or a move, the soldier's attachment
+  becomes anchored if they are airborne and ground if not, and nothing else about them changes.
+  Airborne and mounted are the states Chapter 4 defines (data/gear/odm-gear.yaml, airborne;
+  data/gear/horses.yaml) and sit beside the attachment. A carried soldier's zone and attachment are
+  their carrier's.
+
+# ------------------------------------------------------------------ the derivation of Positions (16-9)
+derivation:
+  order:   # first row that applies, for one soldier and one body (a Focus Titan or corpse)
+    - {id: attached-on-body, when: "attachment on-body or grabbed names the body", position: on-body}
+    - {id: attached-blind-spot, when: "attachment blind-spot names the body", position: blind-spot}
+    - {id: pinned-under, when: "attachment pinned names the body", position: in-reach}
+    - {id: same-zone, when: "in the body's zone", position: in-reach}
+    - {id: other-zone, when: "in another zone", position: distant}
+  off_field: >-
+    A soldier off field, or dead, holds no Position.
+between_soldiers:
+  same_position: same-zone
+  position_steps: zones    # one step = same or adjacent zone; n steps = within n zones
+
+# ------------------------------------------------------------------ moves (16-12)
+moves:
+  zone_step: >-
+    From free in a zone to free in an adjacent zone, or off field from an edge zone (leaving).
+  attachment_step: >-
+    In one zone, along the zone's rating's step rows among in-reach, on-body, and blind-spot
+    (data/engagement/anchor-ratings.yaml, ratings, steps), with in-reach read as free and each
+    attachment naming one body in that zone. The grounded_titan permissions apply to a grounded Titan
+    or a corpse. There is no step from one body's attachment straight to another's.
+  entered_zone_reads: >-
+    Which kinds of move can make a zone step reads the zone it enters, on its rating's distant to
+    in-reach row: on_foot and mounted say whether that kind may enter such a zone, and odm says
+    whether a Flight may end free in it. A move on foot may always enter; a mounted move may enter
+    every rating but Urban, and off field; a Flight may always enter.
+  on_foot: {steps: 1}
+  mounted: {zone_steps: 2, attachment_steps: 0, ends_on_entering_a_standing_focus_titans_zone_unless_open: true}   # OQ-200, decided by the zone retune, Z4 (docs/reviews/zone-retune-decisions.md)
+  down_soldier: >-
+    A Down soldier's move is one on-foot zone step, only out of a zone that holds a body into an
+    adjacent zone that holds none, never off field, and not while Grabbed, carried, or Pinned.
+  letting_go: >-
+    Instead of a move, from on-body or blind-spot: a fall (data/gear/falls.yaml), and the soldier
+    lands with attachment ground in the same zone (data/engagement/positions.yaml, falls_land).
+
+# ------------------------------------------------------------------ the Flight (16-13, 16-14)
+flight:
+  first_step_cost: 0
+  carry_cost_into_zone: anchor-ratings.yaml ratings[].carry_cost
+  carry_cost_off_field: 1
+  carry_cost_attachment_step: 1
+  carry_limit: 2           # OQ-200, decided by the zone retune, Z4 (docs/reviews/zone-retune-decisions.md)
+  ends_free_in_open: false
+  ends_free_as: anchored
+  momentum_gain_cap: departure-zone
+  momentum_trim: arrival-zone
+crossing_flag: >-
+  A Flight crosses a zone when it enters that zone and leaves it again in the same move; the zone it
+  starts in and the zone it ends in are never crossed. The soldier sets the loudest flag on every
+  Focus Titan standing in a zone the Flight crosses, whatever the roll gave, unless they spend
+  Momentum on quiet (data/engagement/attention.yaml, flags, loudest). A corpse takes no flag.
+
+# ------------------------------------------------------------------ the Stride (16-16 to 16-19)
+stride:
+  step: behavior-procedure.yaml resolving_a_card stride
+  toward: attention-holder
+  tie_break: lowest-numbered
+  stops_on_entering_holders_zone: true
+  grounded: 0
+  moves_with: [on-body, grabbed]
+  leaves: [blind-spot]
+  harms: false
+  wrecks: false
+
+# ------------------------------------------------------------------ starting placement (16-7)
+placement:
+  focus_titan: centre
+  squad: squad_start
+  named: {in-reach: focus-titans-zone, distant: squad_start}
+
+# ------------------------------------------------------------------ a promoted Titan's entry zone (16-29)
+entry_zone:
+  rule: >-
+    A Titan that becomes a Focus Titan during the Titan Engagement enters at the edge zone that holds
+    no soldier and is farthest from the nearest soldier on the field, a tie going to the
+    lowest-numbered; if every edge zone holds a soldier, at the edge zone holding the fewest, then
+    the lowest-numbered. With no soldier on the field, it enters at the lowest-numbered edge zone
+    (PROVISIONAL: OQ-207). It strides from its first card.
+  order: [holds-no-soldier, farthest-from-nearest-soldier, lowest-numbered]
+  fallback: [fewest-soldiers, lowest-numbered]
+
+# ------------------------------------------------------------------ effects in zones (16-30), a closed list
+effects:
+  - id: steam
+    where: >-
+      In a corpse's zone for as long as it lies there, and in a living Titan's zone for the step that
+      resolves a steam trigger.
+    harm: none
+    art: fx-steam
+  - id: dust
+    where: >-
+      In a zone whose rating is below its start rating, and in a falling Titan's zone for the step of
+      its fall.
+    harm: none
+    art: fx-dust
+  - {id: fire, where: none, harm: none, art: fx-fire, reserved: true}   # OQ-201
+effect_crossing: >-
+  A soldier whose move enters or crosses a zone holding an effect whose harm is not none takes that
+  harm once for each such effect in that move. No effect harms in this version (OQ-201): the steam
+  table still burns soldiers by attachment, and corpse heat still burns the Pinned, and neither reads
+  the zone. Decoys and flares are not zone effects and have no zone.
+
+elevation: >-
+  A zone has no height. Height is read from the attachment, as the fall bands read it (on-body and
+  blind-spot high), from the Giant Forest zone's raised band, and from the Large Size Class's raised
+  band. Rooftops and canopy are the Urban and Giant Forest ratings' fiction.
+named_field_format: >-
+  A starting rule may name a whole field in this shape: field: {size: <fields.sizes id>, rating:
+  <rating id>, zones: {<n>: <rating id>}}, where zones names ratings by zone number and every zone it
+  does not name is generated (data/engagement/engagement-setup.yaml, steps, zone-terrain).
+gm: >-
+  As framing, before any roll on the setup table, where the starting rule names none: the field size,
+  the field rating, and any zone's rating. Nothing else: never a soldier's zone or attachment, the
+  Squad's start zone, a Titan's zone, a Stride's length or route, a tie, an entry zone, a Carry cost,
+  or which zone a wreck takes (ADR-0024, limit 8). In Foundry the GM's Direct Control places any
+  soldier, horse, or Titan in any zone with any attachment, and sets any zone's rating, as a ruling
+  written to the log and undoable (ADR-0028); that is the direct setter, not a rule of play.

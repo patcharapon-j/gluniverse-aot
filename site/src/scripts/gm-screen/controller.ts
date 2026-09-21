@@ -45,18 +45,24 @@ interface Titan {
 }
 interface Data {
   titans: Titan[];
-  ratings: { id: string; name: string; anchors: number; trait: string }[];
+  ratings: { id: string; name: string; anchors: number; carryCost: number; trait: string }[];
   positions: { id: string; name: string }[];
+  attachments: { id: string; name: string; namesBody: boolean }[];
+  fieldDefaults: { titanZone: number; squadZone: number };
+  carryLimit: number;
+  mountedPace: number;
   retreatClock: number;
 }
 
 interface TitanState {
   label: string;
   id: string;
+  /** Which zone it stands in (section 5.1 and 5.2). The GM reads this off the board or the field diagram. */
+  zone: number;
   parts: Record<string, { count: number; state: 'intact' | 'wounded' | 'broken' }>;
   openings: number;
   regen: number;
-  /** 0 to 3, rising 1 at each round's end step and added to the behavior roll. */
+  /** 0 to 3, rising 1 at the end of every third round and added to the behavior roll. */
   frenzy: number;
   holder: string;
   next: string | null;
@@ -72,7 +78,10 @@ interface Soldier {
   name: string;
   card: string;
   stress: number;
-  pos: Record<string, string>;
+  /** Zone and attachment (section 5.2): the record a Position is derived from, never stored itself. */
+  zone: number;
+  /** One of the attachment ids, or "<id>:<label>" for one of the four that name a Titan. */
+  attach: string;
   down: boolean;
   grab: number; // 0 = not Grabbed, 1 or 2 = counted turns used
 }
@@ -105,8 +114,39 @@ export function mountScreen(): void {
     const titan = titanById(id);
     const parts: TitanState['parts'] = {};
     for (const p of titan.parts) parts[p.id] = { count: 0, state: 'intact' };
-    return { label, id, parts, openings: 0, regen: 0, frenzy: 0, holder: '', next: null, revealed: false, resolved: null, previous: null, dice: null, retarget: null };
+    return {
+      label,
+      id,
+      zone: data.fieldDefaults.titanZone,
+      parts,
+      openings: 0,
+      regen: 0,
+      frenzy: 0,
+      holder: '',
+      next: null,
+      revealed: false,
+      resolved: null,
+      previous: null,
+      dice: null,
+      retarget: null,
+    };
   }
+
+  /**
+   * A soldier's Position relative to one Titan, derived from their zone and attachment
+   * (section 5.2, "derivation"): on-body or grabbed naming the Titan gives On Body; blind-spot
+   * naming it gives Blind Spot; pinned naming it, or sharing its zone, gives In Reach; otherwise
+   * Distant. Never stored, always read fresh.
+   */
+  function derivePosition(s: Soldier, ts: TitanState): string {
+    const [kind, label] = s.attach.split(':');
+    if ((kind === 'on-body' || kind === 'grabbed') && label === ts.label) return 'on-body';
+    if (kind === 'blind-spot' && label === ts.label) return 'blind-spot';
+    if (kind === 'pinned' && label === ts.label) return 'in-reach';
+    if (s.zone === ts.zone) return 'in-reach';
+    return 'distant';
+  }
+  const positionName = (id: string) => data.positions.find((p) => p.id === id)?.name ?? '—';
 
   function fresh(): State {
     const rating = data.ratings.find((r) => r.id === 'wooded') ?? data.ratings[0];
@@ -209,7 +249,7 @@ export function mountScreen(): void {
     if (!entry) return plain(null);
     if (!hasParts(ts, entry)) return plain(thrash);
     if (holderPos && !entry.positions.includes(holderPos)) {
-      const reachable = state.squad.filter((s) => s.key !== ts.holder && entry.positions.includes(s.pos[ts.label] ?? ''));
+      const reachable = state.squad.filter((s) => s.key !== ts.holder && entry.positions.includes(derivePosition(s, ts)));
       if (reachable.length) return { entry, retarget: reachable.map((s) => s.key) };
       const back = find(entry.fallback);
       if (!back || back.id === ts.previous || !hasParts(ts, back)) return plain(thrash);
@@ -256,6 +296,9 @@ export function mountScreen(): void {
     el('[data-anchor-n]')!.textContent = String(state.anchors);
     const rating = data.ratings.find((r) => r.id === state.rating);
     el('[data-trait]')!.textContent = rating ? `${rating.name}: ${rating.trait}` : '';
+    el('[data-carry]')!.textContent = rating
+      ? `A Flight's Carry into a zone of this rating costs ${rating.carryCost}. Carry limit ${data.carryLimit} on one Flight; mounted pace ${data.mountedPace} zone steps.`
+      : '';
 
     const box = el('[data-retreat]')!;
     box.replaceChildren(
@@ -290,10 +333,26 @@ export function mountScreen(): void {
       pick.value = ts.id;
       pick.addEventListener('change', () => {
         const kept = ts.label;
+        const keptZone = ts.zone;
         Object.assign(ts, freshTitan(kept, pick.value));
+        ts.zone = keptZone;
         commit();
       });
       card.append(pick);
+
+      const zoneBox = document.createElement('span');
+      zoneBox.className = 'scr-clock';
+      const zoneLabel = document.createElement('span');
+      zoneLabel.className = 'lbl';
+      zoneLabel.textContent = 'Zone';
+      zoneBox.append(
+        zoneLabel,
+        stepper(`Focus Titan ${ts.label}'s zone`, ts.zone, (d) => {
+          ts.zone = Math.max(1, ts.zone + d);
+          commit();
+        }),
+      );
+      card.append(zoneBox);
 
       const stats = document.createElement('p');
       stats.className = 'scr-stats';
@@ -559,7 +618,7 @@ export function mountScreen(): void {
 
   function holderPosition(ts: TitanState): string {
     const soldier = state.squad.find((s) => s.key === ts.holder);
-    return soldier?.pos[ts.label] ?? '';
+    return soldier ? derivePosition(soldier, ts) : '';
   }
 
   function drawClocks() {
@@ -598,8 +657,6 @@ export function mountScreen(): void {
   function drawSquad() {
     const body = el('[data-squad]')!;
     body.replaceChildren();
-    const hasB = state.titans.length > 1;
-    el('[data-pos-b]')!.hidden = !hasB;
     for (const s of state.squad) {
       const tr = document.createElement('tr');
 
@@ -624,26 +681,55 @@ export function mountScreen(): void {
       );
 
       const cells: HTMLTableCellElement[] = [];
-      for (const ts of state.titans) {
-        const td = document.createElement('td');
-        const sel = document.createElement('select');
-        sel.setAttribute('aria-label', `${s.name}'s Position relative to Focus Titan ${ts.label}`);
-        for (const [v, t] of [['', '—'], ...data.positions.map((p) => [p.id, p.name])] as [string, string][]) {
+
+      // Zone: a plain number, read off the board or the field diagram (section 5.1).
+      const zoneTd = document.createElement('td');
+      const zoneInput = document.createElement('input');
+      zoneInput.type = 'number';
+      zoneInput.min = '1';
+      zoneInput.size = 2;
+      zoneInput.value = String(s.zone);
+      zoneInput.setAttribute('aria-label', `${s.name}'s zone`);
+      zoneInput.addEventListener('change', () => {
+        s.zone = Math.max(1, Number(zoneInput.value) || 1);
+        commit();
+      });
+      zoneTd.append(zoneInput);
+      cells.push(zoneTd);
+
+      // Attachment: where they are within that zone, and which Titan it names, if any
+      // (section 5.2). A Position is derived from this, never picked directly.
+      const attachTd = document.createElement('td');
+      const attachSel = document.createElement('select');
+      attachSel.setAttribute('aria-label', `${s.name}'s attachment`);
+      for (const a of data.attachments) {
+        if (!a.namesBody) {
           const o = document.createElement('option');
-          o.value = v;
-          o.textContent = t;
-          sel.append(o);
+          o.value = a.id;
+          o.textContent = a.name;
+          attachSel.append(o);
+        } else {
+          for (const ts of state.titans) {
+            const o = document.createElement('option');
+            o.value = `${a.id}:${ts.label}`;
+            o.textContent = state.titans.length > 1 ? `${a.name} (${ts.label})` : a.name;
+            attachSel.append(o);
+          }
         }
-        sel.value = s.pos[ts.label] ?? '';
-        sel.addEventListener('change', () => {
-          s.pos[ts.label] = sel.value;
-          commit();
-        });
-        td.append(sel);
-        cells.push(td);
       }
-      if (!hasB) cells.push(document.createElement('td'));
-      if (!hasB) cells[1].hidden = true;
+      attachSel.value = s.attach;
+      if (attachSel.value !== s.attach) attachSel.selectedIndex = 0;
+      attachSel.addEventListener('change', () => {
+        s.attach = attachSel.value;
+        commit();
+      });
+      attachTd.append(attachSel);
+      cells.push(attachTd);
+
+      // Position, derived, one reading per Focus Titan on the field — never stored.
+      const posTd = document.createElement('td');
+      posTd.textContent = state.titans.map((ts) => (state.titans.length > 1 ? `${ts.label} ${positionName(derivePosition(s, ts))}` : positionName(derivePosition(s, ts)))).join(' · ');
+      cells.push(posTd);
 
       const flags = document.createElement('td');
       flags.append(
@@ -756,12 +842,12 @@ export function mountScreen(): void {
     const field = form.elements.namedItem('name') as HTMLInputElement;
     const name = field.value.trim();
     if (!name) return;
-    state.squad.push({ key: uid(), name, card: '', stress: 0, pos: { A: 'distant', B: 'distant' }, down: false, grab: 0 });
+    state.squad.push({ key: uid(), name, card: '', stress: 0, zone: data.fieldDefaults.squadZone, attach: 'ground', down: false, grab: 0 });
     field.value = '';
     commit();
   });
   el<HTMLButtonElement>('[data-reset]')!.addEventListener('click', () => {
-    const squad = state.squad.map((s) => ({ ...s, card: '', pos: { A: 'distant', B: 'distant' }, down: false, grab: 0 }));
+    const squad = state.squad.map((s) => ({ ...s, card: '', zone: data.fieldDefaults.squadZone, attach: 'ground', down: false, grab: 0 }));
     state = { ...fresh(), squad };
     commit();
   });

@@ -54,11 +54,33 @@ OQ_NOT_MEASURED = {
 MISSED_OQ = {
     # decision batch 8, 8-31 decided OQ-132 anew: the Medium deaths band reads at most 0.08 through the end (targets.py),
     # the owner's chosen lethality, so no missed result maps to it
+    # round 3 retune, R7: the bar's Critical Injuries floor against the strongest support; logged, not retuned before
+    # the playtest
+    "bar/bar/full/support: sprinting-abnormal: 4 player characters and 2 Squadmates screening beside the holder, "
+    "Hook and Cut and Hamstring Line, with the escapes/cutters_first/Critical Injuries floor": "OQ-199",
+    "bar/bar/full/support: sprinting-abnormal: 4 player characters and 2 Squadmates screening beside the holder, "
+    "Hook and Cut and Hamstring Line, with the escapes/strikers_first/Critical Injuries floor": "OQ-199",
 }
 # Files of the rules snapshot that changed while the run was going, each with the change as read from a diff of the
 # file before and after the run. run.py --report accepts a file listed here while it still matches the snapshot
 # taken after the run, and the report prints both snapshots with the note.
 SNAPSHOT_CHANGE_NOTES = {
+    "data/engagement/anchor-ratings.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): a Flight Momentum trimmed only at the end of the move, as the engine already did (C1), and the OQ-205 landing; no measured case changes",
+    "data/engagement/background-titans.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): the entry zone with no soldier on the field (OQ-207), as space.py already did",
+    "data/engagement/positions.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording of the zone readers (M1 to M3, minors); no measured case changes",
+    "data/engagement/titan-format.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording; the Frenzy rate is unchanged at 3",
+    "data/engagement/tuning.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording of the figure notes; no case definition changes",
+    "data/engagement/zones.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording (letting go, the Set piece start zone, the terrain mix share); no measured case changes",
+    "data/gear/falls.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): the fall with no Focus Titan alive reads the nearest corpse (OQ-206); no measured strike reads it",
+    "docs/adr/0001-titans-act-from-behavior-tables.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): an amendment note for decision batch 17; text only",
+    "docs/adr/0014-numbers-tuned-to-design-targets.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): an amendment note for decision batch 17; text only",
+    "docs/rules/01-core-rules.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): Help on a called roll reads zones; text only",
+    "docs/rules/03-harm-and-mind.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): zone wording; text only",
+    "docs/rules/04-gear.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): zone wording; text only",
+    "docs/rules/05-titan-engagement.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): section 5.11 end steps and other zone wording; text only",
+    "tools/sim/engine.py": "edited after the run (implementation review M8, m10; commit d45870a): the retreat no longer steps toward a comrade already in the soldier's zone, and the Open and Urban Terrain Traits are modelled. Re-measured on the reference starts at the same seeds, 120,000 fights each: every Titan deaths through the end fell by 0.004 to 0.007 and Critical Injuries by 0.011 to 0.018, no verdict changes; the owner chose not to re-run (2026-09-21), so this report's figures run up to that much high",
+    "tools/sim/policy.py": "edited after the run with engine.py (M8); see its note",
+    "tools/sim/rules.py": "edited after the run with engine.py (m10 reads the Terrain Traits); see its note",
     "docs/rules/PROGRESS.md": "outside the rules hash and the staleness test; a status file no case reads, edited "
                               "by the orchestrator, no rule",
     "docs/rules/DECISIONS-2026-09-14.md": "decision 8-34 recorded while the run was going, and 8-35 to 8-42 after it "
@@ -112,9 +134,12 @@ SNAPSHOT_CHANGE_NOTES = {
                                        "engine models no lost limbs and keeps a pinned soldier pinned",
     "data/engagement/tuning.yaml": "verdict sentences rewritten from the final rerun (R22, R23) by the verdict "
                                    "drafter; the targets and tolerances read the same",
-    "data/titans/tuning.yaml": "verdict sentences rewritten from the final rerun (R22, R23) by the verdict drafter; the "
-                               "targets and tolerances read the same, and the Grab-alone variant's pools read 6 and 9 "
-                               "as before",
+    "data/titans/tuning.yaml": "round 3 retune, R7 and R6: `reported_rows` and the `missed` note under "
+                               "`targets.abnormals`, and the `verdicts` paragraphs re-rendered from this run; no case "
+                               "reads these words, and rules.py's parses of the block (`fights_per_row`, "
+                               "`standard_errors`, the median bounds) are unchanged. Earlier: verdict sentences "
+                               "rewritten from the final rerun (R22, R23) by the verdict drafter; the targets and "
+                               "tolerances read the same, and the Grab-alone variant's pools read 6 and 9 as before",
     "data/expedition/hazards.yaml": "package D (R05 by 8-37, R52): the Night table's retreat and glossary capitals; no "
                                     "case runs an Expedition",
     "data/expedition/legs.yaml": "package D (R01 by 8-35, R05 by 8-37, R07 by 8-39, R52): Expedition rules; no case "
@@ -169,11 +194,7 @@ SNAPSHOT_CHANGE_NOTES = {
                           "matches the run's",
     "tools/sim/dice.py": "the Titan attack's shared functions, and 8-40's Fear snapshot (`fear_result`, "
                          "`apply_fear_result`); listed with the engine changes",
-    "tools/sim/engine.py": "the Titan attack's shared functions, and 8-40's Fear snapshot (`Fight.fear_event`); listed "
-                           "with the engine changes",
     "tools/sim/families.py": "the Titan attack's shared functions; listed with the engine changes",
-    "tools/sim/rules.py": "wording guards: every statement guard ignores letter case (package D's glossary capitals), and "
-                          "the stay limit's guards read 8-36's wording; no value read changes",
 }
 # The in-memory checks behind the notes above (review fix plan, section 5, (b)), on the committed seeds and case sizes.
 POST_RUN_CHECKS = (
@@ -195,6 +216,11 @@ PROBE_GAPS_LOGGED = {
 # Engine changes since the committed run, printed only while the engine hash at rendering differs from the run's
 # (run.py --report --stale-ok). Empty this list once a full run records the current engine.
 ENGINE_CHANGES_SINCE_RUN = [
+    "`space.py` (new), `engine.py`, `policy.py`, `rules.py`, `dice.py`, `families.py`, `cases.py`, after the run: decision "
+    "batch 16 (ADR-0029). The field of zones, derived Positions, the Stride, Flights rolled with Carry and Momentum "
+    "(never modelled before: ODM moves were unrolled), wrecks by zone, the retreat over zones, Help and every "
+    "between-soldiers test in zones, and the `zones/` sensitivity rows. A forced step now spends nothing, as "
+    "`positions.yaml` (forced_step) says. Every figure of this report predates all of it.",
     "`run.py`, after the run: the probe re-check is on again, against `data/titans/probe-figures.yaml` as "
     "re-committed from this run (`--commit-probe-figures`, plan WP-S2), and the staleness test accepts that file. No "
     "case, trial, or figure of this run changes.",
@@ -670,6 +696,34 @@ COVERAGE = {
          "other than Distant (section 6.7); the Grab's hold before its crush (`engine.Fight.grab_lands`). Not "
          "measured: the fall's reference Titan among two Focus Titans; with one Focus Titan it is always that Titan.",
          ["two_titans"]),
+        ("Failed Nape strikes", "Not measured",
+         "Round 3 review 1 (C6) added this case with ADR-0010's amendment and nothing measures it yet: the engine "
+         "counts no failed-strike outcome, so neither the share of failed strikes whose striker takes the Titan's "
+         "next resolved behavior nor the striker's second-strike rate is reported. It is read against the "
+         "lone-strike band when the instrumentation lands.", []),
+        ("The behavior roll under Frenzy", "Partly measured",
+         "Section 6.15 reports, per case, the share of resolved cards that retargeted, the share whose rolled entry "
+         "reached nobody, the Thrash share, and the share of behavior rolls Frenzy lifted off the die's face. Not "
+         "measured: the kill share by previous behavior and Broken parts broken out by Frenzy, and the share of "
+         "rolls resolving each table's result-1 entry by Frenzy, which section 4.1 still reports at Frenzy 0 only.",
+         []),
+        ("The field (decision batch 16, 16-38; ADR-0029)", "Partly measured",
+         "Every full fight is fought over zones (section 14; `tools/sim/space.py`), and section 7.2 sets the field's "
+         "rows beside the reference start. Not measured: the entry zone of a promoted Titan (no Background Titans), "
+         "leaving outside a retreat, the mounted charge, and brace and clean line, which no policy uses.",
+         ["two_titans"]),
+        ("Rounds to the first Nape strike and to the kill", "Measured",
+         "Section 7.2: the median rounds to the first Nape strike and to the kill, the Thrash and retarget shares, and "
+         "the share of resolved cards whose Stride brought the holder into the Titan's zone.", []),
+        ("Round 1 on its own", "Measured", "Section 7.2: Critical Injuries and cards that landed in round 1.", []),
+        ("Help on a Nape strike from an adjacent zone", "Measured", "Section 7.2.", []),
+        ("Momentum gained and spent per fight", "Measured",
+         "Section 7.2: Momentum gained and spent on Carry, quiet, and bite, the share of Flights that Carry, and the "
+         "no-bite row.", []),
+        ("Wrecked zones per fight", "Measured",
+         "Section 7.2: wrecks, rating steps, and fights whose Titan's zone lost its Blind Spot; retreats in section 6.12.",
+         []),
+        ("Each value OQ-200 and OQ-202 hold", "Measured", "Section 7.2: the `zones/` rows of `cases.py`.", []),
         ("The Expedition targets, once the Expedition rules exist.", "Deferred", "No Expedition rules in Phase 1.", []),
     ],
 }
@@ -747,7 +801,7 @@ def write(res, full=True, render=None, stale=()):
         w(f"**Smoke run at scale {res['scale']:g}: every case ran a fraction of its trials. No figure here is the "
           "report's.**\n")
     w(f"- **Run:** {len(main_cases)} cases and {len(res['cases']) - len(main_cases)} second-seed runs, {total:,} "
-      f"trials, plus {len(rechecks)} re-checked cases; {res['runtime_seconds']:.0f} seconds on {res['cpus']} "
+      f"trials, plus {'no re-checks (skipped: the probe figures predate these rules)' if res.get('rechecks_skipped') else f'{len(rechecks)} re-checked cases'}; {res['runtime_seconds']:.0f} seconds on {res['cpus']} "
       f"processes.")
     after_snap = res.get("snapshot_after_run")
     rules_changed = [p for p in changed_during if not p.startswith(sim_dir + os.sep)]
@@ -1203,8 +1257,11 @@ def write(res, full=True, render=None, stale=()):
     LIMITS = ("Critical Injuries floor", "winnable", "ceiling", "reference deaths")
 
     def bar_table(prefix, reading, title, judged):
-        out_rows, fails = [], []
+        out_rows, fails, reported_past = [], [], []
         for r in rows_def:
+            # Round 3 retune, R7: a row that gives the Abnormal a ladder it does not have is run with its twins and
+            # rendered with its z, but never judged, so a limit past on it is reported and is no Missed result.
+            reported_row = r["abnormal"] in R.bar_reported_rows
             for order, _, _ in C.ORDERS:
                 keys = [f"{prefix}/{order}/{r['abnormal']}", f"bar/{order}/{r['medium']}", f"bar/{order}/{r['large']}",
                         f"bar/{order}/{ref_bar}"]
@@ -1228,38 +1285,57 @@ def write(res, full=True, render=None, stale=()):
                             cell += "; no second seed run"
                             failed = True
                     if failed:
-                        fails.append((r["abnormal"], order, name))
-                        if judged:
-                            cell += "; " + result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/{name}", False,
-                                                  f"bar ({prefix}, {reading}): {r['abnormal']}, {order}, {name}")
+                        if reported_row:
+                            reported_past.append((r["abnormal"], order, name, second[name][1] if second else zz))
+                            cell += "; past (reported: a ladder it does not have, R7)"
                         else:
-                            cell += "; past (reported)"
+                            fails.append((r["abnormal"], order, name))
+                            if judged:
+                                cell += "; " + result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/{name}", False,
+                                                      f"bar ({prefix}, {reading}): {r['abnormal']}, {order}, {name}")
+                            else:
+                                cell += "; past (reported)"
                     cells_.append(cell)
                 if first["median"][2] == "past":
-                    fails.append((r["abnormal"], order, "median"))
-                    if judged:
-                        result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/median", False,
-                               f"bar ({prefix}): {r['abnormal']}, {order}, median {first['median'][0]}")
+                    if reported_row:
+                        reported_past.append((r["abnormal"], order, "median", None))
+                    else:
+                        fails.append((r["abnormal"], order, "median"))
+                        if judged:
+                            result(f"bar/{prefix}/{reading}/{r['abnormal']}/{order}/median", False,
+                                   f"bar ({prefix}): {r['abnormal']}, {order}, median {first['median'][0]}")
                 out_rows.append([r["abnormal"].replace("sprinting-abnormal: ", ""), order.replace("_", " "),
                                  first["median"][0]] + cells_)
         w(f"### {title}\n")
         w(table(["Abnormal row", "Order", "Median", "Critical Injuries vs Medium twin", "No kill, % vs Large twin",
                  "Deaths vs Large twin", "Reference deaths vs Medium reference"], out_rows))
         w("")
-        return fails
+        return fails, reported_past
 
     def fails_txt(fl):
         return ("every row holds every limit in both orders" if not fl else
                 "fails " + "; ".join(f"{a.replace('sprinting-abnormal: ', '')} ({o.replace('_', ' ')}, {n})" for a, o, n in fl))
-    bar_full = bar_table("bar", "full", "5.1 The bar, deaths through the end of the Titan Engagement (the verdict)", True)
+
+    def reported_txt(rp):
+        """Round 3 retune, R7: the ladder rows are run with their twins and reported beside the bar, never judged."""
+        head = "Reported beside the bar, not judged (`tuning.yaml`, `reported_rows`): "
+        if not rp:
+            return head + "every limit of the two ladder rows holds in both orders"
+        parts = []
+        for a, o, n, zz in rp:
+            pooled_note = f" (pooled over two seeds, {zf(zz)})" if zz is not None else ""
+            parts.append(f"{a.replace('sprinting-abnormal: ', '')}, {o.replace('_', ' ')}, {n} past{pooled_note}")
+        return head + "; ".join(parts) + "; every other limit of the two ladder rows holds in both orders"
+    bar_full, bar_full_reported = bar_table("bar", "full", "5.1 The bar, deaths through the end of the Titan Engagement (the verdict)", True)
     w(f"**Verdict:** {fails_txt(bar_full)}.\n")
-    bar_fight = bar_table("bar", "in_fight", "5.2 The bar, deaths during the fight (the probes' reading)", False)
+    w(f"{reported_txt(bar_full_reported)}.\n")
+    bar_fight, _ = bar_table("bar", "in_fight", "5.2 The bar, deaths during the fight (the probes' reading)", False)
     w(f"**Under the probes' reading:** {fails_txt(bar_fight)}.\n")
     over, gsev, lsev = C.grab_alone_over()
-    g_full = bar_table("grab_alone", "full", f"5.3 Variant: the Grab alone at {gsev} Attack Dice, Headlong Lunge at "
+    g_full, _ = bar_table("grab_alone", "full", f"5.3 Variant: the Grab alone at {gsev} Attack Dice, Headlong Lunge at "
                                               f"{over['headlong-lunge']['attack_dice']}, deaths through the end", False)
     w(f"**Variant, deaths through the end:** {fails_txt(g_full)}.\n")
-    g_fight = bar_table("grab_alone", "in_fight", "5.4 The same variant, deaths during the fight", False)
+    g_fight, _ = bar_table("grab_alone", "in_fight", "5.4 The same variant, deaths during the fight", False)
     w(f"**Variant, deaths during the fight:** {fails_txt(g_fight)}. Chapter 6's verdict "
       "(`data/titans/tuning.yaml`, `verdicts`, `sprinting_abnormal`) reports this variant on the drafter's "
       "seeds.\n")
@@ -1445,7 +1521,7 @@ def write(res, full=True, render=None, stale=()):
                 out[sizes[size]] = out.get(sizes[size], 0) + ws
         return out
     # the verdict names its source and the reading (deaths during the fight), with through-the-end figures aside
-    vc = need(r"deals (?:on the final full rerun under Attack Dice )?([\d.]+) Critical Injuries and ([\d.]+) deaths "
+    vc = need(r"deals (?:on (?:the final full rerun under Attack Dice|the confirming run of the (?:round 3|zone) retune) )?([\d.]+) Critical Injuries and ([\d.]+) deaths "
               r"(?:during the fight )?per Titan Engagement without the Abnormal roll(?: \([^)]*\))?, and ([\d.]+) and "
               r"([\d.]+) with it", " ".join(T6["verdicts"]["setup_mix"].split()),
               "data/titans/tuning.yaml, verdicts, setup_mix")
@@ -1718,6 +1794,29 @@ def write(res, full=True, render=None, stale=()):
                  "Foes out cold", "Capped, %"], rows))
         w("")
 
+    w("### 6.15 Retargeting and Frenzy, the two Titan rules of round 3\n")
+    w("Decision batch 13 (13-9 and 13-10; OQ-192 and OQ-193), with the fallback retargeted as well (round 3 review "
+      "1, M1). *Retargeted* is the share of resolved cards on which a retarget moved the Titan's Attention, for the "
+      "rolled entry or for its fallback: the card resolves that entry against a soldier the Ladder, read again over "
+      "the soldiers who could meet its Position requirement, turned the Titan onto. Every one of those cards was a "
+      "fallback or a Thrash before the rule. *Rolled entry reached no one* is the share on which no soldier met the "
+      "rolled entry, so the fallback ran; a card counted there may still appear under *Retargeted*, if the fallback "
+      "then found someone, so the two shares are not exclusive. *Thrash* is the share of resolved cards that "
+      "Thrashed, the figure the rule set out to cut. *Frenzy lifted* is the share of behavior rolls whose total was "
+      "higher than the face the die showed.\n")
+    rows = []
+    for c in res["cases"]:
+        if c["family"] != "fight" or "retarget_share" not in c["summary"]:
+            continue
+        s_ = c["summary"]
+        rows.append([c.get("label") or c["key"], f1(s_["retarget_share"]), f1(s_["retarget_miss_share"]),
+                     f1(s_["thrash_share"]),
+                     f1(s_["frenzy_lift_share"]), f2(s_["rounds_per_fight"])])
+    if rows:
+        w(table(["Case", "Retargeted, % of cards", "Rolled entry reached no one, % of cards", "Thrash, % of cards",
+                 "Frenzy lifted, % of rolls", "Rounds a fight"], rows))
+        w("")
+
     w("## 7. Sensitivity rows for the rules this simulator adds\n")
     w("Each row against a twin with the same Squad and start without the rule. z is against the twin. The counters "
       "show that the rule fires.\n")
@@ -1757,6 +1856,39 @@ def write(res, full=True, render=None, stale=()):
         else:
             rows.append([c["key"][len("sequence/"):], "", "", "section 6.11 prints it beside its twin", ""])
     w(table(["Row", "By round 3, %, z", "Critical Injuries, z", "Deaths through the end, z", "Talent counters a fight"], rows))
+    w("")
+
+    # ================================================================== 7.2 the field (decision batch 16, 16-38)
+    w("### 7.2 The field: zones, the Stride, Flights, and wrecks\n")
+    w("Decision batch 16, 16-38 (ADR-0029): the reference start of standard-medium on the field as `data/` writes it "
+      "(first row), then each lever in the order the retune reads it: the Stride, the Carry limit and the mounted pace "
+      "(OQ-200), the terrain mix (OQ-202), and bite and quiet turned off. z is against the row's twin. Stride reach: "
+      "the share of resolved cards whose Stride brought the holder into the Titan's zone. Flights: per fight, with the "
+      "share that Carry. Momentum: gained, then spent on Carry / quiet / bite, per fight. Adjacent Help: the share of "
+      "Help on Nape strikes given from an adjacent zone. Wrecks: rating steps per fight, and the share of fights whose "
+      "Titan's zone lost its Blind Spot while it stood.\n")
+    zref = "ch6/" + C.reference_label("standard-medium")
+    zrows = [("reference start", zref, zref)] + [(c["label"], c["key"], c["twin"]) for c in res["cases"]
+                                                 if c["key"].startswith("zones/")]
+    rows = []
+    for label, k, twin in zrows:
+        if not has(k) or not has(twin):
+            continue
+        s, t_ = S(k), S(twin)
+        same = k == twin
+        g = lambda key: s.get(key) or 0     # noqa: E731
+        rows.append([label, med_txt(s), g("median_first_nape_round") or "none",
+                     f"{f2(s['cis'])} {'' if same else zf(vs(s, t_, 'cis'))}",
+                     f"{f3(s['deaths_all'])} {'' if same else zf(vs(s, t_, 'deaths_all'))}",
+                     f"{f2(g('r1_cis'))} / {f2(g('r1_lands'))}", f"{f1(g('thrash_share'))} / {f1(g('retarget_share'))}",
+                     f1(g("stride_reach_share")), f"{f2(g('flights'))} ({f1(g('flights_carry_share'))}%)",
+                     f"{f2(g('momentum_gained'))}: {f2(g('momentum_carry'))} / {f2(g('momentum_quiet'))} / "
+                     f"{f2(g('momentum_bite'))}", f1(g("nape_help_adjacent_share")),
+                     f"{f2(g('wreck_steps'))}, {f1(g('bs_lost_share'))}%", f"{f3(g('retreats'))}, {f2(g('retreat_rounds'))}"])
+    w(table(["Row", "Median kill round", "Median first Nape round", "Critical Injuries, z", "Deaths through the end, z",
+             "Round 1 CIs / lands", "Thrash / retarget, %", "Stride reach, %", "Flights (Carry)",
+             "Momentum: Carry / quiet / bite", "Adjacent Help, %", "Wreck steps, Blind Spot lost", "Retreats, rounds"],
+            rows))
     w("")
 
     # ================================================================== 8. lone route

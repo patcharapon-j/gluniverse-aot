@@ -7,17 +7,17 @@ tab: Skirmishes
 earlyRules: true
 sources:
   - path: docs/rules/07-playtest-rules.md
-    sha: "1368c9a714c51778a15f84d2472c0abced253f6a"
+    sha: "4721705cae7b3505afee5f1be6b7d9d3d8d117a1"
   - path: data/skirmish/skirmish.yaml
-    sha: "3fda64d21fc4e62d2ea7754b0efd3aecb7882fa0"
+    sha: "ab608bc9dbef2842c33b8958a6d3354489cd909b"
   - path: data/character/action-catalog.yaml
-    sha: "747752afe49fd764d041b05362412356a62fe355"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
   - path: data/gear/items.yaml
-    sha: "6ddd7b203621fb85bf84aef77f3592a81edcb07d"
+    sha: "2721b8315b6ceb2330f6089f197baadc9f6b45ee"
   - path: data/harm/critical-injuries.yaml
     sha: "9d7db8d62faaccb3df532a58cc83ab8b5a3886c8"
   - path: data/harm/engagement-end.yaml
-    sha: "e34f0720353db60bef4d273677dcbdd4d2d0d78d"
+    sha: "3cc2ae71e009ef8754986c694b93bb3ab106b83f"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -87,7 +87,7 @@ You are **Engaged** with a Foe or **Apart** from it, held separately for each: E
 
 <RuleBox title="Engaged and Apart are not Positions" icon="ph:warning">
 
-A Skirmish has **no <GlossaryTerm term="Position">Positions</GlossaryTerm>, no <GlossaryTerm term="Anchor Rating" />, no Anchors, no Momentum, no <GlossaryTerm term="ODM move" /> and so no <GlossaryTerm term="Flight" />, and no <GlossaryTerm term="Airborne">airborne</GlossaryTerm> soldier.** The one Fly roll here is a called roll, and it leaves you on the ground.
+A Skirmish has **no field, no zones, no <GlossaryTerm term="Position">Positions</GlossaryTerm>, no <GlossaryTerm term="Anchor Rating" />, no Anchors, no Momentum, no <GlossaryTerm term="ODM move" /> and so no <GlossaryTerm term="Flight" />, and no <GlossaryTerm term="Airborne">airborne</GlossaryTerm> soldier.** The one Fly roll here is a called roll, and it leaves you on the ground.
 
 </RuleBox>
 
@@ -272,7 +272,7 @@ Work the nine steps that follow any fight, with the Skirmish in the Titan Engage
 <Subsection title="Drives, Talents, and Squadmates" id="drives-talents-squadmates">
 
 - **Drives.** Turn triggers count Skirmish turns. Position triggers need a Titan fight and are never met here.
-- **Talents.** A Skirmish has a start and an end, so a once-per-Titan-Engagement Talent can also be used once per Skirmish. One whose effect reads a Position does nothing here unless its own row says what it does.
+- **Talents.** A Skirmish has a start and an end, so a once-per-Titan-Engagement Talent can also be used once per Skirmish. One whose effect reads a Position, a zone, or a number of zones does nothing here unless its own row says what it does.
 - **Three carry over cleanly.** Hand-to-Hand adds its dice to Fight and Block; Blade Discipline names Fight, so it applies; Pry Loose frees only a Grabbed comrade, never a Held one.
 - **<GlossaryTerm term="Squadmate">Squadmates</GlossaryTerm>** take part on their own cards, and never Push or Cover.
 

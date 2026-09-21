@@ -61,14 +61,17 @@ during_the_steps: >-
   step.
 
 positions_read: >-
-  A step that reads a Position a soldier held when the Titan Engagement ended reads their last
-  Positions: a Position held relative to a Focus Titan when that Titan died is recorded as the last
-  Position relative to it, and the Position records are cleared only after the last step above
-  (data/engagement/positions.yaml, a_focus_titan_dies; decision batch 5, OQ-122). While a Titan's corpse lies on the field, the last Positions relative to that Titan are the Positions relative to its corpse as they stand when the Titan Engagement ends (data/engagement/positions.yaml, corpse; decision batch 8, 8-20).
+  A step that reads a Position a soldier held when the Titan Engagement ended reads the Positions
+  derived from each soldier's zone and attachment as the Titan Engagement ends: relative to each
+  living Focus Titan and each corpse, which lies in the zone its Titan died in
+  (data/engagement/positions.yaml, derivation and corpse; decision batch 5, OQ-122; decision batch 8,
+  8-20; decision batch 16, 16-24). Where a step compares two soldiers, it reads their zones
+  (data/engagement/zones.yaml, between_soldiers). The field is cleared only after the last step
+  above.
 
 momentum_and_anchors: >-
-  When the Titan Engagement ends, every soldier's Momentum becomes 0 and the Titan Engagement's
-  Anchors are cleared with the Position records, after the last step above
+  When the Titan Engagement ends, every soldier's Momentum becomes 0 and the field, with every
+  zone's rating, is cleared, after the last step above
   (data/engagement/anchor-ratings.yaml, anchors, momentum). No step reads either. A Skirmish has
   neither (data/skirmish/skirmish.yaml).
 

@@ -1,10 +1,35 @@
-# Art handout: batch 1 icons, and the engagement board set
+# Art handout: the assets wanted now, and the engagement board set
 
 A handout for the session that runs on the owner's machine, where the Codex CLI lives. Everything
 below is assembled from `site/design/art-style.md`, `docs/adr/0022-*`, `docs/adr/0027-*`,
 `foundry/design/asset-inventory.md`, `foundry/src/art.ts`, `foundry/tools/import-art.sh`, and
 sections 2 and 7 of `docs/playtest/feedback/round-3/zone-combat-design.md`. You should not need any
 of that conversation, only those files.
+
+## 0. How to start this
+
+**For the owner.** Open a Claude Code session in this repository on the machine that has the Codex
+CLI, and paste this as the first message:
+
+> Read `docs/playtest/feedback/round-3/ART-HANDOUT.md` and run it. Start with batch 1, which is the
+> four website and tracker assets wanted now, and stop at the contact sheet so I can approve it
+> before you touch batch 2. Follow `site/design/art-style.md` exactly and ask me about anything in
+> section 8 rather than deciding it yourself. Do not commit; report back in the shape section 9 asks
+> for.
+
+Nothing else from the conversation that produced this handout is needed. Everything the session must
+know is in this file and in the files section 2 tells it to read.
+
+**Two things to decide before batch 2**, both in section 8: whether the board gets its own style
+block and its own approved style lock, which ADR-0022 requires of every other family, and whether the
+hexes are flat-top. The second one is cheap to answer and expensive to get wrong, because fifteen
+tiles are drawn to it.
+
+**Do batch 1 first even if batch 2 is the interesting one.** Batch 1 is four files, all fully covered
+by the locked style, and three of them unblock interface work that has already shipped and is
+currently drawing state with no icon.
+
+---
 
 ## 1. Context
 
@@ -92,7 +117,7 @@ These are not optional and they have bitten this project before.
   share a hash (`md5 -r *.png`). Do it like this, and regenerate anything that collides:
 
 ```bash
-md5 -r *.png | sort | uniq -d -w32
+md5 -r *.png | awk '{print $1}' | sort | uniq -d
 ```
 
   A duplicate hash means one file is another run's image wearing the wrong name. Two assets that look
@@ -135,7 +160,16 @@ Put that sentence in `foundry/art-src/blocks/refline-icon.txt`, written as this 
 REFERENCE IMAGES: the attached colour plates are world reference only. They show what ODM gear, wire, and blades look like in this world; they are not how to render this icon. The attached icons are approved icons from this same set: keep the frame exactly as in the attached references, and match their stroke weight, canvas margin, and stamp texture.
 ```
 
-## 3. Batch 1: the icons needed now
+## 3. Batch 1: the assets wanted now
+
+> **Batch 1 is done and shipped, 2026-09-21.** Approved and committed:
+> `foundry/static/assets/icons/pos-hooked.webp`, `titan-frenzy.webp`, `titan-opening.webp` (128 px),
+> and `site/src/assets/plates/plate-updates.webp`, wired into `site/src/pages/updates/index.astro`.
+> `foundry/tools/import-art.sh` was extended with a `batch-2` section for the three icons. Momentum
+> pips were not generated: section 8.0 settles them as code-drawn. The rest of this section is kept
+> as the record of how they were made.
+
+Three tracker state marks and one website plate. All four are fully covered by the locked style.
 
 ### 3.1 What already exists
 
@@ -187,6 +221,11 @@ flagged in section 8.
 
 Working folder for this batch: `foundry/art-src/batch-2/`. Generate into
 `foundry/art-src/batch-2/originals/`.
+
+> **The folder name is wrong and is kept deliberately.** Batch 1's files sit in a folder called
+> `batch-2`, while batch 2 itself goes to `foundry/art-src/board/` (section 5). The batch 1 run of
+> 2026-09-21 followed the path as written so that section 5's table and the commands above line up.
+> A wiring session looking for batch 1's assets should look in `foundry/art-src/batch-2/`.
 
 ```bash
 mkdir -p foundry/art-src/batch-2/originals foundry/art-src/batch-2/icons foundry/art-src/batch-2/web
@@ -350,9 +389,58 @@ transparent", attached with `$REFS_PLATE` plus two approved icons. But ask befor
 Note that art-style.md's icon system block assumes every icon has a frame, so a frameless pip is
 already a deviation, which is another reason to keep them in code.
 
+### 3.3 E. The Updates opener plate, `plate-updates.webp`
+
+> **Corrected after the batch 1 run (2026-09-21).** This subject asked for "a dated signature in ink",
+> which the locked colour plate block's own exclusions forbid: `site/design/art-style.md` line 66
+> reads "no signatures". `art-style.md` is binding and this handout is not, so the signature is struck
+> from the subject above. The generated `plate-updates.webp` in `foundry/art-src/batch-2/web/` was
+> made before this correction and carries an abstract ink scrawl where the signature was asked for.
+> **Resolved 2026-09-21: the owner rejected it and approved a regenerated plate.** That
+> first plate also failed this section's own acceptance, coming back photoreal with lens bokeh rather
+> than painted. The shipped plate is `plate-updates-v4`: the slip pasted inside the front cover, no
+> desk props, the Wings emblem embossed on the board, painted throughout, no signature. The page's alt
+> text was corrected with it, because it still described the signature. The typewriting marks and the stamp are not letters or numerals and are what the
+> shipped `plate-compendium.webp` already does, so they are not at issue.
+
+Not a tracker icon: a website colour plate, and the only asset here that `art-style.md` covers
+completely with no open question. The site's new Updates section, the player-facing changelog at
+`/updates/`, renders its opener frame empty because no plate exists yet. The page is not broken, and
+this is worth understanding before you generate: `art` on the plate is only a slot name
+(`data-art-slot`), and the image arrives through a separate `image` prop, so an unfilled frame
+renders as an empty figure with its aria-label and the build passes. The frame is simply blank.
+
+- **Family and blocks:** a chapter opener plate. Use the **colour plate** style block and the
+  **world** block, both verbatim, in the order section 2 gives.
+- **Aspect and size:** 16:9, about 1672x941, per the Sizes table. Web copy WebP, 1600 px long edge,
+  quality 82.
+- **References:** attach both style-lock plates with `-i`, and open the prompt with the REFERENCE
+  IMAGES line, exactly as `art-style.md` requires for every plate.
+- **Shipped path:** `site/src/assets/plates/plate-updates.webp`, beside `plate-reference.webp` and
+  the rest. Note the file naming follows the existing plates and does **not** match the page's slot
+  name, which is `updates-opener`. That is correct: the slot name and the file name are different
+  things here.
+- **Subject**, taken from the page's own caption and alt text so the plate matches what the page
+  already says it is:
+
+  > A typed amendment slip pasted inside the front cover of a Survey Corps field manual. The slip is
+  > a small sheet of paper, typewritten and stamped once. It
+  > lies slightly askew on the inside board of a worn leather-bound manual, the cover open and the
+  > edges of its pages showing. Lit as a document on a desk, from one side, with the dust and grain
+  > the other plates carry. No people, no Titans, no ODM gear.
+
+- **Acceptance:** it must read as paperwork, not as a scene. The failure to watch for is the model
+  filling the desk with props, or drifting photoreal on the leather and paper, which is the same
+  drift the reference images exist to stop. If it comes back photoreal, check the references were
+  actually attached before you change the prompt.
+- **Wiring afterwards, one line for the report:** the page needs `import plate from
+  '~/assets/plates/plate-updates.webp'` and `image: plate` added to its `plate={{ ... }}` block, the
+  same as `site/src/pages/reference/index.astro` does. Do not make that edit yourself; name it in
+  your report and the wiring session will do it.
+
 ### 3.4 After the batch 1 generations
 
-1. Check hashes: `cd foundry/art-src/batch-2/originals && md5 -r *.png | sort | uniq -d -w32`.
+1. Check hashes: `cd foundry/art-src/batch-2/originals && md5 -r *.png | awk '{print $1}' | sort | uniq -d`.
 2. If an icon came back on white, convert white to alpha against `#FFFFFF` and save a 1024 px
    transparent PNG into `foundry/art-src/batch-2/icons/` (art-style.md, "Post-processing").
 3. Proof at 20 px on paper `#E4DCC5`, on white, and as a black silhouette, and also proof the
@@ -366,6 +454,19 @@ already a deviation, which is another reason to keep them in code.
    batch approved before anything is committed (ADR-0022).
 
 ## 4. Batch 2: the engagement board
+
+> **Batch 2 is done and shipped, 2026-09-21.** All 29 files are in `foundry/static/assets/board/`,
+> imported by the board section of `foundry/tools/import-art.sh`. The owner answered 8.1 questions 1
+> and 2 first (the board takes its own style block and style lock; hexes are flat-top), approved the
+> lock, and kept the lock figures' eye-level view. Three things below turned out wrong and are
+> corrected in `site/design/art-style.md`, which now holds the board's locked block: the tile
+> geometry asked for a width of the full canvas and a height of half the width inside a 16:9 canvas,
+> which cannot both hold, so the hexagon is now pinned to the canvas edges; tiles need a full
+> RENDERING paragraph or they come back photoreal even with the references attached; and the
+> generator leaves a red and yellow matte fringe on every cut-out, which is despilled on tiles and
+> figures but never on effects. `fx-fire` was regenerated once for a neon core. Rim glyphs are
+> frameless as this section proposed (8.1 question 8). No `art.ts` accessor was added, because no
+> code draws the board until batch E.
 
 Not urgent. Longest lead time, so it starts now. Section 7 of
 `docs/playtest/feedback/round-3/zone-combat-design.md` is the full picture; read 7.3 to 7.7 before you
@@ -754,7 +855,7 @@ name collision is a problem for the wiring session, not for the art.
 
 Before you take anything to the owner:
 
-- [ ] `md5 -r *.png | sort | uniq -d -w32` is empty in every `originals/` folder.
+- [ ] `md5 -r *.png | awk '{print $1}' | sort | uniq -d` is empty in every `originals/` folder.
 - [ ] Every run had both style-lock plates on `-i`. If you cannot say this for a file, regenerate it.
 - [ ] Batch 1: each icon proofed at 20 px on paper `#E4DCC5`, on white, as a black silhouette, and
       inverted, and in a strip beside the icons it will sit next to.
@@ -799,14 +900,18 @@ the batch rather than after.
 
 Do not decide these on your own.
 
-1. **There is no board style block.** art-style.md has colour plate, ink-wash vignette, brand emblem,
-   brand wordmark, wax seal and the icon system, and none of them is a shallow-isometric board tile.
-   This handout says to use the colour plate block verbatim and carry the board-specific requirements
-   in the subject. Should a board style block be added to art-style.md instead, and if so, does the
-   board get its own approved style lock first, as ADR-0022 requires for every other family?
-2. **Hex orientation is not fixed anywhere.** Section 7 of the zone design says hexagonal zones and
-   shallow isometric, but not flat-top or pointy-top. This handout assumes flat-top with two-to-one
-   foreshortening, so the tile is twice as wide as it is tall. Confirm before 15 tiles are generated.
+1. **There is no board style block. ANSWERED 2026-09-21: the board gets its own style block and its
+   own approved style lock, before any of the 29 files.** art-style.md has colour plate, ink-wash
+   vignette, brand emblem, brand wordmark, wax seal and the icon system, and none of them is a
+   shallow-isometric board tile, so the board is a new family and ADR-0022's rule applies to it like
+   every other. `site/design/art-style.md` now carries an "The engagement board" section holding the
+   ruling, with its style block marked pending until the lock is approved. The lock set generated for
+   approval is variant 1 of each of the five anchor ratings, plus `titan-medium` and
+   `soldier-standing`, which between them exercise every painted board sub-kind. The rim glyphs are
+   not in the lock: they are icons and run on the already-locked icon system block.
+2. **Hex orientation. ANSWERED 2026-09-21: flat-top, with two-to-one foreshortening**, so a tile is
+   twice as wide as it is tall. Recorded in `site/design/art-style.md` and
+   `foundry/design/asset-inventory.md`.
 3. **art-style.md's Sizes table has no board row**, so the aspect ratios and the shipped sizes here
    (16:9 for tiles, 4:5 for figures, 1:1 for effects and glyphs) are proposals.
 4. **art-style.md's folder rules have no board folder and no Foundry batch naming.** This handout

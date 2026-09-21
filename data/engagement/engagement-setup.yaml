@@ -1,26 +1,41 @@
-# Interim Titan Engagement setup: the Anchor Rating, the Focus Titan's Size Class, the Background
-# Titans, and the retreat clock, for a Titan Engagement whose starting rule names none of them.
+# Interim Titan Engagement setup: the field (its size, its field rating, and each zone's rating), the
+# Focus Titan's Size Class, the Background Titans, and the retreat clock, for a Titan Engagement whose starting rule names none of them.
 # Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.1) references this
 # file and renders its tables from it (tools/render/render.py).
 id: engagement-setup
 name: Interim Titan Engagement Setup
 chapter: 05-titan-engagement
-adrs: [ADR-0014, ADR-0024]
-decided: [OQ-87, OQ-104, OQ-126, OQ-141, OQ-167, OQ-182]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10); OQ-167: framing (decision batch 9, 9-15)
+adrs: [ADR-0014, ADR-0024, ADR-0029]
+decided: [OQ-87, OQ-104, OQ-126, OQ-141, OQ-167, OQ-182, OQ-202]   # OQ-104: the medium_abnormal roll (decision batch 4, 4-5); OQ-126: the retreat clock (decision batch 5, 5-10); OQ-167: framing (decision batch 9, 9-15)
 
 used_when: >-
-  A Titan Engagement begins and the rule that begins it does not name its Anchor Rating, its Focus
-  Titan, its Background Titans, or its retreat clock's length. An Expedition's hazard rows name some of
-  these, and the kind of the Waypoint names the Anchor Rating (data/expedition/hazards.yaml;
-  data/expedition/route.yaml, waypoint_kinds; decision batch 7, 7-14); a Mission Brief may name more.
-  Or the GM names, as framing before any roll on this table, the Anchor Rating, the Focus Titan, or
-  the Background Titans with their clock lengths that the starting rule leaves unnamed, and this table
+  A Titan Engagement begins and the rule that begins it does not name its field size, its field
+  rating, the rating of any zone, its Focus Titan, its Background Titans, or its retreat clock's
+  length. An Expedition's hazard rows name some of these, and the kind of the Waypoint names the field
+  rating (data/expedition/hazards.yaml; data/expedition/route.yaml, waypoint_kinds; decision batch 7,
+  7-14); a Mission Brief may name more, a whole field included (data/engagement/zones.yaml,
+  named_field_format). Or the GM names, as framing before any roll on this table, the field size, the
+  field rating, any zone's rating, the Focus Titan, or the Background Titans with their clock lengths that the starting rule leaves unnamed, and this table
   fills what is left (docs/rules/05-titan-engagement.md, section 5.1; decision batch 9, 9-15). A value
   the starting rule or the GM names is never rolled or taken from this table.
 
 steps:
-  - id: anchor-rating
-    text: Roll D6 on anchor_rating.
+  - id: field-size
+    text: >-
+      The field is the Standard field, unless the starting rule or the GM's framing names the
+      Skirmish field or the Set piece (data/engagement/zones.yaml, fields). Nothing is rolled.
+  - id: field-rating
+    text: >-
+      Roll D6 on anchor_rating. The result is the field rating: the Anchor Rating the field is
+      generated from. A Waypoint's kind names it (data/expedition/route.yaml, waypoint_kinds).
+  - id: zone-terrain
+    text: >-
+      The centre zone and the Squad's start zone take the field rating. Every other zone, in number
+      order, rolls D6 on zone_terrain: sparser is the field rating's sparser rating, field is the
+      field rating, and denser is the field rating's denser rating
+      (data/engagement/anchor-ratings.yaml, ratings, sparser and denser). A zone the starting rule
+      or the GM's framing names takes the rating named and is not rolled. Each zone's start rating
+      is the rating it takes here.
   - id: focus-titan
     text: >-
       Roll D6 on size_class. The Focus Titan is the standard Titan of that Size Class
@@ -31,11 +46,6 @@ steps:
       Roll D6 on background_titans. For each Background Titan it gives, roll D6 on size_class for
       its Size Class, in the order the row lists the clocks. Each is the standard Titan of its Size
       Class (data/titans/index.yaml, standard_titans); medium_abnormal is never rolled for it.
-  - id: anchors
-    text: >-
-      The Titan Engagement's Anchors are the Anchor Rating's anchors value
-      (data/engagement/anchor-ratings.yaml, ratings, anchors; anchors). Nothing is rolled: the
-      rating sets it.
   - id: retreat-clock
     text: >-
       The retreat clock has retreat_clock segments (data/engagement/background-titans.yaml,
@@ -50,6 +60,17 @@ anchor_rating:
     - {results: [3, 4], anchor_rating: wooded}
     - {results: [5], anchor_rating: urban}
     - {results: [6], anchor_rating: giant-forest}
+
+# The terrain mix (decision batch 16, 16-6; OQ-202, decided by the zone retune, Z4, docs/reviews/zone-retune-decisions.md): one D6 for each zone but the
+# centre and the Squad's start zone. A rating's sparser and denser are in
+# data/engagement/anchor-ratings.yaml, ratings.
+zone_terrain:
+  roll: D6
+  applies_to: every zone but the centre and the Squad's start zone, in number order
+  rows:
+    - {results: [1], rating: sparser}
+    - {results: [2, 3, 4, 5], rating: field}
+    - {results: [6], rating: denser}
 
 size_class:
   roll: D6
@@ -77,9 +98,11 @@ background_titans:
 retreat_clock: 8   # segments, for every Titan Engagement this table sets up; no roll (decision batch 5, 5-10, OQ-126)
 
 gm_choices: >-
-  A ruling, as framing: before any roll on this table, the GM may name the Anchor Rating, the Focus
-  Titan (any Titan in data/titans/index.yaml), and the Background Titans with their clock lengths (none, one, or two, each on a clock of 4, 6, or 8 segments; decision batch 9, 9-34),
-  where the starting rule names none of them (docs/rules/05-titan-engagement.md, section 5.1;
-  decision batch 9, 9-15). Nothing else: the retreat clock's length, the Anchors the named rating
-  gives, a value a starting rule names, everyone's Distant start, and a row once rolled stand
-  (ADR-0024, limits 8 and 10).
+  A ruling, as framing: before any roll on this table, the GM may name the field size, the field
+  rating, any zone's rating, the Focus Titan (any Titan in data/titans/index.yaml), and the Background
+  Titans with their clock lengths (none, one, or two, each on a clock of 4, 6, or 8 segments; decision
+  batch 9, 9-34), where the starting rule names none of them (docs/rules/05-titan-engagement.md,
+  section 5.1; decision batch 9, 9-15; decision batch 16, 16-33). Nothing else: the retreat clock's
+  length, the anchors a named rating gives, a value a starting rule names, a soldier's zone or
+  attachment, the Squad's start zone, the Focus Titan's centre zone, and a row once rolled stand
+  (ADR-0024, limits 8 and 10; data/engagement/zones.yaml, gm).

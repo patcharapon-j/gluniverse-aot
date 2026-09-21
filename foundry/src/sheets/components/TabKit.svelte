@@ -6,6 +6,7 @@
   import { addListEntry, deleteItem, fitCanister, openItem, removeListEntry, setField, setItem, setListEntry, setSpares } from '../soldier-ops.ts';
   import { type GearView, type SoldierView } from '../soldier-view.ts';
   import Sec from './Sec.svelte';
+  import { tracker } from '../../tracker/state.svelte.ts';
   import Stepper from './Stepper.svelte';
 
   let { view }: { view: SoldierView } = $props();
@@ -16,6 +17,8 @@
   /** A piece of gear's Gear Dice rating is what it is, not how worn it is: an Edit-mode field. */
   const roStats = $derived(!view.statsEditable);
   const POSITIONS = ['distant', 'in-reach', 'on-body', 'blind-spot'];
+  /** This soldier's row in the running Titan Engagement's ledger, if they take part in one. */
+  const place = $derived(tracker.view?.mode === 'titan' ? (tracker.view.rows.find((r) => r.id === actor.id) ?? null) : null);
 
   let ledgerEl: HTMLElement | undefined = $state();
 
@@ -219,30 +222,23 @@
           {t('WOF.Actor.Base.FIELDS.positions.left.label')}
         </label>
       </div>
-      <div class="rowlist" style="margin-top:8px">
-        {#each s.positions.entries as p, i (i)}
-          <div class="row">
-            <input type="text" style="width:48px" value={p.titan} placeholder="A" aria-label={t('WOF.Actor.Base.FIELDS.positions.entries.element.titan.label')} disabled={ro} onchange={(e) => setListEntry(actor, 'positions.entries', i, { titan: e.currentTarget.value })} />
-            <select value={p.position} aria-label={t('WOF.Actor.Base.FIELDS.positions.entries.element.position.label')} disabled={ro} onchange={(e) => setListEntry(actor, 'positions.entries', i, { position: e.currentTarget.value })}>
-              {#each POSITIONS as pos (pos)}<option value={pos} title={t(`WOF.PositionTip.${pos}`)}>{t(`WOF.Position.${pos}`)}</option>{/each}
-            </select>
-            <button type="button" class="mini icon" disabled={ro} aria-label={t('WOF.Sheet.menu.remove')} onclick={() => removeListEntry(actor, 'positions.entries', i)}>✕</button>
-          </div>
-        {:else}<p class="empty">{t('WOF.Sheet.kit.noPositions')}</p>{/each}
-        <span><button type="button" class="mini" disabled={ro} onclick={() => addListEntry(actor, 'positions.entries', { titan: String.fromCharCode(65 + s.positions.entries.length), position: 'distant' })}>{t('WOF.Sheet.kit.addPosition')}</button></span>
-      </div>
+      <!-- Zone and attachment are recorded on the running Titan Engagement, and the Positions are
+           derived from them and never written (decision batch 16, 16-35). -->
+      {#if place}
+        <div class="grid-form" style="margin-top:8px">
+          <span class="lbl">{t('WOF.Actor.Base.FIELDS.zone.label')}</span><span>{place.zoneText}</span>
+          <span class="lbl">{t('WOF.Actor.Base.FIELDS.attachment.label')}</span><span>{place.attachText || '–'}</span>
+          <span class="lbl">{t('WOF.Sheet.kit.positionsShown')}</span><span>{place.cells.filter((c) => c.position).map((c) => `${c.label} ${c.text}`).join(', ') || '–'}</span>
+          {#if place.horseText}<span class="lbl">{t('WOF.Sheet.kit.horseZone')}</span><span>{place.horseText}</span>{/if}
+        </div>
+      {:else}<p class="empty">{t('WOF.Sheet.kit.noPositions')}</p>{/if}
     </div>
 
     <div class="block">
       <Sec n="5" title={t('WOF.Actor.Base.FIELDS.left_at.label')} hint={t('WOF.Sheet.kit.leftAtHint')} />
       <div class="grid-form">
-        <span class="lbl">{t('WOF.Actor.Base.FIELDS.left_at.position.label')}</span>
-        <select value={s.left_at.position ?? ''} disabled={ro} onchange={(e) => setField(actor, 'system.left_at.position', e.currentTarget.value || null)}>
-          <option value="">—</option>
-          {#each POSITIONS as pos (pos)}<option value={pos} title={t(`WOF.PositionTip.${pos}`)}>{t(`WOF.Position.${pos}`)}</option>{/each}
-        </select>
-        <span class="lbl">{t('WOF.Actor.Base.FIELDS.left_at.titan.label')}</span>
-        <input type="text" value={s.left_at.titan} disabled={ro} onchange={(e) => setField(actor, 'system.left_at.titan', e.currentTarget.value)} />
+        <span class="lbl">{t('WOF.Actor.Base.FIELDS.left_at.zone.label')}</span>
+        <input type="number" min="1" value={s.left_at.zone ?? ''} disabled={ro} onchange={(e) => setField(actor, 'system.left_at.zone', e.currentTarget.value === '' ? null : Number(e.currentTarget.value))} />
         <span class="lbl">{t('WOF.Actor.Base.FIELDS.left_at.items.label')}</span>
         <input
           type="text"

@@ -6,7 +6,7 @@ order: 3
 tab: Wounds
 sources:
   - path: docs/rules/03-harm-and-mind.md
-    sha: "d1f65237b73bbcb776e1b08bed5b9e64f34ad796"
+    sha: "fb204e38ace9fb6b08526bddad40f33459e80b18"
   - path: data/harm/health.yaml
     sha: "8faf7ebabffd9190a59a30ba3c4830eff0509c49"
   - path: data/harm/critical-injuries.yaml
@@ -16,23 +16,23 @@ sources:
   - path: data/harm/death-rolls.yaml
     sha: "66dd2a154f48e9036242cd6c26de2ef46c4ee9a6"
   - path: data/harm/treat-injury.yaml
-    sha: "28603f6905aaa187b8239f2df6b3c4756bef8dda"
+    sha: "96c6823d32328986ef2c204d4437dff91363d9e2"
   - path: data/harm/healing.yaml
     sha: "b7a951ef936cfc44c757fc57c8e0fd935f3efba4"
   - path: data/harm/effect-types.yaml
-    sha: "09be8cce7c8f1b04b114c49c0e31106a5729cc3d"
+    sha: "4beb1797239b9204825a1a80b4a8d45515534c11"
   - path: data/harm/engagement-end.yaml
-    sha: "e34f0720353db60bef4d273677dcbdd4d2d0d78d"
+    sha: "3cc2ae71e009ef8754986c694b93bb3ab106b83f"
   - path: data/mind/stress-responses.yaml
-    sha: "2c3784df8eb65e5eb83bb80b1391c7074f7d9fa4"
+    sha: "d266cc28ea6171ea33ae21c1ac77b676b22e1cdf"
   - path: data/mind/fear-rolls.yaml
-    sha: "6b6e4d5d77bf9c68bdd2ef02fd9c4229d0e1dd99"
+    sha: "b171a17727944f2fd9ee26559e169094203e4ccc"
   - path: data/mind/scars.yaml
     sha: "018484c414d0f46667c3e0b059fa666984097e05"
   - path: data/mind/grief.yaml
     sha: "35aa2e0d22c9f4ad9e6c66f902b6eeb28b9d3e42"
   - path: data/character/action-catalog.yaml
-    sha: "747752afe49fd764d041b05362412356a62fe355"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -308,7 +308,7 @@ You die from a failed Death Roll, an instant-death row, or any rule that names d
   ['Talents', 'Field Medicine adds dice, Sure Hands allows a second Push, Careful Nursing halves a comrade\'s remaining healing time.'],
 ]} />
 
-**In a fight** it is an action, and in a Titan Engagement the patient must hold your Position. Helped, Pushed, and Covered as usual, and retried on a later turn.
+**In a fight** it is an action, and in a Titan Engagement the patient must be in your zone. Helped, Pushed, and Covered as usual, and retried on a later turn.
 
 </FinePrint>
 
@@ -331,7 +331,7 @@ Everyone in the scope who is not Down makes **one roll**, for any use and patien
 When a fight ends, each dying soldier gets **one** chance before the end-of-fight Death Rolls.
 
 - **Patient:** anyone holding an untreated lethal wound that runs out now.
-- **Treater:** one per patient — a soldier who is not Down and held the patient's Position or one step from it as the fight ended, or the patient treating themselves at the self-treatment penalty. In a Skirmish everyone who took part counts as sharing the Position.
+- **Treater:** one per patient — a soldier who is not Down and was in the patient's zone as the fight ended, or the patient treating themselves at the self-treatment penalty. In a Skirmish everyone who took part counts as sharing the Position.
 - **A failure uses up the patient's attempt.** No second treater, and no other wound of theirs, reopens it.
 - **Nobody Helps or Covers.** It can be Pushed, and it does not use up a roll in the care window that follows.
 
@@ -384,7 +384,7 @@ An Empathy action that talks a comrade back. **It never lowers Stress.**
 
 - **Target:** a comrade holding at least one lasting Stress Response or a pending Fear result. They may be Down. Never yourself.
 - **Needs 1 success, and each success clears one** result, your choice.
-- **In a Titan Engagement** it is an action, and the target must be at your Position or one step away. It can be Helped, and retried on a later turn.
+- **In a Titan Engagement** it is an action, and the target must be in your zone or an adjacent zone. It can be Helped, and retried on a later turn.
 - **Away from one,** any soldier who is not Down may Rally, with no Help and no Covering — once per comrade, until they gain another result.
 
 </Subsection>

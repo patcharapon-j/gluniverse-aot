@@ -131,6 +131,19 @@ describe('Next Behavior (behavior-procedure.yaml)', () => {
     expect(nextBehaviorFor(tiny, partsOf({ 'left-arm': 'broken', 'right-arm': 'broken' }), '', 4)).toBe('thrash');
     expect(nextBehaviorFor(tiny, partsOf(), 'a', 4)).toBe('thrash');
   });
+
+  it('wraps at Frenzy 0 but turns back down at Frenzy 1+ (move-up, as amended after round 3 review 1, C3)', () => {
+    const wrap = [
+      { id: 'a', name: 'A', results: [1, 2], tier: 'terrorize', body_parts_used: [] },
+      { id: 'b', name: 'B', results: [3, 4, 5], tier: 'control', body_parts_used: [] },
+      { id: 'c', name: 'C', results: [6], tier: 'kill', body_parts_used: [] },
+    ];
+    // The entry at 6 is the previous behavior, so it cannot be rolled either way.
+    expect(nextBehaviorFor(wrap, partsOf(), 'c', 6)).toBe('a'); // Frenzy 0: after 6 comes 1.
+    expect(nextBehaviorFor(wrap, partsOf(), 'c', 6, 0)).toBe('a');
+    expect(nextBehaviorFor(wrap, partsOf(), 'c', 6, 1)).toBe('b'); // Frenzy 1+: turns back down instead.
+    expect(nextBehaviorFor(wrap, partsOf(), 'c', 6, 3)).toBe('b');
+  });
 });
 
 describe('what players see (data/engagement/read.yaml)', () => {

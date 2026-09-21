@@ -173,7 +173,7 @@ _Avoid_: willpower, sanity
 Dice contributed by equipment. A Push rolls a Gear Die showing 2 to 5 again, keeps a 6, and locks a 1. When a Pushed roll is final, any 1 showing wears that equipment down by 1 point, one point per roll.
 
 **Help**:
-Adding 1 die to a comrade's roll, up to 3 helpers. In a Titan Engagement it spends the helper's action and needs the same Position or one step away; in a Skirmish it spends the helper's action and needs a comrade taking part who is not Down; outside both, the rule that calls for the roll states who can Help and what it spends, and on a called roll the GM rules who is present and able, with Help spending nothing unless the GM names a cost of time or position, which falls when Help is declared.
+Adding 1 die to a comrade's roll, up to 3 helpers. In a Titan Engagement it spends the helper's action and needs the same zone or an adjacent zone; in a Skirmish it spends the helper's action and needs a comrade taking part who is not Down; outside both, the rule that calls for the roll states who can Help and what it spends, and on a called roll the GM rules who is present and able, with Help spending nothing unless the GM names a cost of time or position, which falls when Help is declared.
 _Avoid_: assist
 
 **Bonus Dice**:
@@ -224,7 +224,7 @@ _Avoid_: mental trauma, madness
 The weight a soldier carries after a comrade dies, gained by the fight's participants when it ends, or by the Squad after other deaths and any Fear Rolls they cause. Each point lowers Resolve by 1, up to 3 held, until dealt with during Downtime.
 
 **Health**:
-How much punishment a character can absorb before they can no longer act: half of Strength plus Agility, rounded up, kept as a row of boxes. Each untreated Critical Injury crosses off one box, up to Health; damage marks the boxes left; at 0 the soldier is Down.
+How much punishment a character can absorb before they can no longer act: 2 plus half of Strength plus Agility, where the rounding up applies to the halved attributes and the 2 is added after, kept as a row of boxes. That is 4 to 6 for a built soldier and 4 to 8 for a rolled one (`data/character/attributes.yaml`, `derived_values`, `health`). Each untreated Critical Injury crosses off one box, up to Health; damage marks the boxes left; at 0 the soldier is Down.
 _Avoid_: HP, hit points
 
 **Critical Injury**:
@@ -326,7 +326,7 @@ A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden unt
 _Avoid_: queued attack
 
 **Frenzy**:
-A counter each Focus Titan holds, from 0 to 3. It starts at 0 when the Titan becomes a Focus Titan and rises by 1 at each round end, and it is added to the Titan's behavior roll, so the Titan walks up its own table as the fight drags. A total above the table's highest result reads as that result.
+A counter each Focus Titan holds, from 0 to 3. It starts at 0 when the Titan becomes a Focus Titan and rises by 1 at the end of every third round (the third, the sixth, the ninth, and so on), and it is added to the Titan's behavior roll, so the Titan walks up its own table as the fight drags. A total above the table's highest result reads as that result. An illegal result at the top of a frenzied Titan's table turns back down the table, never round to 1.
 _Avoid_: rage, enrage, escalation counter, anger
 
 **Telegraph**:
@@ -342,8 +342,12 @@ The one soldier or decoy a Focus Titan is fixed on at any moment, which its Beha
 _Avoid_: aggro, threat, focus
 
 **Attention Ladder**:
-The ranked stimuli a Focus Titan turns its Attention toward each time it acts. The standard order is: hooked into its body, nearest person in reach, just hurt it (until the end of its next card that resolves a behavior), loudest or brightest, nearest (the closest Position). Abnormals have their own ladder.
+The ranked stimuli a Focus Titan turns its Attention toward each time it acts. The standard order is: hooked into its body, nearest person in reach, just hurt it (until the end of its next card that resolves a behavior), loudest or brightest, nearest (the closest Position). Abnormals have their own ladder. It is read a second time, over the soldiers who meet a rolled entry's Position requirement, when its holder does not meet it, and the Titan's Attention moves to the soldier that reading returns (see **Retarget**).
 _Avoid_: priority list, aggro table
+
+**Retarget**:
+What a Focus Titan does when its Attention holder cannot meet the Position requirement of the entry its behavior roll came up with: the Attention Ladder is read again over only the soldiers who can meet it, its Attention moves to the soldier that reading returns, and the entry resolves against them. Only when no soldier meets the requirement does the behavior fall back. A retarget moves no soldier and changes no Position.
+_Avoid_: re-aggro, switch target, pick a new victim
 
 **Draw Attention**:
 An action, or a Fear Roll result, that makes the soldier the loudest or brightest stimulus on the Attention Ladder until the end of the Titan's next card that resolves a behavior. Never from Distant.
@@ -362,11 +366,33 @@ The successes an attack roll scored: a Titan's, a Foe's, or a soldier's against 
 _Avoid_: difficulty, threshold, target number
 
 **Position**:
-Where a soldier is relative to a Focus Titan: Distant, In Reach, On Body, or Blind Spot.
-_Avoid_: range, zone
+Where a soldier is relative to a Focus Titan or corpse, derived from their zone and attachment: Distant (another zone), In Reach (its zone), On Body, or Blind Spot.
+_Avoid_: range
+
+**Field**:
+The hexagonal zones a Titan Engagement is fought over: 7, 13, or 19, with 13 the default.
+_Avoid_: map, grid, battlefield
+
+**Zone**:
+One hex of the field, about a Titan's reach across, with its own Anchor Rating, occupants, and effects.
+_Avoid_: square, tile, area
+
+**Edge zone**:
+A zone on the rim of the field, from which a soldier steps off field to leave.
+
+**Off field**:
+Beyond the edge zones. A soldier there has left the Titan Engagement.
+
+**Attachment**:
+Where a soldier is within their zone: on the ground, anchored, On Body or in the Blind Spot of a named body, Grabbed, or Pinned. With the zone it gives every Position.
+_Avoid_: stance, state
+
+**Stride**:
+The zones a Focus Titan moves toward its Attention holder before each of its cards resolves a behavior: Small 1, Medium 2, Large 2, and as an Abnormal lists. A grounded Titan's is 0.
+_Avoid_: speed, movement rate
 
 **Blind Spot**:
-The Position out of a Focus Titan's sight with its Nape within reach, anchored to terrain behind the Titan and not on it, and the only Position a Nape strike can be made from. It is a place in the world, not a place on the monster: the soldier stands on a tree or a roof and is not touching the Titan. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and leaves the striker at Blind Spot.
+The Position out of a Focus Titan's sight with its Nape within reach, anchored to terrain in the Titan's zone and not on it, and the only Position a Nape strike can be made from. It is a place in the world, not a place on the monster: the soldier is anchored to a tree or a roof, hanging from it or standing on it, and is not touching the Titan; whether they are airborne follows the move that brought them there. Making a Nape strike counts as hooking into the Titan for the Attention Ladder only, and leaves the striker at Blind Spot. It has no facing.
 _Avoid_: rear, behind, a spot on the Titan
 
 **Opening**:
@@ -416,7 +442,7 @@ The Strength action that lifts a Titan's body off a Pinned comrade: each success
 _Avoid_: lift (reserved for Lift Comrade), pry (reserved for Pry Loose)
 
 **Corpse**:
-A dead Focus Titan's body, kept on the field for the rest of the Titan Engagement as a grounded body that keeps its Positions: a soldier who holds one is in the Titan Engagement, and Heave and the strike on a pinning Body Part are the only acts against it. It holds no Attention and plays no cards. The Titan Engagement does not end while a soldier lies Pinned under one.
+A dead Focus Titan's body, lying for the rest of the Titan Engagement in the zone its Titan died in as a grounded body that soldiers hold Positions relative to: a soldier on the field is in the Titan Engagement, and Heave and the strike on a pinning Body Part are the only acts against it. It holds no Attention and plays no cards. The Titan Engagement does not end while a soldier lies Pinned under one.
 _Avoid_: remains, carcass, dead Titan (as a rules term)
 
 **Corpse Heat**:
@@ -453,8 +479,11 @@ The gas-powered grappling harness soldiers use to fly between anchor points and 
 _Avoid_: 3DMG, 3D Maneuver Gear, maneuver gear
 
 **Anchor Rating**:
-How well a battlefield holds ODM Gear anchors: Open, Sparse, Wooded, Urban, or Giant Forest. It decides which Position changes ODM Gear allows.
+How well a zone holds ODM Gear anchors: Open, Sparse, Wooded, Urban, or Giant Forest. It decides which attachment steps the zone allows and what a Flight pays to enter it.
 _Avoid_: terrain type
+
+**Field rating**:
+The Anchor Rating a field is generated from, which the centre zone and the Squad's start zone take.
 
 **Jam**:
 ODM Gear worn down to 0, which stops working and drops an airborne soldier.
@@ -525,7 +554,7 @@ How far an Expedition has pushed from the Walls: Near, Far, or Deep. Deeper band
 _Avoid_: depth, zone
 
 **Waypoint**:
-A named stopping point on an Expedition route, such as a forest, an abandoned town, or a supply depot. Its kind sets the Anchor Rating of the Leg that leads to it.
+A named stopping point on an Expedition route, such as a forest, an abandoned town, or a supply depot. Its kind sets the field rating of a Titan Engagement on the Leg that leads to it.
 _Avoid_: node, location
 
 **Depot**:

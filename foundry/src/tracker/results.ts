@@ -10,7 +10,7 @@ import { attackResult, titanSuccesses } from '../rules/roll.ts';
 import { cardRefusal, resultDigest, resultTrust, strikeRefusal } from '../rules/engagement/card-trust.ts';
 import { grabLands } from '../rules/engagement/grab.ts';
 import { gainInjury, type Location } from '../rules/engagement/injury.ts';
-import { focusLabels, isClose } from '../rules/engagement/positions.ts';
+import { isClose } from '../rules/engagement/positions.ts';
 import { attackDamage, cancelAllowed, foeAttackDice, foeTurn, groupBroken, harmFoe, netSuccesses, type FoeState } from '../rules/engagement/skirmish.ts';
 import { bodyPartStrikeResult, breakAttentionNeeds, breakAttentionResult, napeStrikeResult, spendOpenings, type DecoyId } from '../rules/engagement/strikes.ts';
 import { planBackground, startRetreat } from '../rules/engagement/round.ts';
@@ -19,13 +19,13 @@ import { injuryData } from '../sheets/soldier-ops.ts';
 import { trackerApply } from '../settings.svelte.ts';
 import { showDice, WofRoll } from '../dice/terms.ts';
 import { clock, postCard } from '../dice/post.ts';
-import { enterTitan, isActiveGM, isGM, markOdm, recordRelease, skirmishFoes, titanDies, wingEvent, wreck } from './engine.ts';
+import { boardEvent, enterTitan, isActiveGM, isGM, markOdm, recordPlacement, recordRelease, skirmishFoes, titanDies, wingEvent, wreck } from './engine.ts';
 import { fearRolls, trackerDeaths } from './fear.ts';
 import { healthLine, rollFall } from './harm.ts';
 import { postPrompt, registerPromptResolver, type PromptResolver } from '../dice/prompt.ts';
 import { tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
-import { E, grabbedBy, partsOf, snapshot, soldierState, titanActor, titanRow } from './snapshot.ts';
+import { E, grabbedBy, partsOf, rowZone, snapshot, soldierIn, soldierState, titanActor, titanRow } from './snapshot.ts';
 
 export const RESULT_FLAG = 'result';
 
@@ -293,8 +293,10 @@ async function strike(card: ActionCard, rec: Recorder): Promise<void> {
         const snap = snapshot(combat);
         const path = snap.soldiers.filter((s) => s.alive && !s.airborne && isClose(s.positions[label]) && grabbedBy(snap, s.id) === null).map((s) => s.name);
         rec.line(tr('result.grounded', { label }));
-        // The falling body destroys 1 Anchor where it lands (titan-harm.yaml, falling_titan).
-        wreck(combat, rec);
+        // The falling body takes one rating step off its own zone (titan-harm.yaml, falling_titan; 16-20).
+        const zone = rowZone(snap.titans.find((t) => t.key === key) ?? {});
+        wreck(combat, rec, zone, false);
+        boardEvent(rec, combat, 'fall', { key, zone });
         if (path.length) rec.line(tr('death.fall', { who: path.join(', ') }));
       }
       return;
@@ -397,15 +399,14 @@ async function effect(combat: any, key: string, label: string, actor: any, e: an
       await gainOn(combat, actor, { location: e.injury_location, type: e.injury_type, cannotBeLethal: e.cannot_be_lethal, net }, rec);
       return;
     case 'knock-loose': {
-      const s = soldierState(actor);
+      const s = soldierIn(combat, actor.id) ?? soldierState(actor);
       if (s.mounted) return void rec.line(tr('result.mountedStays', { name: actor.name }));
       if (!s.airborne && !isClose(s.positions[label])) return void rec.line(tr('result.notLoose', { name: actor.name }));
-      const positions = { ...s.positions };
-      if (isClose(positions[label])) positions[label] = 'in-reach';
-      setPositions(rec, actor, positions);
+      // A knock loose is a fall: the soldier lands on the ground in the zone they are in (16-22, 16-23).
+      recordPlacement(rec, combat, actor.id, { attachment: { kind: 'ground', body: null } });
       rec.set(actor, 'system.airborne', false);
       rec.line(tr('result.falls', { name: actor.name }));
-      await rollFall(combat, actor, { positions: s.positions, causing: label }, rec);
+      await rollFall(combat, actor, { attachment: s.attachment, zone: s.zone, causing: label }, rec);
       return;
     }
     case 'grab':
@@ -414,29 +415,19 @@ async function effect(combat: any, key: string, label: string, actor: any, e: an
   }
 }
 
-function setPositions(rec: Recorder, actor: any, positions: Record<string, Position>): void {
-  rec.set(
-    actor,
-    'system.positions.entries',
-    Object.entries(positions)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([titan, position]) => ({ titan, position })),
-  );
-}
-
 async function grab(combat: any, key: string, label: string, actor: any, rec: Recorder): Promise<void> {
   const titan = titanActor(combat, key);
   const snap = snapshot(combat);
   const tRow = snap.titans.find((t) => t.key === key)!;
-  const s = soldierState(actor);
-  const land = grabLands(s, tRow, rec.get(titan, 'system.body_parts'), focusLabels(snap.titans));
+  const s = snap.soldiers.find((x) => x.id === actor.id) ?? soldierState(actor);
+  const land = grabLands(s, tRow, rec.get(titan, 'system.body_parts'));
   if (!land) return void rec.line(tr('result.noArm'));
   if (!land.crushOnly) {
     const list = rec.get(combat, 'system.titans') as any[];
     rec.set(combat, 'system.titans', list.map((r) => (r.key === key ? { ...r, grab: land.grab } : r)));
     rec.set(titan, 'system.attention_holder', actor.id);
     rec.set(titan, 'system.body_parts', land.parts);
-    setPositions(rec, actor, land.positions);
+    recordPlacement(rec, combat, actor.id, land.placement);
     if (land.clearAirborne) rec.set(actor, 'system.airborne', false);
     if (land.dismount) for (const h of actor.items.filter((i: any) => i.type === 'gear' && i.system.subtype === 'horse' && i.system.mounted)) rec.set(h, 'system.mounted', false);
     if (land.stopCarrying) {

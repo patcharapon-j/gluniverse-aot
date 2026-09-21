@@ -11,6 +11,13 @@ import { revertValue, type TrackerOp } from '../rules/engagement/round.ts';
 
 const src = (doc: any, path: string) => foundry.utils.deepClone(foundry.utils.getProperty(doc._source ?? doc, path));
 
+let lastBoardSeq = 0;
+/** The next board event seq: above both what the document holds and what this client last wrote. */
+export function nextBoardSeq(docSeq: number): number {
+  lastBoardSeq = Math.max(lastBoardSeq, docSeq) + 1;
+  return lastBoardSeq;
+}
+
 export class Recorder {
   ops: TrackerOp[] = [];
   lines: string[] = [];
@@ -34,6 +41,17 @@ export class Recorder {
     else this.ops.push({ t: 'set', uuid: doc.uuid, path, from: src(doc, path), to: foundry.utils.deepClone(value) });
   }
 
+  /**
+   * Writes a value in the same update as the recorded changes but records no op, so Undo never writes
+   * it back: the board's event (combat.system.boardEvent), whose seq only rises.
+   */
+  setUnrecorded(doc: any, path: string, value: unknown): void {
+    if (!doc) return;
+    let patch = this.#patches.get(doc);
+    if (!patch) this.#patches.set(doc, (patch = {}));
+    patch[path] = foundry.utils.deepClone(value);
+  }
+
   line(text: string): void {
     this.lines.push(text);
   }
@@ -41,7 +59,13 @@ export class Recorder {
   async commit(): Promise<void> {
     const patches = [...this.#patches];
     this.#patches.clear();
-    for (const [doc, patch] of patches) await doc.update(patch);
+    for (const [doc, patch] of patches) {
+      // The board's event takes its seq here, just before the write, so two steps committing at
+      // once never write the same seq (review m5).
+      const ev = patch['system.boardEvent'] as { seq: number } | undefined;
+      if (ev && typeof ev === 'object') ev.seq = nextBoardSeq(doc.system?.boardEvent?.seq ?? 0);
+      await doc.update(patch);
+    }
   }
 
   /** Creates embedded documents now (after committing pending changes) and records them. */

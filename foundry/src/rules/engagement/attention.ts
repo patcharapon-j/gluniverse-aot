@@ -5,8 +5,8 @@
  */
 import { meetsBodyParts, type BodyPart } from '../titan.ts';
 import { tieCard } from './cards.ts';
-import { entering, holdsAPosition } from './positions.ts';
 import type { Position, Snapshot, SoldierState, TitanRow } from './types.ts';
+import { derivePosition } from './zones.ts';
 
 /** tests.nearest: the order Positions count as close. */
 const NEAREST_ORDER: readonly Position[] = ['on-body', 'in-reach', 'blind-spot', 'distant'];
@@ -155,20 +155,34 @@ export interface EntryLike {
 
 /**
  * resolving_a_card, choose: the Next Behavior's entry; Thrash when the Titan lacks its Body Parts;
- * its fallback when the holder does not meet the requirement; Thrash when that fallback is thrash,
- * is the previous behavior, or fails either test. Since decision batch 13 (13-9) the card retargets
- * first: call retargetForEntry and pass the Position of the soldier it returns, so the fallback is
- * reached only where no candidate meets the requirement at all.
+ * its fallback when the holder does not meet the requirement. Since decision batch 13 (13-9) the
+ * card retargets first: call retargetForEntry and pass the Position of the soldier it returns, so
+ * the fallback is reached only where no candidate meets the rolled entry's requirement at all. The
+ * fallback is then tested the same way (completed after round 3 review 1, M1): Thrash if it is
+ * thrash, is the previous behavior, or the Titan lacks its Body Parts; otherwise, if the holder does
+ * not meet the fallback's own position_requirement, `retarget` is asked whether any candidate does
+ * (the same Attention Ladder evaluation, over the narrowed set) — Thrash only when nobody meets that
+ * either. `retarget` is optional so this stays testable without a Ladder context; omitting it when a
+ * fallback needs one is the same as no candidate qualifying.
  */
-export function chooseEntry(entries: readonly EntryLike[], next: string, previous: string, parts: readonly BodyPart[], holderPosition: Position): EntryLike {
+export function chooseEntry(
+  entries: readonly EntryLike[],
+  next: string,
+  previous: string,
+  parts: readonly BodyPart[],
+  holderPosition: Position,
+  retarget?: (entry: EntryLike) => Position | null,
+): EntryLike {
   const thrash = entries.find((e) => e.tier === 'thrash')!;
   const e = entries.find((x) => x.id === next);
   if (!e || !meetsBodyParts(e, parts)) return thrash;
   if (e.position_requirement.includes(holderPosition)) return e;
   if (e.fallback === 'thrash' || e.fallback === 'none') return thrash;
   const f = entries.find((x) => x.id === e.fallback);
-  if (!f || f.id === previous || !meetsBodyParts(f, parts) || !f.position_requirement.includes(holderPosition)) return thrash;
-  return f;
+  if (!f || f.id === previous || !meetsBodyParts(f, parts)) return thrash;
+  if (f.position_requirement.includes(holderPosition)) return f;
+  if (retarget && retarget(f) !== null) return f;
+  return thrash;
 }
 
 /**
@@ -204,14 +218,14 @@ export function retargetForEntry(ctx: LadderContext, entry: RetargetEntry, holde
 }
 
 /**
- * entry_fields.targets: the holder, or the holder and every other soldier who holds the same
- * Position relative to the Titan, except a Grabbed soldier.
+ * entry_fields.targets: the holder, or the holder and every other soldier in the holder's zone who
+ * holds the same Position relative to the Titan, except a Grabbed soldier (decision batch 16, 16-18).
  */
 export function entryTargets(entry: Pick<EntryLike, 'targets'>, holder: string, titan: TitanRow, soldiers: readonly SoldierState[], grabbed: (id: string) => boolean): string[] {
   if (entry.targets !== 'holder-and-position') return [holder];
   const h = soldiers.find((s) => s.id === holder);
   const p = h?.positions[titan.label];
-  const others = soldiers.filter((s) => s.id !== holder && s.alive && !s.left && p !== undefined && s.positions[titan.label] === p && !grabbed(s.id));
+  const others = soldiers.filter((s) => s.id !== holder && s.alive && !s.left && p !== undefined && s.zone === h?.zone && s.positions[titan.label] === p && !grabbed(s.id));
   return [holder, ...others.map((s) => s.id)];
 }
 
@@ -228,11 +242,17 @@ export function drawAttentionBlock(s: SoldierState, titan: TitanRow, grabbed: bo
 
 /**
  * A Titan that enters as a Focus Titan evaluates its Attention Ladder at once (background-titans.yaml,
- * full_clock): every soldier who holds a Position holds distant relative to it, and only mid-round do
- * this round's cards break a tie (evaluation, card and none).
+ * full_clock): every soldier's Position relative to it is derived from its entry zone (so one in another
+ * zone holds distant), and only mid-round do this round's cards break a tie (evaluation, card and none).
  */
 export function enteringAttention(snap: Snapshot, titan: TitanRow, downCanMeet: Record<string, boolean>): LadderResult {
-  const soldiers = snap.soldiers.map((s) => ({ ...s, positions: entering(s, titan.label, holdsAPosition(s, snap.titans)) }));
+  const soldiers = snap.soldiers.map((s) => {
+    const p = derivePosition(s, titan);
+    const positions = { ...s.positions };
+    if (p === undefined) delete positions[titan.label];
+    else positions[titan.label] = p;
+    return { ...s, positions };
+  });
   const held = (id: string) => snap.titans.find((t) => t.status === 'focus' && t.grab?.soldier === id)?.label ?? null;
   return evaluateLadder({
     titan,

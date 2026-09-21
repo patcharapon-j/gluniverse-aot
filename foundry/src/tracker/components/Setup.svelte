@@ -1,7 +1,9 @@
 <script lang="ts">
   /**
    * Starting a Titan Engagement or a Skirmish (engagement-flow.yaml, starting; engagement-setup.yaml;
-   * skirmish.yaml, starting): the GM names or rolls what the starting rule leaves open.
+   * skirmish.yaml, starting): the GM names or rolls what the starting rule leaves open. For a Titan
+   * Engagement that is the field (decision batch 16, 16-6 and 16-33): its size, the field rating, and
+   * any zone's rating as framing; every zone not named is rolled on the terrain mix at Start.
    */
   import type { SetupView } from '../setup.ts';
 
@@ -12,6 +14,9 @@
   const E = CONFIG.WOF.engagement;
 
   let anchor = $state(v.anchor);
+  let size = $state<'skirmish' | 'standard' | 'set-piece'>(E.zones.defaultSize);
+  let named = $state<{ n: number; rating: string }[]>([]);
+  const zoneCount = $derived(E.zones.layouts[size].zones.length);
   let focus = $state(v.titans[0]?.id ?? '');
   let soldiers = $state<string[]>(v.soldiers.map((s) => s.id));
   let tactics = $state<string[]>([]);
@@ -46,6 +51,7 @@
     sheet.submit({
       mode: v.mode,
       anchor,
+      field: { size, zones: Object.fromEntries(named.filter((z) => z.n >= 1 && z.n <= zoneCount).map((z) => [z.n, z.rating])) },
       focus: v.mode === 'titan' ? focus : null,
       background: v.mode === 'titan' ? background.map((b) => ({ ...b, actor: '' })) : [],
       soldiers,
@@ -59,8 +65,22 @@
   <header class="rd-h"><div><strong>{v.mode === 'titan' ? t('setup.titleTitan') : t('setup.titleSkirmish')}</strong><span class="lbl">{v.scene}</span></div></header>
   <div class="rd-grid">
     {#if v.mode === 'titan'}
-      <label class="lbl" for="{sheet.id}-anchor">{t('line.anchor')}</label>
+      <label class="lbl" for="{sheet.id}-size">{t('setup.fieldSize')}</label>
+      <select id="{sheet.id}-size" bind:value={size}>{#each ['skirmish', 'standard', 'set-piece'] as z (z)}<option value={z}>{t(`field.${z}`)}</option>{/each}</select>
+      <label class="lbl" for="{sheet.id}-anchor">{t('setup.fieldRating')}</label>
       <span class="row2"><select id="{sheet.id}-anchor" bind:value={anchor}>{#each E.ratings as r (r.id)}<option value={r.id}>{r.name}</option>{/each}</select><button type="button" class="mini" onclick={rollAnchor}>{t('setup.roll')}</button></span>
+      <span class="lbl">{t('setup.namedZones')}</span>
+      <div class="bglist">
+        {#each named as z, i (i)}
+          <span class="row2">
+            <select bind:value={z.n} aria-label={t('setup.zone')}>{#each Array.from({ length: zoneCount }, (_, k) => k + 1) as n (n)}<option value={n}>{t('zone.n', { n })}</option>{/each}</select>
+            <select bind:value={z.rating} aria-label={t('setup.fieldRating')}>{#each E.ratings as r (r.id)}<option value={r.id}>{r.name}</option>{/each}</select>
+            <button type="button" class="mini" aria-label={t('setup.remove')} onclick={() => (named = named.filter((_, k) => k !== i))}>✕</button>
+          </span>
+        {/each}
+        <span class="row2"><button type="button" class="mini" onclick={() => (named = [...named, { n: 1, rating: anchor }])}>{t('setup.nameZone')}</button></span>
+        <small class="note">{t('setup.terrainMix')}</small>
+      </div>
       <label class="lbl" for="{sheet.id}-focus">{t('setup.focus')}</label>
       {#if v.titans.length}
         <select id="{sheet.id}-focus" bind:value={focus}>{#each v.titans as ti (ti.id)}<option value={ti.id}>{ti.name}</option>{/each}</select>
