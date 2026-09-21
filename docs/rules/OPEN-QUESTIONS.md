@@ -4022,3 +4022,42 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Open (provisional ruling in force)
 - **Decision:** none yet; the next rules decider.
 - **ADR:** ADR-0029.
+
+### OQ-205: Soldiers Anchored in a zone that becomes Open with no standing Titan in it
+- **Type:** Rules gap (batch E review round 1, m4)
+- **Arose in:** `docs/reviews/zone-combat-review-1.md`, m4; decision batch 16, 16-21; `data/engagement/anchor-ratings.yaml`, `zone_becomes_open`; `data/engagement/positions.yaml`, `changes_to_position`, `zone-becomes-open` and `titan-stands-up`.
+- **Related:** OQ-203.
+- **Question:** 16-21 lands every soldier Anchored in a zone that becomes Open only "while a standing Focus Titan is in it". A zone can become Open under a grounded Titan (its falling body's wreck, or a wreck entry it resolves while grounded), and the stands-up rule converts only Blind Spot. The soldiers Anchored there stay Anchored and airborne in a zone with nothing to hook, for the rest of the fight, a state no Flight could produce (a Flight never ends free in an Open zone). What happens to them?
+- **Options:** (a) Every soldier Anchored in a zone that becomes Open lands Ground with no fall, whatever stands in it; the Blind Spot to On Body change still needs a standing Focus Titan. (b) As (a), but applied only when the grounded Titan stands again, in `titan-stands-up`. (c) Leave them Anchored.
+- **Current handling:** (a), marked PROVISIONAL in `anchor-ratings.yaml`, `positions.yaml`, and Chapter 5 section 5.2. It is what `data/gear/odm-gear.yaml` (`airborne`) and the packet already said without the condition, it needs no new timing, and it never leaves a soldier in an attachment the zone cannot hold. (b) leaves the impossible state standing until the Titan stands, and (c) keeps it for the fight.
+- **Why still open:** 16-21 names the standing Titan for both halves of the rule; splitting them is a reading, not a decision.
+- **Simulator case:** none needed; the state is rare (a zone wrecked to Open under a grounded Titan with a soldier Anchored in it), and the change moves no Position the simulator reads for a strike.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029; ADR-0024.
+
+### OQ-206: A fall in a Titan Engagement with no Focus Titan alive
+- **Type:** Rules gap (batch E review round 1, m5)
+- **Arose in:** `docs/reviews/zone-combat-review-1.md`, m5; decision batch 16, 16-22; `data/gear/falls.yaml`, `height`, `steps`; Chapter 4 section 4.6; Chapter 5 section 5.2.
+- **Related:** OQ-123, OQ-165.
+- **Question:** The reference body's last fallback is the Focus Titan nearest the soldier's zone. After the last Focus Titan dies while a soldier is still Pinned, the Titan Engagement runs on, and an Anchored soldier who falls (a Jam on a Pushed Flight, say) has no attachment body, no cause Titan, and no Focus Titan. The band step then reads a Position relative to nothing, a closed rule with no answer.
+- **Options:** (a) Otherwise the corpse nearest the soldier's zone, a tie going to the earliest label; with no body at all, the band starts low before any raise. (b) With no Focus Titan alive, every such fall is low. (c) The outside-a-Titan-Engagement rule: the fall takes only a named band, else low.
+- **Current handling:** (a), marked PROVISIONAL in `falls.yaml`, Chapter 4 section 4.6, and Chapter 5 section 5.2. A corpse is a body a soldier can attach to (16-24), so it is the body a fall near it reads, and the Large raise then follows the corpse's Size Class as it would a living one's. The Giant Forest raise still applies.
+- **Why still open:** 16-22 wrote the fallbacks for a living fight; which body the run-on reads is new.
+- **Simulator case:** none; the run-on after the last kill is short and no strike reads its falls.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029; ADR-0024.
+
+### OQ-207: The entry zone when no soldier is on the field
+- **Type:** Rules gap (batch E review round 1, m12)
+- **Arose in:** `docs/reviews/zone-combat-review-1.md`, m12; decision batch 16, 16-29; `data/engagement/zones.yaml`, `entry_zone`; Chapter 5 section 5.10.
+- **Related:** OQ-204.
+- **Question:** A Titan entering the fight takes the empty edge zone "farthest from the nearest soldier on the field". When every soldier has left and a returner keeps the fight open for a round, a Background clock can fill at the end step with no soldier on the field, and "farthest from the nearest soldier" has no value. Which edge zone does it enter?
+- **Options:** (a) The lowest-numbered edge zone. (b) The edge zone farthest from the zone the returners left by. (c) The edge zone opposite the Squad's start zone.
+- **Current handling:** (a), marked PROVISIONAL in `zones.yaml`, Chapter 5 section 5.10, and the packet. It is the tie-break the rule already ends on, and it is what `tools/sim/space.py`, `entry_zone`, already does with no soldier zones.
+- **Why still open:** 16-29 does not name the case; (a) is the reading by inference made explicit.
+- **Simulator case:** none; the simulator already implements (a).
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029; ADR-0024.

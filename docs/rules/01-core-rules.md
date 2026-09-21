@@ -372,7 +372,7 @@ Every target of one attack cancels against the same attack roll with their own R
 
 A Titan's first card this round resolves a sweeping behavior against Private Mila Brandt. For this example, the entry rolls 6 Attack Dice. The GM rolls them as Titan Dice in the open: 5, 2, 6, 1, 3, and 4. The 5 and the 6 are successes, so the attack's Severity is 2. Mila chooses to dodge. She hasn't spent her move or her action this round, so the Reaction spends this round's turn.
 
-- **Pool.** Mila has Agility 4, and no Talent of hers names the dodge entry. She is not mounted, so her Gear Dice come from her ODM Gear. Private Oskar Wendt is at the same Position and has an unspent action this round, so he Helps. That gives 1 Bonus Die, and Oskar's own turn later this round will have only its move. Her ODM Gear has a Gear Dice rating of 2. Her Stress is 1.
+- **Pool.** Mila has Agility 4, and no Talent of hers names the dodge entry. She is not mounted, so her Gear Dice come from her ODM Gear. Private Oskar Wendt is in Mila's zone and has an unspent action this round, so he Helps. That gives 1 Bonus Die, and Oskar's own turn later this round will have only its move. Her ODM Gear has a Gear Dice rating of 2. Her Stress is 1.
   - Base dice: 4 + 1 = 5. Gear Dice: 2. Stress Dice: 1.
 - **Roll.** Base dice show 6, 4, 3, 1, 2. Gear Dice show 1, 5. The Stress Die shows 3. That's one success, one short of cancelling the attack's two. No Stress Die shows a 1, so she can Push.
 - **Push.** Mila Pushes, and Oskar offers to Cover. He gains 1 Stress. Mila gains none and adds no new Stress Die.

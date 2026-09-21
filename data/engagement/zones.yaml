@@ -10,7 +10,8 @@ id: zones
 name: The Field, Zones, and Attachments
 chapter: 05-titan-engagement
 adrs: [ADR-0010, ADR-0024, ADR-0029]
-decided: [OQ-200, OQ-201, OQ-202]   # OQ-200: the Carry limit and the mounted pace; OQ-201: no zone effect harms; OQ-202: the terrain mix (decision batch 16; OQ-200 and OQ-202 decided (a) by the zone retune, Z4, decision batch 17)
+decided: [OQ-200, OQ-202]   # OQ-200: the Carry limit and the mounted pace; OQ-202: the terrain mix (decision batch 16; both decided (a) by the zone retune, Z4, decision batch 17)
+provisional: [OQ-201]   # OQ-201: no zone effect harms (decision batch 16, 16-30); open, provisional ruling in force
 
 # ------------------------------------------------------------------ coordinates (16-2)
 coordinates:
@@ -188,7 +189,7 @@ moves:
     adjacent zone that holds none, never off field, and not while Grabbed, carried, or Pinned.
   letting_go: >-
     Instead of a move, from on-body or blind-spot: a fall (data/gear/falls.yaml), and the soldier
-    lands free in the same zone.
+    lands with attachment ground in the same zone (data/engagement/positions.yaml, falls_land).
 
 # ------------------------------------------------------------------ the Flight (16-13, 16-14)
 flight:
@@ -231,7 +232,8 @@ entry_zone:
     A Titan that becomes a Focus Titan during the Titan Engagement enters at the edge zone that holds
     no soldier and is farthest from the nearest soldier on the field, a tie going to the
     lowest-numbered; if every edge zone holds a soldier, at the edge zone holding the fewest, then
-    the lowest-numbered. It strides from its first card.
+    the lowest-numbered. With no soldier on the field, it enters at the lowest-numbered edge zone
+    (PROVISIONAL: OQ-207). It strides from its first card.
   order: [holds-no-soldier, farthest-from-nearest-soldier, lowest-numbered]
   fallback: [fewest-soldiers, lowest-numbered]
 

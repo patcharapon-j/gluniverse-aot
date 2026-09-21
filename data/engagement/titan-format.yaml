@@ -238,7 +238,7 @@ effect_types:
       (data/engagement/anchor-ratings.yaml, ratings, sparser; anchors, wrecking). Like telegraph, a
       wreck effect applies whether the behavior landed or whiffed, and whatever the Net Successes:
       it is the Titan going through the place, not an attack on a person. It affects no soldier and
-      no horse, and changes a Position only when the zone becomes Open under the standing Titan
+      no horse, and changes a Position only when the zone becomes Open
       (data/engagement/anchor-ratings.yaml, zone_becomes_open). An Open zone takes no further step.
   - id: telegraph
     fields: {}

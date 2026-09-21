@@ -163,7 +163,8 @@ retreat:
   termination: >-
     A soldier bound by the retreat who takes option 1 or 2 on each of their moves leaves within five
     of them: at most two to become free, at most two to reach an edge zone, and one off field. A
-    Stride never lengthens this, since it frees a soldier at Blind Spot and changes no soldier's ring;
+    Stride never lengthens this, since it frees a soldier at Blind Spot, carries only soldiers who
+    are not yet free, and never moves a free soldier;
     a Grab stops the soldier's moves as it always has, and its release leaves them free. The stay limit
     bounds options 3 and 4 as it always has, so every retreat ends by no-soldier-standing (decision
     batch 16, 16-27).

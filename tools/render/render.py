@@ -259,7 +259,7 @@ def effect(e):
     elif t == "draw-attention":
         base = "the loudest flag on the event's Titan, never from Distant"
     elif t == "stress-gain-nearby":
-        base = f"comrades within 1 Position step gain {e.get('amount', 1)} Stress"
+        base = f"comrades in your zone or an adjacent zone gain {e.get('amount', 1)} Stress"
     elif t == "forced-move":
         base = f"1 step toward {lookup(TOWARD, e.get('toward'), 'forced-move toward')} at the start of the next turn"
     elif t == "forced-action":

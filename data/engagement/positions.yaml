@@ -143,11 +143,12 @@ changes_to_position:
         Spot stay and detach; every other soldier's Position relative to it is derived anew
         (stride_moves).
     - id: zone-becomes-open
-      what: A zone becoming Open under a standing Focus Titan
+      what: A zone becoming Open
       effect: >-
-        Every soldier who holds blind-spot relative to that Titan holds on-body instead, a change
-        made by this rule and not a fall; every soldier anchored in that zone becomes ground and stops
-        being airborne, with no fall (decision batch 16, 16-21).
+        Every soldier anchored in that zone becomes ground and stops being airborne, with no fall,
+        whatever stands in it (PROVISIONAL: OQ-205). When a standing Focus Titan is in it, every
+        soldier who holds blind-spot relative to that Titan also holds on-body instead, a change made
+        by this rule and not a fall (decision batch 16, 16-21).
     - id: titan-becomes-focus
       what: A Titan becoming a Focus Titan
       effect: >-
@@ -362,7 +363,9 @@ moves:
   forced_step: >-
     A Fear Roll result's forced-move effect (data/harm/effect-types.yaml; decision batch 7, 7-8)
     moves the soldier one step at the start of their next turn: toward distant is one step by the
-    retreat's option 1 (data/engagement/background-titans.yaml, retreat, moves), and toward the
+    retreat's option 1 (data/engagement/background-titans.yaml, retreat, moves), except that no step
+    is made when the soldier is free in a zone that holds no body (PROVISIONAL, OQ-203;
+    data/harm/effect-types.yaml, forced-move), and toward the
     nearest comrade is one step that lowers the number of zones to the nearest comrade (decision
     batch 16, 16-28). It is a change a rule names, not the soldier's own move: it spends nothing, it
     happens even on a turn spent in advance (decision batch 8, 8-13), and it never meets a Drive's

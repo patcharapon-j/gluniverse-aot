@@ -488,12 +488,12 @@ When a Titan Engagement or a Skirmish ends, each dying soldier gets one chance a
 - No one can Help or Cover an aftermath roll. It can be Pushed, and Sure Hands allows a second Push. It is not a care window, so it does not use up the treater's roll in the care window that follows.
 - The players choose the order of rolls, using Chapter 2's roll-off if they disagree.
 
-> **Design note (OQ-57):** One aftermath roll per patient keeps an immediate chance to save a comrade without serial free attempts from everyone nearby. With only one roll per treater, three untrained soldiers within one step left an untreated `engagement` row fatal just 3.8% of the time, which would make treatment during the fight nearly worthless. A Squad can still gain by delaying the end of a fight, at the price of further Titan cards. A treatment probe (aftermath roll at Stress 0, one Push on 0 successes, a Strength 3 patient, no Help, Cover, Sure Hands, or further Titan cards) gives the patient's chance of dying if the fight ends now, against one more in-fight roll at Stress 1 followed by the aftermath roll:
+> **Design note (OQ-57):** One aftermath roll per patient keeps an immediate chance to save a comrade without serial free attempts from everyone nearby. With only one roll per treater, three untrained soldiers each eligible to treat left an untreated `engagement` row fatal just 3.8% of the time, which would make treatment during the fight nearly worthless. A Squad can still gain by delaying the end of a fight, at the price of further Titan cards. A treatment probe (aftermath roll at Stress 0, one Push on 0 successes, a Strength 3 patient, no Help, Cover, Sure Hands, or further Titan cards) gives the patient's chance of dying if the fight ends now, against one more in-fight roll at Stress 1 followed by the aftermath roll:
 >
 > - Wits 2 treater, no medical kit: 23.2% against 7.8%.
 > - Wits 2 treater, kit rated 1: 19.4% against 5.5%.
 > - Rookie Medic (Wits 4, Field Medicine 1, kit rated 1): 6.4% against 0.8%.
-> - Wits 2 treater two steps away, no kit: 57.9% with no eligible aftermath treater, against 23.2% when one move brings the treater within one step.
+> - Wits 2 treater out of the patient's zone, no kit: 57.9% with no eligible aftermath treater, against 23.2% when one move brings the treater into the patient's zone.
 >
 > The delay figures multiply independent treatment estimates and leave out the harm of the extra Titan cards.
 
@@ -734,7 +734,7 @@ Each row's name and *What happens* line are fiction. Only its Effects and Forbid
 | 6 | Scream | The scream is out of you before you know it is yours. Somewhere above you, a huge head turns. | next turn spent; no Reactions; the loudest flag on the event's Titan, never from Distant | Reactions |
 | 7 | Run for the Wall | Every part of you turns toward home and goes. Behind you, someone is still fighting. | next turn spent; no Reactions; 1 step toward Distant at the start of the next turn; gain a Scar | Reactions |
 | 8 | Kill It | The world goes quiet and red. When it comes back, you are already going for it. | next 2 turns spent; no Reactions; next action a strike on the event's Titan, Pushed if short; gain a Scar | Reactions, Help, Covering |
-| 9 or more | Nothing Left | You open your hands and let the blades fall. Everyone near you sees it in your face. | next 2 turns spent; no Reactions; drop the Blade Set in the handles; comrades within 1 Position step gain 1 Stress; gain a Scar | Reactions |
+| 9 or more | Nothing Left | You open your hands and let the blades fall. Everyone near you sees it in your face. | next 2 turns spent; no Reactions; drop the Blade Set in the handles; comrades in your zone or an adjacent zone gain 1 Stress; gain a Scar | Reactions |
 <!-- END RENDERED: fear-rolls -->
 
 **The event's Titan.** An effect that acts on a Titan acts on the event's Titan (`event_titan`), which each trigger names:

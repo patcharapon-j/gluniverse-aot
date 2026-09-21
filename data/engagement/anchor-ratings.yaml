@@ -83,7 +83,7 @@ ratings:
 
   - id: wooded
     name: Wooded
-    meaning: Ordinary woodland, the default battlefield of ADR-0014.
+    meaning: Ordinary woodland, the default ground of ADR-0014.
     anchors: 2
     carry_cost: 0
     sparser: sparse
@@ -192,7 +192,8 @@ anchors:
   momentum_cap: >-
     A soldier's Momentum cap is the anchors of the zone they are in (momentum, cap). When a soldier's
     zone changes, or its rating falls, a soldier whose Momentum is above the new cap loses the excess
-    at once.
+    at once, except during a Flight: a Flight's zone steps trim nothing, and its Momentum is trimmed
+    only at the end of the move, to the anchors of the zone it ends in (momentum, gained).
   wrecking:
     by_a_behavior: >-
       A Behavior Table entry with the wreck effect takes one rating step off the Titan's zone: its
@@ -288,12 +289,13 @@ grounded_titan:
     and they never end for it (data/engagement/positions.yaml, corpse; decision batch 8, 8-9, OQ-146).
   decided: [OQ-74, OQ-146]
 
-# A zone that becomes Open under a standing Focus Titan (decision batch 16, 16-21).
+# A zone that becomes Open (decision batch 16, 16-21; OQ-205).
 zone_becomes_open: >-
-  When a zone's rating becomes Open while a standing Focus Titan is in it, every soldier who holds
-  blind-spot relative to that Titan holds on-body instead, a change made by this rule and not a fall;
-  every soldier anchored in that zone becomes ground and stops being airborne, with no fall
-  (data/engagement/positions.yaml, changes_to_position, zone-becomes-open).
+  When a zone's rating becomes Open, every soldier anchored in that zone becomes ground and stops
+  being airborne, with no fall, whatever stands in it (PROVISIONAL: OQ-205). When a standing Focus
+  Titan is in it, every soldier who holds blind-spot relative to that Titan also holds on-body
+  instead, a change made by this rule and not a fall (data/engagement/positions.yaml,
+  changes_to_position, zone-becomes-open).
 
 # ------------------------------------------------------------------ the mounted charge (decision batch 10, OQ-183; decision batch 16, 16-15)
 mounted_charge:

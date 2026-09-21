@@ -67,8 +67,10 @@ height:
       In a Titan Engagement, find the fall's reference body: the body the soldier's attachment named
       when they fell (on-body, blind-spot, or grabbed); otherwise the Focus Titan whose card, Grab, or
       effect caused the fall; otherwise the Focus Titan nearest the soldier's zone, a tie going to the
-      earliest label. Every later step uses that body (decision batch 5, OQ-123; decision batch 16,
-      16-22). The soldier lands in the zone they fell in (data/engagement/positions.yaml,
+      earliest label; otherwise, with no Focus Titan alive, the corpse nearest the soldier's zone, a
+      tie going to the earliest label. With no body at all the fall has no reference body, and the
+      band starts low before any raise (PROVISIONAL: OQ-206). Every later step uses that body (decision batch
+      5, OQ-123; decision batch 16, 16-22). The soldier lands in the zone they fell in (data/engagement/positions.yaml,
       falls_land).
     - A fall from a horse is low, and no later step changes it.
     - Otherwise use the Position the soldier held relative to the reference body when they fell. Distant or In Reach is low. On Body or Blind Spot is high.

@@ -378,7 +378,7 @@ prepared_squad_kill:
   tolerance: {median_kill_round: exactly 3}   # a median target reads exactly (ADR-0014, as amended in decision batch 5; OQ-127)
   probe: tools/probes/chapter-05/fight.py with cases1.json and cases2.json
   model:
-    battlefield: Anchor Rating Wooded, one Focus Titan with the reference table at its Size Class values, no Background Titans, and a retreat clock of 8 segments, which ends every fight the Squad has not won (retreat).
+    field: field rating Wooded, one Focus Titan with the reference table at its Size Class values, no Background Titans, and a retreat clock of 8 segments, which ends every fight the Squad has not won (retreat).
     squad: >-
       Four Rookie player characters at Stress 1, starting at distant: two cutters and two strikers.
       Squad rows add Squadmates as helpers or decoyers. The template row uses the Slayer and Flier
