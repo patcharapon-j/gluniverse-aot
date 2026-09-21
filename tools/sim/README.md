@@ -88,6 +88,11 @@ commit, so the hashes identify the rules the figures come from.
   the Position, else close on the Titan's zone; no crossing; least Momentum; fewest Carries). A Flight is rolled for
   fly, never Pushed, and its route is chosen after the roll. Momentum is capped by the zone and spent on Carry,
   quiet (`policy.wants_quiet`), and bite (`policy.bite`); brace, clean line, and the mounted charge are never used.
+- **Terrain Traits by zone** (16-5): Open's Bonus Die on a mounted Break Attention and Urban's roof (a soldier at a
+  Blind Spot in an Urban zone is not airborne, so a Jam does not drop them) read the soldier's zone
+  (`rules.R.mounted_ba_dice`, `roof_ratings`); Sparse's grace is `space.wreck`'s, Giant Forest's raised fall
+  `engine.Fight.fall_band`'s.
+- **The retreat's option 3** is a zone step only: in the comrade's zone no step lowers the zones between them.
 - **The Stride** runs in `engine.Fight.titan_card` between the attention and choose steps (`engine.Fight.stride`).
 - **Provisional values** (OQ-200: `carry_limit`, `mounted_pace`; OQ-202: the terrain mix) are read from `data/` only
   (`rules.R._zones`); a case may override them, and the `zones/` rows of `cases.py` (seed base 28000) do.

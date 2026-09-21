@@ -706,6 +706,20 @@ class Rules:
         if len(bottom) != 1:
             raise ValueError(f"anchor-ratings.yaml: {bottom} are their own sparser; the ladder needs one bottom (Open)")
         self.open_rating = bottom[0]
+        # the Terrain Traits the engine applies by zone (16-5): the Bonus Dice a mounted soldier's Break Attention gains
+        # (Open), and the roof that keeps a soldier at a Blind Spot from being airborne (Urban)
+        self.mounted_ba_dice, self.roof_ratings = {}, set()
+        for r in ar["ratings"]:
+            tt = " ".join(str(r["terrain_trait"]).split())
+            m = re.search(r"A mounted soldier's Break Attention gains (\d+) Bonus Die", tt)
+            if m:
+                self.mounted_ba_dice[r["id"]] = int(m.group(1))
+            if re.search(r"holds blind-spot relative to a Focus Titan in an? \w+ zone is anchored to a roof and is not "
+                         r"airborne, so a Jam does not drop them", tt):
+                self.roof_ratings.add(r["id"])
+        if len(self.mounted_ba_dice) != 1 or len(self.roof_ratings) != 1:
+            raise ValueError(f"anchor-ratings.yaml terrain_trait: Break Attention dice on {self.mounted_ba_dice}, roofs "
+                             f"on {self.roof_ratings}; engine.Fight reads one rating of each")
         # the Sparse grace, once per zone (16-5, 16-20): the rating whose trait names the first wreck
         self.wreck_grace = {r["id"] for r in ar["ratings"]
                             if re.search(r"(?i)\bfirst (Anchor|wreck)\b", " ".join(str(r["terrain_trait"]).split()))}

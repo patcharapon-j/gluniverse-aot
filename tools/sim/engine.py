@@ -56,7 +56,8 @@ Rules as written, from data/ YAML through rules.R:
   capped by the zone, spent on Carry, quiet, and bite, lost at the round's end without an ODM move; the crossing and
   no-successes flags; wrecks by zone with the Sparse grace and a zone made Open under a standing Titan; the Down
   soldier's crawl out of a body's zone; leaving from an edge zone; the retreat of 16-27; holder-and-position targets
-  in the holder's zone; Help and every between-soldiers test read in zones.
+  in the holder's zone; Help and every between-soldiers test read in zones; the Terrain Traits by zone (Open's Bonus
+  Die on a mounted Break Attention, Urban's roof at a Blind Spot, Sparse's grace, Giant Forest's raised fall).
 Not modelled (report section 12 and the Open Questions it names): a second Focus Titan, Background Titans (so no
 entry zone is ever used: space.entry_zone is tested, not run), leaving and returning outside a retreat, the mounted
 charge (no policy charges), and brace and clean line (no policy spends them).
@@ -140,7 +141,9 @@ STAT_KEYS = ("cis", "pc_cis", "deaths", "pc_deaths", "grabs", "devours", "grab_d
              # Help on a Nape strike, and the part of it given from an adjacent zone (16-11)
              "nape_helps", "nape_helps_adjacent",
              # round 1 on its own (16-38): Critical Injuries, player characters' Critical Injuries, cards that landed
-             "r1_cis", "r1_pc_cis", "r1_lands")
+             "r1_cis", "r1_pc_cis", "r1_lands",
+             # the Terrain Traits read by zone (16-5): Open's Bonus Die on a mounted Break Attention
+             "terrain_dice")
 
 # A model check, not a rule: under the retreat clock every Titan Engagement ends (engagement-flow.yaml, ending,
 # always_ends), so no fight should reach this many rounds. stats["cap"] counts one that does.
@@ -682,6 +685,17 @@ class Fight:
         for s in self.sold:
             self.trim_momentum(s)
 
+    def on_roof(self, s):
+        """anchor-ratings.yaml, ratings, urban, terrain_trait (16-5): a soldier who holds blind-spot relative to a Focus
+        Titan in an Urban zone is anchored to a roof and is not airborne, so a Jam does not drop them."""
+        return (s.attach[0] == "blind-spot" and s.zone is not None and not self.t.dead
+                and self.field.rating(s.zone) in R.roof_ratings)
+
+    def roof(self, s):
+        """Applies the Urban trait after a change of zone or attachment: not airborne while on the roof."""
+        if self.on_roof(s):
+            s.airborne = False
+
     def set_flag(self, s, key):
         """A flag the soldier sets: none while they have spent Momentum on quiet this turn (anchor-ratings.yaml, momentum,
         spends, quiet)."""
@@ -821,6 +835,7 @@ class Fight:
         self.after_move(s, was_d)
 
     def after_move(self, s, was_d):
+        self.roof(s)
         if s.carrying is not None:
             self.follow(s.carrying, s)
             if s.pos == D and not was_d:
@@ -991,7 +1006,7 @@ class Fight:
                 s.odm = max(0, s.odm - res.gear_ones)
                 if s.odm == 0 and was > 0:
                     self.stats["jams"] += 1
-                    if s.airborne:
+                    if s.airborne and not self.on_roof(s):
                         self.fall(s)
         elif gear == "horse":
             if res.gear_ones:
@@ -2000,7 +2015,7 @@ class Fight:
         need = t.tough(part) - t.count[part]
         holding = bool(t.grab and t.grab["arm"] == part)
         # stay_for: a Pinned comrade whose pinning Body Part this is, under a retreat (8-21)
-        self.order_check(s, stay_for=stay_for or (t.grab["victim"] if (holding and s.pos == t.grab["victim"].pos) else None),
+        self.order_check(s, stay_for=stay_for or (t.grab["victim"] if (holding and s.zone == t.grab["victim"].zone) else None),
                          action="body-part-strike")
         s.cur_action = True
         s.forced_strike = False       # a Body Part strike takes a Fear row's forced strike (decision batch 7, 7-8)
@@ -2170,7 +2185,7 @@ class Fight:
         need = self.ba_need(s, decoy)
         if decoy == "feint" and R.ba_needs["feint_extra"] and use_talent(s, "close-pass"):
             self.stats["talent_fires"] += 1
-        self.order_check(s, stay_for=t.grab["victim"] if (t.grab and s.pos == t.grab["victim"].pos) else None,
+        self.order_check(s, stay_for=t.grab["victim"] if (t.grab and s.zone == t.grab["victim"].zone) else None,
                          action="break-attention")
         s.cur_action = True
         if decoy == "flare":
@@ -2181,7 +2196,11 @@ class Fight:
             self.stats["cloaks"] += 1
         elif decoy == "feint":
             self.stats["feint_rolls"] += 1
-        res = roll(self.rng, s, "break-attention", gear=gear, push_to=need)
+        # anchor-ratings.yaml, ratings, open, terrain_trait (16-5): a mounted soldier's Break Attention gains the trait's
+        # Bonus Dice in an Open zone (bonus-dice-sources.yaml, terrain-trait)
+        terrain = R.mounted_ba_dice.get(self.field.rating(s.zone), 0) if s.mounted and s.zone is not None else 0
+        self.stats["terrain_dice"] += terrain
+        res = roll(self.rng, s, "break-attention", bonus=terrain, gear=gear, push_to=need)
         self.stats["tracker_writes"] += 1
         self.after_roll(s, res, gear)
         if res.succ >= need and not t.dead and not s.dead and t.holder != "decoy":
@@ -2437,7 +2456,7 @@ class Fight:
         # its cap, during a retreat as well, and never touches a Next Behavior already rolled. It raises only a Titan
         # that is a Focus Titan when the step runs (round 3 review 1, C2), which this model cannot distinguish because
         # it has no Background Titans: the one Focus Titan is present from the start. It rises only at the end of a
-        # round that is a multiple of the rate, every even-numbered round at rate 2 (round 3 retune, R1).
+        # round that is a multiple of the rate (round.yaml; every third round at rate 3 since the zone retune, Z2).
         if not t.dead and t.frenzy < R.frenzy_cap and self.rnd % R.frenzy_rate == 0:
             t.frenzy += 1
         if was_grounded and not t.grounded():

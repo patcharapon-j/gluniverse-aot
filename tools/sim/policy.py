@@ -784,19 +784,13 @@ def rescue(f, s):
 # ---------------------------------------------------------------------- the retreat (decision batch 5, 5-1 and 5-10)
 def retreat_toward(f, s, target):
     """Retreat option 3 (background-titans.yaml, retreat, moves; 16-27): one step that lowers the number of zones between
-    the soldier and target, a comrade. In the comrade's zone, a Position step toward the comrade's Position relative to
-    the Focus Titan (a Grabbed comrade's hand). POLICY CHOICE: the lowest-numbered such zone."""
+    the soldier and target, a comrade. In the comrade's zone there is none. POLICY CHOICE: the lowest-numbered such
+    zone."""
     if s.cur_move or s.zone is None or target.zone is None:
         return False
     fd = f.field
     if s.zone == target.zone:
-        d = f.steps_apart(s.pos, target.pos)
-        for to in (IR, OB, BS):
-            if to != s.pos and f.step_kinds(s.pos, to) and f.steps_apart(to, target.pos) < d:
-                place = (s.zone, "ground", None) if to == IR else (s.zone, "on-body" if to == OB else "blind-spot", f.t.label)
-                if f.retreat_step(s, place, toward_comrade=True):
-                    return True
-        return False
+        return False        # no step lowers zero zones: option 4 after an action, or option 1 or 2 (review 1, M8)
     if not f.is_free(s):
         return False
     d = fd.distance(s.zone, target.zone)
@@ -941,7 +935,7 @@ def retreat_turn(f, s):
     g = t.grab
     if g is not None and g["victim"] is not s and not g["victim"].dead:
         v = g["victim"]
-        if s.zone == v.zone and s.pos == v.pos:
+        if s.zone == v.zone:
             moved = s.cur_move       # a Fear row's forced move may have made the move already (8-13): no stay then
             if retreat_act(f, s, g):
                 if not moved:
@@ -956,7 +950,7 @@ def retreat_turn(f, s):
     pinned = [c for c in f.present() if c is not s and c.pinned]
     if pinned and s.carrying is None and "heave" in R.retreat_stay_actions:
         c = min(pinned, key=lambda c: (f.zones_apart(s, c), f.card.get(c.name, 99)))
-        if s.zone == c.zone and s.pos in HEAVE_FROM:
+        if s.zone == c.zone:
             moved = s.cur_move       # a Fear row's forced move may have made the move already (8-13): no stay then
             if free_pinned_act(f, s, c, stay=not moved):
                 if not moved:
