@@ -69,7 +69,7 @@ export interface TitanRow {
   label: string;
   status: 'focus' | 'corpse';
   tempo: number;
-  /** Frenzy held: 0 on entry, 1 more at the end of every third round to FRENZY_CAP, added to the behavior roll. */
+  /** Frenzy held: 0 on entry, 1 more at the end of every third round to its cap (cards.ts, frenzyRule), added to the behavior roll. */
   frenzy: number;
   /** The Attention Ladder's rungs, highest first. */
   ladder: string[];

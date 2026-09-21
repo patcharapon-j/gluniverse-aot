@@ -54,8 +54,10 @@ export function planTitanDeath(x: DeathInput): DeathPlan | null {
   for (const s of x.soldiers) {
     if (!s.alive || s.attachment.body !== label || s.attachment.kind === 'pinned') continue;
     // The freed soldier holds on-body for the steam and fall steps, then ground in the corpse's zone
-    // (grab.yaml, release, titan_dead); a soldier who falls with the body lands on the ground (16-22).
-    const attachment = s.id === freed || falls ? { kind: 'ground' as const, body: null } : detached(s.airborne);
+    // (grab.yaml, release, titan_dead). An airborne soldier in a standing body's path swings clear and
+    // keeps their attachment (titan-harm.yaml, falling_titan, path, airborne), which then ends under the
+    // detach rule, anchored; only one who is not airborne falls with it and lands on the ground (16-22).
+    const attachment = s.id === freed ? { kind: 'ground' as const, body: null } : falls && !s.airborne ? { kind: 'ground' as const, body: null } : detached(s.airborne);
     placements[s.id] = { zone: row.zone, attachment };
   }
   // Played cards stay in the turn order, so the current turn's index does not move (core keeps combat.turn).
@@ -66,6 +68,7 @@ export function planTitanDeath(x: DeathInput): DeathPlan | null {
     relief: x.soldiers.filter((s) => holdsAPosition(s, x.titans)).map((s) => s.id),
     freed,
     steam: close,
-    fall: x.grounded ? [] : close,
+    // In a standing body's path, an airborne soldier swings clear (titan-harm.yaml, falling_titan, path).
+    fall: x.grounded ? [] : close.filter((id) => id === freed || !x.soldiers.find((s) => s.id === id)?.airborne),
   };
 }

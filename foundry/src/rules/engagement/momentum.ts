@@ -31,6 +31,13 @@ export const terrainTrait = (ratingId: string): TerrainTrait => TERRAIN_TRAITS[r
 export const terrainBreakAttentionDice = (rating: Pick<AnchorRating, 'trait'> | null, mounted: boolean): number =>
   rating?.trait === 'mounted-break-attention' && mounted ? 1 : 0;
 
+/** The Open trait read from the soldier's own zone (16-5): the rating of the zone they are in, not the field's (review M4). */
+export function breakAttentionTerrainDice(s: Pick<SoldierState, 'zone' | 'mounted'>, field: FieldState | null, rating: (id: string) => Pick<AnchorRating, 'trait'> | null): number {
+  if (!field || s.zone === null) return 0;
+  const z = field.zones.find((x) => x.n === s.zone);
+  return z ? terrainBreakAttentionDice(rating(z.rating), s.mounted) : 0;
+}
+
 /**
  * Urban: a soldier who holds blind-spot relative to a Focus Titan in an Urban zone is anchored to a
  * roof and is not airborne, so a Jam does not drop them (odm-gear.yaml, jam). Pass that zone's rating.
@@ -45,8 +52,17 @@ export const jamDrops = (rating: Pick<AnchorRating, 'trait'> | null, position: P
 export const MOMENTUM_SPENDS = ['carry', 'bite', 'brace', 'quiet', 'clean-line'] as const;
 export type MomentumSpend = (typeof MOMENTUM_SPENDS)[number];
 
-/** Every spend costs 1 (momentum, spends, list). */
-export const SPEND_COST = 1;
+/**
+ * What each spend costs (momentum, spends, list): the data's numbers (tools/config-data.ts,
+ * engagementConfig, momentum, spends), set by configureSpends. Carry has no one cost: the zones price
+ * each step (zones.ts, carryCostInto). SPEND_DEFAULTS holds the data's values and a test keeps them equal.
+ */
+export const SPEND_DEFAULTS: Record<string, number> = { bite: 1, brace: 1, quiet: 1, 'clean-line': 1 };
+let spendCosts: Record<string, number> = SPEND_DEFAULTS;
+export function configureSpends(list: readonly { id: string; cost: number | null }[]): void {
+  spendCosts = Object.fromEntries(list.filter((x) => typeof x.cost === 'number').map((x) => [x.id, x.cost as number]));
+}
+export const spendCost = (id: MomentumSpend): number => spendCosts[id] ?? 0;
 
 /** momentum, cap: a soldier's cap is the anchors of the zone they are in (zones.ts, momentumCapAt). */
 export const momentumCap = (anchors: number): number => Math.max(0, anchors);
@@ -111,7 +127,7 @@ export function spendBlock(s: SoldierState, spend: MomentumSpend, grabbed: boole
   if (!s.alive) return 'dead';
   if (s.left) return 'left';
   if (holdsNoMomentum(s, grabbed)) return 'cannotHold';
-  if (s.momentum < SPEND_COST) return 'noMomentum';
+  if (s.momentum < Math.max(1, spendCost(spend))) return 'noMomentum';
   return null;
 }
 

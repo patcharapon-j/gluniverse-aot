@@ -89,7 +89,11 @@ class Board {
       const id = this.selected;
       const combat = this.combat;
       this.quietButton.hidden = true;
-      if (id && combat) await spendQuiet(combat, id).catch((err: unknown) => console.error('wings-of-freedom | Quiet failed', err));
+      if (id && combat)
+        await spendQuiet(combat, id).catch((err: unknown) => {
+          console.error('wings-of-freedom | Quiet failed', err);
+          ui.notifications.error(L('failed'));
+        });
     });
     this.host.append(this.tip, this.badge, this.quietButton);
     const view = this.renderer.app.view as HTMLCanvasElement;
@@ -105,8 +109,12 @@ class Board {
     this.observer.observe(this.host);
   }
 
+  /** Torn down (review m6): a start still loading, or a redraw, stops here. */
+  destroyed = false;
+
   async start(): Promise<void> {
     await this.renderer.load();
+    if (this.destroyed) return;
     this.ready = true;
     this.redraw();
   }
@@ -116,6 +124,9 @@ class Board {
   }
 
   destroy(): void {
+    if (this.destroyed) return;
+    this.destroyed = true;
+    this.ready = false;
     cancelAnimationFrame(this.frame);
     this.observer.disconnect();
     this.closeMenu();
@@ -136,7 +147,7 @@ class Board {
   }
 
   redraw(rebuild = true): void {
-    if (!this.ready) return;
+    if (!this.ready || this.destroyed) return;
     if (rebuild) this.rebuild();
     if (!this.scene) return;
     const direct = isGM() && tracker.direct;
@@ -184,16 +195,31 @@ class Board {
    * Quiet when the soldier can pay it, so the drop carries `option.quiet` (16-14, 16-15).
    */
   go(combat: any, soldierId: string, o: ZoneMoveOption, e: MouseEvent): void {
-    const flagged = [...new Set([...o.crosses, ...o.charge])];
     const q = this.quietState(soldierId);
-    if (!flagged.length || q.spent) {
-      void requestZoneMove(combat, soldierId, o).catch((err: unknown) => console.error('wings-of-freedom | the board move failed', err));
+    const crossing = q.spent ? [] : o.crosses;
+    // A mounted charge is the rider's choice (mounted_charge): offered, one entry per Titan, never forced.
+    const charges = o.kind === 'mounted' && !q.spent ? o.charge : [];
+    const plain = { ...o, chargeOn: undefined };
+    if (!crossing.length && !charges.length) {
+      void this.send(combat, soldierId, plain);
       return;
     }
-    const items = [{ label: L('goLoud'), run: () => requestZoneMove(combat, soldierId, o) }];
-    if (quietOffered(o, q.block, q.spent)) items.push({ label: L('goQuiet'), run: () => requestZoneMove(combat, soldierId, { ...o, quiet: true }) });
+    const items = [{ label: crossing.length ? L('goLoud') : L('goPlain'), run: () => this.send(combat, soldierId, plain) }];
+    if (quietOffered(o, q.block, q.spent)) items.push({ label: L('goQuiet'), run: () => this.send(combat, soldierId, { ...plain, quiet: true }) });
+    for (const label of charges) items.push({ label: L('charge', { label }), run: () => this.send(combat, soldierId, { ...o, chargeOn: label }) });
     items.push({ label: L('cancel'), run: async () => false });
-    this.menu = this.popup(e, L('crossWarn', { labels: flagged.join(', ') }), items);
+    this.menu = this.popup(e, crossing.length ? L('crossWarn', { labels: crossing.join(', ') }) : L('chargeAsk'), items);
+  }
+
+  /** A move sent to the engine; a failure is said on screen as well as in the console (review m7). */
+  async send(combat: any, soldierId: string, o: ZoneMoveOption): Promise<boolean> {
+    try {
+      return await requestZoneMove(combat, soldierId, o);
+    } catch (err) {
+      console.error('wings-of-freedom | the board move failed', err);
+      ui.notifications.error(L('failed'));
+      return false;
+    }
   }
 
   // ------------------------------------------------------------------ set pieces
@@ -342,6 +368,7 @@ class Board {
       else if (ways.length > 1) this.choose(ways, e, async (o) => (this.go(combat, drag.id, o, e), true));
     } catch (err) {
       console.error('wings-of-freedom | the board move failed', err);
+      ui.notifications.error(L('failed'));
     }
   };
 
@@ -397,6 +424,7 @@ class Board {
           await it.run();
         } catch (err) {
           console.error('wings-of-freedom | the board action failed', err);
+          ui.notifications.error(L('failed'));
         }
       });
       menu.appendChild(b);
@@ -427,13 +455,22 @@ class Board {
       ...this.scene.titans.filter((t) => t.zone === zone).map((t) => `${t.corpse ? L('corpse') : L('titan')} ${t.label}`),
       ...this.scene.soldiers.filter((s) => s.zone === zone).map((s) => s.name),
     ];
-    const lines = [
-      `<strong>${L('zone', { n: zone })}</strong> · ${z.rating === z.start ? name(z.rating) : L('ratingWas', { rating: name(z.rating), start: name(z.start) })}`,
-      here.length ? L('occupants', { names: here.join(', ') }) : L('empty'),
-    ];
+    // Built as text, never HTML: names are the players' own and must not become markup (review m8).
+    const head = document.createElement('div');
+    const strong = document.createElement('strong');
+    strong.textContent = L('zone', { n: zone });
+    head.append(strong, ` · ${z.rating === z.start ? name(z.rating) : L('ratingWas', { rating: name(z.rating), start: name(z.start) })}`);
+    const lines = [here.length ? L('occupants', { names: here.join(', ') }) : L('empty')];
     const effects = (z.effects ?? []) as string[];
     if (effects.length) lines.push(effects.map((id) => L(`effect.${id}`)).join(', '));
-    this.tip.innerHTML = lines.map((l) => `<div>${l}</div>`).join('');
+    this.tip.replaceChildren(
+      head,
+      ...lines.map((l) => {
+        const d = document.createElement('div');
+        d.textContent = l;
+        return d;
+      }),
+    );
     const r = this.host.getBoundingClientRect();
     this.tip.style.left = `${e.clientX - r.left + 16}px`;
     this.tip.style.top = `${e.clientY - r.top + 16}px`;
@@ -504,8 +541,11 @@ export async function syncBoard(): Promise<void> {
     const b = new Board(combat);
     board = b;
     await b.start();
+    // Torn down while it loaded (the engagement ended): nothing more to do (review m6).
+    if (board !== b) return;
   } catch (err) {
     console.error('wings-of-freedom | the engagement board failed to start', err);
+    ui.notifications.error(L('failed'));
     board?.destroy();
     board = null;
   } finally {

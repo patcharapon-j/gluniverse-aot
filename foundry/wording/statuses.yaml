@@ -14,6 +14,6 @@ statuses:
     from: { path: data/harm/health.yaml, entry: "harm_kinds[critical-injury].health_box", sha: 67b7c1b15111 }
   carrying:
     text: >-
-      You carry a comrade. They hold your Position and count as 5 items for you, plus every item they
-      carry. You carry at most one comrade.
-    from: { path: data/gear/carrying.yaml, entry: carrying_a_comrade, sha: f93f5ee2329e }
+      You carry a comrade. They are in your zone with your attachment, and count as 5 items for you,
+      plus every item they carry. You carry at most one comrade.
+    from: { path: data/gear/carrying.yaml, entry: carrying_a_comrade, sha: 5bc97040dbdd }

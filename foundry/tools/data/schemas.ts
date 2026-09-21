@@ -760,6 +760,7 @@ export const sizeClassesFile = z.looseObject({
 export const titanFormatFile = z.looseObject({
   id: z.literal('titan-format'),
   titan_dice: z.looseObject({ success_faces: z.tuple([z.literal(5), z.literal(6)]) }),
+  frenzy: z.looseObject({ cap: z.number().int().min(0), rate: z.number().int().min(1) }),
   effect_types: z.array(z.looseObject({ id })).refine((e) => e.map((x) => x.id).join() === 'stress,critical-injury,knock-loose,grab,wreck,telegraph', 'the Titan effect types changed'),
 });
 

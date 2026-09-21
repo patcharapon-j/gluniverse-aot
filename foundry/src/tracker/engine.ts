@@ -5,13 +5,14 @@
  */
 import { SYSTEM_ID } from '../config.ts';
 import { evaluateLadder, chooseEntry, enteringAttention, entryTargets, retargetForEntry } from '../rules/engagement/attention.ts';
-import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_CAP, FRENZY_RATE, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
+import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, frenzyRule, skirmishHolders, tieCard, titanHolders } from '../rules/engagement/cards.ts';
 import { countTurn, holdingArm, release } from '../rules/engagement/grab.ts';
 import { coreOf, grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { flightEnds, flightPrefix, moveFlags, holdsAPosition, leaveBlock, letGoBlock, moveBlock, moveContext, moveOptionsFor, nextLabel, ratingRows, returnBlock, returnZones, routeOption, type MoveKind, type ZoneMoveOption } from '../rules/engagement/positions.ts';
-import { capOf, flightResult, momentumCap, momentumEnd, spendBlock, SPEND_COST, trimToCap } from '../rules/engagement/momentum.ts';
+import { capOf, flightResult, momentumCap, momentumEnd, spendBlock, spendCost, trimToCap } from '../rules/engagement/momentum.ts';
 import { retreatBinds, retreatOptions } from '../rules/engagement/retreat.ts';
 import { positionsAfterStride, strideFor, strideMoves } from '../rules/engagement/stride.ts';
+import { strideMomentum, titanStands, zoneOpened, type FieldChange } from '../rules/engagement/field.ts';
 import { detached, entryZone, generateField, momentumCapAt, setRating, wreckZone, zoneDistance, zoneRules, type Attachment, type FieldSize, type FieldState, type Placement, type ZoneId } from '../rules/engagement/zones.ts';
 import {
   autoChecks,
@@ -50,7 +51,7 @@ import { fearRolls, trackerDeaths } from './fear.ts';
 import { rollFall, rollSteam } from './harm.ts';
 import { postNote, tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
-import { E, cardsOf, ensureRules, grabbedBy, partsOf, ratingOf, snapshot, soldierActors, soldierIn, soldierState, titanActor, titanRow, titanToken, wingsOf, type PlacementRow } from './snapshot.ts';
+import { E, cardsOf, ensureRules, rowZone, grabbedBy, partsOf, ratingOf, snapshot, soldierActors, soldierIn, soldierState, titanActor, titanRow, titanToken, wingsOf, type PlacementRow } from './snapshot.ts';
 
 const rng = () => (CONFIG.Dice?.randomUniform ? CONFIG.Dice.randomUniform() : Math.random());
 const d6 = () => Math.floor(rng() * 6) + 1;
@@ -97,33 +98,32 @@ export function recordPlacement(rec: Recorder, combat: any, soldierId: string, p
 
 /** The board's event, in the same update as the change it shows (combat.system.boardEvent); never undone. */
 export function boardEvent(rec: Recorder, combat: any, kind: 'stride' | 'flight' | 'wreck' | 'fall' | 'steam' | 'enter', data: Record<string, unknown>): void {
-  const pending = rec.get(combat, 'system.boardEvent') as { seq: number } | null;
-  const seq = Math.max(pending?.seq ?? 0, combat.system.boardEvent?.seq ?? 0) + 1;
-  rec.setUnrecorded(combat, 'system.boardEvent', { seq, kind, data });
+  // The seq is set when the recorder commits (recorder.ts, nextBoardSeq).
+  rec.setUnrecorded(combat, 'system.boardEvent', { seq: 0, kind, data });
 }
 
 const zoneText = (zone: ZoneId | null) => (zone === null ? tr('zone.off') : tr('zone.n', { n: zone }));
 const attachText = (a: Attachment) => (a.body ? tr(`attach.${a.kind}Of`, { label: a.body }) : tr(`attach.${a.kind}`));
 const placeText = (p: Placement) => (p.zone === null ? tr('zone.off') : `${zoneText(p.zone)}, ${attachText(p.attachment)}`);
 
-/**
- * A zone that becomes Open under a standing Focus Titan (positions.yaml, changes_to_position,
- * zone-becomes-open; 16-21): every soldier at its Blind Spot holds on-body instead, not a fall, and
- * every soldier anchored in that zone is on the ground and stops being airborne, with no fall.
- */
-function zoneBecomesOpen(rec: Recorder, combat: any, snap: Snapshot, zone: ZoneId): void {
-  const standing = snap.titans.filter((t) => t.status === 'focus' && t.zone === zone && !t.grounded).map((t) => t.label);
-  for (const s of snap.soldiers) {
-    if (s.zone !== zone || !s.alive || s.left) continue;
-    if (s.attachment.kind === 'blind-spot' && s.attachment.body && standing.includes(s.attachment.body)) {
-      recordPlacement(rec, combat, s.id, { attachment: { kind: 'on-body', body: s.attachment.body } });
-      rec.line(tr('zone.openOnBody', { name: s.name, label: s.attachment.body }));
-    } else if (s.attachment.kind === 'anchored') {
-      recordPlacement(rec, combat, s.id, { attachment: { kind: 'ground', body: null } });
-      rec.set(game.actors.get(s.id), 'system.airborne', false);
-      rec.line(tr('zone.openGround', { name: s.name }));
-    }
+/** Writes a field change (field.ts): the placements, the airborne it clears, and a line for each. */
+function applyFieldChange(rec: Recorder, combat: any, snap: Snapshot, ch: FieldChange): void {
+  const name = (id: string) => snap.soldiers.find((x) => x.id === id)?.name ?? nameOf(id);
+  for (const [id, p] of Object.entries(ch.placements)) recordPlacement(rec, combat, id, p);
+  for (const id of ch.landed) {
+    rec.set(game.actors.get(id), 'system.airborne', false);
+    rec.line(tr('zone.openGround', { name: name(id) }));
   }
+  for (const id of ch.onBody) rec.line(tr('zone.openOnBody', { name: name(id), label: ch.placements[id]?.attachment.body ?? '' }));
+  for (const id of ch.freed) {
+    rec.set(game.actors.get(id), 'system.pinned.active', false);
+    rec.line(tr('zone.unpinned', { name: name(id) }));
+  }
+}
+
+/** zone-becomes-open (16-21; OQ-205): every anchored soldier lands; the Blind Spot moves only under a standing Titan (field.ts, zoneOpened). */
+function zoneBecomesOpen(rec: Recorder, combat: any, snap: Snapshot, zone: ZoneId): void {
+  applyFieldChange(rec, combat, snap, zoneOpened(snap.soldiers, snap.titans, zone));
 }
 
 /** Momentum above the anchors of each soldier's zone is lost at once (anchor-ratings.yaml, momentum, cap). */
@@ -608,6 +608,11 @@ async function titanCardStart(combat: any, combatant: any): Promise<void> {
       const moves = strideMoves(snap.soldiers, label, to);
       rec.set(combat, 'system.titans', (rec.get(combat, 'system.titans') as any[]).map((t) => (t.key === key ? { ...t, zone: to } : t)));
       for (const [id, p] of Object.entries(moves.placements)) recordPlacement(rec, combat, id, p);
+      // A soldier carried into another zone keeps no more Momentum than its anchors (16-4; field.ts, strideMomentum).
+      for (const [id, n] of Object.entries(strideMomentum(snap.soldiers, moves, snap.field))) {
+        rec.set(game.actors.get(id), 'system.momentum', n);
+        retargetLines.push(tr('end.momentumTrim', { name: nameOf(id), n }));
+      }
       boardEvent(rec, combat, 'stride', { key, from, route });
       const after = positionsAfterStride(snap.soldiers, snap.titans, key, to, moves);
       snap.soldiers.splice(0, snap.soldiers.length, ...after);
@@ -698,7 +703,7 @@ async function titanCardEnd(combat: any, combatant: any): Promise<void> {
   const rec = new Recorder();
   // A wreck effect applies whether the behavior landed or whiffed, as telegraph does
   // (titan-format.yaml, effect_types, wreck).
-  if (pending.wreck) wreck(combat, rec, current.zone ?? 0);
+  if (pending.wreck) wreck(combat, rec, rowZone(current));
   rec.set(actor, 'system.previous_behavior', pending.entry);
   const next = await rollNext(actor, pending.entry, rec, pending.telegraph, frenzyOf(combat, key));
   rec.set(combat, 'system.titans', (after.titans as any[]).map((t) => (t.key === key ? { ...t, pending: '', decoysInRow: 0, flags: emptyFlags() } : t)));
@@ -722,14 +727,16 @@ function checkedMove(snap: Snapshot, s: SoldierState, option: ZoneMoveOption): Z
   if (!ctx) return 'move.noField';
   const why = moveBlock(s, ctx.grabbed);
   if (why) return `move.${why}`;
+  if (snap.movesSpent.includes(s.id)) return 'move.spent';
   const o = routeOption(s, ctx, option.kind, option.steps);
   if (!o) return 'move.notLegal';
   if (snap.retreat && retreatBinds(s, { clock: { length: 0, filled: 0, active: true, began: 0 }, grabbedBy: (id) => grabbedBy(snap, id) })) {
     const same = (a: Placement, b: Placement) => a.zone === b.zone && a.attachment.kind === b.attachment.kind && a.attachment.body === b.attachment.body;
     if (!retreatOptions(s, snap).some((r) => r.kind === o.kind && same(r.to, o.to) && r.steps.length === o.steps.length)) return 'move.retreat';
   }
-  // The rider's choice of Titan for the mounted charge: the option names it, or none.
-  return { ...o, charge: o.charge.filter((l) => option.charge.includes(l)).slice(0, 1) };
+  // The mounted charge is the rider's choice (review M5): at most the one Titan the request names,
+  // and only one the ride may charge; none named, none flagged.
+  return { ...o, chargeOn: option.chargeOn && o.charge.includes(option.chargeOn) ? option.chargeOn : undefined };
 }
 
 /**
@@ -743,7 +750,7 @@ export async function requestZoneMove(combat: any, soldierId: string, option: Zo
   if (!isGM()) {
     if (!actor.isOwner) return warn('gm.onlyGM');
     const { extViaGM } = await import('../dice/proxy.ts');
-    await extViaGM('tracker', { act: 'zone-move', combat: combat.id, soldier: soldierId, kind: option.kind, steps: option.steps, charge: option.charge, quiet: !!option.quiet });
+    await extViaGM('tracker', { act: 'zone-move', combat: combat.id, soldier: soldierId, kind: option.kind, steps: option.steps, chargeOn: option.chargeOn, quiet: !!option.quiet, mount: !!option.mount, dismount: !!option.dismount });
     return true;
   }
   const snap = snapshot(combat);
@@ -752,7 +759,7 @@ export async function requestZoneMove(combat: any, soldierId: string, option: Zo
   const checked = checkedMove(snap, s, option);
   if (typeof checked === 'string') return warn(checked);
   // Quiet is paid with the move; a move on foot or mounted needs the Momentum now (spends, quiet).
-  if (option.quiet && !checked.fly && s.momentum < SPEND_COST) return warn('quietBlock.noMomentum');
+  if (option.quiet && !checked.fly && s.momentum < spendCost('quiet')) return warn('quietBlock.noMomentum');
   checked.quiet = !!option.quiet;
   if (checked.fly) return flight(combat, actor, s, checked);
   await applyMove(combat, actor, s, checked, {});
@@ -778,6 +785,8 @@ async function flight(combat: any, actor: any, s: SoldierState, o: ZoneMoveOptio
     speaker: actor,
   });
   if (!message) return false;
+  // The move is spent when the Flight is asked, so a second one cannot be posted before the answer (review M6).
+  await markMoveSpent(combat, actor.id);
   await postNote({ title: tr('note.flightAsked', { name: actor.name }), lines: [tr('note.flightAskedLine', { to: placeText(o.to), n: o.carries, m: o.momentum })], round: combat.round });
   return true;
 }
@@ -811,13 +820,15 @@ const flightResolver: PromptResolver = {
     const quietBefore = (plain(combat).quiet as string[]).includes(s.id);
     const gained = flightResult(successes, s.momentum, capOf(s, snap.field), { quiet: quietBefore });
     // Quiet bought with the Flight is paid from what the soldier holds after the roll, before the Carries.
-    const buys = !!data.quiet && !quietBefore && gained.momentum >= SPEND_COST;
-    const flown = { ...gained, momentum: gained.momentum - (buys ? SPEND_COST : 0), loud: gained.loud && !buys };
+    const buys = !!data.quiet && !quietBefore && gained.momentum >= spendCost('quiet');
+    const flown = { ...gained, momentum: gained.momentum - (buys ? spendCost('quiet') : 0), loud: gained.loud && !buys };
     const ctxm = moveContext(snap, s, ratingRows());
     const full = ctxm ? routeOption(s, { ...ctxm, momentum: Infinity }, 'odm', data.steps) : null;
     if (!full) return { line: tr('prompt.flightGone', { name: actor.name }), ops: [] };
     const paid = flightPrefix(full, snap.field, flown.momentum, (p) => flightEnds(p, snap.field!, (id) => ratingRows().find((r) => r.id === id) ?? null));
-    const o = paid.steps.length && ctxm ? routeOption(s, { ...ctxm, momentum: Infinity }, 'odm', paid.steps) : null;
+    let o = paid.steps.length && ctxm ? routeOption(s, { ...ctxm, momentum: Infinity }, 'odm', paid.steps) : null;
+    // A retreat that began between the ask and the answer binds the Flight too (review m12).
+    if (o && typeof checkedMove({ ...snap, movesSpent: [] }, s, { ...o, chargeOn: undefined }) === 'string') o = null;
     if (o) o.quiet = buys;
     await applyMove(combat, actor, s, o, { flight: { successes, ...flown }, short: paid.steps.length < full.steps.length, quietPaid: buys });
     return { line: tr('prompt.flightDone', { name: actor.name, n: successes, gained: flown.gained }), ops: [] };
@@ -861,8 +872,9 @@ async function applyMove(combat: any, actor: any, s: SoldierState, o: ZoneMoveOp
   // it stops every flag the soldier would set, the crossing flag included (16-14, 16-15).
   const quietList = rec.get(combat, 'system.quiet') as string[];
   let quiet = quietList.includes(s.id);
-  if (o?.quiet && !quiet) {
-    if (!extra.quietPaid) held = Math.max(0, held - SPEND_COST);
+  // Quiet paid out of a Flight that could not move is still bought (review m4).
+  if ((o?.quiet || extra.quietPaid) && !quiet) {
+    if (!extra.quietPaid) held = Math.max(0, held - spendCost('quiet'));
     rec.set(combat, 'system.quiet', [...quietList, s.id]);
     quiet = true;
     lines.push(tr('note.quiet'));
@@ -870,15 +882,23 @@ async function applyMove(combat: any, actor: any, s: SoldierState, o: ZoneMoveOp
   if (o) {
     const to = o.to;
     const leaving = to.zone === null;
-    const horseZone = o.kind === 'mounted' ? to.zone : o.kind === 'odm' && s.mounted ? s.zone : s.horseZone;
+    const horseZone = o.kind === 'mounted' ? to.zone : (o.kind === 'odm' || o.dismount) && s.mounted ? s.zone : s.horseZone;
     recordPlacement(rec, combat, s.id, { zone: to.zone, attachment: to.attachment, horseZone: leaving && o.kind === 'mounted' ? null : horseZone });
     if (s.carrying && leaving) recordPlacement(rec, combat, s.carrying, { zone: null, attachment: { kind: 'ground', body: null } });
     if (o.kind === 'odm') rec.set(actor, 'system.airborne', true);
     if (o.kind === 'onFoot' && s.airborne) rec.set(actor, 'system.airborne', false);
-    // An ODM move by a mounted soldier dismounts them first; the horse stays in its zone (horses.yaml).
-    if (o.kind === 'odm' && s.mounted) {
-      const horse = [...(actor.items ?? [])].find((i: any) => i.type === 'gear' && i.system.subtype === 'horse' && i.system.mounted);
-      if (horse) rec.set(horse, 'system.mounted', false);
+    // An ODM move, or a move on foot, by a mounted soldier dismounts them first; the horse stays in
+    // the zone the move starts in. A mount comes before a mounted move's steps (horses.yaml,
+    // within_a_move; review M7).
+    const horse = [...(actor.items ?? [])].find((i: any) => i.type === 'gear' && i.system.subtype === 'horse');
+    if ((o.kind === 'odm' || o.dismount) && s.mounted && horse) {
+      rec.set(horse, 'system.mounted', false);
+      lines.push(tr('note.dismounts'));
+    }
+    if (o.mount && horse) {
+      rec.set(horse, 'system.mounted', true);
+      if (s.airborne) rec.set(actor, 'system.airborne', false);
+      lines.push(tr('note.mounts'));
     }
     held = Math.max(0, held - o.momentum);
     for (const label of moveFlags(o, quiet)) {
@@ -888,7 +908,7 @@ async function applyMove(combat: any, actor: any, s: SoldierState, o: ZoneMoveOp
     lines.push(tr('note.zoneMoved', { from: placeText(from), to: placeText(to), kind: extra.ruling ? tr('gm.byRuling') : tr(`move.way.${o.kind}`) }));
     if (o.momentum) lines.push(tr('note.carry', { n: o.momentum }));
     if (o.crosses.length) lines.push(tr('note.crossed', { labels: o.crosses.join(', ') }));
-    if (o.charge.length) lines.push(tr('note.charge', { label: o.charge.join(', ') }));
+    if (o.chargeOn && !quiet) lines.push(tr('note.charge', { label: o.chargeOn }));
     if (extra.short) lines.push(tr('note.flightShort'));
     if (o.fly) boardEvent(rec, combat, 'flight', { soldier: s.id, from, steps: o.steps });
     if (leaving) lines.push(tr('note.leftField'));
@@ -940,7 +960,7 @@ export async function spendQuiet(combat: any, soldierId: string): Promise<boolea
   const list = plain(combat).quiet as string[];
   if (list.includes(soldierId)) return true;
   const rec = new Recorder();
-  rec.set(actor, 'system.momentum', s.momentum - SPEND_COST);
+  rec.set(actor, 'system.momentum', s.momentum - spendCost('quiet'));
   rec.set(combat, 'system.quiet', [...list, soldierId]);
   await rec.commit();
   await postNote({ title: tr('note.quietTitle', { name: actor.name }), lines: [tr('note.quiet')], round: combat.round });
@@ -1016,7 +1036,7 @@ export async function markMoveSpent(combat: any, soldierId: string): Promise<voi
 /**
  * A wreck (titan-format.yaml, effect_types, wreck; 16-20): the zone takes one rating step toward Open,
  * the first while Sparse graced. Every soldier over their new cap loses the excess, and a zone turned
- * Open under a standing Titan applies zone-becomes-open (16-21).
+ * Open applies zone-becomes-open (16-21; OQ-205).
  */
 export function wreck(combat: any, rec: Recorder, zone: ZoneId, event = true): void {
   const snap = snapshot(combat);
@@ -1034,7 +1054,7 @@ export function wreck(combat: any, rec: Recorder, zone: ZoneId, event = true): v
     return;
   }
   rec.line(tr('end.wrecked', { zone, from: ratingOf(out.from)?.name ?? out.from, to: ratingOf(out.to)?.name ?? out.to }));
-  if (out.to === 'open') zoneBecomesOpen(rec, combat, snap, zone);
+  if (out.to === zoneRules().openRating) zoneBecomesOpen(rec, combat, snap, zone);
   trimMomentum(rec, combat, out.field);
 }
 
@@ -1129,9 +1149,9 @@ export async function titanDies(combat: any, key: string, rec: Recorder): Promis
   // The falling body destroys 1 Anchor where it lands, whether or not anyone is in the path
   // (titan-harm.yaml, falling_titan, wrecks_an_anchor). A Titan already grounded does not fall.
   if (!isGrounded(partsOf(actor))) {
-    wreck(combat, rec, row.zone ?? 0, false);
-    boardEvent(rec, combat, 'fall', { key, zone: row.zone ?? 0 });
-  } else boardEvent(rec, combat, 'steam', { key, zone: row.zone ?? 0 });
+    wreck(combat, rec, rowZone(row), false);
+    boardEvent(rec, combat, 'fall', { key, zone: rowZone(row) });
+  } else boardEvent(rec, combat, 'steam', { key, zone: rowZone(row) });
   if (plan.fall.length) rec.line(tr('death.fall', { who: names(plan.fall) }));
   rec.set(actor, 'system.corpse', true);
   rec.set(actor, 'system.openings', 0);
@@ -1223,7 +1243,7 @@ export async function undoCheck(combat: any, index: number): Promise<void> {
 
 /**
  * The frenzy end step (round.yaml, end_steps, frenzy; batch F2): every living Focus Titan's Frenzy
- * rises by 1 at the end of every third round, never above FRENZY_CAP; at the end of any other
+ * rises by 1 at the end of every third round, never above the cap; at the end of any other
  * round it is held. A corpse has none, and a Next Behavior already rolled is not
  * touched: a behavior roll takes the Frenzy that stood when it was rolled (behavior-procedure.yaml,
  * next_behavior, frenzy_when).
@@ -1237,8 +1257,8 @@ function raiseFrenzy(combat: any, rec: Recorder): void {
   }
   const next = rows.map((r) => (r.status === 'focus' ? { ...r, frenzy: frenzyAfterRound(Number(r.frenzy ?? 0), combat.round) } : r));
   rec.set(combat, 'system.titans', next);
-  if (combat.round % FRENZY_RATE === 0) {
-    for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzy', { label: r.label, n: r.frenzy, cap: FRENZY_CAP }));
+  if (combat.round % frenzyRule().rate === 0) {
+    for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzy', { label: r.label, n: r.frenzy, cap: frenzyRule().cap }));
   } else {
     for (const r of next.filter((x) => x.status === 'focus')) rec.line(tr('end.frenzyHeld', { label: r.label }));
   }
@@ -1281,13 +1301,16 @@ async function runCheck(combat: any, check: EndEntry['check'], rec: Recorder): P
         if (p.result.healed) {
           rec.line(tr('end.regenHealed', { label, part: game.i18n.localize(`WOF.BodyPart.${p.result.healed.id}`) }));
           await rollSteam(combat, steamRollers('regeneration-fill', snap.soldiers, label), rec, { trigger: 'regeneration-fill', label, key: p.key });
-          boardEvent(rec, combat, 'steam', { key: p.key, zone: living.find((t) => t.key === p.key)?.zone ?? 0 });
+          boardEvent(rec, combat, 'steam', { key: p.key, zone: rowZone(living.find((t) => t.key === p.key) ?? {}) });
         }
         if (p.result.stands) {
           rec.set(a, 'system.heave_count', 0);
-          const pinned = snap.soldiers.filter((s) => s.pinned?.body === label);
-          for (const s of pinned) rec.set(game.actors.get(s.id), 'system.pinned.active', false);
           rec.line(tr('end.stands', { label }));
+          // Its Pinned are freed to the ground, and in an Open zone its Blind Spot becomes On Body
+          // (grounded_titan, ends; 16-21, 16-23; field.ts, titanStands).
+          const t = living.find((x) => x.key === p.key)!;
+          const zoneRating = snap.field?.zones.find((z) => z.n === t.zone)?.rating ?? '';
+          applyFieldChange(rec, combat, snap, titanStands(snap.soldiers, t, zoneRating));
         }
       }
       if (!plans.length) rec.line(tr('end.noFocus'));
@@ -1648,7 +1671,7 @@ export async function setZoneRating(combat: any, zone: ZoneId, ratingId: string)
   const rec = new Recorder();
   const field = setRating(snap.field, zone, ratingId);
   rec.set(combat, 'system.field', { ...field, zones: field.zones.map((z) => ({ ...z, effects: z.effects.filter((e) => e !== 'dust' && e !== 'steam') })) });
-  if (ratingId === 'open') zoneBecomesOpen(rec, combat, snap, zone);
+  if (ratingId === zoneRules().openRating) zoneBecomesOpen(rec, combat, snap, zone);
   trimMomentum(rec, combat, field);
   return ruling(combat, tr('gm.zoneRating', { zone, name: rating.name ?? ratingId }), [], rec);
 }
@@ -1687,6 +1710,7 @@ export async function gmPlaceTitan(combat: any, key: string, zone: ZoneId): Prom
   setTitans(rec, combat, titansOf(rec, combat).map((r) => (r.key === key ? { ...r, zone } : r)));
   const moves = strideMoves(snap.soldiers, row.label, zone);
   for (const [id, p] of Object.entries(moves.placements)) recordPlacement(rec, combat, id, p);
+  trimMomentum(rec, combat, snap.field);
   return ruling(combat, tr('gm.titanPlaced', { label: row.label, zone }), [], rec);
 }
 
@@ -1877,7 +1901,7 @@ export async function performRequest(combat: any, req: any, user: any): Promise<
       const ctx = moveContext(snap, s, ratingRows());
       const o = ctx ? routeOption(s, ctx, req.kind, req.steps) : null;
       if (!o) return false;
-      return requestZoneMove(combat, req.soldier, { ...o, charge: Array.isArray(req.charge) ? req.charge : [], quiet: !!req.quiet });
+      return requestZoneMove(combat, req.soldier, { ...o, chargeOn: typeof req.chargeOn === 'string' ? req.chargeOn : undefined, quiet: !!req.quiet });
     }
     case 'quiet':
       return spendQuiet(combat, req.soldier);

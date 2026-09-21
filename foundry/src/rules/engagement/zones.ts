@@ -76,6 +76,14 @@ export interface ZoneRules {
   mounted: { zoneSteps: number; stopsAtTitan: boolean };
   /** engagement-setup.yaml, zone_terrain (OQ-202). */
   terrain: { results: number[]; rating: 'sparser' | 'field' | 'denser' }[];
+  /** The rating that is its own sparser: the bottom of the ladder (16-20). */
+  openRating: string;
+  /** The rating whose Terrain Trait keeps a zone's first wreck (16-5). */
+  graceRating: string;
+  /** The rating in whose zones a grounded Titan gains the extra on-body to blind-spot step (grounded_titan, open_rating). */
+  groundedExtraRating: string;
+  /** The ratings whose zones raise a fall one band (falls.yaml, height). */
+  fallRaise: string[];
 }
 
 const cells = (rows: [number, number][]): ZoneCell[] => rows.map(([q, r], i) => ({ n: i + 1, q, r }));
@@ -124,7 +132,16 @@ export const ZONE_DEFAULTS: ZoneRules = {
     { results: [2, 3, 4, 5], rating: 'field' },
     { results: [6], rating: 'denser' },
   ],
+  openRating: 'open',
+  graceRating: 'sparse',
+  groundedExtraRating: 'open',
+  fallRaise: ['giant-forest'],
 };
+
+let missing: (what: string) => void = () => {};
+/** Where a lookup that misses is reported (the tracker warns the GM once; tests stay silent). */
+export const setMissingReporter = (fn: (what: string) => void) => (missing = fn);
+export const reportMissing = (what: string) => missing(what);
 
 let rules: ZoneRules = ZONE_DEFAULTS;
 
@@ -135,7 +152,12 @@ export function configureZones(next: ZoneRules): void {
 
 export const zoneRules = (): ZoneRules => rules;
 
-export const ratingRule = (id: string): ZoneRating => rules.ratings.find((r) => r.id === id) ?? { id, anchors: 0, carryCost: 0, sparser: id, denser: id };
+export function ratingRule(id: string): ZoneRating {
+  const r = rules.ratings.find((x) => x.id === id);
+  if (r) return r;
+  missing(`the Anchor Rating "${id}"`);
+  return { id, anchors: 0, carryCost: 0, sparser: id, denser: id };
+}
 
 // ---------------------------------------------------------------- the field's shape (16-2)
 
@@ -289,7 +311,7 @@ export function wreckZone(field: FieldState, n: ZoneId): { field: FieldState; fr
   const from = z.rating;
   let next: ZoneState;
   let graced = false;
-  if (from === 'sparse' && !z.graceUsed) {
+  if (from === rules.graceRating && !z.graceUsed) {
     graced = true;
     next = { ...z, graceUsed: true };
   } else {

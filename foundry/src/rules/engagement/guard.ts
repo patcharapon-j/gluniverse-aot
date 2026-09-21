@@ -24,7 +24,7 @@ export type TrackerRequest =
   | { act: 'move-spent'; combat: string; soldier: string }
   | { act: 'fall-back'; combat: string; soldier: string; titan: string }
   | { act: 'let-go'; combat: string; soldier: string; titan?: string }
-  | { act: 'zone-move'; combat: string; soldier: string; kind: MoveKind; steps: Placement[]; charge?: string[]; quiet?: boolean }
+  | { act: 'zone-move'; combat: string; soldier: string; kind: MoveKind; steps: Placement[]; chargeOn?: string; quiet?: boolean; mount?: boolean; dismount?: boolean }
   | { act: 'quiet'; combat: string; soldier: string }
   | { act: 'return'; combat: string; soldier: string; zone: number }
   | { act: 'engage'; combat: string; soldier: string; foe: string };
@@ -204,6 +204,8 @@ export function checkTrackerRules(w: TrackerWorld, req: TrackerRequest): string 
       const soldier = soldierOf(req.soldier);
       if (!soldier) return null;
       if (!Array.isArray(req.steps) || !req.steps.length) return 'the move names no step';
+      // One move a turn (review M6); the GM's Direct Control is the override.
+      if (s.movesSpent.includes(soldier.id)) return 'the soldier’s move is spent this turn';
       const ctx = moveContext(s, soldier, ratingRows());
       if (!ctx) return 'the engagement has no field';
       const o = routeOption(soldier, ctx, req.kind, req.steps);

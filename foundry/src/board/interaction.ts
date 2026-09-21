@@ -137,8 +137,9 @@ export function directPlacement(t: DropTarget, s: Pick<BoardSoldier, 'attachment
  * layer's own answer (momentum.ts, spendBlock). A Flight pays Quiet from what the soldier holds after
  * the roll, so an empty purse does not rule it out; a move on foot or mounted pays it now.
  */
-export function quietOffered(o: Pick<ZoneMoveOption, 'crosses' | 'charge' | 'fly'>, block: string | null, spent: boolean): boolean {
-  if (spent || (!o.crosses.length && !o.charge.length)) return false;
+export function quietOffered(o: Pick<ZoneMoveOption, 'crosses' | 'fly'>, block: string | null, spent: boolean): boolean {
+  // Only a crossing is flagged whatever the soldier wants; a charge is the rider's choice (review M5).
+  if (spent || !o.crosses.length) return false;
   return o.fly ? block === null || block === 'noMomentum' : block === null;
 }
 

@@ -25,7 +25,7 @@ import { healthLine, rollFall } from './harm.ts';
 import { postPrompt, registerPromptResolver, type PromptResolver } from '../dice/prompt.ts';
 import { tr } from './notes.ts';
 import { Recorder, revertOps } from './recorder.ts';
-import { E, grabbedBy, partsOf, snapshot, soldierIn, soldierState, titanActor, titanRow } from './snapshot.ts';
+import { E, grabbedBy, partsOf, rowZone, snapshot, soldierIn, soldierState, titanActor, titanRow } from './snapshot.ts';
 
 export const RESULT_FLAG = 'result';
 
@@ -294,7 +294,7 @@ async function strike(card: ActionCard, rec: Recorder): Promise<void> {
         const path = snap.soldiers.filter((s) => s.alive && !s.airborne && isClose(s.positions[label]) && grabbedBy(snap, s.id) === null).map((s) => s.name);
         rec.line(tr('result.grounded', { label }));
         // The falling body takes one rating step off its own zone (titan-harm.yaml, falling_titan; 16-20).
-        const zone = snap.titans.find((t) => t.key === key)?.zone ?? 0;
+        const zone = rowZone(snap.titans.find((t) => t.key === key) ?? {});
         wreck(combat, rec, zone, false);
         boardEvent(rec, combat, 'fall', { key, zone });
         if (path.length) rec.line(tr('death.fall', { who: path.join(', ') }));

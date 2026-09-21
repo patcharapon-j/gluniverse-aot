@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { chooseEntry, drawAttentionBlock, enteringAttention, entryTargets, evaluateLadder, retargetForEntry, type LadderInput } from '../src/rules/engagement/attention.ts';
-import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_CAP, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
+import { behaviorResult, dealBlock, dealCards, frenzyAfterRound, FRENZY_DEFAULTS, frenzyRule, skirmishHolders, swapBlock, swapCards, tieCard, titanHolders, turnOrder, type SwapInput } from '../src/rules/engagement/cards.ts';
 import { breakFreeNeeds, countTurn, grabLands, holdingArm, holdingArmReach, release } from '../src/rules/engagement/grab.ts';
 import { checkTrackerPermission, checkTrackerRequest, checkTrackerRules, coreOf, fallBackBlock, type TrackerRequest, type TrackerWorld } from '../src/rules/engagement/guard.ts';
 import { gainInjury } from '../src/rules/engagement/injury.ts';
@@ -12,11 +12,12 @@ import {
   momentumEnd,
   MOMENTUM_SPENDS,
   spendBlock,
-  SPEND_COST,
+  SPEND_DEFAULTS,
+  spendCost,
   terrainBreakAttentionDice,
   trimToCap,
 } from '../src/rules/engagement/momentum.ts';
-import { leaveBlock, letGoBlock, moveOptions, nextLabel, returnBlock, returnZones, stepRows, swapBladeSetBlock, swapSpends, type MoveContext, type SwapContext } from '../src/rules/engagement/positions.ts';
+import { leaveBlock, letGoBlock, moveFlags, moveOptions, nextLabel, returnBlock, returnZones, stepRows, swapBladeSetBlock, swapSpends, type MoveContext, type SwapContext } from '../src/rules/engagement/positions.ts';
 import { configureZones, generateField, withinZones } from '../src/rules/engagement/zones.ts';
 import {
   autoChecks,
@@ -219,6 +220,14 @@ describe('Positions and moves (positions.yaml, anchor-ratings.yaml, zones.yaml)'
     expect(corpse).toContain('onFoot:7:blind-spot');
     const standing = to(soldier('a', { zone: 7, odmHad: false }), ctx());
     expect(standing.some((x) => x.includes('on-body'))).toBe(false);
+  });
+
+  it('lets a free soldier mount a horse in their zone as part of the move (review M7)', () => {
+    const walker = soldier('w', { zone: 8, odmHad: false, horseZone: 8 });
+    const opts = moveOptions(walker, ctx());
+    expect(opts.filter((o) => o.kind === 'mounted').every((o) => o.mount)).toBe(true);
+    expect(opts.some((o) => o.kind === 'mounted' && o.steps.length === 2)).toBe(true);
+    expect(moveOptions(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), ctx()).some((o) => o.kind === 'mounted')).toBe(false);
   });
 
   it('moves a Grabbed, Pinned, carried, or departed soldier nowhere', () => {
@@ -488,7 +497,9 @@ describe('Frenzy (behavior-procedure.yaml, roll; round 3, decision 12)', () => {
   const entries = medium.behavior_table.entries;
 
   it('rises 1 at the end of every third round and stops at the cap of 3', () => {
-    expect(FRENZY_CAP).toBe(3);
+    // The rate and cap are the data's (titan-format.yaml, frenzy; review m1).
+    expect(E.frenzy).toEqual(FRENZY_DEFAULTS);
+    expect(frenzyRule()).toEqual({ rate: tables.titanFormat.frenzy.rate, cap: tables.titanFormat.frenzy.cap });
     expect(frenzyAfterRound(0, 1)).toBe(0);
     expect(frenzyAfterRound(0, 2)).toBe(0);
     expect(frenzyAfterRound(0, 3)).toBe(1);
@@ -510,7 +521,7 @@ describe('Frenzy (behavior-procedure.yaml, roll; round 3, decision 12)', () => {
     // Above the top of the table (6 on the Standard Medium) reads as the top.
     expect(behaviorResult(5, 2, entries)).toBe(6);
     expect(behaviorResult(6, 3, entries)).toBe(6);
-    expect(behaviorResult(6, FRENZY_CAP, sprinter.behavior_table.entries)).toBe(6);
+    expect(behaviorResult(6, frenzyRule().cap, sprinter.behavior_table.entries)).toBe(6);
     // Thrash claims no result, so it never becomes the top the total clamps to.
     expect(Math.max(...entries.flatMap((e: any) => e.results))).toBe(6);
   });
@@ -924,7 +935,8 @@ describe('Momentum (anchor-ratings.yaml, momentum)', () => {
 
   it('names the spends the data lists, each costing 1 but Carry, which the zones price (16-13)', () => {
     expect(E.momentum.spends.map((x) => x.id)).toEqual([...MOMENTUM_SPENDS]);
-    expect(E.momentum.spends.filter((x) => x.id !== 'carry').every((x) => x.cost === SPEND_COST)).toBe(true);
+    expect(Object.fromEntries(E.momentum.spends.filter((x) => x.id !== 'carry').map((x) => [x.id, x.cost]))).toEqual(SPEND_DEFAULTS);
+    expect(spendCost('quiet')).toBe(SPEND_DEFAULTS.quiet);
     expect(E.momentum.spends.find((x) => x.id === 'carry')!.cost).toBeNull();
   });
 
@@ -971,7 +983,14 @@ describe('the mounted charge (anchor-ratings.yaml, mounted_charge)', () => {
     const opts = moveOptions(rider({ odmHad: false }), { field: f, titans: [titan('A')], rating: (id) => rating(id), grabbed: false });
     expect(opts.find((o) => o.to.zone === 7)!.charge).toEqual(['A']);
     expect(opts.find((o) => o.to.zone === 10 && o.steps.length === 1)!.charge).toEqual([]);
-    expect(opts.some((o) => o.steps.some((x) => x.zone === 5))).toBe(false);
+    expect(opts.some((o) => o.kind === 'mounted' && o.steps.some((x) => x.zone === 5))).toBe(false);
+    // A rider may dismount first and walk into the Urban zone (horses.yaml, within_a_move; review M7).
+    expect(opts.find((o) => o.kind === 'onFoot' && o.to.zone === 5)).toMatchObject({ dismount: true });
+    // A charge is offered, never chosen for the rider (review M5).
+    const into7 = opts.find((o) => o.kind === 'mounted' && o.to.zone === 7)!;
+    expect(moveFlags(into7, false)).toEqual([]);
+    expect(moveFlags({ ...into7, chargeOn: 'A' }, false)).toEqual(['A']);
+    expect(moveFlags({ ...into7, chargeOn: 'Z' }, false)).toEqual([]);
   });
 
   it('says when Momentum may be spent at all (momentum, spends, when)', () => {
@@ -1183,7 +1202,8 @@ describe('a Focus Titan dies (titan-harm.yaml, titan_death)', () => {
   });
 
   it('ends every attachment naming it: a fall lands them on the ground, else the detach rule (16-24)', () => {
-    expect(plan.placements.a).toEqual({ zone: 7, attachment: { kind: 'ground', body: null } });
+    // a is airborne at the Blind Spot: they swing clear of the standing body and end anchored (review C1).
+    expect(plan.placements.a).toEqual({ zone: 7, attachment: { kind: 'anchored', body: null } });
     expect(plan.placements.b).toEqual({ zone: 7, attachment: { kind: 'ground', body: null } });
     expect(plan.placements.c).toBeUndefined();
     const grounded = planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 1, grounded: true })!;
@@ -1194,7 +1214,7 @@ describe('a Focus Titan dies (titan-harm.yaml, titan_death)', () => {
     expect(plan.freed).toBe('g');
     expect(plan.placements.g).toEqual({ zone: 7, attachment: { kind: 'ground', body: null } });
     expect(plan.steam).toEqual(['a', 'b', 'g']);
-    expect(plan.fall).toEqual(['a', 'b', 'g']);
+    expect(plan.fall).toEqual(['b', 'g']);
     expect(planTitanDeath({ soldiers, titans, key: 'tA', cards, turn: 1, grounded: true })!.fall).toEqual([]);
     expect(plan.relief).toEqual(['a', 'b', 'c', 'g', 'x']);
   });

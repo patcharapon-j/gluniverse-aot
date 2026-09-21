@@ -313,6 +313,28 @@ export function zoneRulesOf(t: Tables): ZoneRules {
     },
     mounted: { zoneSteps: z.moves.mounted.zone_steps, stopsAtTitan: z.moves.mounted.ends_on_entering_a_standing_focus_titans_zone_unless_open },
     terrain: t.engagementSetup.zone_terrain.rows.map((r) => ({ results: [...r.results], rating: r.rating })),
+    ...ratingRoles(t),
+  };
+}
+
+/**
+ * The ratings the rules name by role, read from the data rather than by id (review m2): the bottom of
+ * the ladder (its own sparser), the one whose trait keeps the first wreck, the one the grounded extra
+ * step names, and those whose zones raise a fall.
+ */
+function ratingRoles(t: Tables): Pick<ZoneRules, 'openRating' | 'graceRating' | 'groundedExtraRating' | 'fallRaise'> {
+  const rs = t.anchorRatings.ratings;
+  const one = (what: string, list: typeof rs) => {
+    if (list.length !== 1) throw new Error(`data/engagement/anchor-ratings.yaml: ${what} reads on ${list.map((r) => r.id).join(', ') || 'no rating'}; expected one.`);
+    return list[0].id;
+  };
+  const openText = t.anchorRatings.grounded_titan.open_rating.replace(/\s+/g, ' ');
+  const heightText = t.falls.height.steps.join(' ');
+  return {
+    openRating: one('the bottom of the ladder', rs.filter((r) => r.sparser === r.id)),
+    graceRating: one('the wreck grace', rs.filter((r) => /first (Anchor )?wreck/i.test(r.terrain_trait))),
+    groundedExtraRating: one('the grounded extra step', rs.filter((r) => new RegExp(`\\b[ia][nt] an? ${r.name} zone`, 'i').test(openText))),
+    fallRaise: rs.filter((r) => heightText.includes(r.name)).map((r) => r.id),
   };
 }
 
@@ -345,6 +367,8 @@ export function engagementConfig(t: Tables) {
     // The field (zones.yaml, anchor-ratings.yaml, engagement-setup.yaml; decision batch 16): the
     // values src/rules/engagement/zones.ts reads (configureZones).
     zones: zoneRulesOf(t),
+    // Frenzy's rate and cap (titan-format.yaml, frenzy; src/rules/engagement/cards.ts, configureFrenzy).
+    frenzy: { rate: t.titanFormat.frenzy.rate, cap: t.titanFormat.frenzy.cap },
     // Each Titan's Stride by id and by Size Class (size-classes.yaml, stride; decision batch 16, 16-16).
     stride: { byTitan: Object.fromEntries(t.titans.map((x) => [x.id, x.stride])) as Record<string, number>, bySize: Object.fromEntries(t.sizeClasses.classes.map((c) => [c.id, c.stride])) as Record<string, number> },
     // Momentum and its spends (anchor-ratings.yaml, momentum; decision batch 10, OQ-182).

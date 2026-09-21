@@ -2,19 +2,43 @@
  * Reads the running engagement into the plain shapes the rules take (src/rules/engagement/types.ts):
  * the Combat's system data, its card combatants, the soldiers' actors, and the Titans' token actors.
  */
+import { configureFrenzy } from '../rules/engagement/cards.ts';
+import { configureSpends } from '../rules/engagement/momentum.ts';
 import { configureRatings } from '../rules/engagement/positions.ts';
+import { reconcilePin } from '../rules/engagement/field.ts';
 import type { AnchorRating, Snapshot, SoldierState, TitanRow } from '../rules/engagement/types.ts';
-import { configureZones, derivePositions, withDust, type Attachment, type AttachmentKind, type FieldState, type ZoneEffectId, type ZoneId } from '../rules/engagement/zones.ts';
+import { configureZones, derivePositions, setMissingReporter, withDust, type Attachment, type AttachmentKind, type FieldState, type ZoneEffectId, type ZoneId } from '../rules/engagement/zones.ts';
 import type { BodyPart } from '../rules/titan.ts';
 
 export const E = () => CONFIG.WOF.engagement as import('../../tools/config-data.ts').EngagementConfig;
 
 let configured = false;
+const reported = new Set<string>();
+/**
+ * A lookup that missed (review m3): said once in the console and, for the GM, as a warning, so a bad
+ * row never turns silently into a Titan that never strides or a wreck that does nothing.
+ */
+export function warnMissing(what: string): void {
+  if (reported.has(what)) return;
+  reported.add(what);
+  console.warn(`wings-of-freedom | the engagement tracker found no ${what}`);
+  if ((globalThis as any).game?.user?.isGM) (globalThis as any).ui?.notifications?.warn(game.i18n.format('WOF.Tracker.missing', { what }));
+}
+
+/** A Titan row's zone, reported when it is missing. */
+export function rowZone(row: { zone?: number | null; label?: string }): number {
+  if (typeof row?.zone === 'number' && row.zone > 0) return row.zone;
+  warnMissing(`zone for Titan ${row?.label ?? '?'}`);
+  return 0;
+}
 /** The zone rules and the rating rows the pure rules read, from CONFIG.WOF.engagement (once). */
 export function ensureRules(): void {
   if (configured || !(globalThis as any).CONFIG?.WOF?.engagement) return;
   configureZones(E().zones);
+  setMissingReporter(warnMissing);
   configureRatings(E().ratings as AnchorRating[]);
+  configureFrenzy(E().frenzy);
+  configureSpends(E().momentum.spends);
   configured = true;
 }
 
@@ -68,7 +92,10 @@ export function strideOfActor(actor: any): number {
   const cfg = E().stride;
   const id = titanIdOf(actor);
   if (id && cfg.byTitan[id] !== undefined) return cfg.byTitan[id];
-  return cfg.bySize[actor?.system?.size_class ?? 'medium'] ?? 0;
+  const bySize = cfg.bySize[actor?.system?.size_class ?? ''];
+  if (bySize !== undefined) return bySize;
+  warnMissing(`Stride for ${actor?.name ?? 'a Titan'} (Size Class "${actor?.system?.size_class ?? ''}")`);
+  return 0;
 }
 
 function figureOf(actor: any): string {
@@ -105,6 +132,7 @@ export function soldierState(actor: any, place?: PlacementRow | null, titanMode 
   const items = [...(actor.items ?? [])];
   const odm = items.find((i: any) => i.type === 'gear' && i.system.subtype === 'odm');
   const zone = place ? place.zone : null;
+  const pinned = src.pinned?.active ? { body: src.pinned.body, bodyPin: src.pinned.limb === 'body' } : null;
   return {
     id: actor.id,
     name: actor.name,
@@ -115,12 +143,13 @@ export function soldierState(actor: any, place?: PlacementRow | null, titanMode 
     left: titanMode ? zone === null : !!src.positions?.left,
     carriedBy: src.carried_by || null,
     carrying: src.carrying || null,
-    pinned: src.pinned?.active ? { body: src.pinned.body, bodyPin: src.pinned.limb === 'body' } : null,
+    pinned,
     mounted: items.some((i: any) => i.type === 'gear' && i.system.subtype === 'horse' && i.system.mounted),
     airborne: !!src.airborne,
     odmHad: !!odm && odm.system.current > 0 && src.gas_rating > 0,
     zone,
-    attachment: attachmentOf(place ?? undefined),
+    // A Pin cleared on the sheet frees the placement too (16-23; field.ts, reconcilePin).
+    attachment: reconcilePin(attachmentOf(place ?? undefined), pinned),
     horseZone: place?.horseZone ?? null,
     positions: {},
     momentum: src.momentum ?? 0,
@@ -147,7 +176,7 @@ export function titanRow(combat: any, row: any): TitanRow {
     // Frenzy rises 1 at the end of every third round and feeds the behavior roll
     // (data/engagement/round.yaml, end_steps, frenzy; titan-format.yaml).
     frenzy: row.frenzy ?? 0,
-    zone: row.zone ?? 0,
+    zone: sys ? rowZone(row) : (row.zone ?? 0),
     stride: strideOfActor(actor),
     figure: figureOf(actor),
   };

@@ -244,8 +244,9 @@ describe('board drag and drop', () => {
     expect(quietOffered({ ...cross, fly: false }, 'noMomentum', false)).toBe(false);
     expect(quietOffered(cross, 'cannotHold', false)).toBe(false);
     expect(quietOffered(cross, null, true)).toBe(false);
-    expect(quietOffered({ crosses: [], charge: [], fly: true }, null, false)).toBe(false);
-    expect(quietOffered({ crosses: [], charge: ['A'], fly: false }, null, false)).toBe(true);
+    expect(quietOffered({ crosses: [], fly: true }, null, false)).toBe(false);
+    // A charge is the rider's choice, so Quiet is never offered for one (review M5).
+    expect(quietOffered({ crosses: [], fly: false }, null, false)).toBe(false);
     expect(quietNow(null, false)).toBe(true);
     expect(quietNow('noMomentum', false)).toBe(false);
     expect(quietNow(null, true)).toBe(false);

@@ -124,21 +124,19 @@ export function tieCard(id: string, soldiers: Record<string, number | null>, win
 }
 
 /**
- * Frenzy (round 3, decision 12, part 2; behavior-procedure.yaml, roll): each Focus Titan holds
- * Frenzy, starting at 0 and rising by 1 at the end of every third round, to this cap
- * (zone retune, Z2).
+ * Frenzy (round 3, decision 12, part 2; behavior-procedure.yaml, roll; titan-format.yaml, frenzy):
+ * each Focus Titan holds Frenzy, starting at 0 and rising by 1 at the end of every `rate`-th round, to
+ * `cap`. The values are the data's (tools/config-data.ts, engagementConfig, frenzy), set by
+ * configureFrenzy; FRENZY_DEFAULTS holds the same values and a test keeps the two equal.
  */
-export const FRENZY_CAP = 3;
+export const FRENZY_DEFAULTS = { rate: 3, cap: 3 };
+let frenzy = FRENZY_DEFAULTS;
+export const configureFrenzy = (next: { rate: number; cap: number }) => (frenzy = { ...next });
+export const frenzyRule = () => frenzy;
 
-/** Frenzy rises at the end of every third round, not every round (zone retune, Z2). */
-export const FRENZY_RATE = 3;
-
-/**
- * Frenzy, starting at 0 and rising by 1 at the end of every third round, to this cap
- * (zone retune, Z2).
- */
-export function frenzyAfterRound(frenzy: number, round: number): number {
-  return round % FRENZY_RATE === 0 ? Math.min(frenzy + 1, FRENZY_CAP) : frenzy;
+/** Frenzy after a round's frenzy end step: 1 more at every `rate`-th round, never above the cap. */
+export function frenzyAfterRound(held: number, round: number): number {
+  return round % frenzy.rate === 0 ? Math.min(held + 1, frenzy.cap) : held;
 }
 
 /**

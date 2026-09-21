@@ -5,7 +5,7 @@
  */
 import { iconPath } from '../art.ts';
 import { evaluateLadder } from '../rules/engagement/attention.ts';
-import { FRENZY_CAP, tieCard } from '../rules/engagement/cards.ts';
+import { frenzyRule, tieCard } from '../rules/engagement/cards.ts';
 import { grabbedIn, swapCheck } from '../rules/engagement/guard.ts';
 import { isClose, leaveBlock, letGoBlock, returnBlock, returnZones } from '../rules/engagement/positions.ts';
 import { capOf } from '../rules/engagement/momentum.ts';
@@ -173,7 +173,7 @@ export interface TitanView {
   openings: { initial: string; name: string }[];
   openingsBy: string;
   /**
-   * Frenzy (round 3, decision 12): it starts at 0, rises 1 at the end of every third round to FRENZY_CAP, and is
+   * Frenzy (round 3, decision 12): it starts at 0, rises 1 at the end of every third round to frenzyRule().cap, and is
    * added to the behavior roll, so the longer the fight runs the worse the Titan gets. Public: it is
    * the clock that tells the Squad to finish it.
    */
@@ -723,7 +723,7 @@ function titanView(combat: any, snap: Snapshot, t: TitanRow, turns: any[], turnI
   const hiddenClock = !!sys?.abnormal && !src.hidden_until_read?.regeneration_clock && !isGM;
   const kind = sys ? `${sys.abnormal ? `${tr('abnormal')}, ` : ''}${game.i18n.localize(`WOF.SizeClass.${sys.size_class}`)}` : '';
   // Frenzy is held by the Focus Titan's row of the engagement, not by its actor, so a corpse keeps none.
-  const frenzy = t.status === 'focus' ? Math.max(0, Math.min(Number(row?.frenzy ?? (t as any).frenzy ?? 0), FRENZY_CAP)) : 0;
+  const frenzy = t.status === 'focus' ? Math.max(0, Math.min(Number(row?.frenzy ?? (t as any).frenzy ?? 0), frenzyRule().cap)) : 0;
   return {
     key: t.key,
     label: t.label,
@@ -747,8 +747,8 @@ function titanView(combat: any, snap: Snapshot, t: TitanRow, turns: any[], turnI
     openings,
     openingsBy: [...new Set(by.filter(Boolean).map(name))].join(', '),
     frenzy,
-    frenzyCap: FRENZY_CAP,
-    frenzyTitle: tr('frenzyTitle', { n: frenzy, cap: FRENZY_CAP }),
+    frenzyCap: frenzyRule().cap,
+    frenzyTitle: tr('frenzyTitle', { n: frenzy, cap: frenzyRule().cap }),
     flags,
     regen: { length: sys?.regeneration_clock ?? 1, filled: sys?.regeneration ?? 0, hidden: hiddenClock },
     heave: sys ? `${sys.heave_count} ${tr('of')} ${sys.heave}` : '',

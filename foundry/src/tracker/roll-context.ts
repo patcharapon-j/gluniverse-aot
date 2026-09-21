@@ -4,11 +4,11 @@
  */
 import { breakFreeNeeds } from '../rules/engagement/grab.ts';
 import { grabbedIn } from '../rules/engagement/guard.ts';
-import { terrainBreakAttentionDice } from '../rules/engagement/momentum.ts';
+import { breakAttentionTerrainDice } from '../rules/engagement/momentum.ts';
 import { bodyPartStrikeBlock, breakAttentionBlock, breakAttentionNeeds, napeStrikeBlock, spendableOpenings, type DecoyId } from '../rules/engagement/strikes.ts';
 import { currentEngagement } from './combat.ts';
 import { tr } from './notes.ts';
-import { E, partsOf, snapshot, titanActor } from './snapshot.ts';
+import { E, partsOf, ratingOf, snapshot, titanActor } from './snapshot.ts';
 
 export interface TargetOption {
   id: string;
@@ -95,9 +95,9 @@ function titanOption(combat: any, snap: any, s: any, t: any, entryId: string, gr
         needs: breakAttentionNeeds(t, s.id, d.id as DecoyId, E().breakAttention.needs),
       }));
       const open = decoys.filter((d) => !d.block);
-      // The Open rating's Terrain Trait: a mounted soldier's Break Attention gains 1 Bonus Die
-      // (anchor-ratings.yaml, ratings, open, terrain_trait; bonus-dice-sources.yaml, terrain-trait).
-      const terrain = terrainBreakAttentionDice(snap.anchor, s.mounted);
+      // The Open Terrain Trait of the soldier's own zone: a mounted soldier's Break Attention gains 1
+      // Bonus Die (anchor-ratings.yaml, ratings, terrain_trait; bonus-dice-sources.yaml, terrain-trait; 16-5).
+      const terrain = breakAttentionTerrainDice(s, snap.field, ratingOf);
       return { ...base, decoys, block: open.length ? null : decoys[0].block, needs: open[0]?.needs ?? null, bonus: terrain };
     }
     case 'break-free': {

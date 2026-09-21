@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { checkTrackerRequest } from '../src/rules/engagement/guard.ts';
 import { configureRatings, moveFlags, moveOptions, moveOptionsFor, routeOption, type MoveContext } from '../src/rules/engagement/positions.ts';
-import { flightResult } from '../src/rules/engagement/momentum.ts';
+import { breakAttentionTerrainDice, flightResult } from '../src/rules/engagement/momentum.ts';
+import { reconcilePin, strideMomentum, titanStands, zoneOpened } from '../src/rules/engagement/field.ts';
 import { strideMoves, strideOf, strideRoute } from '../src/rules/engagement/stride.ts';
 import { emptyFlags, type AnchorRating, type Snapshot, type SoldierState, type TitanRow } from '../src/rules/engagement/types.ts';
 import {
@@ -209,6 +210,13 @@ describe('a player’s move request (the GM proxy guard, zone-move)', () => {
     expect(checkTrackerRequest(w(['a']), { act: 'zone-move', combat: 'C', soldier: 'a', kind: 'onFoot', steps: [{ zone: 1, attachment: ground }] })).toMatch(/not one/);
     expect(moveOptionsFor(snap, 'a').length).toBeGreaterThan(0);
   });
+
+  it('refuses a second move in one turn, and lights nothing for a spent soldier (review M6)', () => {
+    const spent = { ...snap, movesSpent: ['a'] };
+    const ws = { userId: 'u', owns: () => true, snapshot: () => spent };
+    expect(checkTrackerRequest(ws, { act: 'zone-move', combat: 'C', soldier: 'a', kind: 'onFoot', steps: [{ zone: 7, attachment: ground }] })).toMatch(/spent/);
+    expect(moveOptionsFor(spent, 'a')).toEqual([]);
+  });
 });
 
 describe('quiet stops the flags a move sets (16-14, 16-15)', () => {
@@ -223,5 +231,49 @@ describe('quiet stops the flags a move sets (16-14, 16-15)', () => {
     expect(moveFlags(through, true)).toEqual([]);
     expect(moveFlags({ crosses: [], charge: ['B'] }, true)).toEqual([]);
     expect(flightResult(0, 1, 2, { quiet: true }).loud).toBe(false);
+  });
+});
+
+describe('the field under the soldiers (review C2, M1 to M4)', () => {
+  const f = standard({ 4: 'sparse', 2: 'open' });
+
+  it('frees a Titan’s Pinned to the ground when it stands, and a cleared sheet Pin frees the placement (C2)', () => {
+    const p = soldier('p', { zone: 7, attachment: { kind: 'pinned', body: 'A' }, pinned: { body: 'A', bodyPin: false } });
+    const ch = titanStands([p], titan('A', 7), 'wooded');
+    expect(ch.freed).toEqual(['p']);
+    expect(ch.placements.p).toEqual({ zone: 7, attachment: { kind: 'ground', body: null } });
+    expect(reconcilePin({ kind: 'pinned', body: 'A' }, null)).toEqual({ kind: 'ground', body: null });
+    expect(reconcilePin({ kind: 'pinned', body: 'A' }, { body: 'A', bodyPin: false })).toEqual({ kind: 'pinned', body: 'A' });
+  });
+
+  it('trims the Momentum of soldiers a Stride carries into a sparser zone (M1)', () => {
+    const on = soldier('on', { zone: 7, attachment: { kind: 'on-body', body: 'A' }, momentum: 2 });
+    const stay = soldier('st', { zone: 7, momentum: 2 });
+    expect(strideMomentum([on, stay], strideMoves([on, stay], 'A', 4), f)).toEqual({ on: 1 });
+  });
+
+  it('lands every anchored soldier in a zone turned Open, whatever stands there; the Blind Spot moves only under a standing Titan (OQ-205)', () => {
+    const bs = soldier('b', { zone: 2, attachment: { kind: 'blind-spot', body: 'A' }, airborne: true });
+    const an = soldier('a', { zone: 2, attachment: { kind: 'anchored', body: null }, airborne: true });
+    const standingIn2 = zoneOpened([bs, an], [titan('A', 2)], 2);
+    expect(standingIn2.onBody).toEqual(['b']);
+    expect(standingIn2.landed).toEqual(['a']);
+    const corpse = zoneOpened([bs, an], [titan('A', 2, { status: 'corpse' })], 2);
+    expect(corpse.onBody).toEqual([]);
+    expect(corpse.landed).toEqual(['a']);
+    expect(zoneOpened([an], [], 2).landed).toEqual(['a']);
+  });
+
+  it('moves a Blind Spot to On Body when a Titan stands up in an Open zone, not elsewhere (M3)', () => {
+    const bs = soldier('b', { zone: 2, attachment: { kind: 'blind-spot', body: 'A' } });
+    expect(titanStands([bs], titan('A', 2), 'open').onBody).toEqual(['b']);
+    expect(titanStands([bs], titan('A', 2), 'wooded').onBody).toEqual([]);
+  });
+
+  it('reads the Open Terrain Trait from the soldier’s zone, not the field rating (M4)', () => {
+    const r = (id: string) => rating(id);
+    expect(breakAttentionTerrainDice({ zone: 2, mounted: true }, f, r)).toBe(1);
+    expect(breakAttentionTerrainDice({ zone: 8, mounted: true }, f, r)).toBe(0);
+    expect(breakAttentionTerrainDice({ zone: 2, mounted: false }, f, r)).toBe(0);
   });
 });

@@ -5,7 +5,7 @@
  */
 import { isClose } from './positions.ts';
 import type { Position, TitanRow } from './types.ts';
-import { zoneDistance, type Attachment, type FieldState, type ZoneId } from './zones.ts';
+import { zoneDistance, zoneRules, type Attachment, type FieldState, type ZoneId } from './zones.ts';
 
 export interface DamageRow {
   min: number | null;
@@ -50,7 +50,7 @@ export function fallBand(x: FallInput): Band {
   if (x.fromHorse) return 'low';
   if (!x.position) return 'low';
   const base: Band = isClose(x.position) ? 'high' : 'low';
-  const raise = x.anchor === 'giant-forest' || x.referenceSize === 'large';
+  const raise = (!!x.anchor && zoneRules().fallRaise.includes(x.anchor)) || x.referenceSize === 'large';
   if (!raise) return base;
   return base === 'low' ? 'high' : 'extreme';
 }

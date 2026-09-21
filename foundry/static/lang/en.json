@@ -1274,7 +1274,7 @@
         "forcedAction": "Strike the nearest Titan on your next turn",
         "gainScar": "Gain a Scar",
         "dropBladeSet": "Drop the Blade Set in your handles",
-        "stressGainNearby": "+{amount} Stress to each comrade within one Position step"
+        "stressGainNearby": "+{amount} Stress to each comrade in the same zone or an adjacent one"
       },
       "drop": {
         "hint": "Drop one from the compendium",
@@ -1403,7 +1403,7 @@
       "momentum": {
         "spend": "Spend 1 Momentum",
         "gain": "Gain 1 Momentum",
-        "hint": "Capped by the Anchors left in the Titan Engagement."
+        "hint": "Capped by the anchors of your zone."
       },
       "mode": {
         "label": "Sheet mode",
@@ -1519,7 +1519,7 @@
       "knockLoose": "Knocks loose: an airborne soldier, or one On Body or at Blind Spot, falls.",
       "grab": "Grab.",
       "telegraph": "Telegraphs: its next behavior is revealed.",
-      "wreck": "Wrecks an anchor: the Titan Engagement loses 1, whether it landed or not."
+      "wreck": "Wrecks its own zone: one rating step toward Open, whether it landed or not."
     },
     "Squad": {
       "kicker": "Squadmate stat block",
@@ -2531,7 +2531,7 @@
         "hookedTip": "Hooked by a Nape strike: an Attention fact, not a Position. The striker is still at Blind Spot and meets the Attention Ladder’s first rung."
       },
       "cue": {
-        "swap": "Swap step. Pick two soldiers' cards to swap: same Position or one step apart, not Down or Grabbed, one swap each.",
+        "swap": "Swap step. Pick two soldiers' cards to swap: the same zone or adjacent zones, not Down or Grabbed, one swap each.",
         "swapMade": "Swap made this round: {list}",
         "proposal": "{a} asks {b} to swap cards.",
         "pickOwnFirst": "Pick your own soldier's card first.",
@@ -2614,7 +2614,7 @@
         "grabbed": "{name} is Grabbed.",
         "already": "{name} has already swapped this round.",
         "oneLeft": "A soldier who has left swaps only with another who has left.",
-        "far": "They are more than one Position step apart.",
+        "far": "They are not in the same zone or adjacent zones.",
         "farDetail": "{a} and {b} are {n} zones apart: a swap needs the same or an adjacent zone.",
         "unknown": "No engagement is running."
       },
@@ -2656,7 +2656,8 @@
         "notFree": "Only a soldier on the ground or anchored can step off the field.",
         "notEdge": "Only an edge zone leads off the field.",
         "bodyInZone": "A Focus Titan or corpse stands in this zone: step off the field from another edge zone.",
-        "returnZone": "A returner enters an edge zone with no Focus Titan and no corpse."
+        "returnZone": "A returner enters an edge zone with no Focus Titan and no corpse.",
+        "spent": "The soldier's move is spent this turn."
       },
       "block": {
         "corpse": "That body is a corpse.",
@@ -2777,7 +2778,7 @@
       },
       "note": {
         "startTitle": "Titan Engagement begins",
-        "startTitan": "Anchor Rating {anchor}. Focus Titan A: {titan}. Everyone holds Distant.",
+        "startTitan": "Field rating {anchor}. Focus Titan A: {titan}, in the centre zone. Everyone starts in the Squad's start zone.",
         "startSkirmish": "Skirmish begins",
         "startSkirmishLine": "{name}. Everyone is Apart.",
         "wingsKept": "Wings",
@@ -2842,7 +2843,9 @@
         "enteredZone": "{label} enters at zone {zone}.",
         "startField": "{size}: {zones}.",
         "quiet": "Quiet: they come in unheard this turn.",
-        "quietTitle": "{name} goes quiet"
+        "quietTitle": "{name} goes quiet",
+        "dismounts": "Dismounts first; the horse stays in the zone.",
+        "mounts": "Mounts first."
       },
       "death": {
         "relief": "Nape-kill Stress relief: {who}.",
@@ -2867,7 +2870,6 @@
         "momentum": "{name} holds {n} Momentum of {cap}",
         "airborne": "{name} is airborne",
         "grounded": "{name} is on the ground",
-        "anchor": "The field is {name}: {n} Anchors",
         "loud": "{name} is the loudest to {label}",
         "loudCleared": "{name} is no longer the loudest to {label}",
         "opening": "{label} has {n} Opening(s)",
@@ -3093,7 +3095,7 @@
         "addBackground": "Add one",
         "rollBackground": "Roll",
         "roll": "Roll",
-        "rolledAnchor": "Anchor Rating roll {n}: {name}.",
+        "rolledAnchor": "Field rating roll {n}: {name}.",
         "rolledBackground": "Background Titans roll {n}: {count} clocks.",
         "retreat": "The retreat clock has {n} segments.",
         "soldiers": "Taking part",
@@ -3140,7 +3142,6 @@
         "retire": "Retiring with five Scars: {who}. A soldier who lost both arms or both legs retires too.",
         "promotion": "Share out left items and dropped Blade Sets, then promote replacements for the dead and retired."
       },
-      "anchors": "Anchors {left} of {full}",
       "momentum": "Momentum {n} of {cap}",
       "swapBlades": {
         "dead": "The soldier is dead.",
@@ -3155,7 +3156,8 @@
         "n": "zone {n}",
         "horse": "horse in {n}",
         "openOnBody": "{name}'s Blind Spot on {label} is gone: now On Body.",
-        "openGround": "{name} is on the ground, no longer airborne."
+        "openGround": "{name} is on the ground, no longer airborne.",
+        "unpinned": "{name} is no longer Pinned, on the ground."
       },
       "attach": {
         "ground": "on the ground",
@@ -3182,20 +3184,21 @@
         "left": "The soldier has left.",
         "cannotHold": "The soldier holds no Momentum in this state.",
         "noMomentum": "Quiet costs 1 Momentum, and the soldier holds none."
-      }
+      },
+      "missing": "The tracker found no {what}: check the Titan's sheet and the engagement."
     },
     "TerrainTrait": {
       "none": "No Terrain Trait.",
-      "mounted-break-attention": "A mounted soldier’s Break Attention gains 1 Bonus Die.",
-      "first-wreck-ignored": "The first Anchor wrecked here is not lost.",
-      "blind-spot-anchored": "A soldier at Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them.",
-      "first-carry-free": "The first step a Flight carries costs no Momentum."
+      "mounted-break-attention": "A mounted soldier in this zone gains 1 Bonus Die on Break Attention.",
+      "first-wreck-ignored": "The first wreck this zone takes while Sparse does nothing.",
+      "blind-spot-anchored": "A soldier at Blind Spot in this zone is anchored to a roof and is not airborne, so a Jam does not drop them.",
+      "fall-raised": "Every fall that is not from a horse, in this zone, is raised one band."
     },
     "MomentumSpend": {
-      "carry": "Carry: one more Position step on this move.",
-      "bite": "Bite: 1 Bonus Die on a strike or Break Attention this turn, against the Titan you flew toward.",
+      "carry": "Carry: one more step on a Flight, at the entered zone's Carry cost, at most 2 a Flight.",
+      "bite": "Bite: 1 Bonus Die on a strike or Break Attention this turn, against a Focus Titan in the zone your Flight ended in.",
       "brace": "Brace: 1 Bonus Die on your next dodge this round.",
-      "quiet": "Quiet: nothing you do this turn marks you loudest.",
+      "quiet": "Quiet: nothing you do this turn marks you loudest, crossing a Titan's zone included.",
       "clean-line": "Clean line: you make no Gas Roll this round."
     },
     "Board": {
@@ -3232,7 +3235,11 @@
         "steam": "Steam",
         "dust": "Dust",
         "fire": "Fire"
-      }
+      },
+      "goPlain": "Go",
+      "charge": "Charge {label} (marks you loudest to it)",
+      "chargeAsk": "Ride past, or charge?",
+      "failed": "The board could not do that. The console has the details."
     }
   }
 }

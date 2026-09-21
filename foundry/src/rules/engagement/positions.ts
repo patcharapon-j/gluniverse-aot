@@ -34,7 +34,7 @@ export function stepRows(rating: AnchorRating, grounded: boolean): StepRow[] {
       r.mounted = false;
     }
   }
-  if (rating.id === 'open' && !rows.some((r) => pairIs(r, 'on-body', 'blind-spot'))) {
+  if (rating.id === zoneRules().groundedExtraRating && !rows.some((r) => pairIs(r, 'on-body', 'blind-spot'))) {
     rows.push({ a: 'on-body', b: 'blind-spot', onFoot: true, mounted: false, odm: true });
   }
   return rows;
@@ -74,15 +74,26 @@ export interface ZoneMoveOption {
   leaves: boolean;
   /** The soldier spends 1 Momentum on quiet with this move: no flag lands this turn (16-14, 16-15). */
   quiet?: boolean;
+  /**
+   * The rider's choice of one Titan in `charge` to flag (mounted_charge, "the rider's choice"). Absent,
+   * the ride flags nothing: a charge is never forced (review M5).
+   */
+  chargeOn?: string;
+  /** The move begins with a mount: the soldier is free and their horse is in their zone (horses.yaml, within_a_move; review M7). */
+  mount?: boolean;
+  /** The move begins with a dismount: the horse stays in the zone the move starts in (review M7). */
+  dismount?: boolean;
 }
 
 /**
- * The Focus Titans a move flags (16-15): every one standing in a zone a Flight crosses, and the one a
- * mounted charge names. Quiet, spent this turn or with the move, stops every flag the soldier would set.
+ * The Focus Titans a move flags (16-15): every one standing in a zone a Flight crosses, and the one
+ * the rider chose to charge, if it is among those the ride may charge. Quiet, spent this turn or with
+ * the move, stops every flag the soldier would set.
  */
-export function moveFlags(o: Pick<ZoneMoveOption, 'crosses' | 'charge'>, quiet: boolean): string[] {
+export function moveFlags(o: Pick<ZoneMoveOption, 'crosses' | 'charge' | 'chargeOn'>, quiet: boolean): string[] {
   if (quiet) return [];
-  return [...new Set([...o.crosses, ...o.charge])].sort();
+  const charged = o.chargeOn && o.charge.includes(o.chargeOn) ? [o.chargeOn] : [];
+  return [...new Set([...o.crosses, ...charged])].sort();
 }
 
 export interface MoveContext {
@@ -180,7 +191,11 @@ function option(s: SoldierState, kind: MoveKind, steps: Placement[], costs: numb
     for (const x of steps) if (x.zone !== null && x.zone !== s.zone) touched.add(x.zone);
     charge = [...new Set([...touched].flatMap((z) => standingIn(ctx, z).map((t) => t.label)))].sort();
   }
-  return { to, kind, steps, carries, momentum, crosses, charge, fly, leaves: to.zone === null };
+  const out: ZoneMoveOption = { to, kind, steps, carries, momentum, crosses, charge, fly, leaves: to.zone === null };
+  // A move includes one mount or one dismount, before its steps (horses.yaml, within_a_move; 16-12).
+  if (kind === 'mounted' && !s.mounted) out.mount = true;
+  if (kind === 'onFoot' && s.mounted) out.dismount = true;
+  return out;
 }
 
 /** Prefer the cheaper, quieter, shorter way to one destination (the soldier's own best route). */
@@ -222,8 +237,11 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): ZoneMoveOption[]
     }
     return [...out.values()];
   }
-  if (!s.mounted) for (const st of stepsFrom(start, 'onFoot', ctx)) put(option(s, 'onFoot', [st.to], [0], ctx));
-  if (s.mounted && isFree(s.attachment)) {
+  // On foot, a mounted soldier dismounting first (the horse stays in this zone).
+  for (const st of stepsFrom(start, 'onFoot', ctx)) put(option(s, 'onFoot', [st.to], [0], ctx));
+  // Mounted, or mounting first on a horse in this zone while free (horses.yaml, within_a_move).
+  const canRide = isFree(s.attachment) && (s.mounted || (s.horseZone !== null && s.horseZone === s.zone));
+  if (canRide) {
     const r = zoneRules().mounted;
     const walk = (at: Placement, path: Placement[]) => {
       if (path.length >= r.zoneSteps || at.zone === null) return;
@@ -231,7 +249,7 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): ZoneMoveOption[]
         const next = [...path, st.to];
         put(option(s, 'mounted', next, next.map(() => 0), ctx));
         const z = st.to.zone;
-        const stops = z !== null && r.stopsAtTitan && standingIn(ctx, z).length > 0 && zoneOf(ctx.field, z)?.rating !== 'open';
+        const stops = z !== null && r.stopsAtTitan && standingIn(ctx, z).length > 0 && zoneOf(ctx.field, z)?.rating !== zoneRules().openRating;
         if (!stops) walk(st.to, next);
       }
     };
@@ -277,7 +295,7 @@ export function routeOption(s: SoldierState, ctx: MoveContext, kind: MoveKind, s
     if (!st) return null;
     if (kind === 'mounted') {
       const z = at.zone;
-      const stopped = i > 0 && z !== null && r.mounted.stopsAtTitan && standingIn(ctx, z).length > 0 && zoneOf(ctx.field, z)?.rating !== 'open';
+      const stopped = i > 0 && z !== null && r.mounted.stopsAtTitan && standingIn(ctx, z).length > 0 && zoneOf(ctx.field, z)?.rating !== r.openRating;
       if (stopped || i >= r.mounted.zoneSteps) return null;
     }
     costs.push(i === 0 ? r.flight.firstStepCost : st.cost);
@@ -314,7 +332,8 @@ export const ratingRows = () => ratingTable;
 /** The moves one soldier's own move can make now, read from a snapshot (the board's lit destinations). */
 export function moveOptionsFor(snap: Snapshot, soldierId: string): ZoneMoveOption[] {
   const s = snap.soldiers.find((x) => x.id === soldierId);
-  if (!s || snap.mode !== 'titan') return [];
+  // A soldier whose move is spent this turn has none to make (review M6): the board lights nothing.
+  if (!s || snap.mode !== 'titan' || snap.movesSpent.includes(soldierId)) return [];
   const ctx = moveContext(snap, s, ratingTable);
   return ctx ? moveOptions(s, ctx) : [];
 }
