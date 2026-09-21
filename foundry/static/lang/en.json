@@ -2845,7 +2845,9 @@
         "quiet": "Quiet: they come in unheard this turn.",
         "quietTitle": "{name} goes quiet",
         "dismounts": "Dismounts first; the horse stays in the zone.",
-        "mounts": "Mounts first."
+        "mounts": "Mounts first.",
+        "mountsAfter": "Mounts the horse where the move ends.",
+        "dismountsAfter": "Dismounts where the ride ends; the horse stays there."
       },
       "death": {
         "relief": "Nape-kill Stress relief: {who}.",
@@ -3239,7 +3241,11 @@
       "goPlain": "Go",
       "charge": "Charge {label} (marks you loudest to it)",
       "chargeAsk": "Ride past, or charge?",
-      "failed": "The board could not do that. The console has the details."
+      "failed": "The board could not do that. The console has the details.",
+      "mountBefore": "mount first",
+      "dismountBefore": "dismount first",
+      "mountAfter": "then mount",
+      "dismountAfter": "then dismount"
     }
   }
 }

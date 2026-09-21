@@ -127,6 +127,17 @@ describe('steam and fall rolls (titan-harm.yaml, steam; falls.yaml)', () => {
     expect(referenceBody({ kind: 'ground', body: null }, null, 8, [], field)).toBeNull();
   });
 
+  it('falls back to the nearest corpse with no Focus Titan alive, and raises a bodiless fall in a Giant Forest zone (OQ-206)', () => {
+    const corpses = [titan('B', { zone: 13, status: 'corpse' }), titan('A', { zone: 1, status: 'corpse' }), titan('C', { zone: 3, status: 'corpse' })];
+    expect(referenceBody({ kind: 'ground', body: null }, null, 2, corpses, field)).toBe('A');
+    expect(referenceBody({ kind: 'ground', body: null }, null, 7, corpses, field)).toBe('A');
+    expect(referenceBody({ kind: 'ground', body: null }, null, 8, [titan('D', { zone: 13 }), ...corpses], field)).toBe('D');
+    expect(fallBand({ position: null, anchor: 'giant-forest', referenceSize: null })).toBe('high');
+    expect(fallBand({ position: null, anchor: 'wooded', referenceSize: null })).toBe('low');
+    expect(fallBand({ position: 'in-reach', anchor: 'giant-forest', referenceSize: 'large' })).toBe('high');
+    expect(fallBand({ position: null, anchor: 'wooded', referenceSize: null, fromHorse: true })).toBe('low');
+  });
+
   it('applies damage: nothing for 0, Health lost to 0 then a Critical Injury, and at 0 only the injury', () => {
     expect(damageSoldier(1, 3, 0)).toEqual({ lost: 1, injury: false });
     expect(damageSoldier(1, 3, 2)).toEqual({ lost: 3, injury: false });

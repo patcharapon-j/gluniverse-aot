@@ -48,8 +48,9 @@ export interface FallInput {
 export function fallBand(x: FallInput): Band {
   if (x.named) return x.named;
   if (x.fromHorse) return 'low';
-  if (!x.position) return 'low';
-  const base: Band = isClose(x.position) ? 'high' : 'low';
+  // With no body to read, the band starts low before any raise, so the zone's raise still applies
+  // (falls.yaml, height, steps; OQ-206).
+  const base: Band = x.position && isClose(x.position) ? 'high' : 'low';
   const raise = (!!x.anchor && zoneRules().fallRaise.includes(x.anchor)) || x.referenceSize === 'large';
   if (!raise) return base;
   return base === 'low' ? 'high' : 'extreme';
@@ -67,11 +68,13 @@ export const fallDamage = (rows: readonly DamageRow[], adds: Record<Band, number
 export function referenceBody(attachment: Attachment, causing: string | null, zone: ZoneId | null, titans: readonly Pick<TitanRow, 'label' | 'status' | 'zone'>[], field: FieldState | null): string | null {
   if ((attachment.kind === 'on-body' || attachment.kind === 'blind-spot' || attachment.kind === 'grabbed') && attachment.body) return attachment.body;
   if (causing) return causing;
-  const focus = titans.filter((t) => t.status === 'focus').sort((a, b) => a.label.localeCompare(b.label));
-  if (!focus.length) return null;
-  if (zone === null || !field) return focus[0].label;
-  let best = focus[0];
-  for (const t of focus) if (zoneDistance(field, zone, t.zone) < zoneDistance(field, zone, best.zone)) best = t;
+  // The nearest living Focus Titan; with none alive, the nearest corpse (OQ-206); a tie to the earliest label.
+  const focus = titans.filter((t) => t.status === 'focus');
+  const pool = (focus.length ? focus : titans.filter((t) => t.status === 'corpse')).slice().sort((a, b) => a.label.localeCompare(b.label));
+  if (!pool.length) return null;
+  if (zone === null || !field) return pool[0].label;
+  let best = pool[0];
+  for (const t of pool) if (zoneDistance(field, zone, t.zone) < zoneDistance(field, zone, best.zone)) best = t;
   return best.label;
 }
 

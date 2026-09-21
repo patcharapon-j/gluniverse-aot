@@ -24,7 +24,7 @@ export type TrackerRequest =
   | { act: 'move-spent'; combat: string; soldier: string }
   | { act: 'fall-back'; combat: string; soldier: string; titan: string }
   | { act: 'let-go'; combat: string; soldier: string; titan?: string }
-  | { act: 'zone-move'; combat: string; soldier: string; kind: MoveKind; steps: Placement[]; chargeOn?: string; quiet?: boolean; mount?: boolean; dismount?: boolean }
+  | { act: 'zone-move'; combat: string; soldier: string; kind: MoveKind; steps: Placement[]; chargeOn?: string; quiet?: boolean; mount?: boolean; dismount?: boolean; mountAfter?: boolean; dismountAfter?: boolean }
   | { act: 'quiet'; combat: string; soldier: string }
   | { act: 'return'; combat: string; soldier: string; zone: number }
   | { act: 'engage'; combat: string; soldier: string; foe: string };
@@ -208,7 +208,7 @@ export function checkTrackerRules(w: TrackerWorld, req: TrackerRequest): string 
       if (s.movesSpent.includes(soldier.id)) return 'the soldier’s move is spent this turn';
       const ctx = moveContext(s, soldier, ratingRows());
       if (!ctx) return 'the engagement has no field';
-      const o = routeOption(soldier, ctx, req.kind, req.steps);
+      const o = routeOption(soldier, ctx, req.kind, req.steps, { mountAfter: !!req.mountAfter, dismountAfter: !!req.dismountAfter });
       if (!o) return 'the move is not one the soldier’s move can make';
       // A retreat narrows the soldier's own move (background-titans.yaml, retreat, moves; 16-27).
       if (retreatBinds(soldier, { clock: { length: 0, filled: 0, active: s.retreat, began: 0 }, grabbedBy: (id) => (grabbedIn(s)(id) ? 'x' : null) })) {

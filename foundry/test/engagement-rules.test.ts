@@ -17,7 +17,7 @@ import {
   terrainBreakAttentionDice,
   trimToCap,
 } from '../src/rules/engagement/momentum.ts';
-import { leaveBlock, letGoBlock, moveFlags, moveOptions, nextLabel, returnBlock, returnZones, stepRows, swapBladeSetBlock, swapSpends, type MoveContext, type SwapContext } from '../src/rules/engagement/positions.ts';
+import { leaveBlock, letGoBlock, moveFlags, moveOptions, routeOption, nextLabel, returnBlock, returnZones, stepRows, swapBladeSetBlock, swapSpends, type MoveContext, type SwapContext } from '../src/rules/engagement/positions.ts';
 import { configureZones, generateField, withinZones } from '../src/rules/engagement/zones.ts';
 import {
   autoChecks,
@@ -228,6 +228,18 @@ describe('Positions and moves (positions.yaml, anchor-ratings.yaml, zones.yaml)'
     expect(opts.filter((o) => o.kind === 'mounted').every((o) => o.mount)).toBe(true);
     expect(opts.some((o) => o.kind === 'mounted' && o.steps.length === 2)).toBe(true);
     expect(moveOptions(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), ctx()).some((o) => o.kind === 'mounted')).toBe(false);
+  });
+
+  it('mounts or dismounts after the steps too (horses.yaml, within_a_move; review 2 n4)', () => {
+    const rider = moveOptions(soldier('r', { zone: 8, mounted: true, odmHad: false, horseZone: 8 }), ctx());
+    expect(rider.find((o) => o.kind === 'mounted' && o.to.zone === 5 && o.dismountAfter)).toBeTruthy();
+    const walker = moveOptions(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), ctx());
+    expect(walker.find((o) => o.kind === 'onFoot' && o.to.zone === 5)?.mountAfter).toBeUndefined();
+    expect(walker.find((o) => o.kind === 'onFoot' && o.to.zone === 5 && o.mountAfter)).toBeTruthy();
+    expect(walker.some((o) => o.kind === 'onFoot' && o.to.zone === 10 && o.mountAfter)).toBe(false);
+    const c = ctx();
+    expect(routeOption(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), c, 'onFoot', [{ zone: 5, attachment: { kind: 'ground', body: null } }], { mountAfter: true })?.mountAfter).toBe(true);
+    expect(routeOption(soldier('w', { zone: 8, odmHad: false, horseZone: 5 }), c, 'onFoot', [{ zone: 10, attachment: { kind: 'ground', body: null } }], { mountAfter: true })).toBeNull();
   });
 
   it('moves a Grabbed, Pinned, carried, or departed soldier nowhere', () => {

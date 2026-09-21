@@ -401,7 +401,7 @@ class Board {
       e,
       L('choose'),
       ways.map((o) => ({
-        label: [L(`kind.${o.kind}`), o.momentum > 0 ? L('momentum', { n: o.momentum }) : L('free'), o.fly ? L('fly') : '', o.crosses.length ? L('crosses', { labels: o.crosses.join(', ') }) : ''].filter(Boolean).join(' · '),
+        label: [L(`kind.${o.kind}`), o.mount ? L('mountBefore') : '', o.dismount ? L('dismountBefore') : '', o.mountAfter ? L('mountAfter') : '', o.dismountAfter ? L('dismountAfter') : '', o.momentum > 0 ? L('momentum', { n: o.momentum }) : L('free'), o.fly ? L('fly') : '', o.crosses.length ? L('crosses', { labels: o.crosses.join(', ') }) : ''].filter(Boolean).join(' · '),
         run: () => run(o),
       })),
     );

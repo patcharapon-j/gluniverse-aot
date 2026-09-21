@@ -728,7 +728,7 @@ function checkedMove(snap: Snapshot, s: SoldierState, option: ZoneMoveOption): Z
   const why = moveBlock(s, ctx.grabbed);
   if (why) return `move.${why}`;
   if (snap.movesSpent.includes(s.id)) return 'move.spent';
-  const o = routeOption(s, ctx, option.kind, option.steps);
+  const o = routeOption(s, ctx, option.kind, option.steps, { mountAfter: option.mountAfter, dismountAfter: option.dismountAfter });
   if (!o) return 'move.notLegal';
   if (snap.retreat && retreatBinds(s, { clock: { length: 0, filled: 0, active: true, began: 0 }, grabbedBy: (id) => grabbedBy(snap, id) })) {
     const same = (a: Placement, b: Placement) => a.zone === b.zone && a.attachment.kind === b.attachment.kind && a.attachment.body === b.attachment.body;
@@ -750,7 +750,7 @@ export async function requestZoneMove(combat: any, soldierId: string, option: Zo
   if (!isGM()) {
     if (!actor.isOwner) return warn('gm.onlyGM');
     const { extViaGM } = await import('../dice/proxy.ts');
-    await extViaGM('tracker', { act: 'zone-move', combat: combat.id, soldier: soldierId, kind: option.kind, steps: option.steps, chargeOn: option.chargeOn, quiet: !!option.quiet, mount: !!option.mount, dismount: !!option.dismount });
+    await extViaGM('tracker', { act: 'zone-move', combat: combat.id, soldier: soldierId, kind: option.kind, steps: option.steps, chargeOn: option.chargeOn, quiet: !!option.quiet, mount: !!option.mount, dismount: !!option.dismount, mountAfter: !!option.mountAfter, dismountAfter: !!option.dismountAfter });
     return true;
   }
   const snap = snapshot(combat);
@@ -895,10 +895,15 @@ async function applyMove(combat: any, actor: any, s: SoldierState, o: ZoneMoveOp
       rec.set(horse, 'system.mounted', false);
       lines.push(tr('note.dismounts'));
     }
-    if (o.mount && horse) {
+    if ((o.mount || o.mountAfter) && horse) {
       rec.set(horse, 'system.mounted', true);
       if (s.airborne) rec.set(actor, 'system.airborne', false);
-      lines.push(tr('note.mounts'));
+      lines.push(tr(o.mountAfter ? 'note.mountsAfter' : 'note.mounts'));
+    }
+    // A ride that ends with a dismount leaves the horse where it ended (horses.yaml, within_a_move; review 2 n4).
+    if (o.dismountAfter && s.mounted && horse) {
+      rec.set(horse, 'system.mounted', false);
+      lines.push(tr('note.dismountsAfter'));
     }
     held = Math.max(0, held - o.momentum);
     for (const label of moveFlags(o, quiet)) {
@@ -1899,7 +1904,7 @@ export async function performRequest(combat: any, req: any, user: any): Promise<
       if (!s) return false;
       const snap = snapshot(combat);
       const ctx = moveContext(snap, s, ratingRows());
-      const o = ctx ? routeOption(s, ctx, req.kind, req.steps) : null;
+      const o = ctx ? routeOption(s, ctx, req.kind, req.steps, { mountAfter: !!req.mountAfter, dismountAfter: !!req.dismountAfter }) : null;
       if (!o) return false;
       return requestZoneMove(combat, req.soldier, { ...o, chargeOn: typeof req.chargeOn === 'string' ? req.chargeOn : undefined, quiet: !!req.quiet });
     }

@@ -83,6 +83,24 @@ export interface ZoneMoveOption {
   mount?: boolean;
   /** The move begins with a dismount: the horse stays in the zone the move starts in (review M7). */
   dismount?: boolean;
+  /** A ride that ends with a dismount in the zone it ends in; the horse stays there (within_a_move, after; review 2 n4). */
+  dismountAfter?: boolean;
+  /** A move on foot that ends with a mount on the horse in the zone it ends in (within_a_move, after; review 2 n4). */
+  mountAfter?: boolean;
+}
+
+/** The one mount or dismount a move makes after its steps (horses.yaml, within_a_move). */
+export type AfterSteps = Pick<ZoneMoveOption, 'mountAfter' | 'dismountAfter'>;
+
+/**
+ * The variant of a move that mounts or dismounts after its steps, or null when it cannot: a ride may
+ * end with a dismount; a move on foot by a soldier who is not mounted, ending free in their horse's
+ * zone, may end with a mount. One mount or dismount a move, so not after one before the steps.
+ */
+function afterSteps(s: SoldierState, o: ZoneMoveOption, want: AfterSteps): ZoneMoveOption | null {
+  if (want.dismountAfter) return o.kind === 'mounted' && s.mounted && !o.mount && o.to.zone !== null ? { ...o, dismountAfter: true } : null;
+  if (want.mountAfter) return o.kind === 'onFoot' && !s.mounted && !s.down && o.to.zone !== null && o.to.zone === s.horseZone && isFree(o.to.attachment) ? { ...o, mountAfter: true } : null;
+  return o;
 }
 
 /**
@@ -224,7 +242,7 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): ZoneMoveOption[]
   const start: Placement = { zone: s.zone, attachment: s.attachment };
   const out = new Map<string, ZoneMoveOption>();
   const put = (o: ZoneMoveOption) => {
-    const k = `${o.kind}|${keyOf(o.to)}`;
+    const k = `${o.kind}|${o.mountAfter ? 'm' : ''}${o.dismountAfter ? 'd' : ''}|${keyOf(o.to)}`;
     const had = out.get(k);
     if (!had || better(o, had)) out.set(k, o);
   };
@@ -271,6 +289,13 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): ZoneMoveOption[]
     };
     walk(start, [], [], 0);
   }
+  // The one mount or dismount may come after the steps instead (horses.yaml, within_a_move; review 2 n4).
+  for (const o of [...out.values()]) {
+    for (const want of [{ dismountAfter: true }, { mountAfter: true }]) {
+      const v = afterSteps(s, o, want);
+      if (v && v !== o) put(v);
+    }
+  }
   return [...out.values()].sort((a, b) => a.kind.localeCompare(b.kind) || (a.to.zone ?? 99) - (b.to.zone ?? 99) || keyOf(a.to).localeCompare(keyOf(b.to)));
 }
 
@@ -281,9 +306,14 @@ export function moveOptions(s: SoldierState, ctx: MoveContext): ZoneMoveOption[]
  * checks every requested move this way, so any legal route is accepted, not only the one moveOptions
  * prefers.
  */
-export function routeOption(s: SoldierState, ctx: MoveContext, kind: MoveKind, steps: readonly Placement[]): ZoneMoveOption | null {
+export function routeOption(s: SoldierState, ctx: MoveContext, kind: MoveKind, steps: readonly Placement[], after: AfterSteps = {}): ZoneMoveOption | null {
+  const base = routeBase(s, ctx, kind, steps);
+  return base ? afterSteps(s, base, after) : null;
+}
+
+function routeBase(s: SoldierState, ctx: MoveContext, kind: MoveKind, steps: readonly Placement[]): ZoneMoveOption | null {
   if (moveBlock(s, ctx.grabbed) || s.zone === null || !steps.length) return null;
-  const opts = moveOptions(s, ctx).filter((o) => o.kind === kind);
+  const opts = moveOptions(s, ctx).filter((o) => o.kind === kind && !o.mountAfter && !o.dismountAfter);
   if (!opts.length) return null;
   if (s.down || kind === 'onFoot') return steps.length === 1 ? (opts.find((o) => keyOf(o.to) === keyOf(steps[0])) ?? null) : null;
   let at: Placement = { zone: s.zone, attachment: s.attachment };
