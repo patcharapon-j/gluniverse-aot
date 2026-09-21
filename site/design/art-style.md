@@ -33,6 +33,8 @@ REFERENCE IMAGES: the attached images are approved plates from this same set. Ma
 
 Without references, subjects with a lot of bare skin or foliage (Titans, forests) drift toward photoreal. With them, the Titan plate matched the soldier plate on the first try. For icons, say the plates are world reference only (what ODM gear, wire, and blades look like, not how to render), and also attach approved icons for frame and texture.
 
+**References alone are not enough for a subject with no people in it.** Learned on 2026-09-21, twice in one session: the Updates plate (a book on a desk) and the first board terrain tile (grass and earth) both came back photoreal with both style-lock plates attached. The colour plate style block describes how *characters* are drawn, so a subject with no figure in it has nothing in the block to hold on to. Both were fixed by putting a RENDERING paragraph in the subject, which is per-asset text and not locked, naming the painted treatment and then naming each wrong outcome: never a photograph, never a photorealistic render, never a 3D render, never photographic depth-of-field blur or lens bokeh, and a closing line saying what it would look like if it were wrong. Do this for any subject that is a place or an object rather than a person, and do not reach for the style block instead.
+
 Every prompt is assembled in this order: the run header, the aspect ratio line, the style block, the world block (plates only), the subject, then the exclusions.
 
 ### Run header
