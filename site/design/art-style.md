@@ -202,7 +202,7 @@ Stamp icons, generated with the Codex `board-game-icon-assets` skill. Shown at 3
 ### Icon run header
 
 ```text
-Use the `board-game-icon-assets` skill for this task (read its SKILL.md and references/icon-principles.md first and follow them). Use your built-in image generation tool to create <n> stamp icons for a tabletop RPG website, one image per icon, and copy each generated PNG into `icons/` inside the current working directory with the exact filename listed (copy the file; do not re-encode, crop, or resize). Do not write code and do not review anything; only generate and copy images. Generate the first icon to lock the frame, stroke, and ink texture, then generate every following icon using the previously generated icons as the visual reference, keeping the frame geometry, stroke weight, canvas margin, and stamp texture identical within each family and across the set. When done, reply with the list of saved absolute paths and one line per icon naming its glyph.
+Use the `board-game-icon-assets` skill for this task (read its SKILL.md and references/icon-principles.md first and follow them). Use your built-in image generation tool to create <n> stamp icons for a tabletop RPG website, one image per icon, and copy each generated PNG into `icons/` inside the current working directory with the exact filename listed, using only the exact file path your own image generation call returned in this session (never the newest file in ~/.codex/generated_images, which other sessions also write to) (copy the file; do not re-encode, crop, or resize). Do not write code and do not review anything; only generate and copy images. Generate the first icon to lock the frame, stroke, and ink texture, then generate every following icon using the previously generated icons as the visual reference, keeping the frame geometry, stroke weight, canvas margin, and stamp texture identical within each family and across the set. When done, reply with the list of saved absolute paths and one line per icon naming its glyph.
 ```
 
 For a later batch, attach one or two approved style lock icons with `-i` so the frame and stroke carry over.
@@ -382,6 +382,21 @@ EXCLUSIONS: transparent background with true alpha, nothing behind the seal at a
 - Keep the alpha bounding box centred in the canvas, since the page positions the square box, not the visible blob. Clamp alpha at or above 250 to fully opaque before encoding: the generator returns a body at 253 and the near-transparent pixels fringe on paper.
 - Generated seals come back browner than the palette. Measure the mean colour over the opaque pixels and lift the RGB until it lands near `#8B2A21`; the picked seal needed a 1.15 multiplier.
 - Three candidates were made. The picked one had the boldest wing split at 120 px; a shallow-deboss candidate and a candidate whose wings left a hollow V both read as foliage and are kept in `site/art-src/seal/rejected/`.
+
+## The engagement board
+
+A new family, added on 2026-09-21 for the zone combat board (`docs/playtest/feedback/round-3/zone-combat-design.md` section 7, `ART-HANDOUT.md` section 4). Twenty-nine assets: fifteen hex terrain tiles, five anchor rating rim glyphs, four Titan figures, two soldier figures, three effect overlays.
+
+Settled by the owner on 2026-09-21:
+
+- **Hexes are flat-top**, with two-to-one foreshortening, so a tile is twice as wide as it is tall.
+- **The board takes its own style block and its own approved style lock**, before any of the twenty-nine files are generated. ADR-0022 requires a style lock of every family, and a shallow-isometric board tile is not covered by the colour plate block, the ink-wash vignette block, or the icon system block.
+
+The style block below is written once the style lock is approved. Until then the board has no locked block and no batch may run against it.
+
+### Style block: board tile
+
+Pending the style lock.
 
 ## Sizes
 
