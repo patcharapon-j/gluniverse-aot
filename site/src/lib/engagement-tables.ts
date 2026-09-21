@@ -174,14 +174,15 @@ export function positionStepsTable(): CoreTableData {
   const T = 'Position steps';
   return {
     caption: 'Position steps by Anchor Rating',
-    note: 'Two Positions joined by a row are one Position step apart, whichever kinds of move can make it. A step can be made either way. No step asks for a roll of its own: every ODM move is a Flight, and a move that crosses two steps spends Momentum on Carry.',
-    columns: ['Position step', 'On foot', 'Mounted', 'ODM'],
+    note: 'Two Positions joined by a row are one Position step apart, whichever kinds of move can make it. A step can be made either way. No step asks for a roll of its own: every ODM move is a Flight, and every Carry past the first step pays that step’s cost.',
+    columns: ['Position step', 'Read as', 'On foot', 'Mounted', 'ODM'],
     see: false,
     groups: doc.ratings.map((rating) => ({
       heading: `${rating.name}: ${wording(RATING_WORDING, rating.id, T)}`,
       rows: rating.steps.map((step) => ({
         cells: [
           `${position(step.between[0], T)} to ${position(step.between[1], T)}`,
+          step.between[0] === 'distant' ? 'zone step into it' : 'attachment step in it',
           step.on_foot ? 'Yes' : 'No',
           step.mounted ? 'Yes' : 'No',
           step.odm ? 'Yes' : 'No',
@@ -203,10 +204,10 @@ interface RawSpend {
 /** What the ground gives a soldier on the wires, one line per rating. */
 const TERRAIN_WORDING: Record<string, string> = {
   open: 'A mounted soldier’s Break Attention gains 1 Bonus Die. The plain is the horse’s.',
-  sparse: 'The first Anchor wrecked in the fight is not lost. One good tree survives.',
+  sparse: 'The first wreck a zone takes while it is Sparse does nothing, once per zone. One good tree survives.',
   wooded: 'None. This is the plain baseline every other rating is read against.',
   urban: 'A soldier at Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them.',
-  'giant-forest': 'The first step a Flight Carries costs no Momentum. The Corps fights best here.',
+  'giant-forest': 'Every fall that is not from a horse, in the zone, is raised one band. The Corps fights best here, and a Flight pays nothing to enter it.',
 };
 
 export function anchorsTable(): CoreTableData {
@@ -214,7 +215,7 @@ export function anchorsTable(): CoreTableData {
   const T = 'Anchors';
   return {
     caption: 'Anchors and Terrain Traits by Anchor Rating',
-    note: 'The Anchors are the fight’s own pool, public and never restored. However many are left is every soldier’s Momentum cap.',
+    note: 'Each zone holds its own Anchors, public and never restored. However many a zone has left is every soldier’s Momentum cap in that zone.',
     columns: ['Anchor Rating', 'Anchors', 'Terrain Trait'],
     see: false,
     groups: [
@@ -231,9 +232,9 @@ export function anchorsTable(): CoreTableData {
 const SPEND_WORDING: Record<string, { name: string; effect: string }> = {
   carry: {
     name: 'Carry',
-    effect: 'One more Position step on this move, along steps your kind of move could make, relative to the same Titan. You may Carry more than once on one move.',
+    effect: 'One more step on this Flight, a zone step or an attachment step, at the entered zone’s Carry cost. At most 2 Carries on one Flight.',
   },
-  bite: { name: 'Bite', effect: '1 Bonus Die on a strike or a Break Attention you take this turn against the Titan you flew relative to.' },
+  bite: { name: 'Bite', effect: '1 Bonus Die on a strike or a Break Attention you take this turn against a Focus Titan in the zone the Flight ended in.' },
   brace: { name: 'Brace', effect: '1 Bonus Die on your next dodge this round.' },
   quiet: { name: 'Quiet', effect: 'You set no mark this turn, the loudest mark a Flight with no successes would set included. A mark already set is not cleared.' },
   'clean-line': { name: 'Clean line', effect: 'You make no Gas Roll for this round.' },
@@ -983,7 +984,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   swap: {
     title: 'Swap.',
     icon: 'ph:arrows-left-right',
-    text: 'Two soldiers who each hold a card, neither Down nor Grabbed, at the same Position or one step apart, or both having left, may exchange cards. Each soldier takes part in at most one swap.',
+    text: 'Two soldiers who each hold a card, neither Down nor Grabbed, in the same zone or an adjacent zone, or both having left, may exchange cards. Each soldier takes part in at most one swap.',
     exit: { kind: 'stop', label: 'Never', text: 'A Titan’s card is never swapped, and swapping is not an action.' },
   },
   play: {

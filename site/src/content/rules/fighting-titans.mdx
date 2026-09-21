@@ -10,11 +10,11 @@ sources:
   - path: docs/rules/06-standard-titans.md
     sha: "d786d456876ca31f086ce7c09c4739243f751e70"
   - path: data/engagement/zones.yaml
-    sha: "f624e51bd9127435e6340904709074911b432f8d"
+    sha: "f2956d5e04b878f105ae5f2762f0a163a63ddc32"
   - path: data/engagement/positions.yaml
-    sha: "c2060a7801d9e090c701c4dfa8f9df77b3c9d023"
+    sha: "24f45e88413f0e183901ecf1a93b53b4a55f65ff"
   - path: data/engagement/anchor-ratings.yaml
-    sha: "76933c29ee4b14853dddb60ab1b9c5716d950702"
+    sha: "73ccac5575f457fa46999d3d4514825e2acfaefa"
   - path: data/engagement/round.yaml
     sha: "80ceb842525c338d3dd05ca723911ef63c9fb491"
   - path: data/engagement/size-classes.yaml
@@ -202,17 +202,17 @@ A zone step to an adjacent zone, or an attachment step inside your own zone, wit
 
 <Subsection title="Momentum and Anchors" id="momentum">
 
-Speed you are carrying, 0 up to the Anchors left. **Lose all of it at the end of any round you made no ODM move in.** You spend it in your own turn, and nobody else — the GM included — ever grants, spends, or takes a point.
+Speed you are carrying, 0 up to the Anchors of the zone you're in. **Lose all of it at the end of any round you made no ODM move in.** You spend it in your own turn, and nobody else, the GM included, ever grants, spends, or takes a point.
 
 <CoreTable table="momentum" />
 
-**Anchors** are the trees, roofs, and beams worth a line, in a public pool the rating sets. **However many are left is every soldier's Momentum cap.**
+**Anchors** are the trees, roofs, and beams worth a line, and every zone holds its own rating. **However many a zone has left is every soldier's Momentum cap in that zone.**
 
 <CoreTable table="anchors" />
 
-- **Never restored.** A wreck destroys 1, landed or whiffed; a falling body destroys 1 where it lands.
-- **Caps fall with them,** and anyone over the new cap loses the excess at once.
-- **At 0, nobody holds Momentum** — but Flights still fly and **no step row changes.** However flat the place has been beaten, the route to the Nape stays open.
+- **Never restored.** A wreck takes one rating step off the Titan's own zone, landed or whiffed; a falling body does the same to the zone it lands in.
+- **Caps fall with the zone,** and a soldier in it who is over the new cap loses the excess at once.
+- **At Open, nobody in that zone holds Momentum.** Flights still fly, though, and a wreck to Open **removes that zone's Blind Spot step**, converting a standing Titan's Blind Spot there to On Body. A grounded Titan's Nape stays reachable at every rating.
 
 Each rating carries one **Terrain Trait**; Wooded has none, and is the plain ground the rest are read against.
 
@@ -252,7 +252,7 @@ A second Titan arrives from outside the fight at the field's **entry zone**, the
 
 **One zone, one attachment, two Positions.** An attachment names one body at most, so you are never hooked into two Titans at once: your zone and attachment give your Position relative to each of them separately, and each strides on its own cards toward its own Attention holder.
 
-When a Titan dies, its body becomes a **corpse** in the zone it died in. Your Positions relative to it are then derived exactly as for a living Titan, On Body and Blind Spot reading In Reach. A corpse counts as grounded and never moves, and its Positions count for every rule that reads one — but it holds no Attention, plays no cards, and is no fall's reference. Only a Heave and a strike on a pinning part reach it.
+When a Titan dies, every attachment naming it ends, and afterward soldiers can step onto it on foot as onto a grounded Titan; your Positions relative to it are then derived as for any body. A corpse counts as grounded and never moves, and its Positions count for every rule that reads one, but it holds no Attention and plays no cards. It can still be a fall's reference: the reference is whatever body your attachment named when you fell, and that can be a corpse. Only a Heave and a strike on a pinning part reach it.
 
 A horse moves only with its rider and stays in the zone it was left in, and no ladder or behavior picks one.
 

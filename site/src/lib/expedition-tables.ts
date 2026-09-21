@@ -223,7 +223,7 @@ const LEG_STEPS: Record<string, StepWording> = {
   harm: { title: 'Harm', text: 'Harm a row inflicts outside a fight opens a care window, with every soldier on the Expedition in its scope.', icon: 'harm-health' },
   'titan-engagement': {
     title: 'A Titan Engagement, if the row begins one',
-    text: 'The Waypoint ahead sets the Anchor Rating, and every living soldier takes part, mounted or not as they rode.',
+    text: 'The Waypoint ahead sets the field rating, and every living soldier takes part, mounted or not as they rode.',
     icon: 'titan-medium',
     exit: { kind: 'stop', label: 'A retreat', text: 'Fall back to the Waypoint you started from and ride this Leg again from step 1, with a new Leg roll and a new hazard.' },
   },
@@ -545,8 +545,8 @@ const KIND_TEXT: Record<string, string> = {
 export function waypointKindsTable(): CoreTableData {
   return {
     caption: 'What a Waypoint is made of',
-    note: 'A Waypoint’s kind sets the Anchor Rating of a Titan Engagement on the Leg that leads to it.',
-    columns: ['Waypoint', 'The ground', 'Anchor Rating'],
+    note: 'A Waypoint’s kind sets the field rating of a Titan Engagement on the Leg that leads to it.',
+    columns: ['Waypoint', 'The ground', 'Field rating'],
     see: false,
     groups: [
       {
