@@ -3217,6 +3217,12 @@
       "choose": "How do you go?",
       "direct": "Direct Control",
       "setRating": "Zone {n}: set the rating",
+      "crossing": "Crosses a Titan",
+      "crossWarn": "This way crosses {labels}, and marks you loudest to it",
+      "goLoud": "Go, marked loudest",
+      "goQuiet": "Go quietly (1 Momentum)",
+      "cancel": "Cancel",
+      "quiet": "Quiet (1 Momentum)",
       "kind": {
         "onFoot": "On foot",
         "mounted": "Mounted",

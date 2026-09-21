@@ -131,6 +131,21 @@ export function directPlacement(t: DropTarget, s: Pick<BoardSoldier, 'attachment
 }
 
 /**
+ * Quiet (anchor-ratings.yaml, momentum, spends, quiet; 16-14, 16-15): 1 Momentum that stops every flag
+ * the soldier would set this turn, the crossing flag included. The board offers it on a move that would
+ * set a flag, when Quiet is not already spent this turn and the soldier can pay. `block` is the rules
+ * layer's own answer (momentum.ts, spendBlock). A Flight pays Quiet from what the soldier holds after
+ * the roll, so an empty purse does not rule it out; a move on foot or mounted pays it now.
+ */
+export function quietOffered(o: Pick<ZoneMoveOption, 'crosses' | 'charge' | 'fly'>, block: string | null, spent: boolean): boolean {
+  if (spent || (!o.crosses.length && !o.charge.length)) return false;
+  return o.fly ? block === null || block === 'noMomentum' : block === null;
+}
+
+/** Quiet on its own, from the selected soldier's control: offered while unspent and payable now. */
+export const quietNow = (block: string | null, spent: boolean): boolean => !spent && block === null;
+
+/**
  * Dragging a soldier off the body they hold to their own zone is letting go (7.6), which the board
  * warns is a fall before it commits. Only when no offered move ends there instead.
  */

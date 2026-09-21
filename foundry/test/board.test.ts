@@ -5,7 +5,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { boardFx, boardRim, boardTile, boardTitan } from '../src/art.ts';
-import { directPlacement, directTargets, hitTarget, isLetGo, litTargets, optionsOn, rankOptions, targetKey, type ZoneMoveOption } from '../src/board/interaction.ts';
+import { directPlacement, directTargets, hitTarget, isLetGo, litTargets, optionsOn, quietNow, quietOffered, rankOptions, targetKey, type ZoneMoveOption } from '../src/board/interaction.ts';
 import { fitView, hexCentre, hexCorners, inHex, TILE_H, TILE_W, toBoard, toScreen } from '../src/board/layout.ts';
 import { arcPoint, planEvent, samplePlan } from '../src/board/motion.ts';
 import { buildScene, facingOf, figureHeight, pointOf } from '../src/board/scene.ts';
@@ -234,6 +234,21 @@ describe('board drag and drop', () => {
     expect(directPlacement({ kind: 'rear', label: 'A', zone: 7 }, s)).toEqual(place(7, 'blind-spot', 'A'));
     expect(directPlacement({ kind: 'off' }, s)).toEqual(place(null));
     expect(targetKey({ kind: 'body', label: 'A', zone: 7 })).toBe('body:A');
+  });
+
+  it('offers Quiet on a move that would set a flag, when unspent and payable', () => {
+    const cross = { crosses: ['A'], charge: [], fly: true };
+    expect(quietOffered(cross, null, false)).toBe(true);
+    // A Flight pays from what the roll brings, so an empty purse still may buy it.
+    expect(quietOffered(cross, 'noMomentum', false)).toBe(true);
+    expect(quietOffered({ ...cross, fly: false }, 'noMomentum', false)).toBe(false);
+    expect(quietOffered(cross, 'cannotHold', false)).toBe(false);
+    expect(quietOffered(cross, null, true)).toBe(false);
+    expect(quietOffered({ crosses: [], charge: [], fly: true }, null, false)).toBe(false);
+    expect(quietOffered({ crosses: [], charge: ['A'], fly: false }, null, false)).toBe(true);
+    expect(quietNow(null, false)).toBe(true);
+    expect(quietNow('noMomentum', false)).toBe(false);
+    expect(quietNow(null, true)).toBe(false);
   });
 
   it('treats dragging off a held body into the own zone as letting go', () => {

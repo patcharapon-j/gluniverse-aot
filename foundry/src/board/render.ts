@@ -45,7 +45,7 @@ export interface DrawState {
   direct: boolean;
   /** The set piece playing, and its progress 0 to 1. */
   anim: { plan: Plan; t: number; trail: Pt[] } | null;
-  labels: { fly: string; free: string; momentum: (n: number) => string; leave: string; letGo: string };
+  labels: { fly: string; free: string; momentum: (n: number) => string; leave: string; letGo: string; crossing: string };
 }
 
 export class BoardRenderer {
@@ -317,6 +317,7 @@ export class BoardRenderer {
     const PIXI = PIXIof();
     const parts = [lit.momentum > 0 ? ui.labels.momentum(lit.momentum) : ui.labels.free];
     if (lit.fly) parts.push(ui.labels.fly);
+    if (lit.crosses) parts.push(ui.labels.crossing);
     const c = new PIXI.Container();
     const t = this.text(parts.join(' · '), 15, lit.fly ? PALETTE.brassHi : PALETTE.paper);
     t.anchor.set(0.5);

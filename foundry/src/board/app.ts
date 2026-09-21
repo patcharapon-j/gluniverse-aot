@@ -9,14 +9,16 @@
  * pieces play from `combat.system.boardEvent`, which the engine writes in the same update as the change,
  * so every client animates without a socket of the board's own.
  */
+import { grabbedIn } from '../rules/engagement/guard.ts';
+import { spendBlock } from '../rules/engagement/momentum.ts';
 import { moveOptionsFor } from '../rules/engagement/positions.ts';
 import { motionMode } from '../settings.svelte.ts';
 import { currentEngagement } from '../tracker/combat.ts';
-import { gmPlace, gmPlaceHorse, gmPlaceTitan, isGM, isTitanEngagement, letGo, requestZoneMove, setZoneRating } from '../tracker/engine.ts';
+import { gmPlace, gmPlaceHorse, gmPlaceTitan, isGM, isTitanEngagement, letGo, requestZoneMove, setZoneRating, spendQuiet } from '../tracker/engine.ts';
 import { snapshot, titanToken } from '../tracker/snapshot.ts';
 import { onRefresh, tracker } from '../tracker/state.svelte.ts';
-import { directPlacement, directTargets, hitSoldier, hitTarget, hitTitan, isLetGo, litTargets, optionsOn, rankOptions, targetKey, type DropTarget, type Lit, type ZoneMoveOption } from './interaction.ts';
-import { fitView, inRect, toBoard, type View } from './layout.ts';
+import { directPlacement, directTargets, hitSoldier, hitTarget, hitTitan, isLetGo, litTargets, optionsOn, quietNow, quietOffered, rankOptions, targetKey, type DropTarget, type Lit, type ZoneMoveOption } from './interaction.ts';
+import { fitView, inRect, toBoard, toScreen, type View } from './layout.ts';
 import { planEvent, samplePlan, type Plan } from './motion.ts';
 import { BoardRenderer, TITAN_COLOURS, type DrawState } from './render.ts';
 import { buildScene, type Scene } from './scene.ts';
@@ -56,6 +58,9 @@ class Board {
   tip: HTMLElement;
   badge: HTMLElement;
   menu: HTMLElement | null = null;
+  /** The soldier clicked (not dragged), who carries the Quiet control. */
+  selected: string | null = null;
+  quietButton: HTMLButtonElement;
   observer: ResizeObserver;
   ready = false;
 
@@ -76,7 +81,17 @@ class Board {
     this.badge = document.createElement('div');
     this.badge.className = 'wof-board-direct-badge';
     this.badge.textContent = L('direct');
-    this.host.append(this.tip, this.badge);
+    this.quietButton = document.createElement('button');
+    this.quietButton.type = 'button';
+    this.quietButton.className = 'wof-board-quiet';
+    this.quietButton.hidden = true;
+    this.quietButton.addEventListener('click', async () => {
+      const id = this.selected;
+      const combat = this.combat;
+      this.quietButton.hidden = true;
+      if (id && combat) await spendQuiet(combat, id).catch((err: unknown) => console.error('wings-of-freedom | Quiet failed', err));
+    });
+    this.host.append(this.tip, this.badge, this.quietButton);
     const view = this.renderer.app.view as HTMLCanvasElement;
     view.addEventListener('pointerdown', this.onDown);
     view.addEventListener('pointermove', this.onMove);
@@ -133,9 +148,52 @@ class Board {
       drag: this.drag?.moved ? { kind: this.drag.kind, id: this.drag.id, at: this.drag.at } : null,
       direct,
       anim: this.anim,
-      labels: { fly: L('fly'), free: L('free'), momentum: (n) => L('momentum', { n }), leave: L('leave'), letGo: L('letGo') },
+      labels: { fly: L('fly'), free: L('free'), momentum: (n) => L('momentum', { n }), leave: L('leave'), letGo: L('letGo'), crossing: L('crossing') },
     };
     this.renderer.draw(this.scene, this.view, ui);
+    this.placeQuiet();
+  }
+
+  /** Whether Quiet is spent this turn (the engagement's quiet list) and what the rules say blocks it. */
+  quietState(soldierId: string): { spent: boolean; block: string | null } {
+    const combat = this.combat;
+    if (!combat) return { spent: true, block: 'left' };
+    const snap = snapshot(combat);
+    const s = snap.soldiers.find((x) => x.id === soldierId);
+    const spent = ((combat.system.quiet ?? []) as string[]).includes(soldierId);
+    return { spent, block: s ? spendBlock(s, 'quiet', grabbedIn(snap)(s.id)) : 'left' };
+  }
+
+  /** The Quiet control beside the selected soldier, while they can spend it now. */
+  placeQuiet(): void {
+    const node = this.selected && !this.drag?.moved ? this.scene?.soldiers.find((s) => s.id === this.selected) : undefined;
+    const q = node && node.owner ? this.quietState(node.id) : null;
+    if (!node || !q || !quietNow(q.block, q.spent)) {
+      this.quietButton.hidden = true;
+      return;
+    }
+    const at = toScreen(this.view, { x: node.foot.x, y: node.foot.y - node.h });
+    this.quietButton.textContent = L('quiet');
+    this.quietButton.style.left = `${Math.round(at.x)}px`;
+    this.quietButton.style.top = `${Math.round(at.y - 34)}px`;
+    this.quietButton.hidden = false;
+  }
+
+  /**
+   * A move whose way crosses a Titan's zone (or charges one) warns that the flag lands, and offers
+   * Quiet when the soldier can pay it, so the drop carries `option.quiet` (16-14, 16-15).
+   */
+  go(combat: any, soldierId: string, o: ZoneMoveOption, e: MouseEvent): void {
+    const flagged = [...new Set([...o.crosses, ...o.charge])];
+    const q = this.quietState(soldierId);
+    if (!flagged.length || q.spent) {
+      void requestZoneMove(combat, soldierId, o).catch((err: unknown) => console.error('wings-of-freedom | the board move failed', err));
+      return;
+    }
+    const items = [{ label: L('goLoud'), run: () => requestZoneMove(combat, soldierId, o) }];
+    if (quietOffered(o, q.block, q.spent)) items.push({ label: L('goQuiet'), run: () => requestZoneMove(combat, soldierId, { ...o, quiet: true }) });
+    items.push({ label: L('cancel'), run: async () => false });
+    this.menu = this.popup(e, L('crossWarn', { labels: flagged.join(', ') }), items);
   }
 
   // ------------------------------------------------------------------ set pieces
@@ -197,6 +255,7 @@ class Board {
     const combat = this.combat;
     const direct = isGM() && tracker.direct;
     const sid = hitSoldier(this.scene, p);
+    if (!sid) this.selected = null;
     if (sid) {
       const node = this.scene.soldiers.find((s) => s.id === sid);
       if (!direct && !node?.owner) return;
@@ -245,7 +304,11 @@ class Board {
     this.drag = null;
     this.over = null;
     if (!drag || !this.scene) return;
-    if (!drag.moved) return this.redraw(false);
+    if (!drag.moved) {
+      // A click: select the soldier, which shows their Quiet control.
+      this.selected = drag.kind === 'soldier' ? drag.id : null;
+      return this.redraw(false);
+    }
     const target = hitTarget(this.scene, this.point(e));
     const allowed = drag.lit.some((l) => l.key === targetKey(target));
     this.redraw(false);
@@ -275,8 +338,8 @@ class Board {
         return;
       }
       const ways = rankOptions(optionsOn(drag.options, target));
-      if (ways.length === 1) await requestZoneMove(combat, drag.id, ways[0]);
-      else if (ways.length > 1) this.choose(ways, e, (o) => requestZoneMove(combat, drag.id, o));
+      if (ways.length === 1) this.go(combat, drag.id, ways[0], e);
+      else if (ways.length > 1) this.choose(ways, e, async (o) => (this.go(combat, drag.id, o, e), true));
     } catch (err) {
       console.error('wings-of-freedom | the board move failed', err);
     }
