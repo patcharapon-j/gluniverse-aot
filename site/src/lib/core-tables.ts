@@ -408,14 +408,14 @@ const BONUS_WORDING: Record<string, { unit?: [string, string]; addsTo: string; w
     see: ['skirmishes'],
   },
   momentum: {
-    addsTo: 'A strike or a Break Attention this turn against the Titan you flew relative to, for Bite. Your next dodge this round, for Brace.',
+    addsTo: 'A strike or a Break Attention this turn against a Focus Titan in the zone your Flight ended in, for Bite. Your next dodge this round, for Brace.',
     when: 'You are in a Titan Engagement and hold the Momentum to spend.',
     spends: '1 Momentum per die',
     see: ['fighting-titans'],
   },
   'terrain-trait': {
     addsTo: "A mounted soldier's Break Attention, which is the only Terrain Trait that gives dice.",
-    when: 'The fight is at the Open Anchor Rating.',
+    when: 'You are mounted, in an Open zone.',
     spends: 'Nothing',
     see: ['fighting-titans'],
   },

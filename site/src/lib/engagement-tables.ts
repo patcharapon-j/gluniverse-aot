@@ -1017,7 +1017,7 @@ const ROUND_STEP_WORDING: Record<string, { title: string; text: string; icon: st
   momentum: {
     title: 'Momentum.',
     icon: 'ph:wind',
-    text: 'Everyone who made no ODM move this round loses all their Momentum. Anyone who flew keeps what they hold, up to the Anchors left.',
+    text: 'Everyone who made no ODM move this round loses all their Momentum. Anyone who flew keeps what they hold, up to the anchors of the zone they are in.',
     exit: { kind: 'stop', label: 'Keep flying', text: 'A round spent standing still costs you everything you were carrying.' },
   },
   frenzy: {
