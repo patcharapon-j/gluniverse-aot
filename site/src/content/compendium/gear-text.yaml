@@ -17,25 +17,25 @@
 # record the new sha from `git hash-object <path>` (scripts/check-sync.mjs lists what changed).
 sources:
   - path: data/gear/items.yaml
-    sha: "6ddd7b203621fb85bf84aef77f3592a81edcb07d"
+    sha: "2721b8315b6ceb2330f6089f197baadc9f6b45ee"
   - path: data/gear/odm-gear.yaml
-    sha: "f94d9eb82fea1f7ae58339f7b037d3162e837b11"
+    sha: "8ef3b0a50aa0f8c9d0af0b3bd78d3ac268c98a03"
   - path: data/gear/blade-sets.yaml
     sha: "2f33a0bf9d8236c8c471881d782878d54e144bbe"
   - path: data/gear/horses.yaml
-    sha: "48bd1167d74e56c1e26f8265358876e0052c96e3"
+    sha: "26c742385ad6fe5a8c22b49dc9a751702e344df6"
   - path: data/gear/falls.yaml
-    sha: "7508711ebe1cb5f4afd6468ffeef8b443d5e5420"
+    sha: "225976704dd51b915ea7b34537256c581353adad"
   - path: data/gear/carrying.yaml
-    sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
+    sha: "50681aaa7a60484b017b19fea4070de120c83a5b"
   - path: data/gear/field-repair.yaml
-    sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
+    sha: "ed5f381e7628b96259c7c6b71255d5842b248daa"
   - path: data/gear/standard-issue.yaml
     sha: "fa268aa8dc3313948979989f1023ae172fdc5c72"
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/character/action-catalog.yaml
-    sha: "b55b7753cc0cbe90315c007e8cc323c2c0017e1e"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
 
 items:
   odm-gear:
@@ -47,7 +47,7 @@ items:
       - Your Gas Rating is 0. The training harness of the Graduation Exam has no canister, so this never applies to it.
     at_zero: >-
       It Jams. No Gear Dice, no ODM move, no Nape strike or close Body Part strike, and a fall if
-      you are airborne. At the Urban rating a soldier at Blind Spot is on a roof rather than in the
+      you are airborne. In an Urban zone a soldier at Blind Spot is on a roof rather than in the
       air, so a Jam does not drop them.
     wear: Each point of wear lowers the current rating by 1.
     restore:
@@ -90,11 +90,11 @@ items:
   horse:
     what: >-
       The mount Standard Issue gives you. You can mount only your own horse, and in a Titan
-      Engagement it holds a Position of its own once you dismount.
+      Engagement it is in a zone of its own once you dismount.
     not_had:
       - It is lame, worn down to 0.
       - For a dodge, for Ride, and for Leap Clear, you are not mounted on it.
-      - For Break Attention, you are neither mounted on it nor at the Position it holds, compared relative to the Focus Titan recorded with that Position.
+      - For Break Attention, you are neither mounted on it nor in the zone it is in.
     at_zero: >-
       It goes lame. It cannot be mounted, gives no Gear Dice, and drops any rider, who falls from a
       horse.
@@ -227,7 +227,7 @@ passing:
   cannot:
     item: ODM Gear, the Blade Set in your handles, a horse, and Squad Supply
     note: >-
-      A comrade you carry is not passed either. Set them down, and a comrade at that Position
+      A comrade you carry is not passed either. Set them down, and a comrade in that zone
       lifts them.
 
 falls:

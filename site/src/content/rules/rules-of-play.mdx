@@ -6,15 +6,15 @@ order: 1
 tab: Rules
 sources:
   - path: docs/rules/01-core-rules.md
-    sha: "67b0c010480ada3e909307d20fc8923117cc2cb1"
+    sha: "c609c658d781063d3e89c9e39ca06fb2e6b82a32"
   - path: data/core/dice-pool.yaml
     sha: "86d4fef8eb35845f1244a80790254cbd6a2b4bc6"
   - path: data/core/circumstances.yaml
-    sha: "170189072326c6c82f339f78d20116917fe2cb53"
+    sha: "486e607c24925454ac38b8ed9c63bd2f550a7f4a"
   - path: data/core/stress-changes.yaml
-    sha: "80c428f9122a1a8d20a10eaa5b855a75b0bc2a13"
+    sha: "fb794c41f67780d1622b04402d4f7efabec0530a"
   - path: data/core/bonus-dice-sources.yaml
-    sha: "009774e74c398fe85408b30f2fae21639efd2522"
+    sha: "550e4d3442f60edc24d3e0b68301abe3850f1ad0"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -135,7 +135,7 @@ One step of a seven-step ladder, named by the GM. Name none and the roll is Stan
 
 <RuleBox title="In a Titan Engagement" icon="ph:cloud-rain">
 
-Standard is the assumption: <GlossaryTerm term="Anchor Rating" />, <GlossaryTerm term="Position">Positions</GlossaryTerm>, Openings, and your own penalties already price the fight. Name a step only for what no rule prices — rain, smoke, full dark, ice, a gale.
+Standard is the assumption: each zone's <GlossaryTerm term="Anchor Rating" />, your zone and attachment, <GlossaryTerm term="Position">Positions</GlossaryTerm>, Openings, and your own penalties already price the fight. Name a step only for what no rule prices — rain, smoke, full dark, ice, a gale.
 
 It reaches every roll a soldier makes and **never the Titan**. A Titan mired to the knee makes the dodge against it Easy, and loses no Attack Dice of its own.
 
@@ -205,7 +205,7 @@ One cost, staked aloud before the dice — and one cost however many times you P
 <BoxPair>
 <RuleBox title="A called roll in a fight" icon="ph:crosshair">
 
-Last resort. An act is first a Catalog entry, then an <a href="#improvised-acts">improvised act</a>, and a called roll only if it changes nothing the fight tracks — no Position, Attention, Opening, card, clock, or Foe value.
+Last resort. An act is first a Catalog entry, then an <a href="#improvised-acts">improvised act</a>, and a called roll only if it changes nothing the fight tracks — no zone, attachment, Position, zone's rating, Attention, Opening, card, clock, or Foe value.
 
 It spends your action and never stands in for a Reaction. Facing an attack, you dodge or block.
 
@@ -294,7 +294,7 @@ A Pushed dodge on ODM Gear counts. On your horse it does not. A Push after the r
 To Cover is to take the Stress of a comrade's Push — declared after the Push, before any die is re-rolled. One Coverer, and the Pusher may refuse.
 
 <FactTable compact columns={['', '']} rows={[
-  ['Who', 'A player character, not the roller, not Down. In a fight: same Position or one step away. Outside one: anyone who could <a href="#help">Help</a> that roll.'],
+  ['Who', 'A player character, not the roller, not Down. In a fight: same zone or an adjacent zone. Outside one: anyone who could <a href="#help">Help</a> that roll.'],
   ['Cost', '1 Stress to the Coverer. Not an action.'],
   ['Effect', 'The Pusher gains no Stress and no new Stress Die. Nothing else changes — a 1 still gives <em>them</em> the Stress Response, their gear still wears.'],
 ]} />
@@ -352,7 +352,7 @@ A comrade adds **1 die**, up to **3 comrades** per roll — any other soldier in
 <FinePrint title="who can Help, where">
 
 <FactTable caption="Who can Help, and what it costs" columns={['Where', 'Who qualifies', 'What it spends']} rows={[
-  ['Titan Engagement', 'Same Position or one step away, action unspent.', 'Their action, usable outside their own turn. Their turn keeps only its move.'],
+  ['Titan Engagement', 'Same zone or an adjacent zone, action unspent.', 'Their action, usable outside their own turn. Their turn keeps only its move.'],
   ['Skirmish', 'A comrade taking part, not Down, Engaged, or Apart.', 'Their action, and nothing more.'],
   ['Called roll', 'Up to 3 present and able to help in a way you could point at.', 'Nothing, unless the GM prices it in time or position first.'],
   ['Any other roll', 'Only where that rule allows Help. Silence means none, and no Covering either.', 'Whatever that rule states.'],

@@ -7,15 +7,15 @@ tab: Expeditions
 earlyRules: true
 sources:
   - path: docs/rules/07-playtest-rules.md
-    sha: "1368c9a714c51778a15f84d2472c0abced253f6a"
+    sha: "4721705cae7b3505afee5f1be6b7d9d3d8d117a1"
   - path: data/expedition/legs.yaml
-    sha: "b5596ef522ed1d226a82b1c6775e5ce2398bb0a1"
+    sha: "f811d2e1846aa8a6882eea72364b18cf2d97e27e"
   - path: data/expedition/hazards.yaml
-    sha: "500a5afca65f81d07482528e9c71a0705dba4089"
+    sha: "18d876d56de5288100b83b12a37a9c5aeaf905fb"
   - path: data/expedition/route.yaml
-    sha: "47a1cbcd5f8e38c3a6613c09b3132f61f905cd86"
+    sha: "3a50b6516aec9aecca085375dd2e544527398cc3"
   - path: data/engagement/anchor-ratings.yaml
-    sha: "f614c623c210ffe460e5601433af01db8f606adb"
+    sha: "c4ac32ffa6dbcb763416343e9be4d48f2fb6580d"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -68,7 +68,7 @@ A route outside these bounds is not a route in these rules. Write inside them, o
 
 At a **Depot** the whole Squad takes a full Standard Issue and Squad Supply is restocked. Reaching the **gate** ends the Expedition at the end of that Leg — no further Leg, no camp, and Downtime begins.
 
-<MarginNote stamp="Read twice">The Waypoint kinds are the strongest thing you write. A forest Waypoint and an open plain are the same Leg on the hazard table and two different Titan fights, because the kind sets the Anchor Rating.</MarginNote>
+<MarginNote stamp="Read twice">The Waypoint kinds are the strongest thing you write. A forest Waypoint and an open plain are the same Leg on the hazard table and two different Titan fights, because the kind sets the field rating.</MarginNote>
 
 <Subsection title="The interim route" id="the-interim-route">
 
@@ -104,7 +104,7 @@ The Squad's side is on <a href="/guide/expeditions-and-downtime/#riding-a-leg">E
 - **They always arrive.** Success: 1 ration, and −1 hazard per extra success. Failure: 2 rations and +1. A Hard Ride doubles the rations.
 - **Nobody able to roll?** It fails, with no Help and no Push, and nothing else changes. A row that names the Lead does nothing when there is none.
 - **Then the hazard** — the whole of your work on a Leg.
-- **A fight a row begins** takes its Anchor Rating from the Waypoint this Leg leads to; everything unnamed comes from the setup table. **A retreat** sends the Squad back to where this Leg started, to ride it again with a fresh roll and a fresh hazard.
+- **A fight a row begins** takes its field rating from the Waypoint this Leg leads to; everything unnamed comes from the setup table. **A retreat** sends the Squad back to where this Leg started, to ride it again with a fresh roll and a fresh hazard.
 
 </Subsection>
 
@@ -188,7 +188,7 @@ Between Legs you may frame a scene at a Waypoint: an abandoned town searched, su
 
 At the Waypoint the Squad is standing at — the one the day's last Leg reached, or the one it fell back to.
 
-- **A fight the Night table begins takes that Waypoint's Anchor Rating.** A camp at the gate they rode out of has no kind, so roll the rating on the setup table; the Expedition goes on, because only the route's last Waypoint ends it.
+- **A fight the Night table begins takes that Waypoint's field rating.** A camp at the gate they rode out of has no kind, so roll the rating on the setup table; the Expedition goes on, because only the route's last Waypoint ends it.
 - **The Distance Band the roll adds is still the day's last ridden Leg's,** whatever a retreat did to where they stand.
 
 </Subsection>

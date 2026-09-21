@@ -6,27 +6,27 @@ order: 4
 tab: Gear
 sources:
   - path: docs/rules/04-gear.md
-    sha: "a35379720ee727fc1a3cebb052dc36a3c86b15ac"
+    sha: "22667805958acd907269014e741f8d3bc0d9d776"
   - path: data/gear/items.yaml
-    sha: "6ddd7b203621fb85bf84aef77f3592a81edcb07d"
+    sha: "2721b8315b6ceb2330f6089f197baadc9f6b45ee"
   - path: data/gear/odm-gear.yaml
-    sha: "f94d9eb82fea1f7ae58339f7b037d3162e837b11"
+    sha: "8ef3b0a50aa0f8c9d0af0b3bd78d3ac268c98a03"
   - path: data/gear/blade-sets.yaml
     sha: "2f33a0bf9d8236c8c471881d782878d54e144bbe"
   - path: data/gear/horses.yaml
-    sha: "48bd1167d74e56c1e26f8265358876e0052c96e3"
+    sha: "26c742385ad6fe5a8c22b49dc9a751702e344df6"
   - path: data/gear/falls.yaml
-    sha: "7508711ebe1cb5f4afd6468ffeef8b443d5e5420"
+    sha: "225976704dd51b915ea7b34537256c581353adad"
   - path: data/gear/carrying.yaml
-    sha: "0bd98d0b6b4e3cf64e16605a2ca3c35c2a6a3f33"
+    sha: "50681aaa7a60484b017b19fea4070de120c83a5b"
   - path: data/gear/field-repair.yaml
-    sha: "0e6100c0a7fb7fb397fa401cb4c4d30c26d6b5a5"
+    sha: "ed5f381e7628b96259c7c6b71255d5842b248daa"
   - path: data/gear/standard-issue.yaml
     sha: "fa268aa8dc3313948979989f1023ae172fdc5c72"
   - path: data/gear/squad-supply.yaml
     sha: "f4d185f412e293ce652a22e1a3dcc7bef861ce58"
   - path: data/character/action-catalog.yaml
-    sha: "b55b7753cc0cbe90315c007e8cc323c2c0017e1e"
+    sha: "a6418594bc711c7b92e48c1fa268a9025b2fbbe0"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -119,7 +119,7 @@ A **Wits** action with a tool kit — Wits alone without one. Name the item firs
 
 It needs **{repair.needs} success**, and each success raises the current rating by 1. ODM Gear raised above 0 stops being <GlossaryTerm term="Jam">Jammed</GlossaryTerm>.
 
-**In a Titan Engagement** it spends your action, on your own item or one held by a comrade at your Position, and can be Helped, Pushed, and retried on a later turn. **Outside one** it is rolled only in a care window — one repair roll each, separate from the Treat Injury roll, with Help spending the helper's own repair.
+**In a Titan Engagement** it spends your action, on your own item or one held by a comrade in your zone, and can be Helped, Pushed, and retried on a later turn. **Outside one** it is rolled only in a care window — one repair roll each, separate from the Treat Injury roll, with Help spending the helper's own repair.
 
 </Subsection>
 
@@ -143,7 +143,7 @@ The strike still takes its dice from the Blade Set and is not ODM use, so it mak
 
 You are **<GlossaryTerm term="Airborne">airborne</GlossaryTerm>** while in the air on your own ODM Gear. An ODM move always puts you there, however the dice fall.
 
-- **At Urban you are not airborne at Blind Spot** — you are anchored to a roof, so a <GlossaryTerm term="Jam" /> leaves you standing.
+- **In an Urban zone you are not airborne at Blind Spot** — you are anchored to a roof, so a <GlossaryTerm term="Jam" /> leaves you standing.
 - **You stop** on a move that is not an ODM move, on a fall, on being <GlossaryTerm term="Grabbed" />, and when the fight ends, where everyone still up lands with no fall.
 - **Never airborne** while carried, Grabbed, or <GlossaryTerm term="Mounted">mounted</GlossaryTerm>. Running out of gas does not bring you down.
 
@@ -214,7 +214,7 @@ A **Blade Set** is one pair of ODM blades — the only unit in which blades are 
 
 **The swap** fits a carried set into empty handles. In a Titan Engagement: once per turn, **spending your move** — so you refit where you stand and still strike this turn, and what ruin really costs you is that turn's <GlossaryTerm term="Flight" /> and its Momentum. Outside a fight: whenever you like. A Down soldier cannot swap.
 
-A Fear Roll can drop the set in your handles. It lies at your Position, nobody picks it up during the fight, and it is shared out at the end.
+A Fear Roll can drop the set in your handles. It lies in your zone, nobody picks it up during the fight, and it is shared out at the end.
 
 </Subsection>
 
@@ -228,15 +228,15 @@ Your horse is the one your sheet records, and **you can mount only your own**.
 
 <Subsection title="Where the horse is" id="where-the-horse-is">
 
-In a Titan Engagement a horse holds a <GlossaryTerm term="Position" /> of its own: yours while you ride it, and wherever you left it once you dismount. **Horse Whistle is the only Talent that moves one.** A horse taken as a riderless-horse decoy leaves the fight entirely. When the fight ends no horse holds a Position, and every living soldier's horse is theirs again.
+In a Titan Engagement a horse is in a zone of its own: yours while you ride it, and wherever you left it once you dismount. **Horse Whistle is the only Talent that moves one.** A horse taken as a riderless-horse decoy leaves the fight entirely. When the fight ends no horse is in a zone, and every living soldier's horse is theirs again.
 
 </Subsection>
 
 <Subsection title="Mounting, riding, and the charge" id="mounting">
 
-Neither mounting nor dismounting is rolled. **In a Titan Engagement** each happens as part of a move: the horse must share your Position and not be lame, and you must not be airborne, Down, Grabbed, or carried. **A mounted soldier's ODM move dismounts them first,** leaving the horse behind.
+Neither mounting nor dismounting is rolled. **In a Titan Engagement** each happens as part of a move: the horse must be in your zone and not be lame, and you must be free (on the Ground or Anchored) and not airborne, Down, Grabbed, or carried. **A mounted soldier's ODM move dismounts them first,** leaving the horse behind.
 
-**The charge.** A mounted step between Distant and In Reach may mark you loudest. It is never rolled, spends nothing beyond the move, and is not ODM use. At Open it may be made **twice in one move**, so a rider can come in and get out — still one charge, and one mark at most.
+**The charge.** A mounted move that enters or leaves a zone holding a Focus Titan may mark you loudest on one such Titan, your choice, once per move. It is never rolled, spends nothing beyond the move, and is not ODM use. A mounted move makes up to two zone steps and never enters an Urban zone, and it stops on entering a zone that holds a standing Focus Titan unless that zone is Open — so a rider can still ride through an Open zone holding a Titan and out again in one move.
 
 **Forced dismounts:** your horse going lame or you going Down dismounts you **and you fall**. Being Grabbed dismounts you with no fall. The horse stays put each time.
 
@@ -246,7 +246,7 @@ Neither mounting nor dismounting is rolled. **In a Titan Engagement** each happe
 
 <MarginNote>A Funding 3 harness is rated 3 and a Funding 3 horse rated 2, so a mounted dodge rolls one die fewer. What it buys: a cheaper item to wear out, and no gas and no Jam.</MarginNote>
 
-It gives Gear Dice to **the dodge, Ride, and Leap Clear** while you are mounted on it, and to **Break Attention** while mounted or while it shares your Position. Otherwise it counts as not had.
+It gives Gear Dice to **the dodge, Ride, and Leap Clear** while you are mounted on it, and to **Break Attention** while mounted or while it is in your zone. Otherwise it counts as not had.
 
 Mounted, you may take a dodge's or a Break Attention's dice from your harness instead. **A Pushed roll made with the horse wears the horse,** not the harness, and does not by itself make your Gas Roll three dice.
 
@@ -306,9 +306,9 @@ Over your limit, **every ODM move also spends your action**, and none can be mad
 
 **Lift Comrade** is not rolled. In a fight it spends your action — or your move with Rescue Ride while mounted.
 
-**The comrade** must share your Position and be Down, or consent while the both-legs grade forbids them to move. Never one who is Grabbed, <GlossaryTerm term="Pinned" />, or already carried. **You** must not be Down, already carrying, or carried yourself.
+**The comrade** must be in your zone and be Down, or consent while the both-legs grade forbids them to move. Never one who is Grabbed, <GlossaryTerm term="Pinned" />, or already carried. **You** must not be Down, already carrying, or carried yourself.
 
-**While you carry them** they hold your Position and move when you do, never airborne on their own harness. Their turns still happen: their move changes nothing, and if not Down they keep their action for entries needing no move. They count as **5 items plus everything they carry** — Strong Back removes the 5 but not their items.
+**While you carry them** their zone and attachment are yours and change when yours do, never airborne on their own harness. Their turns still happen: their move changes nothing, and if not Down they keep their action for entries needing no move. They count as **5 items plus everything they carry** — Strong Back removes the 5 but not their items.
 
 **Carrying ends** when you set them down or they leave, when either of you is Grabbed, dies, retires, or is Pinned, or when you go Down or fall. If you were airborne or mounted, they fall with you from the same band; otherwise they are simply set down where you stand.
 
@@ -318,9 +318,9 @@ Over your limit, **every ODM move also spends your action**, and none can be mad
 
 <CoreTable table="passing-items" />
 
-Each spends your action in a Titan Engagement and nothing outside one, and you must not be Down. **Passing** needs a living comrade at your Position, who may be Down or Grabbed. **Taking** works on a comrade who is **Down and not Grabbed**, or — in a fight only — on a dead comrade's left items where they lie. A fitted canister you take leaves them at Gas Rating 0 and reaches you as a spare.
+Each spends your action in a Titan Engagement and nothing outside one, and you must not be Down. **Passing** needs a living comrade in your zone, who may be Down or Grabbed. **Taking** works on a comrade who is **Down and not Grabbed**, or — in a fight only — on a dead comrade's left items where they lie. A fitted canister you take leaves them at Gas Rating 0 and reaches you as a spare.
 
-**No rule passes an item to a comrade at another Position.** Disagreements go to the usual roll-off, and a Down comrade's player has no veto.
+**No rule passes an item to a comrade in another zone.** Disagreements go to the usual roll-off, and a Down comrade's player has no veto.
 
 </Subsection>
 
@@ -328,7 +328,7 @@ Each spends your action in a Titan Engagement and nothing outside one, and you m
 
 A dead soldier's **ODM Gear, horse, and fitted prosthetics leave play.** Everything else is left for the Squad: canisters, every Blade Set, every kit, every firearm.
 
-- **During the fight** a left item lies where they fell and can only be taken with Take Item, from that Position.
+- **During the fight** a left item lies in the zone where they fell and can only be taken with Take Item, by a soldier in that zone.
 - **Sharing out** happens when the procedure ends, before any promotion: the players give each remaining item to a living soldier who took part. Anything nobody takes leaves play.
 - **Left behind.** The items of a soldier who dies left behind when a fight ends are never shared out.
 - **Retirement** takes a soldier's gear out of play with them. Squad Supply belongs to the Squad, so no death takes any of it.
