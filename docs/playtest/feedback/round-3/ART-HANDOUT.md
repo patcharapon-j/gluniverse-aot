@@ -455,6 +455,19 @@ renders as an empty figure with its aria-label and the build passes. The frame i
 
 ## 4. Batch 2: the engagement board
 
+> **Batch 2 is done and shipped, 2026-09-21.** All 29 files are in `foundry/static/assets/board/`,
+> imported by the board section of `foundry/tools/import-art.sh`. The owner answered 8.1 questions 1
+> and 2 first (the board takes its own style block and style lock; hexes are flat-top), approved the
+> lock, and kept the lock figures' eye-level view. Three things below turned out wrong and are
+> corrected in `site/design/art-style.md`, which now holds the board's locked block: the tile
+> geometry asked for a width of the full canvas and a height of half the width inside a 16:9 canvas,
+> which cannot both hold, so the hexagon is now pinned to the canvas edges; tiles need a full
+> RENDERING paragraph or they come back photoreal even with the references attached; and the
+> generator leaves a red and yellow matte fringe on every cut-out, which is despilled on tiles and
+> figures but never on effects. `fx-fire` was regenerated once for a neon core. Rim glyphs are
+> frameless as this section proposed (8.1 question 8). No `art.ts` accessor was added, because no
+> code draws the board until batch E.
+
 Not urgent. Longest lead time, so it starts now. Section 7 of
 `docs/playtest/feedback/round-3/zone-combat-design.md` is the full picture; read 7.3 to 7.7 before you
 start. The board is a PIXI application mounted full-bleed over the canvas area during a Titan

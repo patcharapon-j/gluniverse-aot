@@ -423,7 +423,7 @@ Titans and soldiers stand on the board as painted miniatures, **seen at eye leve
 
 ### Post-processing: the matte fringe
 
-The generator leaves a saturated red and yellow fringe along the alpha edge of anything cut out on transparency, heavy on a Titan (3.2 percent of its pixels on the lock figure) and trace on tiles. Despill it before approval: a pixel is fringe when it is strongly red-over-blue or yellow-over-blue, a fringe pixel takes the mean colour of its clean opaque neighbours within 4 px, and one with no clean neighbour goes fully transparent. Proof on dark, where the fringe shows.
+The generator leaves a saturated red and yellow fringe along the alpha edge of anything cut out on transparency, heavy on a Titan (3.2 percent of its pixels on the lock figure) and trace on tiles. Despill it before approval: a pixel is fringe when it is strongly red-over-blue or yellow-over-blue, a fringe pixel takes the mean colour of its clean opaque neighbours within 4 px, and one with no clean neighbour goes fully transparent. Proof on dark, where the fringe shows. Never despill an effect overlay: fire is red and yellow by nature, and on `fx-fire` the detector flagged 270,000 pixels of real flame. Effects and rim glyphs ship as generated.
 
 ## Sizes
 
@@ -435,6 +435,10 @@ The generator leaves a saturated red and yellow fringe along the alpha edge of a
 | Ink-wash vignette | 1:1 | 1024x1024 | WebP, quality 82 |
 | Game icon | 1:1 | 1024x1024, transparent | WebP with alpha, quality 82, alpha quality 100 |
 | Wax seal | 1:1 | 1024x1024, transparent | WebP with alpha, 768 px, quality 82, alpha quality 100 |
+| Board hex tile | 16:9, hexagon pinned to the canvas edges | about 1672x941, transparent corners | WebP with alpha, 1024 px wide, quality 82, alpha quality 100 |
+| Board figure (Titan or soldier) | 4:5 | about 1024x1280, transparent | WebP with alpha, 1024 px tall, quality 82, alpha quality 100 |
+| Board effect overlay | 1:1 | 1024x1024, transparent | WebP with alpha, 512 px, quality 82, alpha quality 100 |
+| Board rim glyph | 1:1 | 1024x1024, transparent | WebP with alpha, 128 px, quality 82, alpha quality 100 |
 
 WebP copies are made with `cwebp -q 82 -alpha_q 100 -m 6`, adding `-resize` when the long edge is over 1600 px. Crop to the target ratio before encoding if the model returns a near miss.
 
@@ -446,6 +450,7 @@ Names describe meaning, never appearance, in lowercase kebab case.
 - Ink-wash vignettes: `vignette-ink-<subject>.png`, for example `vignette-ink-odm-canister.png`.
 - Wax seal: `seal-wax.png`, one file.
 - Icons: `<family>-<meaning>.png`. Families are `die`, `roll`, `tier`, `gear`, `talent`, `attr`, `harm`, `size`, `position`, `tactic`, `specialty`. Examples: `die-stress.png`, `roll-push.png`, `tier-kill.png`, `gear-odm.png`.
+- Board: `hex-<anchor rating>-<variant>.png` with the rating ids of `data/engagement/anchor-ratings.yaml` (`hex-giant-forest-2.png`), `rim-<anchor rating>.png`, `titan-<size class>.png`, `soldier-<pose>.png`, `fx-<effect>.png`.
 - Retries keep the name and add `-v2`, `-v3` in `originals/` until one is picked. The picked file takes the plain name.
 
 ## Folders
@@ -457,3 +462,4 @@ Names describe meaning, never appearance, in lowercase kebab case.
 - `site/art-src/seal/`: the wax seal's 1024 px original, with its unpicked candidates in `rejected/` (gitignored).
 - `site/art-src/brand/`: the brand batch. `prompts/` holds every prompt as it was sent, `originals/` the picked generations, `rejected/` the ones that lost, `web/` the processed masters, and `og-compose.html` the page the social card is captured from (all gitignored).
 - `site/art-src/<batch>/contact-sheet*.png`: review sheets for the owner.
+- `foundry/art-src/board/`: the engagement board. `originals/` holds the generations and `originals/icons/` the rim glyphs, `clean/` the despilled PNGs, `web/` the WebP copies, `rejected/` the ones that lost, `prompts/` every prompt as sent (all gitignored). Shipped copies are committed under `foundry/static/assets/board/` by `foundry/tools/import-art.sh`.
