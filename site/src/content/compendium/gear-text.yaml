@@ -23,7 +23,7 @@ sources:
   - path: data/gear/blade-sets.yaml
     sha: "2f33a0bf9d8236c8c471881d782878d54e144bbe"
   - path: data/gear/horses.yaml
-    sha: "26c742385ad6fe5a8c22b49dc9a751702e344df6"
+    sha: "67a3d5ffdcee0b0cd4ccf29e97af715dc38b985e"
   - path: data/gear/falls.yaml
     sha: "225976704dd51b915ea7b34537256c581353adad"
   - path: data/gear/carrying.yaml

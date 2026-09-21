@@ -21,7 +21,7 @@ sources:
   - path: data/engagement/read.yaml
     sha: "4c6f60af2d757027d71368129ae3ec6f58ea3004"
   - path: data/engagement/round.yaml
-    sha: "13af90dc27b03f4951e940b7f64bc98c6d1b7ad7"
+    sha: "80ceb842525c338d3dd05ca723911ef63c9fb491"
   - path: data/engagement/squad-tactics.yaml
     sha: "404d461f565f9ba376a80b6273f8a0ed8e78074a"
   - path: data/engagement/titan-harm.yaml
@@ -31,7 +31,7 @@ sources:
   - path: data/gear/carrying.yaml
     sha: "50681aaa7a60484b017b19fea4070de120c83a5b"
   - path: data/gear/horses.yaml
-    sha: "26c742385ad6fe5a8c22b49dc9a751702e344df6"
+    sha: "67a3d5ffdcee0b0cd4ccf29e97af715dc38b985e"
   - path: data/gear/odm-gear.yaml
     sha: "8ef3b0a50aa0f8c9d0af0b3bd78d3ac268c98a03"
   - path: data/gear/blade-sets.yaml

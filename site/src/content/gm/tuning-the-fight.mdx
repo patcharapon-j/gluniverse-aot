@@ -6,15 +6,15 @@ order: 3
 tab: Tuning
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "f443bab11c835d784f7fde1f6063693fd95801fe"
+    sha: "2860850c2159be9b64b34a2b5e6968f5c2cfde97"
   - path: docs/rules/06-standard-titans.md
-    sha: "97151273b4733c4ef776001be624bea059d08011"
+    sha: "d786d456876ca31f086ce7c09c4739243f751e70"
   - path: data/engagement/tuning.yaml
-    sha: "fa81ec570e0051eb6a5bd76adeebd65d4a16ee42"
+    sha: "7f921780bdd662ebf727399151b564cfe15c3ddd"
   - path: data/titans/tuning.yaml
-    sha: "d48ff10dda02b5f9c8929b6655a3654897dcead7"
+    sha: "3a6ba60472b8a5b7e965242f5b385bb63c7852f9"
   - path: data/engagement/engagement-setup.yaml
-    sha: "12f7ff1550ca04dbbaefe2cd8718b019a258bc55"
+    sha: "dbe7f5c181689357c35c7a06d751f5b76fd37d23"
 ---
 
 import FinePrint from '~/components/FinePrint.astro';
@@ -41,17 +41,11 @@ Know the shape a fight already has before you reach for anything, so you can tel
 
 <SectionHead id="what-to-expect" eyebrow="Section 1">What to Expect</SectionHead>
 
-<RuleBox title="Figures are being re-measured" icon="ph:ruler">
-
-The field of zones and the Stride changed how a fight opens and how a Titan closes, so every round-to-kill figure, every odds line, and every Chapter 6 band this section used to quote is being re-measured against them. Nothing below states a number that could go stale under your table; where the shape of a fight matters, it is said in words instead.
-
-</RuleBox>
-
 <FactTable caption="How a Titan takes to fall" columns={['Titan', 'The shape of the fight']} rows={[
-  ['Medium', 'The fight every other one is measured against. Picture this one when you pace a session.'],
-  ['Small', 'Quicker than the Medium, for all that it acts twice a round: the second card a round rarely turns on anyone new.'],
-  ['Large', 'Runs at least as long as the Medium and costs more on the way; the one most likely to drag past its Frenzy.'],
-  ['Sprinting Abnormal', 'Falls sooner than the Medium and later than the Small, and hurts more than either.'],
+  ['Medium', '<b>Dead in about three rounds</b> against a prepared Squad of four. Round three is the one to picture when pacing a session.'],
+  ['Small', 'Usually two, and a little <em>cheaper</em> than the Medium for all that it acts twice a round. It rarely turns on anyone new before it is down.'],
+  ['Large', 'Dies about when the Medium does, but it <b>drags</b>. About one fight in fifteen ends with the Squad out of gas, out of ground, or retreating with it still standing, at about half again the Critical Injuries of a Medium fight and more than half again the deaths.'],
+  ['Sprinting Abnormal', 'Falls sooner than the Medium and later than the Small. Hurts more than either, and kills more often than the Medium.'],
 ]} />
 
 **Every one of those shapes assumes the Squad presses.** A Titan gains 1 Frenzy at the end of every third round, to 3, and adds it to its behavior roll, so a fight that runs past round six costs more than the row above says. The Squad decides which of the two it gets.
@@ -67,7 +61,7 @@ The field of zones and the Stride changed how a fight opens and how a Titan clos
 - **Deaths are rare, and meant to be.** No single standard fight is expected to kill; when one does, a Grab went unanswered or a soldier was already carrying too much.
 - **A long fight is a losing one.** Frenzy walks a Titan down its own table, and it never falls. A Squad that kites, retreats late, or spends rounds on a leg it did not need is choosing the kill tier.
 - **Standing where it cannot reach you does not stop the round.** A Titan that cannot get at its Attention holder turns on the next soldier it can reach. The safe Position is safe for one person only, and that person's comrades pay for it.
-- **A Grab is the sharp end.** A comrade close enough to act is what keeps a Grabbed soldier alive; alone, the odds turn hard against them. That gap is the whole argument for staying near each other.
+- **A Grab is the sharp end.** With a comrade close enough to act, a Grabbed soldier dies about one time in three; alone, two in three. That gap is the whole argument for staying near each other.
 - **A first fight is slower and costlier** for the Fear Roll it opens with. Do not read it as rules that are too hard.
 - **A canister lasts about eight rounds of ODM use,** which is why the retreat clock is {RETREAT_CLOCK} segments. The run for the walls begins as the gas runs low.
 
@@ -77,7 +71,7 @@ The field of zones and the Stride changed how a fight opens and how a Titan clos
 
 <Subsection title="Where the hard nights come from" id="where-the-hard-nights-come-from">
 
-- **Soldiers built without Talents.** Plain templates against a Large Titan is the hardest standard fight in the book, on every count that matters, and the gap against a prepared Squad is being re-measured for the field and the Stride.
+- **Soldiers built without Talents.** Plain templates against a Large Titan is the hardest standard fight in the book: no kill at all close to twice as often as a prepared Squad sees it, and about half again the Critical Injuries and deaths that the same soldiers take from a Medium Titan.
 - **Two Focus Titans at once.** Rounds near half an hour, and far more falls on the Squad than in one fight. If your rounds are dragging, this is usually why.
 - **Scattering.** The lethality lives in the Grab, and the Grab's lethality lives in how many zones away everybody else is.
 
