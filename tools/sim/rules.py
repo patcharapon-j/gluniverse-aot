@@ -706,6 +706,9 @@ class Rules:
         if len(bottom) != 1:
             raise ValueError(f"anchor-ratings.yaml: {bottom} are their own sparser; the ladder needs one bottom (Open)")
         self.open_rating = bottom[0]
+        # anchor-ratings.yaml, zone_becomes_open (OQ-205): engine.Fight.wreck_zone lands every anchored soldier in the zone
+        guard(r"every soldier anchored in that zone becomes ground and stops being airborne, with no fall, whatever "
+              r"stands in it", need(ar, "zone_becomes_open", "anchor-ratings.yaml"), "a zone that becomes Open (OQ-205)")
         # the Terrain Traits the engine applies by zone (16-5): the Bonus Dice a mounted soldier's Break Attention gains
         # (Open), and the roof that keeps a soldier at a Blind Spot from being airborne (Urban)
         self.mounted_ba_dice, self.roof_ratings = {}, set()

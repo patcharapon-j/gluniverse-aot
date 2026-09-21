@@ -1495,9 +1495,9 @@ class Fight:
     # ------------------------------------------------------------------ wrecks and the Stride (decision batch 16)
     def wreck_zone(self, n):
         """titan-format.yaml, effect_types, wreck, and a falling Titan (16-20): the zone takes one rating step toward Open
-        (space.wreck). A zone that becomes Open while a standing Focus Titan is in it (16-21): every soldier at its Blind
-        Spot holds on-body instead, not a fall, and every soldier anchored there becomes ground and stops being
-        airborne, with no fall. Momentum above the zone's new anchors is lost at once (16-4)."""
+        (space.wreck). A zone that becomes Open (16-21; OQ-205): every soldier anchored there becomes ground and stops
+        being airborne, with no fall, whatever stands in it; while a standing Focus Titan is in it, every soldier at its
+        Blind Spot holds on-body instead, not a fall. Momentum above the zone's new anchors is lost at once (16-4)."""
         if n is None:
             return
         st = self.stats
@@ -1509,12 +1509,15 @@ class Fight:
         st["wreck_steps"] += 1
         t = self.t
         standing = not t.dead and not t.grounded() and t.zone == n
-        if to == R.open_rating and standing:
-            st["zones_opened"] += 1
+        if to == R.open_rating:
+            # anchor-ratings.yaml, zone_becomes_open (OQ-205, provisional): every soldier anchored in the zone becomes
+            # ground and stops being airborne, with no fall, whatever stands in it; under a standing Focus Titan every
+            # soldier at its Blind Spot also holds on-body instead
+            st["zones_opened"] += 1 if standing else 0
             for s in self.present():
                 if s.zone != n or s.pinned or s.carried_by is not None:
                     continue
-                if s.attach == ("blind-spot", t.label):
+                if standing and s.attach == ("blind-spot", t.label):
                     s.attach = ("on-body", t.label)
                 elif s.attach[0] == "anchored":
                     s.attach = ("ground", None)
