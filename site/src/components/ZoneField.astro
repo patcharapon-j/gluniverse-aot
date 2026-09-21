@@ -1,0 +1,362 @@
+---
+/**
+ * The Standard field: 13 zones, flat-top, numbered, with a Focus Titan in the centre and the
+ * Squad's start zone. All geometry (which zone sits where, which is the centre, which is the
+ * Squad's start) and every label come from `data/engagement/zones.yaml`
+ * (fields.sizes[id=standard], coordinates), never hand-placed: change the data and this drawing
+ * redraws with it.
+ *
+ * Two set pieces are shown against that field: a Flight that crosses the Titan's zone without
+ * stopping there, and a Stride, both drawn from the same coordinates and the file's own `flight`
+ * and `stride` entries. A third strip, the attachments, is drawn along the field's vertical axis
+ * (the column of zones the centre and the Squad's start both sit in), one chip per entry in the
+ * file's `attachments` list, in the order the file gives them.
+ */
+import { parse } from 'yaml';
+import zonesText from '../../../data/engagement/zones.yaml?raw';
+
+interface RawZone {
+  n: number;
+  q: number;
+  r: number;
+}
+interface RawField {
+  id: string;
+  name: string;
+  centre: number;
+  squad_start: number;
+  zones: RawZone[];
+}
+interface RawAttachment {
+  id: string;
+  text: string;
+}
+interface ZonesDoc {
+  coordinates: { neighbour_offsets: [number, number][] };
+  fields: { sizes: RawField[] };
+  attachments: RawAttachment[];
+}
+const doc = parse(zonesText) as ZonesDoc;
+
+const field = doc.fields.sizes.find((f) => f.id === 'standard');
+if (!field) throw new Error('ZoneField: zones.yaml has no "standard" field.');
+if (field.zones.length !== 13) {
+  throw new Error(`ZoneField: the standard field has ${field.zones.length} zones, not 13.`);
+}
+
+const offsets = doc.coordinates.neighbour_offsets;
+if (offsets.length !== 6) throw new Error('ZoneField: zones.yaml needs six neighbour offsets.');
+
+const byN = new Map(field.zones.map((z) => [z.n, z]));
+const centre = byN.get(field.centre);
+const squadStart = byN.get(field.squad_start);
+if (!centre) throw new Error(`ZoneField: no zone "${field.centre}" for the centre.`);
+if (!squadStart) throw new Error(`ZoneField: no zone "${field.squad_start}" for the Squad's start.`);
+
+// ---------------------------------------------------------------- axial (flat-top) to pixel
+const SIZE = 44; // centre-to-corner, in svg units
+const px = (q: number) => SIZE * 1.5 * q;
+const py = (q: number, r: number) => SIZE * (Math.sqrt(3) / 2 * q + Math.sqrt(3) * r);
+
+function corners(cx: number, cy: number): string {
+  const pts: string[] = [];
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI / 180) * (60 * i);
+    pts.push(`${cx + SIZE * Math.cos(a)},${cy + SIZE * Math.sin(a)}`);
+  }
+  return pts.join(' ');
+}
+
+const zones = field.zones.map((z) => ({
+  ...z,
+  x: px(z.q),
+  y: py(z.q, z.r),
+}));
+const at = new Map(zones.map((z) => [z.n, z]));
+
+// ---------------------------------------------------------------- the vertical axis
+// The column of zones sharing the centre's q: every field's centre and Squad's start both sit
+// in it (placement.focus_titan and placement.squad, zones.yaml), so it is where the attachments
+// (a soldier's place within a zone) are drawn.
+const axisQ = centre.q;
+const axisZones = zones.filter((z) => z.q === axisQ).sort((a, b) => a.y - b.y);
+if (!axisZones.some((z) => z.n === squadStart.n)) {
+  throw new Error("ZoneField: the Squad's start zone is not on the centre's column.");
+}
+
+// ---------------------------------------------------------------- a Flight crossing the Titan's zone
+// Two zones on opposite sides of the centre (offsets[i] and offsets[i+3] are opposite pairs,
+// coordinates.neighbour_offsets), other than the vertical-axis pair the Squad's start already
+// shows, so the Flight's start and end are both distinct from the centre and from each other.
+function neighbour(z: RawZone, [dq, dr]: [number, number]): RawZone | undefined {
+  return field!.zones.find((o) => o.q === z.q + dq && o.r === z.r + dr);
+}
+let flightFrom: RawZone | undefined;
+let flightTo: RawZone | undefined;
+for (let i = 0; i < 3; i++) {
+  const [dq, dr] = offsets[i];
+  if (dq === 0) continue; // skip the vertical-axis pair (already the Squad's start)
+  const a = neighbour(centre, [dq, dr]);
+  const b = neighbour(centre, [-dq, -dr]);
+  if (a && b) {
+    flightFrom = a;
+    flightTo = b;
+    break;
+  }
+}
+if (!flightFrom || !flightTo) throw new Error('ZoneField: could not find a pair of zones flanking the centre for the Flight.');
+const fFrom = at.get(flightFrom.n)!;
+const fTo = at.get(flightTo.n)!;
+// A shallow bow through the crossed zone, so the arc reads as passing over it, not stopping in it.
+const flightMidX = (fFrom.x + fTo.x) / 2;
+const flightMidY = (fFrom.y + fTo.y) / 2 - SIZE * 0.9;
+const flightPath = `M ${fFrom.x} ${fFrom.y} Q ${flightMidX} ${flightMidY} ${fTo.x} ${fTo.y}`;
+
+// ---------------------------------------------------------------- a Stride, toward the Attention holder
+// stride.toward is attention-holder; here the Squad's start zone holds it, and stride.step is one
+// zone step, same as the one from the centre to an adjacent zone on the axis.
+const strideFrom = at.get(centre.n)!;
+const strideTo = at.get(squadStart.n)!;
+
+// ---------------------------------------------------------------- bounds
+const R = SIZE * 1.02;
+const xs = zones.map((z) => z.x);
+const ys = zones.map((z) => z.y);
+const minX = Math.min(...xs) - R;
+const maxX = Math.max(...xs) + R;
+const minY = Math.min(...ys, flightMidY) - R;
+const maxY = Math.max(...ys) + R;
+const fieldH = maxY - minY;
+
+// ---------------------------------------------------------------- the attachment strip, alongside
+const CHIP_W = 150;
+const CHIP_H = 30;
+const CHIP_GAP = 14;
+const stripX = maxX + 56 + CHIP_W / 2;
+const stripTop = minY + CHIP_H / 2;
+const attachments = doc.attachments.map((a, i) => ({
+  ...a,
+  x: stripX,
+  y: stripTop + i * (CHIP_H + CHIP_GAP),
+}));
+
+const width = stripX + CHIP_W / 2 + 20 - minX;
+const height = Math.max(fieldH, attachments.length ? attachments[attachments.length - 1].y + CHIP_H / 2 - minY + 20 : fieldH);
+
+const fig = 'Fig. 5.2';
+---
+<figure class="drawing wide zonefield" aria-labelledby="fig-zone-field-caption">
+  <p class="lead">
+    The {field.name.toLowerCase()}: {field.zones.length} zones, flat-top, numbered from the data
+    that also places every soldier and every Titan on it. A Focus Titan starts at the centre, zone
+    {field.centre}; the Squad starts at zone {field.squad_start}.
+  </p>
+
+  <div class="board">
+    <svg
+      class="field"
+      viewBox={`${minX} ${minY} ${width} ${height}`}
+      role="img"
+      aria-label={`The ${field.name.toLowerCase()}, ${field.zones.length} zones flat-top and numbered. The Focus Titan starts at the centre, zone ${field.centre}. The Squad starts at zone ${field.squad_start}. A Flight from zone ${flightFrom.n} crosses the Titan's zone and ends at zone ${flightTo.n}. A Stride moves the Titan from zone ${centre.n} toward the Attention holder, into zone ${squadStart.n}. The attachments, in order: ${doc.attachments.map((a) => a.id).join(', ')}.`}
+    >
+      <g class="hexes">
+        {zones.map((z) => (
+          <g class:list={['hex', z.n === centre.n && 'hex--titan', z.n === squadStart.n && 'hex--squad']}>
+            <polygon points={corners(z.x, z.y)} />
+            <text class="n" x={z.x} y={z.y - 6}>{z.n}</text>
+            {z.n === centre.n && <text class="tag" x={z.x} y={z.y + 14}>Titan</text>}
+            {z.n === squadStart.n && <text class="tag" x={z.x} y={z.y + 14}>Squad</text>}
+          </g>
+        ))}
+      </g>
+
+      <g class="setpieces">
+        <path class="flight" d={flightPath} marker-end="url(#zf-arrow)" />
+        <text class="setpiece-label" x={flightMidX} y={flightMidY - 8}>Flight, crossing the Titan's zone</text>
+
+        <line
+          class="stride"
+          x1={strideFrom.x}
+          y1={strideFrom.y}
+          x2={strideTo.x}
+          y2={strideTo.y}
+          marker-end="url(#zf-arrow)"
+        />
+        <text class="setpiece-label" x={(strideFrom.x + strideTo.x) / 2 + 14} y={(strideFrom.y + strideTo.y) / 2}>Stride</text>
+      </g>
+
+      <g class="axis">
+        <line
+          class="axis-line"
+          x1={axisZones[0].x}
+          y1={minY + 4}
+          x2={axisZones[0].x}
+          y2={maxY - 4}
+        />
+      </g>
+
+      <g class="attachments">
+        <line
+          class="attach-spine"
+          x1={stripX}
+          y1={attachments[0].y}
+          x2={stripX}
+          y2={attachments[attachments.length - 1].y}
+        />
+        {attachments.map((a) => (
+          <g class:list={['chip', (a.id === 'on-body' || a.id === 'blind-spot') && 'chip--nape']}>
+            <rect x={a.x - CHIP_W / 2} y={a.y - CHIP_H / 2} width={CHIP_W} height={CHIP_H} rx="3" />
+            <text x={a.x} y={a.y + 4}>{a.id.replace(/-/g, ' ')}</text>
+          </g>
+        ))}
+      </g>
+
+      <defs>
+        <marker id="zf-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" />
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <p class="axis-note">
+    The vertical axis, the column of zones the centre and the Squad's start both sit in, is where
+    the attachments line up: how a soldier stands within a zone, from ground up to the body itself.
+  </p>
+
+  <ul class="attach-legend">
+    {doc.attachments.map((a) => (
+      <li><b>{a.id.replace(/-/g, ' ')}.</b> {a.text}</li>
+    ))}
+  </ul>
+
+  <figcaption class="titleblock" id="fig-zone-field-caption"><span>{fig}</span><span>The {field.name.toLowerCase()}, a Flight, and a Stride</span></figcaption>
+</figure>
+
+<style>
+  .zonefield .lead {
+    margin: 0 0 20px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .board {
+    width: 100%;
+  }
+  .field {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .hex polygon {
+    fill: var(--paper-hi);
+    stroke: var(--ink);
+    stroke-width: 1.3;
+  }
+  .hex--titan polygon {
+    stroke: var(--seal);
+    stroke-width: 2;
+  }
+  .hex--squad polygon {
+    stroke-dasharray: 4 3;
+  }
+  .hex .n {
+    font-family: var(--f-type);
+    font-size: 13px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--ink);
+  }
+  .hex .tag {
+    font-family: var(--f-type);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-anchor: middle;
+    fill: var(--ink-2);
+  }
+  .hex--titan .tag {
+    fill: var(--seal);
+  }
+  .axis-line {
+    stroke: var(--rule);
+    stroke-width: 1.4;
+    stroke-dasharray: 2 5;
+  }
+  .flight {
+    fill: none;
+    stroke: var(--seal);
+    stroke-width: 2;
+  }
+  .stride {
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  #zf-arrow path {
+    fill: var(--ink);
+  }
+  .flight ~ .setpiece-label,
+  .setpiece-label {
+    font-family: var(--f-type);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    fill: var(--ink-2);
+  }
+  .attach-spine {
+    stroke: var(--ink);
+    stroke-width: 1.6;
+  }
+  .chip rect {
+    fill: var(--paper-hi);
+    stroke: var(--ink);
+    stroke-width: 1.3;
+  }
+  .chip--nape rect {
+    stroke: var(--seal);
+    stroke-width: 1.8;
+  }
+  .chip--nape text {
+    fill: var(--seal);
+  }
+  .chip text {
+    font-family: var(--f-type);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-anchor: middle;
+    fill: var(--ink);
+  }
+  .axis-note {
+    margin: 18px 0 4px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .attach-legend {
+    margin: 10px 0 26px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .attach-legend b {
+    color: var(--ink);
+    text-transform: capitalize;
+  }
+
+  @media (max-width: 560px) {
+    .field {
+      min-width: 480px;
+    }
+    .board {
+      overflow-x: auto;
+    }
+  }
+</style>
