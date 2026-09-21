@@ -1,0 +1,29 @@
+# The Titan Engagement is fought over zones, with Positions derived and a Titan that strides
+
+A Titan Engagement is fought over a small **field of hexagonal zones**: 7, 13 or 19, with 13 the default. A zone is about a Titan's reach across. Each zone carries its own **Anchor Rating**, its occupants, and its effects, so the rating stops being one number for the whole fight and becomes a property of the ground. A soldier has **one location**: the zone they are in and one **attachment** (on the ground, anchored, on a body, in the blind spot of a named Titan, Grabbed, or Pinned). The four Positions keep their names and are **no longer stored**: each is **derived**, relative to each Focus Titan and each corpse, from the soldier's zone and attachment. A Focus Titan **strides**: on each of its cards that resolves a behavior, before the entry is chosen, it moves toward its Attention holder by the shortest route, up to its Size Class's **Stride** in zones. Recorded after the owner's decisions of 2026-09-20 on playtest feedback round 3 (`docs/playtest/feedback/round-3/OWNER-DECISIONS.md`, items 8 and 9, the Titan movement row, and questions 5 to 8; design in `zone-combat-design.md`), ruled in full in decision batch 16 (16-1 to 16-38).
+
+The reason is that a soldier had no location, only a set of relations. A Position was held relative to each Focus Titan and each corpse, so two Titans meant two facts about where one soldier stood, which needed the close rule and the comparison block to repair; Distant was one value for everywhere not near, so terrain between two soldiers could not exist; and the Foundry canvas showed every soldier somewhere the rules never read. Deriving the Positions from a shared space keeps every Behavior Table `position_requirement`, the Attention Ladder, and every rule that reads a Position working as written, and retires the two repair blocks rather than amending them.
+
+The Stride follows from the same space. Under relative Positions a Titan was the origin of the coordinate system and could not move; on a shared map a Titan that never moves makes a soldier two zones away provably safe. The Stride needs no new choice from anybody: its destination is the Attention holder, which the Ladder already decides, so ADR-0018 (Titans do not roll), ADR-0001 (Titans act from Behavior Tables; the Stride is a step of the card, not a turn), and ADR-0024, limit 8 (the GM picks no row, target, or order, and now no zone or route) all stand.
+
+## What this means
+
+- **Zones hold anything.** Any number of soldiers, horses, Titans and corpses share a zone, and nothing blocks a move or a Stride. Two Focus Titans may stand in one zone; each derives its own Positions.
+- **Reach stays in a Titan's own zone.** In Reach, On Body and Blind Spot exist only in the zone a Titan stands in. A Titan of any Size Class threatens no adjacent zone; an entry whose `position_requirement` names Distant still resolves at a holder in another zone, as its text has always described the Titan closing.
+- **Blind Spot has no facing.** It is an attachment naming a Titan, anchored to terrain in that Titan's zone and not on it (ADR-0010, as amended in batch 13), available where that zone's rating gives a step to it. "Behind the Titan" is its fiction and no rule reads a direction.
+- **Movement reads the zones involved.** A move steps into an adjacent zone or changes an attachment in the zone; a Flight crosses zones and spends Momentum on Carry by the rating of each zone it enters. A Flight that crosses a Focus Titan's zone is seen by it. The Momentum cap is the anchors of the soldier's own zone.
+- **Wrecking is local.** A `wreck` effect, and a falling Titan, take one Anchor Rating step off the Titan's own zone. Striding wrecks nothing.
+- **The Stride moves what hangs on the Titan and leaves what does not.** A soldier On Body or Grabbed goes with it. A soldier at Blind Spot is anchored to the terrain, stays in the zone it leaves, and is then Distant. A grounded Titan's Stride is 0.
+- **Elevation is not modelled.** Height is read from the attachment, as the fall bands already read it, and from the Giant Forest's raised fall band.
+- **Background Titans stay a clock.** A promoted Titan enters at an edge zone no soldier stands in.
+- **The board is the one picture of the fight.** In Foundry a custom PIXI board takes over the canvas area during a Titan Engagement and renders the same snapshot the rules read (ADR-0027, as amended). On paper a printed 13-hex field and dry-wipe markers do the same job.
+
+## Considered Options
+
+- **Replace Positions outright with zones and conditions:** rejected for the first version. It reopens every Behavior Table requirement in `data/titans/`, every Attention Ladder rung, and about thirty data files, and forces a full retune rather than a check. If the derived layer carries no weight at the table, deleting it later is mechanical; doing it first is not.
+- **Keep relative Positions and draw a map beside them:** rejected. Two pictures of the fight that can disagree is the problem this record removes.
+- **A Titan that never moves on the map:** rejected. It makes every entry whose requirement includes Distant nonsense and turns the monster into scenery.
+- **A Titan moved by the GM, or by a rolled direction:** rejected under ADR-0024, limit 8 and ADR-0018. Attention already names a destination.
+- **Titan reach into adjacent zones by Size Class:** rejected for the first version; it makes the field around a Large Titan a harm zone outside the Behavior Tables (ADR-0005, ADR-0019).
+- **Striding wrecks the zones crossed, and Background Titans walking in visibly:** held, not taken. Both are tempting and both move tuning levers that already exist elsewhere.
+- **Foundry's token layer as the board:** rejected. It has no vertical axis, and On Body, Blind Spot, airborne, Grabbed and Pinned are the facts that matter most on screen.

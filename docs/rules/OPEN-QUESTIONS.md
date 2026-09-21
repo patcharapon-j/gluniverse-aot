@@ -3957,3 +3957,42 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Open
 - **Decision:** none yet; the owner after the first playtest, or OQ-140's retune.
 - **ADR:** ADR-0014, as amended by the round 3 retune (R7).
+
+### OQ-200: Zone movement's starting values: the Carry limit and the mounted pace
+- **Type:** Simulator target (batch E, E7)
+- **Arose in:** decision batch 16, 16-12 and 16-13; `docs/playtest/feedback/round-3/zone-combat-design.md` sections 2.5 and 3.5; `data/engagement/zones.yaml`; `data/engagement/anchor-ratings.yaml`.
+- **Related:** OQ-182, OQ-183, OQ-201, OQ-202.
+- **Question:** The design's Carry costs (Open 2, Sparse 1, Wooded and denser 0) leave a Flight through Wooded zones free of any limit, and its promise that a horse outpaces a Titan needs a mounted move longer than one zone. Batch 16 sets a Flight to at most 2 Carries, the most a Flight could make at the tuned Wooded rating before zones, and a mounted move to at most two zone steps, ending on entering a standing Focus Titan's zone unless that zone is Open. Are these the right values once Titans stride?
+- **Options:** (a) Keep 2 and 2. (b) Carry limit 1 or 3. (c) Mounted pace 1 outside Open zones, with the Open ride-through only. (d) Tie the Carry limit to the anchors of the zone the Flight starts in.
+- **Current handling:** (a), provisional. The rerun reports Momentum gained and spent per fight, the share of Flights that Carry, how often a Stride brings its holder into reach, and how often a rider or a flier leaves ahead of a Titan.
+- **Why still open:** Both values are chosen here to close a gap, not measured, and they move escape and approach tempo in every fight.
+- **Simulator case:** the E7 rerun's reference fights on the Standard field, with each value moved one step either way.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** 16-13 and 16-12 as written until the rerun.
+- **ADR:** ADR-0029; ADR-0014 with the retune.
+
+### OQ-201: Which zone effects harm, and how much
+- **Type:** Design
+- **Arose in:** decision batch 16, 16-30; `zone-combat-design.md` sections 2.2 and 2.5; the three effect overlays shipped in `foundry/static/assets/board/`.
+- **Related:** OQ-138, OQ-146, OQ-200.
+- **Question:** The design gives effects a home in a zone and says a Flight that crosses a zone holding an effect such as fire or a steam cloud takes that effect's harm, but names no harm, and no rule of the Titan Engagement places fire or a lingering steam cloud today. Batch 16 writes the crossing rule and a closed list (steam in a corpse's zone, dust in a wrecked zone, fire reserved) and gives every effect harm none. Should any effect harm, and on what terms?
+- **Options:** (a) None harms; effects are information on the board and the sheet. (b) A corpse's steam deals the steam table's damage to a soldier who crosses or enters its zone. (c) Fire, placed only by an Operation Frame or a Mission Brief complication, deals Burn damage on entering or crossing. (d) A harming effect only in scenario rules, never in the base Titan Engagement.
+- **Current handling:** (a). No harm outside the Behavior Tables is added, which is what ADR-0005 and ADR-0019 guard; the mechanism is in the data so that a later ruling adds a row rather than a rule.
+- **Why still open:** Any harm here is new Titan-side harm with no Reaction, and it would need its own lethality row.
+- **Simulator case:** none until an option other than (a) is taken.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** 16-30 as written.
+- **ADR:** ADR-0029.
+
+### OQ-202: The field's terrain mix
+- **Type:** Simulator target (batch E, E7)
+- **Arose in:** decision batch 16, 16-6; `zone-combat-design.md` section 7.7; `data/engagement/engagement-setup.yaml`, `zone_terrain`.
+- **Related:** OQ-141, OQ-167, OQ-200.
+- **Question:** A field of one rating everywhere has no route to choose. Batch 16 generates each zone other than the centre and the Squad's start zone with a D6: 1 one rating sparser, 2 to 5 the field rating, 6 one rating denser. Does that give a route decision often enough without moving the tuned approach?
+- **Options:** (a) Keep the table. (b) A wider mix, 1 to 2 sparser and 6 denser. (c) A fixed pattern per field rating, with no roll. (d) The field rating everywhere unless the starting rule or the GM names a mix.
+- **Current handling:** (a), provisional. The rerun reports how often the shortest approach to the Nape crosses a zone of another rating, and the reference figures with and without the mix.
+- **Why still open:** The table is chosen here to close a gap in the design's generator, not measured.
+- **Simulator case:** the E7 rerun's reference fights with the mix on and with option (d).
+- **Status:** Open (provisional ruling in force)
+- **Decision:** 16-6 as written until the rerun.
+- **ADR:** ADR-0029; ADR-0014 with the retune.
