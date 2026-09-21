@@ -288,7 +288,7 @@ A soldier is **mounted** while riding their own horse. The sheet records it as t
     - **Outside a Titan Engagement,** the soldier has their own horse and it is not lame, and the soldier is not airborne, Down, or carried.
   - **Both arms lost.** A soldier who has lost both arms mounts and dismounts only with a comrade's help (Chapter 3, section 3.2, *Lost limbs*; decision batch 8, 8-25).
 - **Dismount,** with no roll. In a Titan Engagement it is part of a move, and the horse stays in the soldier's zone.
-- **Within a move.** A move can include one mount or one dismount, before or after the move's steps. A mounted soldier's ODM move dismounts before its first step. A mounted move makes up to two zone steps and no attachment step, never into an Urban zone, and ends on entering a zone that holds a standing Focus Titan unless that zone is Open (Chapter 5, section 5.2; provisional, OQ-200).
+- **Within a move.** A move can include one mount or one dismount, before or after the move's steps. A mounted soldier's ODM move dismounts before its first step. A mounted move makes up to two zone steps and no attachment step, never into an Urban zone, and ends on entering a zone that holds a standing Focus Titan unless that zone is Open (Chapter 5, section 5.2; OQ-200, decided by the zone retune, Z4).
 - **Becoming airborne from the saddle.** A mounted soldier whom a rule makes airborne, by an ODM move or a Fly roll whose calling rule says so, is dismounted first, with no fall. In a Titan Engagement the horse stays at the soldier's Position (`becoming_airborne`).
 - **Forced dismount** (`forced_dismount`):
   - The horse becomes lame while the soldier is mounted: they are dismounted and fall from a horse (section 4.6). The horse stays in the soldier's zone.

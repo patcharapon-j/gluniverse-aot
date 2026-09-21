@@ -867,8 +867,8 @@ class Rules:
         if self.frenzy_start != 0 or self.frenzy_cap < 1 or self.frenzy_rate < 1:
             raise ValueError(f"titan-format.yaml frenzy: starts_at {self.frenzy_start} cap {self.frenzy_cap} "
                              "(decision batch 13, 13-10)")
-        guard(r"By 1 at the frenzy end step of every even-numbered round of the Titan Engagement, the second, "
-              r"the fourth, the sixth, and so on, for every living Focus Titan, never above the cap",
+        guard(r"By 1 at the frenzy end step of every third round of the Titan Engagement, the third, "
+              r"the sixth, the ninth, and so on, for every living Focus Titan, never above the cap",
               fz["rises"], "when Frenzy rises")
         guard(r"The behavior roll, and nothing else", fz["used_by"], "what Frenzy is used by")
         guard(r"A total above the table's highest result reads as that highest result, which is 6",

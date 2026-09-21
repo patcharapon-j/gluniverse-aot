@@ -277,7 +277,7 @@ moves:
     (data/engagement/anchor-ratings.yaml, move_kinds).
   on_foot: One step, a zone step or an attachment step.
   mounted: >-
-    Up to two zone steps and no attachment step (provisional, OQ-200). The move ends on entering a
+    Up to two zone steps and no attachment step (OQ-200, decided by the zone retune, Z4). The move ends on entering a
     zone that holds a standing Focus Titan, unless that zone is Open, where the rider may ride on
     through. A move can include one mount or one dismount, before or after its steps
     (data/gear/horses.yaml, mounted, within_a_move). A mounted move that enters or leaves a zone
@@ -295,7 +295,7 @@ moves:
       Its first step, a zone step or an attachment step, costs nothing. Each further step is a Carry,
       paid in Momentum: a zone step costs the Carry cost of the zone it enters
       (data/engagement/anchor-ratings.yaml, ratings, carry_cost), a step off field costs 1, and an
-      attachment step costs 1. A Flight makes at most 2 Carries (provisional, OQ-200;
+      attachment step costs 1. A Flight makes at most 2 Carries (OQ-200, decided by the zone retune, Z4;
       data/engagement/zones.yaml, flight).
     ends: >-
       A Flight never ends free in an Open zone: in an Open zone its last step must be an attachment

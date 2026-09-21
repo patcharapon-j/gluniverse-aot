@@ -61,7 +61,7 @@ anchor_rating:
     - {results: [5], anchor_rating: urban}
     - {results: [6], anchor_rating: giant-forest}
 
-# The terrain mix (decision batch 16, 16-6; provisional, OQ-202): one D6 for each zone but the
+# The terrain mix (decision batch 16, 16-6; OQ-202, decided by the zone retune, Z4, docs/reviews/zone-retune-decisions.md): one D6 for each zone but the
 # centre and the Squad's start zone. A rating's sparser and denser are in
 # data/engagement/anchor-ratings.yaml, ratings.
 zone_terrain:

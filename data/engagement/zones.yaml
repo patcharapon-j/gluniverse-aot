@@ -10,7 +10,7 @@ id: zones
 name: The Field, Zones, and Attachments
 chapter: 05-titan-engagement
 adrs: [ADR-0010, ADR-0024, ADR-0029]
-decided: [OQ-200, OQ-201, OQ-202]   # OQ-200: the Carry limit and the mounted pace; OQ-201: no zone effect harms; OQ-202: the terrain mix (decision batch 16)
+decided: [OQ-200, OQ-201, OQ-202]   # OQ-200: the Carry limit and the mounted pace; OQ-201: no zone effect harms; OQ-202: the terrain mix (decision batch 16; OQ-200 and OQ-202 decided (a) by the zone retune, Z4, decision batch 17)
 
 # ------------------------------------------------------------------ coordinates (16-2)
 coordinates:
@@ -182,7 +182,7 @@ moves:
     whether a Flight may end free in it. A move on foot may always enter; a mounted move may enter
     every rating but Urban, and off field; a Flight may always enter.
   on_foot: {steps: 1}
-  mounted: {zone_steps: 2, attachment_steps: 0, ends_on_entering_a_standing_focus_titans_zone_unless_open: true}   # OQ-200
+  mounted: {zone_steps: 2, attachment_steps: 0, ends_on_entering_a_standing_focus_titans_zone_unless_open: true}   # OQ-200, decided by the zone retune, Z4 (docs/reviews/zone-retune-decisions.md)
   down_soldier: >-
     A Down soldier's move is one on-foot zone step, only out of a zone that holds a body into an
     adjacent zone that holds none, never off field, and not while Grabbed, carried, or Pinned.
@@ -196,7 +196,7 @@ flight:
   carry_cost_into_zone: anchor-ratings.yaml ratings[].carry_cost
   carry_cost_off_field: 1
   carry_cost_attachment_step: 1
-  carry_limit: 2           # OQ-200
+  carry_limit: 2           # OQ-200, decided by the zone retune, Z4 (docs/reviews/zone-retune-decisions.md)
   ends_free_in_open: false
   ends_free_as: anchored
   momentum_gain_cap: departure-zone

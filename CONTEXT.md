@@ -326,7 +326,7 @@ A Focus Titan's upcoming Behavior Table result, rolled in advance and hidden unt
 _Avoid_: queued attack
 
 **Frenzy**:
-A counter each Focus Titan holds, from 0 to 3. It starts at 0 when the Titan becomes a Focus Titan and rises by 1 at the end of every even-numbered round, and it is added to the Titan's behavior roll, so the Titan walks up its own table as the fight drags. A total above the table's highest result reads as that result. An illegal result at the top of a frenzied Titan's table turns back down the table, never round to 1.
+A counter each Focus Titan holds, from 0 to 3. It starts at 0 when the Titan becomes a Focus Titan and rises by 1 at the end of every third round (the third, the sixth, the ninth, and so on), and it is added to the Titan's behavior roll, so the Titan walks up its own table as the fight drags. A total above the table's highest result reads as that result. An illegal result at the top of a frenzied Titan's table turns back down the table, never round to 1.
 _Avoid_: rage, enrage, escalation counter, anger
 
 **Telegraph**:

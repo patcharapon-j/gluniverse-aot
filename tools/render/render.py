@@ -1132,10 +1132,10 @@ def b_carry_costs():
                 f"{ZONES} moves mounted", required=("zone_steps", "attachment_steps"))
     return (table(["A Flight's step", "Momentum it costs"], rows) +
             f"\n\n**Carry limit:** at most {whole(fl['carry_limit'], f'{ZONES} flight')} Carries on one Flight "
-            f"(provisional, OQ-200). A Flight never ends free in an Open zone, and one that ends free ends "
+            f"(OQ-200, decided by the zone retune, Z4). A Flight never ends free in an Open zone, and one that ends free ends "
             f"{ATTACHMENT_NAMES[fl['ends_free_as']]}.\n\n"
             f"**Mounted pace:** up to {whole(mo['mounted']['zone_steps'], f'{ZONES} moves mounted')} zone steps and "
-            f"{mo['mounted']['attachment_steps']} attachment steps (provisional, OQ-200). **On foot:** "
+            f"{mo['mounted']['attachment_steps']} attachment steps (OQ-200, decided by the zone retune, Z4). **On foot:** "
             f"{whole(mo['on_foot']['steps'], f'{ZONES} moves on_foot')} step.")
 
 

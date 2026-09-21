@@ -21,7 +21,8 @@ starting_values: >-
 # entry's Position requirement retargets down the Attention Ladder rather than falling to Thrash; and
 # each Focus Titan carries Frenzy, rising 1 every second round to a cap of 3 and added to its behavior
 # roll, with a total above the table's highest result reading as that result (the round 3 retune halved
-# the rate, R1). No Behavior Table in data/titans/ is re-authored for any of it. THE RERUN HAS
+# the rate, R1; the zone retune moved it to every third round, Z2, and figures measured before
+# that stay stale until its confirming run). No Behavior Table in data/titans/ is re-authored for any of it. THE RERUN HAS
 # HAPPENED: the confirming run of the round 3 retune (2026-09-20, 945 cases, 56,200,000 trials, rules
 # hash 0e5b7591a58a8d85) is the same rerun batches 10 and 11 scheduled, and it measured batches 10, 11
 # and 13 together. Every figure and verdict in this file, in data/titans/probe-figures.yaml, and in

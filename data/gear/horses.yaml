@@ -62,7 +62,7 @@ mounted:
     (data/engagement/positions.yaml, moves, flight). A mounted move makes up to two zone steps and no
     attachment step, enters any zone but an Urban one, and ends on entering a zone that holds a
     standing Focus Titan unless that zone is Open (data/engagement/positions.yaml, moves, mounted;
-    provisional, OQ-200).
+    OQ-200, decided by the zone retune, Z4).
   charge: >-
     A mounted move that enters or leaves a zone holding a Focus Titan may also set the loudest flag
     on one such Titan, once per move (data/engagement/anchor-ratings.yaml, mounted_charge). It is never rolled, spends nothing

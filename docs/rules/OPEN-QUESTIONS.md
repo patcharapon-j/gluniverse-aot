@@ -3875,6 +3875,7 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **ADR:** amends ADR-0001.
 - **Simulator case:** required, in the same retune as OQ-190 and OQ-192. The rate and the cap are starting values the simulator moves; the shape is settled.
 - **Revised by the round 3 retune (R1):** the rate is one rise every second round, at the frenzy end step of every even-numbered round; the cap stays 3. The shape is unchanged.
+- **Revised again by the zone retune (Z2):** every third round, at the frenzy end step of the third, the sixth, the ninth round, and so on; the cap stays 3 (DECISIONS-2026-09-14.md, *Batch 17*; `docs/reviews/zone-retune-decisions.md`).
 
 ### OQ-194: The musket note quotes a Health that no longer exists
 
@@ -3964,11 +3965,10 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Related:** OQ-182, OQ-183, OQ-201, OQ-202.
 - **Question:** The design's Carry costs (Open 2, Sparse 1, Wooded and denser 0) leave a Flight through Wooded zones free of any limit, and its promise that a horse outpaces a Titan needs a mounted move longer than one zone. Batch 16 sets a Flight to at most 2 Carries, the most a Flight could make at the tuned Wooded rating before zones, and a mounted move to at most two zone steps, ending on entering a standing Focus Titan's zone unless that zone is Open. Are these the right values once Titans stride?
 - **Options:** (a) Keep 2 and 2. (b) Carry limit 1 or 3. (c) Mounted pace 1 outside Open zones, with the Open ride-through only. (d) Tie the Carry limit to the anchors of the zone the Flight starts in.
-- **Current handling:** (a), provisional. The rerun reports Momentum gained and spent per fight, the share of Flights that Carry, how often a Stride brings its holder into reach, and how often a rider or a flier leaves ahead of a Titan.
-- **Why still open:** Both values are chosen here to close a gap, not measured, and they move escape and approach tempo in every fight.
-- **Simulator case:** the E7 rerun's reference fights on the Standard field, with each value moved one step either way.
-- **Status:** Open (provisional ruling in force)
-- **Decision:** 16-13 and 16-12 as written until the rerun.
+- **Current handling:** (a), decided. The rerun reported Momentum gained and spent per fight, the share of Flights that Carry, how often a Stride brings its holder into reach, and how often a rider or a flier leaves ahead of a Titan.
+- **Simulator case:** the E7 rerun's reference fights on the Standard field, with each value moved one step either way; `tools/sim/cases.py` keeps the `zones/` rows as sensitivity rows.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 17*, Z4)
+- **Decision:** Zone retune, Z4 (decision batch 17): option **(a)**, measured. The Carry limit stays 2 and the mounted pace stays 2. Carry limit 1 reads 0.1694 deaths through the end on the standard Medium's bar run and Carry limit 3 reads 0.1679, against 0.1661 as shipped; the Sprinting Abnormal's no kill moves only between 9.93% and 10.19%. The mounted pace moves only mounted rows (pace 3 reads 0.186 against 0.167, pace 1 reads 0.171), and 2 is the value that neither raises lethality nor gives up a horse outpacing a striding Titan. With nothing to buy, the values stand and their provisional markers come off (`docs/reviews/zone-retune-decisions.md`).
 - **ADR:** ADR-0029; ADR-0014 with the retune.
 
 ### OQ-201: Which zone effects harm, and how much
@@ -3990,11 +3990,10 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Related:** OQ-141, OQ-167, OQ-200.
 - **Question:** A field of one rating everywhere has no route to choose. Batch 16 generates each zone other than the centre and the Squad's start zone with a D6: 1 one rating sparser, 2 to 5 the field rating, 6 one rating denser. Does that give a route decision often enough without moving the tuned approach?
 - **Options:** (a) Keep the table. (b) A wider mix, 1 to 2 sparser and 6 denser. (c) A fixed pattern per field rating, with no roll. (d) The field rating everywhere unless the starting rule or the GM names a mix.
-- **Current handling:** (a), provisional. The rerun reports how often the shortest approach to the Nape crosses a zone of another rating, and the reference figures with and without the mix.
-- **Why still open:** The table is chosen here to close a gap in the design's generator, not measured.
-- **Simulator case:** the E7 rerun's reference fights with the mix on and with option (d).
-- **Status:** Open (provisional ruling in force)
-- **Decision:** 16-6 as written until the rerun.
+- **Current handling:** (a), decided. The rerun reported the reference figures with the mix, with option (b), and with option (d).
+- **Simulator case:** the E7 rerun's reference fights with the mix on and with option (d); `tools/sim/cases.py` keeps the `zones/` rows as sensitivity rows.
+- **Status:** Decided (see DECISIONS-2026-09-14.md, *Batch 17*, Z4)
+- **Decision:** Zone retune, Z4 (decision batch 17): option **(a)**, measured. The terrain mix stays 1 sparser, 2 to 5 the field rating, 6 denser. The wide mix (option (b)) reads 0.1686 deaths through the end on the standard Medium's bar run and the uniform field (option (d)) reads 0.1656, against 0.1661 as shipped, and the Sprinting Abnormal's no kill stays between 10.09% and 10.11% against 9.98%. With nothing to buy, the mix stands and its provisional marker comes off (`docs/reviews/zone-retune-decisions.md`).
 - **ADR:** ADR-0029; ADR-0014 with the retune.
 
 ### OQ-203: A forced step toward Distant from a zone that holds no body

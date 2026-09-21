@@ -49,7 +49,7 @@ decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127
 # Veteran 6, and Levi-grade 7, and a built soldier's Health runs 4 to 6 rather than 2 to 4 (builds,
 # below, carries the new values). A Titan whose Attention holder cannot meet the rolled entry's
 # Position requirement now retargets down the Attention Ladder instead of falling to Thrash, and each
-# Focus Titan carries Frenzy, rising 1 every second round to a cap of 3 (the round 3 retune halved the rate, R1) and added to
+# Focus Titan carries Frenzy, rising 1 every second round to a cap of 3 (the round 3 retune halved the rate, R1; the zone retune moved it to every third round, Z2, stale until its confirming run) and added to
 # its behavior roll.
 # The confirming run of the round 3 retune measured them, on the one run batches 10 and 11 also
 # waited for. It was a retune, and it measured batches A and F together: Health pulls every

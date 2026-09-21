@@ -244,7 +244,7 @@ momentum:
         effect: >-
           A Flight makes one more step after its free first step: a zone step costs the carry_cost of
           the zone it enters (ratings), a step off field costs 1, and an attachment step costs 1. A
-          Flight makes at most 2 Carries (provisional, OQ-200; data/engagement/zones.yaml, flight).
+          Flight makes at most 2 Carries (OQ-200, decided by the zone retune, Z4; data/engagement/zones.yaml, flight).
       - id: bite
         cost: 1
         effect: >-
