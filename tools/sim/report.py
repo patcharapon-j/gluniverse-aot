@@ -204,6 +204,11 @@ PROBE_GAPS_LOGGED = {
 # Engine changes since the committed run, printed only while the engine hash at rendering differs from the run's
 # (run.py --report --stale-ok). Empty this list once a full run records the current engine.
 ENGINE_CHANGES_SINCE_RUN = [
+    "`space.py` (new), `engine.py`, `policy.py`, `rules.py`, `dice.py`, `families.py`, `cases.py`, after the run: decision "
+    "batch 16 (ADR-0029). The field of zones, derived Positions, the Stride, Flights rolled with Carry and Momentum "
+    "(never modelled before: ODM moves were unrolled), wrecks by zone, the retreat over zones, Help and every "
+    "between-soldiers test in zones, and the `zones/` sensitivity rows. A forced step now spends nothing, as "
+    "`positions.yaml` (forced_step) says. Every figure of this report predates all of it.",
     "`run.py`, after the run: the probe re-check is on again, against `data/titans/probe-figures.yaml` as "
     "re-committed from this run (`--commit-probe-figures`, plan WP-S2), and the staleness test accepts that file. No "
     "case, trial, or figure of this run changes.",

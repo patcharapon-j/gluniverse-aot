@@ -105,6 +105,8 @@ def fight_job(args):
         add(acc, "lame_dodge_fight", 1 if st["lame_dodges"] else 0)
         add(acc, "jam_fight", 1 if st["jams"] else 0)
         hist(acc, "kill_round", st["kill_round"] if st["kill_round"] is not None else "none")
+        # decision batch 16, 16-38: rounds to the first Nape strike, beside rounds to the kill
+        hist(acc, "first_nape_round", st["first_nape_round"] if st["first_nape_round"] is not None else "none")
     return acc
 
 
@@ -155,6 +157,13 @@ def summarize_fight(acc):
                        other_round=(s.get("pools", 0) - s.get("grab_round_pools", 0)) / max(1, rounds - gr))
     out["round_time"] = rt
     out["rounds_per_fight"] = s.get("rounds", 0) / n
+    # decision batch 16, 16-38: the field's figures, as shares
+    fn = acc["hist"].get("first_nape_round", {})
+    out["median_first_nape_round"] = median_from(fn, n) if fn else None
+    out["stride_reach_share"] = 100 * s.get("stride_reach", 0) / max(1, s.get("resolved", 0))
+    out["flights_carry_share"] = 100 * s.get("flights_carry", 0) / max(1, s.get("flights", 0))
+    out["bs_lost_share"] = 100 * s.get("bs_lost", 0) / n
+    out["nape_help_adjacent_share"] = 100 * s.get("nape_helps_adjacent", 0) / max(1, s.get("nape_helps", 0))
     return out
 
 
@@ -172,7 +181,7 @@ def setup_lone(f, cfg):
             setattr(s, k, start[k])
     if start.get("horse_gone"):
         s.horse_gone = True
-        s.horse_at = None
+        s.horse_zone = None
         s.mounted = False
     if "flares" in start:
         f.flares = start["flares"]

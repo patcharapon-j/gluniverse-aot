@@ -1169,4 +1169,24 @@ simulator_cases:
     the move-up rule's wrap at Frenzy 0 and its turn back down at Frenzy 1 or more decide (round 3 review 1,
     C3); and the kill share by previous behavior, Broken parts, and Frenzy, read as a figure and not as a pass
     or a fail (round 3 review 1, C4)."
+  - "The field (decision batch 16, 16-38; ADR-0029): every Titan Engagement fought over zones, with Positions
+    derived from zone and attachment, the Stride before each card that resolves a behavior, Flights across zones with
+    their Carry costs and the Carry limit, the crossing flag and quiet, the mounted pace, wrecks by zone with the Sparse
+    grace, leaving from edge zones, the retreat of 16-27, and fields generated with the terrain mix; reporting every
+    Critical Injury and deaths band with zones and the Stride, against the figures before them."
+  - "Rounds to the first Nape strike and to the kill; the share of a Titan's cards that resolve Thrash and that
+    retarget, against decision batch 15's figures; and the share of cards whose Stride brought the holder into the
+    Titan's zone (16-38)."
+  - "Round 1 on its own: Critical Injuries and cards that landed in the first round, since a Stride of 2 against a
+    start one zone out closes on the first card, so design 2.7's hope that round one is unchanged is a figure to
+    read (16-38)."
+  - "Help on a Nape strike from an adjacent zone, as a share of all Help on Nape strikes (16-11, 16-38)."
+  - "Momentum gained and spent per fight (on Carry, quiet, and bite), the share of Flights that Carry, and bite
+    measured on its own as a row with no bite (16-14, 16-38)."
+  - "Wrecked zones per fight, and fights in which the Titan's zone lost its Blind Spot while it stood (16-20, 16-21,
+    16-38); retreats and their length in rounds under zones (16-27)."
+  - "Each value OQ-200 and OQ-202 hold, as sensitivity rows in the order the retune reads the levers: the Stride (0,
+    1, and 3 beside 2), the Carry limit (1 and 3 beside 2) and the mounted pace (1 and 3 beside 2, on a mounted
+    Squad), then the terrain mix (one rating everywhere, and a wider mix), with a Sparse and an Urban field rating
+    beside the Wooded reference (16-38; tools/sim/cases.py, _zones)."
   - The Expedition targets, once the Expedition rules exist.

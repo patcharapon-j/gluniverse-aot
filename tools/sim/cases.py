@@ -203,6 +203,39 @@ def _rules_added():
                  twin="ch6/" + twin) for i, (label, cfg, twin) in enumerate(rows)]
 
 
+# ---------------------------------------------------------------------- the field (decision batch 16, 16-38)
+def _zones():
+    """Decision batch 16, 16-38: the levers in the order the retune reads them, each against its twin, the reference start
+    of standard-medium on the field as data/ writes it. The Stride (size-classes.yaml, stride; 16-16); the Carry limit
+    and the mounted pace (zones.yaml, flight and moves; OQ-200); the terrain mix (engagement-setup.yaml, zone_terrain;
+    OQ-202), with one rating everywhere as the row nearest the figures measured before zones; and bite and quiet
+    measured by turning each off (policy.bite, policy.wants_quiet). Every value not named here is read from data/."""
+    med = reference_cfg("standard-medium")
+    base = "ch6/" + reference_label("standard-medium")
+    mounted = dict(med, mounted_start=True)
+    rows = [
+        ("stride 0: standard-medium, a Titan that never strides", dict(med, stride=0), base),
+        ("stride 1: standard-medium, Stride 1", dict(med, stride=1), base),
+        ("stride 3: standard-medium, Stride 3", dict(med, stride=3), base),
+        ("carry limit 1: standard-medium, at most 1 Carry a Flight", dict(med, carry_limit=1), base),
+        ("carry limit 3: standard-medium, at most 3 Carries a Flight", dict(med, carry_limit=3), base),
+        ("mounted: standard-medium, every soldier starts mounted", mounted, base),
+        ("mounted pace 1: standard-medium, every soldier starts mounted, 1 zone step", dict(mounted, mounted_pace=1),
+         "zones/mounted: standard-medium, every soldier starts mounted"),
+        ("mounted pace 3: standard-medium, every soldier starts mounted, 3 zone steps", dict(mounted, mounted_pace=3),
+         "zones/mounted: standard-medium, every soldier starts mounted"),
+        ("uniform field: standard-medium, every zone at the field rating", dict(med, uniform_field=True), base),
+        ("wide mix: standard-medium, terrain mix 1-2 sparser, 3-4 field, 5-6 denser",
+         dict(med, zone_terrain=[([1, 2], "sparser"), ([3, 4], "field"), ([5, 6], "denser")]), base),
+        ("sparse field: standard-medium on a Sparse field rating", dict(med, terrain="sparse"), base),
+        ("urban field: standard-medium on an Urban field rating", dict(med, terrain="urban"), base),
+        ("no bite: standard-medium, no Momentum spent on bite", dict(med, bite=False), base),
+        ("no quiet: standard-medium, no Momentum spent on quiet", dict(med, quiet=False), base),
+    ]
+    return [dict(family="fight", key="zones/" + label, cfg=cfg, n=n_of(R.fights_per_case), seed=28000 + i, label=label,
+                 twin=twin) for i, (label, cfg, twin) in enumerate(rows)]
+
+
 # ---------------------------------------------------------------------- the Free Build Squad (decision batch 7, 7-1)
 def _free_build():
     """ADR-0014 as amended in decision batch 7 (7-1): the Free Build Squad (rules.R.free_build), reported beside the
@@ -574,7 +607,7 @@ def _gas():
 
 
 def all_cases():
-    out = (_ch5() + _ch6() + _ch6_extra() + _rules_added() + _free_build() + _talent_rows() + _jam_fight() + _bar() + _lone()
+    out = (_ch5() + _ch6() + _ch6_extra() + _rules_added() + _zones() + _free_build() + _talent_rows() + _jam_fight() + _bar() + _lone()
            + _solo() + _grab() + _skirmish_cases()
            + _jam() + _dodge() + _sequence() + _gas())
     seeds, keys = {}, set()
