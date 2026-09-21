@@ -39,7 +39,7 @@ items_counted:
     talents: Strong Back (data/character/talents.yaml) makes the comrade's own 5 count as 0. The items that comrade carries still count.
   - what: a horse
     items: 0
-    note: A horse is ridden or left at a Position, never carried.
+    note: A horse is ridden or left in a zone, never carried.
   - what: Squad Supply
     items: 0
     note: The Squad holds it, not a soldier (data/gear/squad-supply.yaml).
@@ -54,8 +54,8 @@ overloaded:
 shedding:
   effect:
     - Drop any carried item that counts as 1 or more items (items_counted), other than a carried comrade. The dropped item leaves play.
-    - Set down a comrade the soldier carries. The comrade stops being carried and holds the soldier's Position.
-    - A carried soldier who is not Down stops being carried, and holds the carrier's Position.
+    - Set down a comrade the soldier carries. The comrade stops being carried and is in the soldier's zone with attachment ground.
+    - A carried soldier who is not Down stops being carried, and is in the carrier's zone with attachment ground.
   in_titan_engagement: >-
     At any point during the soldier's own turn, as often as they like, spending neither the move
     nor the action. A carrier who is airborne cannot set a comrade down, and a carried soldier
@@ -71,7 +71,7 @@ lifting_a_comrade:
   requirements:
     in_titan_engagement:
       - >-
-        A comrade holds the soldier's Position who is Down, or who is not Down, consents, and whom the
+        A comrade in the soldier's zone who is Down, or who is not Down, consents, and whom the
         both-legs grade forbids to move (data/harm/critical-injuries.yaml, lost_limb_riders, both-legs;
         decision batch 8, 8-11, as corrected in 8-18).
       - The comrade is not Grabbed, not Pinned, and not already carried. A Pinned soldier is never lifted (data/engagement/titan-harm.yaml, falling_titan, pinned; decision batch 8, 8-18).
@@ -88,8 +88,10 @@ lifting_a_comrade:
 
 carrying_a_comrade:
   position: >-
-    A carried comrade holds the carrier's Position, and changes Position whenever the carrier's
-    move does.
+    A carried comrade's zone and attachment are the carrier's, and change whenever the carrier's do,
+    by the carrier's move, a Stride that carries the carrier, or any other rule (decision batch 16,
+    16-23). A comrade set down, or no longer carried, is in the carrier's zone with attachment
+    ground.
   airborne: >-
     A carried comrade is never airborne on their own ODM Gear. Being carried is not ODM use, so
     it adds nothing to their Gas Roll (data/gear/odm-gear.yaml).
@@ -105,11 +107,11 @@ carrying_a_comrade:
   one_each: A soldier carries at most one comrade, and a carried soldier carries no one.
   ends:
     - The carrier sets the comrade down, or the carried soldier stops being carried (shedding).
-    - The carrier becomes Down while neither airborne nor mounted. The comrade is set down at the carrier's Position.
+    - The carrier becomes Down while neither airborne nor mounted. The comrade is set down in the carrier's zone.
     - The carrier becomes Down while airborne or mounted. Carrying goes on until step 2 of the carrier's own fall (data/gear/falls.yaml, procedure), where it ends and the comrade falls with them from the same band (data/gear/falls.yaml, triggers, carried).
-    - The carrier becomes Grabbed. The comrade is set down at the carrier's Position. If the carrier was airborne, the comrade falls.
+    - The carrier becomes Grabbed. The comrade is set down in the carrier's zone. If the carrier was airborne, the comrade falls.
     - The carrier falls for any other reason. The comrade falls with them.
-    - The carrier dies. The comrade is set down at the Position the carrier held. If the carrier was airborne or mounted, the comrade falls (data/gear/falls.yaml, carried).
+    - The carrier dies. The comrade is set down in the zone the carrier was in. If the carrier was airborne or mounted, the comrade falls (data/gear/falls.yaml, carried).
     - The carrier retires (data/mind/scars.yaml, retirement). The comrade stops being carried, with no fall.
     - The carried comrade becomes Grabbed. Carrying ends with no fall (data/engagement/grab.yaml).
     - >-
@@ -117,7 +119,7 @@ carrying_a_comrade:
       Injury at their own rolled Injury Location and their own pinning Body Part
       (data/engagement/titan-harm.yaml, falling_titan, leap_clear, carried; decision batch 8, 8-18).
     - The carried comrade dies.
-  set_down_outside_titan_engagement: Outside a Titan Engagement no soldier holds a Position, so a comrade set down or no longer carried there holds none.
+  set_down_outside_titan_engagement: Outside a Titan Engagement there is no field, so a comrade set down or no longer carried there is in no zone.
   titan_engagement_ends: Carrying goes on after the Titan Engagement ends, until one of the rows under ends happens.
 
 # ------------------------------------------------------------------ passing an item
@@ -127,7 +129,7 @@ passing_items:
   requirements:
     in_titan_engagement:
       - The passer is not Down.
-      - The receiver is a living comrade who holds the passer's Position. The receiver may be Down or Grabbed.
+      - The receiver is a living comrade in the passer's zone (data/engagement/zones.yaml, between_soldiers). The receiver may be Down or Grabbed.
       - Two soldiers who have both left the Titan Engagement count as holding the same Position (data/engagement/positions.yaml, leaving, after_leaving).
     outside_titan_engagement:
       - The passer is not Down.
@@ -147,7 +149,7 @@ passing_items:
     One passable item moves from the passer to the receiver. From then on it counts against the
     receiver's carrying limit.
   help: Not rolled, so it is never Helped or Covered.
-  no_thrown_pass: No rule lets a soldier pass an item to a comrade at another Position.
+  no_thrown_pass: No rule lets a soldier pass an item to a comrade in another zone.
   gas_roll: >-
     A passer who has used ODM Gear this round, and has not yet made that round's Gas Roll, makes
     it when they declare that they mean to pass their fitted canister, before it moves. If that roll leaves the canister at
@@ -165,7 +167,7 @@ taking_items:
   requirements:
     in_titan_engagement:
       - The taker is not Down.
-      - The Down comrade holds the taker's Position, or the left items lie at the Position the taker holds relative to the Focus Titan recorded with them (leaving_play, death, where_left).
+      - The Down comrade is in the taker's zone, or the left items lie in the taker's zone (leaving_play, death, where_left).
       - Two soldiers who have both left the Titan Engagement count as holding the same Position (data/engagement/positions.yaml, leaving, after_leaving).
     outside_titan_engagement:
       - The taker is not Down.
@@ -183,7 +185,7 @@ taking_items:
     discarded, nothing is taken, and the take is not made and spends nothing, so the taker may
     still take an action that turn (data/gear/odm-gear.yaml, gas_roll, canister_removed).
   help: Not rolled, so it is never Helped or Covered.
-  no_distance: No rule lets a soldier take an item from a comrade, or from left items, at another Position.
+  no_distance: No rule lets a soldier take an item from a comrade, or from left items, in another zone.
 
 # ------------------------------------------------------------------ leaving play
 leaving_play:
@@ -197,14 +199,11 @@ leaving_play:
       A canister that roll leaves at Gas Rating 0 is discarded and is never a left item
       (data/gear/odm-gear.yaml, gas_roll, canister_removed).
     where_left: >-
-      If the soldier dies in a Titan Engagement while holding a Position and not Grabbed, their
-      left items lie at that Position until the Titan Engagement ends, and their sheet records the
-      Position, together with the Focus Titan that Position is held relative to, and the items
-      still there (data/gear/sheet-fields.yaml, left_at). Whether any rule moves them is in
-      data/engagement/positions.yaml (left_items). How a soldier's Positions relative to two Focus
-      Titans relate, and what the recorded Position becomes when its Focus Titan dies, are in
-      data/engagement/positions.yaml (two_focus_titans). Otherwise the left items lie at no
-      Position.
+      If the soldier dies in a Titan Engagement while on the field and not Grabbed, their left items
+      lie in the zone they died in until the Titan Engagement ends, and their sheet records that
+      zone's number and the items still there (data/gear/sheet-fields.yaml, left_at). No Focus Titan
+      label is recorded with them, and no rule moves them (data/engagement/positions.yaml,
+      left_items; decision batch 16, 16-25). Otherwise the left items lie in no zone.
     during_the_procedure: >-
       Before the procedure in which the death happened ends, a left item can be taken only with
       take-item, from where it lies (taking_items). No other rule takes one.
@@ -215,7 +214,7 @@ leaving_play:
       steps:
         - >-
           The players give each left item not yet taken to a living soldier who took part in that
-          procedure. For a Titan Engagement, a soldier who took part is one who held a Position at
+          procedure. For a Titan Engagement, a soldier who took part is one who was on the field at
           any point during it. The players choose together, using the roll-off in
           data/character/lifepath.yaml (group_choices) if they disagree.
         - Every left item the players did not give to a soldier in the first step leaves play.

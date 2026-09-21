@@ -162,8 +162,9 @@ event_titan:
     (outside_titan_engagement, below).
   nearest: >-
     The living Focus Titan relative to which the rolling soldier holds the closest Position, in the
-    order On Body, Blind Spot, In Reach, Distant, as a fall's reference Titan is found
-    (data/gear/falls.yaml, height); on a tie, the living Focus Titan with the earliest label.
+    order On Body, Blind Spot, In Reach, Distant, each Position derived from the soldier's zone and
+    attachment (data/engagement/positions.yaml, derivation); on a tie, the living Focus Titan with the
+    earliest label.
   no_longer_alive: >-
     If the Titan named above has died when the result applies, the event's Titan is the nearest
     Focus Titan instead. If no Focus Titan is alive, every effect that acts on the event's Titan does

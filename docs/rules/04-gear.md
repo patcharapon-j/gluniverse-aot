@@ -6,13 +6,13 @@ It builds on Chapter 1 (dice pools, Gear Dice, wear on a Push, the two-die Gas R
 
 Later chapters own these rules, and this chapter only refers to them:
 
-- **Chapter 5, Titan Engagement:** Positions and Position steps, which Position changes need an ODM move, and what a move on foot or mounted can do (section 5.2); where soldiers and horses are when a Titan Engagement begins (sections 5.1 and 5.2); Attention (section 5.6) and Reactions against Titans (section 5.5); the Grab (section 5.9); Break Attention and its decoys (section 5.6); which Position a fall leaves a soldier at (section 5.2); and the order of the round's end steps (section 5.3). Chapter 4 also relies on Chapter 5 for:
+- **Chapter 5, Titan Engagement:** the field and its zones, attachments, Positions and steps, which steps need an ODM move, and what a move on foot or mounted can do (section 5.2); where soldiers and horses are when a Titan Engagement begins (sections 5.1 and 5.2); Attention (section 5.6) and Reactions against Titans (section 5.5); the Grab (section 5.9); Break Attention and its decoys (section 5.6); where a fall leaves a soldier (section 5.2); and the order of the round's end steps (section 5.3). Chapter 4 also relies on Chapter 5 for:
   - a move that changes no Position, such as landing, or mounting a horse at the soldier's own Position (section 5.2);
   - any rule that lifts the working ODM Gear requirement on strikes, such as one for a Titan grounded by a Broken leg (section 4.2; section 5.7);
   - what a soldier who is Jammed, or has run dry, can do at each Position beyond this chapter's limits (section 5.2);
   - whether any rule moves a horse, or a dead soldier's left items, from the Position where they lie (sections 4.5 and 4.11; section 5.2);
   - whether soldiers who have left a Titan Engagement count as holding the same Position for Field Repair, passing, and taking an item, as Chapter 3 lets them for Treat Injury and Rally (section 5.11);
-  - how a soldier's Positions relative to two Focus Titans relate, and what a horse's or a dead soldier's recorded Position becomes when the Focus Titan it names dies (sections 4.5 and 4.11; section 5.2);
+  - which zone a horse and a dead soldier's left items are in, recorded by zone number (sections 4.5 and 4.11; section 5.2);
   - the simulator case in OQ-60 (gas per round of fighting) and the binding Jam test in OQ-72 (the reference Rookie, with Agility 3, ODM Gear 2, no dodge Talent, and Stress 1 when the fight begins, holding Attention, including cards from a second Titan; section 4.9; section 5.13).
 - **Chapter 6, Standard Titans:** each Titan's behaviors (`data/titans/`). No entry there affects a horse (section 6.1).
 
@@ -63,7 +63,7 @@ Chapter 2's gear rule also lets a Chapter 4 rule name other states that count as
 
 - ODM Gear whose soldier has Gas Rating 0 (section 4.3). This never applies to the Graduation Exam's training ODM Gear, which has no canister.
 - A Blade Set that is not in the soldier's handles (section 4.4).
-- A horse, for the dodge and Ride, while the soldier is not mounted on it; for Break Attention, while the soldier is neither mounted on it nor at the Position it holds, compared relative to the Focus Titan recorded with the horse's Position (section 4.5).
+- A horse, for the dodge and Ride, while the soldier is not mounted on it; for Break Attention, while the soldier is neither mounted on it nor in the zone it is in (section 4.5).
 - A flintlock pistol or musket that is empty (*Firearms*, below).
 
 ### Restoring
@@ -156,7 +156,7 @@ ODM Gear whose current rating reaches 0 **Jams** (`jam`):
 2. The soldier cannot make an ODM move while it is Jammed, so they make no Gas Roll for any later round. The Gas Roll for the round in which it Jammed is still made.
 3. The Gas Rating does not change.
 4. The soldier cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot.
-5. If the soldier is airborne, they fall once the roll that Jammed it is finished (section 4.6). At the Urban Anchor Rating a soldier who holds Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them (Chapter 5, section 5.2; decision batch 10, OQ-182).
+5. If the soldier is airborne, they fall once the roll that Jammed it is finished (section 4.6). In an Urban zone a soldier who holds Blind Spot is anchored to a roof and is not airborne, so a Jam does not drop them (Chapter 5, section 5.2; decision batch 10, OQ-182).
 
 A Jam ends when the current rating rises above 0, through Field Repair (section 4.8) or Standard Issue replacing the Jammed ODM Gear (section 4.9; the interim issue does so only for ODM Gear rated below the Funding row, and a soldier may decline the exchange).
 
@@ -208,7 +208,7 @@ A soldier whose Gas Rating is 0 has **run dry** (`running_dry`):
 - Their ODM Gear counts as not had for every Action Catalog entry and adds no Gear Dice.
 - They cannot make an ODM move, and so make no Gas Roll for a later round, until their Gas Rating is above 0.
 - They cannot make a Nape strike, or a Body Part strike from On Body or Blind Spot (section 4.2).
-- **Running dry does not make them fall.** An airborne soldier who runs dry stays airborne at their Position until they stop being airborne (section 4.2). Chapter 5 states which moves other than ODM moves each Position allows (section 5.2, `data/engagement/positions.yaml`, `moves`, `letting_go`).
+- **Running dry does not make them fall.** An airborne soldier who runs dry stays airborne in their zone, with their attachment, until they stop being airborne (section 4.2). Chapter 5 states which moves other than ODM moves each attachment allows (section 5.2, `data/engagement/positions.yaml`, `moves`, `letting_go`).
 - It ends when the Gas Rating rises above 0: by Change Canister, by Standard Issue, or by receiving or taking a canister and then changing to it (section 4.7).
 - The Graduation Exam's training ODM Gear has no canister, and running dry never applies to it.
 
@@ -275,7 +275,7 @@ When a Pushed roll whose gear item is the Blade Set in the handles is final, and
 ### A soldier's horse
 
 - A soldier's horse is the one their sheet records, from Standard Issue. **A soldier can mount only their own horse** (`own_horse`).
-- In a Titan Engagement a horse holds a Position. While its soldier is mounted, it holds the soldier's Position and changes Position with them. After the soldier dismounts, it stays at the Position where they dismounted until they mount it again, and the sheet records that Position together with the Focus Titan it is held relative to (section 4.12). Chapter 5 states where each horse is when a Titan Engagement begins, whether a horse changes Position by any other rule, whether a Titan's behavior can target one, how a soldier's Positions relative to two Focus Titans relate, and what a recorded Position becomes when its Focus Titan dies (section 5.2, `data/engagement/positions.yaml`, `placement`, `horses`, `two_focus_titans`; `horse_position`). A horse whose riderless-horse decoy succeeds leaves the Titan Engagement: it holds no Position and cannot be mounted or give Gear Dice until the Titan Engagement ends (section 5.6).
+- In a Titan Engagement a horse is in a zone. While its soldier is mounted, it is in the soldier's zone and moves with them. After the soldier dismounts, it stays in that zone until they mount it again, and the sheet records the zone's number (section 4.12). A Titan's Stride never moves a horse. Chapter 5 states where each horse is when a Titan Engagement begins, whether a horse moves by any other rule, and whether a Titan's behavior can target one (section 5.2, `data/engagement/positions.yaml`, `placement`, `horses`; `horse_position`; decision batch 16, 16-25). A horse whose riderless-horse decoy succeeds leaves the Titan Engagement: it is in no zone and cannot be mounted or give Gear Dice until the Titan Engagement ends (section 5.6).
 - **When a Titan Engagement ends,** no horse holds a Position any longer. Each living soldier's horse is still their own, lame or not, and a horse that left as a decoy is its soldier's own again. A soldier who was mounted stays mounted, and one who was not stays dismounted (`titan_engagement_ends`).
 - Outside a Titan Engagement no horse holds a Position.
 
@@ -284,16 +284,16 @@ When a Pushed roll whose gear item is the Blade Set in the handles is final, and
 A soldier is **mounted** while riding their own horse. The sheet records it as true or false. A mounted soldier is never airborne (`mounted`).
 
 - **Mount,** with no roll (`mount.requirements`):
-  - **In a Titan Engagement,** as part of a move. The soldier's own horse holds the Position the soldier holds when they mount, both compared relative to the Focus Titan recorded with the horse's Position; the horse is not lame; and the soldier is not airborne, Down, Grabbed, or carried.
+  - **In a Titan Engagement,** as part of a move. The soldier's own horse is in the soldier's zone when they mount and the soldier is free (on the Ground or Anchored); the horse is not lame; and the soldier is not airborne, Down, Grabbed, or carried.
     - **Outside a Titan Engagement,** the soldier has their own horse and it is not lame, and the soldier is not airborne, Down, or carried.
   - **Both arms lost.** A soldier who has lost both arms mounts and dismounts only with a comrade's help (Chapter 3, section 3.2, *Lost limbs*; decision batch 8, 8-25).
-- **Dismount,** with no roll. In a Titan Engagement it is part of a move, and the horse stays at the Position the soldier holds when they dismount.
-- **Within a move.** A move can include one mount or one dismount, made at the Position the soldier holds before or after the move's change of Position. A mounted soldier's ODM move dismounts before its change of Position. Chapter 5 states which Position changes a mounted soldier can make (section 5.2, `data/engagement/anchor-ratings.yaml`).
+- **Dismount,** with no roll. In a Titan Engagement it is part of a move, and the horse stays in the soldier's zone.
+- **Within a move.** A move can include one mount or one dismount, before or after the move's steps. A mounted soldier's ODM move dismounts before its first step. A mounted move makes up to two zone steps and no attachment step, never into an Urban zone, and ends on entering a zone that holds a standing Focus Titan unless that zone is Open (Chapter 5, section 5.2; provisional, OQ-200).
 - **Becoming airborne from the saddle.** A mounted soldier whom a rule makes airborne, by an ODM move or a Fly roll whose calling rule says so, is dismounted first, with no fall. In a Titan Engagement the horse stays at the soldier's Position (`becoming_airborne`).
 - **Forced dismount** (`forced_dismount`):
-  - The horse becomes lame while the soldier is mounted: they are dismounted and fall from a horse (section 4.6). The horse stays at the Position.
-  - The soldier becomes Down while mounted: they are dismounted and fall from a horse. The horse stays at the Position.
-  - The soldier becomes Grabbed while mounted: they are dismounted, with no fall, and the horse stays at the Position.
+  - The horse becomes lame while the soldier is mounted: they are dismounted and fall from a horse (section 4.6). The horse stays in the soldier's zone.
+  - The soldier becomes Down while mounted: they are dismounted and fall from a horse. The horse stays in the soldier's zone.
+  - The soldier becomes Grabbed while mounted: they are dismounted, with no fall, and the horse stays in the soldier's zone.
 - **Outside a Titan Engagement** there are no moves. A soldier mounts or dismounts when the rule for the procedure under way says so, as the Expedition and Chase rules will. If that rule says nothing, a soldier may mount or dismount at any time, subject to the requirements outside a Titan Engagement above.
 
 Mounting and dismounting are the option `mount-or-dismount`, which changes the tracked value `mount-change` (section 4.13; OQ-35).
@@ -301,7 +301,7 @@ Mounting and dismounting are the option `mount-or-dismount`, which changes the t
 ### What a horse rates
 
 - A horse supplies Gear Dice to the **dodge**, to **Ride**, and to **Leap Clear** only while the soldier is mounted on it (ADR-0019; OQ-25; decision batch 8, 8-9). Horsemanship adds its dice to that dodge (Chapter 2; decision batch 5, OQ-121). Ride is the Leg roll on a Hard Ride (Chapter 7, section 7.1), and the Chase rules, not yet written, may also call for it.
-- It supplies Gear Dice to **Break Attention** while the soldier is mounted on it, or while it holds the Position the soldier holds, both compared relative to the Focus Titan recorded with the horse's Position. Chapter 5 states what Break Attention does with the horse (section 5.6, `data/engagement/attention.yaml`, `break_attention`, `decoys`, `riderless-horse`).
+- It supplies Gear Dice to **Break Attention** while the soldier is mounted on it, or while it is in the soldier's zone. Chapter 5 states what Break Attention does with the horse (section 5.6, `data/engagement/attention.yaml`, `break_attention`, `decoys`, `riderless-horse`).
 - Otherwise the horse counts as not had for that entry (`gear_dice`).
 - A mounted soldier's dodge or Break Attention may take its Gear Dice from ODM Gear instead, one item per roll. That roll is ODM use (section 4.2) and does not make the soldier airborne.
 - A Pushed roll made with the horse wears the horse, not ODM Gear, and does not by itself make the Gas Roll three dice (Chapter 1, section 1.5; OQ-12). Sure Seat can ignore 1 point of that wear.
@@ -336,12 +336,12 @@ A Grab's hold ends the airborne and mounted states before its crush, so a soldie
 Find the fall's band (`height`):
 
 1. **A band already named.** A fall a ruling names takes the band the GM named with the stakes, low or high and never extreme, or low if the GM named none, in a Titan Engagement as well as outside one. A fall another rule names takes the band that rule names. No later step changes a band this step gives. A rule that makes a soldier fall and names no band, such as a knock loose (Chapter 5, section 5.4), letting go (section 5.2), or a release from a lift (section 5.9), takes the band the steps below give (decision batch 9, 9-38).
-2. In a Titan Engagement, find the **fall's reference Titan**: the Focus Titan relative to which the soldier held the closest Position when they fell, in the order On Body, Blind Spot, In Reach, Distant. On a tie it is the Titan whose card, Grab, or effect caused the fall, and otherwise the living Focus Titan with the earliest label. The later steps, and where the fall lands, use that Titan (decision batch 5, OQ-123).
+2. In a Titan Engagement, find the **fall's reference body**: the body the soldier's attachment named when they fell (On Body, Blind Spot, or Grabbed); otherwise the Focus Titan whose card, Grab, or effect caused the fall; otherwise the Focus Titan nearest the soldier's zone, a tie going to the earliest label. The later steps use that body (decision batch 5, OQ-123; decision batch 16, 16-22).
 3. A fall from a horse is **low**, and no later step changes it.
-4. Otherwise, use the Position the soldier held relative to the fall's reference Titan when they fell. Distant or In Reach is **low**. On Body or Blind Spot is **high**.
-5. For a fall that is not from a horse, raise the band one step, to at most **extreme**, if the Titan Engagement's Anchor Rating is Giant Forest, or if the fall's reference Titan is of the Large Size Class. Both together still raise it one step.
+4. Otherwise, use the Position the soldier held relative to the fall's reference body when they fell. Distant or In Reach is **low**. On Body or Blind Spot is **high**.
+5. For a fall that is not from a horse, raise the band one step, to at most **extreme**, if the zone the soldier falls in is Giant Forest, or if the fall's reference body is of the Large Size Class. Both together still raise it one step.
 
-Outside a Titan Engagement there is no reference Titan and no Position to read, so a fall takes the band step 1 gives, and is low if neither a rule nor the GM names one.
+Outside a Titan Engagement there is no reference body and no Position to read, so a fall takes the band step 1 gives, and is low if neither a rule nor the GM names one.
 
 ### The fall
 
@@ -373,7 +373,7 @@ Because step 2 comes before the damage, a soldier whom the fall's own damage mak
 | 9 or more | Shattering landing | 4 |
 <!-- END RENDERED: fall-damage -->
 
-**After the fall.** Chapter 5 states which Position a fall from each Position leaves the soldier at, relative to the fall's reference Titan (section 5.2, `data/engagement/positions.yaml`, `falls_land`). A fall changes no gear rating, Gas Rating, or item. It is not a behavior, so no Reaction answers it, and it is not a Fear Roll trigger.
+**After the fall.** The soldier stays in the zone they fell in and lands on the Ground, so they hold In Reach relative to a body there (Chapter 5, section 5.2, `data/engagement/positions.yaml`, `falls_land`). A fall changes no gear rating, Gas Rating, or item. It is not a behavior, so no Reaction answers it, and it is not a Fear Roll trigger.
 
 > **Design note (OQ-62):** The trigger list, the three bands and how Position, Anchor Rating, and Size Class set them, the procedure's order, and the damage table are this chapter's; no ADR sets falls. A high Health is a legal build and stays one: the damage table is read against current Health and needs no cap, and since decision batch 13 (13-1; OQ-190) raised Health by 2 it covers current Health 1 to 8.
 
@@ -443,7 +443,7 @@ Lift Comrade is the unrolled Catalog entry `lift-comrade`, whose requirements ar
 - the carrier becomes Down while airborne or mounted: carrying goes on until step 2 of the carrier's own fall, where it ends and the comrade falls with them from the same band (section 4.6);
 - the carrier becomes Grabbed: the comrade is set down at the carrier's Position, and falls if the carrier was airborne;
 - the carrier falls for any other reason: the comrade falls with them;
-- the carrier dies: the comrade is set down at the Position the carrier held, and falls if the carrier was airborne or mounted;
+- the carrier dies: the comrade is set down in the zone the carrier was in, and falls if the carrier was airborne or mounted;
 - the carrier retires: the comrade stops being carried, with no fall;
 - the carried comrade becomes Grabbed: carrying ends with no fall (Chapter 5, section 5.9);
 - the carrier becomes Pinned: carrying ends, and the comrade is Pinned too, with their own Crush Critical Injury at their own rolled Injury Location and their own pinning Body Part (Chapter 5, section 5.7; decision batch 8, 8-18);
@@ -457,7 +457,7 @@ Outside a Titan Engagement no soldier holds a Position, so a comrade set down th
 
 Passing an item is the unrolled action `pass-item`, which changes the tracked value `item-give` (OQ-35; section 4.13). Follow `passing_items`:
 
-- **In a Titan Engagement:** the passer is not Down, and the receiver is a living comrade who holds the passer's Position. The receiver may be Down or Grabbed. Two soldiers who have both left the Titan Engagement count as holding the same Position (section 5.11). It spends the passer's action.
+- **In a Titan Engagement:** the passer is not Down, and the receiver is a living comrade in the passer's zone. The receiver may be Down or Grabbed. Two soldiers who have both left the Titan Engagement count as holding the same Position (section 5.11). It spends the passer's action.
 - **Outside a Titan Engagement:** the passer is not Down, and the receiver is a living comrade who takes part in the same procedure, as for Lift Comrade. It spends nothing.
 - **What can be passed:** a spare canister; the passer's fitted canister, if it has gas after any Gas Roll the pass makes (section 4.3), which leaves the passer at Gas Rating 0 with no canister fitted and reaches the receiver as a spare with its Gas Rating; a Blade Set not in the handles; a medical kit; a tool kit; or a flintlock pistol or musket, loaded or empty. A kit or a firearm keeps its rating and current rating.
 - **What cannot:** ODM Gear, the Blade Set in the handles, a horse, a carried comrade (set them down, then a comrade lifts them), and Squad Supply.
@@ -471,7 +471,7 @@ Taking an item is the unrolled action `take-item`, which changes the tracked val
 
 - **From a Down comrade** who is not Grabbed: the taker takes one item that comrade could pass if they were not Down.
 - **From a dead comrade's left items,** in a Titan Engagement only, where they lie (section 4.11): the taker takes one of them.
-- **In a Titan Engagement:** the taker is not Down, and the Down comrade holds the taker's Position, or the left items lie at it relative to the Focus Titan recorded with them (section 4.11). Two soldiers who have both left the Titan Engagement count as holding the same Position (section 5.11). It spends the taker's action.
+- **In a Titan Engagement:** the taker is not Down, and the Down comrade is in the taker's zone, or the left items lie in it (section 4.11). Two soldiers who have both left the Titan Engagement count as holding the same Position (section 5.11). It spends the taker's action.
 - **Outside a Titan Engagement:** the taker is not Down, and the Down comrade takes part in the same procedure, as for Lift Comrade. It spends nothing. Left items are never taken outside a Titan Engagement; they are shared out. When the players disagree about who takes an item from a Down comrade, or in what order, they use Chapter 2's roll-off (`group_choices`). The Down comrade's player has no veto, since a Down soldier takes no action and the take is the taker's act.
 - **Effect:** one item moves to the taker and counts against the taker's limit from then on. A fitted canister taken from a Down comrade leaves them at Gas Rating 0 with no canister fitted and reaches the taker as a spare with its Gas Rating. If the Down comrade has used ODM Gear this round and has not yet made that round's Gas Roll, they make it when the taker declares that they mean to take the fitted canister, before it moves. If that roll empties it, the canister is discarded, nothing is taken, and the take spends nothing (section 4.3).
 - It is not rolled, so it is never Helped or Covered. No rule lets a soldier take an item at another Position.
@@ -496,7 +496,7 @@ Field Repair is the Wits action `field-repair` (Chapter 2). It uses a tool kit f
 
 ### In a Titan Engagement
 
-- The item is the soldier's own, or belongs to a comrade who holds the soldier's Position. Two soldiers who have both left the Titan Engagement count as holding the same Position (section 5.11).
+- The item is the soldier's own, or belongs to a comrade in the soldier's zone. Two soldiers who have both left the Titan Engagement count as holding the same Position (section 5.11).
 - It spends the soldier's action. It can be Helped, Pushed, and Covered as Chapter 1 states.
 - A failed roll can be tried again on a later turn.
 
@@ -655,8 +655,8 @@ Follow `medical_uses`:
 Chapter 3 leaves the gear of a dead soldier to this chapter. Follow `leaving_play` in `data/gear/carrying.yaml`:
 
 - **Death.** The dead soldier's ODM Gear, horse, and every prosthetic fitted to them leave play. Every other item they had is left for the Squad: spare canisters, the fitted canister as a spare if it has gas, every Blade Set including the one in the handles, every kit, and every firearm. A soldier who dies after using ODM Gear this round, and has not yet made that round's Gas Roll, first makes it, before their fitted canister becomes a left item; a canister that roll empties is discarded and is never a left item (section 4.3).
-- **Where left items lie.** If the soldier dies in a Titan Engagement while holding a Position and not Grabbed, their left items lie at that Position until the Titan Engagement ends, and their sheet records the Position, with the Focus Titan it is held relative to, and which items are still there (`where_left`). Chapter 5 states whether any rule moves them, and what the recorded Position becomes when its Focus Titan dies (section 5.2, `data/engagement/positions.yaml`, `left_items`, `two_focus_titans`). Otherwise they lie at no Position.
-- **Taking a left item.** Before the procedure in which the death happened ends, a left item can be taken only with Take Item, by a soldier at the Position where it lies, relative to the Focus Titan recorded with it (section 4.7).
+- **Where left items lie.** If the soldier dies in a Titan Engagement while on the field and not Grabbed, their left items lie in the zone they died in until the Titan Engagement ends, and their sheet records the zone's number and which items are still there (`where_left`). No rule moves them (section 5.2, `data/engagement/positions.yaml`, `left_items`; decision batch 16, 16-25). Otherwise they lie in no zone.
+- **Taking a left item.** Before the procedure in which the death happened ends, a left item can be taken only with Take Item, by a soldier in the zone where it lies (section 4.7).
 - **Sharing out.** When that procedure ends, at the moment promotion is timed (Chapter 2, section 2.10) and before any promotion, share out the left items in two steps (`shared_out`):
   1. The players give each left item not yet taken to a living soldier who took part in the procedure. For a Titan Engagement, a soldier who took part is one who held a Position at any point during it. The players choose together, using Chapter 2's roll-off if they disagree.
   2. Every left item the players did not give to a soldier leaves play.
@@ -679,13 +679,13 @@ The character sheet (Chapter 2, `record_on_sheet`) and the Squadmate stat block 
 - for each flintlock pistol or musket held, its rating, its current rating, and whether it is loaded (decision batch 7, 7-17);
 - which of the soldier's items are kept items (section 4.1);
 - whether the soldier is airborne, the comrade they carry, and the comrade carrying them;
-- in a Titan Engagement, the soldier's own Position relative to each living Focus Titan, by its letter, or that they have left, mirroring the positions column of their Squad sheet row (`positions`, added for Chapter 5, section 5.3);
-- in a Titan Engagement, the soldier's Momentum, from 0 to the Anchors left, which is 0 outside one and is cleared when a Titan Engagement ends (`momentum`, added for Chapter 5, section 5.2);
-- after the soldier dies in a Titan Engagement, the Position where their left items lie, with its Focus Titan, and which are still there.
+- in a Titan Engagement, the soldier's zone, or that they have left, and their attachment with the label of the body it names, mirroring the zone and attachment columns of their Squad sheet row (`zone`, `attachment`; decision batch 16, 16-35); the derived Positions may be shown beside them, read-only, and are never written;
+- in a Titan Engagement, the soldier's Momentum, from 0 to the anchors of their zone, which is 0 outside one and is cleared when a Titan Engagement ends (`momentum`, added for Chapter 5, section 5.2);
+- after the soldier dies in a Titan Engagement, the zone where their left items lie, and which are still there.
 
 Items carried, the carrying limit, Overloaded, Jammed, and lame are derived from those fields, not stored. The file also lists the invariants: a soldier is never both airborne and mounted, a carried soldier is neither, the carrying and carried-by fields always name each other, a horse records no Position while its soldier is mounted or outside a Titan Engagement, and every recorded Position names its Focus Titan. The Titan Engagement's first Focus Titan is A, the next Titan to become a Focus Titan in it is B, and so on (`focus_titan_label`). Whether a soldier has swapped a Blade Set during their current turn belongs to the turn, not the sheet.
 
-**The Squad sheet row.** `squad_sheet_row` gives one line per soldier, in a fixed column order, starting with the soldier's name and then their Positions by Focus Titan letter, with short marks for Jammed, a Blade Set rated above 1, mounted, lame, a dismounted horse's Position and Focus Titan, a loaded firearm, Overloaded, airborne, carrying, and where a dead soldier's left items lie. Firearms share the kits column, and kept items are not marked on the row. A Squadmate's line holds all of its gear, so six fully tracked soldiers stay quick to update each round (OQ-29). In a Titan Engagement every soldier who takes part, player character or Squadmate, has a row, and its positions column is the record the Attention Ladder is read from (Chapter 5, section 5.3; OQ-97). A player character's line may hold its gear as well, or a dash in each gear column its character sheet already holds. The positions column is always filled, on every row.
+**The Squad sheet row.** `squad_sheet_row` gives one line per soldier, in a fixed column order, starting with the soldier's name and then their zone and attachment, with short marks for Jammed, a Blade Set rated above 1, mounted, lame, a dismounted horse's zone, a loaded firearm, Overloaded, airborne, carrying, and where a dead soldier's left items lie. Firearms share the kits column, and kept items are not marked on the row. A Squadmate's line holds all of its gear, so six fully tracked soldiers stay quick to update each round (OQ-29). In a Titan Engagement every soldier who takes part, player character or Squadmate, has a row, and its zone and attachment columns are the record the Attention Ladder's Positions are derived from (Chapter 5, section 5.3; OQ-97). A player character's line may hold its gear as well, or a dash in each gear column its character sheet already holds. The zone column is always filled, on every row.
 
 **Squad Supply.** `squad_sheet` gives the Squad sheet one line for the units of each kind of Squad Supply.
 
@@ -732,24 +732,24 @@ The new entries are options or unrolled actions, so Chapter 2's procedure for ac
 
 *The numbers in this example are for illustration only. Attack Dice come from each Titan's Behavior Table in `data/titans/` (Chapter 6), and Chapter 5 decides placement, moves, and where a fall lands (sections 5.1 and 5.2). The rows below follow the YAML files at the time of writing. If the files change, the files govern.*
 
-The Squad is fighting a Medium Focus Titan, labeled A on the Squad sheet, at Anchor Rating Wooded, at Funding 3. The example joins the fight partway through and numbers its rounds from there. The Squad sheet reads `Supply | Rations 8 | Flares 2 | Medical 2 | Shot 6`.
+The Squad is fighting a Medium Focus Titan, labeled A on the Squad sheet, which stands in zone 7 of a Standard field; zones 7 and 8 are Wooded. The Squad is at Funding 3. The example joins the fight partway through and numbers its rounds from there. The Squad sheet reads `Supply | Rations 8 | Flares 2 | Medical 2 | Shot 6`.
 
-- **Private Jonas Keller** has Strength 3 and Agility 3, so Health 5 and a carrying limit of 7. His Stress is 1. His ODM Gear is rated 2, but a Push earlier in the fight wore it to 1. He begins round 1 airborne at In Reach, and his horse holds Distant, where he dismounted earlier. His row is `Jonas | A In Reach | ODM 1/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 @Distant A | - | Load 3/7 | A`.
-- **Ilse**, a Squadmate on the Medic template, has Strength 3, Wits 4, and Stress 0. She begins mounted at Distant. Her row is `Ilse (Medic) | A Distant | ODM 2/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 M | Med 1/1 | Load 4/7 | -`.
+- **Private Jonas Keller** has Strength 3 and Agility 3, so Health 5 and a carrying limit of 7. His Stress is 1. His ODM Gear is rated 2, but a Push earlier in the fight wore it to 1. He begins round 1 airborne and Anchored in zone 7, the Titan's zone, so In Reach, and his horse is in zone 8, where he dismounted earlier. His row is `Jonas | Z7 | A | ODM 1/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 @Z8 | - | Load 3/7 | A`.
+- **Ilse**, a Squadmate on the Medic template, has Strength 3, Wits 4, and Stress 0. She begins mounted on the Ground in zone 8, so Distant. Her row is `Ilse (Medic) | Z8 | G | ODM 2/2 | Gas 3 +3 | Bl 1+2 | Hr 2/2 M | Med 1/1 | Load 4/7 | -`.
 
 **Round 1.**
 
-- On his turn, Jonas's move is an ODM move from In Reach to On Body. He takes no action.
-- Ilse's move is an ODM move to In Reach, which dismounts her first. Her horse stays at Distant, and her row now shows `A In Reach`, `Hr 2/2 @Distant A`, and `A`.
+- On his turn, Jonas's move is an ODM move in zone 7 from Anchored onto A's body, an attachment step. His row now shows `B A`. He takes no action.
+- Ilse holds her place: her move changes nothing, and she stays mounted in zone 8.
 - After Jonas's turn, a Titan card resolves a behavior against him, and its Attack Dice score 2 successes for this example. His move this round is spent, so the dodge spends his round 2 turn in full. He dodges with his ODM Gear, because he is not mounted: Agility 3, 1 Gear Die from his worn ODM Gear, and Stress 1. The base dice show 6, 2, and 4, the Gear Die shows 1, and the Stress Die shows 3. That is one success. No Stress Die shows 1, so he Pushes and his Stress rises to 2. The re-rolled base dice show 6 and 5, and the two Stress Dice show 3 and 2. His two successes cancel the card's two: it whiffs against him.
 - The roll was Pushed and his Gear Die shows 1, so his ODM Gear takes 1 point of wear, falls to 0, and **Jams**. He is airborne, so he falls once the roll is finished.
-- **The fall.** On Body is high, and neither Anchor Rating Wooded nor a Medium Titan raises it. First he is no longer airborne. Then the D6 shows 4, plus 2 makes 6: a hard landing, 2 damage. He has no boxes crossed off, so his current Health drops from 3 to 1, and he is not Down. Chapter 5 decides where he lands (section 5.2).
-- **Gas Rolls.** Jonas used ODM Gear this round and made a Pushed roll with it, so his Gas Roll is three dice: 1, 1, and 5. His Gas Rating drops from 3 to 1. His ODM Gear Jammed this round, but the Gas Roll for that round is still made. Ilse made an ODM move without a Push, so she rolls two dice, 4 and 6, and keeps Gas Rating 3.
+- **The fall.** On Body is high, and neither a Wooded zone nor a Medium Titan raises it. First he is no longer airborne. Then the D6 shows 4, plus 2 makes 6: a hard landing, 2 damage. He has no boxes crossed off, so his current Health drops from 3 to 1, and he is not Down. He lands on the Ground in zone 7, the zone he fell in, and his row shows `Z7 | G` (Chapter 5, section 5.2).
+- **Gas Rolls.** Jonas used ODM Gear this round and made a Pushed roll with it, so his Gas Roll is three dice: 1, 1, and 5. His Gas Rating drops from 3 to 1. His ODM Gear Jammed this round, but the Gas Roll for that round is still made.
 
 **Round 2.**
 
 - Jonas's turn was spent in advance by his dodge. It still happens, but he has no move or action.
-- Ilse's move is an ODM move to the Position Jonas fell to. As her action she takes Field Repair on his ODM Gear. She has no tool kit, so she rolls Wits 4 alone, with no Stress Dice at Stress 0. One die shows 6, so his ODM Gear rises to 1, his row shows `ODM 1/2`, and the Jam ends.
+- Ilse's move is an ODM move from zone 8 into zone 7, Jonas's zone, which dismounts her first; her horse stays in zone 8, and the Flight ends Anchored in zone 7. Field Repair on a comrade's item needs the same zone. As her action she takes Field Repair on his ODM Gear. She has no tool kit, so she rolls Wits 4 alone, with no Stress Dice at Stress 0. One die shows 6, so his ODM Gear rises to 1, his row shows `ODM 1/2`, and the Jam ends.
 - **Gas Rolls.** Ilse used ODM Gear, so she rolls two dice, 3 and 5, and keeps Gas Rating 3. Jonas did not, so he makes no Gas Roll.
 
 **Round 3.**

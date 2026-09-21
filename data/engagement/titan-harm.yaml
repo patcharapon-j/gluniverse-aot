@@ -73,7 +73,8 @@ grounded:
     - >-
       Every Body Part of the Titan can be struck from in-reach, on-body, or blind-spot, except an
       arm that holds a Grabbed soldier, whose reach data/engagement/grab.yaml (escapes) sets.
-    - Some Position steps relative to it can be made on foot (data/engagement/anchor-ratings.yaml, grounded_titan).
+    - Some attachment steps onto it can be made on foot (data/engagement/anchor-ratings.yaml, grounded_titan).
+    - Its Stride is 0 (data/engagement/size-classes.yaml, stride; decision batch 16, 16-16).
   ends: >-
     When none of its legs is Broken. It then frees every soldier it pins, and its heave count returns to 0
     (falling_titan, freeing, heave; decision batch 8, 8-9 and 8-22).
@@ -180,11 +181,13 @@ titan_death:
     - id: removals
       text: The Titan's Openings, Next Behavior, Regeneration clock, flags, and remaining cards this round are removed.
     - id: positions-end
-      text: Positions relative to the Titan end (data/engagement/positions.yaml, two_focus_titans, a_focus_titan_dies).
+      text: >-
+        Every attachment naming the Titan but pinned ends, and the detach rule applies
+        (data/engagement/zones.yaml, detach_rule; data/engagement/positions.yaml, corpse, positions).
     - id: corpse
       text: >-
-        The body stays on the field as a corpse, and each soldier's last Position relative to the Titan
-        gives their Position relative to the corpse (data/engagement/positions.yaml, corpse).
+        The body stays on the field as a corpse in the zone the Titan died in, and every Position
+        relative to it is derived (data/engagement/positions.yaml, corpse).
     - id: ending
       text: >-
         If no Focus Titan is alive and no soldier is Pinned, the Titan Engagement ends
@@ -242,13 +245,14 @@ falling_titan:
     The falling body is Titan harm that no Behavior Table entry deals: it rolls no Attack Dice, no
     Reaction answers it, and the pin's Critical Injury takes no net success rider (ADR-0019).
   wrecks_an_anchor: >-
-    The Titan Engagement loses 1 Anchor where the body lands, resolved with the fall and before the
-    Leap Clear rolls (data/engagement/anchor-ratings.yaml, anchors, wrecking). It happens whether
-    or not any soldier is in the path, and never below 0 (decision batch 10, OQ-182).
+    One rating step off the zone the body lands in, which is its own zone, resolved with the fall and
+    before the Leap Clear rolls (data/engagement/anchor-ratings.yaml, anchors, wrecking). It happens
+    whether or not any soldier is in the path; an Open zone takes no further step, and a Sparse zone's
+    first wreck does nothing (decision batch 10, OQ-182; decision batch 16, 16-20).
   path:
     in_it: Every soldier who holds On Body or Blind Spot relative to the falling Titan.
     airborne: >-
-      An airborne soldier swings clear with no roll and keeps their Position (data/gear/odm-gear.yaml,
+      An airborne soldier swings clear with no roll and keeps their attachment (data/gear/odm-gear.yaml,
       airborne).
     outside: >-
       In Reach and Distant are outside the path. So is a soldier Grabbed in another Titan's hand,
@@ -265,17 +269,17 @@ falling_titan:
       (Chapter 1, section 1.3, step 6).
     needs: 1
     help: >-
-      Comrades who hold the roller's Position may Help, as Chapter 1, section 1.8 states, each spending
-      their action.
+      Comrades in the roller's zone or an adjacent zone may Help, as Chapter 1, section 1.8 states,
+      each spending their action (data/engagement/zones.yaml, between_soldiers).
     push: As Chapter 1, section 1.5. A Squadmate never Pushes.
     success: >-
-      The soldier clears. They hold In Reach relative to the Titan; at a death, In Reach is their last
-      Position relative to it, which the corpse reads (data/engagement/positions.yaml, corpse).
+      The soldier clears. Their attachment becomes ground in the Titan's zone, so they hold In Reach
+      relative to the Titan, or to its corpse at a death (data/engagement/positions.yaml, corpse).
     failure: The soldier is Pinned (pinned).
     down: A Down soldier in the path makes no roll and is Pinned.
     carried: >-
-      A carried soldier makes no roll and follows their carrier. If the carrier clears, both hold In
-      Reach. If the carrier is Pinned, carrying ends and the comrade is Pinned too, with their own
+      A carried soldier makes no roll and follows their carrier. If the carrier clears, both are in the
+      Titan's zone with attachment ground and hold In Reach. If the carrier is Pinned, carrying ends and the comrade is Pinned too, with their own
       Critical Injury at their own rolled Injury Location and their own pinning Body Part
       (data/gear/carrying.yaml, carrying_a_comrade, ends; decision batch 8, 8-18).
     not_a_reaction: >-
@@ -311,11 +315,12 @@ falling_titan:
         - {injury_location: head, side: null, body_part: null, if_broken: null}
       decided: [OQ-151]   # decision batch 8, 8-17
     position: >-
-      The soldier holds In Reach relative to the pinning body, the Titan or its corpse, and is not
-      airborne.
+      The soldier's attachment is pinned naming the pinning body, the Titan or its corpse, in its zone,
+      so they hold In Reach relative to it, and is not airborne (data/engagement/zones.yaml,
+      attachments, pinned).
     moves: >-
-      The soldier cannot move or be moved: their move changes nothing, and no rule changes their
-      Position relative to the pinning body while they are Pinned. Lift Comrade never takes them
+      The soldier cannot move or be moved: their move changes nothing, and no rule changes their zone
+      or attachment while they are Pinned; a Stride does not take them. Lift Comrade never takes them
       (data/gear/carrying.yaml, lifting_a_comrade; decision batch 8, 8-18).
     # Chapter 1's hook (section 1.9; ADR-0024, limit 13) is the only route by which a state forbids Help,
     # Covering, or Reactions. 8-9 names Reactions, and its closed list leaves Cover out for a limb pin and
@@ -369,8 +374,8 @@ falling_titan:
       them.
     spends: the soldier's action
     help: >-
-      Comrades who hold the heaver's Position may Help, as Chapter 1, section 1.8 states, each spending
-      their action.
+      Comrades in the heaver's zone or an adjacent zone may Help, as Chapter 1, section 1.8 states,
+      each spending their action (data/engagement/zones.yaml, between_soldiers).
     push: As Chapter 1, section 1.5.
     each_success: Adds 1 to the body's heave count.
     frees: >-
@@ -412,7 +417,8 @@ falling_titan:
       The end of the Titan Engagement frees no one (data/engagement/engagement-flow.yaml, ending,
       pinned_at_the_end).
   freed: >-
-    A freed soldier stops being Pinned and holds In Reach relative to the body. The pin's Critical
+    A freed soldier stops being Pinned; their attachment becomes ground in the body's zone, so they
+    hold In Reach relative to the body. The pin's Critical
     Injury stays, as every Critical Injury does.
   corpse: data/engagement/positions.yaml (corpse)
   ending: data/engagement/engagement-flow.yaml (ending, no-focus-titan)

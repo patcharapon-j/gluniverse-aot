@@ -147,8 +147,8 @@ effect_types:
   - id: draw-attention
     name: The loudest flag
     reading: >-
-      If the soldier holds a Position other than distant relative to the event's Titan
-      (data/mind/fear-rolls.yaml, event_titan), they hold the loudest flag for that Titan, the flag
+      If the event's Titan (data/mind/fear-rolls.yaml, event_titan) is a Focus Titan in the soldier's
+      zone, they hold the loudest flag for that Titan (decision batch 16, 16-28), the flag
       Draw Attention sets (data/engagement/attention.yaml, flags, loudest). It lasts until the end of
       that Titan's next card that resolves a behavior, like every flag (flag_duration; ADR-0024,
       limit 2). Otherwise it does nothing: a scream from beyond a Titan's reach does not turn it
@@ -163,9 +163,9 @@ effect_types:
     parameters:
       amount: whole number (1 unless the row says otherwise)
     reading: >-
-      Every comrade, player character or Squadmate, who holds the same Position as the soldier or one
-      Position step away, compared relative to the event's Titan (data/mind/fear-rolls.yaml,
-      event_titan), gains that much Stress once, when the result applies. A comrade who has left the
+      Every comrade, player character or Squadmate, in the soldier's zone or an adjacent zone
+      (data/engagement/zones.yaml, between_soldiers; decision batch 16, 16-11 and 16-28), gains that
+      much Stress once, when the result applies. A comrade who has left the
       Titan Engagement never counts as either (data/engagement/positions.yaml, leaving, after_leaving,
       same_position). It is Stress, not a roll: it causes no Fear Roll and no other roll (decision
       batch 7, 7-8; OQ-50, as revised). The gain uses the named-gain row of
@@ -182,24 +182,22 @@ effect_types:
     parameters:
       toward: distant, or nearest-comrade
     reading: >-
-      At the start of the soldier's next turn, before anything else in it, the soldier's Position
-      changes by one step. The step happens even when that turn was spent in advance, because it is a
-      result and not the soldier's own move (decision batch 8, 8-13): it spends nothing, it is a
-      change of Position a rule names (data/engagement/positions.yaml, moves, forced_step), and it
-      never meets a Drive's own-move trigger. It is one step the soldier's move could make, of that
-      kind (on foot, mounted, or ODM, with any Fly roll the step calls for), so an ODM step is an ODM
-      move for Chapter 4 (data/gear/odm-gear.yaml, odm_use, airborne). With toward distant, it is the
-      retreat's option 1: one step along a shortest chain of steps their move can make from their
-      Position to distant, relative to the Focus Titan with the earliest label they do not hold
-      distant from (data/engagement/background-titans.yaml, retreat, moves). With toward
-      nearest-comrade, it is one step their move can make that lowers the number of Position steps
-      between the soldier and the nearest comrade: the living comrade who holds a Position the fewest
-      Position steps away, compared relative to the living Focus Titan with the earliest label. When
-      more than one comrade or step qualifies, the soldier's player chooses. No step is made if the
-      soldier is Down, Grabbed, Pinned, or carried, or has left the Titan Engagement; if they hold distant
-      relative to every Focus Titan (toward distant) or already hold the nearest comrade's Position
-      (toward nearest-comrade); or if no step their move can make qualifies. The step never makes the
-      soldier leave the Titan Engagement or let go.
+      At the start of the soldier's next turn, before anything else in it, the soldier makes one
+      step. The step happens even when that turn was spent in advance, because it is a result and not
+      the soldier's own move (decision batch 8, 8-13): it spends nothing, it is a change a rule names
+      (data/engagement/positions.yaml, moves, forced_step), and it never meets a Drive's own-move
+      trigger. It is one step the soldier's move could make, of that kind (on foot, mounted, or ODM),
+      and never a Flight, so an ODM step is an ODM move for Chapter 4 but is not rolled and pays no
+      Carry (data/gear/odm-gear.yaml, odm_use, airborne). With toward distant, it is one step by the
+      retreat's option 1 (data/engagement/background-titans.yaml, retreat, moves; decision batch 16,
+      16-28). With toward nearest-comrade, it is one step their move can make that lowers the number
+      of zones between the soldier and the nearest comrade: the living comrade on the field in the
+      zone the fewest zones away (data/engagement/zones.yaml, coordinates, distance). When more than
+      one comrade or step qualifies, the soldier's player chooses. No step is made if the soldier is
+      Down, Grabbed, Pinned, or carried, or has left the Titan Engagement; if, toward distant, they
+      are free in a zone that holds no body (PROVISIONAL, OQ-203); if, toward nearest-comrade, they
+      are already in the nearest comrade's zone; or if no step their move can make qualifies. The
+      step never makes the soldier leave the Titan Engagement or let go.
     lasts: >-
       Pending from when the result applies until the start of that turn, when the step is made or not
       made. Rally clears a pending step (data/mind/stress-responses.yaml, rally), and it ends when the
@@ -246,8 +244,8 @@ effect_types:
     name: Blade Set dropped
     placement: Only on a row that also spends the next action or the next turn (decision batch 7, 7-8).
     reading: >-
-      The Blade Set in the soldier's handles falls, and the handles are empty. It lies at the
-      soldier's Position. No one takes it during the Titan Engagement and no rule moves it; when the
+      The Blade Set in the soldier's handles falls, and the handles are empty. It lies in the
+      soldier's zone. No one takes it during the Titan Engagement and no rule moves it; when the
       Titan Engagement ends, it is shared out with the left items, as data/gear/carrying.yaml
       (leaving_play, death, shared_out) shares out a dead soldier's (decision batch 8, 8-13). If the
       handles are empty, nothing happens. The soldier refits from a carried Blade Set with the swap
@@ -325,7 +323,7 @@ never_used:
     state forbids both on its own row (data/harm/down.yaml).
   gear_damage: >-
     No Chapter 3 row damages or wears gear. Two Fear Roll effects touch gear, each through a rule
-    Chapter 4 defines: drop-blade-set leaves the Blade Set in the handles at the soldier's Position,
+    Chapter 4 defines: drop-blade-set leaves the Blade Set in the handles in the soldier's zone,
     and gas-roll spends gas by a Gas Roll (decision batch 7, 7-8). Chapter 4 owns gear damage.
   forced_move_toward_nearest_comrade: >-
     No Phase 1 Fear Roll row uses forced-move with toward nearest-comrade. The reading stands so a

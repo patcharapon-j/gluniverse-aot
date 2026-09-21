@@ -74,8 +74,8 @@ type_riders:
 in_titan_engagement:
   kind: action
   position_requirement: >-
-    The patient holds the same Position as the treater (data/engagement/positions.yaml,
-    comparison). Two soldiers who have both
+    The patient is in the treater's zone (data/engagement/zones.yaml, between_soldiers; decision
+    batch 16, 16-11). Two soldiers who have both
     left a Titan Engagement that is still under way count as holding the same Position
     (data/harm/engagement-end.yaml, soldiers_who_left).
   help: >-
@@ -108,10 +108,9 @@ aftermath_rolls:
     engagement limit, including a turn limit that has just become engagement.
   who_rolls: >-
     The players choose one treater for the patient: a living soldier who is not Down and who
-    held, at the moment the Titan Engagement ended, the patient's last Position or a Position one
-    step from it, relative to the Focus Titan alive last (while its corpse lies on the field, the Positions relative to the corpse as they stand at the end; data/engagement/positions.yaml, corpse; decision batch 8, 8-20), or, when more than one Focus Titan was
-    alive, relative to the one data/engagement/positions.yaml (comparison) names
-    (data/engagement/positions.yaml, a_focus_titan_dies; decision batch 5, OQ-122), or the patient, if not Down, treating themselves
+    was, at the moment the Titan Engagement ended, in the patient's zone (data/engagement/zones.yaml,
+    between_soldiers; data/harm/engagement-end.yaml, positions_read; decision batch 16, 16-11), or
+    the patient, if not Down, treating themselves
     with the self penalty in
     patients. Two soldiers who had both left the Titan Engagement count as holding the same
     Position, and a soldier who had left never counts as holding the same Position as, or one

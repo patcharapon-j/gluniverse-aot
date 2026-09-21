@@ -76,7 +76,7 @@ tracked_values:
   - {id: down-end, name: end the Down state, rules: [03-harm-and-mind]}
   - {id: grabbed-end, name: free a Grabbed soldier, rules: [05-titan-engagement]}
   - {id: momentum-gain, name: gain Momentum, rules: [05-titan-engagement]}
-  - {id: anchor-wreck, name: destroy an Anchor, rules: [05-titan-engagement]}
+  - {id: anchor-wreck, name: take a zone's Anchor Rating one step toward Open, rules: [05-titan-engagement]}
   - {id: gear-restore, name: restore a gear item's Gear Dice rating or end a Jam, rules: [04-gear]}
   - {id: gas-restore, name: restore a Gas Rating, rules: [04-gear]}
   - {id: comrade-carry, name: "pick up and carry a Down comrade, or one the both-legs grade forbids to move", rules: [04-gear, 05-titan-engagement]}
@@ -306,8 +306,8 @@ entries:
     context: any
     requirements: >-
       data/gear/carrying.yaml (lifting_a_comrade), in and out of a Titan Engagement. In one, a comrade who
-      is Down, or who is not Down, consents, and whom the both-legs grade forbids to move, holds the
-      soldier's Position and is not Grabbed, Pinned, or already carried; and the soldier is not Down,
+      is Down, or who is not Down, consents, and whom the both-legs grade forbids to move, is in the
+      soldier's zone and is not Grabbed, Pinned, or already carried; and the soldier is not Down,
       carries no other comrade, and is not carried (decision batch 8, 8-11 and 8-18).
     changes: [comrade-carry]
     rules: [04-gear, 05-titan-engagement]
@@ -353,8 +353,8 @@ entries:
     requires_gear: false
     context: any
     requirements: >-
-      In a Titan Engagement, the passer is not Down, and the receiver is a living comrade who
-      holds the passer's Position; the receiver may be Down or Grabbed. Outside a Titan
+      In a Titan Engagement, the passer is not Down, and the receiver is a living comrade in the
+      passer's zone; the receiver may be Down or Grabbed. Outside a Titan
       Engagement, data/gear/carrying.yaml (passing_items) sets the requirement.
     changes: [item-give]
     notes: data/gear/carrying.yaml (passing_items) lists which items can be passed and what passing spends.
@@ -371,9 +371,9 @@ entries:
     requires_gear: false
     context: any
     requirements: >-
-      In a Titan Engagement, the taker is not Down, and either a Down comrade who is not Grabbed
-      holds the taker's Position, or a dead comrade's left items lie at that Position, relative to
-      the Focus Titan recorded with them (data/gear/carrying.yaml, leaving_play, death, where_left).
+      In a Titan Engagement, the taker is not Down, and either a Down comrade who is not Grabbed is
+      in the taker's zone, or a dead comrade's left items lie in that zone (data/gear/carrying.yaml,
+      leaving_play, death, where_left).
       Outside a Titan Engagement, data/gear/carrying.yaml (taking_items) sets the requirement.
     changes: [item-take]
     notes: data/gear/carrying.yaml (taking_items) lists which items can be taken and what taking spends.
@@ -1149,9 +1149,9 @@ uncatalogued_actions:
     toward that leg's Toughness; a rope thrown to a comrade is Help or Lift Comrade; an object that
     is not a gear item, hurled at a person, is a Shoot at damage 1 and Crush, with no Gear Dice
     (data/skirmish/skirmish.yaml, improvised_act and weapons). A dive behind a chimney stack is a
-    move if it changes the soldier's Position, and otherwise changes nothing and needs no roll; it is
-    never modelled on the dodge and gives no Circumstances to a later dodge, since Positions already
-    price where a soldier stands (decision batch 9, 9-27).
+    move if it changes the soldier's zone or attachment, and otherwise changes nothing and needs no
+    roll; it is never modelled on the dodge and gives no Circumstances to a later dodge, since zones
+    and attachments already price where a soldier stands (decision batch 9, 9-27).
   # decision batch 9, 9-24 (OQ-176): the called-roll sentences.
   rolls_called_by_attribute: >-
     A rule that calls for an attribute roll without naming a Catalog entry calls for that

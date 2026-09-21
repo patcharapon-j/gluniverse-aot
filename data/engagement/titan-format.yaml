@@ -6,7 +6,7 @@
 id: titan-format
 name: Titan Stat Blocks and Behavior Tables
 chapter: 05-titan-engagement
-adrs: [ADR-0001, ADR-0005, ADR-0007, ADR-0015, ADR-0017, ADR-0019, ADR-0024]
+adrs: [ADR-0001, ADR-0005, ADR-0007, ADR-0015, ADR-0017, ADR-0019, ADR-0024, ADR-0029]
 decided: [OQ-78, OQ-80, OQ-82, OQ-137, OQ-145, OQ-192, OQ-193, OQ-195, OQ-196]
 
 # ------------------------------------------------------------------ stat block
@@ -134,8 +134,8 @@ entry_fields:
   tier: terrorize, control, kill, or thrash.
   targets: >-
     holder: only the soldier who holds the Titan's Attention. holder-and-position: that soldier and
-    every other soldier who holds the same Position relative to the Titan, except a soldier who is
-    Grabbed. Both are read from the Attention holder as the card's choose step leaves them, so an
+    every other soldier in the holder's zone who holds the same Position relative to the Titan,
+    except a soldier who is Grabbed (decision batch 16, 16-18). Both are read from the Attention holder as the card's choose step leaves them, so an
     entry that retargeted reads the soldier it retargeted onto (data/engagement/attention.yaml,
     evaluation, retargeting).
   position_requirement: >-
@@ -143,6 +143,10 @@ entry_fields:
     Listing all four means any Position. When the holder does not, the Titan retargets down the
     Attention Ladder over the candidates who do, and falls back only when none does
     (data/engagement/behavior-procedure.yaml, resolving_a_card, choose; decision batch 13, 13-9).
+    In Reach, On Body, and Blind Spot exist only in the Titan's own zone, whatever its Size Class. An
+    entry whose requirement lists distant resolves at a holder in any other zone, as its text
+    describes the Titan closing (decision batch 16, 16-18). The requirement is checked after the
+    card's stride step, against the Positions the Stride left.
   # an entry a grounded Titan must not resolve lists leg twice (decision batch 4, OQ-109)
   body_parts_used: >-
     A list of Body Part kinds. The entry can happen only while, for each listed kind, the Titan
@@ -219,7 +223,8 @@ effect_types:
       If the target is airborne, or holds on-body or blind-spot relative to the Titan, they fall
       (data/gear/falls.yaml, triggers, rule-named), with the band Chapter 4's height steps give.
       Otherwise nothing happens. A mounted target is not affected. The fall is the same whatever the
-      Net Successes.
+      Net Successes. An airborne target in another zone falls in their own zone
+      (data/engagement/positions.yaml, falls_land; decision batch 16, 16-18 and 16-22).
   - id: grab
     fields: {}
     effect: >-
@@ -228,10 +233,12 @@ effect_types:
   - id: wreck
     fields: {}
     effect: >-
-      The Titan Engagement loses 1 Anchor (data/engagement/anchor-ratings.yaml, anchors, wrecking).
-      Like telegraph, a wreck effect applies whether the behavior landed or whiffed, and whatever
-      the Net Successes: it is the Titan going through the place, not an attack on a person. It
-      affects no soldier, no horse, and no Position, and it never falls below 0 Anchors.
+      The Titan's zone takes one rating step toward Open: its rating becomes its rating's sparser
+      (data/engagement/anchor-ratings.yaml, ratings, sparser; anchors, wrecking). Like telegraph, a
+      wreck effect applies whether the behavior landed or whiffed, and whatever the Net Successes:
+      it is the Titan going through the place, not an attack on a person. It affects no soldier and
+      no horse, and changes a Position only when the zone becomes Open under the standing Titan
+      (data/engagement/anchor-ratings.yaml, zone_becomes_open). An Open zone takes no further step.
   - id: telegraph
     fields: {}
     effect: >-

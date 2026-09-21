@@ -32,7 +32,8 @@ target:
     still applies).
   whose:
     in_titan_engagement: >-
-      An item of the soldier's own, or of a comrade who holds the soldier's Position. Two soldiers
+      An item of the soldier's own, or of a comrade in the soldier's zone
+      (data/engagement/zones.yaml, between_soldiers). Two soldiers
       who have both left the Titan Engagement count as holding the same Position
       (data/engagement/positions.yaml, leaving, after_leaving).
     outside_titan_engagement: An item of any soldier in the care window's scope.

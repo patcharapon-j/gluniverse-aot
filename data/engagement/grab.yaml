@@ -16,8 +16,9 @@ grabbed_state:
   forbids: [help, cover, reaction]   # Chapter 1, section 1.9 hook (OQ-18). A Grabbed soldier can still Push.
   meaning: The soldier is held in the hand of the Focus Titan whose Grab landed on them, the holding Titan.
   position: >-
-    The soldier holds on-body relative to the holding Titan, and the close rule applies
-    (data/engagement/positions.yaml, two_focus_titans). Becoming Grabbed is a change of Position
+    The soldier's attachment is grabbed naming the holding Titan, so they hold on-body relative to it
+    and move with it when it strides (data/engagement/zones.yaml, attachments, grabbed;
+    data/engagement/positions.yaml, stride_moves; decision batch 16, 16-23). Becoming Grabbed is a change of Position
     made by a rule, not by the soldier's own move, even when they already held on-body
     (data/character/enlistment.yaml, drive_rules, trigger_tests, own_state).
   chapter_4_effects: >-
@@ -53,7 +54,7 @@ grab_lands:
         The target becomes Grabbed (grabbed_state). A target who was airborne stops being airborne;
         a mounted target is dismounted with no fall (data/gear/horses.yaml, forced_dismount,
         grabbed); a target who was carried stops being carried, with no fall; and a comrade the
-        target carried is set down at the target's Position, and falls if the target was airborne
+        target carried is set down in the target's zone with attachment ground, and falls if the target was airborne
         (data/gear/carrying.yaml, carrying_a_comrade, ends; data/gear/falls.yaml, triggers,
         carried). The holding arm is the first arm in the Titan's stat block that is not Broken.
         While it holds the soldier its Toughness is grip_toughness and its count is 0, so any count
@@ -140,7 +141,7 @@ escapes:
     roll: break-free (data/character/action-catalog.yaml), Strength with Gear Dice from a Blade Set.
     needs: 2
     lifted_penalty: 2   # a 2-die penalty (data/harm/effect-types.yaml, penalty) once the soldier has been lifted
-    help: As Chapter 1, section 1.8. Helpers compare their Position relative to the holding Titan.
+    help: As Chapter 1, section 1.8. Helpers are in the Grabbed soldier's zone or an adjacent zone (data/engagement/zones.yaml, between_soldiers).
     on_success: The soldier is freed (release).
   - id: pry-loose
     who: >-
@@ -184,18 +185,19 @@ escapes:
 # ------------------------------------------------------------------ being freed
 release:
   not_lifted: >-
-    The soldier stops being Grabbed and, if the holding Titan is alive, holds in-reach relative to
-    it, with no fall.
+    The soldier stops being Grabbed and, if the holding Titan is alive, their attachment becomes
+    ground in its zone, so they hold in-reach relative to it, with no fall.
   lifted: >-
     The soldier stops being Grabbed and falls (data/gear/falls.yaml, triggers, rule-named), with
-    the band Chapter 4's height steps give for on-body. If the holding Titan is alive, the soldier
-    then holds in-reach relative to it (data/engagement/positions.yaml, falls_land).
+    the band Chapter 4's height steps give for on-body, and lands with attachment ground in the
+    holding Titan's zone, so if it is alive they then hold in-reach relative to it
+    (data/engagement/positions.yaml, falls_land).
   titan_dead: >-
-    A soldier freed by the holding Titan's death holds no Position relative to it. If they were
-    lifted, they still fall. Their Positions relative to any other Focus Titan stay as they are. For
-    the steam and fall steps of that death, they hold on-body relative to the dying body, which is
-    their last Position relative to it, and are not airborne; a fall this release makes them take is
-    resolved first (data/engagement/titan-harm.yaml, titan_death, freed; decision batch 8, 8-18).
+    A soldier freed by the holding Titan's death stops being Grabbed. If they were lifted, they still
+    fall, and that fall is resolved first. For the steam and fall steps of that death they hold
+    on-body relative to the dying body, as they did, and are not airborne. Then their attachment
+    becomes ground in the corpse's zone (data/engagement/titan-harm.yaml, titan_death, freed;
+    decision batch 8, 8-18; decision batch 16, 16-23).
   after: >-
     The holding arm's Toughness returns to its stat block value and its count is 0. The Titan's
     Attention is held by nothing until its next card (data/engagement/attention.yaml, changes,

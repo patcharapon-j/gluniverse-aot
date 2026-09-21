@@ -137,8 +137,8 @@ talents_never_change_a_step: true    # ADR-0016, Talent guardrail 10; decision b
 in_titan_engagement:
   default: standard
   already_priced:
-    - the Anchor Rating
-    - Positions
+    - each zone's Anchor Rating
+    - zones, attachments, and Positions
     - Openings
     - a grounded Titan
     - Call It

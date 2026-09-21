@@ -61,6 +61,7 @@ SETUP = "data/engagement/engagement-setup.yaml"
 ANCH = "data/engagement/anchor-ratings.yaml"
 SIZE = "data/engagement/size-classes.yaml"
 POSN = "data/engagement/positions.yaml"
+ZONES = "data/engagement/zones.yaml"
 TIDX = "data/titans/index.yaml"
 LEGS = "data/expedition/legs.yaml"
 HAZ = "data/expedition/hazards.yaml"
@@ -920,9 +921,28 @@ def b_interim_setup():
     sizes = {c["id"]: c for c in load(SIZE)["classes"]}
     std = load(TIDX)["standard_titans"]
     t1 = []
+    covered = []
     for r in d["anchor_rating"]["rows"]:
         expect_keys(r, {"results", "anchor_rating"}, f"{SETUP} anchor_rating")
+        covered += r["results"]
         t1.append([runs(r["results"]), lookup(anchors, r["anchor_rating"], f"{SETUP} anchor_rating")])
+    covers_d6(covered, f"{SETUP} anchor_rating")
+    zt = d["zone_terrain"]
+    expect_keys(zt, {"roll", "applies_to", "rows"}, f"{SETUP} zone_terrain", required=("roll", "applies_to", "rows"))
+    terrain_words = {"sparser": "one rating sparser than the field rating",
+                     "field": "the field rating",
+                     "denser": "one rating denser than the field rating"}
+    t0, covered = [], []
+    for r in zt["rows"]:
+        expect_keys(r, {"results", "rating"}, f"{SETUP} zone_terrain", required=("results", "rating"))
+        covered += r["results"]
+        t0.append([runs(r["results"]), lookup(terrain_words, r["rating"], f"{SETUP} zone_terrain")])
+    covers_d6(covered, f"{SETUP} zone_terrain")
+    ladder = []
+    for rt in load(ANCH)["ratings"]:
+        expect_keys(rt, RATING_KEYS, f"{ANCH} {rt['id']} rating", required=RATING_KEYS)
+        ladder.append([rt["name"], lookup(anchors, rt["sparser"], f"{ANCH} {rt['id']} sparser"),
+                       lookup(anchors, rt["denser"], f"{ANCH} {rt['id']} denser")])
     t2 = []
     for r in d["size_class"]["rows"]:
         expect_keys(r, {"results", "size_class"}, f"{SETUP} size_class")
@@ -936,7 +956,10 @@ def b_interim_setup():
     for r in d["background_titans"]["rows"]:
         expect_keys(r, {"results", "clocks"}, f"{SETUP} background_titans")
         t4.append([runs(r["results"]), len(r["clocks"]) or "none", ", ".join(str(c) for c in r["clocks"]) or "none"])
-    return ("**Anchor Rating (D6)**\n\n" + table(["D6", "Anchor Rating"], t1) +
+    return ("**Field rating (D6)**\n\n" + table(["D6", "Field rating"], t1) +
+            f"\n\n**Zone terrain ({zt['roll']}), for {folded(zt['applies_to'])}**\n\n" +
+            table([zt["roll"], "The zone's rating"], t0) +
+            "\n\n**Sparser and denser, by rating**\n\n" + table(["Rating", "One sparser", "One denser"], ladder) +
             "\n\n**Size Class (D6), for the Focus Titan and for each Background Titan**\n\n" +
             table(["D6", "Size Class", "Standard Titan"], t2) +
             "\n\n**On Medium: `medium_abnormal` (D6)**\n\n" + table(["D6", "Focus Titan"], t3) +
@@ -945,22 +968,201 @@ def b_interim_setup():
 
 
 def b_position_steps():
-    """The step rows, and the Anchors and Terrain Trait each rating gives (decision batch 10, OQ-182)."""
+    """The step rows, and the anchors, Carry cost, and Terrain Trait each zone's rating gives (decision batch 10,
+    OQ-182; decision batch 16, 16-4, 16-5, and 16-13)."""
     steps, field = [], []
     for rt in load(ANCH)["ratings"]:
-        expect_keys(rt, {"id", "name", "meaning", "anchors", "terrain_trait", "steps"},
-                    f"{ANCH} {rt['id']} rating")
+        expect_keys(rt, RATING_KEYS, f"{ANCH} {rt['id']} rating", required=RATING_KEYS)
         for s in rt["steps"]:
             expect_keys(s, {"between", "on_foot", "mounted", "odm"}, f"{ANCH} {rt['id']} step")
             a, b = s["between"]
-            steps.append([rt["name"], f"{position_name(a)} to {position_name(b)}", yes_no(s["on_foot"]),
+            kind = "zone step into it" if {a, b} == {"distant", "in-reach"} else "attachment step in it"
+            steps.append([rt["name"], f"{position_name(a)} to {position_name(b)}", kind, yes_no(s["on_foot"]),
                           yes_no(s["mounted"]), yes_no(s["odm"])])
         trait = folded(rt["terrain_trait"])
         trait = re.sub(r"\s*\((?:data/[^()]*|[a-z][a-z0-9_-]*(?:, [a-z][a-z0-9_-]*)*)\)", "", trait)
-        field.append([rt["name"], str(rt["anchors"]), "none" if trait == "none" else trait])
-    return (table(["Anchor Rating", "Position step (either way)", "On foot", "Mounted", "ODM"], steps) +
-            "\n\n**Anchors and Terrain Traits**\n\n" +
-            table(["Anchor Rating", "Anchors", "Terrain Trait"], field))
+        field.append([rt["name"], str(rt["anchors"]), str(whole0(rt["carry_cost"], f"{ANCH} {rt['id']} carry_cost")),
+                      "none" if trait == "none" else trait])
+    return (table(["Zone's rating", "Step (either way)", "Read as", "On foot", "Mounted", "ODM"], steps) +
+            "\n\n**Anchors, Carry cost, and Terrain Traits, by zone**\n\n" +
+            table(["Zone's rating", "Anchors (Momentum cap)", "Carry cost to enter", "Terrain Trait"], field))
+
+
+RATING_KEYS = ("id", "name", "meaning", "anchors", "carry_cost", "sparser", "denser", "terrain_trait", "steps")
+
+
+def whole0(v, where):
+    if isinstance(v, bool) or not isinstance(v, int) or v < 0:
+        raise RenderError(f"{where}: expected a whole number of 0 or more, got {v!r}")
+    return v
+
+
+# ------------------------------------------------------------------ the field (ADR-0029; decision batch 16)
+AXIAL = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]]
+
+
+def field_cells(size, where):
+    """One field's zones as {n: (q, r)}, checked against the numbering rule of 16-2."""
+    expect_keys(size, {"id", "name", "use", "centre", "squad_start", "zones"}, where,
+                required=("id", "name", "use", "centre", "squad_start", "zones"))
+    cells = {}
+    for z in size["zones"]:
+        expect_keys(z, {"n", "q", "r"}, f"{where} zones", required=("n", "q", "r"))
+        cells[z["n"]] = (z["q"], z["r"])
+    if sorted(cells) != list(range(1, len(cells) + 1)):
+        raise RenderError(f"{where}: zones are not numbered 1 to {len(cells)}")
+    if sorted(cells, key=lambda n: cells[n]) != sorted(cells):
+        raise RenderError(f"{where}: zones are not numbered column by column, top to bottom")
+    if cells.get(size["centre"]) != (0, 0):
+        raise RenderError(f"{where}: the centre zone is not at (0, 0)")
+    if cells.get(size["squad_start"]) != (0, 1):
+        raise RenderError(f"{where}: the Squad's start zone is not directly below the centre")
+    return cells
+
+
+def zone_distance(cells, a, b):
+    dq, dr = cells[a][0] - cells[b][0], cells[a][1] - cells[b][1]
+    return (abs(dq) + abs(dr) + abs(dq + dr)) // 2
+
+
+def zone_neighbours(cells, n):
+    at = {v: k for k, v in cells.items()}
+    q, r = cells[n]
+    return sorted(at[(q + dq, r + dr)] for dq, dr in AXIAL if (q + dq, r + dr) in at)
+
+
+def field_diagram(cells, centre, start):
+    """The field drawn flat-top: each column a column of text, each zone two text rows high, so a column's
+    neighbours sit half a zone up and down. [n] marks the centre and (n) the Squad's start zone."""
+    qs = sorted({q for q, _ in cells.values()})
+    ys = {n: 2 * r + q for n, (q, r) in cells.items()}
+    lo, hi = min(ys.values()), max(ys.values())
+    lines = []
+    for y in range(lo, hi + 1):
+        row = []
+        for q in qs:
+            n = next((k for k, (qq, _) in cells.items() if qq == q and ys[k] == y), None)
+            if n is None:
+                row.append("      ")
+            elif n == centre:
+                row.append(f" [{n:>2}] ")
+            elif n == start:
+                row.append(f" ({n:>2}) ")
+            else:
+                row.append(f"  {n:>2}  ")
+        lines.append("".join(row).rstrip())
+    return lines
+
+
+def b_zone_fields():
+    """The three fields (decision batch 16, 16-2), drawn from their coordinates, with centre, start, and edges."""
+    d = load(ZONES)
+    co = d["coordinates"]
+    if co["system"] != "axial-flat-top" or co["neighbour_offsets"] != AXIAL:
+        raise RenderError(f"{ZONES} coordinates: not the axial flat-top offsets of 16-2")
+    out = []
+    sizes = d["fields"]["sizes"]
+    if d["fields"]["default"] not in {s["id"] for s in sizes}:
+        raise RenderError(f"{ZONES} fields: the default names no field")
+    for s in sizes:
+        where = f"{ZONES} fields {s.get('id')}"
+        cells = field_cells(s, where)
+        edges = [n for n in cells if len(zone_neighbours(cells, n)) < 6]
+        default = " The default." if s["id"] == d["fields"]["default"] else ""
+        out.append(f"**{s['name']}**, {len(cells)} zones.{default} Centre {s['centre']}, the Squad's start zone "
+                   f"{s['squad_start']}. Edge zones: {runs(edges)}.\n\n```\n" +
+                   "\n".join(field_diagram(cells, s["centre"], s["squad_start"])) + "\n```")
+    return ("`[n]` is the centre zone, where Focus Titan A starts; `(n)` is the Squad's start zone. Two zones that "
+            "touch are adjacent.\n\n" + "\n\n".join(out))
+
+
+ATTACHMENT_IDS = ("ground", "anchored", "on-body", "blind-spot", "grabbed", "pinned")
+ATTACHMENT_NAMES = {"ground": "Ground", "anchored": "Anchored", "on-body": "On Body", "blind-spot": "Blind Spot",
+                    "grabbed": "Grabbed", "pinned": "Pinned"}
+
+
+def b_attachments():
+    rows = []
+    d = load(ZONES)
+    ids = []
+    for a in d["attachments"]:
+        where = f"{ZONES} attachments {a.get('id')}"
+        keys = ("id", "names_body", "free", "derives", "text")
+        expect_keys(a, set(keys), where, required=keys)
+        ids.append(a["id"])
+        if (a["derives"] is None) == a["names_body"]:
+            raise RenderError(f"{where}: names_body and derives disagree")
+        derives = ("names none: In Reach of every body in the zone" if a["derives"] is None
+                   else position_name(a["derives"]))
+        rows.append([ATTACHMENT_NAMES[a["id"]], yes_no(a["names_body"]), yes_no(a["free"]), derives,
+                     folded(DATA_REF.sub("", a["text"])).replace(" .", ".")])
+    if tuple(ids) != ATTACHMENT_IDS:
+        raise RenderError(f"{ZONES} attachments: {ids} is not the closed list of 16-8")
+    return table(["Attachment", "Names a body", "Free", "Position relative to that body", "Where the soldier is"], rows)
+
+
+def b_position_derivation():
+    d = load(ZONES)["derivation"]
+    rows = []
+    for i, r in enumerate(d["order"], 1):
+        expect_keys(r, {"id", "when", "position"}, f"{ZONES} derivation", required=("id", "when", "position"))
+        rows.append([str(i), folded(r["when"]), position_name(r["position"])])
+    if [r["position"] for r in d["order"]][-1] != "distant":
+        raise RenderError(f"{ZONES} derivation: the last row is not distant")
+    return (table(["Order", "For one soldier and one body, if the soldier's", "Position"], rows) +
+            f"\n\nThe first row that applies gives the Position. {folded(d['off_field'])}")
+
+
+def b_carry_costs():
+    d = load(ZONES)
+    fl = d["flight"]
+    keys = ("first_step_cost", "carry_cost_into_zone", "carry_cost_off_field", "carry_cost_attachment_step",
+            "carry_limit", "ends_free_in_open", "ends_free_as", "momentum_gain_cap", "momentum_trim")
+    expect_keys(fl, set(keys), f"{ZONES} flight", required=keys)
+    rows = [["The first step, of any kind", str(whole0(fl["first_step_cost"], f"{ZONES} flight"))]]
+    for rt in load(ANCH)["ratings"]:
+        art = "an" if rt["name"][0] in "AEIOU" else "a"
+        rows.append([f"A zone step into {art} {rt['name']} zone", str(whole0(rt["carry_cost"], f"{ANCH} {rt['id']}"))])
+    rows.append(["A step off field, from an edge zone", str(whole0(fl["carry_cost_off_field"], f"{ZONES} flight"))])
+    rows.append(["An attachment step", str(whole0(fl["carry_cost_attachment_step"], f"{ZONES} flight"))])
+    if fl["ends_free_in_open"] is not False or fl["ends_free_as"] not in ATTACHMENT_IDS:
+        raise RenderError(f"{ZONES} flight: the Open ending or the free attachment is not 16-13's")
+    mo = d["moves"]
+    expect_keys(mo["mounted"], {"zone_steps", "attachment_steps", "ends_on_entering_a_standing_focus_titans_zone_unless_open"},
+                f"{ZONES} moves mounted", required=("zone_steps", "attachment_steps"))
+    return (table(["A Flight's step", "Momentum it costs"], rows) +
+            f"\n\n**Carry limit:** at most {whole(fl['carry_limit'], f'{ZONES} flight')} Carries on one Flight "
+            f"(provisional, OQ-200). A Flight never ends free in an Open zone, and one that ends free ends "
+            f"{ATTACHMENT_NAMES[fl['ends_free_as']]}.\n\n"
+            f"**Mounted pace:** up to {whole(mo['mounted']['zone_steps'], f'{ZONES} moves mounted')} zone steps and "
+            f"{mo['mounted']['attachment_steps']} attachment steps (provisional, OQ-200). **On foot:** "
+            f"{whole(mo['on_foot']['steps'], f'{ZONES} moves on_foot')} step.")
+
+
+def b_zone_effects():
+    rows = []
+    for e in load(ZONES)["effects"]:
+        where = f"{ZONES} effects {e.get('id')}"
+        expect_keys(e, {"id", "where", "harm", "art", "reserved"}, where, required=("id", "where", "harm", "art"))
+        rows.append([e["id"].capitalize(), "reserved: no rule places it" if e.get("reserved") else folded(e["where"]),
+                     e["harm"]])
+    return table(["Effect", "Where it is", "Harm"], rows)
+
+
+def b_stride():
+    sizes = load(SIZE)
+    if "stride" not in sizes["fields"]:
+        raise RenderError(f"{SIZE} fields: no stride")
+    rows = []
+    for c in sizes["classes"]:
+        rows.append([c["name"], str(whole(c["stride"], f"{SIZE} {c['id']} stride"))])
+    for tid in load(TIDX)["abnormals"]:
+        aid = tid["id"] if isinstance(tid, dict) else tid
+        t = load(f"data/titans/{aid}.yaml")
+        rows.append([t["name"] + " (an Abnormal lists its own)", str(whole(t["stride"], f"data/titans/{aid}.yaml stride"))])
+    st = load(ZONES)["stride"]
+    return (table(["Titan", "Stride (zones)"], rows) +
+            f"\n\nA grounded Titan's Stride is {st['grounded']}. Ties between two zones go to the lower-numbered.")
 
 
 # The Position map (decision batch 13, 13-6; OQ-191): left to right, the way a soldier closes on a Titan.
@@ -1043,8 +1245,7 @@ def b_position_maps():
             lines = _branch_diagram(names, {"fork": fork}, joined)
         else:
             raise RenderError(f"{where}: shape {m['shape']!r} has no drawing")
-        n = m["anchors"]
-        anchors = f"{n} {'Anchor' if n == 1 else 'Anchors'}"
+        anchors = f"anchors {m['anchors']}"
         out.append(f"**{m['name']}** ({anchors}). {folded(m['says'])}\n\n```\n" + "\n".join(lines) + "\n```")
     return "\n\n".join(out)
 
@@ -1118,7 +1319,7 @@ def b_waypoint_kinds():
         roll = runs(w["interim_roll"]) if w["interim_roll"] else "never rolled; always the route's last Waypoint"
         rows.append([w["name"], rating, roll])
     covers_d6(covered, f"{ROUTE} waypoint_kinds")
-    return table(["Waypoint kind", "Anchor Rating", "Interim route (D6)"], rows)
+    return table(["Waypoint kind", "Field rating", "Interim route (D6)"], rows)
 
 
 def b_pace():
@@ -1517,6 +1718,12 @@ block("fall-damage", CH4, FALL, b_fall_damage)
 block("standard-issue", CH4, ISSUE, b_standard_issue)
 block("squad-supply", CH4, SUP, b_squad_supply)
 block("interim-setup", CH5, SETUP, b_interim_setup)
+block("zone-fields", CH5, ZONES, b_zone_fields)
+block("attachments", CH5, ZONES, b_attachments)
+block("position-derivation", CH5, ZONES, b_position_derivation)
+block("carry-costs", CH5, ZONES, b_carry_costs)
+block("zone-effects", CH5, ZONES, b_zone_effects)
+block("stride", CH5, SIZE, b_stride)
 block("position-steps", CH5, ANCH, b_position_steps)
 block("position-maps", CH5, ANCH, b_position_maps)
 block("pinned-entries", CH5, EFF, b_pinned_entries)

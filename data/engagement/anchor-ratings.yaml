@@ -1,17 +1,21 @@
-# Anchor Ratings: which Position steps exist on a battlefield, which kinds of move can make each,
-# how many Anchors the field holds, and what each rating's Terrain Trait does.
+# Anchor Ratings: the rating each zone of the field carries (decision batch 16, 16-4): which steps
+# exist in a zone, which kinds of move can make each and can enter the zone, what a Flight pays to
+# enter it, its anchors, how it is wrecked, and what each rating's Terrain Trait does.
 # Source of truth under ADR-0012. docs/rules/05-titan-engagement.md (section 5.2) references this
 # file and renders its tables from it (tools/render/render.py).
 id: anchor-ratings
-name: Anchor Ratings, Position Steps, and Anchors
+name: Anchor Ratings, Steps, Carry Costs, and Momentum
 chapter: 05-titan-engagement
-adrs: [ADR-0010, ADR-0024]
-decided: [OQ-74, OQ-99, OQ-182, OQ-183, OQ-191]   # OQ-182: Flight, Momentum, and Anchors; OQ-183: the mounted charge (decision batch 10); OQ-191: the Position maps (decision batch 13)
+adrs: [ADR-0010, ADR-0024, ADR-0029]
+decided: [OQ-74, OQ-99, OQ-182, OQ-183, OQ-191, OQ-200]   # OQ-182: Flight, Momentum, and Anchors; OQ-183: the mounted charge (decision batch 10); OQ-191: the Position maps (decision batch 13); OQ-200: the Carry limit and mounted pace (decision batch 16)
 
 # The four Positions (data/engagement/positions.yaml gives their meanings).
 positions: [distant, in-reach, on-body, blind-spot]
 
-# Kinds of move (data/engagement/positions.yaml, moves). A step row says which kinds can make it.
+# Kinds of move (data/engagement/positions.yaml, moves). A step row says which kinds can make it. A
+# zone step reads the distant to in-reach row of the zone it enters (decision batch 16, 16-12):
+# on_foot and mounted say whether that kind may enter such a zone, and odm says whether a Flight may
+# end free in it.
 move_kinds:
   on_foot: >-
     A move that is not an ODM move, made by a soldier who is not mounted. A soldier who was
@@ -23,33 +27,38 @@ move_kinds:
 
 # How to read a step row.
 step_fields:
-  between: The two Positions the step joins. A step can be made in either direction.
+  between: >-
+    The two Positions the step joins. A step can be made in either direction. The distant to
+    in-reach row is read for a zone step into a zone of this rating; every other row is an attachment
+    step in a zone of this rating (data/engagement/zones.yaml, moves).
   on_foot: true if a move on foot can make the step.
   mounted: true if a mounted move can make the step.
   odm: true if an ODM move can make the step.
 # No step row calls for a roll of its own. Every ODM move is a Flight and is rolled
-# (data/engagement/positions.yaml, moves, flight), and a move that crosses more than one step
-# spends Momentum on Carry (momentum, spends, carry). The Fly roll needs that Sparse and Urban
-# carried before decision batch 10 are withdrawn with those two rows (history).
+# (data/engagement/positions.yaml, moves, flight), and a Flight's steps after the first are Carries
+# (momentum, spends, carry). The Fly roll needs that Sparse and Urban carried before decision batch
+# 10 are withdrawn with those two rows (history).
 
-# One Position step: two Positions joined by a step row of the Titan Engagement's Anchor Rating,
-# whatever kinds of move can make it. Help, Covering, Rally, and aftermath rolls count steps this
-# way (Chapter 1, section 1.8). Every Position is 0 steps from itself; any pair of Positions with
-# no row is more than one step apart.
+# Position steps between two soldiers count zones, not these rows (data/engagement/zones.yaml,
+# between_soldiers; decision batch 16, 16-11).
+# carry_cost: Momentum a Flight's Carry pays for a zone step into a zone of this rating (decision batch
+# 16, 16-13). sparser and denser: the rating one step toward Open and one step away from it, read by a
+# wreck (wrecking) and by the terrain mix (data/engagement/engagement-setup.yaml, zone_terrain).
 ratings:
   - id: open
     name: Open
     meaning: >-
       Flat ground with no anchors but the Titan itself, such as a plain. Nothing holds a soldier
       out of a standing Titan's sight with its Nape in reach, so no step reaches blind-spot until
-      the Titan is grounded (grounded_titan, open_rating). The field holds no Anchors, so no
-      soldier holds Momentum here (anchors).
+      the Titan is grounded (grounded_titan, open_rating). The zone holds no anchors, so no
+      soldier in it holds Momentum (anchors), and no Flight ends free in it
+      (data/engagement/positions.yaml, moves, flight, ends).
     anchors: 0
     carry_cost: 2
     sparser: open
     denser: sparse
     terrain_trait: >-
-      A mounted soldier's Break Attention gains 1 Bonus Die
+      A mounted soldier's Break Attention gains 1 Bonus Die when the soldier is in an Open zone
       (data/core/bonus-dice-sources.yaml, terrain-trait). The plain is the horse's.
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: false}
@@ -65,8 +74,8 @@ ratings:
     sparser: open
     denser: wooded
     terrain_trait: >-
-      The first Anchor wrecked in the Titan Engagement is not lost (anchors, wrecking). One good
-      tree survives.
+      The first wreck a zone takes while its rating is Sparse does nothing, once per zone (anchors,
+      wrecking). One good tree survives.
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
@@ -94,8 +103,8 @@ ratings:
     sparser: wooded
     denser: urban
     terrain_trait: >-
-      A soldier who holds blind-spot relative to a Focus Titan is anchored to a roof and is not
-      airborne, so a Jam does not drop them (data/gear/odm-gear.yaml, jam).
+      A soldier who holds blind-spot relative to a Focus Titan in an Urban zone is anchored to a roof
+      and is not airborne, so a Jam does not drop them (data/gear/odm-gear.yaml, jam).
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: false, odm: true}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
@@ -104,14 +113,17 @@ ratings:
 
   - id: giant-forest
     name: Giant Forest
-    meaning: Trees taller than any Titan. Chapter 4 raises every fall that is not from a horse one band here (data/gear/falls.yaml, height).
+    meaning: Trees taller than any Titan.
     anchors: 3
     carry_cost: 0
     sparser: wooded
     denser: giant-forest
     terrain_trait: >-
-      The first step a Flight Carries costs no Momentum (momentum, spends, carry). The Corps fights
-      best here.
+      Every fall that is not from a horse, in a Giant Forest zone, is raised one band
+      (data/gear/falls.yaml, height). The Corps fights best here, and a Flight pays nothing to enter
+      it (carry_cost).
+    # The first-Carry-free trait is withdrawn: the Carry cost of 0 into the zone contains it
+    # (decision batch 16, 16-5).
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
       - {between: [in-reach, on-body], on_foot: false, mounted: false, odm: true}
@@ -119,8 +131,8 @@ ratings:
       - {between: [in-reach, blind-spot], on_foot: false, mounted: false, odm: true}
 
 # ------------------------------------------------------------------ the Position maps
-# The shape the step rows above make, named and drawn, one per shape of Anchor Rating (decision
-# batch 13, 13-7; OQ-191). This adds no step and changes no row: every map is read off ratings,
+# The shape the step rows above make inside one zone, named and drawn, one per shape of Anchor Rating
+# (decision batch 13, 13-7; OQ-191). Distant is another zone (decision batch 16, 16-9). This adds no step and changes no row: every map is read off ratings,
 # steps, and it is wrong if it ever disagrees with them. docs/rules/05-titan-engagement.md
 # (section 5.2) draws these maps from this block.
 position_maps:
@@ -157,56 +169,66 @@ position_maps:
   grounded_titan: >-
     A grounded Titan changes every map (grounded_titan). Every step joining two of in-reach,
     on-body, and blind-spot can then also be made on foot, and none of them mounted, so the shape
-    is the same and the ways of making it widen. At the Open rating a grounded Titan also gains an
+    is the same and the ways of making it widen. In an Open zone a grounded Titan also gains an
     on-body to blind-spot step, so the Open map becomes the Sparse map's chain and a Nape strike
     becomes possible on a plain at last (grounded_titan, open_rating). When the Titan has no Broken
-    leg the permissions end, and a soldier who holds blind-spot relative to it at the Open rating
-    then holds on-body instead (grounded_titan, ends). A corpse counts as a grounded Titan for as
+    leg the permissions end, and a soldier who holds blind-spot relative to it in an Open zone then
+    holds on-body instead (grounded_titan, ends). A corpse counts as a grounded Titan for as
     long as it lies on the field, and for it the permissions never end (grounded_titan, corpse).
 
-# ------------------------------------------------------------------ Anchors (decision batch 10, OQ-182)
-# The battlefield's own resource: what the ground offers a soldier on the wires, and what a Titan
-# takes away by going through it.
+# ------------------------------------------------------------------ anchors (decision batch 10, OQ-182; decision batch 16, 16-4 and 16-20)
+# What the ground offers a soldier on the wires, zone by zone, and what a Titan takes away by going
+# through it. The Titan Engagement's single Anchors count is retired: each zone holds its own rating.
 anchors:
   what: >-
-    A whole number held by the Titan Engagement, not by any soldier. It starts at the Anchor
-    Rating's anchors value and never rises during the Titan Engagement. It is public and is
-    tracked on the GM's tracker (data/engagement/round.yaml, gm_tracker, anchors_row).
+    Each zone of the field holds one Anchor Rating, its rating, and a start rating, the rating it had
+    when the field was generated (data/engagement/engagement-setup.yaml, steps, zone-terrain). A
+    zone's anchors are its rating's anchors value, read at any moment. A zone's rating never rises
+    during the Titan Engagement. Every zone's rating is public and is tracked on the GM's tracker
+    (data/engagement/round.yaml, gm_tracker, engagement_line).
   set_when: >-
-    As the Titan Engagement begins, from the Anchor Rating (data/engagement/engagement-flow.yaml,
+    As the Titan Engagement begins, when the field is generated (data/engagement/engagement-flow.yaml,
     starting; data/engagement/engagement-setup.yaml).
   momentum_cap: >-
-    Every soldier's Momentum cap is the number of Anchors left (momentum, cap). When Anchors fall,
-    every soldier whose Momentum is above the new cap loses the excess at once.
+    A soldier's Momentum cap is the anchors of the zone they are in (momentum, cap). When a soldier's
+    zone changes, or its rating falls, a soldier whose Momentum is above the new cap loses the excess
+    at once.
   wrecking:
     by_a_behavior: >-
-      A Behavior Table entry with the wreck effect destroys 1 Anchor
-      (data/engagement/titan-format.yaml, effect_types, wreck). Like telegraph, it applies whether
-      the behavior landed or whiffed: it is the Titan going through the place, not an attack on a
-      person.
+      A Behavior Table entry with the wreck effect takes one rating step off the Titan's zone: its
+      rating becomes its rating's sparser (data/engagement/titan-format.yaml, effect_types, wreck).
+      Like telegraph, it applies whether the behavior landed or whiffed: it is the Titan going
+      through the place, not an attack on a person. It affects no soldier and no horse.
     by_a_falling_titan: >-
-      A Focus Titan that falls destroys 1 Anchor where it lands
+      One rating step off the zone the body lands in, which is its own zone
       (data/engagement/titan-harm.yaml, falling_titan).
-    never_below_zero: Anchors never fall below 0.
+    never_below_open: An Open zone takes no further step.
     sparse_trait: >-
-      At the Sparse rating the first Anchor that would be wrecked in the Titan Engagement is not
-      lost (terrain_trait). It applies once, to the first wrecking of the Titan Engagement, whatever
-      caused it.
-  at_zero: >-
-    No soldier holds Momentum and none can be gained. Flights are still rolled and still make their
-    step, and no step row changes: a wrecked field never closes a route to the Nape, which keeps
-    ADR-0010's promise whatever the Titan has flattened.
+      The first wreck a zone takes while its rating is Sparse does nothing (terrain_trait). It
+      applies once per zone, whatever caused the wreck.
+    striding: A Stride never wrecks (data/engagement/zones.yaml, stride).
+  route: >-
+    A wreck can close the Nape in one zone. ADR-0010's legal route holds on the field: a standing
+    Titan follows its Attention holder into another zone (data/engagement/behavior-procedure.yaml,
+    resolving_a_card, stride), and a grounded Titan opens the Nape at every rating (grounded_titan).
+    A field whose every zone is Open is the Open rating as it has always been, where only a grounded
+    Titan's Nape can be reached. Flights are still rolled and still make their first step in a zone
+    with no anchors.
   gm: >-
-    none (ADR-0024): the GM never spends, wrecks, or restores an Anchor. Only a wreck effect, a
-    falling Titan, and a soldier's own spending change the count.
+    none (ADR-0024): the GM never wrecks, restores, or chooses a zone's rating during play. Only a
+    wreck effect and a falling Titan change it. The GM names a zone's rating only as framing, before
+    the field is generated (data/engagement/zones.yaml, gm).
 
-# ------------------------------------------------------------------ Momentum (decision batch 10, OQ-182)
+# ------------------------------------------------------------------ Momentum (decision batch 10, OQ-182; decision batch 16, 16-14)
 momentum:
   what: >-
     A whole number each soldier holds, from 0 to their cap. It is public and is recorded on the
     sheet (data/gear/sheet-fields.yaml, momentum).
-  cap: The Anchors left in the Titan Engagement (anchors, momentum_cap).
-  gained: 1 for each success on a Flight (data/engagement/positions.yaml, moves, flight), to the cap.
+  cap: The anchors of the zone the soldier is in (anchors, momentum_cap).
+  gained: >-
+    1 for each success on a Flight (data/engagement/positions.yaml, moves, flight), up to the anchors
+    of the zone the Flight starts in. Carry is spent from it during the move. At the end of the move,
+    Momentum above the anchors of the zone it ends in is lost.
   lost: >-
     All of it, at the round-ends end step of any round in which the soldier made no ODM move
     (data/engagement/round.yaml, end_steps, round-ends). A soldier who has left the Titan
@@ -218,16 +240,17 @@ momentum:
       names.
     list:
       - id: carry
-        cost: 1
+        cost: the Carry cost of the step
         effect: >-
-          The move makes one more Position step, along a chain of step rows the soldier's kind of
-          move could make, relative to the same named Focus Titan. Carry may be spent more than once
-          on one move.
+          A Flight makes one more step after its free first step: a zone step costs the carry_cost of
+          the zone it enters (ratings), a step off field costs 1, and an attachment step costs 1. A
+          Flight makes at most 2 Carries (provisional, OQ-200; data/engagement/zones.yaml, flight).
       - id: bite
         cost: 1
         effect: >-
-          1 Bonus Die on a strike or a Break Attention the soldier takes this turn against the Focus
-          Titan the Flight named (data/core/bonus-dice-sources.yaml, momentum), within the cap of 4.
+          1 Bonus Die on a strike or a Break Attention the soldier takes this turn against a Focus
+          Titan in the zone the Flight ended in (data/core/bonus-dice-sources.yaml, momentum), within
+          the cap of 4.
       - id: brace
         cost: 1
         effect: >-
@@ -236,42 +259,51 @@ momentum:
       - id: quiet
         cost: 1
         effect: >-
-          The soldier sets no flag this turn, the loudest flag a Flight with no successes sets
-          included (data/engagement/attention.yaml, flags). A flag already set is not cleared.
+          The soldier sets no flag this turn, the loudest flag a Flight with no successes sets and the
+          crossing flag included (data/engagement/attention.yaml, flags). A flag already set is not
+          cleared.
       - id: clean-line
         cost: 1
         effect: The soldier makes no Gas Roll for this round (data/gear/odm-gear.yaml, gas_roll).
   gm: none (ADR-0024). The GM never grants, spends, or removes Momentum.
 
 # A Titan grounded by a Broken leg (data/engagement/titan-harm.yaml, body_part_kinds, leg) lies on
-# the ground. While it is grounded, these extra permissions apply to Positions held relative to it,
-# at every Anchor Rating. They add no step that the rating's rows do not have, except open_rating.
+# the ground. While it is grounded, these extra permissions apply to attachment steps onto it, in
+# every zone. They add no step that the zone's rating's rows do not have, except open_rating.
 grounded_titan:
   on_foot_steps: >-
     Every step row joining two of in-reach, on-body, and blind-spot can also be made on foot. None
     can be made mounted.
   open_rating: >-
-    At the Open rating a grounded Titan also has a step between on-body and blind-spot that a move
+    In an Open zone a grounded Titan also has a step between on-body and blind-spot that a move
     on foot or an ODM move can make. The Titan lies on the ground, and its Nape is reached from
     beside it.
   ends: >-
     When the Titan has no Broken leg, these permissions end. A soldier keeps the Position they
-    hold, except at the Open rating: a soldier who holds blind-spot relative to it then holds
-    on-body instead, a change of Position made by this rule and not a fall.
+    hold, except in an Open zone, meaning the zone the Titan is in: a soldier who holds blind-spot
+    relative to it then holds on-body instead, a change of Position made by this rule and not a
+    fall.
   corpse: >-
     A corpse counts as a grounded Titan for these permissions for as long as it lies on the field,
     and they never end for it (data/engagement/positions.yaml, corpse; decision batch 8, 8-9, OQ-146).
   decided: [OQ-74, OQ-146]
 
-# ------------------------------------------------------------------ the mounted charge (decision batch 10, OQ-183)
+# A zone that becomes Open under a standing Focus Titan (decision batch 16, 16-21).
+zone_becomes_open: >-
+  When a zone's rating becomes Open while a standing Focus Titan is in it, every soldier who holds
+  blind-spot relative to that Titan holds on-body instead, a change made by this rule and not a fall;
+  every soldier anchored in that zone becomes ground and stops being airborne, with no fall
+  (data/engagement/positions.yaml, changes_to_position, zone-becomes-open).
+
+# ------------------------------------------------------------------ the mounted charge (decision batch 10, OQ-183; decision batch 16, 16-15)
 mounted_charge:
   what: >-
-    A mounted move that makes the distant to in-reach step may also set the loudest flag on that
-    Focus Titan (data/engagement/attention.yaml, flags, loudest). It is the only move that sets a
-    flag by the soldier's choice: a Flight sets the loudest flag only when it gives no successes
-    (data/engagement/positions.yaml, moves, flight, no_successes), which is a failure and not a
-    capability, and no move on foot sets one at all.
-  who: A mounted soldier whose move makes that step, in either direction, and who is not Grabbed or carried.
+    A mounted move that enters or leaves a zone holding a Focus Titan may set the loudest flag on one
+    such Titan, the rider's choice, once per move (data/engagement/attention.yaml, flags, loudest).
+    It is the only move that sets a flag by the soldier's choice: a Flight sets the loudest flag only
+    when it gives no successes or crosses a Focus Titan's zone (data/engagement/positions.yaml, moves,
+    flight), which a soldier can silence with quiet, and no move on foot sets one at all.
+  who: A mounted soldier whose move enters or leaves such a zone, and who is not Grabbed or carried.
   spends: Nothing beyond the move itself. It is not an action and is never rolled.
   decided: [OQ-183]
 
@@ -286,7 +318,8 @@ history:
     (decision batch 10, OQ-182).
 
 gm_choices: >-
-  A ruling, as framing: the Anchor Rating, named before the Titan Engagement starts where no starting
-  rule names it (data/engagement/engagement-setup.yaml, gm_choices; decision batch 9, 9-15). Nothing
-  else: the GM never picks a step, whether a move can make it, where a move ends, an Anchor, or a
-  point of Momentum (ADR-0024, limit 8).
+  A ruling, as framing: the field rating and any zone's rating, named before the Titan Engagement
+  starts where no starting rule names them (data/engagement/engagement-setup.yaml, gm_choices;
+  data/engagement/zones.yaml, gm; decision batch 9, 9-15; decision batch 16, 16-33). Nothing else:
+  the GM never picks a step, whether a move can make it, where a move ends, a Carry cost, a wreck's
+  zone, or a point of Momentum (ADR-0024, limit 8).

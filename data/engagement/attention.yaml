@@ -103,10 +103,15 @@ flags:
       The soldier takes Draw Attention against the Titan (draw_attention), or a Fear Roll result's
       draw-attention effect names the Titan as the event's Titan (data/harm/effect-types.yaml;
       data/mind/fear-rolls.yaml, event_titan; decision batch 7, 7-8). Neither sets it from distant.
-      A Flight with no successes sets it on the Focus Titan the move named, from any Position,
-      distant included (data/engagement/positions.yaml, moves, flight, no_successes), and a mounted
-      charge sets it (data/engagement/anchor-ratings.yaml, mounted_charge). Momentum spent on Quiet
-      stops a flag this turn (data/engagement/anchor-ratings.yaml, momentum, spends, quiet).
+      A Flight with no successes sets it on every Focus Titan in the zone the Flight ends in, or, when
+      there is none, on the Focus Titan nearest that zone, a tie going to the earliest label
+      (data/engagement/positions.yaml, moves, flight, no_successes). A Flight sets it on every Focus
+      Titan standing in a zone it crosses, whatever the roll gave (data/engagement/positions.yaml,
+      moves, flight, crossing; data/engagement/zones.yaml, crossing_flag), and a mounted charge sets
+      it on one Titan in a zone the move enters or leaves (data/engagement/anchor-ratings.yaml,
+      mounted_charge). A corpse takes no flag. Momentum spent on Quiet stops every flag the soldier
+      would set this turn, the crossing flag included (data/engagement/anchor-ratings.yaml,
+      momentum, spends, quiet; decision batch 16, 16-15).
     matches: >-
       While a soldier holds this flag they also count, for this Titan's ladder, as meeting every
       rung any other candidate meets except hooked-into-its-body (evaluation, steps, loudest-matches;
@@ -136,7 +141,9 @@ tests:
       The soldier holds the closest Position any soldier in the set being tested holds, in the
       order on-body, in-reach, blind-spot, distant. As the highest rung met, it is met by the
       candidates at the closest Position any candidate holds; as a lower rung, by the tied soldiers
-      at the closest Position any of them holds.
+      at the closest Position any of them holds. Among candidates at Distant it counts no zones: every
+      soldier in another zone holds the same Position, and ties go on to the holder and card steps
+      (decision batch 16, 16-17).
     down_can_meet: true
   - id: current-holder
     meaning: >-
@@ -287,7 +294,7 @@ draw_attention:
   entry: draw-attention   # data/character/action-catalog.yaml: an unrolled action
   requirements:
     - The soldier holds a Position relative to the named Focus Titan.
-    - The soldier holds a Position other than distant relative to that Titan (decision batch 5, OQ-113).
+    - The soldier holds a Position other than distant relative to that Titan, which means being in its zone (decision batch 5, OQ-113; decision batch 16, 16-15).
     - The soldier is not Grabbed.
   spends: the soldier's action (Shout Them Off lets the soldier spend their move instead)
   effect: >-
@@ -361,13 +368,12 @@ break_attention:
     - id: riderless-horse
       name: Riderless horse
       requirement: >-
-        The soldier's own horse is not lame, and the soldier is mounted on it, or it holds the
-        Position the soldier holds, both compared relative to the Focus Titan recorded with the
-        horse's Position (data/gear/horses.yaml, gear_dice). Broken eyes do not stop this decoy.
+        The soldier's own horse is not lame, and the soldier is mounted on it, or it is in the
+        soldier's zone (data/gear/horses.yaml, gear_dice; data/engagement/positions.yaml, horses). Broken eyes do not stop this decoy.
       spends_when_declared: none
       on_success: >-
         If the soldier is mounted, they are dismounted with no fall. The horse bolts and leaves the
-        Titan Engagement: it holds no Position, cannot be mounted, gives no Gear Dice, and cannot
+        Titan Engagement: it is in no zone, cannot be mounted, gives no Gear Dice, and cannot
         be named as a decoy again until the Titan Engagement ends, when it is the soldier's own
         again (data/engagement/positions.yaml, horses; data/gear/horses.yaml,
         titan_engagement_ends). Its price is the horse for the rest of the fight: no mounted

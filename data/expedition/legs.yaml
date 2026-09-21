@@ -203,7 +203,7 @@ leg_steps:
       its scope.
   - id: titan-engagement
     text: >-
-      A Titan Engagement a row begins takes its Anchor Rating from the kind of the Waypoint this Leg
+      A Titan Engagement a row begins takes its field rating from the kind of the Waypoint this Leg
       leads to (data/expedition/route.yaml, waypoint_kinds), and whatever else the row names; everything
       it leaves unnamed comes from data/engagement/engagement-setup.yaml. Every living soldier on the
       Expedition takes part. If it became a retreat before it ended (data/engagement/background-titans.yaml,
@@ -247,11 +247,11 @@ night_camp:
     The Night Camp is made at the Waypoint the Squad is at when it begins: the Waypoint the day's last Leg
     reached (leg_steps, waypoint), or, after a Waypoint-scene retreat that left no Leg slot, the Waypoint
     that Leg started from (day, waypoint_scene, retreat). A Titan Engagement the Night table begins takes
-    its Anchor Rating from the kind of that Waypoint (data/expedition/hazards.yaml, night, anchor_rating;
+    its field rating from the kind of that Waypoint (data/expedition/hazards.yaml, night, anchor_rating;
     data/expedition/route.yaml, waypoint_kinds). The night hazard still reads the Distance Band of the
     day's last Leg ridden (data/expedition/hazards.yaml, night, modifiers, distance_band). A camp at the
     gate the Expedition left, which is not a route Waypoint and has no kind, gives a Titan Engagement the
-    Night table begins an Anchor Rating rolled on the setup table, as a gate does (data/expedition/route.yaml,
+    Night table begins a field rating rolled on the setup table, as a gate does (data/expedition/route.yaml,
     kind_rules, gate; data/engagement/engagement-setup.yaml, anchor_rating), and the Expedition goes on:
     only the route's last Waypoint ends it (decision batch 9, 9-45).
   steps:

@@ -33,8 +33,8 @@ gains:
     condition: >-
       The Covering soldier is not the Pushing soldier, is not Down, and is a player
       character or a Squadmate whose Chapter 2 rules allow Covering. In a Titan
-      Engagement they are at the same Position as the Pushing soldier or one Position
-      step away. Outside a Titan Engagement they qualify to Help that roll under the
+      Engagement they are in the Pushing soldier's zone or an adjacent zone
+      (data/engagement/zones.yaml, between_soldiers). Outside a Titan Engagement they qualify to Help that roll under the
       rule that called for it, or, on a called roll, the GM rules them present and able
       to Help. No state or result the soldier holds forbids it (a
       forbids field on that state's or result's row; Chapter 1, section 1.9). Only one
@@ -62,7 +62,7 @@ gains:
     amount: as that result or Talent states
     includes: >-
       Fear contagion: a Fear Roll row's stress-gain-nearby effect gives its amount of Stress to every
-      comrade within one Position step of the soldier who rolled. It is Stress, not a roll, and causes
+      comrade in the zone of the soldier who rolled or an adjacent zone. It is Stress, not a roll, and causes
       no Fear Roll (data/harm/effect-types.yaml; decision batch 7, 7-8; OQ-50, as revised).
     rules: [03-harm-and-mind]
     decided: [OQ-139]

@@ -60,10 +60,14 @@ waypoint_kinds:
   - {id: giant-forest, name: Giant forest, anchor_rating: giant-forest, interim_roll: [6]}
   - {id: gate, name: Gate of the Walls, anchor_rating: null, interim_roll: []}
 kind_rules:
-  anchor_rating: A Waypoint's kind sets the Anchor Rating of a Titan Engagement on the Leg that leads to it (data/engagement/anchor-ratings.yaml).
+  anchor_rating: >-
+    A Waypoint's kind sets the field rating of a Titan Engagement on the Leg that leads to it: the
+    rating its centre zone and the Squad's start zone take and every other zone is generated from
+    (data/engagement/engagement-setup.yaml, steps, field-rating and zone-terrain; decision batch 16,
+    16-6).
   gate: >-
-    Only the route's last Waypoint is a gate, and reaching it ends the Expedition. It sets no Anchor
-    Rating, so a Titan Engagement on the Leg to the gate rolls its Anchor Rating on
+    Only the route's last Waypoint is a gate, and reaching it ends the Expedition. It sets no field
+    rating, so a Titan Engagement on the Leg to the gate rolls its field rating on
     data/engagement/engagement-setup.yaml (anchor_rating).
 depot: >-
   A Waypoint the Mission Brief marks as a depot keeps its kind. When the Squad arrives there, every

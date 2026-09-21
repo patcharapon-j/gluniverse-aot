@@ -118,7 +118,7 @@ items:
     counts_as_not_had:
       - Its current rating is 0 (lame).
       - For dodge, ride, and leap-clear, the soldier is not mounted on it.
-      - For break-attention, the soldier is not mounted on it and it does not hold the Position the soldier holds, both compared relative to the Focus Titan recorded with the horse's Position (data/gear/horses.yaml, horse_position).
+      - For break-attention, the soldier is not mounted on it and it is not in the soldier's zone (data/gear/horses.yaml, horse_position; data/engagement/attention.yaml, riderless-horse).
     restored_by:
       - Standard Issue, full or interim, replaces a lame or worn horse (OQ-93). The soldier may decline the exchange and keep the horse as it is, worn or at current rating 0 (data/gear/standard-issue.yaml, receiving, decline; decision batch 2b).
       - The Maintain Gear Downtime Action, which also ends lameness (Chapter 7, section 7.2).

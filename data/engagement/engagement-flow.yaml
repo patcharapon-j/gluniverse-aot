@@ -12,17 +12,20 @@ starting:
   steps:
     - id: setup
       text: >-
-        The rule that begins the Titan Engagement names its Anchor Rating, one Focus Titan, any
-        Background Titans with their clock lengths, and the length of its retreat clock. The GM's
-        framing may name the Anchor Rating, the Focus Titan, and the Background Titans with their
-        clock lengths where the rule does not (data/engagement/engagement-setup.yaml, gm_choices;
+        The rule that begins the Titan Engagement names its field (its size, its field rating, and
+        any zone's rating), one Focus Titan, any Background Titans with their clock lengths, and the
+        length of its retreat clock. The GM's framing may name the field size, the field rating, any
+        zone's rating, the Focus Titan, and the Background Titans with their clock lengths where the
+        rule does not (data/engagement/engagement-setup.yaml, gm_choices;
         decision batch 9, 9-15). Any of these neither names comes from
         data/engagement/engagement-setup.yaml. The retreat clock
         starts empty (data/engagement/background-titans.yaml, retreat_clock).
-    - id: anchors
+    - id: field
       text: >-
-        The Titan Engagement's Anchors are the Anchor Rating's anchors value, and every soldier's
-        Momentum is 0 (data/engagement/anchor-ratings.yaml, anchors, momentum). Nothing is rolled.
+        Generate the field: its size, its field rating, and each zone's rating, which is also that
+        zone's start rating (data/engagement/engagement-setup.yaml, steps, field-size, field-rating,
+        and zone-terrain; data/engagement/zones.yaml). Every soldier's Momentum is 0
+        (data/engagement/anchor-ratings.yaml, anchors, momentum).
     - id: label
       text: The Focus Titan is labelled A (data/gear/sheet-fields.yaml, focus_titan_label).
     - id: titan-values
@@ -31,7 +34,10 @@ starting:
         empty, and it has no previous behavior. Roll its Next Behavior
         (data/engagement/behavior-procedure.yaml, next_behavior).
     - id: placement
-      text: Place the soldiers and horses (data/engagement/positions.yaml, placement).
+      text: >-
+        Place the Focus Titan in the centre zone and the soldiers and horses in the Squad's start
+        zone, or as the starting rule names (data/engagement/positions.yaml, placement;
+        data/engagement/zones.yaml, placement).
     - id: attention
       text: Evaluate the Titan's Attention Ladder (data/engagement/attention.yaml).
     - id: fear
@@ -91,9 +97,9 @@ ending:
         Reaction or a result is not this soldier. The start of the first round past the limit is an
         event for checked, so this test is checked as that round begins, before its wings step, and
         after every event from then on; no returner exists in a retreat, so once it is met the Titan
-        Engagement ends at once. The soldier keeps their Position, their turns, and every action their
-        Position allows, such as Heave, the strike on a pinning Body Part, Treat Injury, and Rally, and
-        their forced move changes nothing. A comrade who shares their Position may still take Lift
+        Engagement ends at once. The soldier keeps their zone and attachment, their turns, and every
+        action their Position allows, such as Heave, the strike on a pinning Body Part, Treat Injury,
+        and Rally, and their forced move changes nothing. A comrade in their zone may still take Lift
         Comrade for them, at their consent, and carry them out by option 1 or 2 with the move after the
         lift (data/gear/carrying.yaml, lifting_a_comrade; decision batch 5, 5-13): the limit closes
         options 3 and 4, not the lift, and no rule obliges anyone to take it. If the Titan Engagement
@@ -159,11 +165,11 @@ ending:
     The end of a Titan Engagement frees no one (data/engagement/titan-harm.yaml, falling_titan,
     freeing; decision batch 8, 8-9). Only no-soldier-standing can end it while a soldier is Pinned, since no-focus-titan waits for them and the retreat ends by no-soldier-standing, and then every Pinned soldier dies, as left_behind states (decision batch 8, 8-21; OQ-157).
   then: >-
-    Resolve the steps in data/harm/engagement-end.yaml, which read each soldier's last Positions
-    (data/harm/engagement-end.yaml, positions_read). After the last of those steps, every Position,
-    last Position, recorded horse Position, and left-item record is cleared
-    (data/engagement/positions.yaml, a_focus_titan_dies; data/gear/horses.yaml,
-    titan_engagement_ends; data/gear/carrying.yaml, leaving_play).
+    Resolve the steps in data/harm/engagement-end.yaml, which read the Positions derived from each
+    soldier's zone and attachment as the Titan Engagement ends (data/harm/engagement-end.yaml,
+    positions_read). After the last of those steps, the field is cleared: every zone, attachment,
+    horse's zone, and left-item zone (data/engagement/positions.yaml, corpse, cleared;
+    data/gear/horses.yaml, titan_engagement_ends; data/gear/carrying.yaml, leaving_play).
   gm: >-
     none (ADR-0024; decision batch 9, 9-11): the GM never ends a Titan Engagement. Only these tests
     do.

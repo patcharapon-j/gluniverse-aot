@@ -64,16 +64,17 @@ height:
       release from a lift (data/engagement/grab.yaml, release, lifted), takes the band the steps below
       give (decision batch 9, 9-38).
     - >-
-      In a Titan Engagement, find the fall's reference Titan: the Focus Titan relative to which the
-      soldier held the closest Position when they fell, in the order On Body, Blind Spot, In Reach,
-      Distant. On a tie, it is the Titan whose card, Grab, or effect caused the fall, and otherwise
-      the living Focus Titan with the earliest label. Every later step, and where the fall lands
-      (data/engagement/positions.yaml, falls_land), uses that Titan (decision batch 5, OQ-123).
+      In a Titan Engagement, find the fall's reference body: the body the soldier's attachment named
+      when they fell (on-body, blind-spot, or grabbed); otherwise the Focus Titan whose card, Grab, or
+      effect caused the fall; otherwise the Focus Titan nearest the soldier's zone, a tie going to the
+      earliest label. Every later step uses that body (decision batch 5, OQ-123; decision batch 16,
+      16-22). The soldier lands in the zone they fell in (data/engagement/positions.yaml,
+      falls_land).
     - A fall from a horse is low, and no later step changes it.
-    - Otherwise use the Position the soldier held relative to the reference Titan when they fell. Distant or In Reach is low. On Body or Blind Spot is high.
-    - For a fall that is not from a horse, raise the band one step, to at most extreme, if the Titan Engagement's Anchor Rating is Giant Forest, or if the reference Titan is of the Large Size Class. Both together still raise it one step.
+    - Otherwise use the Position the soldier held relative to the reference body when they fell. Distant or In Reach is low. On Body or Blind Spot is high.
+    - For a fall that is not from a horse, raise the band one step, to at most extreme, if the zone the soldier falls in is Giant Forest, or if the reference body is of the Large Size Class. Both together still raise it one step.
   outside_titan_engagement: >-
-    Outside a Titan Engagement there is no reference Titan and no Position to read: the fall takes the
+    Outside a Titan Engagement there is no reference body and no Position to read: the fall takes the
     band the first step of steps gives, and is low if neither a rule nor the GM names one.
   bands:
     - id: low
@@ -123,7 +124,8 @@ after_the_fall:
     A ruling may name a fall only as a called roll's stakes, with the band the GM names before the roll,
     low or high and never extreme, low if none, in a Titan Engagement as well as outside one
     (triggers, rule-named; decision batch 9, 9-5, 9-11, and 9-38).
-    In a Titan Engagement it lands as position gives, a change of Position the fall rule makes
+    In a Titan Engagement it lands as position gives, in the soldier's zone with attachment ground, a
+    change the fall rule makes
     (decision batch 9, 9-44).
     The GM never decides whether any
     other trigger makes a soldier fall, never changes a band that height or a rule names, and never

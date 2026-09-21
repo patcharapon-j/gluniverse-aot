@@ -480,8 +480,8 @@ talents:
     max_level: 1
     names: [fly]
     trigger: >-
-      In a Titan Engagement, a comrade falls while holding the Position you hold relative to the fall's
-      reference Titan (data/gear/falls.yaml, height), and you are airborne, not carried, and carrying no
+      In a Titan Engagement, a comrade in your zone falls (data/engagement/zones.yaml,
+      between_soldiers), and you are airborne, not carried, and carrying no
       comrade.
     effect: >-
       Before the fall's damage is rolled, you may make a roll for fly with your own ODM Gear, needing 1.
@@ -610,7 +610,7 @@ talents:
     names: [help]
     trigger: You declare Help for a roll in a Titan Engagement.
     effect: >-
-      You may be up to two Position steps from the roller instead of one. Every other Help
+      You may be up to two zones from the roller instead of one. Every other Help
       requirement in Chapter 1, section 1.8, still applies.
     limit: none
     rules: [01-core-rules, 05-titan-engagement]
@@ -626,7 +626,7 @@ talents:
     # (data/character/squadmates.yaml, playtest_configuration; decision batch 8, 8-38).
     trigger: You declare that the Squadmate on your Wing Helps a roll of yours in a Titan Engagement.
     effect: >-
-      The Squadmate may be up to two Position steps from you instead of one. Every other Help
+      The Squadmate may be up to two zones from you instead of one. Every other Help
       requirement in Chapter 1, section 1.8, still applies.
     limit: none
     rules: [01-core-rules, 05-titan-engagement]
@@ -644,7 +644,7 @@ talents:
       neither Down nor Grabbed.
     effect: >-
       You may name two comrades who each hold a card this round, are neither Down nor Grabbed, and both
-      agree. They exchange cards whatever Positions they hold. It is the one swap each of them takes part
+      agree. They exchange cards whatever zones they are in. It is the one swap each of them takes part
       in this round (data/engagement/round.yaml, swapping); you take no part in it.
     limit: none
     rules: [05-titan-engagement]
@@ -674,8 +674,7 @@ talents:
     max_level: 1
     names: [fear-roll]
     trigger: >-
-      In a Titan Engagement, a comrade who holds your Position or a Position one step from
-      you makes a Fear Roll, and you are not Down.
+      In a Titan Engagement, a comrade in your zone or an adjacent zone makes a Fear Roll, and you are not Down.
     effect: That Fear Roll uses your Resolve in place of the comrade's, if yours is higher.
     limit: once_per_titan_engagement
     rules: [03-harm-and-mind, 05-titan-engagement]
@@ -702,8 +701,8 @@ talents:
     names: [rally]
     trigger: You declare rally.
     effect: >-
-      You may target a comrade one Position step farther from you than Chapter 3 allows. In a
-      Skirmish, which has no Positions, you may target any soldier taking part in it (Chapter 7,
+      You may target a comrade one zone farther from you than Chapter 3 allows. In a
+      Skirmish, which has no Positions or zones, you may target any soldier taking part in it (Chapter 7,
       section 7.4).
     limit: none
     rules: [03-harm-and-mind, 07-playtest-rules]
@@ -718,7 +717,7 @@ talents:
     names: [cover]
     trigger: You declare that you Cover a comrade's Push in a Titan Engagement.
     effect: >-
-      You may be up to two Position steps from the Pushing soldier instead of one. Every
+      You may be up to two zones from the Pushing soldier instead of one. Every
       other Covering requirement in Chapter 1, section 1.5, still applies.
     limit: none
     rules: [01-core-rules, 05-titan-engagement]
@@ -938,10 +937,10 @@ talents:
     max_level: 1
     names: [mount-or-dismount]
     trigger: >-
-      You declare a move in a Titan Engagement that mounts your own horse, while you hold Distant or In
-      Reach relative to the Focus Titan recorded with the horse's Position.
+      You declare a move in a Titan Engagement that mounts your own horse, while you are free
+      (attachment ground or anchored; data/engagement/zones.yaml, attachments).
     effect: >-
-      Before the move, your horse holds the Position you hold, if it is not lame and holds a Position,
+      Before the move, your horse is in your zone, if it is not lame and is in a zone,
       so the move can mount it (data/gear/horses.yaml, mounted, mount). Every other mount requirement
       still applies.
     limit: once_per_titan_engagement
@@ -970,8 +969,8 @@ talents:
     max_level: 1
     names: [break-free]
     trigger: >-
-      You declare break-free on behalf of a Grabbed comrade who holds your Position, and you
-      are not Grabbed.
+      You declare break-free on behalf of a Grabbed comrade in your zone, and you are not
+      Grabbed.
     effect: >-
       You may take break-free as your action on that comrade's behalf, although you are not
       Grabbed. You roll your own pool for break-free, including your dice Talent that names
@@ -1062,7 +1061,7 @@ talents:
     trigger: You declare that you Cover a comrade's Push in a Titan Engagement.
     effect: >-
       If you have Covered no other comrade's Push in this Titan Engagement, you may Cover it from any
-      number of Position steps away. Every other Covering requirement in Chapter 1, section 1.5, still
+      number of zones away. Every other Covering requirement in Chapter 1, section 1.5, still
       applies.
     limit: none
     rules: [01-core-rules, 05-titan-engagement]

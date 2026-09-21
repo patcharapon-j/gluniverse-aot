@@ -57,6 +57,7 @@ A stat block gives the fields of Chapter 5's format (section 5.4):
 - **Nape Depth:** successes one Nape strike needs.
 - **Regeneration clock:** segments.
 - **Heave rating:** the heave count at which its body, living or a corpse, frees every soldier it pins (Chapter 5, section 5.7). A standard Titan takes its Size Class's, and an Abnormal lists its own (decision batch 8, 8-9).
+- **Stride:** the zones it moves toward its Attention holder on each of its cards that resolves a behavior (Chapter 5, section 5.5; decision batch 16, 16-16). A standard Titan takes its Size Class's and an Abnormal lists its own; Chapter 5's Stride table (section 5.4) renders every Titan's from `data/titans/`. A grounded Titan's is 0.
 - **Body Parts:** in stat block order, with each one's Toughness. The order breaks Regeneration ties and decides which arm Grabs.
 - **Attention Ladder:** standard, or the Abnormal's own.
 
@@ -242,7 +243,7 @@ When an effect kills its target, that target receives none of the card's later e
 <!-- END RENDERED: behavior-text standard-large -->
 
 > **Design note (OQ-101):** A Large Titan's mouth is far above the ground, and until the round 3 retune its Bite needed a soldier On Body and became Crush against one In Reach. That left a fall from a flail as the Large's only kill against a Squad that kept off its body, and Health 6 and retargeting both remove that fall by design: with neither rule the Large read 0.038 deaths a fight against the Medium's 0.038, and with retargeting 0.053 against 0.070, under the twin the bar reads it as. So it stoops: Bite reaches In Reach as every other Bite in this chapter does, and Crush is its fallback only when nobody is within reach (round 3 retune, R5; `docs/reviews/round-3-retune-decisions.md`).
-> - **Heavy Tread** shakes everyone at the holder's Position, and it needs both legs: one Broken leg grounds the Titan, and a grounded Titan does not walk. Its result then moves up to Crush.
+> - **Heavy Tread** shakes everyone at the holder's Position **in the holder's zone**, never the whole field, even against a holder at Distant (Chapter 5, section 5.4, *Reach is the Titan's own zone*; decision batch 16, 16-18), and it needs both legs: one Broken leg grounds the Titan, and a grounded Titan does not walk. Its result then moves up to Crush.
 > - **Crush and Shrug Off** use no Body Part. Its bulk slams down beside a soldier and pins their legs, and its back scrapes against whatever stands near it, whatever is Broken. Crush's leg Critical Injury cannot be lethal, as every control entry's cannot.
 > - **Crush** harms the holder only. When it also struck everyone at the holder's Position, 16.6% of fights had no kill within 12 rounds, the reading before decision batch 5, over the 15% limit, with 2.66 Critical Injuries per fight. On the holder only, the Large Titan deals what Chapter 5's reference Large Titan dealt (section 6.6).
 
@@ -260,7 +261,7 @@ This chapter prints each Abnormal's hidden values only in a GM section, which pl
 
 ### The Sprinting Abnormal
 
-A Medium Abnormal that runs. At the table everyone sees what any Focus Titan shows: it is Medium, it draws two cards a round (Tempo 2), its Heave rating is 3, and its Body Parts' counts and states and its clock's filled segments are on the tracker. Its Behavior Table is public:
+A Medium Abnormal that runs. At the table everyone sees what any Focus Titan shows: it is Medium, it draws two cards a round (Tempo 2), its Heave rating is 3, its Stride is 3, one more than any standard Titan's, and its Body Parts' counts and states and its clock's filled segments are on the tracker. Its Behavior Table is public:
 
 <!-- BEGIN RENDERED: behavior-table sprinting-abnormal -->
 | D6 | Behavior | Tier | Targets | Holder's Position | Body Parts used | Attack Dice | Effects | Fallback | Grab |
@@ -287,7 +288,7 @@ A Medium Abnormal that runs. At the table everyone sees what any Focus Titan sho
 <!-- END RENDERED: behavior-text sprinting-abnormal -->
 
 What its table means at the table:
-- **It runs through people.** Run Past and Trample work against a holder at Distant or In Reach, so a soldier on horseback at Distant is not out of its path: Distant is out of a standing Titan's reach, not out of a running one's way (Chapter 5, section 5.2). Trample's leg Critical Injury cannot be lethal; a rider who goes Down from it falls (Chapter 4).
+- **It runs through people.** Run Past and Trample work against a holder at Distant or In Reach, so a soldier on horseback in another zone is not out of its path: Distant is out of a standing Titan's reach, not out of a running one's way (Chapter 5, section 5.2). Run Past strikes the holder and everyone at their Position **in the holder's zone** only, not every soldier elsewhere on the field (Chapter 5, section 5.4; decision batch 16, 16-18). With a Stride of 3 it covers most of the Standard field on one card before it resolves the entry. Trample's leg Critical Injury cannot be lethal; a rider who goes Down from it falls (Chapter 4).
 - **Its hands and jaws need you close.** Its Grab and Headlong Lunge need In Reach or On Body, and the Lunge falls back to Pitch Headlong. Both roll 6 Attack Dice, the standard Medium Titan's control pool rather than its kill pool of 9: it snatches and lunges at full stride, and a soldier leaps clear of a Titan that cannot stop.
 - **Cut one leg.** Run Past, Trample, and Headlong Lunge each need both legs. One Broken leg drops it to the ground (Chapter 5, section 5.7): it can no longer run past, trample, or lunge, and it only veers, pitches over, and grabs, while Nape strikes against it gain the grounded dice. Four strikers who leave its legs alone still kill it sooner and take less harm under the rules as they stand, an open question on every table (section 6.6, *Four strikers and no cutters*; OQ-112).
 - **Clinging to it is risky.** Pitch Headlong knocks loose the soldier holding its Attention when they are On Body or at Blind Spot, though its slow roll rolls only 3 Attack Dice.
@@ -325,7 +326,7 @@ Its Attention Ladder (`index.yaml`, `ladders`), highest first:
 1. **hooked-into-its-body:** The soldier holds on-body relative to the Titan, or holds the hooked-by-strike flag for it.
 2. **loudest-or-brightest:** The soldier holds the loudest flag for the Titan.
 3. **current-holder:** The soldier holds the Titan's Attention and a Position other than Distant. A holder who is at Distant, mounted or on foot, does not meet it (decision batch 4, 4-3). A Down soldier can meet it.
-4. **nearest:** The soldier holds the closest Position any soldier in the set being tested holds, in the order on-body, in-reach, blind-spot, distant. As the highest rung met, it is met by the candidates at the closest Position any candidate holds; as a lower rung, by the tied soldiers at the closest Position any of them holds. A Down soldier can meet it.
+4. **nearest:** The soldier holds the closest Position any soldier in the set being tested holds, in the order on-body, in-reach, blind-spot, distant. As the highest rung met, it is met by the candidates at the closest Position any candidate holds; as a lower rung, by the tied soldiers at the closest Position any of them holds. Among candidates at Distant it counts no zones: every soldier in another zone holds the same Position, and ties go on to the holder and card steps (decision batch 16, 16-17). A Down soldier can meet it.
 <!-- END RENDERED: ladder sprinting-abnormal -->
 
 What its ladder means at the table:
@@ -346,6 +347,8 @@ What its ladder means at the table:
 ---
 
 ## 6.6 Tuning (ADR-0014)
+
+> **Stale until the zone rerun (decision batch 16, 16-38).** Every figure, band, verdict, and bar limit in this section was measured before zones and the Stride, and every one is stale until batch E's rerun measures the Titans on the field. They stay printed as the record of the rules they measured; the retune after the report moves any value, starting with the Stride (Chapter 5, section 5.13).
 
 Chapter 6 changes no Size Class value; those are Chapter 5's simulator starting values (OQ-78). What this chapter measures is each Behavior Table, and the Abnormal's values. The Phase 1 simulator re-measures all of them, and `tuning.yaml` (`simulator_cases`) lists the cases this chapter adds.
 
@@ -933,23 +936,23 @@ Two changes were decisions rather than pointers, both taken in decision batch 4:
 
 *The numbers in this example are for illustration only. The rows follow the YAML files at the time of writing; if the files change, the files govern.*
 
-The Squad fights Focus Titan A, the standard Medium Titan, at Anchor Rating Wooded, in round 2.
+The Squad fights Focus Titan A, the standard Medium Titan, in zone 7 of a Standard field, a Wooded zone, in round 2.
 
 **The field.**
-- **Private Oskar Brandt** holds In Reach and the Titan's Attention.
-- **Private Renate Vogt** holds In Reach, with Agility 3, ODM Gear 2, Stress 1, and the Closing Hand Scar.
+- **Private Oskar Brandt** is on the Ground in zone 7, so In Reach, and holds the Titan's Attention.
+- **Private Renate Vogt** is on the Ground in zone 7, In Reach, with Agility 3, ODM Gear 2, Stress 1, and the Closing Hand Scar.
 - **The Titan's Next Behavior** is hidden, and nothing is Broken.
 
-**Round 2, the Titan's card.** The ladder keeps Oskar: both soldiers meet only nearest person in reach, and the current holder keeps a tie. The Next Behavior is revealed as Fixed Grin, result 1.
+**Round 2, the Titan's card.** The ladder keeps Oskar: both soldiers meet only nearest person in reach, and the current holder keeps a tie. He is in the Titan's zone, so it does not stride. The Next Behavior is revealed as Fixed Grin, result 1.
 - **Can it happen?** Its eyes are not Broken, and it works at any Position, so it resolves against Oskar with 3 Attack Dice. The GM rolls them in the open: 5, 1, and 3, one success.
 - **Oskar's choice.** It deals only Stress, so he keeps his turn and does not dodge. The success is net, so Fixed Grin lands, and he gains 1 Stress.
 - **The telegraph.** The GM rolls the new Next Behavior: a 6, Grab. Fixed Grin is the previous behavior and both arms are unbroken, so Grab can be rolled. Its telegraph effect reveals it to every soldier at once.
 
 **Round 3.** Oskar draws 4, Renate 7, and the Titan 12.
-- **Card 4: Oskar** makes an ODM move from In Reach to Blind Spot, a Wooded step. Every ODM move is a Flight, so he rolls for Fly and scores 2 successes, which give him 2 Momentum, the cap Wooded's 2 Anchors set (Chapter 5, section 5.2). The step would have happened on no successes too, though he would have come in loud. He still holds Attention, which changes only when the Titan's card comes up, so he cannot strike the Nape. He strikes the eyes instead and scores 1 success: their count is 1 of Toughness 2, and he holds the just-hurt flag.
+- **Card 4: Oskar** makes an ODM move in zone 7 from the Ground to A's Blind Spot, an attachment step a Wooded zone allows, and as the Flight's first step it costs nothing. Every ODM move is a Flight, so he rolls for Fly and scores 2 successes, which give him 2 Momentum, the cap a Wooded zone's 2 anchors set (Chapter 5, section 5.2). The step would have happened on no successes too, though he would have come in loud. He still holds Attention, which changes only when the Titan's card comes up, so he cannot strike the Nape. He strikes the eyes instead and scores 1 success: their count is 1 of Toughness 2, and he holds the just-hurt flag.
 - **Card 7: Renate** stays In Reach and strikes the left leg for 1 success, a count of 1, which gives her the just-hurt flag too.
 - **Card 12: the Titan.**
-  - **Attention.** No one is On Body or holds the hooked-by-strike flag. Renate is the only soldier In Reach, so she takes Attention on the second rung. The flags stay until this card's Next step.
+  - **Attention.** No one is On Body or holds the hooked-by-strike flag. Renate is the only soldier In Reach, so she takes Attention on the second rung. She is in its zone, so it does not stride. The flags stay until this card's Next step.
   - **The Grab.** It needs In Reach or On Body and an unbroken arm, so it resolves against Renate with 9 Attack Dice. The GM rolls them in the open: 6, 5, 5, 4, 3, 2, 2, 1, and 1. That is 3 successes, so the Grab's Severity is 3.
 - **Renate's dodge.** Her turn this round is spent, so the dodge spends her round 4 turn.
   - **The Scar.** Grab's effects include a grab effect, which marks it as a Grab, so the Closing Hand gives her a 1-die penalty on this dodge.

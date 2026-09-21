@@ -3996,3 +3996,29 @@ All 57 entries were decided on 2026-09-14 (`DECISIONS-2026-09-14.md`, which also
 - **Status:** Open (provisional ruling in force)
 - **Decision:** 16-6 as written until the rerun.
 - **ADR:** ADR-0029; ADR-0014 with the retune.
+
+### OQ-203: A forced step toward Distant from a zone that holds no body
+- **Type:** Rules gap (batch E, P1)
+- **Arose in:** decision batch 16, 16-28 and 16-27; `data/harm/effect-types.yaml`, `forced-move`; `data/engagement/positions.yaml`, `moves`, `forced_step`; Chapter 3, section 3.9; Chapter 5, section 5.2.
+- **Related:** OQ-186, OQ-139.
+- **Question:** 16-28 makes a Fear Roll's forced step "toward distant" one step by the retreat's option 1. Option 1's last clause moves a free soldier in a zone that holds no body one ring further out, which a retreat needs so that it ends. Before zones a forced step toward Distant was not made for a soldier who already held Distant from every Focus Titan. Does a soldier who is already Distant from every body still take the outward step?
+- **Options:** (a) No step when the soldier is free in a zone that holds no body: "toward distant" stops at Distant, as it always did. (b) Always take option 1's step, the outward ring included, so fear drives a soldier toward the edge even when out of reach. (c) Take option 1 only while the soldier is in a zone holding a body or attached to one.
+- **Current handling:** (a), marked PROVISIONAL in `effect-types.yaml`, Chapter 3 section 3.9, and Chapter 5 section 5.2. It keeps the effect's old meaning and its name, and (c) reads the same in play.
+- **Why still open:** 16-28's words read as (b); (a) is the reading most consistent with the effect's purpose and its pre-zone rule, and neither is measured.
+- **Simulator case:** the rerun's Fear Roll rows under (a) and (b), reporting forced steps taken and soldiers who reach an edge zone by them.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029.
+
+### OQ-204: The cost of a Flight whose first step is the step off field
+- **Type:** Rules gap (batch E, P1)
+- **Arose in:** decision batch 16, 16-13 and 16-26; `data/engagement/zones.yaml`, `flight`; `data/engagement/positions.yaml`, `leaving`, `how`; Chapter 5, section 5.11.
+- **Related:** OQ-200.
+- **Question:** 16-13 makes a Flight's first step free "a zone step or an attachment step" and prices "a step off field" at 1; 16-12 counts stepping off field as a zone step; 16-26 says leaving at the end of a Flight "costs 1 Carry". What does a Flight from an edge zone whose only step is off field cost?
+- **Options:** (a) Nothing: it is the Flight's free first step, and the 1 applies only when leaving is a later step. (b) 1, always: stepping off field is never free by Flight. (c) The step off field cannot be a Flight's first step.
+- **Current handling:** (a), marked PROVISIONAL in `positions.yaml` (`leaving`, `how`) and Chapter 5 section 5.11. A soldier on foot leaves from an edge zone for nothing, so (b) would make a flier pay more than a walker for the same step.
+- **Why still open:** 16-26's "costs 1 Carry" reads as (b) if taken alone; the data contract (`carry_cost_off_field: 1`) serves every option.
+- **Simulator case:** the rerun's retreats, reporting how often a Flight leaves as its first step.
+- **Status:** Open (provisional ruling in force)
+- **Decision:** none yet; the next rules decider.
+- **ADR:** ADR-0029.
