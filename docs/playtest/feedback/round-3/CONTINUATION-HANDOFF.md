@@ -131,6 +131,13 @@ an agent; read it first with the Artifact tool and publish with `url` set so the
 
 ### 3.6 Batch E: zone combat
 
+**Done on 2026-09-21** (PR #20), after the owner played batches A and F. ADR-0029, decision batches 16 and 17,
+`IMPLEMENTATION-PLAN-E.md`, `docs/reviews/zone-retune-decisions.md`, and two review rounds
+(`docs/reviews/zone-combat-review-1.md`, `-1-impl.md`, `-2.md`). The confirming run has 0 missed results and
+closed OQ-199. Open: OQ-203 to OQ-207 (provisional), a live Foundry check of the board, and republishing the
+packet Artifact. The text below is the plan as it stood before the work.
+
+
 The whole package, designed and settled but deliberately not started: ADR-0029, a new
 `data/engagement/zones.yaml`, the rewrite of `positions.yaml` around zones with the four Position
 names derived from zone plus attachment, the Stride, the canvas board, and its own retune.
