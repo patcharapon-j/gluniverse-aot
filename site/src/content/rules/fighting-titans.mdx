@@ -6,7 +6,7 @@ order: 5
 tab: Titans
 sources:
   - path: docs/rules/05-titan-engagement.md
-    sha: "2860850c2159be9b64b34a2b5e6968f5c2cfde97"
+    sha: "92506550589ff210191f608f04cf384987f8215c"
   - path: docs/rules/06-standard-titans.md
     sha: "d786d456876ca31f086ce7c09c4739243f751e70"
   - path: data/engagement/zones.yaml
@@ -20,7 +20,7 @@ sources:
   - path: data/engagement/size-classes.yaml
     sha: "c33e65ddc6cb78cb057b0d8462430c1c73d00d9b"
   - path: data/engagement/titan-format.yaml
-    sha: "a5b0398d47a0970a6157dd4f6af465dbea6ea6a4"
+    sha: "0f832b2da3978d7146e15b1b4297aa280a8bab65"
   - path: data/engagement/behavior-procedure.yaml
     sha: "4bc3ae8d5647b1d8fad8fa8593f572ae3a1ea80f"
   - path: data/engagement/attention.yaml
@@ -34,7 +34,7 @@ sources:
   - path: data/engagement/engagement-flow.yaml
     sha: "c4d04b1c8ac4839bb531520f4adc34c382b28d93"
   - path: data/engagement/background-titans.yaml
-    sha: "6560825072ce9bfab33ccb0d480b934ca45f37fa"
+    sha: "49b1681716adc1d6b463d956e6fa68f2e7064a4b"
   - path: data/engagement/squad-tactics.yaml
     sha: "404d461f565f9ba376a80b6273f8a0ed8e78074a"
   - path: data/harm/effect-types.yaml
@@ -240,7 +240,7 @@ Help, Covering, Treat Injury, and Rally all read whether two soldiers hold the s
 
 <Subsection title="Where a fall lands" id="where-a-fall-lands">
 
-You stay in the zone you are in (for an attached soldier, the body's zone) and land **Ground**, so you hold **In Reach** relative to whatever body is there. The height it reads is the reference body the fall names: your own attachment if you had one, else the Titan whose card or Grab caused it, else the nearest Titan to your zone. A fall is never your move.
+You stay in the zone you are in (for an attached soldier, the body's zone) and land **Ground**, so you hold **In Reach** relative to whatever body is there. The height it reads is the reference body the fall names: your own attachment if you had one, else the Titan whose card or Grab caused it, else the nearest Titan to your zone, else, with no Focus Titan alive, the nearest corpse. With no body at all it starts low before any raise, a provisional rule not yet settled. A fall is never your move.
 
 </Subsection>
 
@@ -248,7 +248,7 @@ You stay in the zone you are in (for an attached soldier, the body's zone) and l
 
 <Subsection title="Two Titans, and corpses" id="two-focus-titans">
 
-A second Titan arrives from outside the fight at the field's **entry zone**, the edge zone with no soldier in it and farthest from the nearest one, so everyone holds Distant relative to it until it strides.
+A second Titan arrives from outside the fight at the field's **entry zone**, the edge zone with no soldier in it and farthest from the nearest one (with no soldier on the field at all, the lowest-numbered edge zone, a provisional rule not yet settled), so everyone holds Distant relative to it until it strides.
 
 **One zone, one attachment, two Positions.** An attachment names one body at most, so you are never hooked into two Titans at once: your zone and attachment give your Position relative to each of them separately, and each strides on its own cards toward its own Attention holder.
 
@@ -675,7 +675,7 @@ Two tests, and nothing else — the GM never ends a fight.
 
 **Ending that way while a Titan lives kills everyone still holding a Position,** and everyone still Pinned dies under the body. Those deaths raise no Fear Roll, but they count for <GlossaryTerm term="Grief" />.
 
-Afterwards Momentum becomes 0, and the Anchors and Position records are cleared.
+Afterwards the field's zone ratings and every soldier's Momentum are cleared. Positions are never recorded, so nothing else needs clearing.
 
 </Subsection>
 

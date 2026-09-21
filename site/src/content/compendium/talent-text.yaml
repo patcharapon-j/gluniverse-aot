@@ -16,7 +16,7 @@ sources:
   - path: data/engagement/grab.yaml
     sha: "b52129f3597da2e8a0d9e21d54dcd541c08cf21d"
   - path: data/gear/falls.yaml
-    sha: "225976704dd51b915ea7b34537256c581353adad"
+    sha: "197f9c0859eb55289c9317ae8cff4ab18fbb1a57"
   - path: data/harm/death-rolls.yaml
     sha: "66dd2a154f48e9036242cd6c26de2ef46c4ee9a6"
   - path: data/mind/fear-rolls.yaml

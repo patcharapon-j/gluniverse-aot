@@ -25,7 +25,7 @@ sources:
   - path: data/gear/horses.yaml
     sha: "67a3d5ffdcee0b0cd4ccf29e97af715dc38b985e"
   - path: data/gear/falls.yaml
-    sha: "225976704dd51b915ea7b34537256c581353adad"
+    sha: "197f9c0859eb55289c9317ae8cff4ab18fbb1a57"
   - path: data/gear/carrying.yaml
     sha: "50681aaa7a60484b017b19fea4070de120c83a5b"
   - path: data/gear/field-repair.yaml
