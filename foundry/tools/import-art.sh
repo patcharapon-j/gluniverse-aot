@@ -8,6 +8,8 @@
 #   Soldier portraits      512 px webp   assets/portraits/portrait-<specialty>.webp
 #   Foe plates             512 px webp   assets/plates/plate-foe-<kind>.webp
 #   Setup background       1920 px webp  assets/plates/setup-sortie-dawn.webp
+#   Engagement board       assets/board: hex tiles 1024 px wide, Titan and soldier figures 1024 px
+#                          tall, effect overlays 512 px, rim glyphs 128 px (site/design/art-style.md)
 #   Dice So Nice faces     assets/dice: labels as lossless webp (alpha kept exactly), bump maps as
 #                          greyscale PNG, identical faces stored once; textures as webp + PNG bump
 set -eu
@@ -15,10 +17,11 @@ HERE=$(cd "$(dirname "$0")/.." && pwd)
 ART="$HERE/art-src"
 B1="$ART/batch-1/web"
 B2="$ART/batch-2/web"
+BOARD="$ART/board/web"
 SL="$ART/style-lock"
 DICE="$SL/dice/final"
 OUT="$HERE/static/assets"
-mkdir -p "$OUT/icons" "$OUT/portraits" "$OUT/plates" "$OUT/dice"
+mkdir -p "$OUT/icons" "$OUT/portraits" "$OUT/plates" "$OUT/dice" "$OUT/board"
 
 lossy() { cwebp -quiet -q "${Q:-82}" -alpha_q 100 -m 6 "$@"; }
 
@@ -48,6 +51,13 @@ for n in gear-rations; do lossy -resize 128 128 "$SITE/$n.webp" -o "$OUT/icons/$
 
 # Setup background.
 cp "$B1/setup-sortie-dawn.webp" "$OUT/plates/setup-sortie-dawn.webp"
+
+# Engagement board (batch 2, the zone board). Tiles keep their transparent corners, figures and
+# effects their alpha, so every file is lossy with alpha_q 100 like the icons.
+for f in "$BOARD"/hex-*.webp; do lossy -resize 1024 0 "$f" -o "$OUT/board/$(basename "$f")"; done
+for f in "$BOARD"/titan-*.webp "$BOARD"/soldier-*.webp; do lossy -resize 0 1024 "$f" -o "$OUT/board/$(basename "$f")"; done
+for f in "$BOARD"/fx-*.webp; do lossy -resize 512 512 "$f" -o "$OUT/board/$(basename "$f")"; done
+for f in "$BOARD"/rim-*.webp; do lossy -resize 128 128 "$f" -o "$OUT/board/$(basename "$f")"; done
 
 # Dice So Nice faces (asset-inventory.md, Dice So Nice presets).
 label() { cwebp -quiet -lossless -z 9 -exact "$1" -o "$OUT/dice/$2.webp"; }
