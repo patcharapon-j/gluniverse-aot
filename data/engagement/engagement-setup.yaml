@@ -19,8 +19,22 @@ used_when: >-
   the starting rule or the GM names is never rolled or taken from this table.
 
 steps:
-  - id: anchor-rating
-    text: Roll D6 on anchor_rating.
+  - id: field-size
+    text: >-
+      The field is the Standard field, unless the starting rule or the GM's framing names the
+      Skirmish field or the Set piece (data/engagement/zones.yaml, fields). Nothing is rolled.
+  - id: field-rating
+    text: >-
+      Roll D6 on anchor_rating. The result is the field rating: the Anchor Rating the field is
+      generated from. A Waypoint's kind names it (data/expedition/route.yaml, waypoint_kinds).
+  - id: zone-terrain
+    text: >-
+      The centre zone and the Squad's start zone take the field rating. Every other zone, in number
+      order, rolls D6 on zone_terrain: sparser is the field rating's sparser rating, field is the
+      field rating, and denser is the field rating's denser rating
+      (data/engagement/anchor-ratings.yaml, ratings, sparser and denser). A zone the starting rule
+      or the GM's framing names takes the rating named and is not rolled. Each zone's start rating
+      is the rating it takes here.
   - id: focus-titan
     text: >-
       Roll D6 on size_class. The Focus Titan is the standard Titan of that Size Class
@@ -31,11 +45,6 @@ steps:
       Roll D6 on background_titans. For each Background Titan it gives, roll D6 on size_class for
       its Size Class, in the order the row lists the clocks. Each is the standard Titan of its Size
       Class (data/titans/index.yaml, standard_titans); medium_abnormal is never rolled for it.
-  - id: anchors
-    text: >-
-      The Titan Engagement's Anchors are the Anchor Rating's anchors value
-      (data/engagement/anchor-ratings.yaml, ratings, anchors; anchors). Nothing is rolled: the
-      rating sets it.
   - id: retreat-clock
     text: >-
       The retreat clock has retreat_clock segments (data/engagement/background-titans.yaml,
@@ -50,6 +59,17 @@ anchor_rating:
     - {results: [3, 4], anchor_rating: wooded}
     - {results: [5], anchor_rating: urban}
     - {results: [6], anchor_rating: giant-forest}
+
+# The terrain mix (decision batch 16, 16-6; provisional, OQ-202): one D6 for each zone but the
+# centre and the Squad's start zone. A rating's sparser and denser are in
+# data/engagement/anchor-ratings.yaml, ratings.
+zone_terrain:
+  roll: D6
+  applies_to: every zone but the centre and the Squad's start zone, in number order
+  rows:
+    - {results: [1], rating: sparser}
+    - {results: [2, 3, 4, 5], rating: field}
+    - {results: [6], rating: denser}
 
 size_class:
   roll: D6

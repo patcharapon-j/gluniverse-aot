@@ -102,6 +102,31 @@ resolving_a_card:
         Evaluate the Attention Ladder (data/engagement/attention.yaml, evaluation). If no soldier
         holds its Attention, the card resolves no behavior, the Next Behavior is kept, and the flags
         for this Titan stay as they are. Stop.
+    - id: stride
+      text: >-
+        If the soldier who holds the Titan's Attention is in another zone, the Titan strides: it
+        moves toward that soldier's zone one zone at a time, up to its Stride
+        (data/engagement/size-classes.yaml, stride), and stops as soon as it enters that zone. Each
+        zone it enters is an adjacent zone one closer to the holder's zone; when two are, it enters
+        the lower-numbered. It never goes off field. A grounded Titan's Stride is 0
+        (data/engagement/titan-harm.yaml, grounded). What moves with it and what it leaves are in
+        data/engagement/positions.yaml, stride_moves; the rules of its route are in
+        data/engagement/zones.yaml, stride.
+      holder: >-
+        The Titan strides only toward a soldier who holds its Attention at this step, after this
+        card's attention step. A soldier who has left holds no Attention
+        (data/engagement/attention.yaml, changes, holder-gone), and the attention step evaluates only
+        candidates on the field, so a Titan never strides toward a soldier off field. An airborne
+        holder is in their zone like any soldier; airborne is a state, not a place. A carried holder
+        is in their carrier's zone. A soldier Grabbed by another Focus Titan is never a candidate. A
+        decoy's hold, or nothing holding its Attention, stops the card before this step.
+      is_not: >-
+        The Stride is not a roll, an entry, or an action. It harms nobody, sets no flag, clears no
+        flag, wrecks nothing, and is no Fear Roll trigger. A card that stops before this step (the
+        Titan is dead, holds a Grabbed soldier, is held by a decoy, or has nothing holding its
+        Attention) does not stride. The entry's position_requirement is then checked at choose
+        exactly as it always is, retargeting included, against the Positions as the Stride left them
+        (decision batch 16, 16-16 and 16-17).
     - id: choose
       text: >-
         Take the Next Behavior's entry. If the Titan does not meet its body_parts_used, the

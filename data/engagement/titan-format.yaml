@@ -23,6 +23,10 @@ stat_block:
       Its Heave rating: the heave count at which its body, living or a corpse, frees every soldier it
       pins (data/engagement/size-classes.yaml, heave; data/engagement/titan-harm.yaml, falling_titan,
       heave; decision batch 8, 8-9).
+    stride: >-
+      Its Stride: the zones it may move toward its Attention holder on each of its cards that resolves
+      a behavior (data/engagement/size-classes.yaml, stride; data/engagement/behavior-procedure.yaml,
+      resolving_a_card, stride; decision batch 16, 16-16). A grounded Titan's is 0.
     body_parts: >-
       A list of Body Parts, each with id, kind (eyes, arm, or leg; data/engagement/titan-harm.yaml,
       body_part_kinds), and toughness. The list order matters: it breaks ties for Regeneration and
@@ -30,7 +34,7 @@ stat_block:
     attention_ladder: standard, or the id of an Abnormal ladder (data/titans/index.yaml, ladders; format in data/engagement/attention.yaml, abnormal_ladder_format).
     behavior_table: The Titan's Behavior Table (behavior_table).
   standard_titan: >-
-    A Titan whose abnormal is false takes tempo, nape_depth, regeneration_clock, heave, each Body
+    A Titan whose abnormal is false takes tempo, nape_depth, regeneration_clock, heave, stride, each Body
     Part's toughness, and each entry's attack_dice from its Size Class row. Its body_parts list is exactly
     eyes, left-arm, right-arm, left-leg, right-leg, in that order, and its attention_ladder is
     standard.

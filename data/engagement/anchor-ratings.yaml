@@ -45,6 +45,9 @@ ratings:
       the Titan is grounded (grounded_titan, open_rating). The field holds no Anchors, so no
       soldier holds Momentum here (anchors).
     anchors: 0
+    carry_cost: 2
+    sparser: open
+    denser: sparse
     terrain_trait: >-
       A mounted soldier's Break Attention gains 1 Bonus Die
       (data/core/bonus-dice-sources.yaml, terrain-trait). The plain is the horse's.
@@ -58,6 +61,9 @@ ratings:
       A few anchors, such as scattered trees, a ruined farmstead, or a supply wagon. Nothing joins
       in-reach and blind-spot: a soldier reaches the Nape by way of on-body.
     anchors: 1
+    carry_cost: 1
+    sparser: open
+    denser: wooded
     terrain_trait: >-
       The first Anchor wrecked in the Titan Engagement is not lost (anchors, wrecking). One good
       tree survives.
@@ -70,6 +76,9 @@ ratings:
     name: Wooded
     meaning: Ordinary woodland, the default battlefield of ADR-0014.
     anchors: 2
+    carry_cost: 0
+    sparser: sparse
+    denser: giant-forest
     terrain_trait: none
     steps:
       - {between: [distant, in-reach], on_foot: true, mounted: true, odm: true}
@@ -81,6 +90,9 @@ ratings:
     name: Urban
     meaning: Streets and rooftops, such as a town inside or beyond the Walls.
     anchors: 3
+    carry_cost: 0
+    sparser: wooded
+    denser: urban
     terrain_trait: >-
       A soldier who holds blind-spot relative to a Focus Titan is anchored to a roof and is not
       airborne, so a Jam does not drop them (data/gear/odm-gear.yaml, jam).
@@ -94,6 +106,9 @@ ratings:
     name: Giant Forest
     meaning: Trees taller than any Titan. Chapter 4 raises every fall that is not from a horse one band here (data/gear/falls.yaml, height).
     anchors: 3
+    carry_cost: 0
+    sparser: wooded
+    denser: giant-forest
     terrain_trait: >-
       The first step a Flight Carries costs no Momentum (momentum, spends, carry). The Corps fights
       best here.
@@ -208,9 +223,6 @@ momentum:
           The move makes one more Position step, along a chain of step rows the soldier's kind of
           move could make, relative to the same named Focus Titan. Carry may be spent more than once
           on one move.
-        giant_forest: >-
-          At the Giant Forest rating the first step a Flight Carries costs no Momentum
-          (terrain_trait). Every later Carry on that move costs 1.
       - id: bite
         cost: 1
         effect: >-
@@ -261,10 +273,6 @@ mounted_charge:
     capability, and no move on foot sets one at all.
   who: A mounted soldier whose move makes that step, in either direction, and who is not Grabbed or carried.
   spends: Nothing beyond the move itself. It is not an action and is never rolled.
-  open_double_step: >-
-    At the Open rating only, a mounted move may make the distant to in-reach step twice, in either
-    order, so a rider can come in and get out again in one move. It is one move and one charge: the
-    loudest flag is set at most once.
   decided: [OQ-183]
 
 # ------------------------------------------------------------------ history
