@@ -51,9 +51,9 @@ def effect_text(eff):
     if typ == "knock-loose":
         return f"Knock loose (fall: {injury_type_name(titans.load('data', 'gear', 'falls.yaml')['injury_type'])})"
     if typ == "wreck":
-        # decision batch 10: the Titan Engagement loses 1 Anchor. It harms no soldier, so it carries
-        # no Injury Type and never reaches the critical-injury fields below.
-        return "Wreck (the Titan Engagement loses 1 Anchor)"
+        # decision batch 16, 16-20: the Titan's zone takes one rating step toward Open. It harms no soldier, so it
+        # carries no Injury Type and never reaches the critical-injury fields below.
+        return "Wreck (the Titan's zone takes one rating step toward Open)"
     if typ == "grab":
         crush = titans.load("data", "engagement", "grab.yaml")["grab_lands"]["crush_harm"]
         return f"Grab (crush: {injury_type_name(crush['injury_type'])})"
@@ -109,6 +109,9 @@ def stat_block(tid):
         # decision batch 8, 8-9 (OQ-146): every stat block shows its Heave rating, an Abnormal's own or else its
         # Size Class's (data/engagement/size-classes.yaml, heave; run6.py check reads the same values).
         ("Heave rating", t["heave"] if "heave" in t else sc["heave"]),
+        # decision batch 16, 16-16: every stat block shows its Stride, an Abnormal's own or else its Size Class's
+        # (data/engagement/size-classes.yaml, stride; data/engagement/titan-format.yaml, stat_block, fields, stride).
+        ("Stride", (lambda n: f"{n} zone" + ("" if n == 1 else "s"))(t["stride"] if "stride" in t else sc["stride"])),
         ("Attention Ladder", lad["name"]),
     ]
     if t["abnormal"]:
@@ -125,7 +128,7 @@ def behavior_table(tid):
     ents = sorted(titans.entries(t), key=lambda e: (e["results"] or [9])[0])
     for e in ents:
         res = ", ".join(str(r) for r in e["results"]) or "never rolled"
-        tg = "holder" if e["targets"] == "holder" else "holder and everyone at their Position"
+        tg = "holder" if e["targets"] == "holder" else "holder and everyone in their zone at their Position"  # titan-format.yaml, holder-and-position (decision batch 16, 16-18)
         eff = "; ".join(effect_text(x) for x in e["effects"])
         out.append(f"| {res} | {e['name']} | {TIER[e['tier']]} | {tg} | {positions(e['position_requirement'])} | "
                    f"{parts_text(e['body_parts_used'])} | {e.get('attack_dice', 'none')} | {eff} | {entry_name(t, e['fallback'])} | "

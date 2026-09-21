@@ -19,11 +19,14 @@ decided: [OQ-78, OQ-79, OQ-81, OQ-85, OQ-89, OQ-95, OQ-96, OQ-98, OQ-126, OQ-127
 # Decision batch 10 (OQ-182 to OQ-185) changed how a move works: every ODM move is a Flight, each
 # success is 1 Momentum, Anchors cap it and the Titan wrecks them, the loudest flag matches every
 # rung but hooked into its body, a mounted step may charge, and Swap Blade Set spends the move.
-# The confirming run of the round 3 retune measured them, together with batches 11 and 13, and every
-# figure in this file is that run's (docs/reviews/round-3-retune-decisions.md, R6; the report it
-# rendered is dated 2026-09-20).
-# The rerun was a retune, not a sensitivity row, because Flight replaces the move rather than sitting
-# beside it. It had to answer: prepared_squad_kill with Bite measured separately as the first thing to
+# Every figure in this file is the confirming run of the round 3 retune (docs/reviews/round-3-retune-decisions.md,
+# R6; the report it rendered is dated 2026-09-20), which measured batches 11 and 13. That run did not measure
+# batch 10's Flight: its engine made no Fly roll for an ODM move (it rolled only on a step row that named one,
+# and none did after batch 10), held no Momentum, spent no Carry, and applied no wreck effect. The simulator
+# models all of them from decision batch 16 on (tools/sim/space.py), so batch E's rerun is their first
+# measurement.
+# That rerun is a retune, not a sensitivity row, because Flight replaces the move rather than sitting
+# beside it. It has to answer: prepared_squad_kill with Bite measured separately as the first thing to
 # cut; the PC Critical Injury and death targets, which OQ-182's failed-Flight flag, OQ-183's charge
 # and OQ-184's matching flag feed together; the wreck rate per table and Size Class; and
 # families.route_check with Anchors at 0, which must confirm ADR-0010's legal route still holds.

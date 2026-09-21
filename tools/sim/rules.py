@@ -491,10 +491,9 @@ class Rules:
         m = parse(r"step between ([a-z-]+) and ([a-z-]+) that a move on foot or an ODM move", g["open_rating"],
                   "the grounded Open step")
         self.grounded_extra_pair = frozenset(m.groups())
-        # "At the Open rating" before decision batch 16; "in an Open zone" or "at an Open zone" after it (16-21)
+        # "in an Open zone" or "at an Open zone" (decision batch 16, 16-21)
         self.grounded_extra_rating = next(rid for rid, r in self.ratings.items()
-                                          if re.search(rf"(?i)\b(at the {r['name']} rating|[ia][nt] an? {r['name']} zone)",
-                                                       " ".join(g["open_rating"].split())))
+                                          if re.search(rf"(?i)\b[ia][nt] an? {r['name']} zone", " ".join(g["open_rating"].split())))
         m = parse(r"holds ([a-z-]+) relative to it then holds ([a-z-]+) instead", g["ends"], "grounding's end")
         self.grounded_end_move = (m.group(1), m.group(2))
         self.fall_raise_ratings = {rid for rid, r in self.ratings.items() if r["name"] in self._fall_height_text}
@@ -507,14 +506,10 @@ class Rules:
             raise ValueError("falls.yaml: no Position reads as a high fall")
         # falls.yaml, height, steps: the fall's reference body (decision batch 16, 16-22): the body the soldier's
         # attachment named, else the Focus Titan whose card, Grab, or effect caused the fall, else the Focus Titan nearest
-        # the soldier's zone. With one Focus Titan it is always that Titan. The wording before batch 16 (the closest
-        # Position, decision batch 5, 5-5) is read too while Chapter 4's data is rewritten; both give the one Titan.
+        # the soldier's zone. With one Focus Titan it is always that Titan.
         ht = " ".join(self._fall_height_text.split())
-        if re.search(r"(?i)attachment named", ht):
-            guard(r"nearest the soldier's zone", ht, "the fall's reference body")
-        else:
-            parse(r"find the fall's reference Titan: the Focus Titan relative to which the soldier held the closest "
-                  r"Position when they fell", ht, "the fall's reference Titan")
+        guard(r"attachment named", ht, "the fall's reference body")
+        guard(r"nearest the soldier's zone", ht, "the fall's reference body")
         pos = load("engagement/positions.yaml")
         # positions.yaml, falls_land (16-22): the soldier stays in their zone and their attachment becomes ground
         m = parse(r"stays in the zone they are in, which for an attached soldier is the body's zone, and their attachment "
@@ -975,7 +970,7 @@ class Rules:
              "mid-air-catch": int(eff("mid-air-catch", r"needing (\d+)", "Fly need").group(1)),
              "spare-parts": int(eff("spare-parts", r"rises by (\d+) more", "extra repair").group(1)),
              "triage": int(eff("triage", r"at least (\d+) successes", "successes", key="trigger").group(1)),
-             "formation-drill": count_of(eff("formation-drill", r"up to (\w+) (?:Position steps|zones)", "Help range").group(1),
+             "formation-drill": count_of(eff("formation-drill", r"up to (\w+) zones", "Help range").group(1),
                                          "formation-drill's steps"),
              "steady-heart": int(eff("steady-heart", r"Resolve counts as (\d+) higher", "Resolve").group(1))}
         for tid, pat, what in (("not-like-this", r"takes no lifted penalty", "lifted penalty"),
@@ -983,8 +978,8 @@ class Rules:
                                ("close-pass", r"adds nothing to what the roll needs", "Feint need"),
                                ("mid-air-catch", r"the fall's band is low", "low band"),
                                ("tourniquet", r"from turn to engagement", "slowed limit"),
-                               ("got-your-back", r"from any number of (?:Position steps|zones) away", "Cover range"),
-                               ("change-the-order", r"whatever (?:Positions they hold|zones they are in)", "swap"),
+                               ("got-your-back", r"from any number of zones away", "Cover range"),
+                               ("change-the-order", r"whatever zones they are in", "swap"),
                                ("gallows-humour", r"roll the D6 a second time\. Use the second total", "reroll")):
             eff(tid, pat, what)
         m = eff("steady-heart", r"for the ([a-z-]+) or ([a-z-]+) trigger", "triggers", key="trigger")

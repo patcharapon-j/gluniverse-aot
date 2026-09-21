@@ -695,6 +695,23 @@ COVERAGE = {
          "measured: the kill share by previous behavior and Broken parts broken out by Frenzy, and the share of "
          "rolls resolving each table's result-1 entry by Frenzy, which section 4.1 still reports at Frenzy 0 only.",
          []),
+        ("The field (decision batch 16, 16-38; ADR-0029)", "Partly measured",
+         "Every full fight is fought over zones (section 14; `tools/sim/space.py`), and section 7.2 sets the field's "
+         "rows beside the reference start. Not measured: the entry zone of a promoted Titan (no Background Titans), "
+         "leaving outside a retreat, the mounted charge, and brace and clean line, which no policy uses.",
+         ["two_titans"]),
+        ("Rounds to the first Nape strike and to the kill", "Measured",
+         "Section 7.2: the median rounds to the first Nape strike and to the kill, the Thrash and retarget shares, and "
+         "the share of resolved cards whose Stride brought the holder into the Titan's zone.", []),
+        ("Round 1 on its own", "Measured", "Section 7.2: Critical Injuries and cards that landed in round 1.", []),
+        ("Help on a Nape strike from an adjacent zone", "Measured", "Section 7.2.", []),
+        ("Momentum gained and spent per fight", "Measured",
+         "Section 7.2: Momentum gained and spent on Carry, quiet, and bite, the share of Flights that Carry, and the "
+         "no-bite row.", []),
+        ("Wrecked zones per fight", "Measured",
+         "Section 7.2: wrecks, rating steps, and fights whose Titan's zone lost its Blind Spot; retreats in section 6.12.",
+         []),
+        ("Each value OQ-200 and OQ-202 hold", "Measured", "Section 7.2: the `zones/` rows of `cases.py`.", []),
         ("The Expedition targets, once the Expedition rules exist.", "Deferred", "No Expedition rules in Phase 1.", []),
     ],
 }
@@ -1827,6 +1844,39 @@ def write(res, full=True, render=None, stale=()):
         else:
             rows.append([c["key"][len("sequence/"):], "", "", "section 6.11 prints it beside its twin", ""])
     w(table(["Row", "By round 3, %, z", "Critical Injuries, z", "Deaths through the end, z", "Talent counters a fight"], rows))
+    w("")
+
+    # ================================================================== 7.2 the field (decision batch 16, 16-38)
+    w("### 7.2 The field: zones, the Stride, Flights, and wrecks\n")
+    w("Decision batch 16, 16-38 (ADR-0029): the reference start of standard-medium on the field as `data/` writes it "
+      "(first row), then each lever in the order the retune reads it: the Stride, the Carry limit and the mounted pace "
+      "(OQ-200), the terrain mix (OQ-202), and bite and quiet turned off. z is against the row's twin. Stride reach: "
+      "the share of resolved cards whose Stride brought the holder into the Titan's zone. Flights: per fight, with the "
+      "share that Carry. Momentum: gained, then spent on Carry / quiet / bite, per fight. Adjacent Help: the share of "
+      "Help on Nape strikes given from an adjacent zone. Wrecks: rating steps per fight, and the share of fights whose "
+      "Titan's zone lost its Blind Spot while it stood.\n")
+    zref = "ch6/" + C.reference_label("standard-medium")
+    zrows = [("reference start", zref, zref)] + [(c["label"], c["key"], c["twin"]) for c in res["cases"]
+                                                 if c["key"].startswith("zones/")]
+    rows = []
+    for label, k, twin in zrows:
+        if not has(k) or not has(twin):
+            continue
+        s, t_ = S(k), S(twin)
+        same = k == twin
+        g = lambda key: s.get(key) or 0     # noqa: E731
+        rows.append([label, med_txt(s), g("median_first_nape_round") or "none",
+                     f"{f2(s['cis'])} {'' if same else zf(vs(s, t_, 'cis'))}",
+                     f"{f3(s['deaths_all'])} {'' if same else zf(vs(s, t_, 'deaths_all'))}",
+                     f"{f2(g('r1_cis'))} / {f2(g('r1_lands'))}", f"{f1(g('thrash_share'))} / {f1(g('retarget_share'))}",
+                     f1(g("stride_reach_share")), f"{f2(g('flights'))} ({f1(g('flights_carry_share'))}%)",
+                     f"{f2(g('momentum_gained'))}: {f2(g('momentum_carry'))} / {f2(g('momentum_quiet'))} / "
+                     f"{f2(g('momentum_bite'))}", f1(g("nape_help_adjacent_share")),
+                     f"{f2(g('wreck_steps'))}, {f1(g('bs_lost_share'))}%", f"{f3(g('retreats'))}, {f2(g('retreat_rounds'))}"])
+    w(table(["Row", "Median kill round", "Median first Nape round", "Critical Injuries, z", "Deaths through the end, z",
+             "Round 1 CIs / lands", "Thrash / retarget, %", "Stride reach, %", "Flights (Carry)",
+             "Momentum: Carry / quiet / bite", "Adjacent Help, %", "Wreck steps, Blind Spot lost", "Retreats, rounds"],
+            rows))
     w("")
 
     # ================================================================== 8. lone route
