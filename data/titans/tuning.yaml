@@ -16,21 +16,23 @@ starting_values: >-
   which are reported and not tuned. The Phase 1 simulator re-measures all of them
   (data/engagement/tuning.yaml, simulator_cases; cases below).
 
-# Decision batch 13 (OQ-190, OQ-192, OQ-193): Health becomes 2 + (strength + agility) / 2, rounded
-# up, so every soldier carries two more boxes; a Titan whose Attention holder cannot meet the rolled
-# entry's Position requirement retargets down the Attention Ladder rather than falling to Thrash; and
-# each Focus Titan carries Frenzy, rising 1 every second round to a cap of 3 and added to its behavior
-# roll, with a total above the table's highest result reading as that result (the round 3 retune halved
-# the rate, R1; the zone retune moved it to every third round, Z2, and figures measured before
-# that stay stale until its confirming run). No Behavior Table in data/titans/ is re-authored for any of it. THE RERUN HAS
-# HAPPENED: the confirming run of the round 3 retune (2026-09-20, 945 cases, 56,200,000 trials, rules
-# hash 0e5b7591a58a8d85) is the same rerun batches 10 and 11 scheduled, and it measured batches 10, 11
-# and 13 together. Every figure and verdict in this file, in data/titans/probe-figures.yaml, and in
-# docs/reviews/simulator-report.md is read from it. Health pulled every Critical Injury and deaths band
-# down and the two behavior fixes put lethality back through what the monster does rather than through
-# its dice; the Medium bands were re-set to what the owner's rules measure (round 3 retune, R2). Each
-# table's kill share by previous behavior and by Broken parts is read under the Frenzy roll and the
-# retarget.
+# Decision batch 13 (OQ-190, OQ-192, OQ-193): Health becomes 2 + (strength + agility) / 2, rounded up, so
+# every soldier carries two more boxes; a Titan whose Attention holder cannot meet the rolled entry's Position
+# requirement retargets down the Attention Ladder rather than falling to Thrash; and each Focus Titan carries
+# Frenzy, added to its behavior roll, with a total above the table's highest result reading as that result,
+# rising 1 every third round to a cap of 3 (the round 3 retune halved the first rate, R1; the zone retune
+# moved it to every third round, Z2). No Behavior Table in data/titans/ is re-authored for any of it. Decision
+# batch 16 (ADR-0029) put every Titan Engagement on zones, with the Stride, Flights, and wrecks, and the zone
+# retune took Pitch Headlong's wreck off the Sprinting Abnormal's table (Z3). THE CONFIRMING RUN OF THE ZONE
+# RETUNE HAS HAPPENED (2026-09-21, 949 cases and 3 second-seed runs, 55,528,000 trials, rules hash
+# 54e147e73e8d0852; docs/reviews/zone-retune-decisions.md, Z5): it measured batches 10, 11, 13, and 16 and the
+# zone retune's rulings together, every ADR-0014 target, every band, and every limit of the Sprinting
+# Abnormal's bar is Met on it, and it reads no missed result. Every figure and verdict in this file, in
+# data/titans/probe-figures.yaml, and in docs/reviews/simulator-report.md is read from it. Health pulled every
+# Critical Injury and deaths band down and the two behavior fixes put lethality back through what the monster
+# does rather than through its dice; the Medium bands were re-set to what the owner's rules measure (round 3
+# retune, R2), and the zone retune kept them. Each table's kill share by previous behavior and by Broken parts
+# is read under the Frenzy roll and the retarget.
 
 # ------------------------------------------------------------------ the probes
 probes:
@@ -313,18 +315,16 @@ targets:
         In every row, deaths per fight, deaths through the end of the Titan Engagement with deaths
         during the fight reported beside them, are at most the standard Large Titan's twin (decision
         batch 5, 5-19).
-    missed:   # round 3 retune, R7
+    oq_199:   # round 3 retune, R7; closed on the confirming run of the zone retune (Z5)
       - >-
-        The Critical Injuries floor in the screen with Hook and Cut and Hamstring Line, with the
-        escapes, in both orders, on the confirming run of the round 3 retune (rules hash
-        0e5b7591a58a8d85): 0.491 against the standard Medium Titan's 0.522 pooled over two seeds with
-        the cutters first (+11.1 standard errors) and 0.492 against 0.523 with the strikers first
-        (+10.9), on both death readings; 0.479 against 0.421 and 0.480 against 0.422 before decision
-        batch 13. Logged as OQ-199 and not retuned before the first playtest: retargeting lifts the
-        standard Medium's Critical Injuries by a quarter in that row and the runner's by a fortieth,
-        because the runner's cards fail for want of anyone to reach and not for a holder out of
-        Position, and the floor is read relative to the Medium. The report renders the two cells
-        Missed (OQ-199).
+        The Critical Injuries floor in the screen with Hook and Cut and Hamstring Line, with the escapes,
+        in both orders, was Missed on the confirming run of the round 3 retune (rules hash
+        0e5b7591a58a8d85): 0.491 against the standard Medium Titan's 0.522 pooled over two seeds with the
+        cutters first (+11.1 standard errors) and 0.492 against 0.523 with the strikers first (+10.9), on
+        both death readings. It was logged as OQ-199 and not retuned. On the confirming run of the zone
+        retune (rules hash 54e147e73e8d0852) it holds in both orders: 0.514 against 0.513 with the cutters
+        first (z -0.3) and 0.513 against 0.511 with the strikers first (z -0.7), on both death readings
+        (docs/reviews/simulator-report.md, sections 5.1 and 5.2), and OQ-199 is closed.
     report: >-
       The setup mix: Critical Injuries and deaths per Titan Engagement the interim setup table sets up,
       with and without its Abnormal roll (OQ-104).
@@ -352,273 +352,259 @@ simulator_cases:
     them, and mounted starts, which Chapter 5's fight.py does not model.
 
 # ------------------------------------------------------------------ verdicts
-# Every verdict below reads the confirming run of the round 3 retune (decision batch 8, 8-1, 8-14, and
-# 8-31; round 3 retune, R6 and R7; docs/reviews/simulator-report.md, cited by section), in which every
-# ADR-0014 target and every band above is Met and no fight reached the safety cap, and one limit of the
-# Abnormal's bar is Missed and logged as OQ-199 (targets, abnormals, missed); probe-figures.yaml is
-# re-committed from that run. A figure a verdict gives as the probes' was measured with each entry's fixed need of dodge
-# successes, before Attack Dice replaced it at 3 dice per point, and stands as the record of the
-# measurement that chose a value (tools/probes/chapter-06 and tools/probes/batch-4 where named, under
-# the retreat clock after decision batch 5 unless it says the 12-round horizon). If the report and a
-# verdict differ, the report governs and the verdict is re-written.
+# Every verdict below reads the confirming run of the zone retune (decision batch 8, 8-1, 8-14, and 8-31; the
+# zone retune, Z5; docs/reviews/simulator-report.md, cited by section), in which every ADR-0014 target, every
+# band above, and every limit of the Abnormal's bar is Met, no fight reached the safety cap, and OQ-199 is
+# closed (targets, abnormals, oq_199); probe-figures.yaml is re-committed from that run. A figure a verdict
+# gives as the probes' was measured with each entry's fixed need of dodge successes, before Attack Dice
+# replaced it at 3 dice per point, and stands as the record of the measurement that chose a value
+# (tools/probes/chapter-06 and tools/probes/batch-4 where named, under the retreat clock after decision batch
+# 5 unless it says the 12-round horizon). If the report and a verdict differ, the report governs and the
+# verdict is re-written.
 verdicts:
   port_check: >-
-    Met within sampling on the confirming run of the round 3 retune (docs/reviews/simulator-report.md,
+    Met within sampling on the confirming run of the zone retune (docs/reviews/simulator-report.md,
     sections 9 and 10). The simulator's Chapter 6 port-check case on Chapter 5's reference Titan gives
-    median kill round 3, 71.7% by round 3, and 0.83 Critical Injuries per fight, and its Chapter 5
-    reference case the same median, 72.3% and 0.81, all under the retreat clock: the two models agree
-    within sampling, which is what the port check asks. Both sit well above the figures committed
-    before decision batch 13 (62.5% and 0.70 for the Chapter 6 case, z +15.1 and +8.2; 62.0% and 0.72
-    for fight.py's, z +17.1 and +5.0), because retargeting and Frenzy shortened the fight and made the
-    Titan's cards count.
+    median kill round 3, 70.3% by round 3, and 0.79 Critical Injuries per fight, and its Chapter 5
+    reference case the same median, 71.0% and 0.81, all under the retreat clock: the two models agree
+    within sampling, which is what the port check asks. Both sit well above the figures committed before
+    decision batch 13 (62.5% and 0.70 for the Chapter 6 case; 62.0% and 0.72 for fight.py's, z +14.8 and
+    +5.4 on this run), because retargeting and Frenzy shortened the fight and made the Titan's cards
+    count.
   medium: >-
-    Met on every band on the confirming run of the round 3 retune, each band a range or limit read
-    exactly and the median read exactly (ADR-0014, as amended in decision batches 5, 5c, 7, and 8, and
-    by the round 3 retune, R2; docs/reviews/simulator-report.md, section 3). At the reference start:
-    median kill round 3 (45.2% killed by round 2), 71.8% by round 3 (55% to 75%), 0.8124 Critical
-    Injuries (standard error 0.0121; 0.5 to 0.9), and 0.3317 Grabs (standard error 0.0064; 0.15 to
-    0.45) per fight, under the retreat clock; on the bar's two runs of that start, round 3, 71.2% and
-    71.3%, 0.8363 and 0.8306 Critical Injuries, and 0.3328 and 0.3335 Grabs, each Met. The
-    killed-by-round-3 band's top moved from 70% to 75% and the Grabs band's from 0.30 to 0.45 under
-    the round 3 retune (R2): retargeting frees a striker who fell short to cut again, worth about five
-    points at every Frenzy setting, and Frenzy piles up to four faces on the entry at result 6, which
-    on every standard table is the Grab; the one-Grab-result guard the band once carried is now read
-    directly (every_standard_table; section 4.1). Deaths per fight (at most 0.15, re-set by the round
-    3 retune, R2, to what the owner's batch 13 rules measure at Frenzy's halved rate, which decides
-    OQ-132 anew again; at most 0.08 under decision batch 8, 8-31, 0.06 under decision batch 7, 7-13,
-    and 0.05 under decision batch 5, 5-19) read deaths through the end of the Titan Engagement
-    (decision batch 5, 5-19), which the probes do not count: the confirming run gives 0.1284 (standard
-    error 0.0050) at the reference start and 0.1376 and 0.1363 (standard error 0.0016) in the bar's
-    two sheet orders, Met (docs/reviews/simulator-report.md, section 3). Deaths during the fight are
-    reported beside it: the confirming run gives 0.1220, 0.1301, and 0.1290; the
-    probes, under each entry's fixed need, give 0.046 (standard error 0.003) at 12,000 fights, and the
-    bar's twin rows 0.0487 (standard error 0.0009) with the cutters first and 0.0501 with the strikers
-    first, pooled over a second seed 0.0494 (standard error 0.0006).
-    Jam test worst cells on the table reading, which is the acceptance reading (section 4.2), 1.6% for
-    one Titan and 17.2% for two, both Met; the mounted reading, reported beside them, 11.0% and 35.7%.
-    Highest kill share 0.500 in any state at Frenzy 0 (section 4.1). Sensitivity rows (section 9):
-    strikers wait (68.2% by round 3, 0.87 Critical Injuries), dodge only lethal harm and Grabs (71.6%,
-    1.01), helper Squadmates, template Squad (median round 3, 60.0%, 1.17), a mounted start (71.8%,
-    0.83, 0.124 deaths during the fight and 0.131 through the end), and a first Titan Engagement with
-    its Fear Roll (median 3, 66.2%, 0.98 Critical Injuries, 0.392 Grabs, 0.185 deaths during the fight
-    and 0.194 through the end, so its deaths still pass the Medium band's limit, and it is reported,
-    not tuned; decision batch 8, 8-31). Support rows (decision batch 3b; section 9): helpers median
-    round 2, 76.8% by round 3, 0.72 Critical Injuries; the screen beside the holder round 2, 74.9%,
-    0.57; Hook and Cut and Hamstring Line round 3, 74.7%, 0.74; the screen with that pair round 2,
-    77.8%, 0.50, 0.036 deaths during the fight. Every Squad Tactic alone and in pairs: median kill
-    round 3, 71.3% to 74.7% by round 3, 0.74 to 0.83 Critical Injuries. On the confirming run the
-    helpers resolve 0.798 Titan cards a round and the screen 0.608; the probes, under each entry's
-    fixed need, gave 0.837 and 0.634.
+    Met on every band on the confirming run of the zone retune, each band a range or limit read exactly
+    and the median read exactly (ADR-0014, as amended in decision batches 5, 5c, 7, and 8, and by the
+    round 3 retune, R2; docs/reviews/simulator-report.md, section 3). At the reference start: median kill
+    round 3 (44.8% killed by round 2), 69.9% by round 3 (55% to 75%), 0.8313 Critical Injuries (standard
+    error 0.0120; 0.5 to 0.9), and 0.3292 Grabs (standard error 0.0062; 0.15 to 0.45) per fight, under the
+    retreat clock; on the bar's two runs of that start, round 3, 70.3% and 70.2%, 0.8356 and 0.8341
+    Critical Injuries, and 0.3250 and 0.3247 Grabs, each Met. The killed-by-round-3 band's top moved from
+    70% to 75% and the Grabs band's from 0.30 to 0.45 under the round 3 retune (R2): retargeting frees a
+    striker who fell short to cut again, worth about five points at every Frenzy setting, and Frenzy piles
+    up to four faces on the entry at result 6, which on every standard table is the Grab; the
+    one-Grab-result guard the band once carried is now read directly (every_standard_table; section 4.1).
+    Deaths per fight (at most 0.15, re-set by the round 3 retune, R2, to what the owner's batch 13 rules
+    measure at Frenzy's halved rate, which decides OQ-132 anew again, and kept by the zone retune, which
+    slowed Frenzy to every third round because zones and wrecks had carried the deaths past it, Z2; at
+    most 0.08 under decision batch 8, 8-31, 0.06 under decision batch 7, 7-13, and 0.05 under decision
+    batch 5, 5-19) read deaths through the end of the Titan Engagement (decision batch 5, 5-19), which the
+    probes do not count: the confirming run gives 0.1373 (standard error 0.0052) at the reference start
+    and 0.1463 and 0.1460 (standard error 0.0017) in the bar's two sheet orders, Met
+    (docs/reviews/simulator-report.md, section 3). Deaths during the fight are reported beside it: the
+    confirming run gives 0.1292, 0.1385, and 0.1388; the probes, under each entry's fixed need, give 0.046
+    (standard error 0.003) at 12,000 fights, and the bar's twin rows 0.0487 (standard error 0.0009) with
+    the cutters first and 0.0501 with the strikers first, pooled over a second seed 0.0494 (standard error
+    0.0006). Jam test worst cells on the table reading, which is the acceptance reading (section 4.2),
+    1.6% for one Titan and 17.2% for two, both Met; the mounted reading, reported beside them, 11.0% and
+    35.7%. Highest kill share 0.500 in any state at Frenzy 0 (section 4.1). Sensitivity rows (section 9):
+    strikers wait (63.0% by round 3, 0.95 Critical Injuries), dodge only lethal harm and Grabs (71.8%,
+    1.00), helper Squadmates, template Squad (median round 3, 60.5%, 1.13), a mounted start (70.0%, 0.86,
+    0.143 deaths during the fight and 0.150 through the end), and a first Titan Engagement with its Fear
+    Roll (median 3, 66.3%, 0.97 Critical Injuries, 0.383 Grabs, 0.195 deaths during the fight and 0.202
+    through the end, so its deaths still pass the Medium band's limit, and it is reported, not tuned;
+    decision batch 8, 8-31). Support rows (decision batch 3b; section 9): helpers median round 2, 77.1% by
+    round 3, 0.68 Critical Injuries; the screen beside the holder round 2, 74.1%, 0.56; Hook and Cut and
+    Hamstring Line round 3, 72.2%, 0.72; the screen with that pair round 2, 76.8%, 0.50, 0.043 deaths
+    during the fight. Every Squad Tactic alone and in pairs: median kill round 3, 70.1% to 72.2% by round
+    3, 0.72 to 0.82 Critical Injuries. On the confirming run the helpers resolve 0.776 Titan cards a round
+    and the screen 0.603; the probes, under each entry's fixed need, gave 0.837 and 0.634.
   small: >-
-    Met on the confirming run of the round 3 retune (docs/reviews/simulator-report.md, sections 3, 4,
-    7, and 9). Median kill round 2 (69.3% killed by round 2) and 0.7370 Critical Injuries per fight
-    (standard error 0.0110; at most 1.0), with steam; 0.74 without steam, the same within sampling
-    (section 7). Jam test worst cells on the table reading 1.5% and 16.6%, both Met; on the mounted
-    reading, reported beside them, 12.4% and 38.9%. Highest kill share 0.500 at Frenzy 0. Support
-    rows, each median kill round 2: helpers 91.0% by round 3, 0.69 Critical Injuries; the screen
-    91.0%, 0.47; Hook and Cut and Hamstring Line 88.2%, 0.69; the screen with that pair 92.9%, 0.43.
-    Under retargeting and Frenzy the Small Titan now sits below the standard Medium Titan's
-    same-support Critical Injuries in every row, where before decision batch 13 it sat above: a
-    retarget moves its Attention on 11.6% of its cards at the reference start against the Medium's
-    26.7%, and on 11.2% against 27.3% with the screen (section 6.15). It is reported, not a bar: the
-    Small Titan's own bands
-    are the median kill round and the Critical Injuries limit above, and both are Met. On the
-    confirming run the helpers resolve 1.460 Titan cards a round and the screen 1.063; the probes,
+    Met on the confirming run of the zone retune (docs/reviews/simulator-report.md, sections 3, 4, 7, and
+    9). Median kill round 2 (67.7% killed by round 2) and 0.8153 Critical Injuries per fight (standard
+    error 0.0128; at most 1.0), with steam; 0.79 without steam, the same within sampling (section 7). Jam
+    test worst cells on the table reading 1.5% and 16.6%, both Met; on the mounted reading, reported
+    beside them, 12.4% and 38.9%. Highest kill share 0.500 at Frenzy 0. Support rows, each median kill
+    round 2: helpers 89.2% by round 3, 0.69 Critical Injuries; the screen 89.5%, 0.52; Hook and Cut and
+    Hamstring Line 85.9%, 0.69; the screen with that pair 90.6%, 0.46. Under retargeting and Frenzy the
+    Small Titan sits level with the standard Medium Titan's same-support Critical Injuries with helpers
+    (0.69 against 0.68) and below them in every other row, where before decision batch 13 it sat above: a
+    retarget moves its Attention on 19.1% of its cards at the reference start against the Medium's 33.4%,
+    and on 19.3% against 34.9% with the screen (section 6.15). It is reported, not a bar: the Small
+    Titan's own bands are the median kill round and the Critical Injuries limit above, and both are Met.
+    On the confirming run the helpers resolve 1.376 Titan cards a round and the screen 1.046; the probes,
     under each entry's fixed need, gave 1.485 and 1.098.
   large: >-
-    Met on the confirming run of the round 3 retune (docs/reviews/simulator-report.md, sections 3, 4,
-    6.2, 9, and 10). Median kill round 3 (43.6% killed by round 2) and 5.7% of fights with no kill
-    (standard error 0.2; at most 15%; decision batch 5, 5-10), and 5.7% on both of the bar's runs of
-    that start, with 1.15 Critical Injuries and 0.194 deaths per fight during the fight (0.206 through
-    the end), above Chapter 5's reference Large Titan (1.08 and 0.167; 0.186 through the end), because
-    the round 3 retune let its Bite reach In Reach as well as On Body (R5), which the Large's row
-    needed once Health 6 and retargeting had taken away the fall from a flail as its only kill.
-    Heavy Tread needs both legs (OQ-109); with one leg the probes' row gave 13.0%, 1.38, and 0.162
-    before decision batch 3e, to the 12-round horizon. Template Squad: median round 3, 11.0% with no
-    kill, 1.55 Critical Injuries, 0.362 deaths during the fight and 0.376 through the end, still the
-    hardest standard fight Phase 1 accepts. Jam test worst cells on the table reading 2.8% and 26.7%,
-    both Met; on the mounted reading, reported beside them, 15.8% and 46.0%. The two-Titan table cell
-    is under a third by 6.6 points, and any change to the Large table that the Jam test reads re-runs
-    it; the Jam test breaks no Body Part, so Heavy Tread's legs do not reach it. Highest kill share
-    0.500 at Frenzy 0. Support rows: helpers median round 2, 75.2% by round 3, 3.0% with no kill, 1.05
-    Critical Injuries, 0.102 deaths during the fight; the screen round 2, 73.4%, 2.8%, 0.77, 0.075, so
-    Heavy Tread does not make it a trap; Hook and Cut and Hamstring Line round 3, 71.7%, 4.8%, 1.04,
-    0.167; the screen with that pair round 2, 76.0%, 2.6%, 0.71, 0.069.
+    Met on the confirming run of the zone retune (docs/reviews/simulator-report.md, sections 3, 4, 6.2, 9,
+    and 10). Median kill round 3 (43.2% killed by round 2) and 6.8% of fights with no kill (standard error
+    0.2; at most 15%; decision batch 5, 5-10), and 6.8% and 6.9% on the bar's runs of that start, with
+    1.24 Critical Injuries and 0.221 deaths per fight during the fight (0.233 through the end), above
+    Chapter 5's reference Large Titan (1.09 and 0.179; 0.196 through the end), because the round 3 retune
+    let its Bite reach In Reach as well as On Body (R5), which the Large's row needed once Health 6 and
+    retargeting had taken away the fall from a flail as its only kill. Heavy Tread needs both legs
+    (OQ-109); with one leg the probes' row gave 13.0%, 1.38, and 0.162 before decision batch 3e, to the
+    12-round horizon. Template Squad: median round 3, 12.2% with no kill, 1.64 Critical Injuries, 0.392
+    deaths during the fight and 0.406 through the end, still the hardest standard fight Phase 1 accepts.
+    Jam test worst cells on the table reading 2.8% and 26.7%, both Met; on the mounted reading, reported
+    beside them, 15.8% and 46.0%. The two-Titan table cell is under a third by 6.6 points, and any change
+    to the Large table that the Jam test reads re-runs it; the Jam test breaks no Body Part, so Heavy
+    Tread's legs do not reach it. Highest kill share 0.500 at Frenzy 0. Support rows: helpers median round
+    2, 75.2% by round 3, 3.5% with no kill, 1.03 Critical Injuries, 0.101 deaths during the fight; the
+    screen round 3, 71.9%, 3.5%, 0.86, 0.090, so Heavy Tread does not make it a trap; Hook and Cut and
+    Hamstring Line round 3, 69.0%, 6.2%, 1.08, 0.194; the screen with that pair round 2, 74.5%, 3.0%,
+    0.75, 0.074.
   lone_strike: >-
-    Met on the standard Medium Titan at the measurement point on the confirming run of the round 3
-    retune (docs/reviews/simulator-report.md, sections 1, 2.2, and 9): the Rookie's fresh cut succeeds
-    on 15.0% at Stress 1 (standard error 0.1; 8% to 16%, the top re-set by the round 3 retune, R4,
-    because decision batch 11's Push re-rolls the blade's Gear Dice and lifted the cut from 13.0% to
-    15.0%; 11.6% from Stress 0), the Veteran 35.9% at Stress 2, and the Levi-grade soldier 52.0% at
-    Stress 2 (standard error 0.2; about 50%, read as 45% to 55%). The standard Large Titan shares Nape
-    Depth 4 and gives the same; the standard Small Titan's Nape Depth 3 gives the Rookie 35.9%, and
-    the Sprinting Abnormal's 35.9%. Reported beside it and not
-    tuned, the lone fight on the waiting line, under the retreat clock: a usable strike before the
-    retreat in 72.7% of lone fights against the standard Medium Titan, with the in-fight cut at 15.9%
-    and a mean Stress of 2.48; Large 71.4%; Small 71.8%, after 5.46 Titan cards, with 4.0% devoured;
-    the Sprinting Abnormal 56.3%, with 4.3% Down and 0.84 Critical Injuries per lone fight. Each counts
-    a spare canister and Field Repair (decision batch 3c, 3c-3), and no decoy is usable first in any
-    lone fight on any table or line (0.0%). The Abnormal's own table, whose Run Past and Trample reach
-    Distant, gives fewer strikes than decision batch 3b's starting row for Tempo 2 and Nape Depth 3 on
-    the reference table (69.2% in the probes). The hurried line: Small 69.1% (11.0% devoured), Abnormal
-    59.7% (9.7%). A one-card hold would give 40.7% and 29.4%. On the confirming run 26.3% of the Small
-    Titan's lone fights end with the Titan dead, and 36.0% of the Abnormal's are still waiting when
-    the retreat begins. The lone model reads the Abnormal's Grab, which rolls 6 Attack Dice (decision
-    batch 4). The Abnormal's rows are rendered only in its GM subsection (OQ-108).
+    Met on the standard Medium Titan at the measurement point on the confirming run of the zone retune
+    (docs/reviews/simulator-report.md, sections 1, 2.2, and 9): the Rookie's fresh cut succeeds on 15.0%
+    at Stress 1 (standard error 0.1; 8% to 16%, the top re-set by the round 3 retune, R4, because decision
+    batch 11's Push re-rolls the blade's Gear Dice and lifted the cut from 13.0% to 15.0%; 11.6% from
+    Stress 0), the Veteran 35.9% at Stress 2, and the Levi-grade soldier 52.0% at Stress 2 (standard error
+    0.2; about 50%, read as 45% to 55%). The standard Large Titan shares Nape Depth 4 and gives the same;
+    the standard Small Titan's Nape Depth 3 gives the Rookie 35.9%, and the Sprinting Abnormal's 35.9%.
+    Reported beside it and not tuned, the lone fight on the waiting line, under the retreat clock and on
+    the field: a usable strike before the retreat in 36.0% of lone fights against the standard Medium
+    Titan, with the in-fight cut at 21.2% and a mean Stress of 3.05; Large 30.8%; Small 17.3%, after 4.43
+    Titan cards, with 35.0% devoured; the Sprinting Abnormal 9.9%, with 43.9% Down and 2.04 Critical
+    Injuries per lone fight. Each counts a spare canister and Field Repair (decision batch 3c, 3c-3), and
+    no decoy is usable first in any lone fight on any table or line (0.0%). The Abnormal's own table,
+    whose Run Past and Trample reach Distant, gives fewer strikes than decision batch 3b's starting row
+    for Tempo 2 and Nape Depth 3 on the reference table (69.2% in the probes). The hurried line: Small
+    33.5% (29.3% devoured), Abnormal 22.3% (29.1%). A one-card hold would give 8.3% and 4.5%. On the
+    confirming run 7.3% of the Small Titan's lone fights end with the Titan dead, and 12.5% of the
+    Abnormal's are still waiting when the retreat begins. The lone model reads the Abnormal's Grab, which
+    rolls 6 Attack Dice (decision batch 4). The Abnormal's rows are rendered only in its GM subsection
+    (OQ-108).
   grab: >-
-    Met on every Titan on the confirming run of the round 3 retune, with each victim dodging the
-    Titan's own Grab Attack Dice and witnesses' Fear Rolls on every row of the re-cut table
-    (docs/reviews/simulator-report.md, sections 1 and 9). On the standard Medium Titan (9 Attack Dice)
-    a lone victim whose dodge failed dies 67.7% of the time (standard error 0.2; about 2 in 3, read as
-    61.7% to 71.7%) and one who did not dodge 70.2%; with one comrade in reach the six cells run 27.0%
-    to 46.0%, with the Stress 2, Grief 0 cell at 31.8% (near 1 in 3, read as 28.3% to 38.3%). Small (6
-    Attack Dice) runs 27.6% to 46.9%, Large (12) 26.8% to 45.9%, and the Sprinting Abnormal (6 since
-    decision batch 4) 27.0% to 46.0%, with 68.1% alone after a failed dodge; every cell is under 50%.
-    The worst cell on every Titan is Stress 3, Grief 1; the probes, under each entry's fixed need and
-    the old Fear table, gave it 44.4% to 45.3%. The Grab family reads no clock and no Behavior Table,
-    so decision batch 13 moved it only through the Fear Rolls and Health, and its figures repeat.
+    Met on every Titan on the confirming run of the zone retune, with each victim dodging the Titan's own
+    Grab Attack Dice and witnesses' Fear Rolls on every row of the re-cut table
+    (docs/reviews/simulator-report.md, sections 1 and 9). On the standard Medium Titan (9 Attack Dice) a
+    lone victim whose dodge failed dies 67.6% of the time (standard error 0.2; about 2 in 3, read as 61.7%
+    to 71.7%) and one who did not dodge 70.0%; with one comrade in reach the six cells run 25.9% to 45.9%,
+    with the Stress 2, Grief 0 cell at 30.8% (near 1 in 3, read as 28.3% to 38.3%). Small (6 Attack Dice)
+    runs 26.0% to 45.9%, Large (12) 25.4% to 45.6%, and the Sprinting Abnormal (6 since decision batch 4)
+    25.9% to 45.6%, with 67.7% alone after a failed dodge; every cell is under 50%. The worst cell on
+    every Titan is Stress 3, Grief 1; the probes, under each entry's fixed need and the old Fear table,
+    gave it 44.4% to 45.3%. The Grab family reads no clock and no Behavior Table, so decision batch 13
+    moved it only through the Fear Rolls and Health; on this run the one-comrade cells sit about a point
+    under the round 3 retune's (the Medium's Stress 2, Grief 0 cell 30.8% against 31.8%).
   sprinting_abnormal: >-
-    Reported, not tuned to a target, and holding every part of the Chapter 6 bar (targets, abnormals)
-    in every judged row and both Squad sheet orders but one: the Critical Injuries floor in the screen
-    with Hook and Cut and Hamstring Line, with the escapes, Missed in both orders and logged as OQ-199
-    (round 3 retune, R7; docs/reviews/round-3-retune-decisions.md). The bar is read row against row at
-    120,000 fights a row under the retreat clock on the confirming run of the round 3 retune
-    (docs/reviews/simulator-report.md, section 5; decision batch 4, 4-4; decision batch 5, 5-10). Two
-    rows are run with their twins and reported beside the bar rather than judged by it, because they
-    give the Abnormal a ladder it does not have and the bar holds the published creature's values
-    (reported_rows; round 3 retune, R7): the standard ladder instead of its own, and its earlier
-    ladder, loudest-or-brightest then nearest. Its
-    ladder begins with hooked-into-its-body, as every ladder does, so noise, its second rung, never
-    turns it off a striker who fell short (decision batch 4b, 4b-1), and it names current-holder,
-    met only by a holder not at Distant; Chapter 5's last tie-break leaves a tie no card can break
-    held by nothing, so the Squad sheet's order chooses nothing and the two orders differ by
-    sampling alone (decision batch 4, 4-3). Its Grab and Headlong Lunge roll 6 Attack Dice. Draw
-    Attention needs a Position other than Distant, so decision batch 4b's loud-rider rows are no
+    Reported, not tuned to a target, and holding every part of the Chapter 6 bar (targets, abnormals) in
+    every judged row and both Squad sheet orders, which closes OQ-199 (targets, abnormals, oq_199; the
+    zone retune, Z5). The bar is read row against row at 120,000 fights a row under the retreat clock on
+    the confirming run of the zone retune (docs/reviews/simulator-report.md, section 5; decision batch 4,
+    4-4; decision batch 5, 5-10). Two rows are run with their twins and reported beside the bar rather
+    than judged by it, because they give the Abnormal a ladder it does not have and the bar holds the
+    published creature's values (reported_rows; round 3 retune, R7): the standard ladder instead of its
+    own, and its earlier ladder, loudest-or-brightest then nearest. Its ladder begins with
+    hooked-into-its-body, as every ladder does, so noise, its second rung, never turns it off a striker
+    who fell short (decision batch 4b, 4b-1), and it names current-holder, met only by a holder not at
+    Distant; Chapter 5's last tie-break leaves a tie no card can break held by nothing, so the Squad
+    sheet's order chooses nothing and the two orders differ by sampling alone (decision batch 4, 4-3). Its
+    Grab and Headlong Lunge roll 6 Attack Dice, and its Pitch Headlong wrecks no zone (the zone retune,
+    Z3). Draw Attention needs a Position other than Distant, so decision batch 4b's loud-rider rows are no
     longer legal policies and have left the bar (decision batch 5, OQ-113). On the confirming run
-    (docs/reviews/simulator-report.md, sections 2.3, 5, and 9), at its reference
-    start: median kill round 2, 75.2% by round 3, 5.1% of fights with no kill, 0.89 Critical Injuries,
-    0.138 deaths during the fight (0.144 through the end), and 0.447 Grabs per fight, 22.8% of them
-    devouring (24.6% counting any death while held). The bar, read on deaths through the end of the
-    Titan Engagement, cutters first then strikers first, gives the same verdict under deaths during
-    the fight (sections 5.1 and 5.2): at the
-    reference start a median kill in round 2 in both orders, 0.928 and 0.935 Critical Injuries against
-    the standard Medium Titan's 0.836 and 0.831, and 0.1565 and 0.1581 deaths against the Medium
-    Titan's 0.1376 and 0.1363; every row has a median kill in round 2 or 3; Critical Injuries at least
-    the Medium twin's in every judged row but the screen with Hook and Cut and Hamstring Line, with
-    the escapes, where it gives 0.485 against 0.523 with the cutters first (+9.4 standard errors,
-    pooled over two seeds 0.491 against 0.522, +11.1) and 0.497 against 0.523 with the strikers first
-    (+6.2, pooled 0.492 against 0.523, +10.9), on both death readings, Missed in both orders and
-    logged as OQ-199 (targets, abnormals, missed); elsewhere the floor holds by 3.5 standard errors or
-    more, the closest the template Squad (1.201 against 1.175). No kill under the Large twin's in
-    every row by 2.6 standard errors or more, the closest its reference start (5.45% against 5.70%
-    with the strikers first); deaths under the Large twin's in every row by 19.6 standard errors or
-    more, also the closest at its reference start (0.1581 against 0.2127 and 0.1565 against 0.2151).
-    Each figure past a limit by more than 2 standard errors was re-run on a second seed in the same
-    order, with its twins, and judged on the pooled figure (targets, abnormals, sampling; decision
-    batch 4b, 4b-4). Of the two reported ladder rows, the standard ladder instead of its own sits at
-    the Critical Injuries floor with the cutters first (0.822 against 0.837 pooled over two seeds,
-    +3.7) and holds every other limit in both orders, and its earlier ladder holds every limit in both
-    orders by 10.8 standard errors or more; a limit past on either is reported and is never a Missed
-    result. The standard-ladder row is also the measurement that shows the ladder is not what keeps
-    retargeting off the runner: with it the Abnormal is retargeted on 11.4% of its cards against 14.4%
-    under its own ladder (section 6.15). Four strikers
-    hold their part against the standard Titans' four-striker rows (0.0486 and 0.0485 deaths against
-    the Large Titan's 0.1264 and 0.1253; 0.694 and 0.693 Critical Injuries against the Medium Titan's
-    0.552 and 0.553). The Grab alone at 6 Attack Dice, with Headlong Lunge at 9, is a variant of the
-    creature's values and is reported beside the bar, not judged by it; on the confirming run it holds
-    every limit in every row in both orders, on deaths through the end and during the fight alike
-    (sections 5.3 and 5.4), where on the run before it had failed the ceiling with helpers in both
-    orders through the end. The
-    probes' records below, under each entry's fixed need, stand as the measurements that chose its
-    values; those measured to the 12-round horizon before decision batch 5 stand as measured. The
-    probes' figures at its reference start (12,000 fights) were median kill round 2, 69.3% by round
-    3, 8.9% with no kill, 0.85 Critical Injuries, 0.104 deaths, and 0.328 Grabs, 19.4% of them fatal;
-    on the bar 0.0352 against 0.0454 and 0.0336 against 0.0465 for helpers. The same variant on the
-    bar's seeds (abnormal_b4.py): helpers
-    0.0219 against 0.0200 (2.2 standard errors) and 0.0218 against 0.0194 (2.8), which the
-    2-standard-error tolerance counts as failures; it sits above its twin's rate, not at it (pooled
-    over seven runs 0.0217 against 0.0206 with helpers, +3.5 standard errors, and 0.0108 against
-    0.0103 with the screen, +2.6; decision batch 4b, 4b-4), and decision batch 4 had seen it fail
-    one of two seeds (quarry_b4_grab2_bar.out: the screen with the pair, 2.1). Without
-    current-holder (abnormal_b4.py, both orders): helpers 0.0208 and 0.0209 against 0.0200 and
-    0.0194 (0.9 and 1.7 standard errors), the screen 0.0111 and 0.0112 against 0.0099 and 0.0106
-    (2.4 and 1.2), and the screen with the pair 0.0087 and 0.0091 against 0.0079 and 0.0081 (1.9 and
-    2.4), so it fails narrowly; under decision batch 3e, with the kill entries at a fixed need of 3, it
-    failed by 8.0 to 12.7 (abnormal_b3e.py). At its reference start the current-holder rung kept a
-    holder who was not at the closest Position 0.98 times a fight, no card resolved against a holder
-    at Distant while a candidate stood closer, and 0.18 cards a fight resolved against a Down holder
-    (abnormal_b4.py, 60,000 fights). The parked rider, listed first and never leaving the saddle at
-    Distant: 0.177 deaths and 1.38 Critical Injuries against the standard Medium Titan's 0.082 and
-    0.95 with the same Squad (abnormal_b4.py, 120,000 fights), so parking a silent rider buys
-    nothing. Values chosen against the bar (OQ-103): under decision batch 4's tie-break the Grab and
-    Headlong Lunge at a fixed need of 3 failed the ceiling in every supported row (3.4 to 5.9 standard
-    errors at 24,000 fights; tools/probes/batch-4/quarry_b4.py and sweep_b4.py); with the round 2
-    ladder and Pitch Headlong at a fixed need of 2 the helpers row gave 0.026 deaths against 0.019, about 6
-    standard errors at 60,000 fights, and at a fixed need of 1 it holds; with leg Toughness 3 the template
-    Squad row gave 0.296 deaths against 0.268 (round 1). At Nape Depth 4 (abnormal_b3e.py, under
-    decision batch 3e, not re-measured) every row read failed the winnable limit and the ceiling:
-    the reference start 18.5% with no kill against 13.0% and 0.172 deaths against 0.164; helpers
-    12.6% against 9.3% and 0.051 against 0.020; the template Squad median kill round 6, 37.0%
-    against 20.0%, and 0.344 against 0.278. Sensitivity rows on the confirming run (section 9, under
-    the retreat clock; deaths during the fight): template Squad median round 3, 67.4% by round 3,
-    9.0% with no kill, 1.21 Critical Injuries, 0.255 deaths; Draw Attention from a Position other
-    than Distant, median round 2, 75.2%, 4.6% with no kill, 1.00, 0.137, with 0.49
-    attempts a fight by a cutter still at Distant barred (section 6.7); four strikers and no cutters
-    median round 2, 91.4%, 0.6%, 0.69, 0.035 (4b-2); two mounted Squadmates at Distant 75.4%, 0.94,
-    0.124 deaths; the standard ladder 78.8%, 4.0%, 0.84, 0.123; on foot with the Fear Roll 74.9%,
-    0.92, 0.146; its earlier ladder (loudest-or-brightest, nearest) median round 2, 76.2%, 4.5% with
-    no kill, 0.88, 0.129. Support rows: helpers 80.6%, 0.83, 0.053; the screen 82.0%, 0.58, 0.030;
-    Hook and Cut and Hamstring Line 79.0%, 0.78, 0.118; the screen with that pair 85.2%, 0.51, 0.025.
-    On the confirming run the screen resolves 1.161 Titan cards a round; the probes gave 1.211. Jam
-    test worst cells on the table reading (section 4.2) 1.6% and 16.9%; on the mounted reading,
+    (docs/reviews/simulator-report.md, sections 2.3, 5, and 9), at its reference start: median kill round
+    2, 74.8% by round 3, 5.3% of fights with no kill, 0.89 Critical Injuries, 0.155 deaths during the
+    fight (0.161 through the end), and 0.452 Grabs per fight, 24.5% of them devouring (27.3% counting any
+    death while held). The bar, read on deaths through the end of the Titan Engagement, cutters first then
+    strikers first, gives the same verdict under deaths during the fight (sections 5.1 and 5.2): at the
+    reference start a median kill in round 2 in both orders, 0.917 and 0.916 Critical Injuries against the
+    standard Medium Titan's 0.836 and 0.834, and 0.1673 and 0.1653 deaths against the Medium Titan's
+    0.1463 and 0.1460; every row has a median kill in round 2 or 3; Critical Injuries at least the Medium
+    twin's in every judged row, the closest the screen with Hook and Cut and Hamstring Line, with the
+    escapes, the row OQ-199 held open (0.514 against 0.513 with the cutters first, z -0.3, and 0.513
+    against 0.511 with the strikers first, z -0.7, on both death readings), then the template Squad (1.178
+    against 1.153 with the strikers first, 3.3 standard errors). No kill under the Large twin's in every
+    row by 5.5 standard errors or more, the closest the helpers row (3.26% against 3.67% with the cutters
+    first); deaths under the Large twin's in every row by 23.8 standard errors or more, the closest the
+    start on foot (0.1685 against 0.2387 with the cutters first) and then its reference start (0.1673
+    against 0.2387 and 0.1653 against 0.2420). A figure past a limit by more than 2 standard errors is
+    re-run on a second seed in the same order, with its twins, and judged on the pooled figure (targets,
+    abnormals, sampling; decision batch 4b, 4b-4). Of the two reported ladder rows, the standard ladder
+    instead of its own sits at the Critical Injuries floor with the cutters first (0.821 against 0.830
+    pooled over two seeds, +2.3) and holds every other limit in both orders, and its earlier ladder holds
+    every limit in both orders by 5.9 standard errors or more; a limit past on either is reported and is
+    never a Missed result. The standard-ladder row is also the measurement that shows the ladder is not
+    what keeps retargeting off the runner: with it the Abnormal is retargeted on 19.1% of its cards
+    against 23.8% under its own ladder (section 6.15). Four strikers hold their part against the standard
+    Titans' four-striker rows (0.0336 and 0.0335 deaths against the Large Titan's 0.0787 and 0.0763; 0.411
+    and 0.410 Critical Injuries against the Medium Titan's 0.301 and 0.304). The Grab alone at 6 Attack
+    Dice, with Headlong Lunge at 9, is a variant of the creature's values and is reported beside the bar,
+    not judged by it; on the confirming run it holds every limit in every row in both orders, on deaths
+    through the end and during the fight alike (sections 5.3 and 5.4), where on the run before the round 3
+    retune's confirming run it had failed the ceiling with helpers in both orders through the end. The
+    probes' records below, under each entry's fixed need, stand as the measurements that chose its values;
+    those measured to the 12-round horizon before decision batch 5 stand as measured. The probes' figures
+    at its reference start (12,000 fights) were median kill round 2, 69.3% by round 3, 8.9% with no kill,
+    0.85 Critical Injuries, 0.104 deaths, and 0.328 Grabs, 19.4% of them fatal; on the bar 0.0352 against
+    0.0454 and 0.0336 against 0.0465 for helpers. The same variant on the bar's seeds (abnormal_b4.py):
+    helpers 0.0219 against 0.0200 (2.2 standard errors) and 0.0218 against 0.0194 (2.8), which the
+    2-standard-error tolerance counts as failures; it sits above its twin's rate, not at it (pooled over
+    seven runs 0.0217 against 0.0206 with helpers, +3.5 standard errors, and 0.0108 against 0.0103 with
+    the screen, +2.6; decision batch 4b, 4b-4), and decision batch 4 had seen it fail one of two seeds
+    (quarry_b4_grab2_bar.out: the screen with the pair, 2.1). Without current-holder (abnormal_b4.py, both
+    orders): helpers 0.0208 and 0.0209 against 0.0200 and 0.0194 (0.9 and 1.7 standard errors), the screen
+    0.0111 and 0.0112 against 0.0099 and 0.0106 (2.4 and 1.2), and the screen with the pair 0.0087 and
+    0.0091 against 0.0079 and 0.0081 (1.9 and 2.4), so it fails narrowly; under decision batch 3e, with
+    the kill entries at a fixed need of 3, it failed by 8.0 to 12.7 (abnormal_b3e.py). At its reference
+    start the current-holder rung kept a holder who was not at the closest Position 0.98 times a fight, no
+    card resolved against a holder at Distant while a candidate stood closer, and 0.18 cards a fight
+    resolved against a Down holder (abnormal_b4.py, 60,000 fights). The parked rider, listed first and
+    never leaving the saddle at Distant: 0.177 deaths and 1.38 Critical Injuries against the standard
+    Medium Titan's 0.082 and 0.95 with the same Squad (abnormal_b4.py, 120,000 fights), so parking a
+    silent rider buys nothing. Values chosen against the bar (OQ-103): under decision batch 4's tie-break
+    the Grab and Headlong Lunge at a fixed need of 3 failed the ceiling in every supported row (3.4 to 5.9
+    standard errors at 24,000 fights; tools/probes/batch-4/quarry_b4.py and sweep_b4.py); with the round 2
+    ladder and Pitch Headlong at a fixed need of 2 the helpers row gave 0.026 deaths against 0.019, about
+    6 standard errors at 60,000 fights, and at a fixed need of 1 it holds; with leg Toughness 3 the
+    template Squad row gave 0.296 deaths against 0.268 (round 1). At Nape Depth 4 (abnormal_b3e.py, under
+    decision batch 3e, not re-measured) every row read failed the winnable limit and the ceiling: the
+    reference start 18.5% with no kill against 13.0% and 0.172 deaths against 0.164; helpers 12.6% against
+    9.3% and 0.051 against 0.020; the template Squad median kill round 6, 37.0% against 20.0%, and 0.344
+    against 0.278. Sensitivity rows on the confirming run (section 9, under the retreat clock; deaths
+    during the fight): template Squad median round 3, 69.4% by round 3, 8.7% with no kill, 1.19 Critical
+    Injuries, 0.266 deaths; Draw Attention from a Position other than Distant, median round 2, 76.9%, 4.7%
+    with no kill, 0.97, 0.149, with 0.19 attempts a fight by a cutter still at Distant barred (section
+    6.7); four strikers and no cutters median round 2, 95.3%, 0.4%, 0.41, 0.030 (4b-2); two mounted
+    Squadmates at Distant 76.1%, 0.94, 0.143 deaths; the standard ladder 78.8%, 4.0%, 0.82, 0.131; on foot
+    with the Fear Roll 74.7%, 0.92, 0.169; its earlier ladder (loudest-or-brightest, nearest) median round
+    2, 77.2%, 4.2% with no kill, 0.84, 0.127. Support rows: helpers 79.8%, 0.79, 0.059; the screen 82.3%,
+    0.58, 0.037; Hook and Cut and Hamstring Line 78.9%, 0.80, 0.130; the screen with that pair 85.3%,
+    0.51, 0.030. On the confirming run the screen resolves 1.129 Titan cards a round; the probes gave
+    1.211. Jam test worst cells on the table reading (section 4.2) 1.6% and 16.9%; on the mounted reading,
     reported beside them, 12.2% and 39.3%. Highest kill share 0.500 at Frenzy 0 (section 4.1); fewest
-    legal entries besides Thrash 1. Retargeting moves its Attention on 14.4% of its cards at the
-    reference start against the standard Medium Titan's 26.7%, and on 10.6% against 24.1% in the
-    screen with Hook and Cut and Hamstring Line, with Thrash 27.4% of its cards against 18.8%: its
-    cards fail for want of anyone to reach rather than for a holder out of Position, which is the
-    failure retargeting answers, and that is what the Critical Injuries floor reads in that row
-    (section 6.15; OQ-199).
+    legal entries besides Thrash 1. Retargeting moves its Attention on 23.8% of its cards at the reference
+    start against the standard Medium Titan's 33.4%, and on 21.9% against 33.0% in the screen with Hook
+    and Cut and Hamstring Line, with Thrash 14.9% of its cards against 9.4%: its cards fail for want of
+    anyone to reach rather than for a holder out of Position, which is the failure retargeting answers. On
+    the round 3 retune's run that gap left the Critical Injuries floor Missed in that row (OQ-199); on
+    this run the floor holds there (section 6.15).
   thrash_share: >-
     Reported, not tuned (decision batch 4, OQ-101). The confirming run reports it directly
-    (docs/reviews/simulator-report.md, section 6.15), and its kill-share states match the committed
-    shares in every state (section 4.1). Under decision batch 13's retarget, at each reference start,
-    Thrash is 19.2% of the standard Small Titan's resolved cards, 16.0% of the standard Medium
-    Titan's, 19.3% of the standard Large Titan's, and 23.5% of the Sprinting Abnormal's; a retarget
-    moves the Titan's Attention on 11.6%, 26.7%, 24.6%, and 14.4% of those cards, and the rolled entry
-    reaches no one at all on 18.9%, 15.7%, 14.9%, and 17.7%. That is what the rule set out to do: the
-    standard Medium Titan's Thrash share fell from 41.2% to 16.0%, and the Sprinting Abnormal's, whose
-    cards fail for want of anyone to reach rather than for a holder out of Position, from 33.7% to
-    23.5%. Before the rule, at each reference start
-    (tools/probes/batch-4/abnormal_b4.py, 12,000 fights a table, to the 12-round
-    horizon), Thrash was 30.9% of the standard Small
-    Titan's resolved cards, 41.2% of the standard Medium Titan's, 40.9% of the standard Large Titan's,
-    and 33.7% of the Sprinting Abnormal's. Nearly all of it came from a holder at a Position the rolled
-    entry excludes, or a fallback that repeats, rather than a Broken part: 1.27 of 1.30 Thrash cards a
-    fight, 1.34 of 1.37, 1.34 of 1.49, and 1.66 of 2.00. The commonest case is a Nape striker who fell
-    short and holds Attention at Blind Spot.
+    (docs/reviews/simulator-report.md, section 6.15), and its kill-share states match the committed shares
+    in every state (section 4.1). Under decision batch 13's retarget, on the field, at each reference
+    start, Thrash is 8.9% of the standard Small Titan's resolved cards, 7.3% of the standard Medium
+    Titan's, 11.9% of the standard Large Titan's, and 13.7% of the Sprinting Abnormal's; a retarget moves
+    the Titan's Attention on 19.1%, 33.4%, 31.1%, and 23.8% of those cards, and the rolled entry reaches
+    no one at all on 8.4%, 6.9%, 8.0%, and 8.7%. That is what the rule set out to do: the standard Medium
+    Titan's Thrash share fell from 41.2% to 7.3%, and the Sprinting Abnormal's, whose cards fail for want
+    of anyone to reach rather than for a holder out of Position, from 33.7% to 13.7%. Before the rule, at
+    each reference start (tools/probes/batch-4/abnormal_b4.py, 12,000 fights a table, to the 12-round
+    horizon), Thrash was 30.9% of the standard Small Titan's resolved cards, 41.2% of the standard Medium
+    Titan's, 40.9% of the standard Large Titan's, and 33.7% of the Sprinting Abnormal's. Nearly all of it
+    came from a holder at a Position the rolled entry excludes, or a fallback that repeats, rather than a
+    Broken part: 1.27 of 1.30 Thrash cards a fight, 1.34 of 1.37, 1.34 of 1.49, and 1.66 of 2.00. The
+    commonest case is a Nape striker who fell short and holds Attention at Blind Spot.
   setup_mix: >-
     Reported, not tuned. Weighted by the interim setup table, the Focus Titan's fight at its reference
-    start, under the retreat clock, deals on the confirming run of the round 3 retune 0.844 Critical
-    Injuries and 0.109 deaths during the fight per Titan Engagement without the Abnormal roll (0.117
-    through the end), and 0.851 and 0.110 with it (0.119 through the end; 1 Titan Engagement in 12;
-    decision batch 4, OQ-104; docs/reviews/simulator-report.md, section 6.9), so the roll adds 0.007
-    Critical Injuries and 0.001 deaths during the fight. The probes, under each
-    entry's fixed need, gave 0.83 and 0.065, and 0.85 and 0.070. Background Titans are not counted
-    (OQ-115).
+    start, under the retreat clock, deals on the confirming run of the zone retune 0.894 Critical Injuries
+    and 0.127 deaths during the fight per Titan Engagement without the Abnormal roll (0.137 through the
+    end), and 0.899 and 0.129 with it (0.139 through the end; 1 Titan Engagement in 12; decision batch 4,
+    OQ-104; docs/reviews/simulator-report.md, section 6.9), so the roll adds 0.005 Critical Injuries and
+    0.002 deaths during the fight. The probes, under each entry's fixed need, gave 0.83 and 0.065, and
+    0.85 and 0.070. Background Titans are not counted (OQ-115).
   four_strikers: >-
     Reported beside the prepared-Squad target, not tuned (ADR-0014, as amended in decision batch 4b;
-    decision batch 4b, 4b-2; OQ-112). The target is read under the baseline Squad, two cutters and
-    two strikers. On the confirming run of the round 3 retune (docs/reviews/simulator-report.md,
-    sections 5.1, 6.8, and 9; under the retreat clock; deaths during the fight) four eager strikers and
-    no cutters beat it on every table: Chapter 5's reference Titan median round 3 on the boundary,
-    79.4% by round 3, 0.55 Critical Injuries, 0.058 deaths, against its baseline's 72.3%, 0.81, 0.103;
-    the standard Small Titan 91.3%, 0.64, 0.038, against 86.6%, 0.74, 0.046; the standard Medium Titan
-    median round 2 on the boundary, 80.0%, 0.53, 0.067, against 71.8%, 0.81, 0.122; the standard Large
-    Titan median round 3 on the boundary, 78.5%, 2.7% with no kill, 0.80, 0.120, against 68.5%, 5.7%,
-    1.15, 0.194; the Sprinting Abnormal median round 2, 91.4%, 0.69, 0.035, against 75.2%, 0.89, 0.138.
-    The Medium and Large medians sit on the boundary of rounds 2 and 3: in the bar's twin runs the
-    Medium row is round 3 on the boundary in both orders, and the Large row round 3 in both. The
-    Sprinting Abnormal's four-striker row holds its bar against
-    the standard Titans' four-striker rows in both orders. The probes, under each entry's fixed need,
-    gave the standard Medium Titan's row 77.3%, 0.44, 0.016 against 61.7%, 0.69, 0.046.
-  gas: Unchanged from Chapter 5 (medians 8 and 6 rounds, read exactly, Met on the confirming run of the round 3 retune with means 9.24 and 6.34; docs/reviews/simulator-report.md, section 1); no Chapter 6 rule adds ODM use.
+    decision batch 4b, 4b-2; OQ-112). The target is read under the baseline Squad, two cutters and two
+    strikers. On the confirming run of the zone retune (docs/reviews/simulator-report.md, sections 5.1,
+    6.8, and 9; under the retreat clock; deaths during the fight) four eager strikers and no cutters beat
+    it on every table: Chapter 5's reference Titan median round 2, 89.6% by round 3, 0.30 Critical
+    Injuries, 0.036 deaths, against its baseline's 71.0%, 0.81, 0.111; the standard Small Titan median
+    round 1, 96.4%, 0.31, 0.023, against 84.0%, 0.82, 0.077; the standard Medium Titan median round 2,
+    89.0%, 0.31, 0.042, against 69.9%, 0.83, 0.129; the standard Large Titan median round 2, 88.5%, 1.5%
+    with no kill, 0.48, 0.075, against 66.7%, 6.8%, 1.24, 0.221; the Sprinting Abnormal median round 2,
+    95.3%, 0.41, 0.030, against 74.8%, 0.89, 0.155. The Medium and Large medians sit off the boundary of
+    rounds 2 and 3, at the reference start and in both of the bar's twin runs, where on the round 3
+    retune's run they sat on it. The Sprinting Abnormal's four-striker row holds its bar against the
+    standard Titans' four-striker rows in both orders. The probes, under each entry's fixed need, gave the
+    standard Medium Titan's row 77.3%, 0.44, 0.016 against 61.7%, 0.69, 0.046.
+  gas: Unchanged from Chapter 5 (medians 8 and 6 rounds, read exactly, Met on the confirming run of the zone retune with means 9.24 and 6.34; docs/reviews/simulator-report.md, section 1); no Chapter 6 rule adds ODM use.

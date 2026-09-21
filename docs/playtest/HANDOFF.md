@@ -94,7 +94,6 @@ zsh tools/codex/run-review.sh playtest-packet 4 docs/playtest/process/packet-rev
 ## Open items the owner may want to decide
 
 - OQ-112 (Unresolved Major): four strikers beat the baseline Squad on every table.
-- OQ-199 (Simulator target): against the strongest support the bar measures, a screen with Hook and Cut and Hamstring Line, the Sprinting Abnormal's Critical Injuries read 6% under the standard Medium Titan's; the floor stands, and the playtest reads whether the runner is the easier fight there.
 - OQ-114: open Minor findings from the Chapters 5 and 6 conformance review.
 - OQ-115 to OQ-118, OQ-128, OQ-133: simulator cases not yet measured.
 - Chapter 5's design note near line 545 still says "a sound horse"; the rule and glossary say "mounted on their own horse that is not lame".

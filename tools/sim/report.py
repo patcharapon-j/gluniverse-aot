@@ -1509,7 +1509,7 @@ def write(res, full=True, render=None, stale=()):
                 out[sizes[size]] = out.get(sizes[size], 0) + ws
         return out
     # the verdict names its source and the reading (deaths during the fight), with through-the-end figures aside
-    vc = need(r"deals (?:on (?:the final full rerun under Attack Dice|the confirming run of the round 3 retune) )?([\d.]+) Critical Injuries and ([\d.]+) deaths "
+    vc = need(r"deals (?:on (?:the final full rerun under Attack Dice|the confirming run of the (?:round 3|zone) retune) )?([\d.]+) Critical Injuries and ([\d.]+) deaths "
               r"(?:during the fight )?per Titan Engagement without the Abnormal roll(?: \([^)]*\))?, and ([\d.]+) and "
               r"([\d.]+) with it", " ".join(T6["verdicts"]["setup_mix"].split()),
               "data/titans/tuning.yaml, verdicts, setup_mix")
