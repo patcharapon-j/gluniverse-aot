@@ -97322,11 +97322,25 @@
   }
  },
  "post_run_commits": {
-  "data/engagement/tuning.yaml": "4682319f28a4c4ce3f5430973d9fd0cb5b1bedf873ce07687dcebc8ef1503fda",
+  "data/engagement/anchor-ratings.yaml": "a6ab6bfd8c4aa4f7bbc1d85cbf471f50cb44bcb62c221e33a17ab28433a2622d",
+  "data/engagement/background-titans.yaml": "4e44e3a58e21fbb60e6052a8304a2c70a5c392fe4a557bfa2d772b333a5803a1",
+  "data/engagement/positions.yaml": "7b3ca5de92b62c523de15e39fea24a49478c386ed94b66fc7b351858cfab0416",
+  "data/engagement/titan-format.yaml": "53a17b68e22bae84be0e0133e68623575e1b23573d963bb71f365a5091b5e8a8",
+  "data/engagement/tuning.yaml": "489fe6ac7702ceedc7e9a8e7f4d5872008be769af4b6df68068963ef1dccc2e0",
+  "data/engagement/zones.yaml": "5b63b060d0f4db9afcf6ded8b6cf44ed119aefc0cca2abf9fd1db3327a4cae8c",
+  "data/gear/falls.yaml": "6766e70c70cc570f4500a0ec075b00f860c158cf554e36ecdd8a015ab5a02492",
   "data/titans/probe-figures.yaml": "1acc274e0e5759b71faff7e147eaf6cbe34561221cc0b91fc1f53d265a79b8e4",
   "data/titans/tuning.yaml": "1ed04829956a6e1557388eb4ee228b17ddbfa28242ec986fe9f13a3f1e647068",
-  "docs/rules/05-titan-engagement.md": "52d893f39696871907c3a3387bb3478cebb9a7cf70fc3632fcd97daa6d343d9f",
+  "docs/adr/0001-titans-act-from-behavior-tables.md": "463c24303dfec9a0ee4d27901cde780a670afcd625050542848d4b710004f8bd",
+  "docs/adr/0014-numbers-tuned-to-design-targets.md": "86985cd4cce907b4eebffb4292fa5c71e3a3ba825e2c304917b291d5d207bc4c",
+  "docs/rules/01-core-rules.md": "1d80bb4c6a61e225895d2f57a2dd7e48bc8d66cd0b2da6f184704da98eb67b8d",
+  "docs/rules/03-harm-and-mind.md": "de7aac9a21034079851f7ee95a0d88d7af3a28eb525682fedc7dbb460cf891d3",
+  "docs/rules/04-gear.md": "f6dacbc9a13f58986f795ee994a7add4a16e3ceaaae1832f7c194b59d84e832e",
+  "docs/rules/05-titan-engagement.md": "77f57a9eb4123ef309b5f9e15bef5affffbdda1ab09a2bde3d761903f11b76f0",
   "docs/rules/06-standard-titans.md": "08a4a1df8e62535a4682dd5dba0ba056f7fd781797687903a1914428020c722e",
+  "tools/sim/engine.py": "9dbbb953a69b6627a5b9263d0c71d6f1215d6950e37a18cd8565fcd8082a9177",
+  "tools/sim/policy.py": "0ae616ac0129b973ecbc7a28bfd8b0370d91d4364302f3f8f15ed8f829ab3e6d",
+  "tools/sim/rules.py": "54115c237bfa8f3676b374da1f763593a7556e3247b3da6dc0d1398927f4c6a6",
   "tools/sim/run.py": "6f724192f5a5f43c10dddcb00472d6c6d15a70d42328d2742597bff66013eca3"
  },
  "previous_headlines": [

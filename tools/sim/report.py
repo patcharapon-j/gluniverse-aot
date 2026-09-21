@@ -65,6 +65,22 @@ MISSED_OQ = {
 # file before and after the run. run.py --report accepts a file listed here while it still matches the snapshot
 # taken after the run, and the report prints both snapshots with the note.
 SNAPSHOT_CHANGE_NOTES = {
+    "data/engagement/anchor-ratings.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): a Flight Momentum trimmed only at the end of the move, as the engine already did (C1), and the OQ-205 landing; no measured case changes",
+    "data/engagement/background-titans.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): the entry zone with no soldier on the field (OQ-207), as space.py already did",
+    "data/engagement/positions.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording of the zone readers (M1 to M3, minors); no measured case changes",
+    "data/engagement/titan-format.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording; the Frenzy rate is unchanged at 3",
+    "data/engagement/tuning.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording of the figure notes; no case definition changes",
+    "data/engagement/zones.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): wording (letting go, the Set piece start zone, the terrain mix share); no measured case changes",
+    "data/gear/falls.yaml": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): the fall with no Focus Titan alive reads the nearest corpse (OQ-206); no measured strike reads it",
+    "docs/adr/0001-titans-act-from-behavior-tables.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): an amendment note for decision batch 17; text only",
+    "docs/adr/0014-numbers-tuned-to-design-targets.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): an amendment note for decision batch 17; text only",
+    "docs/rules/01-core-rules.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): Help on a called roll reads zones; text only",
+    "docs/rules/03-harm-and-mind.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): zone wording; text only",
+    "docs/rules/04-gear.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): zone wording; text only",
+    "docs/rules/05-titan-engagement.md": "batch E review round 1 (docs/reviews/zone-combat-review-1.md, commit eaa649d): section 5.11 end steps and other zone wording; text only",
+    "tools/sim/engine.py": "edited after the run (implementation review M8, m10; commit d45870a): the retreat no longer steps toward a comrade already in the soldier's zone, and the Open and Urban Terrain Traits are modelled. Re-measured on the reference starts at the same seeds, 120,000 fights each: every Titan deaths through the end fell by 0.004 to 0.007 and Critical Injuries by 0.011 to 0.018, no verdict changes; the owner chose not to re-run (2026-09-21), so this report's figures run up to that much high",
+    "tools/sim/policy.py": "edited after the run with engine.py (M8); see its note",
+    "tools/sim/rules.py": "edited after the run with engine.py (m10 reads the Terrain Traits); see its note",
     "docs/rules/PROGRESS.md": "outside the rules hash and the staleness test; a status file no case reads, edited "
                               "by the orchestrator, no rule",
     "docs/rules/DECISIONS-2026-09-14.md": "decision 8-34 recorded while the run was going, and 8-35 to 8-42 after it "
