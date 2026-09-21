@@ -30,6 +30,9 @@ Options:
 
 - `--scale 0.05` runs 5% of every case's trials into `results/results-scale.json` and `results/report-scale.md`,
   and leaves `results.json` and the report alone. Use it as a smoke test.
+- `--no-recheck` skips the re-check pass. Use it for the first run after a rule change: every committed probe figure
+  is then stale, so nearly every case is flagged and re-run at five times its trials for nothing. Re-commit the probe
+  figures (`--commit-probe-figures`) after that run so the next run's re-checks mean something again.
 - `--report` re-renders the report from `results/results.json` alone. It refuses, and lists the files, if any
   file of the rules snapshot differs from the one the results record.
 - `--report --stale-ok` renders anyway and lists those files at the top of the report. Every figure is still the

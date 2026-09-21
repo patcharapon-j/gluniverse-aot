@@ -147,7 +147,20 @@ def zones_apart(field, a, b):
 
 
 # ---------------------------------------------------------------------- steps inside one zone (16-12)
+_STEP_KINDS = {}
+_ENTER_KINDS = {}
+
+
 def step_kinds(R, rating, a, b, grounded):
+    """Memoised per rules object: the result depends only on R and the arguments. Callers must not mutate it."""
+    key = (id(R), rating, a, b, grounded)
+    got = _STEP_KINDS.get(key)
+    if got is None:
+        got = _STEP_KINDS[key] = frozenset(_step_kinds(R, rating, a, b, grounded))
+    return got
+
+
+def _step_kinds(R, rating, a, b, grounded):
     """The kinds of move that can make the Position step a to b relative to one body in a zone of this rating
     (anchor-ratings.yaml, ratings, steps, with the grounded_titan permissions for a grounded Titan or a corpse)."""
     pair = frozenset((a, b))
@@ -163,6 +176,15 @@ def step_kinds(R, rating, a, b, grounded):
 
 
 def enter_kinds(R, rating):
+    """Memoised per rules object; callers must not mutate the dict it returns."""
+    key = (id(R), rating)
+    got = _ENTER_KINDS.get(key)
+    if got is None:
+        got = _ENTER_KINDS[key] = _enter_kinds(R, rating)
+    return got
+
+
+def _enter_kinds(R, rating):
     """zones.yaml, moves, entered_zone_reads: the kinds a zone step into a zone of this rating reads, from its distant
     to in-reach row: foot and mounted may enter; odm always enters, and the row's odm says whether a Flight may end
     free there."""
@@ -275,7 +297,23 @@ def standing_in(bodies, zone):
     return [b for b in bodies if b.zone == zone and not getattr(b, "dead", False)]
 
 
+_FLIGHTS = {}
+
+
 def flight_options(R, field, start, momentum, bodies, may_leave=False, carry_limit=None):
+    """Memoised: the result depends only on the rules, the field's layout and current ratings, the start, the Momentum,
+    each body's label, zone and grounding, may_leave, and the limit. Each call returns fresh step lists."""
+    key = (id(R), field.size, tuple(field.zones[n].rating for n in sorted(field.zones)), start, momentum,
+           tuple((b.label, b.zone, b.grounded()) for b in bodies), may_leave, carry_limit)
+    got = _FLIGHTS.get(key)
+    if got is None:
+        if len(_FLIGHTS) > 200000:
+            _FLIGHTS.clear()
+        got = _FLIGHTS[key] = _flight_options(R, field, start, momentum, bodies, may_leave, carry_limit)
+    return [(list(st), c, m) for st, c, m in got]
+
+
+def _flight_options(R, field, start, momentum, bodies, may_leave=False, carry_limit=None):
     """Every Flight from placement start that the rules allow with this much Momentum: its steps (the first free, at most
     the Carry limit more, each Carry paid at its cost), never ending free in a zone whose rating gives ODM no distant to
     in-reach row (Open), and ending free as anchored. Returns [(steps, carries, momentum)] with the shortest way to each

@@ -789,7 +789,7 @@ def write(res, full=True, render=None, stale=()):
         w(f"**Smoke run at scale {res['scale']:g}: every case ran a fraction of its trials. No figure here is the "
           "report's.**\n")
     w(f"- **Run:** {len(main_cases)} cases and {len(res['cases']) - len(main_cases)} second-seed runs, {total:,} "
-      f"trials, plus {len(rechecks)} re-checked cases; {res['runtime_seconds']:.0f} seconds on {res['cpus']} "
+      f"trials, plus {'no re-checks (skipped: the probe figures predate these rules)' if res.get('rechecks_skipped') else f'{len(rechecks)} re-checked cases'}; {res['runtime_seconds']:.0f} seconds on {res['cpus']} "
       f"processes.")
     after_snap = res.get("snapshot_after_run")
     rules_changed = [p for p in changed_during if not p.startswith(sim_dir + os.sep)]
