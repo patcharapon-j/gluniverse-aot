@@ -12,8 +12,12 @@ import RestrictedBand from '~/components/RestrictedBand.astro';
 import { gmTabs } from '~/lib/chapters';
 import {
   ANCHOR_RATINGS,
+  ATTACHMENTS,
+  CARRY_LIMIT,
   END_STEPS,
+  FIELD_DEFAULTS,
   LADDER_STEPS,
+  MOUNTED_PACE,
   NEVER_YOURS,
   POSITION_LIST,
   RETREAT_CLOCK,
@@ -22,7 +26,16 @@ import {
 } from '~/lib/gm-screen';
 
 const tabs = await gmTabs();
-const data = { titans: TITANS, ratings: ANCHOR_RATINGS, positions: POSITION_LIST, retreatClock: RETREAT_CLOCK };
+const data = {
+  titans: TITANS,
+  ratings: ANCHOR_RATINGS,
+  positions: POSITION_LIST,
+  attachments: ATTACHMENTS,
+  fieldDefaults: FIELD_DEFAULTS,
+  carryLimit: CARRY_LIMIT,
+  mountedPace: MOUNTED_PACE,
+  retreatClock: RETREAT_CLOCK,
+};
 ---
 <GmLayout title="GM Screen" description="A live screen for running a Titan Engagement: trackers, clocks, the hidden Next Behavior, and Titan Dice." tabs={tabs}>
   <section class="sheet sheet--carbon screen" aria-labelledby="page-title">
@@ -68,6 +81,7 @@ const data = { titans: TITANS, ratings: ANCHOR_RATINGS, positions: POSITION_LIST
         </div>
 
         <p class="scr-trait" data-trait></p>
+        <p class="scr-hint" data-carry></p>
 
         <!-- ------------------------------------------------ Titans -->
         <div class="scr-titans" data-titans></div>
@@ -94,8 +108,9 @@ const data = { titans: TITANS, ratings: ANCHOR_RATINGS, positions: POSITION_LIST
                 <th scope="col">Soldier</th>
                 <th scope="col">Card</th>
                 <th scope="col">Stress</th>
-                <th scope="col" data-pos-a>Position · A</th>
-                <th scope="col" data-pos-b hidden>Position · B</th>
+                <th scope="col">Zone</th>
+                <th scope="col">Attachment</th>
+                <th scope="col">Position, derived</th>
                 <th scope="col">State</th>
                 <th scope="col"><span class="sr-only">Remove</span></th>
               </tr>
@@ -106,6 +121,7 @@ const data = { titans: TITANS, ratings: ANCHOR_RATINGS, positions: POSITION_LIST
             <input type="text" name="name" placeholder="Name" aria-label="Soldier's name" required />
             <button type="submit">Add soldier</button>
           </form>
+          <p class="scr-hint">Zone and Attachment are the record; Position is read off them, never set directly. Give each soldier the zone number from your board or the field diagram, and an attachment naming a Titan only when they are On Body, Blind Spot, Grabbed, or Pinned relative to it.</p>
         </section>
 
         <!-- ------------------------------------------------ the round -->

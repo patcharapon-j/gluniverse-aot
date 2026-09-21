@@ -104,14 +104,15 @@ interface RawPositionChange {
  * principle at its head come from the Positions table; a new entry with no wording fails the build.
  */
 const POSITION_CHANGE_WORDING: Record<string, string> = {
-  'own-move': 'One step the ground allows, or a mount, a dismount, or leaving. An ODM move is a Flight, and crosses two steps only by spending Momentum on Carry.',
-  'letting-go': 'Taken instead of a move: you fall, and land In Reach.',
-  fall: 'Any fall from On Body or Blind Spot leaves you In Reach of the Titan the fall is read against. From further out, your Position holds.',
+  'own-move': 'A zone step, an attachment step, a mount, a dismount, or leaving. An ODM move is a Flight, and every step past the first is a Carry, paid in Momentum.',
+  'letting-go': 'Taken instead of a move: you fall, and land Ground in the zone you are in.',
+  fall: 'You stay in the zone you are in and land Ground, so you hold In Reach relative to a body there.',
   'fear-roll-forced-move': 'One step at the start of your next turn. It is the result moving you, not a move of your own.',
   'grab-lands': 'The Grabbed soldier holds On Body relative to the hand that holds them.',
-  'freed-from-a-grab': 'In Reach, with a fall first if you had already been lifted.',
-  'knock-loose': 'A target who is airborne or on the body falls, and lands In Reach.',
-  'close-rule': 'Coming to On Body or Blind Spot on one Titan drops you to In Reach of every other Titan you were On Body or at Blind Spot of. A Titan you were Distant or In Reach of does not change.',
+  'freed-from-a-grab': 'Ground in the holding Titan’s zone, with a fall first if you had already been lifted.',
+  'knock-loose': 'A target who is airborne, or who holds On Body or Blind Spot relative to the Titan, falls.',
+  stride: 'The Titan’s zone changes. You go with it if you hold On Body or Grabbed relative to it; you stay and detach if you hold its Blind Spot. Everyone else’s Position relative to it is derived anew.',
+  'zone-becomes-open': 'Every soldier who holds that Titan’s Blind Spot in the zone holds On Body instead, and every soldier Anchored there lands Ground. Neither is a fall.',
   'titan-becomes-focus': 'Everyone holding a Position holds Distant relative to it.',
   'focus-titan-dies': 'Your Positions carry over to its corpse, with On Body and Blind Spot reading In Reach.',
   'titan-body-comes-down': 'Everyone on it or behind it who is not airborne ends up In Reach of the body, whether they leap clear or are pinned under it. If you were in the air, you swing clear and keep your Position.',
@@ -270,6 +271,7 @@ interface RawSizeClass {
   attack_dice: Record<string, number>;
   raises_fall_band: boolean;
   heave: number;
+  stride: number;
 }
 
 /** The Body Part kinds a Toughness column can name. */
@@ -286,8 +288,8 @@ export function titanSizesTable(): CoreTableData {
   for (const kind of kinds) wording(TOUGHNESS_COLUMNS, kind, T);
   return {
     caption: 'What a standard Titan takes from its Size Class',
-    note: 'An Abnormal lists its own numbers, and keeps some of them hidden until a Read.',
-    columns: ['Size Class', 'Height', 'Tempo', 'Nape Depth', 'Regeneration', 'Heave rating', ...kinds.map((k) => `${TOUGHNESS_COLUMNS[k]} Toughness`)],
+    note: 'An Abnormal lists its own numbers, and keeps some of them hidden until a Read. A grounded Titan’s Stride is 0, whatever its class.',
+    columns: ['Size Class', 'Height', 'Tempo', 'Nape Depth', 'Regeneration', 'Heave rating', 'Stride', ...kinds.map((k) => `${TOUGHNESS_COLUMNS[k]} Toughness`)],
     see: false,
     groups: [
       {
@@ -301,6 +303,7 @@ export function titanSizesTable(): CoreTableData {
               String(c.nape_depth),
               `${c.regeneration_clock} segments`,
               String(c.heave),
+              `${c.stride} zone${c.stride === 1 ? '' : 's'}`,
               ...kinds.map((k) => String(c.toughness[k])),
             ] as Cell[],
           };

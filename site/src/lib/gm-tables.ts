@@ -177,10 +177,10 @@ function trackerKey(line: keyof Tracker, field: string): string {
 }
 
 const TRACKER_WORDING: Record<string, { name: string; text: string }> = {
-  'engagement_line/anchor-rating': { name: 'Anchor Rating', text: 'The ground, which decides the Position steps ODM Gear allows.' },
-  'engagement_line/anchors-left': {
-    name: 'Anchors left',
-    text: 'How many the ground still holds, of what the Anchor Rating gave. Public, never restored, and whatever is left is every soldier’s Momentum cap.',
+  'engagement_line/field-size-and-field-rating': { name: 'Field size and field rating', text: 'How many zones the field has, and the rating it was generated from.' },
+  'engagement_line/the-field-readout': {
+    name: 'The field readout',
+    text: "Each zone's rating, marked where it has fallen below its start rating, since what is left there is every soldier's Momentum cap, and which zone each Titan and corpse stands in.",
   },
   'engagement_line/round-number': { name: 'Round', text: 'Which round the fight is in.' },
   'engagement_line/retreat-clock-filled-segments-of': { name: 'Retreat clock', text: 'Filled segments of its length, such as 2 of 8. Public.' },
@@ -198,6 +198,7 @@ const TRACKER_WORDING: Record<string, { name: string; text: string }> = {
   },
   'focus_titan_row/label': { name: 'Label', text: 'A, B, and so on. Every Position is held relative to a label.' },
   'focus_titan_row/size-class-and-stat-block': { name: 'Size Class and Titan', text: 'Which Titan it is, and which dossier you are running it from.' },
+  'focus_titan_row/its-zone-and-its-stride': { name: 'Zone and Stride', text: 'Which zone it stands in, and how far it may stride on a card that reaches the Stride step. A grounded Titan strides 0.' },
   'focus_titan_row/cards-this-round': { name: 'Cards this round', text: 'The numbers it was dealt, one per point of Tempo.' },
   'focus_titan_row/attention-holder-the-decoy-that': {
     name: 'Attention',
@@ -224,6 +225,7 @@ const TRACKER_WORDING: Record<string, { name: string; text: string }> = {
   },
 
   'corpse_row/label-marked-corpse': { name: 'Label, marked a corpse', text: 'It keeps the label it had alive, and soldiers keep Positions relative to it.' },
+  'corpse_row/its-zone-which-never-changes': { name: 'Zone', text: 'Where it lies. A corpse never moves and never strides.' },
   'corpse_row/each-body-part-s-state-and': { name: 'Body Parts', text: 'Each state and count, which never regenerate now.' },
   'corpse_row/heave-count-of-its-heave': { name: 'Heave count', text: 'Of its Heave rating, which is what frees everyone it pins.' },
   'corpse_row/each-soldier-it-pins-by': { name: 'Pins', text: 'Each soldier it pins, by limb with the pinning Body Part, or by the body.' },

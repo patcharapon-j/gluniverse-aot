@@ -8,6 +8,7 @@ import { parse } from 'yaml';
 import anchorText from '../../../data/engagement/anchor-ratings.yaml?raw';
 import roundText from '../../../data/engagement/round.yaml?raw';
 import setupText from '../../../data/engagement/engagement-setup.yaml?raw';
+import zonesText from '../../../data/engagement/zones.yaml?raw';
 import smallText from '../../../data/titans/standard-small.yaml?raw';
 import mediumText from '../../../data/titans/standard-medium.yaml?raw';
 import largeText from '../../../data/titans/standard-large.yaml?raw';
@@ -56,9 +57,15 @@ interface RawTitan {
 
 const RAW = [smallText, mediumText, largeText, abnormalText].map((t) => parse(t) as RawTitan);
 const anchors = parse(anchorText) as {
-  ratings: { id: string; name: string; anchors: number; terrain_trait: string }[];
+  ratings: { id: string; name: string; anchors: number; carry_cost: number; terrain_trait: string }[];
 };
 const setup = parse(setupText) as { retreat_clock: number };
+const zonesDoc = parse(zonesText) as {
+  fields: { sizes: { id: string; centre: number; squad_start: number }[] };
+  attachments: { id: string; names_body: boolean; text: string }[];
+  flight: { carry_limit: number };
+  moves: { mounted: { zone_steps: number } };
+};
 
 const POSITIONS = ['distant', 'in-reach', 'on-body', 'blind-spot'] as const;
 const POSITION_NAMES: Record<string, string> = {
@@ -67,6 +74,30 @@ const POSITION_NAMES: Record<string, string> = {
   'on-body': 'On Body',
   'blind-spot': 'Blind Spot',
 };
+
+/** The attachments a soldier can hold, for the screen's zone-and-attachment picker. */
+const ATTACHMENT_NAMES: Record<string, string> = {
+  ground: 'Ground',
+  anchored: 'Anchored',
+  'on-body': 'On Body',
+  'blind-spot': 'Blind Spot',
+  grabbed: 'Grabbed',
+  pinned: 'Pinned',
+};
+export const ATTACHMENTS = zonesDoc.attachments.map((a) => ({
+  id: a.id,
+  name: ATTACHMENT_NAMES[a.id] ?? titleCase(a.id.replace(/-/g, ' ')),
+  namesBody: a.names_body,
+}));
+
+/** The Standard field's centre zone and the Squad's start zone (ADR-0029), the screen's defaults. */
+const standardField = zonesDoc.fields.sizes.find((f) => f.id === 'standard');
+if (!standardField) throw new Error('The GM screen: zones.yaml has no "standard" field.');
+export const FIELD_DEFAULTS = { titanZone: standardField.centre, squadZone: standardField.squad_start };
+
+/** A Flight's Carry limit and the mounted pace, both provisional (OQ-200; section 5.2). */
+export const CARRY_LIMIT = zonesDoc.flight.carry_limit;
+export const MOUNTED_PACE = zonesDoc.moves.mounted.zone_steps;
 
 /** A Terrain Trait in one line for the screen, with the source file's cross-references dropped. */
 const trait = (text: string) => text.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
@@ -171,6 +202,7 @@ export const ANCHOR_RATINGS = anchors.ratings.map((r) => ({
   id: r.id,
   name: r.name,
   anchors: r.anchors,
+  carryCost: r.carry_cost,
   trait: r.terrain_trait.trim() === 'none' || !r.terrain_trait ? 'No Terrain Trait — the plain ground the other ratings are read against.' : trait(r.terrain_trait),
 }));
 
