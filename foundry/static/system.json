@@ -48,6 +48,9 @@
     },
     {
       "src": "styles/tracker.css"
+    },
+    {
+      "src": "styles/board.css"
     }
   ],
   "languages": [

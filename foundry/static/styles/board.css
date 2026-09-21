@@ -1,0 +1,105 @@
+/*
+ * The engagement board (16-34; ADR-0027 as amended). While a Titan Engagement has a field the board
+ * covers the canvas area and the scene canvas is hidden; Foundry's interface stays over it. Held to
+ * the locked palette and fonts of the sheet and the tracker.
+ */
+#wof-board-host {
+  --wb-paper: #f4ecd8; --wb-ink: #14100c; --wb-ink2: #4f463d;
+  --wb-brass: #b9924a; --wb-brass-hi: #e2c078; --wb-red: #8e2323;
+  --wb-fl: "Special Elite", "Courier New", monospace;
+  --wb-fb: "Noto Serif", Georgia, serif;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #1b1712;
+  touch-action: none;
+}
+body.wof-board-on #board { visibility: hidden; }
+
+#wof-board-host .wof-board-canvas { display: block; width: 100%; height: 100%; }
+
+/* A vignette over the field, so the edge of the board reads as the edge of the table. */
+#wof-board-host::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 160px 40px rgba(10, 8, 6, .75);
+  transition: box-shadow .24s ease;
+}
+
+/* Direct Control: the frame is tinted and named, so a player-facing table never drifts into it. */
+#wof-board-host.wof-board-direct::after {
+  box-shadow: inset 0 0 0 6px var(--wb-red), inset 0 0 140px 40px rgba(95, 23, 23, .55);
+}
+#wof-board-host .wof-board-direct-badge {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  padding: 4px 14px;
+  font: 14px/1.4 var(--wb-fl);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--wb-paper);
+  background: var(--wb-red);
+  border: 1px solid var(--wb-ink);
+  border-radius: 3px;
+  pointer-events: none;
+}
+#wof-board-host.wof-board-direct .wof-board-direct-badge { display: block; }
+
+/* Hover a zone: terrain, anchor rating, occupants, effects. */
+#wof-board-host .wof-board-tip {
+  position: absolute;
+  z-index: 2;
+  max-width: 280px;
+  padding: 6px 10px;
+  font: 13px/1.45 var(--wb-fb);
+  color: var(--wb-ink);
+  background: var(--wb-paper);
+  border: 1px solid var(--wb-brass);
+  border-radius: 3px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .45);
+  pointer-events: none;
+}
+#wof-board-host .wof-board-tip strong { font-family: var(--wb-fl); font-weight: 400; }
+#wof-board-host .wof-board-tip[hidden] { display: none; }
+
+/* The way picker, and Direct Control's rating menu. */
+#wof-board-host .wof-board-menu {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  padding: 4px;
+  background: var(--wb-paper);
+  border: 1px solid var(--wb-brass);
+  border-radius: 3px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .5);
+}
+#wof-board-host .wof-board-menu header {
+  padding: 4px 8px 6px;
+  font: 12px/1.3 var(--wb-fl);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--wb-ink2);
+  border-bottom: 1px solid rgba(36, 31, 27, .24);
+}
+#wof-board-host .wof-board-menu button {
+  all: unset;
+  padding: 6px 8px;
+  font: 13px/1.3 var(--wb-fb);
+  color: var(--wb-ink);
+  cursor: pointer;
+  border-radius: 2px;
+}
+#wof-board-host .wof-board-menu button:hover,
+#wof-board-host .wof-board-menu button:focus-visible { background: var(--wb-brass-hi); }
+
+@media (prefers-reduced-motion: reduce) {
+  #wof-board-host::after { transition: none; }
+}

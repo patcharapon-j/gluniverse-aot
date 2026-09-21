@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { actionIcon, defaultArtwork, entryIcon, foePlate, isReplaceableImg, specialtyPortrait, STATUSES, titanPlate } from '../src/art.ts';
+import { actionIcon, boardAssets, boardFx, boardPath, boardRim, boardSoldier, boardTile, boardTitan, boardTitanFigure, defaultArtwork, entryIcon, foePlate, isReplaceableImg, specialtyPortrait, STATUSES, tileVariant, titanPlate } from '../src/art.ts';
 import { KIND_PRESETS, presetFaces, TEXTURES } from '../src/dice/dsn.ts';
 import { boundStatuses, statusBinding } from '../src/rules/statuses.ts';
 import { FOUNDRY_ROOT, loadTables } from '../tools/data/load.ts';
@@ -37,6 +37,32 @@ describe('shipped art', () => {
     expect(isReplaceableImg('icons/svg/mystery-man.svg')).toBe(true);
     expect(isReplaceableImg(specialtyPortrait('rider'))).toBe(true);
     expect(isReplaceableImg('worlds/x/me.webp')).toBe(false);
+  });
+});
+
+describe('engagement board art', () => {
+  it('ships all 29 board assets and reads every one through boardPath', () => {
+    const all = boardAssets();
+    expect(all).toHaveLength(29);
+    expect(new Set(all).size).toBe(29);
+    for (const src of all) {
+      expect(src).toMatch(/^systems\/wings-of-freedom\/assets\/board\/[a-z-]+(-\d)?\.webp$/);
+      expect(shipped(src), src).toBe(true);
+    }
+    expect(boardTile('giant-forest', 2)).toBe(boardPath('hex-giant-forest-2'));
+    expect(boardRim('urban')).toBe(boardPath('rim-urban'));
+    expect(boardSoldier('hanging')).toBe(boardPath('soldier-hanging'));
+    expect(boardFx('steam')).toBe(boardPath('fx-steam'));
+  });
+
+  it('fixes the tile variant by the zone number', () => {
+    expect([1, 2, 3, 4, 5, 6, 7, 13, 19].map(tileVariant)).toEqual([1, 2, 3, 1, 2, 3, 1, 1, 1]);
+  });
+
+  it('stands a Titan as its Abnormal figure where one ships, else its Size Class', () => {
+    expect(boardTitanFigure('medium', 'sprinting-abnormal')).toBe(boardTitan('sprinting-abnormal'));
+    expect(boardTitanFigure('large', 'standard-large')).toBe(boardTitan('large'));
+    expect(boardTitanFigure(undefined, null)).toBe(boardTitan('medium'));
   });
 });
 
