@@ -162,6 +162,13 @@ REFERENCE IMAGES: the attached colour plates are world reference only. They show
 
 ## 3. Batch 1: the assets wanted now
 
+> **Batch 1 is done and shipped, 2026-09-21.** Approved and committed:
+> `foundry/static/assets/icons/pos-hooked.webp`, `titan-frenzy.webp`, `titan-opening.webp` (128 px),
+> and `site/src/assets/plates/plate-updates.webp`, wired into `site/src/pages/updates/index.astro`.
+> `foundry/tools/import-art.sh` was extended with a `batch-2` section for the three icons. Momentum
+> pips were not generated: section 8.0 settles them as code-drawn. The rest of this section is kept
+> as the record of how they were made.
+
 Three tracker state marks and one website plate. All four are fully covered by the locked style.
 
 ### 3.1 What already exists
@@ -389,8 +396,11 @@ already a deviation, which is another reason to keep them in code.
 > reads "no signatures". `art-style.md` is binding and this handout is not, so the signature is struck
 > from the subject above. The generated `plate-updates.webp` in `foundry/art-src/batch-2/web/` was
 > made before this correction and carries an abstract ink scrawl where the signature was asked for.
-> It is staged and unapproved: the owner decides whether it stands or the plate is regenerated
-> without it. The typewriting marks and the stamp are not letters or numerals and are what the
+> **Resolved 2026-09-21: the owner rejected it and approved a regenerated plate.** That
+> first plate also failed this section's own acceptance, coming back photoreal with lens bokeh rather
+> than painted. The shipped plate is `plate-updates-v4`: the slip pasted inside the front cover, no
+> desk props, the Wings emblem embossed on the board, painted throughout, no signature. The page's alt
+> text was corrected with it, because it still described the signature. The typewriting marks and the stamp are not letters or numerals and are what the
 > shipped `plate-compendium.webp` already does, so they are not at issue.
 
 Not a tracker icon: a website colour plate, and the only asset here that `art-style.md` covers
@@ -877,14 +887,18 @@ the batch rather than after.
 
 Do not decide these on your own.
 
-1. **There is no board style block.** art-style.md has colour plate, ink-wash vignette, brand emblem,
-   brand wordmark, wax seal and the icon system, and none of them is a shallow-isometric board tile.
-   This handout says to use the colour plate block verbatim and carry the board-specific requirements
-   in the subject. Should a board style block be added to art-style.md instead, and if so, does the
-   board get its own approved style lock first, as ADR-0022 requires for every other family?
-2. **Hex orientation is not fixed anywhere.** Section 7 of the zone design says hexagonal zones and
-   shallow isometric, but not flat-top or pointy-top. This handout assumes flat-top with two-to-one
-   foreshortening, so the tile is twice as wide as it is tall. Confirm before 15 tiles are generated.
+1. **There is no board style block. ANSWERED 2026-09-21: the board gets its own style block and its
+   own approved style lock, before any of the 29 files.** art-style.md has colour plate, ink-wash
+   vignette, brand emblem, brand wordmark, wax seal and the icon system, and none of them is a
+   shallow-isometric board tile, so the board is a new family and ADR-0022's rule applies to it like
+   every other. `site/design/art-style.md` now carries an "The engagement board" section holding the
+   ruling, with its style block marked pending until the lock is approved. The lock set generated for
+   approval is variant 1 of each of the five anchor ratings, plus `titan-medium` and
+   `soldier-standing`, which between them exercise every painted board sub-kind. The rim glyphs are
+   not in the lock: they are icons and run on the already-locked icon system block.
+2. **Hex orientation. ANSWERED 2026-09-21: flat-top, with two-to-one foreshortening**, so a tile is
+   twice as wide as it is tall. Recorded in `site/design/art-style.md` and
+   `foundry/design/asset-inventory.md`.
 3. **art-style.md's Sizes table has no board row**, so the aspect ratios and the shipped sizes here
    (16:9 for tiles, 4:5 for figures, 1:1 for effects and glyphs) are proposals.
 4. **art-style.md's folder rules have no board folder and no Foundry batch naming.** This handout
