@@ -331,8 +331,10 @@ Checked without screenshots, by script: no console errors opening, switching and
 - **Animations started by other clients.** A roll's gas loss or the GM's edit arrives as a document update; the change rules in `instrument.ts` decide what animates, and two quick updates must not stack ghosts (the ghost is keyed to the change id, as `EquipmentRig` does today).
 - **Hover cards and the tab column.** The detail hover card is placed beside its row; with the tab column on the right, step 4 checks a card never covers the index tabs or leaves the window.
 
-## 12. Open questions for the owner
+## 12. Owner decisions (2026-09-23)
 
-1. The Squadmate sheet keeps its own frame (horizontal tabs, footer inside the paper) and only picks up the new band, Kit and Wounds & Mind. Should it move to the Dossier frame (index tabs, binder footer) too, now or later?
-2. The preview lets a click on the header's Standing or Down tag and its Airborne tag toggle them. The plan keeps the tags read-only, so each field has one control (the band's Down stamp, the Kit tab's Airborne). Should the tags toggle as well?
-3. The Record's stamps: the preview shows only the milestones a soldier has earned; today the unearned ones show faded. The plan shows earned only. Keep the faded ones?
+The owner asked for everything, fully:
+
+1. The Squadmate sheet moves to the Dossier frame now: index tabs on the right edge, footer on the binder, the slim header and the band. Step 3 builds the frame so both sheets share it, and the Squadmate's own tab content is laid out in the Dossier style in step 6.
+2. The header's Standing or Down tag and its Airborne tag toggle too, as in the preview, alongside the band's Down stamp and the Kit tab's Airborne. They are the same fields, so the controls stay in sync.
+3. The Record keeps the unearned milestone stamps, faded, as today; earned ones are inked.
