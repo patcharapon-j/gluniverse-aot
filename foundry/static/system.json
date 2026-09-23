@@ -38,6 +38,24 @@
       "src": "styles/sheet.css"
     },
     {
+      "src": "styles/instrument.css"
+    },
+    {
+      "src": "styles/dossier.css"
+    },
+    {
+      "src": "styles/dossier-soldier.css"
+    },
+    {
+      "src": "styles/dossier-kit.css"
+    },
+    {
+      "src": "styles/dossier-wounds.css"
+    },
+    {
+      "src": "styles/dossier-record.css"
+    },
+    {
       "src": "styles/chat.css"
     },
     {

@@ -24,6 +24,10 @@
   color-scheme: light;
 }
 
+/* Each attribute's colour, read as --sc by the Soldier tab, the Squadmate and the Lifepath */
+.wof-sheet .s-strength { --sc: var(--str); } .wof-sheet .s-agility { --sc: var(--agi); } .wof-sheet .s-wits { --sc: var(--wit); }
+.wof-sheet .s-perception { --sc: var(--per); } .wof-sheet .s-instinct { --sc: var(--ins); } .wof-sheet .s-empathy { --sc: var(--emp); }
+
 /* ── Window: leather binder ─────────────────────────────────────────── */
 .application.wof-app {
   background: radial-gradient(ellipse at 30% 18%, rgba(255, 255, 255, .07), transparent 52%), linear-gradient(160deg, var(--leather-hi), var(--leather) 40%, var(--leather-lo));
@@ -174,21 +178,6 @@
 .wof-sheet .meta button.link { color: var(--ink); border-bottom: 1px dotted var(--ink3); font: var(--t-sm)/1.2 var(--fb); }
 .wof-sheet .meta input, .wof-sheet .meta select { height: 20px; font-size: var(--t-sm); width: auto; min-width: 72px; max-width: 160px; background: transparent; }
 .wof-sheet .meta input[type=number] { width: 40px; min-width: 40px; }
-/* One line, always: the five fields never wrap, whatever the window does. Space is given up in
-   order -- the free-text fields squeeze, long item names ellipsise, then the captions shorten and
-   (on a narrow sheet, below) drop out to their tooltips. */
-.wof-sheet .meta.line { flex-wrap: nowrap; gap: var(--s2); line-height: 1.3; letter-spacing: .04em; }
-.wof-sheet .meta.line > span, .wof-sheet .meta.line > label { gap: 3px; min-width: 0; white-space: nowrap; }
-.wof-sheet .meta.line .cap { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.wof-sheet .meta.line > label.grow { flex: 1 1 56px; }
-.wof-sheet .meta.line b, .wof-sheet .meta.line button.link { min-width: 0; max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wof-sheet .meta.line input, .wof-sheet .meta.line select { height: 18px; min-width: 0; max-width: none; padding: 0 2px; }
-.wof-sheet .meta.line > label.grow input, .wof-sheet .meta.line > label.grow select { flex: 1 1 56px; }
-.wof-sheet .meta.line input[type=number] { flex: 0 0 30px; width: 30px; min-width: 30px; text-align: center; }
-/* Rank and Class Rank: one field of the five, the number tucked against the rank. */
-.wof-sheet .meta.line .rankf { display: inline-flex; align-items: baseline; gap: var(--s1); }
-.wof-sheet .meta.line .rankf > label { display: inline-flex; align-items: baseline; gap: 3px; min-width: 0; }
-.wof-sheet .meta.line .rankf select { flex: 0 1 auto; }
 .wof-sheet .tags { display: flex; flex-wrap: wrap; gap: var(--s1); }
 .wof-sheet .tag { display: inline-flex; align-items: center; gap: var(--s1); font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; padding: 3px 6px; border: 1px dashed var(--ink3); color: var(--ink2); white-space: nowrap; }
 .wof-sheet .tag.ok { border: 1px solid var(--green); color: var(--green); background: rgba(63, 97, 70, .07); }
@@ -198,35 +187,6 @@
 .wof-sheet .crest { display: flex; flex-direction: column; align-items: flex-end; gap: var(--s1); text-align: right; }
 .wof-sheet .crest img { width: 48px; height: 48px; border: 0; filter: drop-shadow(1px 1px 0 rgba(36, 31, 27, .35)); }
 
-/* ── Vitals strip ───────────────────────────────────────────────────── */
-/* One band of five: the body (Health, Stress, Resolve) beside the kit that keeps it alive (Gas,
-   Blade Sets). Each is a readout and its two quick actions, so the columns are nearly even; the
-   strip folds into two rows only in the narrow layout (below). */
-.wof-sheet .vitals {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .62fr) minmax(0, 1.1fr) minmax(0, 1.1fr);
-  margin: var(--s3) var(--gr) 0 var(--gl); border: 1px solid var(--ink2); flex: 0 0 auto;
-  background: linear-gradient(var(--paper-hi), var(--paper-lo)); box-shadow: 2px 2px 0 var(--ink);
-}
-.wof-sheet .vit { padding: var(--s2) var(--s3); display: flex; flex-direction: column; gap: var(--s1); min-width: 0; }
-.wof-sheet .vit + .vit { border-left: 1px solid var(--rule); }
-/* The body vitals are shorter than the rigs beside them: their readout rides the middle of the
-   cell, with the caption kept at the top of the row. */
-.wof-sheet:not(.compact) .vit:not(.gasv, .bladev) .vhead { margin-bottom: auto; }
-.wof-sheet:not(.compact) .vit:not(.gasv, .bladev) > :last-child:not(.vhead) { margin-bottom: auto; }
-/* The caption and its note share the row while they fit; on a narrow column the note (the Down
-   stamp, the Stress floor) drops under the caption rather than crossing into the next vital. */
-.wof-sheet .vhead { display: flex; align-items: center; justify-content: space-between; gap: 2px var(--s2); flex-wrap: wrap; }
-.wof-sheet .vhead .lbl { display: inline-flex; align-items: center; gap: var(--s1); min-width: 0; }
-/* Held Critical Injuries and Stress Responses, by name only, under their vital */
-.wof-sheet .vchips { display: flex; flex-wrap: wrap; gap: 3px; margin: 2px 0 0; padding: 0; list-style: none; width: 0; min-width: 100%; }
-.wof-sheet .vchips li { margin: 0; min-width: 0; max-width: 100%; }
-.wof-sheet .vchip { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; padding: 1px 5px 1px 2px; border: 1px solid var(--red); background: rgba(142, 35, 35, .08); color: var(--red); font: 600 var(--t-xs)/1.3 var(--fb); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.wof-sheet .vchip img { width: 14px; height: 14px; flex: 0 0 auto; border: 0; mix-blend-mode: multiply; }
-.wof-sheet .vchip.treated { border-color: var(--green); color: var(--green); background: rgba(63, 97, 70, .08); }
-.wof-sheet button.vchip:hover, .wof-sheet .vchip:focus-visible { background: rgba(142, 35, 35, .18); }
-.wof-sheet .vchip.mind { border-color: var(--ink2); color: var(--ink); background: rgba(36, 31, 27, .06); padding-left: 4px; }
-.wof-sheet .vchip.mind i { font-size: 10px; color: var(--ink2); }
-.wof-sheet .vchip small { font: var(--t-xs)/1 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); margin-left: 2px; }
 .wof-sheet .big { font: 900 var(--t-num)/.9 var(--fd); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
 .wof-sheet .big small { font: 600 var(--t-md) var(--fd); color: var(--ink3); }
 .wof-sheet .big.red { color: var(--red); }
@@ -241,7 +201,6 @@
   gap: var(--bgap); padding: 1px 0 3px; align-content: flex-start;
   max-width: calc(var(--track-cols) * var(--box) + (var(--track-cols) - 1) * var(--bgap));
 }
-.wof-sheet .track-row.lg { --box: 24px; --bgap: 6px; --track-cols: 12; }
 /* Health is 4 to 8 boxes since round 3 (2 + ceil((Strength + Agility) / 2)). The component sets
    --track-cols, so a long row wraps into two even rows inside the Health column rather than
    stretching the vitals strip; the large row on the Wounds tab has the width for one line of eight. */
@@ -284,7 +243,6 @@
 .wof-sheet .hbox.crossed .glyph { position: relative; width: 66%; height: 66%; box-sizing: border-box; padding: 1px; border: 1px solid var(--status); border-radius: 2px; object-fit: contain; background: var(--paper-hi); box-shadow: 0 0 0 1px rgba(0, 0, 0, .55), 0 1px 2px rgba(0, 0, 0, .6); transform: rotate(-4deg); }
 .wof-sheet .hbox.crossed i.glyph { display: grid; place-items: center; font-size: calc(var(--box) * .42); line-height: 1; color: var(--status); }
 .wof-sheet .hbox.crossed:hover { outline-color: var(--status); }
-.wof-sheet .hbox.clean { background: var(--paper-hi); }
 /* Stress: marked boxes are red stamps with a paper cross cut through; the Scar floor is inked under the box */
 .wof-sheet .sbox.on .ink path { stroke: var(--paper-hi); stroke-width: 2; opacity: .8; }
 .wof-sheet .sbox.min { border-bottom-width: 3px; border-bottom-color: var(--ink); }
@@ -292,39 +250,6 @@
 .wof-sheet .hbox:hover:not(:disabled):not(.crossed), .wof-sheet .sbox:hover:not(:disabled) { border-color: var(--red); filter: brightness(1.05); }
 .wof-sheet .hbox:focus-visible, .wof-sheet .sbox:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
 .wof-sheet .hbox:disabled:not(.crossed), .wof-sheet .sbox:disabled { cursor: default; }
-.wof-sheet .down { display: inline-flex; align-items: center; gap: var(--s1); }
-.wof-sheet .down .stamp { padding: 1px 6px; transform: rotate(-3deg); }
-.wof-sheet .down .stamp.no { color: var(--green); border-color: var(--green); }
-/* ── The kit vitals: the gas tanks and the Blade Sets, read at a glance ─── */
-/* Gas is the fitted tank's gauge and the spares beside it, each spare a tank a click fits. The
-   chips are the Kit page's own canisters, so a canister reads the same wherever it is shown. */
-.wof-sheet .tanks { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); }
-.wof-sheet .canister.fitted { padding: 2px 3px; gap: 2px; }
-.wof-sheet .canister.fitted .gasbar { width: 12px; height: 22px; }
-.wof-sheet .canister.fitted.dry .gasbar { border-color: var(--red); }
-.wof-sheet button.canister { cursor: pointer; transition: transform .12s var(--ease), box-shadow .12s var(--ease); }
-.wof-sheet button.canister:hover:not(:disabled) { border-color: var(--red); transform: translate(-1px, -1px); box-shadow: 2px 2px 0 rgba(36, 31, 27, .35); }
-.wof-sheet button.canister:disabled { cursor: default; }
-/* The Blade Sets: the set in the hand, and the sets still in the box on the hip. */
-.wof-sheet .slots { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); min-width: 0; }
-.wof-sheet .slot {
-  display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--s1); padding: 2px var(--s2); max-width: 100%;
-  border: 1px solid var(--ink2); background: var(--paper-hi); box-shadow: 1px 1px 0 rgba(36, 31, 27, .25);
-}
-.wof-sheet .slot.bad { border-color: var(--red); background: rgba(142, 35, 35, .06); }
-.wof-sheet .slot.bad .note, .wof-sheet .slot.bad b { color: var(--red); }
-.wof-sheet .slot b { font: 700 var(--t-md)/1 var(--fd); font-variant-numeric: lining-nums tabular-nums; }
-.wof-sheet .slot i.blade {
-  width: 20px; height: 7px; flex: 0 0 auto; border-radius: 1px 4px 4px 1px;
-  background: linear-gradient(#f2f5f7, #aeb6bd 55%, #767e85); box-shadow: inset 0 0 0 1px #5d646b;
-}
-.wof-sheet .slot:not(.on) i.blade { background: var(--paper-lo); box-shadow: inset 0 0 0 1px var(--ink3); }
-.wof-sheet .slot i.box {
-  width: 15px; height: 13px; flex: 0 0 auto; border-radius: 1px;
-  background: linear-gradient(#8d959c, #5b6268); box-shadow: inset 0 0 0 1px #2a2d31;
-}
-.wof-sheet .vit.gasv .acts, .wof-sheet .vit.bladev .acts { margin-top: 2px; }
-
 /* ── Tabs ───────────────────────────────────────────────────────────── */
 .wof-sheet .tabs { display: flex; gap: var(--s1); margin: var(--s3) var(--gr) 0 var(--gl); border-bottom: 1.5px solid var(--ink2); flex: 0 0 auto; }
 .wof-sheet .tabs button {
@@ -371,71 +296,7 @@
 .wof-sheet button.pip:disabled { cursor: default; }
 .wof-sheet button.pip:hover:not(:disabled) i { outline: 1px solid var(--red); outline-offset: 1px; }
 
-/* Attribute cards */
-.wof-sheet .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2); }
-.wof-sheet .stat {
-  display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: var(--s2); align-items: center; min-height: 56px; padding: var(--s2);
-  background: linear-gradient(170deg, var(--paper-hi), var(--paper-lo)); border: 1px solid var(--ink2); border-left: 4px solid var(--sc); box-shadow: 2px 2px 0 var(--ink); position: relative;
-}
-.wof-sheet .stat .ic { width: 36px; height: 36px; mix-blend-mode: multiply; }
-.wof-sheet .stat .big { font-size: var(--t-xl); align-self: start; color: var(--ink2); text-align: center; }
-.wof-sheet .stat .nm { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1); font: var(--t-sm)/1.2 var(--fl); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
-.wof-sheet .stat .what { display: block; font: italic var(--t-xs)/1.35 var(--fb); color: var(--ink3); margin-top: 2px; }
-.wof-sheet .stat .dots { margin: var(--s1) 0 2px; }
-.wof-sheet .stat .key { transform: rotate(4deg); font-size: var(--t-xs); padding: 0 4px; border-width: 1.5px; }
-/* An attribute card rolls that attribute alone: the icon and the name are the roll buttons. */
-.wof-sheet .stat .attr-roll.ic-btn { position: relative; display: block; width: 36px; height: 36px; border-radius: 2px; }
-.wof-sheet .stat .attr-roll .hint { position: absolute; right: -4px; bottom: -4px; font-size: 11px; color: var(--paper-hi); background: var(--sc, var(--ink2)); border: 1px solid var(--ink); padding: 2px; border-radius: 2px; opacity: 0; transform: scale(.7); transition: opacity .12s, transform .12s; }
-.wof-sheet .stat .attr-roll.nm-btn { letter-spacing: inherit; text-transform: inherit; border-bottom: 1px dotted transparent; }
-.wof-sheet .stat:has(.attr-roll:hover), .wof-sheet .stat:has(.attr-roll:focus-visible) { background: linear-gradient(170deg, var(--paper-hi), rgba(142, 35, 35, .1)); }
-.wof-sheet .stat .attr-roll:hover .ic, .wof-sheet .stat .attr-roll:focus-visible .ic { filter: drop-shadow(0 0 2px rgba(142, 35, 35, .55)); }
-.wof-sheet .stat:has(.attr-roll:hover) .attr-roll .hint, .wof-sheet .stat .attr-roll:focus-visible .hint { opacity: 1; transform: none; }
-.wof-sheet .stat:has(.attr-roll:hover) .attr-roll.nm-btn { color: var(--red); border-bottom-color: var(--red); }
-.wof-sheet .s-strength { --sc: var(--str); } .wof-sheet .s-agility { --sc: var(--agi); } .wof-sheet .s-wits { --sc: var(--wit); }
-.wof-sheet .s-perception { --sc: var(--per); } .wof-sheet .s-instinct { --sc: var(--ins); } .wof-sheet .s-empathy { --sc: var(--emp); }
 
-/* Quick rolls */
-.wof-sheet .bonusbar { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; margin: 0 0 var(--s2); padding: var(--s1) var(--s2); border: 1px dashed var(--ink3); }
-.wof-sheet .bonusbar .pick { display: inline-flex; gap: var(--s1); }
-.wof-sheet .bonusbar .pick button { width: 20px; height: 20px; display: grid; place-items: center; }
-.wof-sheet .bonusbar .pick i { width: 12px; height: 12px; display: block; }
-.wof-sheet .rollgroup + .rollgroup { margin-top: var(--s4); }
-/* One heading per attribute: its ink, its glyph, and the attribute's own dice at the right. */
-.wof-sheet .rollgroup > .grouphead {
-  display: flex; align-items: center; gap: var(--s2); margin: 0 0 var(--s1); padding: 0 0 2px;
-  border-bottom: 1px solid color-mix(in srgb, var(--sc, var(--ink2)) 45%, transparent);
-}
-.wof-sheet .rollgroup > .grouphead .ic { mix-blend-mode: multiply; }
-.wof-sheet .rollgroup > .grouphead .lbl { color: var(--sc, var(--ink3)); letter-spacing: .2em; }
-.wof-sheet .rollgroup > .grouphead .gdice {
-  margin-left: auto; font: 700 var(--t-base)/1 var(--fd); color: var(--sc, var(--ink2)); font-variant-numeric: lining-nums tabular-nums;
-}
-.wof-sheet .rollgroup > .grouphead .gdice small { font: var(--t-xs)/1 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-left: 3px; }
-.wof-sheet .rollgroup.fixedgroup > .grouphead { border-bottom-style: dashed; }
-.wof-sheet .roll .rn .ctx {
-  margin-left: var(--s1); padding: 0 3px; border: 1px solid rgba(142, 35, 35, .5); color: var(--red);
-  font: var(--t-xs)/1.3 var(--fl); letter-spacing: .06em; text-transform: uppercase; vertical-align: 1px;
-}
-.wof-sheet .rolls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); }
-.wof-sheet .roll {
-  display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: var(--s2); align-items: center; text-align: left; min-height: 52px; padding: var(--s1) var(--s2) var(--s1) var(--s1);
-  background: linear-gradient(172deg, #f9f3e4, var(--paper-hi) 58%, #eee3c9); border: 1px solid rgba(79, 70, 61, .5); border-top: 2px solid rgba(142, 35, 35, .45);
-  box-shadow: 0 2px 0 rgba(36, 31, 27, .16); transition: transform .12s var(--ease), box-shadow .12s var(--ease); width: 100%;
-}
-.wof-sheet .roll:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 3px 0 rgba(36, 31, 27, .2), 0 6px 10px rgba(60, 40, 20, .14); border-top-color: var(--red); }
-.wof-sheet .roll:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
-.wof-sheet .roll:disabled { opacity: .6; }
-.wof-sheet .roll .tile { width: 36px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--paper); border: 1px solid rgba(79, 70, 61, .5); border-left: 4px solid var(--sc, var(--ink2)); }
-.wof-sheet .roll .tile img { width: 28px; height: 28px; border: 0; mix-blend-mode: multiply; }
-.wof-sheet .roll .rn { display: flex; flex-direction: column; min-width: 0; }
-.wof-sheet .roll .rn strong { font: 600 var(--t-base)/1.25 var(--fb); }
-.wof-sheet .roll .rn > span:last-child { font: var(--t-xs)/1.35 var(--fl); letter-spacing: .02em; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.wof-sheet .roll .rn span.warn { color: var(--red); }
-.wof-sheet .roll .rn .dots { margin: 3px 0 1px; }
-.wof-sheet .roll .cnt { font: 900 var(--t-xl)/1 var(--fd); text-align: right; color: var(--ink); }
-.wof-sheet .roll .cnt small { display: block; font: var(--t-xs)/1.2 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
-.wof-sheet .legend { margin-top: var(--s2); display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); align-items: center; }
-.wof-sheet .legend span { display: inline-flex; align-items: center; gap: var(--s1); }
 
 /* Talents and file notes */
 .wof-sheet .tal { padding: var(--s2) 0; border-top: 1px dotted var(--ink3); }
@@ -444,47 +305,12 @@
 .wof-sheet .tal-h strong { font: 700 var(--t-md)/1.2 var(--fd); flex: 1; min-width: 0; cursor: pointer; }
 .wof-sheet .tal-h .ic { mix-blend-mode: multiply; }
 .wof-sheet .tal-h .dots { --d: 9px; }
-.wof-sheet .kind { font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; padding: 2px 4px; border: 1px solid var(--ink3); color: var(--ink2); }
-.wof-sheet .kind.dice { border-color: var(--blue); color: var(--blue); }
 .wof-sheet .tal p { margin: var(--s1) 0 0; font: var(--t-sm)/1.45 var(--fb); color: var(--ink2); }
 .wof-sheet .tal .for { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); font: var(--t-xs)/1.3 var(--fl); color: var(--ink3); letter-spacing: .04em; margin-top: 2px; }
 .wof-sheet dl.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s1) var(--s3); margin: 0; align-items: center; }
 .wof-sheet dl.facts dt { font-weight: 400; font: var(--t-xs)/1.5 var(--fl); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin: 0; }
 .wof-sheet dl.facts dd { margin: 0; font: var(--t-base)/1.45 var(--fb); min-width: 0; }
-.wof-sheet dl.facts dd.drive input { font: italic 600 var(--t-md)/1.3 var(--fd); color: var(--red); }
-.wof-sheet .itemline { display: flex; align-items: center; gap: var(--s2); }
-.wof-sheet .itemline img { width: 24px; height: 24px; border: 0; mix-blend-mode: multiply; }
-.wof-sheet .itemline button.link { font: 600 var(--t-base)/1.2 var(--fb); text-align: left; }
-.wof-sheet .itemline button.link:hover { color: var(--red); }
 
-/* ── Kit ────────────────────────────────────────────────────────────── */
-.wof-sheet table.ledger { width: 100%; border-collapse: collapse; border: 0; background: none; margin: 0; }
-.wof-sheet .ledger thead { background: none; text-shadow: none; }
-.wof-sheet table.ledger thead tr, .wof-sheet table.ledger th, .wof-sheet table.ledger td { border-left: 0; border-right: 0; border-top: 0; }
-.wof-sheet .ledger th { font: var(--t-xs)/1.2 var(--fl); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); text-align: left; padding: var(--s1) var(--s2); border-bottom: 1.5px solid var(--ink); }
-.wof-sheet .ledger tr { background: none !important; }
-.wof-sheet .ledger td { padding: var(--s2); border-bottom: 1px solid var(--rule); font: var(--t-base)/1.35 var(--fb); vertical-align: middle; }
-.wof-sheet .ledger td.ico { width: 32px; padding-right: 0; }
-.wof-sheet .ledger td.ico img { width: 24px; height: 24px; mix-blend-mode: multiply; display: block; border: 0; }
-.wof-sheet .ledger td.q { text-align: right; white-space: nowrap; }
-.wof-sheet .ledger td.q .dots { justify-content: flex-end; }
-.wof-sheet .ledger .stamp { color: var(--blue); border-color: var(--blue); transform: rotate(-3deg); }
-.wof-sheet .ledger .stamp.bad { color: var(--red); border-color: var(--red); }
-.wof-sheet .ledger .opts { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); margin-top: var(--s1); align-items: center; }
-.wof-sheet .ledger .opts select { width: auto; height: 20px; font-size: var(--t-sm); }
-.wof-sheet .ledger .opts input[type=text] { width: 48px; height: 20px; }
-.wof-sheet .ledger .name button { font: 600 var(--t-base)/1.2 var(--fb); text-align: left; }
-.wof-sheet .ledger .name button:hover { color: var(--red); }
-.wof-sheet .canisters { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
-.wof-sheet .canister { display: inline-flex; align-items: center; gap: var(--s1); padding: 2px var(--s1); border: 1px solid var(--ink2); background: var(--paper-hi); box-shadow: 1px 1px 0 rgba(36, 31, 27, .25); }
-.wof-sheet .canister .gas { display: inline-flex; gap: 2px; }
-.wof-sheet .gasbar { display: inline-block; width: 10px; height: 16px; border: 1.5px solid var(--ink2); background: var(--paper-hi); }
-.wof-sheet .gasbar.on { background: var(--blue); border-color: #1c2f48; }
-.wof-sheet .loadmeter { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
-.wof-sheet .loadmeter .bar { display: flex; gap: 2px; }
-.wof-sheet .loadmeter .bar i { width: 10px; height: 14px; border: 1.5px solid var(--ink2); background: var(--paper-hi); display: block; }
-.wof-sheet .loadmeter .bar i.on { background: var(--ink2); }
-.wof-sheet .loadmeter .bar i.over { background: var(--red); border-color: var(--red-lo); }
 .wof-sheet .grid-form { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s1) var(--s3); align-items: center; }
 .wof-sheet .grid-form > .lbl { white-space: nowrap; }
 .wof-sheet .grid-form > .stepper, .wof-sheet .grid-form > .canister, .wof-sheet .grid-form > input[type=checkbox] { justify-self: start; }
@@ -493,7 +319,6 @@
 .wof-sheet .rowlist .row > * { min-width: 0; }
 
 /* ── Wounds & Mind ──────────────────────────────────────────────────── */
-.wof-sheet .wm { display: grid; grid-template-columns: 176px minmax(0, 1fr) minmax(0, 1fr); gap: var(--s4); align-items: start; }
 .wof-sheet .figbox { margin: 0; padding: var(--s2); background: var(--paper-hi); border: 1px solid var(--ink2); box-shadow: 2px 2px 0 rgba(36, 31, 27, .22); background-image: repeating-linear-gradient(transparent 0 19px, rgba(47, 74, 110, .08) 19px 20px); }
 .wof-sheet .figwrap { position: relative; margin: 0 auto; }
 .wof-sheet .figwrap svg { display: block; width: 100%; height: 100%; overflow: visible; }
@@ -508,43 +333,12 @@
 .wof-sheet .seg button[aria-pressed=true] { background: var(--ink); color: var(--paper-hi); }
 .wof-sheet .pin { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; display: grid; place-items: center; font: 700 var(--t-xs)/1 var(--fl); color: var(--paper-hi); background: var(--red); border: 1.5px solid var(--paper-hi); box-shadow: 0 1px 2px rgba(0, 0, 0, .4); cursor: pointer; z-index: 2; }
 .wof-sheet .pin.treated { background: var(--green); }
-.wof-sheet .injury { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: var(--s2); padding: var(--s2) var(--s3); background: var(--paper-hi); border: 1px solid var(--ink2); border-left: 4px solid var(--red); box-shadow: 2px 2px 0 rgba(36, 31, 27, .25); position: relative; }
-.wof-sheet .injury.treated { border-left-color: var(--green); }
-.wof-sheet .injury + .injury { margin-top: var(--s2); }
-.wof-sheet .injury > img { width: 32px; height: 32px; mix-blend-mode: multiply; border: 0; }
-.wof-sheet .injury h4 { margin: 0; font: 700 var(--t-md)/1.15 var(--fd); padding-right: 72px; cursor: pointer; }
-.wof-sheet .injury .fx { margin: 2px 0 var(--s1); display: flex; flex-direction: column; gap: 1px; font: var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
-.wof-sheet .injury .pin { position: absolute; left: -10px; top: 10px; margin: 0; }
-.wof-sheet .injury .lbl { display: block; padding-right: 72px; }
-.wof-sheet .injury .st { position: absolute; right: var(--s2); top: var(--s2); transform: rotate(-5deg); }
-.wof-sheet .injury .opts { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s2); align-items: center; margin: var(--s1) 0; }
-.wof-sheet .injury .opts select { width: auto; height: 20px; font-size: var(--t-sm); }
-.wof-sheet .injury .foot2 { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s1); }
 .wof-sheet .days { display: flex; gap: var(--s1); align-items: center; flex-wrap: wrap; }
 .wof-sheet .day { width: 16px; height: 16px; border: 1.5px solid var(--ink2); display: grid; place-items: center; font: var(--t-xs)/1 var(--fl); color: var(--ink3); background: var(--paper); }
 .wof-sheet .day.done { background: var(--ink); color: var(--paper-hi); border-color: var(--ink); }
-.wof-sheet .formula { font: var(--t-sm)/1.6 var(--fl); color: var(--ink2); letter-spacing: .02em; }
-.wof-sheet .formula b { font: 700 var(--t-md) var(--fd); color: var(--ink); }
-.wof-sheet .scar { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: var(--s3); align-items: center; padding: var(--s2) var(--s3); border: 1px solid var(--ink2); background: var(--paper-hi); box-shadow: 2px 2px 0 rgba(36, 31, 27, .22); }
-.wof-sheet .scar + .scar { margin-top: var(--s2); }
-.wof-sheet .scar img { width: 32px; height: 32px; mix-blend-mode: multiply; border: 0; }
-.wof-sheet .scar strong { font: italic 700 var(--t-md)/1.25 var(--fd); }
-.wof-sheet .scar p { margin: 2px 0 0; font: var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
-.wof-sheet .grief { display: flex; gap: var(--s2); }
-.wof-sheet .grief button { width: 24px; height: 24px; border: 1.5px solid var(--ink2); border-radius: 50%; background: var(--paper-hi); }
-.wof-sheet .grief button.on { background: var(--ink); border-color: var(--ink); }
-.wof-sheet .resp { display: flex; align-items: flex-start; gap: var(--s2); padding: var(--s2); border-left: 3px solid var(--red); background: rgba(142, 35, 35, .07); }
-.wof-sheet .resp + .resp { margin-top: var(--s2); }
-.wof-sheet .resp img { width: 20px; height: 20px; border: 0; mix-blend-mode: multiply; }
-.wof-sheet .resp > div { flex: 1; min-width: 0; }
-.wof-sheet .resp strong { font: 700 var(--t-base)/1.3 var(--fd); color: var(--red); }
-.wof-sheet .resp p { margin: 2px 0 0; font: var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
-.wof-sheet .resp .opts { display: flex; gap: var(--s2); margin-top: var(--s1); }
-.wof-sheet .resp .opts select { width: auto; height: 20px; font-size: var(--t-sm); }
 .wof-sheet .adder { display: flex; gap: var(--s1); margin-top: var(--s2); align-items: center; }
 .wof-sheet .adder select { flex: 1; height: 24px; }
 .wof-sheet .flags { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3); }
-.wof-sheet .warnline { display: flex; align-items: center; gap: var(--s2); padding: var(--s1) var(--s2); border-left: 3px solid var(--amber-line); background: rgba(176, 132, 47, .1); font: var(--t-sm)/1.4 var(--fb); color: var(--amber); margin-top: var(--s1); }
 
 /* Figure: the owner's Titan World painted studies, cut into regions (figure.ts) */
 .wof-sheet .soldierfig .figstamp { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%) rotate(-12deg); padding: 2px 8px; font-size: var(--t-lg); background: rgba(244, 236, 216, .82); pointer-events: none; z-index: 1; }
@@ -613,17 +407,6 @@
 @media (prefers-reduced-motion: reduce) { .wof-sheet .fig .drop { animation: none !important; } }
 
 /* ── Record ─────────────────────────────────────────────────────────── */
-.wof-sheet .record { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: var(--s4); }
-.wof-sheet .card-typed { padding: var(--s3) var(--s4); background: #f7f0de; border: 1px solid var(--ink2); box-shadow: 2px 2px 0 rgba(36, 31, 27, .25); background-image: repeating-linear-gradient(transparent 0 23px, rgba(47, 74, 110, .13) 23px 24px); }
-.wof-sheet .card-typed dl.facts dd, .wof-sheet .card-typed dl.facts dd input, .wof-sheet .card-typed dl.facts dd select { font-family: var(--fl); letter-spacing: .03em; }
-.wof-sheet .milestones { display: flex; flex-wrap: wrap; gap: var(--s3); align-content: flex-start; padding: var(--s2); }
-.wof-sheet .milestones .stamp:nth-child(3n+1) { transform: rotate(-7deg); }
-.wof-sheet .milestones .stamp:nth-child(3n+2) { transform: rotate(5deg); color: var(--blue); border-color: var(--blue); }
-.wof-sheet .milestones .stamp:nth-child(3n) { transform: rotate(-2deg); }
-.wof-sheet .milestones .stamp.off { opacity: .28; }
-.wof-sheet .xp { display: flex; gap: var(--s1); flex-wrap: wrap; }
-.wof-sheet .xp i { width: 14px; height: 14px; border: 1.5px solid var(--ink2); display: block; }
-.wof-sheet .xp i.on { background: var(--brass); border-color: var(--brass-lo); }
 .wof-sheet .notes { margin-top: var(--s3); }
 .wof-sheet .notes prose-mirror { display: block; min-height: 160px; background: var(--paper-hi); border: 1px solid var(--ink2); padding: var(--s2); font: var(--t-base)/1.5 var(--fb); color: var(--ink); }
 .wof-sheet .notes prose-mirror .editor-content { min-height: 140px; }
@@ -632,33 +415,16 @@
 .wof-sheet .notes.entry-first prose-mirror { overflow: visible; }
 .wof-sheet .notes.entry-first prose-mirror .editor-content { position: static; min-height: 0; height: auto; overflow: visible; }
 
-/* Nothing left for the captions: each field keeps its value, and its tooltip names it. */
-@container wofsheet (max-width: 860px) {
-  .wof-sheet .meta.line { gap: var(--s3); }
-  .wof-sheet .meta.line .cap { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); border: 0; }
-}
 /* ── Narrow ─────────────────────────────────────────────────────────── */
 @container wofsheet (max-width: 760px) {
-  .wof-sheet .two, .wof-sheet .two.even, .wof-sheet .record { grid-template-columns: minmax(0, 1fr); }
-  .wof-sheet .wm { grid-template-columns: 176px minmax(0, 1fr); }
-  .wof-sheet .wm > :last-child { grid-column: 1 / -1; }
-  .wof-sheet .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-/* Too narrow for five readouts side by side: two to a row, the kit below the body. */
-@container wofsheet (max-width: 620px) {
-  .wof-sheet .vitals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .wof-sheet .vit + .vit { border-left: 0; }
-  .wof-sheet .vit { border-top: 1px solid var(--rule); grid-column: span 1; }
+  .wof-sheet .two, .wof-sheet .two.even { grid-template-columns: minmax(0, 1fr); }
 }
 @container wofsheet (max-width: 560px) {
   .wof-sheet { --gl: 28px; --gr: 10px; }
   .wof-sheet .hdr { grid-template-columns: 64px minmax(0, 1fr); }
   .wof-sheet .plate { width: 64px; height: 84px; padding: 3px 3px 12px; }
-  .wof-sheet .crest .emblem { display: none; }
-  .wof-sheet .rolls { grid-template-columns: minmax(0, 1fr); }
   .wof-sheet .tabs button .tl { display: none; }
   .wof-sheet .eyelet { display: none; }
-  .wof-sheet .wm { grid-template-columns: minmax(0, 1fr); }
 }
 .application.wof-app > .window-content.wof-content { container: wofsheet / inline-size; }
 .wof-sheet button.link { font: inherit; text-align: left; color: inherit; }
@@ -900,17 +666,8 @@
 @container wofsheet (max-width: 440px) { .wof-sheet .typepick { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .wof-sheet .block + .two, .wof-sheet .two + .block, .wof-sheet .two + .two { margin-top: var(--s4); }
 
-/* Compact vitals: one short strip, the 2e widget slots folded away */
 .wof-sheet.compact { overflow-y: auto; scrollbar-width: thin; }
 .wof-sheet.compact > .body { flex: 1 0 auto; overflow: visible; }
-.wof-sheet.compact .vitals { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-.wof-sheet.compact .vitals .vit { grid-column: span 2; border-top: 0; padding: var(--s1) var(--s2); }
-.wof-sheet.compact .vitals .vit.gasv, .wof-sheet.compact .vitals .vit.bladev { grid-column: span 3; border-top: 1px solid var(--rule); }
-.wof-sheet.compact .vitals .vit + .vit { border-left: 1px solid var(--rule); }
-.wof-sheet.compact .vitals .vit.gasv { border-left: 0; }
-.wof-sheet.compact .vitals .big { font-size: var(--t-2xl); }
-.wof-sheet.compact .vitals .canister.fitted .gasbar { width: 10px; height: 18px; }
-.wof-sheet.compact .vitals .vrow { flex-wrap: wrap; }
 .wof-sheet .slipline .link { text-align: left; }
 /* Foundry's default white glyphs, inked for the paper */
 .wof-sheet img[src^="icons/svg/"] { filter: invert(1) sepia(.35) opacity(.7); mix-blend-mode: multiply; object-fit: contain; padding: 8px; }
@@ -961,110 +718,6 @@
 .wof-prefs .pbtn:hover { background: var(--red-hi); transform: translate(-1px, -1px); box-shadow: 2.5px 2.5px 0 var(--ink); }
 @media (prefers-reduced-motion: reduce) { .wof-prefs .pc-body, .wof-prefs .pbtn { transition: none; } }
 
-/* ODM mechanisms fitted into a worn equipment cradle. */
-.wof-sheet .vitals { grid-template-columns: minmax(0,.8fr) minmax(0,.8fr) minmax(0,.55fr) minmax(0,1.5fr) minmax(0,1.5fr); }
-.wof-sheet .gasv, .wof-sheet .bladev { padding: 8px; }
-.wof-sheet .odm-rig { overflow: hidden; position: relative; width: 100%; min-width: 0; padding: 5px 6px 6px; border: 1px solid #252c20; border-radius: 3px;
-  background: repeating-linear-gradient(96deg, #b4ae8510 0 1px, transparent 1px 9px), linear-gradient(110deg,#454a38,#303a2b 45%,#414635);
-  box-shadow: inset 0 1px 1px #b4ac7b80, inset 0 -2px 3px #111c15, 0 2px 3px #29231970; }
-.wof-sheet .odm-rig::before { content: ''; position: absolute; inset: 5px; border: 1px solid #8b8d6338; pointer-events: none; }
-.wof-sheet .odm-rig svg { display: block; width: 100%; height: auto; overflow: visible; }
-.wof-sheet .rig-rivet { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: linear-gradient(120deg,#b5ae88,#404831); box-shadow: 0 1px 1px #131b11; }
-.wof-sheet .top-left { top: 3px; left: 3px; }.wof-sheet .top-right { top: 3px; right: 3px; }
-.wof-sheet .bottom-left { bottom: 3px; left: 3px; }.wof-sheet .bottom-right { bottom: 3px; right: 3px; }
-.wof-sheet .fitted-vessel, .wof-sheet .blade-assembly { position: relative; height: 56px; display: grid; align-items: center; }
-.wof-sheet .fitted-vessel svg, .wof-sheet .blade-assembly svg { max-height: 56px; }
-.wof-sheet .fitted-vessel { overflow: hidden; }
-.wof-sheet .rig-caption { display: flex; justify-content: space-between; align-items: center; font: 10px/1.4 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: #d0c6a5; padding: 0 5px 2px; }
-.wof-sheet .rig-caption span:last-child { font: 12px monospace; }
-.wof-sheet .tank-bay { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; padding: 4px; background: #17251980; border: 1px solid #697150; box-shadow: inset 0 2px 5px #0c190f; }
-.wof-sheet .tank-socket { min-width: 0; height: 34px; display: grid; place-items: center; background: linear-gradient(135deg,#35432f,#202c20); border: 1px solid #64704d; box-shadow: inset 1px 1px 2px #101c10; }
-.wof-sheet button.tank-cap { display: block; width: min(35px, 100%); height: 34px; min-height: 0; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; cursor: pointer; }
-.wof-sheet button.tank-cap svg { width: 100%; height: 100%; }
-.wof-sheet button.tank-cap:hover:not(:disabled) { filter: brightness(1.25); background: #7e8c5130; }
-.wof-sheet button.tank-cap:focus-visible { outline: 2px solid #e6d09a; outline-offset: 1px; }
-.wof-sheet button.tank-cap:disabled { cursor: default; }
-.wof-sheet .empty-socket { width: 29px; height: 29px; border-radius: 50%; background: radial-gradient(circle,#0f1c13 45%,#253721 60%,#0e190f 65%,#546040 70%,#23331e 77%); box-shadow: inset 0 2px 5px #070f09; }
-.wof-sheet .rig-empty-note { display: block; font: 10px var(--fb); color: #c9b995; text-align: center; padding-top: 3px; }
-.wof-sheet .blade-magazine { position: relative; height: 43px; display: grid; align-items: center; }
-.wof-sheet .blade-magazine > svg { max-height: 43px; }
-.wof-sheet .equipment-status { display: flex; align-items: center; gap: 8px; }
-.wof-sheet .vitals .gasv .acts, .wof-sheet .vitals .bladev .acts { margin-top: auto; }
-.wof-sheet .rig-ghost { pointer-events: none; }
-.wof-sheet .vessel-out, .wof-sheet .gas-vent { position: absolute; inset: 0; }
-.wof-sheet .gas-vent { height: 56px !important; }
-.wof-sheet .magazine-transfer { position: absolute; inset: 0; z-index: 2; }
-.wof-sheet .tank-swap .vessel-current { animation: odm-tank-in 850ms cubic-bezier(.2,.7,.3,1) both; }
-.wof-sheet .tank-swap .vessel-out { animation: odm-tank-out 700ms ease-in both; }
-.wof-sheet .tank-swap .returned .tank-cap { animation: odm-cap-return 900ms ease-out both; }
-.wof-sheet .gas-spend .vessel-current { animation: odm-pressure 450ms ease-out; }
-.wof-sheet .gas-vent { animation: odm-vent 550ms ease-out both; }
-.wof-sheet .broken-blade { transform-box: fill-box; transform-origin: left center; animation: odm-blade-break 750ms ease-in both; }
-.wof-sheet .blade-fit .live-blade { animation: odm-blade-seat 950ms cubic-bezier(.2,.7,.3,1) both; }
-.wof-sheet .magazine-transfer { animation: odm-magazine-draw 950ms cubic-bezier(.2,.7,.3,1) both; }
-@keyframes odm-tank-in { 0%,35% { transform: translate(35px,-52px) rotate(-8deg); opacity: 0; } 65% { opacity: 1; } 85% { transform: translate(0,2px); } 100% { transform: none; opacity: 1; } }
-@keyframes odm-tank-out { 0% { transform: none; opacity: 1; } 60% { opacity: .9; } 100% { transform: translate(-45px,48px) rotate(12deg); opacity: 0; } }
-@keyframes odm-cap-return { 0%,60% { transform: translateY(-16px) scale(.65); opacity: 0; } 100% { transform: none; opacity: 1; } }
-@keyframes odm-pressure { 0%,100% { transform: none; } 20% { transform: translateX(-2px); filter: brightness(1.18); } 45% { transform: translateX(1px); } }
-@keyframes odm-vent { from { opacity: .8; transform: translateY(0); } to { opacity: 0; transform: translateY(-9px); } }
-@keyframes odm-blade-break { 0% { transform: none; opacity: 1; } 15% { transform: translate(3px,-2px) rotate(-2deg); } 100% { transform: translate(22px,45px) rotate(18deg); opacity: 0; } }
-@keyframes odm-blade-seat { 0%,70% { opacity: 0; transform: translateX(25px); } 72% { opacity: 1; } 95% { transform: translateX(-2px); } 100% { transform: none; opacity: 1; } }
-@keyframes odm-magazine-draw { 0% { transform: translate(-28px,0) scaleX(.8); opacity: 1; } 35% { transform: translate(26px,0) scaleX(.8); opacity: 1; } 70% { transform: translate(20px,-80px); opacity: 1; } 75%,100% { transform: translate(20px,-80px); opacity: 0; } }
-.wof-sheet .odm-rig[data-motion='off'] * { animation: none !important; }
-.wof-sheet .odm-rig[data-motion='off'] .rig-ghost { display: none; }
-.wof-sheet .odm-rig[data-motion='reduced'] * { animation: none !important; }
-.wof-sheet .odm-rig[data-motion='reduced'] .rig-ghost { display: none; }
-.wof-sheet .odm-rig[data-motion='reduced'].gas-spend, .wof-sheet .odm-rig[data-motion='reduced'].tank-swap,
-.wof-sheet .odm-rig[data-motion='reduced'].blade-fit, .wof-sheet .odm-rig[data-motion='reduced'].blade-break { animation: odm-soft-change 120ms linear; }
-@keyframes odm-soft-change { from { filter: brightness(1.15); } to { filter: none; } }
-@media (prefers-reduced-motion: reduce) {
-  .wof-sheet .odm-rig * { animation: none !important; }
-  .wof-sheet .odm-rig .rig-ghost { display: none; }
-}
-@container wofsheet (max-width: 700px) {
-  .wof-sheet:not(.compact) .vitals { grid-template-columns: repeat(6,minmax(0,1fr)); }
-  .wof-sheet:not(.compact) .vitals .vit { grid-column: span 2; padding: 8px; }
-  .wof-sheet:not(.compact) .vitals .gasv, .wof-sheet:not(.compact) .vitals .bladev { grid-column: span 3; border-top: 1px solid var(--rule); }
-  .wof-sheet:not(.compact) .vitals .gasv { border-left: 0; }
-  .wof-sheet:not(.compact) .vitals .bladev { border-left: 1px solid var(--rule); }
-}
-.wof-sheet .tank-socket { position: relative; }
-.wof-sheet .cap-lift { position: absolute; z-index: 3; width: 34px; height: 34px; border: 3px solid #9caa80; border-radius: 50%; background: #3b4b30; color: #eee5c6; display: grid; place-items: center; font: 11px monospace; animation: odm-cap-lift 700ms ease-in-out both; }
-.wof-sheet .fragment-b { animation-name: odm-blade-tip; }
-@keyframes odm-cap-lift { 0% { opacity: 1; transform: none; } 60% { opacity: 1; transform: translateY(-48px) scale(.8); } 100% { opacity: 0; transform: translateY(-65px) scale(.6); } }
-@keyframes odm-blade-tip { 0% { transform: none; opacity: 1; } 15% { transform: translate(4px,-3px) rotate(3deg); } 100% { transform: translate(35px,24px) rotate(-22deg); opacity: 0; } }
-@keyframes odm-tank-in { 0%,35% { transform: translate(20px,55px) rotate(-25deg); opacity: 0; } 65% { opacity: 1; } 85% { transform: translate(0,2px); } 100% { transform: none; opacity: 1; } }
-
-
-/* Health above Stress; Resolve belongs beside the Stress readout. */
-.wof-sheet .vitals { grid-template-columns: minmax(0,1.05fr) minmax(0,1fr) minmax(0,1fr); }
-.wof-sheet .body-vitals { display: grid; grid-template-rows: 1fr 1fr; min-width: 0; border-right: 1px solid var(--rule); }
-.wof-sheet .body-vitals .vit { padding: 6px 8px; border: 0; justify-content: center; gap: 3px; }
-.wof-sheet .body-vitals .healthv { border-bottom: 1px solid var(--rule); }
-.wof-sheet .stress-resolve { display: grid; grid-template-columns: minmax(0,1fr) 72px; min-width: 0; }
-.wof-sheet .body-vitals .resolvev { border-left: 1px solid var(--rule); padding: 6px; align-items: center; justify-content: start; margin: 6px 0; }
-.wof-sheet .resolvev .vhead { justify-content: center; }
-.wof-sheet:not(.compact) .body-vitals .vit .vhead,
-.wof-sheet:not(.compact) .body-vitals .vit > :last-child:not(.vhead) { margin-bottom: 0; }
-.wof-sheet .resolvev .big { font-size: var(--t-2xl); cursor: help; }
-.wof-sheet .vitals > .gasv { border-left: 0; }
-.wof-sheet .body-vitals .vchips { width: auto; }
-.wof-sheet.compact .body-vitals { grid-column: 1 / -1; border-right: 0; }
-.wof-sheet.compact .body-vitals .vit { grid-column: auto; }
-.wof-sheet.compact .body-vitals .healthv { border-bottom: 1px solid var(--rule); }
-.wof-sheet.compact .body-vitals .resolvev { border-left: 1px solid var(--rule); }
-@container wofsheet (max-width: 700px) {
-  .wof-sheet:not(.compact) .vitals { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .wof-sheet:not(.compact) .vitals > .body-vitals { grid-column: 1 / -1; border-right: 0; grid-template-rows: auto auto; }
-  .wof-sheet:not(.compact) .vitals .body-vitals .vit { grid-column: auto; padding: 8px 12px; }
-  .wof-sheet:not(.compact) .vitals > .gasv, .wof-sheet:not(.compact) .vitals > .bladev { grid-column: span 1; }
-  .wof-sheet .stress-resolve { grid-template-columns: minmax(0,1fr) 72px; }
-  .wof-sheet .body-vitals .healthv { display: grid; grid-template-columns: auto minmax(0,1fr); column-gap: 12px; align-items: center; }
-  .wof-sheet .body-vitals .healthv .vhead, .wof-sheet .body-vitals .healthv .vchips { grid-column: 1 / -1; }
-  .wof-sheet .body-vitals .stressv { display: grid; grid-template-columns: auto minmax(0,1fr); column-gap: 12px; align-items: center; }
-  .wof-sheet .body-vitals .stressv .vhead, .wof-sheet .body-vitals .stressv .vchips { grid-column: 1 / -1; }
-  .wof-sheet .body-vitals .resolvev { margin: 6px 0; }
-}
 /* ══ Edit mode and Play mode, the plate, and the Token door ═════════════ */
 
 /* The running strip that marks a sheet open for amendment: one along the top edge, one along the
@@ -1088,7 +741,6 @@
 
 /* Header controls: the mode switch and the Token door, above the crest. */
 .wof-sheet .hdr-acts { display: flex; align-items: center; justify-content: flex-end; gap: var(--s1); flex-wrap: wrap; }
-.wof-sheet .hdr-acts.col { flex-direction: column; align-items: flex-end; justify-content: center; }
 .wof-sheet .modesw, .wof-sheet .tokbtn { display: inline-flex; }
 .wof-sheet .modesw .mini, .wof-sheet .tokbtn .mini { box-shadow: none; }
 .wof-sheet .modesw .mini:hover:not(:disabled), .wof-sheet .tokbtn .mini:hover:not(:disabled) { transform: none; box-shadow: inset 0 0 0 1px var(--ink2); }

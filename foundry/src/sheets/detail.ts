@@ -216,6 +216,13 @@ export interface Box {
 export interface Anchor extends Box {
   left: number;
   top: number;
+  /**
+   * The Dossier file's index tab column stands just outside the paper's right edge (still inside
+   * the window); a row anchored on that paper reports this as the x its card must not cross, so a
+   * card never opens over the tabs. Unset outside the file frame, where the window edge is the
+   * only limit.
+   */
+  maxRight?: number;
 }
 
 export type CardSide = 'right' | 'left' | 'below' | 'above';
@@ -230,11 +237,13 @@ const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(ma
 
 /**
  * Where the card goes: beside the row it belongs to when there is room, otherwise under or over it,
- * and always inside the window with a margin to spare. The side the card takes is reported so its
- * pointer leans the right way.
+ * and always inside the window with a margin to spare, and never past the anchor's `maxRight` (the
+ * Dossier's index tab column, when the row is on that paper). The side the card takes is reported
+ * so its pointer leans the right way.
  */
 export function placeCard(anchor: Anchor, card: Box, view: Box, gap = 12, margin = 8): Placement {
-  const room = { right: view.width - (anchor.left + anchor.width), left: anchor.left, below: view.height - (anchor.top + anchor.height), above: anchor.top };
+  const right = anchor.maxRight !== undefined ? Math.min(view.width, anchor.maxRight) : view.width;
+  const room = { right: right - (anchor.left + anchor.width), left: anchor.left, below: view.height - (anchor.top + anchor.height), above: anchor.top };
   const need = card.width + gap + margin;
   const side: CardSide =
     room.right >= need ? 'right'
@@ -250,7 +259,7 @@ export function placeCard(anchor: Anchor, card: Box, view: Box, gap = 12, margin
     ? anchor.top + anchor.height / 2 - card.height / 2
     : (side === 'below' ? anchor.top + anchor.height + gap : anchor.top - gap - card.height);
   return {
-    left: clamp(left, margin, Math.max(margin, view.width - card.width - margin)),
+    left: clamp(left, margin, Math.max(margin, right - card.width - margin)),
     top: clamp(top, margin, Math.max(margin, view.height - card.height - margin)),
     side,
   };

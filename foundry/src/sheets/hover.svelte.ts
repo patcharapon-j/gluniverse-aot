@@ -20,9 +20,17 @@ export interface HoverLayer {
   anchor: Anchor;
 }
 
+/**
+ * A row on the Dossier file (`.wof-file-main`) stands beside the index tab column (`.itabs`),
+ * outside the paper but still inside the window; `placeCard` reads this as the anchor's `maxRight`
+ * so a card never opens over the tabs. Unset for a row anywhere else.
+ */
+const tabColumnLeft = (el: HTMLElement): number | undefined =>
+  el.closest('.wof-file-main')?.querySelector<HTMLElement>('.itabs')?.getBoundingClientRect().left;
+
 const boxOf = (el: HTMLElement): Anchor => {
   const r = el.getBoundingClientRect();
-  return { left: r.left, top: r.top, width: r.width, height: r.height };
+  return { left: r.left, top: r.top, width: r.width, height: r.height, maxRight: tabColumnLeft(el) };
 };
 
 let seq = 0;

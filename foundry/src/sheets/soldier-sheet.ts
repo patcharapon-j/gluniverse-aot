@@ -95,8 +95,10 @@ export function defineSoldierSheet() {
 
   class SoldierSheet extends Base {
     static DEFAULT_OPTIONS = {
-      classes: ['wof', 'wof-app', 'wof-soldier-sheet'],
-      position: { width: 860, height: 760 },
+      // wof-file-window: the Dossier frame (FileFrame) sets its own padding, leaving room for the
+      // index tabs on the paper's right edge and the footer on the binder below it.
+      classes: ['wof', 'wof-app', 'wof-file-window', 'wof-soldier-sheet'],
+      position: { width: 860, height: 820 },
       window: { resizable: true },
       form: { submitOnChange: false, closeOnSubmit: false },
     };
@@ -133,7 +135,7 @@ export function defineSquadmateSheet() {
 
   class SquadmateSheet extends Base {
     static DEFAULT_OPTIONS = {
-      classes: ['wof', 'wof-app', 'wof-compact', 'wof-squadmate-sheet'],
+      classes: ['wof', 'wof-app', 'wof-compact', 'wof-file-window', 'wof-squadmate-sheet'],
       position: { width: 600, height: 720 },
       window: { resizable: true },
       form: { submitOnChange: false, closeOnSubmit: false },

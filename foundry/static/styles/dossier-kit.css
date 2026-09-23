@@ -1,0 +1,116 @@
+/*
+ * Wings of Freedom: the Dossier Kit tab (sheet-overhaul plan, section 4, step 5).
+ * The issued-equipment ledger (about 30px rows, every control inline), its status stamps and Kept
+ * clip, the gas canister chips, the load strip, and the compact fields below the ledger (Titan
+ * Engagement and Left at). Tokens are the locked ones on `.wof-app` (sheet.css); motion is gated
+ * the same way as the rest of the file (dossier.css): transitions run under data-motion=full only,
+ * short colour and opacity under reduced, none under off or prefers-reduced-motion.
+ */
+
+/* ── The ledger ─────────────────────────────────────────────────────── */
+.wof-sheet.file .kit table.ledger { width: 100%; border-collapse: collapse; border: 0; background: none; margin: 0; }
+.wof-sheet.file .kit table.ledger thead tr, .wof-sheet.file .kit table.ledger th, .wof-sheet.file .kit table.ledger td { border-left: 0; border-right: 0; border-top: 0; }
+.wof-sheet.file .kit .ledger th {
+  font: var(--t-xs)/1.2 var(--fl); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3);
+  text-align: left; padding: var(--s1) var(--s2); border-bottom: 1.5px solid var(--ink); font-weight: 400; white-space: nowrap;
+}
+.wof-sheet.file .kit .ledger tr { background: none !important; }
+.wof-sheet.file .kit .ledger td { height: 30px; padding: 0 var(--s2); border-bottom: 1px solid var(--rule); font: var(--t-base)/1.2 var(--fb); vertical-align: middle; }
+.wof-sheet.file .kit .ledger tr:hover td { background: rgba(255, 255, 255, .3); }
+.wof-sheet.file .kit .ledger td.ico { width: 26px; padding: 0 0 0 2px; }
+.wof-sheet.file .kit .ledger td.ico img { width: 20px; height: 20px; mix-blend-mode: multiply; display: block; border: 0; }
+.wof-sheet.file .kit .ledger td.art { min-width: 0; }
+.wof-sheet.file .kit .ledger .name { font: 600 var(--t-base)/1.2 var(--fb); text-align: left; background: none; border: 0; padding: 0; }
+.wof-sheet.file .kit .ledger button.name { cursor: pointer; }
+.wof-sheet.file .kit .ledger button.name:hover { color: var(--red); }
+.wof-sheet.file .kit .ledger .sub { display: block; font: var(--t-xs)/1 var(--fl); color: var(--ink3); letter-spacing: .04em; }
+.wof-sheet.file .kit .ledger td.st { white-space: nowrap; }
+.wof-sheet.file .kit .ledger td.q { text-align: right; white-space: nowrap; }
+.wof-sheet.file .kit .ledger td.q .dots { justify-content: flex-end; }
+.wof-sheet.file .kit .ledger td.q .stepper { margin-left: var(--s2); vertical-align: middle; }
+.wof-sheet.file .kit .ledger td.kp { width: 52px; text-align: center; white-space: nowrap; }
+.wof-sheet.file .kit .ledger .empty { display: block; text-align: center; }
+
+/* Status stamps: a rotated rubber stamp, red for a bad state, blue (info) otherwise; a button when
+   the status is the row's own toggle, plain text when it only reports a derived state. */
+.wof-sheet.file .kit .ledger .stamp { padding: 1px 6px; transform: rotate(-2deg); font-size: var(--t-xs); line-height: 15px; }
+.wof-sheet.file .kit .ledger button.stamp { cursor: pointer; transition: filter .12s; }
+.wof-sheet.file .kit .ledger button.stamp:hover:not(:disabled) { filter: brightness(.8); }
+.wof-sheet.file .kit .ledger button.stamp:disabled { cursor: default; opacity: .55; }
+.wof-sheet.file .kit .ledger .stamp.fixed { cursor: default; }
+
+/* The expand chevron for a row's sub-fields (a dismounted horse's Position, a prosthetic's side). */
+.wof-sheet.file .kit .ledger .chev {
+  display: inline-flex; width: 14px; height: 14px; vertical-align: middle; margin: 0 2px 0 0;
+  align-items: center; justify-content: center; background: none; border: 0; padding: 0; flex: 0 0 auto;
+}
+.wof-sheet.file .kit .ledger .chev::before {
+  content: ""; display: block; width: 6px; height: 6px; border-right: 1.5px solid var(--ink3); border-bottom: 1.5px solid var(--ink3); transform: rotate(-45deg);
+}
+.wof-sheet.file .kit .ledger .chev[aria-expanded=true]::before { transform: rotate(45deg); }
+.wof-sheet.file[data-motion=full] .kit .ledger .chev::before { transition: transform .14s var(--ease); }
+
+/* The sub-row a chevron opens. */
+.wof-sheet.file .kit .ledger tr.subrow td { padding: var(--s1) var(--s2) var(--s2); border-bottom: 1px solid var(--rule); background: rgba(255, 255, 255, .22); height: auto; }
+.wof-sheet.file .kit .subfields { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); align-items: center; }
+.wof-sheet.file .kit .subfields select, .wof-sheet.file .kit .subfields input[type=text] { height: 20px; font-size: var(--t-sm); }
+.wof-sheet.file[data-motion=full] .kit .ledger tr.subrow { animation: kit-subrow .16s var(--ease); }
+.wof-sheet.file[data-motion=reduced] .kit .ledger tr.subrow { animation: kit-subrow-fade .12s linear; }
+.wof-sheet.file[data-motion=off] .kit .ledger tr.subrow { animation: none; }
+@media (prefers-reduced-motion: reduce) { .wof-sheet.file .kit .ledger tr.subrow { animation: none !important; } }
+@keyframes kit-subrow { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+@keyframes kit-subrow-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* The Kept clip: a paperclip that shows only when the piece is held onto. */
+.wof-sheet.file .kit .kept {
+  display: inline-grid; place-items: center; width: 18px; height: 18px; padding: 0; margin: 0 2px 0 0;
+  background: none; border: 0; color: var(--ink2); opacity: .35;
+}
+.wof-sheet.file .kit .kept svg { width: 12px; height: 18px; }
+.wof-sheet.file .kit .kept[aria-pressed=true] { opacity: 1; color: var(--ink); }
+.wof-sheet.file .kit .kept:disabled { cursor: default; }
+.wof-sheet.file[data-motion=full] .kit .kept:not(:disabled) { transition: opacity .12s, transform .12s var(--ease); }
+.wof-sheet.file[data-motion=full] .kit .kept:hover:not(:disabled) { opacity: .8; transform: translateY(-1px); }
+.wof-sheet.file .kit .ledger .mini.rm { margin-left: 2px; }
+
+/* ── The gas canisters row: chips instead of a fitted canister and a separate spares block ──── */
+.wof-sheet.file .kit .gasrow .cans { display: inline-flex; flex-wrap: wrap; gap: var(--s2); align-items: center; justify-content: flex-end; }
+.wof-sheet.file .kit .canchip {
+  display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 4px 0 3px;
+  border: 1px solid var(--ink3); background: rgba(255, 255, 255, .35); font: var(--t-xs)/1 var(--fl); letter-spacing: .05em; color: var(--ink2);
+}
+.wof-sheet.file .kit .canchip.fit { border-color: var(--ink); box-shadow: 1px 1px 0 var(--ink); color: var(--ink); }
+.wof-sheet.file .kit .canchip .lv { display: inline-flex; gap: 1px; }
+.wof-sheet.file .kit .canchip .lv button { width: 5px; height: 10px; padding: 0; border: 0; background: #2a3034; display: block; }
+.wof-sheet.file .kit .canchip .lv button.on { background: #9fb8bd; }
+.wof-sheet.file .kit .canchip .lv button:disabled { cursor: default; }
+.wof-sheet.file[data-motion=full] .kit .canchip .lv button:not(:disabled):hover { filter: brightness(1.3); }
+.wof-sheet.file .kit .canchip .mini { min-height: 16px; padding: 0 4px; }
+
+/* ── The load strip: a dashed box under the ledger, the same shape as the band's meter ────────── */
+.wof-sheet.file .kit .load { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; margin-top: var(--s2); padding: 5px var(--s3); border: 1px dashed var(--ink3); }
+.wof-sheet.file .kit .load .bar { display: inline-flex; gap: 2px; }
+.wof-sheet.file .kit .load .bar i { width: 10px; height: 14px; border: 1.5px solid var(--ink2); background: var(--paper-hi); display: block; }
+.wof-sheet.file .kit .load .bar i.on { background: var(--ink2); }
+.wof-sheet.file .kit .load .bar i.over { background: var(--red); border-color: var(--red-lo); }
+.wof-sheet.file .kit .load b { font: 700 var(--t-md)/1 var(--fd); }
+
+/* Momentum, beside the carrying fields below the load strip. */
+.wof-sheet.file .kit .mrow { display: inline-flex; align-items: center; gap: var(--s2); }
+.wof-sheet.file .kit .mrow b { min-width: 1em; text-align: center; }
+
+/* ── Titan Engagement and Left at, below the ledger ────────────────────────────────────────────── */
+.wof-sheet.file .kit .field { display: flex; align-items: center; gap: var(--s2); border-bottom: 1px solid var(--ink3); min-height: 24px; padding: 0 2px; margin-top: var(--s1); }
+.wof-sheet.file .kit .field:first-of-type { margin-top: var(--s2); }
+.wof-sheet.file .kit .field input { flex: 1; min-width: 0; border: 0; background: transparent; font: var(--t-base)/1 var(--fl); color: var(--ink); letter-spacing: .03em; padding: 2px 0; }
+.wof-sheet.file .kit .field input::placeholder { color: var(--ink3); }
+.wof-sheet.file .kit .field input:focus { outline: none; }
+.wof-sheet.file[data-motion=full] .kit .field { transition: border-color .12s, box-shadow .12s; }
+.wof-sheet.file .kit .field:focus-within { border-bottom-color: var(--blue); box-shadow: 0 1px 0 var(--blue); }
+
+/* ── Width response: the Squadmate's 600px paper (dossier.css sets the 700px break) ───────────── */
+@container paper (max-width: 700px) {
+  .wof-sheet.file .kit .ledger .sub { display: none; }
+  .wof-sheet.file .kit .ledger th:nth-child(3), .wof-sheet.file .kit .ledger td.st { padding-left: 3px; padding-right: 3px; }
+  .wof-sheet.file .kit .ledger .stamp { padding: 1px 4px; }
+}

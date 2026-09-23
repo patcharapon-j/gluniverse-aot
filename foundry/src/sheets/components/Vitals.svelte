@@ -1,39 +1,59 @@
 <script lang="ts">
-  import { tick } from 'svelte';
-  import { jolt, pulse } from '../../motion/fx.ts';
-  import { tooltip } from '../actions.ts';
+  /**
+   * The Dossier's vitals band (sheet-overhaul plan, 3.1 and 6): five cells, Health (the Down stamp,
+   * the boxes, the injury chips), Stress (boxes, stepper, the Scar minimum, the response chips), the
+   * Resolve seal (a click shows how Resolve is built), Gas and Blade Sets (the Instrument drawings,
+   * section 5). A chip takes the viewer to Wounds & Mind and highlights its card.
+   *
+   * `compact` is the Squadmate's: its response chips are plain chips, not links. Under a paper of
+   * about 640px the band lays out in two rows (dossier.css).
+   */
+  import { tick, untrack } from 'svelte';
+  import { jolt, pulse, thud } from '../../motion/fx.ts';
+  import { contextMenu, tooltip } from '../actions.ts';
   import { sheetContext, t } from '../context.ts';
+  import { bladeState, gasStamp } from '../instrument.ts';
   import { clickHealthBox, clickStressBox, fitBladeSet, fitCanister, openItem, ruinBladeInHandles, setField, spendGas, stepStress } from '../soldier-ops.ts';
   import { icon, type SoldierView } from '../soldier-view.ts';
+  import BladeInstrument from './BladeInstrument.svelte';
   import Dots from './Dots.svelte';
-  import EquipmentRig from './EquipmentRig.svelte';
+  import GasInstrument from './GasInstrument.svelte';
   import HealthTrack from './HealthTrack.svelte';
   import StressTrack from './StressTrack.svelte';
 
   let { view, compact = false }: { view: SoldierView; compact?: boolean } = $props();
-  const { actor, state: ss } = sheetContext();
+  const { actor, state: ss, uid } = sheetContext();
   const s = $derived(view.system);
   const d = $derived(view.derived);
   const ro = $derived(!view.editable);
 
   let hpEl: HTMLElement | undefined = $state();
   let stEl: HTMLElement | undefined = $state();
-  let rsEl: HTMLElement | undefined = $state();
-  let gasEl: HTMLElement | undefined = $state();
-  let bladeEl: HTMLElement | undefined = $state();
+  let downEl: HTMLElement | undefined = $state();
+  let sealWrap: HTMLElement | undefined = $state();
 
   const odm = $derived(view.gear.find((g) => g.subtype === 'odm') ?? null);
-  const blades = $derived(view.gear.filter((g) => g.subtype === 'blade-set'));
-  const inHandles = $derived(blades.find((g) => g.inHandles) ?? null);
-  const carried = $derived(blades.filter((g) => !g.inHandles));
+  const blades = $derived(bladeState(view.gear));
   const discipline = $derived(view.talents.find((x) => x.talentId === 'blade-discipline') ?? null);
-  // The strip's track wraps at eight boxes a row (sheet.css, --track-cols) and tallies the rest.
-  const STRIP_BOXES = 24;
+  const stamp = $derived(gasStamp({ hasOdm: !!odm, jammed: !!d.jammed, level: s.gas_rating }));
+  /** The band draws ten Stress boxes at most and tallies the rest. */
+  const BAND_BOXES = 10;
   const stressBoxes = $derived(Math.max(6, d.stress_effective + 1));
   const bestSpare = $derived(s.spare_canisters.length ? s.spare_canisters.indexOf(Math.max(...s.spare_canisters)) : -1);
+  const downOff = $derived(s.down !== d.down_by_rule);
 
+  // ── Gas and blades: one busy lock over every equipment button ──────────
   let equipmentBusy = $state(false);
   let gasSwap = $state({ id: 0, index: -1, oldLevel: 0 });
+  async function equipmentAction(action: () => Promise<unknown> | null | undefined) {
+    if (equipmentBusy || ro) return;
+    equipmentBusy = true;
+    try {
+      await action();
+    } finally {
+      equipmentBusy = false;
+    }
+  }
   async function swapTank(index: number) {
     const oldLevel = s.gas_rating;
     await equipmentAction(async () => {
@@ -41,16 +61,34 @@
       if (result) gasSwap = { id: gasSwap.id + 1, index, oldLevel };
     });
   }
-  async function equipmentAction(action: () => Promise<unknown> | null | undefined) {
-    if (equipmentBusy || ro) return;
-    equipmentBusy = true;
-    try { await action(); } finally { equipmentBusy = false; }
-  }
 
-  const resolveTip = $derived([t('WOF.Sheet.resolve.short', { base: Math.ceil((s.attributes.instinct + s.attributes.empathy) / 2), scars: s.scars.length, grief: Math.min(s.grief, 3) }), d.resolve_unclamped < 0 ? t('WOF.Sheet.resolve.floorTip', { n: d.resolve_unclamped }) : ''].filter(Boolean).join('. '));
+  // ── Resolve: the seal and its formula ───────────────────────────────
+  const resolveBase = $derived(Math.ceil((s.attributes.instinct + s.attributes.empathy) / 2));
+  const resolveShort = $derived(t('WOF.Sheet.resolve.short', { base: resolveBase, scars: s.scars.length, grief: Math.min(s.grief, 3) }));
+  const resolveFloor = $derived(d.resolve_unclamped < 0 ? t('WOF.Sheet.resolve.floorTip', { n: d.resolve_unclamped }) : '');
+  const resolveTip = $derived([resolveShort, resolveFloor].filter(Boolean).join('. '));
+  let sealOpen = $state(false);
+  $effect(() => {
+    if (!sealOpen) return;
+    const doc = sealWrap?.ownerDocument ?? document;
+    const away = (e: PointerEvent) => {
+      if (!sealWrap?.contains(e.target as Node)) sealOpen = false;
+    };
+    const key = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      sealOpen = false;
+      sealWrap?.querySelector<HTMLElement>('.seal')?.focus();
+    };
+    doc.addEventListener('pointerdown', away, true);
+    doc.addEventListener('keydown', key, true);
+    return () => {
+      doc.removeEventListener('pointerdown', away, true);
+      doc.removeEventListener('keydown', key, true);
+    };
+  });
 
-  const dry = $derived(s.gas_rating <= 0 || d.jammed || !odm);
-
+  // ── Chips ───────────────────────────────────────────────────────────
   /** A held Critical Injury as a chip: where it is, its type, and what it does while held. */
   const injuryTip = (w: SoldierView['injuries'][number]) =>
     [
@@ -59,7 +97,9 @@
       ...w.effects,
     ].join('. ');
   const responseTip = (r: SoldierView['responses'][number]) => [r.text, ...r.effects, t(`WOF.Sheet.ends.${r.ends}`)].filter(Boolean).join(' ');
+  const openMenu = (id: string) => () => [{ label: t('WOF.Sheet.menu.open'), icon: 'fa-solid fa-book-open', onClick: () => openItem(actor, id) }];
 
+  // ── Motion ──────────────────────────────────────────────────────────
   /** Animate after the document update has re-rendered. */
   async function after(p: Promise<unknown> | null | undefined, fn: () => void) {
     if (!p) return;
@@ -83,125 +123,168 @@
       else pulse(stEl);
     });
   }
+
+  // The Down stamp lands whenever the field changes, from the stamp, the header tag or anyone else.
+  let lastDown: boolean | null = null;
+  $effect(() => {
+    const now = !!s.down;
+    untrack(() => {
+      const before = lastDown;
+      lastDown = now;
+      if (before === null || before === now) return;
+      tick().then(() => {
+        thud(downEl, -4);
+        if (now) jolt(hpEl);
+        else pulse(hpEl);
+      });
+    });
+  });
 </script>
 
-<div class="vitals">
-  <div class="body-vitals">
+<section class="band" class:compact aria-label={t('WOF.Sheet.band.label')}>
   <!-- Health -->
-  <div class="vit healthv" bind:this={hpEl}>
-    <div class="vhead">
-      <span class="lbl"><img class="ic s16" src={icon('harm-health')} alt="" />{t('WOF.Derived.health')}</span>
-      <span class="down">
-        <button
-          type="button"
-          class="stamp {s.down ? '' : 'no'}"
-          disabled={ro}
-          aria-pressed={s.down}
-          use:tooltip={s.down !== d.down_by_rule ? t(d.down_by_rule ? 'WOF.Sheet.down.ruleSaysDown' : 'WOF.Sheet.down.ruleSaysUp') : t('WOF.Sheet.down.toggle')}
-          onclick={() => after(setField(actor, 'system.down', !s.down), () => (s.down ? jolt(hpEl) : pulse(hpEl)))}
-        >{s.down ? t('WOF.Actor.Base.FIELDS.down.label') : t('WOF.Sheet.state.standing')}{s.down !== d.down_by_rule ? ' ?' : ''}</button>
-      </span>
-    </div>
-    <div class="vrow"><span class="big" class:red={d.current_health <= 1}>{d.current_health}<small>/{d.health}</small></span></div>
-    <HealthTrack cells={view.health} disabled={ro} onbox={onHealth} />
-    {#if view.injuries.length}
-      <ul class="vchips" aria-label={t('WOF.Sheet.health.injuries')}>
-        {#each view.injuries as w (w.id)}
-          <li>
-            <button type="button" class="vchip" class:treated={w.treated} use:tooltip={injuryTip(w)} onclick={() => openItem(actor, w.id)}>
-              <img src={w.img} alt="" />{w.name}
-            </button>
-          </li>
-        {/each}
-      </ul>
-    {/if}
-  </div>
-
-  <div class="stress-resolve">
-  <!-- Stress -->
-  <div class="vit stressv" bind:this={stEl}>
-    <div class="vhead">
-      <span class="lbl"><img class="ic s16" src={icon('die-stress')} alt="" />{t('WOF.Derived.stress')}</span>
-      <span class="note red">{t('WOF.Sheet.stress.min', { n: d.minimum_stress })}</span>
-    </div>
-    <div class="vrow">
-      <span class="big red">{d.stress_effective}</span>
-      <span class="stepper">
-        <button type="button" disabled={ro || d.stress_effective <= d.minimum_stress} aria-label={t('WOF.Sheet.stress.lower')} onclick={() => onStress(stepStress(actor, -1), false)}>−</button>
-        <button type="button" disabled={ro} aria-label={t('WOF.Sheet.stress.raise')} onclick={() => onStress(stepStress(actor, 1), true)}>+</button>
-      </span>
-    </div>
-    <StressTrack count={stressBoxes} max={STRIP_BOXES} value={d.stress_effective} minimum={d.minimum_stress} disabled={ro} onbox={(i) => onStress(clickStressBox(actor, i), i >= d.stress_effective)} />
-    {#if view.responses.length}
-      <ul class="vchips" aria-label={t('WOF.Sheet.stress.responses')}>
-        {#each view.responses as r (r.index)}
-          <li>
-            {#if compact}
-              <span class="vchip mind" use:tooltip={responseTip(r)}>
-                <i class="fa-solid fa-head-side-virus" aria-hidden="true"></i>{r.name}<small>{t('WOF.Sheet.stress.lasting')}</small>
-              </span>
-            {:else}
-              <button type="button" class="vchip mind" use:tooltip={responseTip(r)} onclick={() => (ss.tab = 'wounds')}>
-                <i class="fa-solid fa-head-side-virus" aria-hidden="true"></i>{r.name}<small>{t('WOF.Sheet.stress.lasting')}</small>
-              </button>
-            {/if}
-          </li>
-        {/each}
-      </ul>
-    {/if}
-  </div>
-
-  <!-- Resolve -->
-  <div class="vit resolvev" bind:this={rsEl}>
-    <div class="vhead"><span class="lbl">{t('WOF.Derived.resolve')}</span></div>
-    <div class="vrow">
-      <span class="big" class:red={d.resolve <= 0} role="img"
-        aria-label={t('WOF.Derived.resolve') + ': ' + d.resolve + '. ' + resolveTip}
-        use:tooltip={resolveTip}
-      >{d.resolve}</span>
-    </div>
-  </div>
-  </div>
-  </div>
-
-  <!-- Gas: the fitted canister's gauge, then the spares as tanks a click fits. -->
-  <div class="vit gasv" bind:this={gasEl}>
-    <div class="vhead">
-      <span class="lbl"><img class="ic s16" src={icon('gear-gas-canister')} alt="" />{t('WOF.Sheet.gas.title')}</span>
-      <span class="note" class:red={s.gas_rating <= 0 || d.jammed}>
-        {#if !odm}{t('WOF.Sheet.gas.noOdm')}{:else if d.jammed}{t('WOF.Derived.jammed')}{:else if s.gas_rating <= 0}{t('WOF.Sheet.gas.dry')}{:else}{t('WOF.Sheet.gas.odm', { current: odm.current, rating: odm.rating })}{/if}
-      </span>
-    </div>
-    <EquipmentRig kind="gas" level={s.gas_rating} full={view.fullGas} spares={s.spare_canisters}
-      unavailable={dry} swapEvent={gasSwap} disabled={ro || equipmentBusy} onfit={swapTank} />
-    {#if odm}<Dots size="sm" groups={[{ cls: 'dg', n: odm.current }, { cls: 'dg o', n: odm.rating - odm.current }]} label={t('WOF.Sheet.gas.odmDice', { current: odm.current, rating: odm.rating })} />{/if}
-    <div class="acts">
-      <button type="button" class="mini" disabled={ro || equipmentBusy || s.gas_rating <= 0} onclick={() => equipmentAction(() => spendGas(actor))}>{t('WOF.Sheet.gas.spend')}</button>
+  <div class="cell hp" bind:this={hpEl}>
+    <div class="ch">
+      <span class="lbl"><img src={icon('harm-health')} alt="" />{t('WOF.Derived.health')}</span>
       <button
         type="button"
-        class="mini"
-        disabled={ro || equipmentBusy || bestSpare < 0}
-        use:tooltip={t('WOF.Sheet.gas.changeTip')}
-        onclick={() => swapTank(bestSpare)}
-      >{t('WOF.Sheet.gas.change')}</button>
+        class="stamp downst"
+        class:green={!s.down}
+        bind:this={downEl}
+        disabled={ro}
+        aria-pressed={!!s.down}
+        use:tooltip={downOff ? t(d.down_by_rule ? 'WOF.Sheet.down.ruleSaysDown' : 'WOF.Sheet.down.ruleSaysUp') : t('WOF.Sheet.down.toggle')}
+        onclick={() => setField(actor, 'system.down', !s.down)}
+      >{s.down ? t('WOF.Actor.Base.FIELDS.down.label') : t('WOF.Sheet.state.standing')}{downOff ? ' ?' : ''}</button>
+    </div>
+    <div class="cr">
+      <span class="num" class:red={d.current_health <= 1}>{d.current_health}<small>/{d.health}</small></span>
+      <HealthTrack cells={view.health} size="band" disabled={ro} onbox={onHealth} />
+    </div>
+    <ul class="chips" aria-label={t('WOF.Sheet.health.injuries')}>
+      {#each view.injuries as w (w.id)}
+        <li>
+          <button
+            type="button"
+            class="chip"
+            class:treated={w.treated}
+            class:untreated={!w.treated}
+            use:tooltip={injuryTip(w)}
+            use:contextMenu={openMenu(w.id)}
+            onclick={() => ss.spot('injury', w.id)}
+          ><img src={w.img} alt="" /><span>{w.name}</span></button>
+        </li>
+      {/each}
+    </ul>
+  </div>
+
+  <!-- Stress -->
+  <div class="cell st" bind:this={stEl}>
+    <div class="ch">
+      <span class="lbl"><img src={icon('die-stress')} alt="" />{t('WOF.Derived.stress')}</span>
+      <span class="chr">
+        <span class="note red">{t('WOF.Sheet.stress.min', { n: d.minimum_stress })}</span>
+        <span class="stepper">
+          <button type="button" disabled={ro || d.stress_effective <= d.minimum_stress} aria-label={t('WOF.Sheet.stress.lower')} onclick={() => onStress(stepStress(actor, -1), false)}>−</button>
+          <button type="button" disabled={ro} aria-label={t('WOF.Sheet.stress.raise')} onclick={() => onStress(stepStress(actor, 1), true)}>+</button>
+        </span>
+      </span>
+    </div>
+    <div class="cr">
+      <span class="num red">{d.stress_effective}</span>
+      <StressTrack
+        count={stressBoxes}
+        max={BAND_BOXES}
+        size="band"
+        value={d.stress_effective}
+        minimum={d.minimum_stress}
+        disabled={ro}
+        onbox={(i) => onStress(clickStressBox(actor, i), i >= d.stress_effective)}
+      />
+    </div>
+    <ul class="chips" aria-label={t('WOF.Sheet.stress.responses')}>
+      {#each view.responses as r (r.index)}
+        <li>
+          {#if compact}
+            <span class="chip resp" use:tooltip={responseTip(r)}><img src={icon('roll-stress')} alt="" /><span>{r.name}</span></span>
+          {:else}
+            <button type="button" class="chip resp" use:tooltip={responseTip(r)} onclick={() => ss.spot('response', String(r.index))}>
+              <img src={icon('roll-stress')} alt="" /><span>{r.name}</span>
+            </button>
+          {/if}
+        </li>
+      {:else}
+        <li><span class="chip none"><span>{t('WOF.Sheet.stress.noResponse')}</span></span></li>
+      {/each}
+    </ul>
+  </div>
+
+  <!-- Resolve: the wax seal -->
+  <div class="cell res" bind:this={sealWrap}>
+    <button
+      type="button"
+      class="seal"
+      class:red={d.resolve <= 0}
+      aria-expanded={sealOpen}
+      aria-controls="{uid}-resolve"
+      aria-label={t('WOF.Sheet.resolve.show', { n: d.resolve })}
+      use:tooltip={resolveTip}
+      onclick={() => (sealOpen = !sealOpen)}
+    ><img src={icon('seal-wax')} alt="" /><b>{d.resolve}</b></button>
+    <span class="lbl">{t('WOF.Derived.resolve')}</span>
+    <div class="pop-f" id="{uid}-resolve" role="note" hidden={!sealOpen}>
+      <b>{t('WOF.Sheet.resolve.title', { n: d.resolve })}</b>
+      <span>{t('WOF.Sheet.resolve.built')}</span>
+      <span>{resolveShort} = <b>{d.resolve}</b></span>
+      {#if resolveFloor}<span class="red">{resolveFloor}</span>{/if}
     </div>
   </div>
 
-  <!-- Blade Sets: the set in the handles, and the sets still in the box. -->
-  <div class="vit bladev" bind:this={bladeEl}>
-    <div class="vhead">
-      <span class="lbl"><img class="ic s16" src={icon('gear-blades')} alt="" />{t('WOF.Sheet.blades.title')}</span>
-      {#if discipline}<span class="note">{discipline.used ? t('WOF.Sheet.blades.disciplineUsed') : t('WOF.Sheet.blades.disciplineReady')}</span>{/if}
+  <!-- Gas: the fitted canister and the spare rack -->
+  <div class="cell gear gas">
+    <div class="ch">
+      <span class="lbl">
+        <img src={icon('gear-gas-canister')} alt="" />{t('WOF.Sheet.gas.title')}
+        <b class="gnum" class:dry={s.gas_rating <= 0} use:tooltip={t('WOF.Sheet.gas.level', { current: s.gas_rating, full: view.fullGas })}>{s.gas_rating}<small>/{view.fullGas}</small></b>
+      </span>
+      {#if odm}<Dots size="sm" groups={[{ cls: 'dg', n: odm.current }, { cls: 'dg o', n: odm.rating - odm.current }]} label={t('WOF.Sheet.gas.odmDice', { current: odm.current, rating: odm.rating })} />{/if}
     </div>
-    <EquipmentRig kind="blades" fitted={!!inHandles} carried={carried.length} />
-    <div class="equipment-status">
-      <span class="note">{t('WOF.Sheet.blades.hand')}</span>
-      {#if inHandles}<Dots size="sm" groups={[{ cls: 'dg', n: inHandles.rating }]} label={t('WOF.Sheet.blades.handDice', { current: inHandles.rating })} />
-      {:else}<b class="note red">{t('WOF.Sheet.blades.handEmpty')}</b>{/if}
+    <div class="cr">
+      <GasInstrument
+        level={s.gas_rating}
+        full={view.fullGas}
+        spares={s.spare_canisters}
+        {stamp}
+        disabled={ro || equipmentBusy}
+        swapEvent={gasSwap}
+        onspend={() => equipmentAction(() => spendGas(actor))}
+        onfit={swapTank}
+        onmore={() => (ss.tab = 'kit')}
+      />
     </div>
     <div class="acts">
-      <button type="button" class="mini" disabled={ro || equipmentBusy || !inHandles} use:tooltip={t('WOF.Sheet.blades.ruinTip')} onclick={() => equipmentAction(() => ruinBladeInHandles(actor))}>{t('WOF.Sheet.blades.ruin')}</button>
-      <button type="button" class="mini" disabled={ro || equipmentBusy || !!inHandles || !carried.length} onclick={() => equipmentAction(() => fitBladeSet(actor))}>{t('WOF.Sheet.blades.swap')}</button>
+      <button type="button" class="mini" disabled={ro || equipmentBusy || s.gas_rating <= 0} onclick={() => equipmentAction(() => spendGas(actor))}>{t('WOF.Sheet.gas.spend')}</button>
+      <button type="button" class="mini" disabled={ro || equipmentBusy || bestSpare < 0} use:tooltip={t('WOF.Sheet.gas.changeTip')} onclick={() => swapTank(bestSpare)}>{t('WOF.Sheet.gas.change')}</button>
     </div>
   </div>
-</div>
+
+  <!-- Blade Sets: the set in the handles and the scabbard -->
+  <div class="cell gear grow blades">
+    <div class="ch">
+      <span class="lbl"><img src={icon('gear-blades')} alt="" />{t('WOF.Sheet.blades.title')}</span>
+      {#if blades.inHand !== null}
+        <Dots size="sm" groups={[{ cls: 'dg', n: blades.inHand }]} label={t('WOF.Sheet.blades.handDice', { current: blades.inHand })} />
+      {:else}
+        <b class="note red">{t('WOF.Sheet.blades.handEmpty')}</b>
+      {/if}
+    </div>
+    <div class="cr">
+      <BladeInstrument inHand={blades.inHand} stored={blades.stored} disabled={ro || equipmentBusy} onswap={() => equipmentAction(() => fitBladeSet(actor))} />
+    </div>
+    <div class="acts">
+      <button type="button" class="mini red" disabled={ro || equipmentBusy || blades.inHand === null} use:tooltip={t('WOF.Sheet.blades.ruinTip')} onclick={() => equipmentAction(() => ruinBladeInHandles(actor))}>{t('WOF.Sheet.blades.ruin')}</button>
+      <button type="button" class="mini" disabled={ro || equipmentBusy || blades.inHand !== null || !blades.stored} onclick={() => equipmentAction(() => fitBladeSet(actor))}>{t('WOF.Sheet.blades.swap')}</button>
+      {#if discipline}<span class="note disc">{discipline.used ? t('WOF.Sheet.blades.disciplineUsed') : t('WOF.Sheet.blades.disciplineReady')}</span>{/if}
+    </div>
+  </div>
+</section>

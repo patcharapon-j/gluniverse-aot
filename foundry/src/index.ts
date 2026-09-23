@@ -3,8 +3,8 @@
  * 2a: data models, derived data, system config, fonts. 2b: the Soldier sheet, Motion and Gore.
  * 2c: the Titan, Squadmate, and Foe sheets, the item slips, and prototype Token defaults.
  * 2d: the four die kinds, the roll dialog, roll cards with Push, Cover, auto-apply, and Undo.
- * 2e: Dice So Nice presets, the three.js gas and blade widgets, the preferences menu, token status
- * effects bound to the model, and default art.
+ * 2e: Dice So Nice presets, the preferences menu, token status effects bound to the model, and
+ * default art.
  * 3: the Lifepath wizard.
  * 4: the Titan Engagement tracker (HUD strip, board, token badges, round-end automation).
  * Batch E: the engagement board over the canvas area while a Titan Engagement has a field (16-34).
@@ -22,7 +22,6 @@ import { rollFear, rollGas, rollStressResponse } from './dice/tables.ts';
 import { registerDiceSoNice } from './dice/dsn.ts';
 import { defineDice } from './dice/terms.ts';
 import { defineActorDocument, defineTokenHUD, registerStatusEffects } from './documents/actor.ts';
-import { widgetStats } from './motion/widgets.ts';
 import { registerFonts } from './fonts.ts';
 import { defineActorModels } from './models/actors.ts';
 import { defineItemModels } from './models/items.ts';
@@ -61,7 +60,7 @@ Hooks.once('init', () => {
   defineWizard();
   registerTracker();
   registerBoard();
-  game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse, widgetStats, openLifepath };
+  game.wof = { rollAction, callRoll, rollTitanAttack, rollFear, rollGas, rollStressResponse, openLifepath };
   console.log(`${SYSTEM_ID} | initialised: ${CONFIG.WOF.actionCatalog.length} Action Catalog entries`);
 });
 

@@ -179,6 +179,7 @@
 .wof-sheet .trial-cover { display: inline-flex; align-items: center; gap: var(--s2); }
 .wof-sheet .pool-why { flex: 1 1 160px; }
 .wof-sheet .resp { margin: var(--s2) 0 0; }
+.wof-sheet .resp img { width: 20px; height: 20px; border: 0; mix-blend-mode: multiply; }
 
 /* Graduation */
 .wof-sheet .rank-block { display: flex; gap: var(--s2); flex-wrap: wrap; }

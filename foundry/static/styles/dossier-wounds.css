@@ -1,0 +1,106 @@
+/*
+ * Wings of Freedom: the Dossier Wounds & Mind tab (sheet-overhaul plan, section 4, step 6; the
+ * design/preview-sheet-a-refined-dossier.html drawing). Three columns on the paper: the figure
+ * (unchanged, with the Gore switch); Critical Injuries and Stress Responses; Scars and Grief, the
+ * readout (what the band's Health, Resolve and Stress are built from) and the field record. The
+ * band already carries the Health and Stress tracks, so this tab draws none of its own.
+ *
+ * Scoped under `.wof-sheet.file` throughout, so these rules apply only to the Soldier and Squadmate
+ * sheets (the Dossier frame) and win over any same-named rule still in sheet.css until step 8 clears
+ * the old Wounds & Mind section there. Tokens are the locked ones on `.wof-app` (sheet.css); the
+ * card, § label and mini-button looks come from dossier.css and the generic sheet.css utilities
+ * (`.block`, `.grid-form`, `.rowlist`, `.flags`, `.check`, `.note`, `.empty`, `.dropzone`, `.stamp`,
+ * `.mini`), unchanged.
+ */
+
+/* ── The three columns ──────────────────────────────────────────────── */
+.wof-sheet.file .wm { display: grid; grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1fr); gap: var(--s4); align-items: start; }
+.wof-sheet.file .wm > .stack { display: flex; flex-direction: column; gap: var(--s4); min-width: 0; }
+
+/* ── The figure column: unchanged Figure/Gore, just the padded frame around it ───────────────── */
+.wof-sheet.file .figbox {
+  margin: 0; padding: 8px 6px 6px; background: var(--paper-hi); border: 1px solid var(--ink2);
+  box-shadow: 2px 2px 0 rgba(36, 31, 27, .22);
+  background-image: repeating-linear-gradient(transparent 0 19px, rgba(47, 74, 110, .09) 19px 20px);
+  position: relative;
+}
+.wof-sheet.file .figbox figcaption { display: flex; justify-content: space-between; margin-top: 4px; font: var(--t-xs)/1.2 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+.wof-sheet.file .figbox .gore { margin-top: 8px; }
+
+/* ── Critical Injury and Stress Response cards ───────────────────────── */
+.wof-sheet.file .inj {
+  padding: 6px 10px 8px 12px; background: var(--paper-hi); border: 1px solid var(--ink2); border-left: 4px solid var(--green);
+  box-shadow: 2px 2px 0 rgba(36, 31, 27, .25); position: relative;
+}
+.wof-sheet.file .inj.untreated { border-left-color: var(--red); }
+.wof-sheet.file .inj + .inj { margin-top: var(--s3); }
+.wof-sheet.file .inj-h { display: flex; align-items: flex-start; gap: var(--s2); }
+.wof-sheet.file .inj-h img { width: 26px; height: 26px; flex: 0 0 26px; margin-top: 1px; mix-blend-mode: multiply; border: 0; }
+.wof-sheet.file .inj-h h4 { margin: 0; flex: 1; min-width: 0; font: 700 var(--t-md)/1.2 var(--fd); }
+.wof-sheet.file .inj-h h4 .link { font: inherit; color: var(--ink); }
+.wof-sheet.file .inj-h h4 .link:hover { color: var(--red); }
+.wof-sheet.file .inj-h h4 small { display: block; font: var(--t-xs)/1.3 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); font-weight: 400; }
+.wof-sheet.file .inj-h .stamp.st { flex: 0 0 auto; margin-top: 1px; transform: rotate(-5deg); }
+.wof-sheet.file .inj .fx { margin: 4px 0; display: flex; flex-direction: column; gap: 1px; font: var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
+.wof-sheet.file .inj p.txt { margin: 4px 0; font: italic var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
+.wof-sheet.file .inj .opts { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s2); align-items: center; margin: var(--s2) 0; }
+.wof-sheet.file .inj .opts select { width: auto; height: 20px; font-size: var(--t-sm); }
+.wof-sheet.file .inj .foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); flex-wrap: wrap; margin-top: 4px; }
+.wof-sheet.file .inj .days { display: flex; gap: 3px; align-items: center; flex-wrap: wrap; }
+.wof-sheet.file .inj .day {
+  width: 16px; height: 16px; border: 1.5px solid var(--ink2); display: grid; place-items: center;
+  font: var(--t-xs)/1 var(--fl); color: var(--ink3); background: var(--paper);
+}
+.wof-sheet.file .inj .day.done { background: var(--ink); color: var(--paper-hi); border-color: var(--ink); }
+.wof-sheet.file[data-motion=full] .inj .day { transition: transform .1s var(--ease); }
+.wof-sheet.file[data-motion=full] .inj .day:hover:not(:disabled) { transform: translateY(-1px); }
+
+/* A Stress Response reads the same as a Critical Injury, in red instead of green. */
+.wof-sheet.file .inj.resp { border-left-color: var(--red); background: linear-gradient(rgba(142, 35, 35, .06), rgba(142, 35, 35, .06)), var(--paper-hi); }
+.wof-sheet.file .inj.resp .inj-h h4 { color: var(--red); }
+
+/* ── Scars ────────────────────────────────────────────────────────────── */
+.wof-sheet.file .scar {
+  display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: var(--s3); align-items: center;
+  padding: var(--s2) var(--s3); border: 1px solid var(--ink2); background: var(--paper-hi); box-shadow: 2px 2px 0 rgba(36, 31, 27, .22);
+}
+.wof-sheet.file .scar + .scar { margin-top: var(--s2); }
+.wof-sheet.file .scar img { width: 32px; height: 32px; mix-blend-mode: multiply; border: 0; }
+.wof-sheet.file .scar strong { font: italic 700 var(--t-md)/1.25 var(--fd); }
+.wof-sheet.file .scar p { margin: 2px 0 0; font: var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
+.wof-sheet.file .griefline { margin-top: 12px; }
+.wof-sheet.file .grief { display: flex; gap: 6px; align-items: center; }
+.wof-sheet.file .grief button { width: 20px; height: 20px; border: 1.5px solid var(--ink2); border-radius: 50%; background: var(--paper-hi); }
+.wof-sheet.file .grief button.on { background: var(--ink); border-color: var(--ink); }
+.wof-sheet.file[data-motion=full] .grief button { transition: transform .12s var(--ease); }
+.wof-sheet.file[data-motion=full] .grief button:hover:not(:disabled) { transform: scale(1.1); }
+
+/* ── The readout: a dashed box of what the band's tracks are built from ─────────────────────── */
+.wof-sheet.file .readout {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; margin: 0; padding: 6px 10px;
+  border: 1px dashed var(--ink3); font: var(--t-sm)/1.5 var(--fl); color: var(--ink2); letter-spacing: .02em;
+}
+.wof-sheet.file .readout dt { font: var(--t-xs)/1.9 var(--fl); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+.wof-sheet.file .readout dd { margin: 0; font-variant-numeric: tabular-nums; }
+.wof-sheet.file .readout dd .note { display: block; }
+.wof-sheet.file .readout b { font: 700 var(--t-md) var(--fd); color: var(--ink); }
+.wof-sheet.file .readout .red-text { display: inline-flex; align-items: center; gap: var(--s2); }
+
+/* ── The field record: the same dashed box, holding form rows instead of a formula list ─────── */
+.wof-sheet.file .record { display: flex; flex-direction: column; gap: var(--s2); padding: 6px 10px 8px; border: 1px solid var(--rule); }
+.wof-sheet.file .record > p.lbl { margin: 0; }
+
+/* ── Width response: a paper under 700px (a 720px window, the Squadmate's 600) folds the three
+   columns to the figure plus one stack; the second stack (Scars, the readout, the field record)
+   moves under it full width. ─────────────────────────────────────────────────────────────────── */
+@container paper (max-width: 700px) {
+  .wof-sheet.file .wm { grid-template-columns: 150px minmax(0, 1fr); }
+  .wof-sheet.file .wm > .stack:last-child { grid-column: 1 / -1; }
+}
+
+/* ── Motion off, and the viewer's reduced-motion preference ─────────────────────────────────── */
+.wof-sheet.file[data-motion=off] .wm * { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .wof-sheet.file .inj .day, .wof-sheet.file .grief button { transition: none !important; }
+  .wof-sheet.file .inj .day:hover, .wof-sheet.file .grief button:hover { transform: none !important; }
+}

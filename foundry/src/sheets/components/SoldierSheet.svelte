@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { tick } from 'svelte';
-  import { reveal } from '../../motion/fx.ts';
-  import { MOTION } from '../../motion/tokens.ts';
-  import { motionMode, viewer } from '../../settings.svelte.ts';
+  /**
+   * The Soldier sheet, the Refined Dossier (sheet-overhaul plan): the slim header and the vitals
+   * band over the pages, the index tabs on the file's right edge, the footer on the binder
+   * (FileFrame). The Lifepath banner stands between the band and the pages.
+   */
   import { setHoverCards, setSheetContext, t } from '../context.ts';
   import { HoverCards } from '../hover.svelte.ts';
   import type { SheetState } from '../sheet-state.svelte.ts';
   import type { SoldierView } from '../soldier-view.ts';
   import DetailCards from './DetailCards.svelte';
-  import EditBanner from './EditBanner.svelte';
+  import FileFrame from './FileFrame.svelte';
   import Header from './Header.svelte';
   import LifepathBanner from './LifepathBanner.svelte';
   import TabKit from './TabKit.svelte';
   import TabRecord from './TabRecord.svelte';
   import TabSoldier from './TabSoldier.svelte';
-  import Tabs from './Tabs.svelte';
   import TabWounds from './TabWounds.svelte';
   import Vitals from './Vitals.svelte';
 
@@ -26,46 +26,40 @@
   setHoverCards(hover);
 
   const view = $derived(sheetState.view);
+  /** The index tabs, each with its colour mark (the preview's red, iron, green, brass). */
   const TABS = [
-    { id: 'soldier', label: 'WOF.Sheet.tab.soldier' },
-    { id: 'kit', label: 'WOF.Sheet.tab.kit' },
-    { id: 'wounds', label: 'WOF.Sheet.tab.wounds' },
-    { id: 'record', label: 'WOF.Sheet.tab.record' },
+    { id: 'soldier', label: 'WOF.Sheet.tab.soldier', tc: 'var(--red)' },
+    { id: 'kit', label: 'WOF.Sheet.tab.kit', tc: 'var(--iron-hi)' },
+    { id: 'wounds', label: 'WOF.Sheet.tab.wounds', tc: 'var(--agi)' },
+    { id: 'record', label: 'WOF.Sheet.tab.record', tc: 'var(--brass)' },
   ];
-
-  let body: HTMLElement | undefined = $state();
-
-  async function select(id: string) {
-    if (sheetState.tab === id) return;
-    sheetState.tab = id;
-    await tick();
-    body?.scrollTo({ top: 0 });
-    reveal(body?.firstElementChild);
-  }
 </script>
 
-<div class="wof-sheet" data-gore={viewer.gore} data-motion={motionMode()} data-mode={view.mode} style="--wof-loop: {MOTION.loop}ms">
-  <i class="eyelet e1"></i><i class="eyelet e2"></i><i class="eyelet e3"></i>
-  {#if view.mode === 'edit'}<EditBanner edge="top" text={t('WOF.Sheet.mode.bannerText')} label={t('WOF.Sheet.mode.bannerLabel')} />{/if}
-  <Header {view} />
-  <Vitals {view} />
-  {#if view.lifepath}<LifepathBanner offer={view.lifepath} {sheet} />{/if}
-
-  <Tabs tabs={TABS} {sheetState} {sheet} onselect={select} label={t('WOF.Sheet.tab.label')} />
-
-  <div class="body" bind:this={body} id="{sheet.id}-panel" role="tabpanel" aria-labelledby="{sheet.id}-tab-{sheetState.tab}">
-    {#if sheetState.tab === 'soldier'}
-      <section class="panel"><TabSoldier {view} /></section>
-    {:else if sheetState.tab === 'kit'}
-      <section class="panel"><TabKit {view} /></section>
-    {:else if sheetState.tab === 'wounds'}
-      <section class="panel"><TabWounds {view} /></section>
+<FileFrame
+  {sheet}
+  {sheetState}
+  mode={view.mode}
+  tabs={TABS}
+  tabLabel={t('WOF.Sheet.tab.label')}
+  footLeft={t('WOF.Sheet.foot.left')}
+  footRight={t('WOF.Sheet.foot.right')}
+  cls="soldier"
+>
+  {#snippet top()}
+    <Header {view} />
+    <Vitals {view} />
+    {#if view.lifepath}<LifepathBanner offer={view.lifepath} {sheet} />{/if}
+  {/snippet}
+  {#snippet page(tab)}
+    {#if tab === 'kit'}
+      <TabKit {view} />
+    {:else if tab === 'wounds'}
+      <TabWounds {view} />
+    {:else if tab === 'record'}
+      <TabRecord {view} />
     {:else}
-      <section class="panel"><TabRecord {view} /></section>
+      <TabSoldier {view} />
     {/if}
-  </div>
-
-  <footer class="foot"><span class="lbl">{t('WOF.Sheet.foot.left')}</span><span class="lbl">{t('WOF.Sheet.foot.right')}</span></footer>
-  {#if view.mode === 'edit'}<EditBanner edge="bottom" text={t('WOF.Sheet.mode.bannerText')} label={t('WOF.Sheet.mode.bannerLabel')} />{/if}
-</div>
+  {/snippet}
+</FileFrame>
 <DetailCards {hover} />

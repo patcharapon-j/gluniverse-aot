@@ -1112,6 +1112,9 @@
         "left": "Wings of Freedom, field dossier",
         "right": "Personnel division"
       },
+      "band": {
+        "label": "Vitals"
+      },
       "header": {
         "kicker": "Survey Corps personnel record",
         "file": "File",
@@ -1127,7 +1130,8 @@
         "horseLame": "Horse lame",
         "carrying": "Carrying {name}",
         "carriedBy": "Carried by {name}",
-        "nextRoll": "Next roll −{dice}"
+        "nextRoll": "Next roll −{dice}",
+        "airborneTip": "On the wires. Click to mark Airborne or clear it."
       },
       "menu": {
         "open": "Open",
@@ -1164,33 +1168,38 @@
         "box": "Stress box {n}",
         "over": "{n} more Stress beyond the last box drawn",
         "responses": "Stress Responses",
-        "lasting": "lasting"
+        "lasting": "lasting",
+        "noResponse": "No response held"
       },
       "resolve": {
         "short": "{base} + Scars {scars} − Grief {grief}",
-        "floorTip": "The formula gives {n}; the system keeps Resolve at 0 (rules question open)."
+        "floorTip": "The formula gives {n}; the system keeps Resolve at 0 (rules question open).",
+        "show": "Resolve {n}. Show how it is built",
+        "title": "Resolve {n}",
+        "built": "Half of Instinct plus Empathy, rounded up, plus Scars, minus Grief (3 at most)."
       },
       "down": {
         "toggle": "Mark Down or Standing",
         "ruleSaysDown": "By the rules this soldier is Down: current Health is 0, or an untreated injury keeps them Down.",
         "ruleSaysUp": "By the rules this soldier is not Down.",
-        "match": "Match the rules",
-        "byRuleYes": "(the rules say Down)",
-        "byRuleNo": "(the rules say not Down)"
+        "match": "Match the rules"
       },
       "gas": {
         "title": "Gas",
-        "noOdm": "No ODM Gear",
         "dry": "Dry",
         "odm": "ODM {current}/{rating}",
         "odmDice": "ODM Gear, {current} of {rating} Gear Dice",
         "level": "Gas {current} of {full}",
         "noSpare": "No spare canister",
-        "spareTanks": "Spares",
         "spend": "Spend 1",
         "change": "Change",
         "changeTip": "Change Canister: fit the fullest spare; the old canister stays a spare if it has gas.",
-        "fitThis": "Fit spare canister {n}, at {current} of {full}"
+        "fitThis": "Fit spare canister {n}, at {current} of {full}",
+        "spendTip": "Fitted canister: {current} of {full}. Click to spend 1.",
+        "dryTip": "Fitted canister is dry. Change fits the fullest spare.",
+        "more": "{n} more spares on the Kit page",
+        "moreCount": "+{n}",
+        "stampNoOdm": "No ODM"
       },
       "blades": {
         "title": "Blade Sets",
@@ -1202,28 +1211,44 @@
         "ruinTip": "Any wear ruins a Blade Set: it is discarded and the handles are empty.",
         "swap": "Swap",
         "disciplineReady": "Discipline ready",
-        "disciplineUsed": "Discipline used"
+        "disciplineUsed": "Discipline used",
+        "inHandTip": "Blade Set in the handles: {dice} Gear Dice. Any wear ruins it.",
+        "inHandTipOne": "Blade Set in the handles: 1 Gear Die. Any wear ruins it.",
+        "emptyTip": "Handles empty. Swap fits a stored Blade Set.",
+        "storedCount": "Blade Sets stored: {n}",
+        "storedTip": "{n} Blade Sets stored. Click to fit one in the handles.",
+        "storedTipOne": "1 Blade Set stored. Click to fit it in the handles."
       },
       "soldier": {
         "attributes": "Attributes",
-        "attributesHint": "Each dot is a base die",
         "rolls": "Quick rolls",
-        "rollsHint": "The dots are the pool you roll",
         "talents": "Talents",
         "noTalents": "No Talents yet.",
         "enlistment": "Enlistment",
-        "driveUsed": "Drive used",
         "key": "Key",
         "keyTip": "The key attribute of the Specialty can reach {max}.",
         "keyLine": "{attr}, up to {max}",
         "rollAttr": "Roll {attr}: {dice} Base Dice, plus a Stress Die for each point of Stress",
-        "rollAttrLabel": "Roll {attr}"
+        "rollAttrLabel": "Roll {attr}",
+        "headTip": "{summary} Roll {attr} alone: {dice} Base Dice, plus a Stress Die for each point of Stress.",
+        "comrade": "Comrade",
+        "used": "Used",
+        "load": "Load",
+        "loadLine": "{items} of {limit} carried",
+        "loadTip": "Strength + 4. Over it you are Overloaded."
       },
       "talent": {
         "dice": "Dice",
         "rule": "Rule",
         "markUsed": "Mark used",
-        "markReady": "Mark ready"
+        "markReady": "Mark ready",
+        "count": "{n} held",
+        "expand": "Show the rules text",
+        "collapse": "Hide the rules text",
+        "usedAria": "{name}: its use is spent",
+        "readyAria": "{name}: its use is ready",
+        "usedTip": "{limit}. Its use is spent. Mark it ready.",
+        "readyTip": "{limit}. Its use is ready. Mark it used."
       },
       "talentDice": "+{dice} base dice on {entries}",
       "rolls": {
@@ -1235,7 +1260,11 @@
         "any": "Anywhere",
         "fixed": "Fixed rolls",
         "d6": "D6",
-        "dice": "dice"
+        "dice": "dice",
+        "bonusLabel": "Bonus Dice",
+        "bonusNext": "next roll, up to {cap}",
+        "stressAdds": "+{n} Stress Dice on every attribute roll",
+        "noStress": "No Stress Dice"
       },
       "roll": {
         "noGear": "Needs {gear}",
@@ -1254,7 +1283,8 @@
         "bonus": "Bonus",
         "penalty": "penalty",
         "gear": "Gear",
-        "stress": "Stress"
+        "stress": "Stress",
+        "label": "Dice key"
       },
       "effect": {
         "penalty": "−{dice} die: {entries}",
@@ -1284,8 +1314,6 @@
         "onlyOne": "This soldier already has {name}.",
         "notHere": "{type} items do not go on a {sheet} sheet.",
         "talents": "Drop Talents here. Dropping a held Talent raises its level.",
-        "specialty": "Drop a Specialty",
-        "origin": "Drop an Origin",
         "gear": "Drop gear from the compendium here.",
         "injuries": "Drop a Critical Injury row here; you pick its Injury Type and side."
       },
@@ -1311,11 +1339,13 @@
         "engagement": "Titan Engagement",
         "engagementHint": "Positions by Focus Titan",
         "noPositions": "Not in a Titan Engagement.",
-        "addPosition": "Add a Position",
         "leftAtHint": "After death in a Titan Engagement",
         "commaList": "Items, separated by commas",
         "positionsShown": "Positions (derived)",
-        "horseZone": "Horse"
+        "horseZone": "Horse",
+        "kept": "Kept",
+        "more": "More",
+        "less": "Less"
       },
       "status": {
         "carried": "Carried",
@@ -1354,13 +1384,11 @@
         "apply": "Record the injury"
       },
       "wounds": {
-        "healthHint": "Down at 0",
         "healthFormula": "2 + ceil((Str <b>{str}</b> + Agi <b>{agi}</b>) / 2) = <b>{health}</b>",
         "current": "Current Health {current} of {health}; {crossed} crossed off",
         "injuries": "Critical Injuries",
         "injuriesHint": "{held} held, {untreated} untreated",
         "noInjuries": "No Critical Injuries.",
-        "stressHint": "Each box is a Stress Die",
         "stressNote": "Minimum {min}: one per Scar. Every attribute roll adds one Stress Die per box.",
         "resolveFormula": "ceil((Ins <b>{ins}</b> + Emp <b>{emp}</b>) / 2) = <b>{base}</b>, + Scars <b>{scars}</b>, − Grief <b>{grief}</b> = <b>{resolve}</b>",
         "scarsGrief": "Scars and Grief",
@@ -1378,7 +1406,9 @@
         "body": "Body",
         "addRally": "Add a comrade",
         "pickRow": "Choose the Critical Injury",
-        "otherRow": "A Critical Injury the tables do not list"
+        "otherRow": "A Critical Injury the tables do not list",
+        "readout": "Readout",
+        "readoutHint": "What the band is built from"
       },
       "ends": {
         "titan-engagement-end": "Ends with the Titan Engagement",
@@ -1398,7 +1428,8 @@
         "noSpecialty": "No Specialty",
         "top10": "Top 10",
         "xpAria": "{n} XP",
-        "notesHint": "Click the pen to write"
+        "notesHint": "Click the pen to write",
+        "xpOf": "{n} of {max}"
       },
       "momentum": {
         "spend": "Spend 1 Momentum",

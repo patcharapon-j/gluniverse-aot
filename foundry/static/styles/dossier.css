@@ -1,0 +1,306 @@
+/*
+ * Wings of Freedom: the Refined Dossier frame (sheet-overhaul plan, sections 3 and 4; the
+ * design/preview-sheet-a-refined-dossier.html drawing), shared by the Soldier and Squadmate sheets:
+ * the binder padding, the paper and its eyelets, the index tabs on the paper's right edge, the
+ * footer on the binder, the slim header and plate, the vitals band, the Resolve seal, the light
+ * section labels inside `.wof-sheet.file`, and the width responses. Tokens are the locked ones on
+ * `.wof-app` (sheet.css); the tab pages have their own stylesheets (dossier-*.css).
+ *
+ * Motion: hover lifts, the index tab slide and the seal's turn are CSS transitions that run only
+ * under data-motion=full; Reduced keeps short colour changes; Off and prefers-reduced-motion none.
+ */
+
+/* ── Window: the binder around the file ──────────────────────────────── */
+.application.wof-app.wof-file-window > .window-content.wof-content { padding: 0 0 0 8px; }
+.wof-file { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.wof-file-main { flex: 1; min-height: 0; display: flex; position: relative; }
+.wof-file-foot {
+  flex: 0 0 18px; display: flex; align-items: center; justify-content: space-between; gap: var(--s2); padding: 0 44px 2px 26px;
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .22em; text-transform: uppercase; white-space: nowrap; overflow: hidden;
+  color: rgba(226, 192, 120, .78); text-shadow: 0 -1px 0 rgba(0, 0, 0, .7), 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+/* ── Paper ───────────────────────────────────────────────────────────── */
+.wof-sheet.file {
+  --gr: 12px;
+  flex: 1; min-width: 0; container: paper / inline-size;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .4), inset 0 0 60px rgba(90, 60, 30, .16), 0 0 0 1px rgba(0, 0, 0, .5);
+}
+.wof-sheet.file .eyelet.e1 { top: 40px; }
+.wof-sheet.file .eyelet.e3 { bottom: 40px; }
+
+/* ── Index tabs on the paper's right edge ────────────────────────────── */
+.wof-file .itabs { flex: 0 0 34px; display: flex; flex-direction: column; gap: 4px; padding: 64px 0 0; position: relative; z-index: 2; }
+.wof-file .itab {
+  position: relative; box-sizing: border-box; width: 28px; height: auto; min-height: 0; margin: 0 0 0 -1px; padding: 12px 0;
+  display: flex; align-items: center; justify-content: center; gap: 7px; flex: none; cursor: pointer;
+  writing-mode: vertical-rl; white-space: nowrap; text-align: center; text-shadow: none;
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .16em; text-transform: uppercase; color: var(--ink2);
+  background: linear-gradient(90deg, #c9b68e, var(--paper-deep) 40%, var(--paper-lo));
+  border: 1px solid rgba(20, 14, 10, .8); border-left: 0; border-radius: 0 6px 6px 0;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .4), inset -1px 0 0 rgba(255, 255, 255, .3);
+}
+.wof-file .itab::after { content: ""; position: absolute; right: 3px; top: 8px; bottom: 8px; width: 2px; background: var(--tc, var(--red)); opacity: .75; }
+.wof-file .itab .n { color: var(--red); }
+.wof-file .itab:hover { color: var(--ink); background: linear-gradient(90deg, #c9b68e, var(--paper-deep) 40%, var(--paper-lo)); border-color: rgba(20, 14, 10, .8); box-shadow: 2px 2px 0 rgba(0, 0, 0, .4), inset -1px 0 0 rgba(255, 255, 255, .3); }
+.wof-file .itab[aria-selected=true] {
+  width: 32px; margin-left: -3px; z-index: 1; color: var(--ink);
+  background: linear-gradient(90deg, var(--paper) 30%, var(--paper-hi)); box-shadow: 2px 2px 0 rgba(0, 0, 0, .45);
+}
+.wof-file .itab:focus-visible { outline: 2px solid var(--brass-hi); outline-offset: 1px; }
+.wof-file[data-motion=full] .itab { transition: transform .16s var(--ease), width .16s var(--ease), background .16s, color .16s; }
+.wof-file[data-motion=full] .itab:hover:not([aria-selected=true]) { transform: translateX(2px); }
+.wof-file[data-motion=full] .itab:active { transform: translateX(0); }
+.wof-file[data-motion=reduced] .itab { transition: color .12s, background .12s; }
+
+/* ── Pages: one scrolling panel under the band ───────────────────────── */
+.wof-sheet.file .pages { flex: 1; min-height: 0; position: relative; margin-top: 10px; }
+.wof-sheet.file .panel {
+  position: absolute; inset: 0; overflow: auto; padding: 0 var(--gr) 12px var(--gl);
+  scrollbar-width: thin; scrollbar-color: rgba(79, 70, 61, .4) transparent;
+}
+.wof-sheet.file .lp-banner { flex: 0 0 auto; }
+
+/* A card on a page (the tab steps use it): a raised sheet of paper-lo. */
+.wof-sheet.file .card {
+  position: relative; padding: 6px 10px 8px; background: var(--paper-lo); border: 1px solid var(--ink2);
+  box-shadow: 2px 2px 0 rgba(36, 31, 27, .22), inset 0 1px 0 rgba(255, 255, 255, .5);
+}
+
+/* Section labels inside the file: the red title and its small § number, the hint, no rule line. */
+.wof-sheet.file .sec { flex-wrap: wrap; min-height: 22px; margin: 0 0 6px; gap: 0 var(--s2); white-space: normal; font: var(--t-sm)/1 var(--fl); letter-spacing: .18em; }
+.wof-sheet.file .sec::after { display: none; }
+.wof-sheet.file .sec .n { margin-right: -4px; font-size: var(--t-xs); letter-spacing: .06em; opacity: .75; }
+.wof-sheet.file .sec .hint { order: 0; font: var(--t-xs)/1.2 var(--fl); letter-spacing: .06em; text-transform: none; color: var(--ink3); }
+.wof-sheet.file .sec .sec-act { order: 0; margin-left: auto; }
+
+/* ── Header: slim ────────────────────────────────────────────────────── */
+.wof-sheet.file .hdr {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s3); align-items: center;
+  margin: 0 var(--gr) 0 var(--gl); padding: 10px 0 6px; border-bottom: 2px solid var(--ink); position: relative; flex: 0 0 auto;
+}
+.wof-sheet.file .ident { min-width: 0; display: block; }
+.wof-sheet.file .kicker { display: flex; align-items: center; gap: 6px; min-width: 0; font: var(--t-xs)/1.2 var(--fl); letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
+.wof-sheet.file .kicker img { width: 14px; height: 14px; }
+.wof-sheet.file .kicker .kt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wof-sheet.file .kicker .serial {
+  margin-left: auto; flex: none; padding: 2px 6px; font: var(--t-xs)/1 var(--fl); letter-spacing: .16em; text-transform: uppercase; color: var(--ink2);
+  border: 1px solid var(--ink3); background: rgba(255, 255, 255, .25); font-variant-numeric: tabular-nums;
+}
+.wof-sheet.file .kicker span.serial:empty { display: none; }
+.wof-sheet.file .kicker select.serial { width: auto; height: 20px; flex: 0 1 auto; min-width: 0; max-width: 45%; }
+.wof-sheet.file .kicker .hdr-acts { display: inline-flex; flex: none; flex-wrap: nowrap; gap: var(--s1); }
+.wof-sheet.file .kicker .hdr-acts:empty { display: none; }
+.wof-sheet.file .nrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
+.wof-sheet.file input.name {
+  flex: 1 1 120px; width: auto; min-width: 0; height: auto; margin: 2px 0 3px; padding: 0;
+  font: 900 24px/1 var(--fd); letter-spacing: -.01em; color: var(--ink); text-overflow: ellipsis;
+  background: transparent; border: 0; border-bottom: 1px dashed transparent;
+}
+.wof-sheet.file input.name:hover:not(:disabled) { border-bottom-color: var(--ink3); }
+.wof-sheet.file input.name:disabled { opacity: 1; }
+
+/* Status tags; Standing or Down and Airborne are buttons. */
+.wof-sheet.file .tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--s1); flex: 0 1 auto; min-width: 0; }
+.wof-sheet.file .tag {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 20px; padding: 2px 6px;
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+  border: 1px dashed var(--ink3); color: var(--ink3); background: none;
+}
+.wof-sheet.file .tag img { width: 14px; height: 14px; mix-blend-mode: multiply; }
+.wof-sheet.file .tag.ok { border: 1px solid var(--green); color: var(--green); background: rgba(63, 97, 70, .08); }
+.wof-sheet.file .tag.warn { border: 1px solid var(--amber-line); color: var(--amber); background: rgba(176, 132, 47, .1); }
+.wof-sheet.file .tag.grave { border: 1px solid var(--red-lo); color: var(--paper-hi); background: var(--red); }
+.wof-sheet.file .tag.grave img { filter: invert(1); mix-blend-mode: normal; }
+.wof-sheet.file .tag.info { border: 1px solid var(--blue); color: var(--blue); background: rgba(47, 74, 110, .08); }
+.wof-sheet.file button.tag { cursor: pointer; }
+.wof-sheet.file button.tag:hover:not(:disabled) { filter: brightness(.9); }
+.wof-sheet.file button.tag:disabled { cursor: default; }
+.wof-sheet.file[data-motion=full] button.tag { transition: transform .12s var(--ease), filter .12s; }
+.wof-sheet.file[data-motion=full] button.tag:hover:not(:disabled) { transform: translateY(-1px); }
+
+/* The meta line: read-only on the Soldier, one line. */
+.wof-sheet.file .meta {
+  display: flex; flex-wrap: nowrap; align-items: baseline; gap: 0 var(--s3); min-width: 0; overflow: hidden; white-space: nowrap;
+  font: var(--t-xs)/1.5 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3);
+}
+.wof-sheet.file .meta > span, .wof-sheet.file .meta > label { display: inline-flex; align-items: baseline; gap: 4px; min-width: 0; }
+.wof-sheet.file .meta b, .wof-sheet.file .meta button.link {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font: inherit; font-weight: 400; letter-spacing: inherit; text-transform: inherit; color: var(--ink); border-bottom: 1px dotted var(--ink3);
+}
+.wof-sheet.file .meta b.blank { color: var(--ink3); font-style: italic; }
+.wof-sheet.file .meta button.link:hover { color: var(--red); }
+.wof-sheet.file .meta select, .wof-sheet.file .meta input { height: 18px; width: auto; min-width: 72px; max-width: 180px; padding: 0 2px; font-size: var(--t-xs); background: transparent; }
+
+/* The slim plate: small, clipped, its buttons in an overlay on hover and on focus. */
+.wof-sheet .plate.slim {
+  width: 52px; height: 62px; padding: 3px; transform: rotate(-2deg);
+  box-shadow: 1.5px 2px 0 rgba(36, 31, 27, .3), 0 5px 10px rgba(60, 40, 20, .2);
+}
+.wof-sheet .plate.slim img { object-position: 50% 10%; }
+.wof-sheet .plate.slim::before { display: none; }
+.wof-sheet .plate.slim::after { right: -4px; bottom: -4px; width: 11px; height: 11px; }
+.wof-sheet .plate.slim .clip { position: absolute; left: 10px; top: -9px; width: 12px; height: 30px; z-index: 3; pointer-events: none; filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, .25)); }
+.wof-sheet .plate.slim .plate-acts { left: 3px; right: 3px; bottom: 3px; gap: 0; padding: 6px 0 1px; }
+.wof-sheet .plate.slim .pbtn { width: 15px; height: 16px; font-size: 10px; }
+
+/* ── The vitals band ─────────────────────────────────────────────────── */
+.wof-sheet.file .band {
+  position: relative; flex: 0 0 auto; display: flex; margin: 12px var(--gr) 0 var(--gl);
+  border: 1px solid var(--ink2); background: linear-gradient(var(--paper-hi), var(--paper-lo)); box-shadow: 2px 2px 0 var(--ink);
+}
+/* Every cell keeps its drawn width and the Blade Sets cell takes what is left. A long Health and
+   Stress row can leave it less than its drawing: then it drops to a row of its own rather than
+   pushing the band past the paper. */
+.wof-sheet.file .band { flex-wrap: wrap; }
+.wof-sheet.file .band .cell { position: relative; display: flex; flex-direction: column; gap: 3px; flex: 0 0 auto; min-width: 0; padding: 5px 10px 6px; }
+.wof-sheet.file .band .cell + .cell { border-left: 1px dotted rgba(36, 31, 27, .4); }
+.wof-sheet.file .band .cell.grow { flex: 1 1 0; min-width: min-content; }
+.wof-sheet.file .band .ch { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); min-height: 16px; }
+.wof-sheet.file .band .ch .lbl { display: inline-flex; align-items: center; gap: 4px; color: var(--ink2); white-space: nowrap; }
+.wof-sheet.file .band .ch .lbl img { width: 14px; height: 14px; mix-blend-mode: multiply; }
+.wof-sheet.file .band .cr { display: flex; align-items: center; gap: 6px; min-height: 26px; }
+.wof-sheet.file .band .num { min-width: 30px; font: 900 24px/1 var(--fd); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.wof-sheet.file .band .num small { font: 600 var(--t-sm) var(--fd); color: var(--ink3); }
+.wof-sheet.file .band .num.red { color: var(--red); }
+
+/* The Down stamp */
+.wof-sheet.file .band .downst {
+  transform: rotate(-4deg); padding: 0 5px; font-size: var(--t-xs); line-height: 14px;
+  color: var(--red); border: 2px solid currentColor; opacity: .92;
+}
+.wof-sheet.file .band .downst.green { color: var(--green); }
+.wof-sheet.file .band .downst:hover:not(:disabled) { filter: brightness(.8); }
+
+/* The tracks at band size: one row, narrow boxes */
+.wof-sheet.file .track-row.band { --box: 15px; --bgap: 3px; flex-wrap: nowrap; max-width: none; padding: 0; gap: 3px; }
+.wof-sheet.file .track-row.band .hbox, .wof-sheet.file .track-row.band .sbox {
+  border: 1.5px solid var(--ink2); border-radius: 0; outline: 0; transform: none;
+  background: rgba(255, 255, 255, .35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+.wof-sheet.file .track-row.band .hbox { width: 15px; height: 19px; }
+.wof-sheet.file .track-row.band .sbox { width: 12px; height: 17px; background: rgba(255, 255, 255, .4); }
+.wof-sheet.file .track-row.band .hbox.held::before, .wof-sheet.file .track-row.band .sbox.on::before { display: none; }
+.wof-sheet.file .track-row.band .hbox.held { background: var(--red); border-color: var(--red-lo); }
+.wof-sheet.file .track-row.band .hbox.damaged { background: rgba(255, 255, 255, .35); border-color: var(--ink2); }
+.wof-sheet.file .track-row.band .hbox.damaged .ink path { stroke: var(--red); stroke-width: 2.4; filter: none; }
+.wof-sheet.file .track-row.band .hbox.crossed {
+  cursor: help; border-color: var(--ink); box-shadow: none;
+  background: repeating-linear-gradient(-45deg, var(--paper-lo) 0 2px, var(--ink2) 2px 3px);
+}
+.wof-sheet.file .track-row.band .hbox.crossed .glyph { display: none; }
+.wof-sheet.file .track-row.band .sbox.on { background: var(--red); border-color: var(--red-lo); border-radius: 2px; }
+.wof-sheet.file .track-row.band .sbox.on .ink path { stroke: var(--paper-hi); stroke-width: 2; opacity: .6; }
+.wof-sheet.file .track-row.band .sbox.min { box-shadow: 0 3px 0 -1px var(--ink); }
+.wof-sheet.file .track-row.band .sbox.min::after { display: none; }
+.wof-sheet.file .track-row.band .sover { min-width: 17px; height: 17px; }
+.wof-sheet.file .track-row.band .hbox:hover:not(:disabled):not(.crossed), .wof-sheet.file .track-row.band .sbox:hover:not(:disabled) { border-color: var(--red); filter: none; }
+.wof-sheet.file[data-motion=full] .track-row.band .hbox, .wof-sheet.file[data-motion=full] .track-row.band .sbox { transition: transform .12s var(--ease), border-color .12s; }
+.wof-sheet.file[data-motion=full] .track-row.band .hbox:hover:not(:disabled):not(.crossed),
+.wof-sheet.file[data-motion=full] .track-row.band .sbox:hover:not(:disabled) { transform: translateY(-1px); }
+
+/* The stepper at band size */
+.wof-sheet.file .band .chr { display: inline-flex; align-items: center; gap: 6px; }
+.wof-sheet.file .band .stepper button { width: 18px; height: 16px; }
+.wof-sheet.file .band .stepper button:active:not(:disabled) { box-shadow: inset 0 1px 3px rgba(0, 0, 0, .4); }
+
+/* Chips: the held injuries under Health, the lasting responses under Stress */
+.wof-sheet.file .band .chips {
+  display: flex; flex-wrap: nowrap; gap: 4px; min-height: 18px; margin: 0; padding: 0; list-style: none; overflow: hidden;
+  width: 0; min-width: 100%;
+}
+.wof-sheet.file .band .chips li { display: flex; min-width: 0; flex: 0 1 auto; margin: 0; }
+.wof-sheet.file .band .chip {
+  display: inline-flex; align-items: center; gap: 4px; height: 18px; max-width: 100%; padding: 0 6px 0 2px; overflow: hidden; white-space: nowrap;
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .04em; text-transform: uppercase;
+  border: 1px solid var(--ink3); color: var(--ink2); background: rgba(255, 255, 255, .35);
+}
+.wof-sheet.file .band .chip img { width: 14px; height: 14px; flex: 0 0 14px; mix-blend-mode: multiply; }
+.wof-sheet.file .band .chip span { overflow: hidden; text-overflow: ellipsis; }
+.wof-sheet.file .band .chip.treated { border-color: var(--green); color: var(--green); }
+.wof-sheet.file .band .chip.untreated { border-color: var(--red); color: var(--paper-hi); background: var(--red); }
+.wof-sheet.file .band .chip.untreated img { filter: invert(1); mix-blend-mode: normal; }
+.wof-sheet.file .band .chip.resp { border-color: var(--red); color: var(--red); background: rgba(142, 35, 35, .07); }
+.wof-sheet.file .band .chip.none { border-style: dashed; color: var(--ink3); cursor: default; }
+.wof-sheet.file .band button.chip { cursor: pointer; }
+.wof-sheet.file .band button.chip:hover { box-shadow: 0 2px 0 rgba(36, 31, 27, .2); }
+.wof-sheet.file[data-motion=full] .band button.chip { transition: transform .12s var(--ease), box-shadow .12s; }
+.wof-sheet.file[data-motion=full] .band button.chip:hover { transform: translateY(-1px); }
+
+/* The Resolve seal and the formula it opens */
+.wof-sheet.file .band .cell.res { align-items: center; justify-content: center; gap: 1px; padding: 4px 8px; }
+.wof-sheet.file .band .seal { position: relative; width: 46px; height: 46px; display: grid; place-items: center; }
+.wof-sheet.file .band .seal img { position: absolute; inset: 0; width: 46px; height: 46px; filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, .3)); }
+.wof-sheet.file .band .seal::before {
+  content: ""; position: absolute; left: 10px; top: 9px; width: 24px; height: 24px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #a8322b, #7c1717 70%); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .45), 0 0 0 1px rgba(255, 210, 190, .15);
+}
+.wof-sheet.file .band .seal b { position: relative; margin: -4px 0 0 -3px; font: 900 18px/1 var(--fd); color: #f6e3c6; text-shadow: 0 1px 0 #3a0808; font-variant-numeric: tabular-nums; }
+.wof-sheet.file .band .seal.red b { color: #ffd0c4; }
+.wof-sheet.file[data-motion=full] .band .seal { transition: transform .14s var(--ease), filter .14s; }
+.wof-sheet.file[data-motion=full] .band .seal:hover { transform: rotate(-6deg) scale(1.04); }
+.wof-sheet.file[data-motion=full] .band .seal:active { transform: scale(.94); }
+.wof-sheet.file .band .pop-f {
+  position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); z-index: 20; width: 236px;
+  display: flex; flex-direction: column; gap: 2px; padding: 8px 10px;
+  font: var(--t-sm)/1.5 var(--fl); letter-spacing: .02em; color: var(--ink2); white-space: normal; text-align: left;
+  background: var(--paper-hi); border: 1px solid var(--ink2); box-shadow: 3px 3px 0 rgba(36, 31, 27, .35);
+}
+.wof-sheet.file .band .pop-f b { font: 700 var(--t-base) var(--fd); color: var(--ink); }
+.wof-sheet.file .band .pop-f .red { color: var(--red); }
+.wof-sheet.file .band .pop-f[hidden] { display: none; }
+
+/* Gas and Blade Sets: the Instrument cells (the drawings: instrument.css) */
+.wof-sheet.file .band .cell.gear { gap: 2px; }
+.wof-sheet.file .band .cell.gear .cr { min-height: 30px; gap: 6px; }
+.wof-sheet.file .band .gnum { margin-left: 3px; font: 700 var(--t-md)/1 var(--fd); letter-spacing: 0; text-transform: none; color: var(--ink); font-variant-numeric: tabular-nums; }
+.wof-sheet.file .band .gnum small { font: 600 var(--t-xs) var(--fd); color: var(--ink3); }
+.wof-sheet.file .band .gnum.dry { color: var(--red); }
+.wof-sheet.file .band .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; }
+.wof-sheet.file .band .acts .disc { margin-left: auto; white-space: nowrap; }
+.wof-sheet.file .band .mini { min-height: 20px; padding: 0 7px; }
+
+/* ── The Foundry tooltip over a file ─────────────────────────────────── */
+#tooltip.wof-tip {
+  max-width: 260px; padding: 6px 9px; border-radius: 0; text-align: left;
+  font: 11px/1.45 "Noto Serif", Georgia, serif; color: #241f1b; text-shadow: none;
+  background: #f4ecd8; border: 1px solid #4f463d; box-shadow: 3px 3px 0 rgba(36, 31, 27, .4);
+}
+
+/* ── Width responses (container queries on the paper) ─────────────────── */
+/* The default window (a paper of about 818px): Health can be eight boxes, so the band tightens. */
+@container paper (max-width: 900px) {
+  .wof-sheet.file .band .cell { padding: 5px 7px 6px; }
+  .wof-sheet.file .track-row.band .hbox { width: 13px; }
+}
+/* A paper under 700px (a 720px window, the Squadmate's 600) is too narrow for five cells in a row:
+   the body on the first row, the kit below with the narrow instruments (instrument.css), each cell
+   full height. Measured: the narrow instruments and a Health row of up to eight boxes leave the
+   Blade Sets no room on one row there. */
+@container paper (max-width: 700px) {
+  .wof-sheet.file .tags .tag img { display: none; }
+  .wof-sheet.file .track-row.band .sbox { width: 11px; }
+  .wof-sheet.file .meta > :nth-child(n+5) { display: none; }
+  .wof-sheet.file .kicker .kt { display: none; }
+  .wof-sheet.file .band {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    grid-template-areas: "hp st rs" "gas bl bl";
+  }
+  .wof-sheet.file .band .cell.hp { grid-area: hp; }
+  .wof-sheet.file .band .cell.st { grid-area: st; }
+  .wof-sheet.file .band .cell.res { grid-area: rs; }
+  .wof-sheet.file .band .cell.gas { grid-area: gas; border-left: 0; border-top: 1px dotted rgba(36, 31, 27, .4); }
+  .wof-sheet.file .band .cell.blades { grid-area: bl; min-width: 0; border-top: 1px dotted rgba(36, 31, 27, .4); }
+}
+@container paper (max-width: 640px) {
+  .wof-sheet.file .nrow { flex-wrap: wrap; }
+  .wof-sheet.file .tags { justify-content: flex-start; }
+}
+
+/* ── Motion off, and the viewer's reduced-motion preference ──────────── */
+.wof-file[data-motion=off] .itab, .wof-sheet.file[data-motion=off] * { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .wof-file .itab, .wof-sheet.file .band *, .wof-sheet.file .hdr * { transition: none !important; }
+  .wof-file .itab:hover { transform: none !important; }
+}
