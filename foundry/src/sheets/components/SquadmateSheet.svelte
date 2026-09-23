@@ -141,7 +141,7 @@
     </div>
 
     <div class="two even">
-      <div class="block">
+      <div class="card">
         <Sec n="2" title={t('TYPES.Item.talent')} hint={t('WOF.Squad.talentHint')} />
         {#if talent}
           <div class="tal" data-item-id={talent.id} use:dragItem={{ item: actor.items.get(talent.id) }} use:contextMenu={itemMenu(talent.id, true)} use:detailHover={{ hover, card: () => talent.detail }}>
@@ -173,7 +173,7 @@
         {/if}
       </div>
 
-      <div class="block">
+      <div class="card">
         <Sec n="3" title={t('WOF.Squad.mind')} />
         <dl class="facts">
           <dt>{t('WOF.Derived.resolve')}</dt>
