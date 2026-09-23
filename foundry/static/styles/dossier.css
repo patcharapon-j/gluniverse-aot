@@ -201,8 +201,8 @@
 .wof-sheet.file[data-motion=full] .track-row.band .sbox:hover:not(:disabled) { transform: translateY(-1px); }
 
 /* The stepper at band size */
-.wof-sheet.file .band .stepper { margin-left: 2px; }
-.wof-sheet.file .band .stepper button { width: 20px; height: 20px; }
+.wof-sheet.file .band .chr { display: inline-flex; align-items: center; gap: 6px; }
+.wof-sheet.file .band .stepper button { width: 18px; height: 16px; }
 .wof-sheet.file .band .stepper button:active:not(:disabled) { box-shadow: inset 0 1px 3px rgba(0, 0, 0, .4); }
 
 /* Chips: the held injuries under Health, the lasting responses under Stress */

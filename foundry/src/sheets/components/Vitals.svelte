@@ -182,7 +182,13 @@
   <div class="cell st" bind:this={stEl}>
     <div class="ch">
       <span class="lbl"><img src={icon('die-stress')} alt="" />{t('WOF.Derived.stress')}</span>
-      <span class="note red">{t('WOF.Sheet.stress.min', { n: d.minimum_stress })}</span>
+      <span class="chr">
+        <span class="note red">{t('WOF.Sheet.stress.min', { n: d.minimum_stress })}</span>
+        <span class="stepper">
+          <button type="button" disabled={ro || d.stress_effective <= d.minimum_stress} aria-label={t('WOF.Sheet.stress.lower')} onclick={() => onStress(stepStress(actor, -1), false)}>−</button>
+          <button type="button" disabled={ro} aria-label={t('WOF.Sheet.stress.raise')} onclick={() => onStress(stepStress(actor, 1), true)}>+</button>
+        </span>
+      </span>
     </div>
     <div class="cr">
       <span class="num red">{d.stress_effective}</span>
@@ -195,10 +201,6 @@
         disabled={ro}
         onbox={(i) => onStress(clickStressBox(actor, i), i >= d.stress_effective)}
       />
-      <span class="stepper">
-        <button type="button" disabled={ro || d.stress_effective <= d.minimum_stress} aria-label={t('WOF.Sheet.stress.lower')} onclick={() => onStress(stepStress(actor, -1), false)}>−</button>
-        <button type="button" disabled={ro} aria-label={t('WOF.Sheet.stress.raise')} onclick={() => onStress(stepStress(actor, 1), true)}>+</button>
-      </span>
     </div>
     <ul class="chips" aria-label={t('WOF.Sheet.stress.responses')}>
       {#each view.responses as r (r.index)}
