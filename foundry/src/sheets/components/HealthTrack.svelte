@@ -7,7 +7,8 @@
    * to 8 boxes rather than 2 to 4. A row of 8 at this box size is wider than the Health column of the
    * vitals strip, so a long row lays out as two even rows of at most four rather than stretching the
    * column or leaving one box hanging: the pairs stay easy to count at the table, and the strip's
-   * proportions are untouched.
+   * proportions are untouched. On the Dossier's vitals band (`size="band"`) the row is one line of
+   * narrow boxes (15 x 19, dossier.css), whatever its length.
    */
   import { tick } from 'svelte';
   import { inkIn, inkOut } from '../../motion/fx.ts';
@@ -21,16 +22,16 @@
     disabled = false,
     size = 'md',
     onbox,
-  }: { cells: HealthCell<InjuryView>[]; disabled?: boolean; size?: 'md' | 'lg'; onbox: (i: number) => void } = $props();
+  }: { cells: HealthCell<InjuryView>[]; disabled?: boolean; size?: 'md' | 'lg' | 'band'; onbox: (i: number) => void } = $props();
 
   let el: HTMLElement | undefined = $state();
   let prev: string[] | null = null;
 
   /**
-   * Boxes a row. The large row of the Wounds tab has the width for all eight on one line; the row in
-   * the vitals strip does not, so it lays out as two even rows of at most four.
+   * Boxes a row. The large row of the Wounds tab and the band's row have the width for all eight on
+   * one line; the row in the vitals strip does not, so it lays out as two even rows of at most four.
    */
-  const cols = $derived(size === 'lg' || cells.length <= 4 ? Math.max(1, cells.length) : Math.min(4, Math.ceil(cells.length / 2)));
+  const cols = $derived(size !== 'md' || cells.length <= 4 ? Math.max(1, cells.length) : Math.min(4, Math.ceil(cells.length / 2)));
 
   const where = (w: InjuryView) => [w.side ? t(`WOF.Side.${w.side}`) : '', w.locationLabel].filter(Boolean).join(' ');
   const label = (c: HealthCell<InjuryView>, i: number) =>

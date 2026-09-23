@@ -3,6 +3,8 @@
    * The Stress row as square track boxes: marked boxes are red stamps; boxes under the Scar floor
    * carry an inked bar. The row wraps, and a track longer than `max` stops there and counts the rest
    * on a tally chip, so a soldier carrying a lot of Stress cannot push the strip out of the sheet.
+   * On the Dossier's vitals band (`size="band"`) the row is one line of 12 x 17 boxes (dossier.css);
+   * the band passes `max` 10.
    */
   import { tick } from 'svelte';
   import { inkIn, inkOut } from '../../motion/fx.ts';
@@ -16,7 +18,7 @@
     size = 'md',
     max = 24,
     onbox,
-  }: { count: number; value: number; minimum: number; disabled?: boolean; size?: 'md' | 'lg'; max?: number; onbox: (i: number) => void } = $props();
+  }: { count: number; value: number; minimum: number; disabled?: boolean; size?: 'md' | 'lg' | 'band'; max?: number; onbox: (i: number) => void } = $props();
 
   const shown = $derived(Math.max(1, Math.min(count, max)));
   const over = $derived(Math.max(0, value - shown));

@@ -1112,6 +1112,9 @@
         "left": "Wings of Freedom, field dossier",
         "right": "Personnel division"
       },
+      "band": {
+        "label": "Vitals"
+      },
       "header": {
         "kicker": "Survey Corps personnel record",
         "file": "File",
@@ -1127,7 +1130,8 @@
         "horseLame": "Horse lame",
         "carrying": "Carrying {name}",
         "carriedBy": "Carried by {name}",
-        "nextRoll": "Next roll −{dice}"
+        "nextRoll": "Next roll −{dice}",
+        "airborneTip": "On the wires. Click to mark Airborne or clear it."
       },
       "menu": {
         "open": "Open",
@@ -1164,11 +1168,15 @@
         "box": "Stress box {n}",
         "over": "{n} more Stress beyond the last box drawn",
         "responses": "Stress Responses",
-        "lasting": "lasting"
+        "lasting": "lasting",
+        "noResponse": "No response held"
       },
       "resolve": {
         "short": "{base} + Scars {scars} − Grief {grief}",
-        "floorTip": "The formula gives {n}; the system keeps Resolve at 0 (rules question open)."
+        "floorTip": "The formula gives {n}; the system keeps Resolve at 0 (rules question open).",
+        "show": "Resolve {n}. Show how it is built",
+        "title": "Resolve {n}",
+        "built": "Half of Instinct plus Empathy, rounded up, plus Scars, minus Grief (3 at most)."
       },
       "down": {
         "toggle": "Mark Down or Standing",
