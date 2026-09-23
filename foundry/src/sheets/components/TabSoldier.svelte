@@ -131,6 +131,7 @@
               <button
                 type="button"
                 class="ahead-b"
+                aria-disabled={ro ? 'true' : undefined}
                 aria-label={t('WOF.Sheet.soldier.rollAttrLabel', { attr: name })}
                 use:tooltip={t('WOF.Sheet.soldier.headTip', { summary: summaryOf(a), attr: name, dice: v })}
                 onclick={(e) => rollAttribute(a, e.currentTarget)}
@@ -157,7 +158,8 @@
                   type="button"
                   class="qroll"
                   class:blocked
-                  aria-disabled={blocked ? 'true' : undefined}
+                  class:ro
+                  aria-disabled={blocked || ro ? 'true' : undefined}
                   aria-describedby={describedBy(r.id)}
                   use:detailHover={{ hover, card: () => r.detail }}
                   onclick={(e) => roll(r, e.currentTarget)}
