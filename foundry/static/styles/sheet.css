@@ -24,6 +24,10 @@
   color-scheme: light;
 }
 
+/* Each attribute's colour, read as --sc by the Soldier tab, the Squadmate and the Lifepath */
+.wof-sheet .s-strength { --sc: var(--str); } .wof-sheet .s-agility { --sc: var(--agi); } .wof-sheet .s-wits { --sc: var(--wit); }
+.wof-sheet .s-perception { --sc: var(--per); } .wof-sheet .s-instinct { --sc: var(--ins); } .wof-sheet .s-empathy { --sc: var(--emp); }
+
 /* ── Window: leather binder ─────────────────────────────────────────── */
 .application.wof-app {
   background: radial-gradient(ellipse at 30% 18%, rgba(255, 255, 255, .07), transparent 52%), linear-gradient(160deg, var(--leather-hi), var(--leather) 40%, var(--leather-lo));

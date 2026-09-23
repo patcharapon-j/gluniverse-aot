@@ -10,12 +10,6 @@
  */
 
 .wof-sheet.file .sol { display: grid; grid-template-columns: minmax(0, 1fr) 214px; gap: 14px; align-items: start; }
-.wof-sheet.file .sol .s-strength { --sc: var(--str); }
-.wof-sheet.file .sol .s-agility { --sc: var(--agi); }
-.wof-sheet.file .sol .s-wits { --sc: var(--wit); }
-.wof-sheet.file .sol .s-perception { --sc: var(--per); }
-.wof-sheet.file .sol .s-instinct { --sc: var(--ins); }
-.wof-sheet.file .sol .s-empathy { --sc: var(--emp); }
 .wof-sheet.file .sol .plain { --sc: var(--ink2); }
 
 /* ── The quick-roll label line ───────────────────────────────────────── */
