@@ -1,0 +1,106 @@
+/*
+ * Wings of Freedom: the gas and blade instruments on the Soldier sheet's band (sheet-overhaul plan,
+ * section 5; the "1 Instrument" drawing of design/preview-sheet-a-refined-dossier.html). The metal
+ * paints are SVG gradients inside each instrument, with ids unique to it. Hover motion runs only
+ * under Motion Full; the stamps and the stored count are HTML at the 10px floor.
+ */
+
+.wof-inst {
+  position: relative; display: flex; align-items: center; gap: 6px; min-height: 30px; outline: 0;
+}
+.wof-inst .inst-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.wof-inst button {
+  font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; border-radius: 0;
+  width: auto; height: auto; min-height: 0; line-height: 1; box-shadow: none; flex: none; cursor: pointer;
+}
+.wof-inst button:hover { box-shadow: none; }
+.wof-inst button:disabled, .wof-inst button[aria-disabled=true] { cursor: default; }
+.wof-inst :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+/* ── The drawings ──────────────────────────────────────────────────── */
+.wof-inst .obj { display: block; flex: none; overflow: visible; }
+.wof-inst .obj, .wof-inst .gsp, .wof-inst .scab { filter: drop-shadow(0 1.2px .7px rgba(36, 31, 27, .42)); }
+.wof-inst .can-wrap, .wof-inst .bl-wrap { position: relative; display: block; flex: none; }
+.wof-inst .can-btn { display: block; }
+.wof-inst .can-i { width: 100px; height: 30px; }
+.wof-inst .bl-inst { width: 120px; height: 30px; }
+.wof-inst .sheen { transform: translateX(0); }
+.wof-inst.no-odm .can-btn, .wof-inst.no-odm .spares { opacity: .55; }
+
+/* Moving parts at rest: the puff, the click marks and the spark show only while they play. */
+.wof-inst .hiss {
+  opacity: 0; fill: #fff; stroke: rgba(70, 95, 105, .35); stroke-width: .35;
+  transform-box: fill-box; transform-origin: 100% 50%; pointer-events: none;
+}
+.wof-inst .drain { transform-box: fill-box; transform-origin: 0 50%; pointer-events: none; }
+.wof-inst .clk { opacity: 0; fill: none; stroke: var(--ink); stroke-width: .6; stroke-linecap: round; pointer-events: none; }
+.wof-inst .pt, .wof-inst .spk { transform-box: view-box; transform-origin: 85px 15px; }
+.wof-inst .spk { opacity: 0; }
+.wof-inst .ghost { pointer-events: none; }
+
+/* ── Stamps and counts over the drawings (HTML, never under 10px) ─────── */
+.wof-inst .ins-stamp {
+  position: absolute; z-index: 2; translate: -50% -50%; padding: 0 3px; pointer-events: none; white-space: nowrap;
+  font: var(--t-xs)/1.2 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--red);
+  background: rgba(244, 236, 216, .92); border: 1.5px solid var(--red); border-radius: 1px;
+}
+.wof-inst .gas-stamp { left: 38.5%; top: 61.7%; rotate: -5deg; }
+.wof-inst .blade-stamp { left: 61.7%; top: 50%; rotate: -4deg; }
+
+/* ── Spares: small upright canisters on a leather strap ───────────────── */
+.wof-inst .spares { position: relative; display: flex; gap: 2px; align-items: flex-end; flex: none; }
+.wof-inst .spares.rack { padding: 0 3px; }
+.wof-inst .spares.rack::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 23px; height: 4px; pointer-events: none; border-radius: 1px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .35);
+  background:
+    radial-gradient(circle at 3px 50%, #f3d99a 0 .8px, #a47c3a 1.2px, #5e4520 1.6px, transparent 2px),
+    radial-gradient(circle at calc(100% - 3px) 50%, #f3d99a 0 .8px, #a47c3a 1.2px, #5e4520 1.6px, transparent 2px),
+    linear-gradient(#5a3d28, #3a2618 60%, #1e120a);
+}
+.wof-inst .gsp { display: block; flex: none; position: relative; }
+.wof-inst .gsp svg { display: block; width: 11px; height: 28px; }
+.wof-inst .gsp:hover:not(:disabled) { filter: brightness(1.1) drop-shadow(0 2px 1px rgba(36, 31, 27, .4)); }
+.wof-inst .more {
+  position: relative; z-index: 1; align-self: center; display: inline-flex; align-items: center; min-height: 18px; padding: 0 4px;
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .06em; color: var(--ink2);
+  border: 1px solid var(--ink3); background: rgba(244, 236, 216, .7);
+}
+.wof-inst button.more:hover { color: var(--ink); border-color: var(--ink2); }
+.wof-inst .more.narrow { display: none; }
+.wof-inst .spares .note { font: var(--t-xs)/1.2 var(--fl); color: var(--ink3); letter-spacing: .04em; }
+
+/* ── Blades: the scabbard of stored sets ─────────────────────────────── */
+.wof-inst .scab { position: relative; display: block; flex: none; }
+.wof-inst .scab svg { display: block; width: 24px; height: 30px; }
+.wof-inst .scab.none { opacity: .5; }
+.wof-inst .scab-n {
+  position: absolute; left: 50%; top: 62.3%; translate: -50% -50%; pointer-events: none;
+  font: 700 var(--t-xs)/1 var(--fd); color: #2a1a0e; font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── Hover motion, Full only: a lift and a sheen across the steel ─────── */
+.wof-inst[data-motion=full] .obj,
+.wof-inst[data-motion=full] .gsp,
+.wof-inst[data-motion=full] .scab { transition: transform .15s var(--ease), filter .15s; }
+.wof-inst[data-motion=full]:not(.disabled) .can-btn:not([aria-disabled=true]):hover .obj,
+.wof-inst[data-motion=full]:not(.disabled) .bl-wrap:hover .obj { transform: translateY(-1px); }
+.wof-inst[data-motion=full]:not(.disabled) .can-btn:not([aria-disabled=true]):hover .sheen,
+.wof-inst[data-motion=full]:not(.disabled) .bl-wrap:hover .sheen { transform: translateX(118px); transition: transform .3s ease-out; }
+.wof-inst[data-motion=full]:not(.disabled) .gsp:hover { transform: translateY(-2px); }
+.wof-inst[data-motion=full]:not(.disabled) .scab:not([aria-disabled=true]):hover { transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) {
+  .wof-inst .obj, .wof-inst .gsp, .wof-inst .scab, .wof-inst .sheen { transition: none !important; transform: none !important; }
+}
+
+/* ── A paper under 700px: the narrow instruments and a rack of three ──── */
+@container paper (max-width: 700px) {
+  .wof-inst { gap: 3px; }
+  .wof-inst .can-i { width: 80px; height: 24px; }
+  .wof-inst .bl-inst { width: 96px; height: 24px; }
+  .wof-inst .gsp svg { width: 9px; height: 23px; }
+  .wof-inst .spares.rack::after { top: 19px; height: 3.5px; }
+  .wof-inst .scab svg { width: 19px; height: 24px; }
+  .wof-inst .gsp.beyond-narrow, .wof-inst .more.wide { display: none; }
+  .wof-inst .more.narrow { display: inline-flex; }
+}

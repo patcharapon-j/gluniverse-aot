@@ -1190,7 +1190,12 @@
         "spend": "Spend 1",
         "change": "Change",
         "changeTip": "Change Canister: fit the fullest spare; the old canister stays a spare if it has gas.",
-        "fitThis": "Fit spare canister {n}, at {current} of {full}"
+        "fitThis": "Fit spare canister {n}, at {current} of {full}",
+        "spendTip": "Fitted canister: {current} of {full}. Click to spend 1.",
+        "dryTip": "Fitted canister is dry. Change fits the fullest spare.",
+        "more": "{n} more spares on the Kit page",
+        "moreCount": "+{n}",
+        "stampNoOdm": "No ODM"
       },
       "blades": {
         "title": "Blade Sets",
@@ -1202,7 +1207,13 @@
         "ruinTip": "Any wear ruins a Blade Set: it is discarded and the handles are empty.",
         "swap": "Swap",
         "disciplineReady": "Discipline ready",
-        "disciplineUsed": "Discipline used"
+        "disciplineUsed": "Discipline used",
+        "inHandTip": "Blade Set in the handles: {dice} Gear Dice. Any wear ruins it.",
+        "inHandTipOne": "Blade Set in the handles: 1 Gear Die. Any wear ruins it.",
+        "emptyTip": "Handles empty. Swap fits a stored Blade Set.",
+        "storedCount": "Blade Sets stored: {n}",
+        "storedTip": "{n} Blade Sets stored. Click to fit one in the handles.",
+        "storedTipOne": "1 Blade Set stored. Click to fit it in the handles."
       },
       "soldier": {
         "attributes": "Attributes",
