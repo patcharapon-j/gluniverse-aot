@@ -1,1 +1,213 @@
-/* Wings of Freedom: the Dossier Soldier tab (sheet-overhaul plan, section 4, step 4). */
+/*
+ * Wings of Freedom: the Dossier Soldier tab (sheet-overhaul plan, section 4, step 4; the
+ * design/preview-sheet-a-refined-dossier.html drawing). The quick-roll label line, the attribute
+ * heads with their rolls in columns (two, three on a paper of 900px and up), the compact Talents,
+ * the Drive and Enlistment cards and the dice key. Dice glyphs keep their sheet.css look.
+ *
+ * Motion: hover lifts, the row nudge, the chevron turn and the Talent expand are CSS transitions
+ * that run only under data-motion=full; Reduced keeps short colour changes; Off and
+ * prefers-reduced-motion none. The roll press itself goes through fx() (motion/fx.ts).
+ */
+
+.wof-sheet.file .sol { display: grid; grid-template-columns: minmax(0, 1fr) 214px; gap: 14px; align-items: start; }
+.wof-sheet.file .sol .s-strength { --sc: var(--str); }
+.wof-sheet.file .sol .s-agility { --sc: var(--agi); }
+.wof-sheet.file .sol .s-wits { --sc: var(--wit); }
+.wof-sheet.file .sol .s-perception { --sc: var(--per); }
+.wof-sheet.file .sol .s-instinct { --sc: var(--ins); }
+.wof-sheet.file .sol .s-empathy { --sc: var(--emp); }
+.wof-sheet.file .sol .plain { --sc: var(--ink2); }
+
+/* ── The quick-roll label line ───────────────────────────────────────── */
+.wof-sheet.file .sol .rh {
+  display: flex; align-items: center; gap: 6px 10px; flex-wrap: wrap; min-height: 24px;
+  margin: 0 0 8px; padding-bottom: 5px; border-bottom: 1px solid var(--rule);
+}
+.wof-sheet.file .sol .rh .t { font: var(--t-sm)/1 var(--fl); letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
+.wof-sheet.file .sol .bonus { display: inline-flex; align-items: center; gap: 2px; padding-left: 10px; border-left: 1px solid var(--rule); }
+.wof-sheet.file .sol .bonus .lbl { margin-right: 4px; }
+.wof-sheet.file .sol .bonus .note { margin-left: 4px; }
+.wof-sheet.file .sol .bonus button { width: 20px; height: 20px; display: grid; place-items: center; }
+.wof-sheet.file .sol .bonus button i { width: 11px; height: 11px; display: block; }
+.wof-sheet.file .sol .bonus button:hover i { filter: brightness(1.12); }
+.wof-sheet.file .sol .rh .sx { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+.wof-sheet.file .sol .rh .sx .dots { flex-wrap: nowrap; }
+.wof-sheet.file .sol .rh .call { flex: none; }
+
+/* ── Attribute heads and their rolls, in columns ─────────────────────── */
+.wof-sheet.file .sol .groups { columns: 2; column-gap: 14px; }
+@container paper (min-width: 900px) {
+  .wof-sheet.file .sol { grid-template-columns: minmax(0, 1fr) 250px; }
+  .wof-sheet.file .sol .groups { columns: 3; }
+}
+.wof-sheet.file .sol .agrp { break-inside: avoid; padding-bottom: 10px; }
+
+/* The head: the roll button (icon, name, Key stamp) stretches over the whole head, so a click
+   anywhere on it rolls the attribute alone; in Edit the rating pips stand above that layer. */
+.wof-sheet.file .sol .ahead {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; gap: 6px; align-items: center;
+  height: 32px; padding: 0 8px 0 5px; text-align: left;
+  background: linear-gradient(170deg, var(--paper-hi), var(--paper-lo));
+  border: 1px solid var(--ink2); border-left: 4px solid var(--sc, var(--ink2)); box-shadow: 2px 2px 0 var(--ink);
+}
+.wof-sheet.file .sol .ahead-b, .wof-sheet.file .sol .ahead.fixed { display: flex; align-items: center; gap: 6px; min-width: 0; height: 100%; text-align: left; }
+.wof-sheet.file .sol .ahead.fixed { display: grid; grid-template-columns: 22px minmax(0, 1fr); }
+.wof-sheet.file .sol .ahead-b::after { content: ""; position: absolute; inset: -1px -1px -1px -4px; }
+.wof-sheet.file .sol .ahead-b:focus-visible { outline: none; }
+.wof-sheet.file .sol .ahead:has(.ahead-b:focus-visible) { outline: 2px solid var(--blue); outline-offset: 2px; }
+.wof-sheet.file .sol .ahead img { width: 22px; height: 22px; flex: 0 0 22px; border: 0; mix-blend-mode: multiply; }
+.wof-sheet.file .sol .ahead .nm {
+  display: flex; align-items: center; gap: 6px; min-width: 0;
+  font: var(--t-sm)/1 var(--fl); letter-spacing: .14em; text-transform: uppercase; color: var(--ink);
+}
+.wof-sheet.file .sol .ahead .nmt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wof-sheet.file .sol .ahead .key {
+  position: relative; z-index: 1; flex: none; transform: rotate(5deg);
+  font-size: var(--t-xs); padding: 0 3px; border-width: 1.5px; line-height: 12px;
+}
+.wof-sheet.file .sol .ahead .pipset { display: inline-flex; align-items: center; pointer-events: none; }
+.wof-sheet.file .sol .ahead.edit .pipset { position: relative; z-index: 1; pointer-events: auto; padding: 4px 2px; margin: -4px -2px; }
+.wof-sheet.file .sol .ahead .pipset .dots { --d: 9px; flex-wrap: nowrap; }
+.wof-sheet.file .sol .ahead .v { font: 900 var(--t-xl)/1 var(--fd); color: var(--sc, var(--ink2)); text-align: right; font-variant-numeric: tabular-nums; }
+.wof-sheet.file .sol .ahead:has(.ahead-b:hover) { box-shadow: 3px 3px 0 var(--ink); }
+.wof-sheet.file .sol .ahead:has(.ahead-b:hover) .nmt { color: #000; }
+.wof-sheet.file .sol .ahead:has(.ahead-b:active) { box-shadow: 0 0 0 var(--ink); }
+.wof-sheet.file .sol .ahead.fixed { --sc: var(--ink2); cursor: default; }
+
+/* The rolls under a head. */
+.wof-sheet.file .sol .qrows {
+  list-style: none; margin: 3px 0 0 6px; padding: 0 0 0 6px;
+  border-left: 1.5px solid color-mix(in srgb, var(--sc, var(--ink2)) 45%, transparent);
+}
+.wof-sheet.file .sol .qrows li { margin: 0; padding: 0; }
+.wof-sheet.file .sol .qroll {
+  width: 100%; display: grid; grid-template-columns: 16px minmax(0, 1fr) auto minmax(18px, auto); gap: 6px; align-items: center;
+  height: 24px; padding: 0 4px; text-align: left; border-bottom: 1px solid rgba(36, 31, 27, .1);
+}
+.wof-sheet.file .sol .qroll img { width: 16px; height: 16px; border: 0; mix-blend-mode: multiply; opacity: .85; }
+.wof-sheet.file .sol .qroll .rn { font: var(--t-base)/1 var(--fb); color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wof-sheet.file .sol .qroll .dots { flex-wrap: nowrap; }
+.wof-sheet.file .sol .qroll .ctx {
+  font: var(--t-xs)/1 var(--fl); letter-spacing: .08em; text-transform: uppercase; color: var(--red);
+  border: 1px solid rgba(142, 35, 35, .55); padding: 1px 3px 0; margin-left: 5px; vertical-align: 1px;
+}
+.wof-sheet.file .sol .qroll .tot { font: 700 var(--t-md)/1 var(--fd); text-align: right; color: var(--ink); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.wof-sheet.file .sol .qroll .tot small { font: var(--t-xs)/1 var(--fl); color: var(--ink3); margin-left: 1px; }
+.wof-sheet.file .sol .qroll:not(.blocked):hover { background: rgba(255, 255, 255, .4); }
+.wof-sheet.file .sol .qroll:not(.blocked):hover .rn { color: #000; }
+.wof-sheet.file .sol .qroll:not(.blocked):hover img { opacity: 1; }
+.wof-sheet.file .sol .qroll:not(.blocked):active { background: rgba(36, 31, 27, .07); box-shadow: inset 0 1px 2px rgba(36, 31, 27, .2); }
+.wof-sheet.file .sol .qroll.blocked { background: repeating-linear-gradient(-45deg, transparent 0 5px, rgba(142, 35, 35, .07) 5px 6px); cursor: not-allowed; }
+.wof-sheet.file .sol .qroll.blocked .rn { color: var(--ink3); text-decoration: line-through; text-decoration-color: rgba(142, 35, 35, .6); }
+.wof-sheet.file .sol .qroll.blocked .tot::before { content: ""; display: inline-block; width: 10px; height: 2px; vertical-align: middle; background: var(--red); }
+
+/* ── The side column ─────────────────────────────────────────────────── */
+.wof-sheet.file .sol-side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.wof-sheet.file .sol-side .card .sec { margin-bottom: 2px; }
+
+/* Talents: one line each, the rules text opens in place. */
+.wof-sheet.file .sol .tals { list-style: none; margin: 0; padding: 0; }
+.wof-sheet.file .sol .dtal { margin: 0; padding: 0; border-top: 1px dotted rgba(79, 70, 61, .5); }
+.wof-sheet.file .sol .dtal:first-child { border-top: 0; }
+.wof-sheet.file .sol .dtal-h { position: relative; display: flex; align-items: center; gap: 6px; min-height: 26px; }
+.wof-sheet.file .sol .tal-b { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; min-height: 26px; text-align: left; }
+.wof-sheet.file .sol .tal-b::after { content: ""; position: absolute; inset: 0; }
+.wof-sheet.file .sol .tal-b:focus-visible { outline: none; }
+.wof-sheet.file .sol .dtal-h:has(.tal-b:focus-visible) { outline: 2px solid var(--blue); outline-offset: 1px; }
+.wof-sheet.file .sol .tal-b img { width: 16px; height: 16px; flex: 0 0 16px; border: 0; mix-blend-mode: multiply; }
+.wof-sheet.file .sol .tal-b strong { flex: 1; min-width: 0; font: 700 var(--t-base)/1.15 var(--fd); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wof-sheet.file .sol .tal-b:hover strong { color: #000; }
+.wof-sheet.file .sol .dtal-h .pipset { display: inline-flex; pointer-events: none; }
+.wof-sheet.file .sol .dtal-h .pipset.edit { position: relative; z-index: 1; pointer-events: auto; }
+.wof-sheet.file .sol .dkind { flex: none; font: var(--t-xs)/1 var(--fl); letter-spacing: .08em; text-transform: uppercase; padding: 2px 3px 1px; border: 1px solid var(--ink3); color: var(--ink2); }
+.wof-sheet.file .sol .dkind.dice { border-color: var(--blue); color: var(--blue); }
+.wof-sheet.file .sol .dkind.rule { border-color: var(--amber-line); color: var(--amber); }
+.wof-sheet.file .sol .chev {
+  flex: none; width: 8px; height: 8px; margin-right: 2px;
+  border-right: 1.5px solid var(--ink3); border-bottom: 1.5px solid var(--ink3); transform: rotate(-45deg);
+}
+.wof-sheet.file .sol .dtal.open .chev { transform: rotate(45deg); }
+.wof-sheet.file .sol .tal-x { display: grid; grid-template-rows: 0fr; }
+.wof-sheet.file .sol .tal-x > div { overflow: hidden; min-height: 0; }
+.wof-sheet.file .sol .dtal.open .tal-x { grid-template-rows: 1fr; }
+.wof-sheet.file .sol .tal-x p { margin: 0 0 2px 22px; font: italic var(--t-sm)/1.4 var(--fb); color: var(--ink2); }
+.wof-sheet.file .sol .tal-x .for {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 6px;
+  margin: 0 0 6px 22px; font: var(--t-xs)/1.35 var(--fl); letter-spacing: .03em; color: var(--ink3);
+}
+.wof-sheet.file .sol .tal-x .open {
+  flex: none; font: var(--t-xs)/1.2 var(--fl); letter-spacing: .1em; text-transform: uppercase; color: var(--red);
+  border-bottom: 1px dotted currentColor;
+}
+.wof-sheet.file .sol .tal-x .open:hover { color: var(--red-hi); }
+.wof-sheet.file .sol .drophint {
+  margin: 6px 0 0; padding: 4px 6px; border: 1px dashed var(--ink3); text-align: center;
+  font: italic var(--t-xs)/1.35 var(--fb); color: var(--ink3);
+}
+
+/* The Talent level: small squares (Pips variant="square"). */
+.wof-sheet .dots.sq .grp { gap: 2px; }
+.wof-sheet .dots.sq i.sq { display: block; width: 7px; height: 7px; border: 1.5px solid var(--ink2); background: transparent; }
+.wof-sheet .dots.sq i.sq.on { background: var(--ink); border-color: var(--ink); }
+
+/* The use box of a Talent with a limit, and of the Drive. */
+.wof-sheet.file .sol .lim {
+  position: relative; z-index: 1; flex: 0 0 16px; width: 16px; height: 16px;
+  border: 1.5px solid var(--ink2); background: rgba(255, 255, 255, .5);
+}
+.wof-sheet.file .sol .lim[aria-checked=true]::after {
+  content: ""; position: absolute; left: 4px; top: 0; width: 5px; height: 9px;
+  border-right: 2px solid var(--red); border-bottom: 2px solid var(--red); transform: rotate(40deg);
+}
+.wof-sheet.file .sol .lim:hover:not(:disabled) { border-color: var(--ink); background: rgba(255, 255, 255, .75); }
+.wof-sheet.file .sol .lim:disabled { opacity: .7; }
+
+/* Drive and Enlistment. */
+.wof-sheet.file .sol .drive { margin: 2px 0 4px; font: italic 600 var(--t-md)/1.25 var(--fd); color: var(--red); }
+.wof-sheet.file .sol .drive.none { color: var(--ink3); font-weight: 400; }
+.wof-sheet.file .sol input.drive-in { margin: 2px 0 4px; font: italic 600 var(--t-md)/1.25 var(--fd); color: var(--red); }
+.wof-sheet.file .sol .dline {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 2px 0;
+  font: var(--t-xs)/1.3 var(--fl); letter-spacing: .06em; text-transform: uppercase; color: var(--ink3);
+}
+.wof-sheet.file .sol .dline b { font-weight: 400; color: var(--ink); border-bottom: 1px dotted var(--ink3); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wof-sheet.file .sol .dline b.none { color: var(--ink3); }
+.wof-sheet.file .sol .dline b.over { color: var(--red); border-bottom-color: var(--red); }
+.wof-sheet.file .sol .dline .comrade { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+.wof-sheet.file .sol .dline .comrade input { width: 100%; min-width: 60px; height: 20px; text-transform: none; letter-spacing: 0; }
+.wof-sheet.file .sol .chk { display: inline-flex; align-items: center; gap: 5px; flex: none; }
+
+/* The dice key. */
+.wof-sheet.file .sol .dlegend {
+  display: flex; flex-wrap: wrap; gap: 3px 10px; padding: 0 2px;
+  font: var(--t-xs)/1.4 var(--fl); letter-spacing: .04em; color: var(--ink3);
+}
+.wof-sheet.file .sol .dlegend > span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ── Width responses ─────────────────────────────────────────────────── */
+@container paper (max-width: 700px) {
+  .wof-sheet.file .sol { grid-template-columns: minmax(0, 1fr) 196px; gap: 10px; }
+  .wof-sheet.file .sol .groups { column-gap: 10px; }
+  .wof-sheet.file .sol .qroll .ctx { display: none; }
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────── */
+.wof-sheet.file[data-motion=full] .sol .ahead { transition: transform .12s var(--ease), box-shadow .12s var(--ease); }
+.wof-sheet.file[data-motion=full] .sol .ahead:has(.ahead-b:hover) { transform: translate(-1px, -1px); }
+.wof-sheet.file[data-motion=full] .sol .ahead:has(.ahead-b:active) { transform: translate(1px, 1px); }
+.wof-sheet.file[data-motion=full] .sol .qroll { transition: transform .12s var(--ease), background .12s; }
+.wof-sheet.file[data-motion=full] .sol .qroll img, .wof-sheet.file[data-motion=full] .sol .qroll .rn { transition: opacity .12s, color .12s; }
+.wof-sheet.file[data-motion=full] .sol .qroll:not(.blocked):hover { transform: translateX(2px); }
+.wof-sheet.file[data-motion=full] .sol .qroll:not(.blocked):active { transform: translate(1px, 1px); }
+.wof-sheet.file[data-motion=full] .sol .bonus button { transition: transform .12s var(--ease); }
+.wof-sheet.file[data-motion=full] .sol .bonus button:hover { transform: translateY(-1px); }
+.wof-sheet.file[data-motion=full] .sol .chev { transition: transform .16s var(--ease); }
+.wof-sheet.file[data-motion=full] .sol .tal-x { transition: grid-template-rows .18s var(--ease); }
+.wof-sheet.file[data-motion=reduced] .sol .ahead,
+.wof-sheet.file[data-motion=reduced] .sol .qroll,
+.wof-sheet.file[data-motion=reduced] .sol .qroll .rn { transition: background .12s, color .12s; }
+@media (prefers-reduced-motion: reduce) {
+  .wof-sheet.file .sol * { transition: none !important; }
+  .wof-sheet.file .sol .ahead:has(.ahead-b:hover), .wof-sheet.file .sol .ahead:has(.ahead-b:active),
+  .wof-sheet.file .sol .qroll:hover, .wof-sheet.file .sol .qroll:active, .wof-sheet.file .sol .bonus button:hover { transform: none !important; }
+}
