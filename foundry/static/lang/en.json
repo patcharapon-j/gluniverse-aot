@@ -1225,24 +1225,34 @@
       },
       "soldier": {
         "attributes": "Attributes",
-        "attributesHint": "Each dot is a base die",
         "rolls": "Quick rolls",
-        "rollsHint": "The dots are the pool you roll",
         "talents": "Talents",
         "noTalents": "No Talents yet.",
         "enlistment": "Enlistment",
-        "driveUsed": "Drive used",
         "key": "Key",
         "keyTip": "The key attribute of the Specialty can reach {max}.",
         "keyLine": "{attr}, up to {max}",
         "rollAttr": "Roll {attr}: {dice} Base Dice, plus a Stress Die for each point of Stress",
-        "rollAttrLabel": "Roll {attr}"
+        "rollAttrLabel": "Roll {attr}",
+        "headTip": "{summary} Roll {attr} alone: {dice} Base Dice, plus a Stress Die for each point of Stress.",
+        "comrade": "Comrade",
+        "used": "Used",
+        "load": "Load",
+        "loadLine": "{items} of {limit} carried",
+        "loadTip": "Strength + 4. Over it you are Overloaded."
       },
       "talent": {
         "dice": "Dice",
         "rule": "Rule",
         "markUsed": "Mark used",
-        "markReady": "Mark ready"
+        "markReady": "Mark ready",
+        "count": "{n} held",
+        "expand": "Show the rules text",
+        "collapse": "Hide the rules text",
+        "usedAria": "{name}: its use is spent",
+        "readyAria": "{name}: its use is ready",
+        "usedTip": "{limit}. Its use is spent. Mark it ready.",
+        "readyTip": "{limit}. Its use is ready. Mark it used."
       },
       "talentDice": "+{dice} base dice on {entries}",
       "rolls": {
@@ -1254,7 +1264,11 @@
         "any": "Anywhere",
         "fixed": "Fixed rolls",
         "d6": "D6",
-        "dice": "dice"
+        "dice": "dice",
+        "bonusLabel": "Bonus Dice",
+        "bonusNext": "next roll, up to {cap}",
+        "stressAdds": "+{n} Stress Dice on every attribute roll",
+        "noStress": "No Stress Dice"
       },
       "roll": {
         "noGear": "Needs {gear}",
@@ -1273,7 +1287,8 @@
         "bonus": "Bonus",
         "penalty": "penalty",
         "gear": "Gear",
-        "stress": "Stress"
+        "stress": "Stress",
+        "label": "Dice key"
       },
       "effect": {
         "penalty": "−{dice} die: {entries}",
@@ -1334,7 +1349,10 @@
         "leftAtHint": "After death in a Titan Engagement",
         "commaList": "Items, separated by commas",
         "positionsShown": "Positions (derived)",
-        "horseZone": "Horse"
+        "horseZone": "Horse",
+        "kept": "Kept",
+        "more": "More",
+        "less": "Less"
       },
       "status": {
         "carried": "Carried",
@@ -1397,7 +1415,9 @@
         "body": "Body",
         "addRally": "Add a comrade",
         "pickRow": "Choose the Critical Injury",
-        "otherRow": "A Critical Injury the tables do not list"
+        "otherRow": "A Critical Injury the tables do not list",
+        "readout": "Readout",
+        "readoutHint": "What the band is built from"
       },
       "ends": {
         "titan-engagement-end": "Ends with the Titan Engagement",
@@ -1417,7 +1437,8 @@
         "noSpecialty": "No Specialty",
         "top10": "Top 10",
         "xpAria": "{n} XP",
-        "notesHint": "Click the pen to write"
+        "notesHint": "Click the pen to write",
+        "xpOf": "{n} of {max}"
       },
       "momentum": {
         "spend": "Spend 1 Momentum",

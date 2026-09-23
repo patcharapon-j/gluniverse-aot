@@ -1,1 +1,95 @@
-/* Wings of Freedom: the Dossier Record tab (sheet-overhaul plan, section 4, step 7). */
+/*
+ * Wings of Freedom: the Dossier Record tab (sheet-overhaul plan, section 4, step 7).
+ * The typed service-record form (a sheet of ruled onionskin), its rotated rubber stamps, and the
+ * ruled notepad that carries Foundry's own ProseMirror editor and its pencil toggle.
+ *
+ * Motion: only the pencil's hover turn is a transition, and it runs under data-motion=full only
+ * (Reduced and Off, and prefers-reduced-motion, keep the resting state with no transition).
+ */
+
+/* ── The typed form ──────────────────────────────────────────────────── */
+.wof-sheet.file .typed {
+  position: relative; padding: 10px 16px 12px; background: #f7f0de; border: 1px solid var(--ink2);
+  box-shadow: 2px 2px 0 rgba(36, 31, 27, .25);
+  background-image: repeating-linear-gradient(transparent 0 25px, rgba(47, 74, 110, .13) 25px 26px);
+}
+.wof-sheet.file .typed dl { display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 0 14px; margin: 0; }
+.wof-sheet.file .typed dt { font: var(--t-xs)/26px var(--fl); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
+.wof-sheet.file .typed dd { margin: 0; font: var(--t-base)/26px var(--fl); letter-spacing: .03em; color: var(--ink); min-width: 0; }
+.wof-sheet.file .typed dd.span { grid-column: span 3; }
+.wof-sheet.file .typed dd.vrow { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+
+/* Fields typed straight onto the paper: no boxed control chrome, just the dotted rule beneath. */
+.wof-sheet.file .typed dd input[type=text], .wof-sheet.file .typed dd input[type=number], .wof-sheet.file .typed dd select {
+  height: 22px; padding: 0 2px; font: var(--t-base)/20px var(--fl); letter-spacing: .03em; color: var(--ink);
+  background: transparent; border: 0; border-bottom: 1px dotted var(--ink3);
+}
+.wof-sheet.file .typed dd input[type=number] { width: 56px; text-align: left; }
+.wof-sheet.file .typed dd select { width: auto; max-width: 100%; }
+.wof-sheet.file .typed dd input:disabled, .wof-sheet.file .typed dd select:disabled { opacity: 1; color: var(--ink); border-bottom-color: transparent; background: transparent; }
+.wof-sheet.file .typed dd input:not(:disabled):hover, .wof-sheet.file .typed dd select:not(:disabled):hover { border-bottom-color: var(--ink); }
+.wof-sheet.file .typed dd input:focus, .wof-sheet.file .typed dd select:focus { outline: 2px solid var(--blue); outline-offset: 0; background: rgba(255, 255, 255, .5); }
+.wof-sheet.file .typed dd input[type=checkbox] { vertical-align: -2px; }
+
+/* XP: a row of small pressed boxes, the "n of max" note, and the stepper for past the last box. */
+.wof-sheet.file .typed .xp { display: inline-flex; gap: 3px; vertical-align: -3px; }
+.wof-sheet.file .typed .xp button {
+  width: 13px; height: 13px; padding: 0; border: 1.5px solid var(--ink2); display: block; background: rgba(255, 255, 255, .5);
+}
+.wof-sheet.file .typed .xp button.on { background: var(--brass); border-color: var(--brass-lo); }
+.wof-sheet.file .typed .xp button:disabled { cursor: default; }
+.wof-sheet.file[data-motion=full] .typed .xp button:not(:disabled):hover { transform: translateY(-1px); }
+.wof-sheet.file .typed .note { font: var(--t-xs)/1 var(--fl); font-style: normal; color: var(--ink3); }
+.wof-sheet.file .typed .stepper { margin-left: 2px; }
+.wof-sheet.file .typed .stepper button { width: 18px; height: 18px; }
+
+/* The rubber stamps, pinned to the form's top corner: earned ones inked, the rest faded. */
+.wof-sheet.file .typed .stamps {
+  position: absolute; right: 14px; top: 8px; z-index: 1; display: flex; flex-wrap: wrap; flex-direction: row-reverse;
+  justify-content: flex-start; align-content: flex-start; gap: 6px 10px; max-width: 58%; pointer-events: none;
+}
+.wof-sheet.file .typed .stamps .stamp { font-size: var(--t-xs); padding: 2px 7px; border-width: 2px; }
+.wof-sheet.file .typed .stamps .stamp:nth-child(3n+1) { transform: rotate(-7deg); }
+.wof-sheet.file .typed .stamps .stamp:nth-child(3n+2) { transform: rotate(5deg); color: var(--blue); border-color: var(--blue); }
+.wof-sheet.file .typed .stamps .stamp:nth-child(3n) { transform: rotate(-2deg); }
+.wof-sheet.file .typed .stamps .stamp.off { opacity: .28; }
+
+/* ── The ruled notepad, under the form ───────────────────────────────── */
+.wof-sheet.file .notepad {
+  position: relative; margin-top: 4px; background: var(--paper-hi); border: 1px solid var(--ink2); box-shadow: 2px 2px 0 rgba(36, 31, 27, .22);
+}
+.wof-sheet.file .notepad prose-mirror.editor {
+  display: block; position: relative; min-height: 180px; padding: 0;
+}
+.wof-sheet.file .notepad prose-mirror.editor .editor-content {
+  min-height: 180px; padding: 8px 40px 10px 44px; font: var(--t-base)/24px var(--fl); letter-spacing: .02em; color: var(--ink);
+  background:
+    linear-gradient(90deg, transparent 30px, rgba(142, 35, 35, .4) 30px 31px, transparent 31px),
+    repeating-linear-gradient(transparent 0 23px, rgba(47, 74, 110, .16) 23px 24px);
+  background-attachment: local;
+}
+.wof-sheet.file .notepad prose-mirror.editor .editor-content :is(p, ul, ol, h1, h2, h3, h4) { margin: 0; font: inherit; }
+.wof-sheet.file .notepad prose-mirror.editor.active .editor-content { outline: none; box-shadow: inset 0 0 0 2px var(--blue); }
+
+/* The pencil: Foundry's own toggle button for a `toggled` ProseMirror editor. */
+.wof-sheet.file .notepad prose-mirror.editor button.icon.toggle {
+  position: absolute; right: 6px; top: 6px; width: 26px; height: 24px; display: grid; place-items: center;
+  color: var(--ink2); background: var(--paper-lo); border: 1px solid var(--ink2);
+}
+.wof-sheet.file .notepad prose-mirror.editor button.icon.toggle:disabled { opacity: .4; }
+.wof-sheet.file[data-motion=full] .notepad prose-mirror.editor button.icon.toggle { transition: transform .12s var(--ease), color .12s; }
+.wof-sheet.file .notepad prose-mirror.editor button.icon.toggle:not(:disabled):hover { transform: rotate(-12deg); color: var(--ink); }
+
+/* ── Width response: a paper too narrow for two field-pairs a row ───── */
+@container paper (max-width: 700px) {
+  .wof-sheet.file .typed dl { grid-template-columns: auto minmax(0, 1fr); }
+  .wof-sheet.file .typed dd.span { grid-column: span 1; }
+  .wof-sheet.file .typed .stamps { position: static; max-width: none; margin: 4px 0 0; justify-content: flex-end; }
+}
+
+/* ── Motion off, and the viewer's reduced-motion preference ──────────── */
+.wof-sheet.file[data-motion=off] .notepad *, .wof-sheet.file[data-motion=off] .typed * { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .wof-sheet.file .notepad *, .wof-sheet.file .typed * { transition: none !important; }
+  .wof-sheet.file .notepad prose-mirror.editor button.icon.toggle:hover { transform: none !important; }
+}
