@@ -1182,19 +1182,15 @@
         "toggle": "Mark Down or Standing",
         "ruleSaysDown": "By the rules this soldier is Down: current Health is 0, or an untreated injury keeps them Down.",
         "ruleSaysUp": "By the rules this soldier is not Down.",
-        "match": "Match the rules",
-        "byRuleYes": "(the rules say Down)",
-        "byRuleNo": "(the rules say not Down)"
+        "match": "Match the rules"
       },
       "gas": {
         "title": "Gas",
-        "noOdm": "No ODM Gear",
         "dry": "Dry",
         "odm": "ODM {current}/{rating}",
         "odmDice": "ODM Gear, {current} of {rating} Gear Dice",
         "level": "Gas {current} of {full}",
         "noSpare": "No spare canister",
-        "spareTanks": "Spares",
         "spend": "Spend 1",
         "change": "Change",
         "changeTip": "Change Canister: fit the fullest spare; the old canister stays a spare if it has gas.",
@@ -1318,8 +1314,6 @@
         "onlyOne": "This soldier already has {name}.",
         "notHere": "{type} items do not go on a {sheet} sheet.",
         "talents": "Drop Talents here. Dropping a held Talent raises its level.",
-        "specialty": "Drop a Specialty",
-        "origin": "Drop an Origin",
         "gear": "Drop gear from the compendium here.",
         "injuries": "Drop a Critical Injury row here; you pick its Injury Type and side."
       },
@@ -1345,7 +1339,6 @@
         "engagement": "Titan Engagement",
         "engagementHint": "Positions by Focus Titan",
         "noPositions": "Not in a Titan Engagement.",
-        "addPosition": "Add a Position",
         "leftAtHint": "After death in a Titan Engagement",
         "commaList": "Items, separated by commas",
         "positionsShown": "Positions (derived)",
@@ -1391,13 +1384,11 @@
         "apply": "Record the injury"
       },
       "wounds": {
-        "healthHint": "Down at 0",
         "healthFormula": "2 + ceil((Str <b>{str}</b> + Agi <b>{agi}</b>) / 2) = <b>{health}</b>",
         "current": "Current Health {current} of {health}; {crossed} crossed off",
         "injuries": "Critical Injuries",
         "injuriesHint": "{held} held, {untreated} untreated",
         "noInjuries": "No Critical Injuries.",
-        "stressHint": "Each box is a Stress Die",
         "stressNote": "Minimum {min}: one per Scar. Every attribute roll adds one Stress Die per box.",
         "resolveFormula": "ceil((Ins <b>{ins}</b> + Emp <b>{emp}</b>) / 2) = <b>{base}</b>, + Scars <b>{scars}</b>, − Grief <b>{grief}</b> = <b>{resolve}</b>",
         "scarsGrief": "Scars and Grief",
